@@ -1,0 +1,43 @@
+DEADLINE TRACKER — Sample User
+As of: 2026-03-11
+================================================================================
+
+STATUS KEY:  [OVERDUE]  = Past due, act immediately
+             [URGENT]   = Due within 30 days
+             [UPCOMING] = Due within 90 days
+             [LATER]    = Due 90+ days out
+             [DONE]     = Completed
+
+================================================================================
+
+[UPCOMING] 2025 Federal Tax Return (Form 1040-NR)
+  Due:        04/15/2026 (extendable to 10/15/2026 via Form 4868)
+  Action:     File 2025 return including:
+              - W-2 from employer
+              - Schedule C for LLC activity
+              - Form 8843 (exempt individual statement)
+
+[UPCOMING] Form 3520 — 2025 Foreign Gifts
+  Due:        04/15/2026 (with tax return)
+  Action:     File if aggregate foreign gifts >= $100,000
+
+[UPCOMING] 2025 FBAR (FinCEN Form 114)
+  Due:        04/15/2026 (auto-extends to 10/15/2026)
+  Action:     File if foreign accounts > $10K aggregate at any point in 2025
+
+[LATER] LLC Annual Report
+  Due:        Anniversary month of formation each year
+  Fee:        Varies by state
+  Action:     File with Secretary of State
+
+================================================================================
+RECURRING
+================================================================================
+
+FBAR — Every Year
+  When:       April 15 (auto-extends to Oct 15)
+  Condition:  If foreign accounts aggregate > $10K at any time during year
+
+LLC Annual Report — Every Year
+  When:       Anniversary month of formation
+  Consequence: Dissolution if late beyond grace period

@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "compliance-os"
+version = "0.1.0"
+description = "Continuous compliance OS for immigrants — document vault, deadline engine, and expert routing"
+requires-python = ">=3.11"
+dependencies = [
+    "llama-index>=0.14",
+    "llama-index-embeddings-openai>=0.5",
+    "llama-index-llms-openai>=0.6",
+    "llama-index-vector-stores-chroma>=0.5",
+    "chromadb>=1.5",
+    "openai>=2.0",
+    "python-dotenv>=1.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+]
+gmail = [
+    "google-auth>=2.0",
+    "google-auth-oauthlib>=1.0",
+    "google-api-python-client>=2.0",
+]
+
+[project.scripts]
+cos = "compliance_os.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["compliance_os*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

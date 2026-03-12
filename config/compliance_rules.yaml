@@ -1,0 +1,78 @@
+# Compliance rules — deterministic triggers for deadlines and risk flags.
+# These rules are evaluated by the ComplianceRuleEngine against a user's
+# profile and events. NO LLM involved — pure rule-based logic.
+
+rules:
+  # --- Tax thresholds ---
+  - id: foreign_gift_3520
+    type: threshold
+    event_type: wire_received_foreign
+    threshold: 100000
+    severity: critical
+    message: "Foreign gifts from non-US persons total {total} in {year}, exceeding the {threshold} threshold."
+    action: "File Form 3520 with your tax return. List each gift on Part IV with date, amount, and donor info."
+    sources:
+      - "IRS Form 3520 Instructions"
+      - "IRC §6039F"
+
+  - id: fbar_threshold
+    type: threshold
+    event_type: account_balance_foreign
+    threshold: 10000
+    severity: high
+    message: "Aggregate foreign account balance exceeded {threshold} during {year}."
+    action: "File FBAR (FinCEN Form 114) via BSA E-Filing by April 15 (auto-extends to Oct 15)."
+    sources:
+      - "31 USC §5314"
+      - "31 CFR §1010.350"
+
+  - id: fatca_8938_threshold_single
+    type: threshold
+    event_type: account_balance_foreign
+    threshold: 50000  # Year-end; $75K at any time during year
+    severity: high
+    message: "Foreign financial assets may exceed FATCA reporting threshold for {year}."
+    action: "File Form 8938 with your tax return if year-end balance > $50K or peak balance > $75K."
+    sources:
+      - "IRC §6038D"
+      - "IRS Form 8938 Instructions"
+
+  # --- Date proximity ---
+  - id: passport_expiry
+    type: date_proximity
+    field: visa_expiry
+    window_days: 120
+    severity: high
+    message: "Passport/visa expires in {days} days ({date}). Renew before any travel or status filing."
+    action: "Apply for renewal at nearest consulate. Processing: 4-6 weeks typical."
+    sources:
+      - "8 CFR §214.1(a)(3)"
+
+  - id: program_end
+    type: date_proximity
+    field: program_end_date
+    window_days: 180
+    severity: critical
+    message: "Academic program ends in {days} days ({date}). Plan next status or departure."
+    action: "Options: H-1B (if selected), OPT/STEM OPT, transfer, or depart. Consult DSO."
+    sources:
+      - "8 CFR §214.2(f)"
+
+  # --- Missing documents ---
+  - id: missing_w2
+    type: missing_document
+    document_name: "Current Year W-2"
+    severity: high
+    message: "W-2 for current tax year not yet obtained. Employer must issue by January 31."
+    action: "Contact employer/payroll provider to request W-2."
+    sources:
+      - "IRC §6051"
+
+  - id: missing_i94
+    type: missing_document
+    document_name: "I-94 Record"
+    severity: medium
+    message: "I-94 arrival/departure record not in document vault."
+    action: "Download from i94.cbp.dhs.gov. Needed for SPT calculation and immigration filings."
+    sources:
+      - "8 CFR §235.1"

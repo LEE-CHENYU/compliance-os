@@ -1,0 +1,102 @@
+# Document classification rules
+# Each rule maps filename keywords to a document type.
+# Rules are evaluated in order — first match wins.
+
+rules:
+  - doc_type: tax_form
+    keywords:
+      - w2
+      - w-2
+      - "1099"
+      - "1098"
+      - "1040"
+      - 1040-nr
+      - "3520"
+      - 3520-a
+      - "8843"
+      - "8938"
+      - "5472"
+      - fbar
+      - fatca
+      - schedule-c
+      - 540nr
+
+  - doc_type: payroll
+    keywords:
+      - paystub
+      - payroll
+      - paycheck
+      - pay_stub
+      - earnings
+
+  - doc_type: immigration
+    keywords:
+      - h1b
+      - h-1b
+      - i-20
+      - i20
+      - i-765
+      - i765
+      - visa
+      - immigration
+      - uscis
+      - sevis
+      - opt
+      - stem-opt
+      - cpt
+      - ead
+      - i-94
+      - i94
+      - g-28
+      - h1br
+      - petition
+      - beneficiary
+
+  - doc_type: deadline
+    keywords:
+      - deadline
+      - timeline
+      - schedule
+      - due_date
+      - calendar
+
+  - doc_type: financial
+    keywords:
+      - bank
+      - statement
+      - transaction
+      - transfer
+      - wire
+      - brokerage
+      - balance
+      - deposit
+      - withdrawal
+
+  - doc_type: legal
+    keywords:
+      - lawyer
+      - attorney
+      - legal
+      - consultation
+      - retainer
+      - engagement
+
+  - doc_type: correspondence
+    keywords:
+      - draft
+      - reply
+      - email
+      - request
+      - inquiry
+      - followup
+
+  - doc_type: corporate
+    keywords:
+      - llc
+      - corp
+      - formation
+      - ein
+      - articles
+      - operating_agreement
+      - annual_report
+      - registered_agent

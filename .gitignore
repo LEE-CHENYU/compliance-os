@@ -1,0 +1,29 @@
+# Secrets
+.env
+secrets/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Vector store
+chroma_db/
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (user documents should never be committed)
+user_data/
+uploads/
