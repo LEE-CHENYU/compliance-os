@@ -659,6 +659,30 @@ This aligns well with the recurring nature of immigration and cross-border compl
 6. add policy gates for high-risk advice
 7. build a dashboard before expanding channels
 
+## Engineering MVP Direction
+
+There is now a separate engineering-focused MVP document at `docs/mvp_engineering.md`.
+
+The key engineering decision is:
+
+- build a private compliance workbench with a chat box as the control surface,
+- not a chat-first consumer assistant.
+
+The intended interaction style is **Claude co-work**:
+
+- documents and concerns live in one workspace,
+- Gmail provides real-time communication context,
+- the user can inspect email content, attachments, risks, and deadlines in one place,
+- the agent can draft actions and emails,
+- deterministic logic remains the truth layer.
+
+For v1:
+
+- use a standard cloud stack,
+- keep OpenClaw narrow and orchestration-focused,
+- do not make specialized sandbox infrastructure a dependency,
+- and do not rely on the model for legal or tax conclusions.
+
 ## Product Decision Summary
 
 These are the default decisions this repo should now assume:

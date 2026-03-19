@@ -72,6 +72,21 @@ This file is implementation-specific working memory for the repo. It should stay
 - Expert layer should start as structured triage plus verified routing, not a free-form marketplace.
 - Positioning to preserve:
   - "system of record and risk engine for immigrant compliance, with humans at the advice boundary"
+- Add an engineering MVP doc.
+- The intended chat-box metaphor is `Claude co-work`, not generic chat and not "cloud co-work".
+- MVP should be a private compliance workbench:
+  - documents
+  - concerns
+  - Gmail context
+  - deterministic risks/deadlines
+  - action queue
+- Gmail is a high-value v1 connector because it enables:
+  - live issue discovery
+  - thread inspection
+  - attachment capture
+  - draft/send follow-up workflows
+- OpenClaw should be used for orchestration and co-work memory, not as the truth layer.
+- Standard cloud first; do not make Blaxel or any specialized sandbox platform a hard v1 dependency.
 
 ## What Is Missing In Code
 
