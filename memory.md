@@ -1,0 +1,130 @@
+# Compliance OS Memory
+
+Last updated: 2026-03-19
+
+This file is implementation-specific working memory for the repo. It should stay short, factual, and revision-friendly. Use `docs/product_master.md` for the durable product definition.
+
+## Current Repo Reality
+
+- Repo is an extracted prototype from the accounting workflow.
+- Git history is minimal: only the initial extraction commit exists.
+- There were no existing product docs in `docs/` before this session.
+- Current product surface is CLI-only.
+- Current codebase already contains real domain logic, especially:
+  - deterministic compliance rules,
+  - deadline status computation,
+  - event-triggered deadline creation,
+  - document classification,
+  - retrieval with source-grounded answers.
+
+## Files That Matter Most
+
+- `compliance_os/compliance/schemas.py`
+- `compliance_os/compliance/rules.py`
+- `compliance_os/compliance/deadlines.py`
+- `config/compliance_rules.yaml`
+- `compliance_os/indexer/index.py`
+- `compliance_os/indexer/classifier.py`
+- `config/document_types.yaml`
+- `compliance_os/query/engine.py`
+- `compliance_os/cli.py`
+- `docs/product_master.md`
+
+## Extracted Product Truths
+
+- Deterministic compliance logic is the critical path.
+- The main product object is the compliance profile, not the chat transcript.
+- Events trigger obligations.
+- Deadlines are first-class product objects with lifecycle.
+- Documents are evidence and provenance, not just retrieval context.
+- LLM outputs must stay grounded and secondary to rules.
+
+## First-Party Use Cases Confirmed From `/Users/lichenyu/accounting`
+
+- attorney / CPA sourcing and credential-fit evaluation is a real workflow problem
+- 1040 vs 1040-NR correction is a real product-driving issue
+- Form 8843 / 3520 / FBAR / 8938 / 5472 confusion is not theoretical
+- SEVIS / OPT / STEM OPT / CPT / H-1B timing needs explicit state tracking
+- passport-renewal timing versus petition timing is a real trigger
+- W-2 retrieval, paystub reconciliation, and employer correction letters are recurring operational work
+- international family wires and LLC/personal account boundaries create threshold-monitoring and documentation needs
+- the actual user need is continuous compliance state management, not one-off Q&A
+
+## Decisions From This Session
+
+- Create a master product doc and a separate repo memory file.
+- Treat the current repo as a backend logic prototype, not a complete product.
+- Make the authenticated app the future system of record.
+- Use messaging as a companion interface, not the primary source of truth.
+- Do not commit to iMessage-first.
+- Prefer web app plus SMS/email initially; evaluate WhatsApp later.
+- Use hybrid privacy architecture:
+  - encrypted raw document storage,
+  - minimal structured extraction,
+  - minimized retrieval embeddings.
+- Use OpenCLO, if adopted, as orchestration/runtime memory rather than as the source of legal logic.
+- Keep negative-compliance monitoring in scope, but express outputs as risk alerts, not legal conclusions.
+- Enforce legal/tax boundaries in workflow and architecture, not only in disclaimer text.
+- Narrow the product wedge hard:
+  - not "AI lawyer/CPA for immigrants"
+  - yes to "continuous compliance OS for immigrants"
+- Preferred initial segment is F-1 / OPT / STEM OPT / early-career immigrant compliance.
+- Expert layer should start as structured triage plus verified routing, not a free-form marketplace.
+- Positioning to preserve:
+  - "system of record and risk engine for immigrant compliance, with humans at the advice boundary"
+
+## What Is Missing In Code
+
+- persistent profile store
+- durable event store
+- authenticated UI
+- multi-tenant isolation model
+- consent and privacy settings
+- audit logging
+- connector framework
+- expert escalation workflow
+- policy gating for high-risk outputs
+- negative-compliance detection beyond placeholders
+
+## Recommended Next Build Steps
+
+1. Add a persistent database schema for:
+   - users
+   - profiles
+   - documents
+   - extracted facts
+   - events
+   - deadlines
+   - concerns
+2. Build the first authenticated dashboard:
+   - deadlines
+   - risks
+   - document vault
+   - missing items
+3. Add structured extraction from uploaded documents into profile facts.
+4. Add notification service with email/SMS first.
+5. Add privacy surfaces:
+   - data map
+   - connector permissions
+   - audit log
+   - delete/export
+6. Add expert escalation model for high-risk issues.
+
+## Product Risks To Keep In Mind
+
+- turning the product into generic chat instead of stateful compliance software
+- overclaiming legal/tax certainty
+- relying on embeddings as the primary truth store
+- collecting more private data than is operationally necessary
+- shipping too many channels before the dashboard and state model are stable
+- producing false-positive "violations" from bank or transaction monitoring
+
+## Operating Rule
+
+When making future product decisions, ask:
+
+1. Does this strengthen the regulatory state model?
+2. Is this deterministic where it must be?
+3. Can the user see why the system believes what it believes?
+4. Does this reduce or increase trust burden?
+5. Are we staying on the safe side of the legal/tax boundary?
