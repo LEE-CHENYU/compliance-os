@@ -6,6 +6,7 @@ Usage:
     cos query "your question here" [--top-k N] [--filter KEY=VAL] [--sources-only]
     cos deadlines [--category CAT]
     cos status
+    cos web [--host HOST] [--port PORT] [--reload]
 """
 
 import argparse
@@ -112,6 +113,18 @@ def cmd_status(args):
         print("No index found. Run `cos index` first.")
 
 
+def cmd_web(args):
+    """Run the seeded MVP web workbench locally."""
+    import uvicorn
+
+    uvicorn.run(
+        "compliance_os.web.app:app",
+        host=args.host,
+        port=args.port,
+        reload=args.reload,
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="cos",
@@ -138,6 +151,12 @@ def main():
     # status
     subparsers.add_parser("status", help="Show system status")
 
+    # web
+    p_web = subparsers.add_parser("web", help="Run the MVP workspace UI")
+    p_web.add_argument("--host", default="127.0.0.1")
+    p_web.add_argument("--port", type=int, default=8000)
+    p_web.add_argument("--reload", action="store_true")
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
@@ -148,6 +167,7 @@ def main():
         "query": cmd_query,
         "deadlines": cmd_deadlines,
         "status": cmd_status,
+        "web": cmd_web,
     }
     dispatch[args.command](args)
 

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Compliance OS MVP</title>
+    <link rel="stylesheet" href="/static/app.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Compliance OS</p>
+          <h1 id="workspace-title">Loading workspace...</h1>
+          <p id="workspace-subtitle" class="subtitle"></p>
+        </div>
+        <div class="topbar-meta">
+          <span id="mode-label" class="mode-pill"></span>
+          <span id="as-of-label" class="quiet-label"></span>
+        </div>
+      </header>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <span class="stat-label">Open Concerns</span>
+          <strong id="stat-concerns">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Unread Threads</span>
+          <strong id="stat-threads">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Urgent Deadlines</span>
+          <strong id="stat-deadlines">0</strong>
+        </article>
+      </section>
+
+      <main class="workspace-grid">
+        <aside class="rail rail-left">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Concerns</h2>
+              <span class="panel-hint">Tracked issues</span>
+            </div>
+            <div id="concern-list" class="list-stack"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Inbox</h2>
+              <span class="panel-hint">Gmail threads</span>
+            </div>
+            <div id="thread-list" class="list-stack"></div>
+          </section>
+        </aside>
+
+        <section class="center-column">
+          <section class="panel hero-panel">
+            <div class="panel-header">
+              <div>
+                <h2 id="concern-title">Select a concern</h2>
+                <p id="concern-meta" class="panel-hint"></p>
+              </div>
+              <div class="badges">
+                <span id="concern-priority" class="priority-pill"></span>
+                <span id="concern-status" class="status-pill"></span>
+              </div>
+            </div>
+            <p id="concern-summary" class="hero-summary"></p>
+            <div class="hero-why">
+              <span>Why now</span>
+              <p id="concern-why"></p>
+            </div>
+            <div>
+              <p class="mini-heading">Suggested prompts</p>
+              <div id="quick-prompts" class="chip-row"></div>
+            </div>
+            <div>
+              <p class="mini-heading">Next actions</p>
+              <ul id="next-steps" class="checklist"></ul>
+            </div>
+          </section>
+
+          <section class="panel assistant-panel">
+            <div class="panel-header">
+              <h2>Claude Co-Work</h2>
+              <span class="panel-hint">Inspect, ask, draft, act</span>
+            </div>
+            <div id="assistant-feed" class="assistant-feed"></div>
+            <form id="assistant-form" class="assistant-form">
+              <label class="sr-only" for="assistant-input">Ask the workspace</label>
+              <textarea
+                id="assistant-input"
+                rows="3"
+                placeholder="Ask about the selected concern, inspect Gmail context, or draft a follow-up..."
+              ></textarea>
+              <button type="submit">Run workspace check</button>
+            </form>
+          </section>
+
+          <section class="panel evidence-panel">
+            <div class="evidence-grid">
+              <div>
+                <div class="panel-header compact">
+                  <h2>Documents</h2>
+                  <span class="panel-hint">Evidence trail</span>
+                </div>
+                <div id="document-list" class="evidence-stack"></div>
+              </div>
+              <div>
+                <div class="panel-header compact">
+                  <h2>Thread Detail</h2>
+                  <span class="panel-hint">Selected inbox context</span>
+                </div>
+                <div id="thread-detail" class="thread-detail"></div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <aside class="rail rail-right">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Deadlines</h2>
+              <span class="panel-hint">Deterministic status</span>
+            </div>
+            <div id="deadline-list" class="deadline-stack"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Risk Cards</h2>
+              <span class="panel-hint">Human escalation boundary</span>
+            </div>
+            <div id="risk-list" class="risk-stack"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Draft Queue</h2>
+              <span class="panel-hint">Approval before send</span>
+            </div>
+            <div id="draft-list" class="draft-stack"></div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

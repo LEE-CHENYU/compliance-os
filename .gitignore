@@ -7,6 +7,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.egg-info/
+.venv/
 dist/
 build/
 .eggs/
@@ -27,3 +28,4 @@ Thumbs.db
 # Data (user documents should never be committed)
 user_data/
 uploads/
+output/
