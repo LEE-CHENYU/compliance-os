@@ -1,0 +1,36 @@
+================================================================================
+PARSED: CLAUDIUS LEGAL INTELLIGENCE — TERMINATION LETTER
+Source: /Users/devuser/accounting/Termination letter 02 05 2025.pdf
+Parsed: 2026-02-12
+================================================================================
+
+DOCUMENT TYPE: End of Employment Letter
+
+Employer:
+  Name:       TechLaw AI Inc.
+  Address:    6920 SW 44th Street, Suite 107, Miami, FL 33155
+  Signatory:  Joseph J. Avery, President & CEO
+
+Employee:
+  Name:       Alex Zhang
+  Address:    888 Main Street #345, New York, New York 10044
+
+Date of Letter:       February 5, 2025
+Effective Date:       February 5, 2025 (immediate termination)
+Employment Letter:    Dated 12/08/2024 (at-will employment)
+Reason:               "Recent performance issues"
+
+Key Terms:
+  - Employment was at-will, terminable at any time with or without cause
+  - Termination effective immediately
+  - Final paycheck to be processed per applicable state and federal law
+  - Must return all company property and confidential information
+
+NOTE: Last paystub on file (02/25/2025) shows pay period Feb 1-28, 2025
+      with 12 hours worked and $431.96 gross. This likely represents the
+      final paycheck covering work through Feb 5, processed on Feb 25.
+      YTD totals: $5,435.55 gross, 151 hours, $589.21 federal withheld.
+
+================================================================================
+END OF PARSED DOCUMENT
+================================================================================

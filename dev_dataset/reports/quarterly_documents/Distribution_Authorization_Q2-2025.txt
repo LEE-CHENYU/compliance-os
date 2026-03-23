@@ -1,0 +1,244 @@
+═══════════════════════════════════════════════════════════════════════════════
+WRITTEN CONSENT OF SOLE MEMBER/MANAGER
+QUARTERLY DISCRETIONARY DISTRIBUTION RESOLUTION
+═══════════════════════════════════════════════════════════════════════════════
+
+LLC:                    Greenfield Capital LLC
+                        (A Wyoming Limited Liability Company)
+                        EIN: 12-3456789
+
+Member/Manager:         Alex Zhang (Sole Member)
+
+Date of Authorization:  April 07, 2025
+
+Distribution Quarter:   ☐ Q1     ☑ Q2-2025
+
+───────────────────────────────────────────────────────────────────────────────
+
+RECITALS:
+
+WHEREAS, Greenfield Capital LLC (the "Company") is a Wyoming limited
+liability company governed by W.S. § 17-29-101 et seq.;
+
+WHEREAS, Alex Zhang is the sole Member and Manager with authority to authorize
+distributions pursuant to W.S. § 17-29-405 and the Operating Agreement;
+
+WHEREAS, pursuant to the Operating Agreement, distributions are discretionary
+and may be withheld, reduced, or deferred by the Manager at any time;
+
+WHEREAS, the Manager reviewed the Company's financial condition during Q2-2025
+and authorized distributions to the Member;
+
+NOW, THEREFORE, acting as the sole Member and Manager, I hereby adopt the
+following resolutions:
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 1: AUTHORITY & DISCRETION
+
+I, Alex Zhang, acting as Manager under W.S. § 17-29-407 and the Company's
+Operating Agreement, hereby authorize the discretionary distributions described
+below. These distributions are:
+
+   • NOT mandatory or required
+   • Subject to Manager discretion
+   • Subject to solvency and surplus tests under Wyoming law
+   • Subject to all restrictions in the Operating Agreement
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 2: DISTRIBUTIONS AUTHORIZED FOR Q2-2025
+
+☑ DISTRIBUTIONS AUTHORIZED - Details below:
+
+   1. Date: 04/07/2025       Amount:       $3,900.00
+      Description: JOURNAL TO ...619
+
+
+   ─────────────────────────────────────────────────────────────────────────
+   TOTAL DISTRIBUTIONS FOR Q2-2025:                  $3,900.00
+   ─────────────────────────────────────────────────────────────────────────
+
+   PAYEE:                   Alex Zhang (Sole Member)
+
+   DISTRIBUTION METHOD:     Journal Transfer / Internal Account Transfer
+
+   ORIGINATING ACCOUNT:     Greenfield Capital LLC
+                            Charles Schwab Bank
+                            EIN-based account
+
+   NUMBER OF DISTRIBUTIONS: 1
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 3: WYOMING SOLVENCY & SURPLUS TESTS (W.S. § 17-29-405)
+
+Before authorizing these distributions, I reviewed the Company's financial
+condition and hereby certify the following for Q2-2025:
+
+A. BALANCE SHEET TEST (Asset/Liability Test):
+
+   After giving effect to these distributions, the Company:
+
+   ☑ HAD total assets exceeding total liabilities at all times
+
+   The Company maintains substantial assets in the form of:
+   • Cash and money market funds
+   • U.S. Treasury securities
+   • Publicly traded stocks and ETFs
+   • Investment securities
+
+   ☑ PASSES the balance sheet test
+
+
+B. EQUITY INSOLVENCY TEST (Cash Flow Test):
+
+   After giving effect to these distributions, the Company:
+
+   ☑ WAS able to pay its debts as they came due in the ordinary course
+     of business
+
+   The Company has:
+   • Sufficient liquid assets (cash, money market, treasury bills)
+   • No material liabilities or debt obligations
+   • Ongoing investment income (dividends, interest)
+   • Ability to liquidate securities if needed
+
+   ☑ PASSES the equity insolvency test
+
+
+C. SURPLUS TEST:
+
+   After giving effect to these distributions:
+
+   Member's Capital Account maintained positive balance throughout Q2-2025
+
+   ☑ The Company maintains adequate capital reserves for business operations
+
+
+D. OVERALL SOLVENCY CERTIFICATION:
+
+   I certify that, after giving effect to these distributions:
+
+   ☑ The Company was SOLVENT under Wyoming law at all times
+   ☑ The Company satisfied W.S. § 17-29-405 requirements
+   ☑ The distributions did not violate the Operating Agreement
+   ☑ The distributions did not violate any loan covenants or contractual
+     restrictions (none exist)
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 4: NO CREDITOR PREJUDICE & FRAUDULENT TRANSFER DEFENSES
+
+I represent and warrant that these distributions:
+
+   A. Were made in good faith for legitimate purposes (compensating the Member
+      for capital at risk in investment activities);
+
+   B. Did NOT violate any restrictions, limitations, or prohibitions;
+
+   C. Were NOT made with any intent to hinder, delay, or defraud any creditor;
+
+   D. Did NOT render the Company insolvent or unable to pay debts;
+
+   E. Did NOT constitute fraudulent transfers or conveyances under:
+      i.   Wyoming Uniform Fraudulent Transfer Act
+      ii.  Federal bankruptcy law (11 U.S.C. § 548)
+      iii. Any other applicable fraudulent transfer law
+
+   F. To the best of my knowledge, neither the Company nor the Member was
+      subject to any known, pending, threatened, or reasonably anticipated
+      claims, lawsuits, or liabilities during Q2-2025 that would make these
+      distributions improper or preferential.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 5: TAX TREATMENT
+
+These distributions represent (to be determined with tax advisor):
+
+   ☐ Return of capital (non-taxable distribution reducing Member's basis)
+   ☐ Profit distribution (taxable income)
+   ☑ To be allocated on Form K-1 per tax preparer
+
+Tax reporting:
+   • Member will receive IRS Form K-1 for tax year 2025
+   • Distributions do not constitute W-2 wages or compensation
+   • Distributions from passive investment income not subject to SE tax
+   • Member is responsible for all tax compliance
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 6: BOOKS & RECORDS
+
+The Company shall record these distributions in its books and records as follows:
+
+   JOURNAL ENTRIES FOR Q2-2025:
+
+   Date: 04/07/2025
+   Dr. Member's Equity - Distributions (Alex Zhang)   $3,900.00
+       Cr. Cash                                                          $3,900.00
+   Description: JOURNAL TO ...619
+
+   ─────────────────────────────────────────────────────────────────────────
+
+   SUMMARY FOR Q2-2025:
+
+   Total Debits to Member's Equity:            $3,900.00
+   Total Credits to Cash:                      $3,900.00
+
+   CAPITAL ACCOUNT: The Member's capital account shall be reduced by
+                    $3,900.00 for Q2-2025.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 7: MEMBER ACKNOWLEDGMENT
+
+As the sole Member receiving these distributions, I acknowledge:
+
+   • These distributions were discretionary and not guaranteed
+   • Future distributions may be reduced, suspended, or eliminated
+   • These distributions reduced the Company's cash available for operations
+   • I have no right to demand future distributions
+   • All distribution decisions are within Manager discretion
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 8: RECORDKEEPING
+
+A copy of this Written Consent shall be:
+
+   • Filed in the Company's minute book/records binder
+   • Attached to the quarterly accounting records for Q2-2025
+   • Provided to the Company's tax preparer
+   • Retained for a minimum of 7 years
+
+Bank statements and transfer confirmations for all 1
+distributions are attached as supporting documentation.
+
+───────────────────────────────────────────────────────────────────────────────
+
+EXECUTED this April 07, 2025.
+
+
+AUTHORIZED BY MANAGER:
+
+________________________________________    Date: April 07, 2025
+Alex Zhang, Manager
+Greenfield Capital LLC
+
+
+ACKNOWLEDGED BY MEMBER:
+
+________________________________________    Date: April 07, 2025
+Alex Zhang, Member
+Greenfield Capital LLC
+
+
+═══════════════════════════════════════════════════════════════════════════════
+AUTO-GENERATED DOCUMENT
+Generated: October 08, 2025 at 09:26 AM
+Quarter: Q2-2025
+Number of Distributions: 1
+Total Amount: $3,900.00
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,125 @@
+The PDF contains **5 distinct 2024 Form 1042-S records** (UFIs `2024657906` to `2024657910`), each repeated as Copy B/C/D with the same box data.
+
+```json
+{
+  "source_file": "tax/2024/1042S - 2024_2025-03-15_619.PDF",
+  "forms_detected": 5,
+  "copies_present_per_form": ["B", "C", "D"],
+  "common_boxes_across_all_5_forms": {
+    "tax_year": "2024",
+    "omb_no": "1545-0096",
+    "amended": false,
+    "amendment_no": null,
+
+    "box_3_chapter_indicator": "3",
+    "box_4a_exemption_code": "15",
+    "box_4b_tax_rate": "00.00",
+    "box_5_withholding_allowance": "00.00",
+    "box_6_net_income": "00.00",
+    "box_7b_federal_tax_not_deposited_due_to_escrow": false,
+    "box_7c_withholding_in_subsequent_year_for_partnership_interest": false,
+    "box_8_tax_withheld_by_other_agents": "00.00",
+    "box_9_overwithheld_tax_repaid_to_recipient": "00.0",
+    "box_11_tax_paid_by_withholding_agent_amounts_not_withheld": "00.0",
+
+    "box_12a_withholding_agent_ein": "94-0000000",
+    "box_12b_withholding_agent_ch3_status_code": "15",
+    "box_12c_withholding_agent_ch4_status_code": "01",
+    "box_12d_withholding_agent_name": "CHARLES SCHWAB & CO., INC.",
+    "box_12e_withholding_agent_giin": null,
+    "box_12f_withholding_agent_country_code": "US",
+    "box_12g_withholding_agent_foreign_tin": null,
+    "box_12h_withholding_agent_address": "3000 SCHWAB WAY (CONTACT US:415-667-8400)",
+    "box_12i_withholding_agent_city_state_zip": "WEST LAKE, TX 76262",
+
+    "box_13a_recipient_name": "ALEX ZHANG",
+    "box_13b_recipient_country_code": "CH",
+    "box_13c_recipient_address": "888 MAIN ST APT 234",
+    "box_13d_recipient_city_state_zip": "NEW YORK, NY 10044",
+    "box_13e_recipient_us_tin": "987-65-4321",
+    "box_13f_recipient_ch3_status_code": "16",
+    "box_13g_recipient_ch4_status_code": "23",
+    "box_13h_recipient_giin": null,
+    "box_13i_recipient_foreign_tin": "110101199703150289",
+    "box_13j_lob_code": null,
+    "box_13k_recipient_account_number": "0000-0890",
+    "box_13l_recipient_date_of_birth_yyyymmdd": "19980918",
+
+    "box_14a_primary_withholding_agent_name": null,
+    "box_14b_primary_withholding_agent_ein": null,
+
+    "box_15_pro_rata_basis_reporting_checked": false,
+    "box_15a_intermediary_ein": null,
+    "box_15b_intermediary_ch3_status_code": null,
+    "box_15c_intermediary_ch4_status_code": null,
+    "box_15d_intermediary_name": null,
+    "box_15e_intermediary_giin": null,
+    "box_15f_intermediary_country_code": null,
+    "box_15g_intermediary_foreign_tin": null,
+    "box_15h_intermediary_address": null,
+    "box_15i_intermediary_city_state_zip": null,
+
+    "box_16a_payer_name": null,
+    "box_16b_payer_tin": null,
+    "box_16c_payer_giin": null,
+    "box_16d_payer_ch3_status_code": null,
+    "box_16e_payer_ch4_status_code": null,
+
+    "box_17a_state_income_tax_withheld": null,
+    "box_17b_payer_state_tax_number": null,
+    "box_17c_state_name": null
+  },
+  "forms": [
+    {
+      "unique_form_identifier": "2024657906",
+      "box_1_income_code": "01",
+      "box_1_income_code_description": "Interest paid by U.S. obligors-general",
+      "box_2_gross_income": "55.00",
+      "box_3a_exemption_code": "00",
+      "box_3b_tax_rate": "10.00",
+      "box_7a_federal_tax_withheld": "5.00",
+      "box_10_total_withholding_credit": "5.00"
+    },
+    {
+      "unique_form_identifier": "2024657907",
+      "box_1_income_code": "01",
+      "box_1_income_code_description": "Interest paid by U.S. obligors-general",
+      "box_2_gross_income": "1300.00",
+      "box_3a_exemption_code": "05",
+      "box_3b_tax_rate": "00.00",
+      "box_7a_federal_tax_withheld": "00.00",
+      "box_10_total_withholding_credit": "00.00"
+    },
+    {
+      "unique_form_identifier": "2024657908",
+      "box_1_income_code": "01",
+      "box_1_income_code_description": "Interest paid by U.S. obligors-general",
+      "box_2_gross_income": "2.00",
+      "box_3a_exemption_code": "02",
+      "box_3b_tax_rate": "00.00",
+      "box_7a_federal_tax_withheld": "00.00",
+      "box_10_total_withholding_credit": "00.00"
+    },
+    {
+      "unique_form_identifier": "2024657909",
+      "box_1_income_code": "06",
+      "box_1_income_code_description": "Dividends paid by U.S. corporations-general",
+      "box_2_gross_income": "68.00",
+      "box_3a_exemption_code": "00",
+      "box_3b_tax_rate": "10.00",
+      "box_7a_federal_tax_withheld": "7.00",
+      "box_10_total_withholding_credit": "7.00"
+    },
+    {
+      "unique_form_identifier": "2024657910",
+      "box_1_income_code": "37",
+      "box_1_income_code_description": "Return of capital",
+      "box_2_gross_income": "1.00",
+      "box_3a_exemption_code": "02",
+      "box_3b_tax_rate": "00.00",
+      "box_7a_federal_tax_withheld": "00.00",
+      "box_10_total_withholding_credit": "00.00"
+    }
+  ]
+}
+```

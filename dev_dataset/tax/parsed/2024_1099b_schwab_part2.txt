@@ -1,0 +1,140 @@
+================================================================================
+2024 Form 1099-B Parsed Data
+Source: Charles Schwab & Co., Inc.
+Account Number: 76892619
+Payer EIN: 94-0000000
+Recipient TIN: XXXXX4443
+Tax Year: 2024
+Data imported from Charles Schwab & Co., Inc. on 04/12/2025
+================================================================================
+
+
+================================================================================
+SECTION 1: SHORT-TERM TRANSACTIONS (Form 8949 Code C - basis reported to IRS)
+================================================================================
+
+Txn  Description                                  Date Acquired  Date Sold   Proceeds     Cost Basis   Gain/Loss    Wash Sale Adj  Accrued Mkt Discount
+---  -------------------------------------------  -------------  ----------  -----------  -----------  -----------  ------------  ---------------------
+ 1   40000.00 US TREASUR NT 3.25% 08XXX**MATURED** 2024-04-05    2024-08-31   40,000.00    39,695.20          --           --           304.80
+ 2   40000.00 US TREASUR NT 3.25% 08XXX**MATURED** 2024-04-04    2024-08-31   40,000.00    39,688.80          --           --           311.20
+
+SHORT-TERM SUBTOTALS:
+  Proceeds:          80,000.00
+  Cost Basis:        79,384.00
+  Gain/Loss:               N/A (not separately stated on form)
+  Accrued Mkt Disc:     616.00
+  Wash Sale Adj:          0.00
+
+
+================================================================================
+SECTION 2: LONG-TERM TRANSACTIONS (Form 8949 Code F - basis reported to IRS)
+================================================================================
+
+Txn  Description                              Shares  Date Acquired  Date Sold   Proceeds   Cost Basis   Gain/Loss    Wash Sale Adj
+---  ---------------------------------------- ------  -------------  ----------  ---------  -----------  -----------  ------------
+ 1   ENVELA CORP ELA                            1.00   2023-04-20    2024-08-19      5.00         6.80       -1.80         --
+ 2   MARINE PRODS CORP MPX                      1.00   2023-04-17    2024-08-19      9.20        13.45       -4.25         --
+ 3   WESTERN ALLIANCE BANCORP WAL               5.00   2023-03-14    2024-08-19    390.94       140.00      250.94         --
+ 4   WESTERN ALLIANCE BANCORP WAL               5.00   2023-03-14    2024-08-19    390.94       175.00      215.94         --
+ 5   WESTERN ALLIANCE BANCORP WAL               5.00   2023-03-14    2024-08-19    390.94       187.50      203.44         --
+ 6   WESTERN ALLIANCE BANCORP WAL               5.00   2023-04-19    2024-08-19    390.94       202.90      188.04         --
+ 7   WESTERN ALLIANCE BANCORP WAL               5.00   2023-03-15    2024-08-19    390.94       140.00      250.94         --
+ 8   WESTERN ALLIANCE BANCORP WAL               5.00   2023-04-19    2024-08-19    390.94       196.70      194.24         --
+ 9   WESTERN ALLIANCE BANCORP WAL               5.00   2023-04-19    2024-08-19    390.94       202.35      188.59         --
+10   WESTERN ALLIANCE BANCORP WAL               5.00   2023-03-14    2024-08-19    390.94       130.00      260.94         --
+     --- Western Alliance Bancorp (5-sh lots) Subtotal ---
+     Proceeds: 3,127.52   Cost Basis: 1,374.45   Gain/Loss: 1,753.07
+
+11   WESTERN ALLIANCE BANCORP WAL              10.00   2023-03-20    2024-08-19    781.88       300.00      481.88         --
+12   WESTERN ALLIANCE BANCORP WAL              10.00   2023-04-19    2024-08-19    781.86       401.30      380.56         --
+     --- Western Alliance Bancorp (10-sh lots) Subtotal ---
+     Proceeds: 1,563.74   Cost Basis: 701.30   Gain/Loss: 862.44
+
+13   ZIONS BANCORP N A ZION                     3.00   2023-03-17    2024-08-19    139.47        88.50       50.97         --
+
+LONG-TERM TOTALS:
+  Proceeds:           4,844.93
+  Cost Basis:         2,184.50
+  Gain/Loss:          2,660.43
+  Wash Sale Adj:          0.00
+
+
+================================================================================
+GRAND SUMMARY
+================================================================================
+
+SHORT-TERM TRANSACTIONS (held 1 year or less):
+  Number of transactions:     2
+  Total Proceeds:        80,000.00
+  Total Cost Basis:      79,384.00
+  Net Gain/Loss:            616.00  (per accrued market discount)
+  Wash Sale Adjustments:      0.00
+  Note: These are US Treasury notes that matured. The gain is reported
+        as accrued market discount (ordinary income), not capital gain.
+
+LONG-TERM TRANSACTIONS (held more than 1 year):
+  Number of transactions:    13
+  Total Proceeds:         4,844.93
+  Total Cost Basis:       2,184.50
+  Net Gain/Loss:         +2,660.43  (capital gain)
+  Wash Sale Adjustments:      0.00
+
+COMBINED TOTALS:
+  Total Proceeds:        84,844.93
+  Total Cost Basis:      81,568.50
+  Total Accrued Mkt Discount (ordinary):   616.00
+  Total Long-Term Capital Gain:          2,660.43
+
+================================================================================
+DETAILED TRANSACTION BREAKDOWN BY SECURITY
+================================================================================
+
+1. US TREASURY NOTE 3.25% (matured 08/31/2024) -- SHORT-TERM
+   - 2 lots of $31,200 face value each
+   - Total Proceeds: $62,400.00
+   - Total Cost Basis: $61,919.52
+   - Accrued Market Discount: $480.48 (treated as ordinary income)
+   - Form 8949 Code: C (short-term, basis reported to IRS)
+
+2. ENVELA CORP (ELA) -- LONG-TERM
+   - 1 share sold
+   - Proceeds: $3.90
+   - Cost Basis: $5.30
+   - Loss: -$1.40
+   - Form 8949 Code: F (long-term, basis reported to IRS)
+
+3. MARINE PRODS CORP (MPX) -- LONG-TERM
+   - 1 share sold
+   - Proceeds: $7.18
+   - Cost Basis: $10.49
+   - Loss: -$3.31
+   - Form 8949 Code: F (long-term, basis reported to IRS)
+
+4. WESTERN ALLIANCE BANCORP (WAL) -- LONG-TERM
+   - 10 lots totaling 60 shares sold
+     (8 lots of 5 shares + 2 lots of 10 shares)
+   - Total Proceeds: $3,659.18
+   - Total Cost Basis: $1,619.09
+   - Total Gain: $2,040.10
+   - Form 8949 Code: F (long-term, basis reported to IRS)
+
+5. ZIONS BANCORP N A (ZION) -- LONG-TERM
+   - 3 shares sold
+   - Proceeds: $108.79
+   - Cost Basis: $69.03
+   - Gain: $39.76
+   - Form 8949 Code: F (long-term, basis reported to IRS)
+
+================================================================================
+NOTES
+================================================================================
+- All long-term transactions were sold on 2024-08-19.
+- All short-term transactions (US Treasury maturities) settled on 2024-08-31.
+- Gross proceeds for all transactions were reported as non-covered (X),
+  meaning the broker reported cost basis to the IRS.
+- Form 1099B was not received for any of the long-term transactions
+  (Form 1099B Not Received = X on pages 4 and 8), indicating this data
+  was sourced from TurboTax import rather than an official mailed form.
+- No wash sale loss disallowed amounts were reported on any transaction.
+- The short-term US Treasury gains are accrued market discount and are
+  taxed as ordinary income, not as capital gains.

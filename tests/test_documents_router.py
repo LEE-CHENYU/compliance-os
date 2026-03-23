@@ -97,11 +97,14 @@ def test_checklist_from_discovery(client, case_id):
     client.post(f"/api/cases/{case_id}/discovery", json={
         "step": "concern_area", "question_key": "concern_area", "answer": ["Tax Filing"],
     })
+    client.post(f"/api/cases/{case_id}/discovery", json={
+        "step": "tax_income_sources", "question_key": "tax_income_sources", "answer": ["W-2 employment"],
+    })
     resp = client.get(f"/api/cases/{case_id}/documents/checklist")
     assert resp.status_code == 200
     slots = resp.json()["slots"]
     keys = [s["key"] for s in slots]
-    assert "w2_latest" in keys
+    assert "tax_w2" in keys
 
 
 def test_reject_disallowed_file_type(client, case_id):

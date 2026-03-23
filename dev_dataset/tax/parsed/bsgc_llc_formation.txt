@@ -1,0 +1,127 @@
+================================================================================
+PARSED: GREENFIELD CAPITAL LLC - FORMATION DOCUMENTS
+Sources: Articles of Organization, Certificate of Good Standing, CP575 Notice,
+         Consent to Appointment, W-9/Tax Interview, Operating Agreement Template
+Parsed: 2026-02-12
+================================================================================
+
+================================================================================
+ENTITY OVERVIEW
+================================================================================
+Entity Name:            Greenfield Capital LLC
+Entity Type:            Limited Liability Company (Wyoming)
+State of Formation:     Wyoming
+Date of Formation:      June 16, 2023 (filed 10:48 AM)
+WY Entity ID:           2023-001286103
+Duration:               Perpetual
+EIN:                    12-3456789 (assigned 06-16-2023)
+IRS Name Control:       BAMB
+Sole Member:            Alex Zhang
+
+--------------------------------------------------------------------------------
+ARTICLES OF ORGANIZATION (Filed 06/16/2023)
+--------------------------------------------------------------------------------
+Filed With:     Wyoming Secretary of State
+Original ID:    2023-001286103
+
+I.   Name:              Greenfield Capital LLC
+II.  Registered Agent:  Registered Agents Inc
+                        100 Main St Ste A, Cheyenne, WY 82001
+III. Mailing Address:   100 Main St Ste A, Cheyenne, WY 82001
+IV.  Principal Office:  100 Main St Ste A, Cheyenne, WY 82001
+V.   Organizer:         Registered Agents Inc
+                        100 Main St Ste A, Cheyenne, WY 82001
+
+Filer: Robin Jones (Authorized Individual)
+       Registered Agents Inc
+       Email: support@registeredagentsinc.com
+       Phone: (307) 200-2803
+
+--------------------------------------------------------------------------------
+CERTIFICATE OF GOOD STANDING (Issued 10/30/2025)
+--------------------------------------------------------------------------------
+Issued By:      Chuck Gray, Secretary of State, Wyoming
+Certificate ID: 092105115
+Date Issued:    October 30, 2025 at 2:26 PM
+
+Status: IN EXISTENCE AND IN GOOD STANDING
+- Filed all annual reports and paid all annual license taxes to date
+- Has NOT filed Articles of Dissolution
+- Period of duration: Perpetual
+
+--------------------------------------------------------------------------------
+CONSENT TO APPOINTMENT BY REGISTERED AGENT
+--------------------------------------------------------------------------------
+Agent Name:     Registered Agents Inc
+Agent Address:  100 Main St Ste A, Cheyenne, WY 82001
+Signed By:      David Roberts, Assistant Secretary
+Date Signed:    06/12/2023
+Phone:          (307) 200-2803
+Email:          support@registeredagentsinc.com
+
+--------------------------------------------------------------------------------
+IRS CP575 NOTICE (EIN ASSIGNMENT)
+--------------------------------------------------------------------------------
+Notice Date:    06-16-2023
+Notice Number:  CP 575 G
+Form:           SS-4
+
+Entity Name:    GREENFIELD CAPITAL LLC
+                ALEX ZHANG SOLE MBR
+EIN:            12-3456789
+Address:        100 Main St Ste A, Cheyenne, WY 82001
+Name Control:   BAMB
+
+Note: LLC may file Form 8832 to elect corporate classification, or
+      Form 2553 for S-Corp election.
+
+--------------------------------------------------------------------------------
+W-9 / TAX INTERVIEW (Schwab Account Opening)
+--------------------------------------------------------------------------------
+Name:                   Greenfield Capital LLC
+Tax Classification:     Limited Liability Company - P (Partnership)
+EIN:                    XXXXX4106 (12-3456789)
+Address:                Sheridan, WY 82801
+Signed By:              Alex Zhang
+Date Signed:            06-29-2023
+Reference ID:           A0473624125S1EZKFIMEA
+
+NOTE: The W-9 indicates tax classification as "P" (Partnership), but the
+      CP575 and Operating Agreement indicate single-member LLC taxed as
+      sole proprietorship. This W-9 was submitted to Schwab for account
+      opening. The "P" classification on the W-9 may be an error -- a
+      single-member LLC is typically a disregarded entity for tax purposes.
+
+--------------------------------------------------------------------------------
+OPERATING AGREEMENT (TEMPLATE - UNSIGNED)
+--------------------------------------------------------------------------------
+Type:           Sole Member Operating Agreement (Wyoming)
+Status:         BLANK TEMPLATE (all fields unfilled)
+Pages:          6
+
+Key Provisions:
+- Section 1: Formation under Wyoming LLC Act (Title 17, Ch. 29)
+- Section 5: Capital Contributions at Member's discretion
+- Section 6: Calendar year fiscal year (ending December)
+- Section 7: Capital Account maintained for sole member
+- Section 8: Tax Treatment - Single-member LLC taxed as sole proprietorship
+             per Internal Revenue Code (disregarded entity)
+- Section 9: Member-managed LLC; sole member has full authority
+- Section 10: Limitation of liability and indemnification
+- Section 11: Company dissolves upon death of Member
+- Section 12: Governed by Wyoming law
+
+NOTE: This is a blank template that has NOT been filled in or signed.
+      The company name, member name, date, and purpose fields are all blank.
+
+================================================================================
+ANNUAL REPORT REQUIREMENTS
+================================================================================
+- Annual reports due every year on the first day of the anniversary month
+  of formation (June 1 each year for this entity)
+- If not paid within 60 days of due date, entity is subject to dissolution
+- Filing fee: $78.00
+
+================================================================================
+END OF PARSED DOCUMENT
+================================================================================

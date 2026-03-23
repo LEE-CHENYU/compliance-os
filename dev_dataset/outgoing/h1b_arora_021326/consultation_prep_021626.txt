@@ -1,0 +1,232 @@
+================================================================================
+ARORA CONSULTATION PREP — Monday Feb 16, 4:00pm EST (15 minutes)
+================================================================================
+Call: 212-268-3580, ask for Ajay Arora
+Fee: $98 (pay via Helcim link by 3:30pm EST)
+
+GOAL: Get answers to 2 critical questions, and gauge Arora's expertise
+on the harder compliance issue (#2).
+
+================================================================================
+QUESTION 1: WHICH ENTITY SHOULD PETITION?
+================================================================================
+Present both options concisely, then ask which he recommends and why.
+
+OPTION A — BSGC LLC (Wyoming Single-Member LLC)
+──────────────────────────────────────────────────
+  Entity:           Greenfield Capital LLC
+  State:            Wyoming (formed June 16, 2023 — 2.5+ years old)
+  EIN:              12-3456789
+  Type:             SMLLC (disregarded entity for tax)
+  Owner:            Alex Zhang (sole member) — ALSO the H-1B beneficiary
+  Address:          100 Main St Ste A, Cheyenne, WY 82001
+                    (registered agent address, not physical office)
+  Employees:        1 (Alex Zhang only)
+  Bank accounts:    Citibank business checking + Schwab LLC brokerage
+  Capital:          $335,894 member's equity (as of 10/2025)
+  Investments:      ~$445K face value in US Treasuries + equities
+                    (OXY, INTC, CROX, LULU, PDD, etc.)
+  2025 revenue:     ~$8K operating + ~$8K investment income
+  Prior H-1B:       Used as petitioner for FY2026 (not selected in lottery)
+  E-Verify:         Unknown — need to confirm
+
+  STRENGTHS:
+    - 2.5+ years of operating history
+    - Substantial assets ($335K+ equity, $445K+ investments)
+    - Established bank/brokerage accounts with transaction history
+    - Already petitioned once for H-1B (FY2026)
+    - "Sufficient to cover more than 3 years of offered salary"
+
+  WEAKNESSES:
+    - Owner IS the beneficiary → employer-employee relationship problem
+      (who supervises/fires Chenyu? No independent board or other employees)
+    - Registered agent address in WY, not a real office
+    - Only 1 employee — USCIS may question whether position is genuine
+    - SMLLC structure is weaker than C-Corp for H-1B
+    - Ties to STEM OPT compliance concern (see Question 2)
+
+OPTION B — PACIFIC RIVER CAPITAL (California C Corporation, pending)
+──────────────────────────────────────────────────────────────
+  Entity:           Pacific River Capital (name reserved, filing in progress)
+  State:            California C Corporation
+  EIN:              Pending
+  Owner:            Meiling Wang (Chenyu's mother) — President
+  Address:          995 Market St, San Francisco, CA
+  Employees:        Will hire Alex Zhang as Financial Specialist
+  Capitalization:   To be funded (~$273K-$312K from mother's funds)
+  Revenue:          None yet (new entity)
+  E-Verify:         Will enroll
+
+  STRENGTHS:
+    - Clear employer-employee separation (mother owns, son is employee)
+    - Mother as President/sole shareholder can supervise and terminate
+    - C-Corp structure preferred by USCIS over SMLLC
+    - SF address is real business location (co-working planned)
+    - Clean slate — no compliance baggage from STEM OPT period
+    - Mother's funds provide ability to pay prevailing wage
+
+  WEAKNESSES:
+    - Not yet formed — needs EIN, bank account, capitalization before 3/4
+    - Zero operating history
+    - Zero revenue
+    - USCIS may scrutinize "paper company" created just for H-1B
+    - Funded by foreign parent → may raise questions about true ownership
+    - Mother is in China — how does she supervise day-to-day in SF?
+
+KEY QUESTION FOR ARORA:
+  "Given that the registration deadline is March 4 and we may not have
+  the C-Corp fully formed by then — can we register with the C-Corp
+  and switch to the LLC as fallback if formation isn't complete? Or
+  should we register both? Or pick one?"
+
+  "For the LLC, how do we establish the employer-employee relationship
+  when I'm the sole owner? Is there a board structure or operating
+  agreement modification that would satisfy USCIS?"
+
+  "For the C-Corp with my mother as owner — does USCIS scrutinize
+  family-owned companies more heavily? How do we demonstrate that the
+  position is genuine and not created solely for the visa?"
+
+================================================================================
+QUESTION 2: STEM OPT COMPLIANCE — THE EXPERTISE TEST
+================================================================================
+This is the harder question. How Arora handles it will tell you whether
+he's the right attorney for your case.
+
+TIMELINE (from I-20 records):
+──────────────────────────────
+  06/16/2023    BSGC LLC formed (Wyoming)
+
+  01/23/2023 – 01/22/2024    REGULAR POST-COMPLETION OPT
+    Employers on I-20:
+      - Wall Street Consulting LLC     04/21/2023 – 05/22/2023
+      - Tiger Cloud, LLC               05/22/2023 – (no end date)
+      - Greenfield Capital LLC 06/23/2023 – (no end date)
+
+    2023 Schedule C: $323 revenue, $1,211 expenses (net loss -$888)
+    → This activity was during REGULAR OPT, which ALLOWS self-employment
+    → LEGAL — no issue here
+
+  01/23/2024 – 01/22/2026    STEM OPT (24-month extension)
+    Employer on I-20:
+      - Tiger Cloud LLC ONLY    01/23/2024 – 01/22/2026 (New York, NY)
+
+    BSGC was NOT listed as a STEM OPT employer.
+
+    BUT during this period:
+      - 2024 Schedule C: $69 expenses, $0 revenue (filed on 1040)
+      - LLC Citibank checking had ongoing transactions
+      - Capital contributions continued ($10,493 in Q4-2024)
+      - LLC brokerage opened (Schwab XXX567, Feb 2025)
+      - Massive capital activity in 2025 ($390K+ contributions)
+      - Securities trading, options writing throughout 2025
+      - eBay/Amazon sales through LLC checking ($491 in 2025)
+
+THE COMPLIANCE CONCERN:
+──────────────────────────
+  STEM OPT does NOT allow self-employment. Unlike regular OPT, STEM OPT
+  requires:
+    1. Bona fide employer-employee relationship
+    2. Employer enrolled in E-Verify
+    3. Signed I-983 training plan
+    4. Student may NOT be self-employed
+
+  BSGC was dropped from the SEVIS record when STEM OPT started — only
+  Tiger Cloud LLC was listed. But the LLC continued operating (expenses
+  on Schedule C, bank activity, capital contributions, trading).
+
+  KEY LEGAL QUESTIONS:
+    a. Does passive investment management through an LLC constitute
+       "employment" or "self-employment" under 8 CFR 214.2(f)?
+    b. The 2024 Schedule C with $69 expenses and the ongoing LLC bank
+       activity — is this discoverable by USCIS during H-1B adjudication?
+    c. If USCIS cross-references tax returns with SEVIS, they'd see
+       Schedule C activity during a period when only Tiger Cloud was the
+       authorized STEM OPT employer. What's the risk?
+    d. Does this affect the H-1B petition? Or is it only a concern for
+       future green card / visa stamp / extension adjudication?
+    e. Should we proactively address this, or leave it alone unless asked?
+
+HOW TO PRESENT THIS TO ARORA (suggested framing):
+──────────────────────────────────────────────────
+  "I have a compliance question about my STEM OPT period. During my
+  regular post-completion OPT, I listed my own LLC as one of my employers
+  — self-employment is allowed on regular OPT. When I transitioned to
+  STEM OPT in January 2024, only my W-2 employer was listed. But the LLC
+  continued to exist and had some minor activity — small expenses on
+  Schedule C, ongoing bank transactions. No active services were rendered
+  through the LLC during STEM OPT — it was essentially passive asset
+  holding. Does this create any risk for the H-1B petition or for future
+  immigration applications?"
+
+WHAT A GOOD ANSWER LOOKS LIKE:
+──────────────────────────────
+  A knowledgeable attorney should:
+  ✓ Immediately distinguish regular OPT self-employment (allowed) from
+    STEM OPT self-employment (not allowed)
+  ✓ Ask about the nature of LLC activity during STEM OPT (passive vs active)
+  ✓ Discuss whether "passive investment" = "employment" under 8 CFR 214.2(f)
+  ✓ Address the discoverability risk (Schedule C on tax return vs SEVIS)
+  ✓ Discuss INA §212(a)(6)(C)(i) misrepresentation risk if ever questioned
+  ✓ NOT panic, NOT dismiss it — thoughtful risk assessment
+  ✓ Recommend a strategy (disclose vs don't disclose, how to structure
+    future filings to minimize exposure)
+
+  RED FLAGS (if Arora does any of these, reconsider):
+  ✗ Doesn't know the difference between OPT and STEM OPT self-employment rules
+  ✗ Says "it's fine, don't worry about it" without analysis
+  ✗ Says "you should have disclosed this to USCIS" without discussing strategy
+  ✗ Doesn't ask follow-up questions about the nature of LLC activity
+  ✗ Seems unfamiliar with the employer-employee relationship test for STEM OPT
+
+================================================================================
+TIME MANAGEMENT — 15 MINUTES
+================================================================================
+
+  0:00 – 1:00   Brief intro, confirm he reviewed the data sheets
+  1:00 – 7:00   QUESTION 1: Entity choice (BSGC vs Pacific River Capital)
+                 - Present both options in 1-2 minutes
+                 - Let him advise for 4-5 minutes
+  7:00 – 13:00  QUESTION 2: STEM OPT compliance concern
+                 - Present the framing above in 1-2 minutes
+                 - Listen to his analysis for 4-5 minutes
+  13:00 – 15:00 Wrap-up: Confirm next steps, registration timeline,
+                 whether to pay $663 now or wait
+
+================================================================================
+DOCUMENTS TO HAVE READY (in case he asks)
+================================================================================
+  - All I-20s (already sent with data sheets)
+  - I-94
+  - EAD card (if available)
+  - 2023 and 2024 tax returns (Schedule C pages)
+  - BSGC LLC formation docs (Wyoming)
+  - W-2s from Tiger Cloud / Wolff & Li / others
+  - I-983 training plan from Tiger Cloud (if you have it)
+
+================================================================================
+DECISION MATRIX AFTER THE CALL
+================================================================================
+  IF Arora recommends BSGC:
+    → Ask how to structure employer-employee relationship
+    → Confirm E-Verify enrollment status
+    → Proceed with $663 payment for BSGC registration
+
+  IF Arora recommends Pacific River Capital:
+    → Ask what minimum formation steps are needed by 3/4
+    → Confirm whether name reservation is sufficient or need full formation
+    → Accelerate C-Corp formation immediately
+
+  IF Arora recommends registering both:
+    → Cost: $663 × 2 = $1,326
+    → Ask if this is common / advisable
+
+  IF Arora handles Question 2 poorly:
+    → Do NOT pay the $663 yet
+    → Schedule Shah Peerally $117 consultation as comparison
+    → Consider whether a more specialized attorney is needed for the
+      compliance issue (separate from the H-1B filing attorney)
+
+================================================================================
+END OF CONSULTATION PREP
+================================================================================

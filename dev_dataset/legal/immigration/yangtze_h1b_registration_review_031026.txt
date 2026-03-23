@@ -1,0 +1,291 @@
+FY2027 H-1B Registration Draft Comparison — BSGC (MT Law) vs Yangtze (Arora)
+================================================================================
+Date: 03/10/2026
+Prepared for review before accepting drafts on USCIS portal
+
+================================================================================
+1. CORE REGISTRATION FIELDS (IDENTICAL ACROSS BOTH DRAFTS)
+================================================================================
+
+  Field               BSGC (MT Law)              Yangtze (Arora)
+  ─────────────────── ────────────────────────── ──────────────────────────
+  Beneficiary         Alex Zhang                  ALEX ZHANG
+  DOB                 03-15-1997                 03-15-1997
+  Passport            G88855571                  G88855571
+  Passport Exp        2026-06-30                 2026-06-30
+  Country             CHN                        CHN
+  Master's Cap        Yes                        Yes
+  Wage Level          III                        III
+  SOC Code            13-2099                    13-2099
+  Work Location       Albany, CA, Alameda        ALBANY, CA, ALAMEDA
+
+  VERDICT: All beneficiary and job fields match. No data entry discrepancies.
+
+================================================================================
+2. ENTITY / EMPLOYER DIFFERENCES (EXPECTED — TWO SEPARATE COMPANIES)
+================================================================================
+
+  Field               BSGC                       Yangtze
+  ─────────────────── ────────────────────────── ──────────────────────────
+  Employer            Bamboo Shoot Growth         PACIFIC RIVER CAPITAL
+                      Capital LLC
+  EIN                 12-3456789                 45-6789012
+  Entity Type         WY single-member LLC       CA C-Corporation
+                      (owner = beneficiary)      (standard employer-employee)
+  Address             100 Main St Ste A        500 K St Ste B
+                      Sheridan, WY 82801         Sacramento, CA 95816
+  Signatory           Alex Zhang                  Meiling Wang
+                      Owner, Managing Member     President and Sole Director
+  Contact Phone       646-555-0142               646-555-0199
+  Contact Email       contact.greenfield@gmail.com     INFO@PACIFIC-RIVER-CAPITAL.COM
+  Attorney            Xinzi Chen (Cindy)         Ajay K. Arora
+                      MT Law LLC                 Ajay K. Arora, P.C.
+                      MA Bar #699143             NY Bar #2600310
+  Attorney Address    430 Bedford St, Ste 200    1270 Broadway, Suite 510
+                      Lexington, MA 02420        New York, NY 10001
+  Attorney Email      cindy@mtlawllc.com         info@h1b1.com
+  Attorney Phone      800-345-1899               212-268-3580
+  USCIS Acct (G-28)   059603265440               061407218440
+  Petition Type       Owner-beneficiary           Standard employer-employee
+                      (Modernization Rule,       (3-year validity if approved)
+                      18-month validity)
+
+================================================================================
+3. POINTS CINDY / MT LAW RAISED THAT ARORA MAY NOT HAVE ADDRESSED
+================================================================================
+
+  The following issues were identified through correspondence with MT Law
+  (Cindy Chen, Jiaqi Xiao) during the BSGC registration process. These
+  are strategic concerns that apply equally to the Yangtze registration
+  but have NOT been raised or analyzed by Arora based on the correspondence
+  record.
+
+  ─────────────────────────────────────────────────────────────────────────
+  3.1  WAGE LEVEL III JUSTIFICATION (JOB ZONE 5 RFE RISK)
+  ─────────────────────────────────────────────────────────────────────────
+
+  ISSUE: SOC 13-2099 falls under subcategory 13-2099.01 (Financial
+  Quantitative Analysts), which is a Job Zone 5 classification. For Job
+  Zone 5 positions, even a Master's degree with four years of experience
+  does not automatically support Level III. USCIS may issue RFEs
+  challenging the wage level at the petition stage.
+
+  MT LAW STATUS: Cindy was actively analyzing four justification factors
+  provided on 03/06/2026:
+    1. No additional licensure or certification
+    2. Language requirement — Chinese and Japanese (business necessity:
+       cross-border investment strategy requiring analysis of financial
+       reports, regulatory filings, and market data in both languages)
+    3. Special knowledge — experience architecting portfolio management
+       systems, quantitative analytics pipelines, risk modeling frameworks,
+       and automated trading infrastructure using ML techniques
+    4. Supervisory duty — potential supervision of employees starting
+       10/01/2026
+
+  ARORA STATUS: Same four factors were sent to Arora on 03/06/2026
+  (arora_wagelevel_030626.txt). Arora replied 03/11/2026: "We do not
+  foresee any problems with filing this registration at Level III wage."
+  No detailed RFE risk analysis provided; no engagement with the four
+  justification factors. Accepted Level III without petition-stage prep.
+
+  RISK: If selected and Level III is challenged at petition, the
+  registration advantage (3x lottery weight) could become a liability
+  if the wage level cannot be sustained in the LCA/petition.
+
+  ─────────────────────────────────────────────────────────────────────────
+  3.2  DEGREE FIELD QUALIFICATION GAP
+  ─────────────────────────────────────────────────────────────────────────
+
+  ISSUE: The Columbia MS in Applied Analytics (CIP 30.7101) is not a
+  direct degree-field match for Financial Quantitative Analysts. USCIS
+  could issue a specialty occupation RFE arguing the degree is not in a
+  "directly related" field.
+
+  MT LAW STATUS: Cindy identified this gap and initiated multi-email
+  analysis (03/06 – 03/07):
+    a. Transcript evaluation for double major — SJTU coursework (~32
+       credits in finance/business) + Waseda exchange (~14 credits in
+       commerce/finance) = ~55 total credits across three institutions
+    b. Columbia cross-registered courses — Earnings Quality &
+       Fundamentals, M&A Accounting (Columbia Business School), plus
+       International Political Economy (SIPA)
+    c. CIAM MBA as direct fix — MBA is closely related to Finance,
+       potentially resolving the degree-field mismatch entirely
+    d. Coursework summary prepared and sent to Cindy (03/07)
+
+  ARORA STATUS: No evidence Arora has analyzed the degree-field match
+  or identified this as a concern. His consultation recommended
+  "Financial Specialist" as the job title but did not discuss whether
+  the degree supports the SOC code at the petition stage.
+
+  RISK: This is a petition-stage RFE risk, not a registration issue.
+  But advance preparation (transcript evaluation, coursework mapping)
+  significantly improves petition success odds.
+
+  ─────────────────────────────────────────────────────────────────────────
+  3.3  PASSPORT EXPIRATION (06/30/2026)
+  ─────────────────────────────────────────────────────────────────────────
+
+  ISSUE: Passport G88855571 expires 06/30/2026, which falls within the
+  90-day petition filing window if selected in the lottery (~late March
+  selection → ~end of June filing deadline).
+
+  MT LAW STATUS: Flagged during BSGC review. Cindy's team noted renewal
+  may be needed before actual petition filing. Passport bio page was
+  reviewed and the expiration date was called out.
+
+  ARORA STATUS: Both the Yangtze H-1BR and G-28 list passport expiration
+  as 2026-06-30, but there is no documented communication from Arora
+  flagging this as a concern or recommending renewal timing.
+
+  ACTION REQUIRED: Apply for Chinese passport renewal by April 2026 at
+  latest (processing time: 4-6 weeks). This applies to BOTH registrations.
+
+  ─────────────────────────────────────────────────────────────────────────
+  3.4  STEM OPT COMPLIANCE HISTORY
+  ─────────────────────────────────────────────────────────────────────────
+
+  ISSUE: Open-ended SEVIS employer entries from OPT/STEM OPT periods.
+  Some employers no longer active. Potential compliance questions if USCIS
+  reviews SEVIS records during petition adjudication.
+
+  MT LAW STATUS: Not explicitly raised by Cindy at registration stage.
+  (MT Law is handling registration only; this is a petition-stage concern.)
+
+  ARORA STATUS: Explicitly refused to analyze. During the Feb 16
+  consultation ($98), Arora stated: "We don't have an opinion on how
+  you maintain your, you know, comply with STEM OPT guidelines." When
+  pressed on a missing I-983 from one employer, suggested treating it
+  as "unemployment" rather than analyzing the compliance implications.
+  Did NOT ask follow-up questions about nature of LLC activity during
+  STEM OPT, did NOT address discoverability risk (Schedule C vs SEVIS),
+  did NOT discuss misrepresentation risk under INA §212(a)(6)(C)(i).
+
+  RISK: Neither attorney is currently analyzing this. May require a
+  separate compliance attorney before petition filing.
+
+  ─────────────────────────────────────────────────────────────────────────
+  3.5  TRAVEL WARNING ($78K PRESIDENTIAL PROCLAMATION FEE)
+  ─────────────────────────────────────────────────────────────────────────
+
+  ISSUE: Presidential Proclamation imposes $78K H-1B visa fee if the
+  employer's beneficiary travels abroad while the petition is pending.
+
+  MT LAW STATUS: Explicitly warned on 03/05/2026 via Jiaqi Xiao:
+  "Do NOT travel outside U.S. between now and October 1, 2026."
+
+  ARORA STATUS: No documented travel advisory communicated.
+
+  ─────────────────────────────────────────────────────────────────────────
+  3.6  G-28 NOTICE DELIVERY INSTRUCTIONS
+  ─────────────────────────────────────────────────────────────────────────
+
+  ISSUE: The G-28 form has three checkboxes in Part 4 controlling where
+  USCIS sends notices, secure identity documents, and I-94 arrival
+  notices. These must be checked during online acceptance.
+
+  MT LAW STATUS: Jiaqi Xiao explicitly instructed to CHECK ALL THREE
+  BOXES during online review of the BSGC G-28. Detailed step-by-step
+  acceptance instructions provided.
+
+  ARORA STATUS: [RESOLVED 03/11] Arora's 03/06 email (Thread ID:
+  19cc62122b195573) contains 7-step portal guide with screenshots.
+  Confirms CHECK ALL 3 BOXES. Full instructions saved to
+  arora_reply_wagelevel_g28_031126.txt.
+
+  ─────────────────────────────────────────────────────────────────────────
+  3.7  SELF-PETITIONING STRUCTURE (BSGC ONLY)
+  ─────────────────────────────────────────────────────────────────────────
+
+  NOTE: This concern applies only to the BSGC registration, not Yangtze.
+
+  BSGC: Alex Zhang is both employer (authorized signatory) and beneficiary.
+  This triggers the Modernization Rule owner-beneficiary framework, which
+  limits initial approval to 18 months. MT Law has prior-year experience
+  with this exact structure (FY2025 registration for BSGC).
+
+  YANGTZE: Meiling Wang (mother) signs as President/Sole Director. Chenyu
+  Li is the beneficiary (employee, not officer or controlling shareholder).
+  This is a standard employer-employee case eligible for 3-year validity.
+  Arora recommended this structure during the Feb 16 consultation.
+
+================================================================================
+4. OVERALL ASSESSMENT
+================================================================================
+
+  The Yangtze draft through Arora is MECHANICALLY CORRECT. All beneficiary
+  data, SOC code, wage level, and work location match the BSGC draft. No
+  data entry errors detected.
+
+  However, MT Law / Cindy Chen has been significantly more thorough on the
+  STRATEGIC LAYER:
+
+    ✓ Wage level justification analysis (in progress)
+    ✓ Degree field qualification gap identified and being addressed
+    ✓ Passport expiration flagged with renewal timeline
+    ✓ Travel advisory communicated (Presidential Proclamation $78K fee)
+    ✓ Detailed portal acceptance instructions (G-28 checkboxes)
+    ✓ Prior-year experience with BSGC structure
+
+  Arora's approach has been REGISTRATION-AS-DATA-ENTRY, which is adequate
+  for the lottery submission itself but leaves several petition-stage risks
+  unaddressed and unprepared for.
+
+  This is consistent with the original strategy: use both attorneys for
+  registration (mechanical task), then engage a specialized boutique
+  attorney for petition filing if selected (strategic task).
+
+================================================================================
+5. ACTION ITEMS BEFORE ACCEPTING DRAFTS
+================================================================================
+
+  BSGC (MT Law):
+    [ ] Log into my.USCIS.gov → My Company → H-1B Registrations
+    [ ] Accept G-28: check all three notice delivery boxes
+    [ ] Sign G-28 electronically: "Alex Zhang"
+    [ ] Accept H-1BR: verify all fields, sign electronically
+    [ ] Email Jacky (jxiao@mtlawllc.com) to confirm acceptance
+
+  YANGTZE (Arora):
+    [x] Confirm with Arora: G-28 acceptance process and notice delivery
+        checkbox instructions — DONE 03/11 (7-step guide with screenshots)
+    [x] Wage Level III confirmation — DONE 03/11 ("no problems" per Arora)
+    [ ] Meiling Wang must complete Steps 1-7 on my.uscis.gov
+        (sign G-28 + H-1BR as "Meiling Wang", check all 3 boxes,
+         then "Finish & Send to Representative")
+    [ ] Verify Meiling Wang has access to the Yangtze USCIS Organizational
+        Account (info@pacific-river-capital.com)
+    [ ] Confirm Arora (info@h1b1.com) is invited as legal representative
+
+  SHARED:
+    [ ] Begin passport renewal process (target: April 2026)
+    [ ] Do NOT travel internationally before October 1, 2026
+
+================================================================================
+6. SOURCE FILES
+================================================================================
+
+  BSGC Registration:
+    - bsgc_h1b_registration_draft_031026.pdf     (H-1BR form)
+    - bsgc_h1b_g28_mt_law_031026.pdf             (G-28, Xinzi Chen)
+    - bsgc_h1b_registration_beneficiaries_031026.csv
+    - bsgc_h1b_registration_review_031026.txt    (prior review notes)
+
+  Yangtze Registration:
+    - yangtze_h1b_registration_draft_031026.pdf   (H-1BR form)
+    - yangtze_h1b_g28_arora_031026.pdf            (G-28, Ajay K. Arora)
+    - yangtze_h1b_registration_beneficiaries_031026.csv
+
+  Correspondence Referenced:
+    - outgoing/mt_law/cindy_reply_wagelevel_030626.txt
+    - outgoing/mt_law/cindy_reply_qualification_030726.txt
+    - outgoing/mt_law/cindy_reply_diploma_030626.txt
+    - outgoing/mt_law/cindy_reply_mba_030726.txt
+    - outgoing/mt_law/cindy_coursework_summary_030726.txt
+    - outgoing/h1b_arora_021326/arora_wagelevel_030626.txt
+    - outgoing/h1b_arora_021326/consultation_evaluation_021626.txt
+    - outgoing/h1b_arora_021326/h1b_registration_status_030426.txt
+
+================================================================================
+END OF COMPARISON
+================================================================================

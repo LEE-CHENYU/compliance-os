@@ -1,0 +1,215 @@
+================================================================================
+SCHWAB BROKERAGE STATEMENT - PARSED OUTPUT
+================================================================================
+Source: schwab_brokerage_stmt_xxx239_2025-07.pdf
+Parsed: 2026-02-12
+
+================================================================================
+ACCOUNT INFORMATION
+================================================================================
+Account Type:       Schwab One Account
+Account Holder:     BAMBOO SHOOT GROWTH CAPITAL LL
+Account Number:     1270-9239
+Statement Period:   July 1-31, 2025
+
+================================================================================
+ACCOUNT SUMMARY
+================================================================================
+Beginning Account Value (07/01):    $324,640.03
+Ending Account Value (07/31):       $332,809.28
+
+  Deposits:                          $7,020.00
+  Withdrawals:                       $0.00
+  Dividends and Interest:            $512.10
+  Transfer of Securities:            ($604.50)
+  Market Appreciation/(Depreciation):$1,241.65
+  Expenses:                          $0.00
+
+YTD Summary:
+  Beginning Account Value:           $0.00
+  Deposits:                          $106,602.44
+  Withdrawals:                       ($3,900.00)
+  Dividends and Interest:            $1,277.80
+  Transfer of Securities:            $217,533.05
+  Market Appreciation/(Depreciation):$11,296.00
+  Expenses:                          $0.00
+  Ending Account Value:              $332,809.28
+
+================================================================================
+ASSET ALLOCATION
+================================================================================
+Cash and Cash Investments:           $120,159.19
+Fixed Income:                        $109,304.86
+Equities:                            $104,122.22
+Exchange Traded Funds:               $946.63
+Options:                             ($1,723.61)
+----------------------------------------------
+Total:                               $332,809.28
+Liabilities:                         ($1,723.61)
+
+================================================================================
+POSITIONS SUMMARY
+================================================================================
+Beginning Value (07/01):             $324,640.03
+Transfer of Securities (In/Out):     ($604.50)
+Dividends Reinvested:                ($232.16)
+Cash Activity:                       $7,532.10
+Change in Market Value:              $1,473.81
+Ending Value (07/31):                $332,809.28
+Cost Basis:                          $206,693.00
+Unrealized Gain/(Loss):              $4,760.19
+
+================================================================================
+CASH AND CASH INVESTMENTS
+================================================================================
+Type              Symbol   Description                      Quantity       Price    Beg Balance   End Balance   Change
+Cash              --       --                               --             --       $11,700.00    $0.00         ($11,700.00)
+Bank Sweep        --       CHARLES SCHWAB BANK              --             --       $47,376.54    $47,668.07    $291.53       Rate: 0.05%
+Money Fund        SNVXX    SCHWAB GOVERNMENT MONEY           92,937.3300   $0.78    $72,258.96    $72,491.12    $232.16
+
+Total Cash and Cash Investments:                                                   $131,335.50   $120,159.19   ($11,176.31)
+
+================================================================================
+HOLDINGS - FIXED INCOME
+================================================================================
+Symbol/CUSIP   Description              Coupon  Maturity     Qty/Par          Price       Mkt Value     Adj Cost Basis   Unrealized G/L  YTM
+912797PN1      US TREASURY              --      08/14/25     25,000.0000      $77.84490   $19,469.76    $19,286.72       $183.04         4.39%
+912797PX9      US TREASURY              --      09/18/25     25,000.0000      $77.43000   $19,388.85    $19,095.31       $293.54         4.25%
+912797RA7      US TREASURY              --      01/02/26     25,000.0000      $76.22686   $19,154.24    $19,102.59       $51.65          4.29%
+912833XX3      US TREASURY STRIP        --      02/15/30     60,000.0000      $65.21484   $38,944.54    $37,277.23       $695.96         N/A
+9128335A4      US TREASURY STRIP        --      08/15/35     25,000.0000      $49.32031   $12,347.46    $12,362.81       ($240.90)       N/A
+
+Total Fixed Income:  160,000.0000 par                                                    $109,304.86                    $983.29
+  Total Adj Cost Basis:   $57,484.62
+  Total Orig Cost Basis:  $107,124.66
+
+================================================================================
+HOLDINGS - EQUITIES
+================================================================================
+Symbol   Description                    Quantity       Price        Mkt Value     Cost Basis     Unrealized G/L  Est Yield
+BIDU     BAIDU INC (ADR)                10.0000        $68.54       $685.39       $697.12        ($11.74)        N/A
+CROX     CROCS INC                      222.0000       $77.79       $17,269.25    $16,175.17     $1,094.07       N/A
+FRCB     FIRST REP BK SAN FRA          40.0000        $0.00320     $0.10         $966.42      ($966.32)     N/A
+INTC     INTEL CORP                     1,195.0000     $15.44       $18,455.58    $18,464.89     ($9.31)        N/A
+LBTYK    LIBERTY GLOBAL LTD             100.0000       $7.98       $797.94     $889.20      ($91.26)       N/A
+OXY      OCCIDENTAL PETE CORP          1,483.8790     $34.27       $50,857.28    $51,559.48     ($702.20)       2.18%
+PDD      PDD HOLDINGS INC ADR          150.0000       $88.49      $13,273.65    $11,459.66     $1,813.99       N/A
+SOLV     SOLVENTUM CORP                 50.0000        $55.66       $2,783.04     $2,477.58      $305.46         N/A
+
+Total Equities:                                                     $104,122.22   $102,689.53    $1,432.70
+  Est. Annual Income: $1,111.13
+
+================================================================================
+HOLDINGS - EXCHANGE TRADED FUNDS
+================================================================================
+Symbol   Description                    Quantity       Price        Mkt Value     Cost Basis     Unrealized G/L  Est Yield
+EFA      ISHARES MSCI EAFE ETF          1.0000         $68.27       $68.27        $58.52         $9.75          3.47%
+SHY      ISHARES 1-3 YEAR TREASRY      1.0000         $64.37       $64.37        $64.17         $0.20           N/A
+SLYV     SPDR S&P 600 SMALL CAP        10.0870        $63.08       $636.28       $728.85        ($92.57)       2.17%
+TBIL     US TREASURY 3 MONTH BILL      1.0000         $38.98       $38.98        $38.97         $0.02           4.52%
+VNQ      VANGUARD REAL ESTATE           1.0000         $69.53       $69.53        $66.24         $3.29           3.89%
+VTWO     VANGUARD RUSSELL 2000          1.0000         $69.21       $69.21        $55.77         $13.44          1.12%
+
+Total Exchange Traded Funds:                                        $946.63     $1,012.51      ($65.88)
+  Est. Annual Income: $21.44
+
+================================================================================
+HOLDINGS - OPTIONS (SHORT POSITIONS)
+================================================================================
+Symbol                              Quantity    Price       Mkt Value     Cost Basis     Unrealized G/L
+BABA $82 PUT EXP 06/18/26         (1.0000)    $6.04600    ($627.59)     ($828.63)    $201.04
+GOOGL $101 PUT EXP 03/20/26        (1.0000)    $1.50130    ($117.10)     ($724.86)      $607.76
+PDD $66 PUT EXP 03/20/26           (1.0000)    $2.82410    ($220.28)     ($880.86)    $660.58
+PDD $70 PUT EXP 06/18/26           (1.0000)    $4.82500    ($454.35)     ($873.09)    $418.74
+PDD $74 PUT EXP 01/16/26           (1.0000)    $2.90120    ($304.29)     ($826.26)    $521.97
+
+Total Options:                                              ($1,723.61)   ($4,133.70)    $2,410.08
+
+================================================================================
+TRANSACTIONS SUMMARY
+================================================================================
+Beginning Cash (07/01):              $59,076.54
+  Deposits:                          $7,020.00
+  Withdrawals:                       $0.00
+  Purchases:                         ($19,769.19)
+  Sales/Redemptions:                 $828.63
+  Dividends/Interest:                $512.10
+  Expenses:                          $0.00
+Ending Cash (07/31):                 $47,668.07
+Other Activity:                      ($604.50)
+
+================================================================================
+TRANSACTION DETAILS
+================================================================================
+Date    Category      Action                Symbol/CUSIP                Description                                  Qty            Price      Charges    Amount         Realized G/L
+07/01   Sale          --                    BABA 06/18/2026 105.00 P   PUT ALIBABA GROUP HLDG L $82 EXP 06/18/26   (1.0000)       $8.29     $0.51      $828.63      --
+07/01   Purchase      --                    AXP 03/20/2026 210.00 P    PUT AMERICAN EXPRESS CO $164 EXP 03/20/26    1.0000         $2.19      $0.51      ($219.69)      $1,074.55 (ST)
+07/01   Purchase      --                    NVDA 03/20/2026 80.00 P    PUT NVIDIA CORP $62 EXP 03/20/26             2.0000         $1.07      $1.03      ($214.75)      $1,238.88 (ST)
+07/02   Dividend      Cash Dividend         TBIL                       US TREASURY 3 MONTH BILL                     --             --         --         $0.15          --
+07/07   Dividend      Cash Dividend         SHY                        ISHARES 1-3 YEAR TREASRY                     --             --         --         $0.20          --
+07/08   Deposit       Journaled Funds       --                         JOURNAL FRM 76892619                         --             --         --         $7,020.00      --
+07/08   Other Act.    Journaled Shares      PDD 06/18/2026 90.00 P    PUT PDD HOLDINGS INC ADR $70 EXP 06/18/26    (1.0000)       $6.04      --         ($604.50)      --
+07/09   Purchase      --                    912797RA7                   US TREASURY BILL DUE 01/02/26                25,000.0000    $76.9619   --         ($19,102.59)   --
+07/15   Purchase      Reinvested Shares     SNVXX                      SCHWAB GOVERNMENT MONEY INV                  0.9900         $0.78      --         ($0.77)        --
+07/15   Purchase      Reinvested Shares     SNVXX                      SCHWAB GOVERNMENT MONEY INV                  296.6500       $0.78      --         ($231.39)      --
+07/15   Dividend      Qual. Dividend        OXY                        OCCIDENTAL PETE CORP                         --             --         --         $277.78        --
+07/15   Dividend      Div For Reinvest      SNVXX                      SCHWAB GOVERNMENT MONEY                      --             --         --         $0.77          --
+07/15   Dividend      Div For Reinvest      SNVXX                      SCHWAB GOVERNMENT MONEY                      --             --         --         $231.39        --
+07/16   Interest      Bank Interest         --                         BANK INT 061625-071525                       --             --         --         $1.81          --
+
+Total Transactions:                                                                                                                                     ($12,012.97)   $2,313.43
+
+================================================================================
+GAIN OR (LOSS) SUMMARY
+================================================================================
+                    Short-Term                          Long-Term
+                    Gain       (Loss)     Net           Gain       (Loss)     Net
+This Period:        $2,313.43  $0.00      $2,313.43     $0.00      $0.00      $0.00
+YTD:                                      $2,313.43                           $0.00
+Unrealized:                                                                   $4,760.19
+
+================================================================================
+INCOME SUMMARY
+================================================================================
+                          This Period                  YTD
+                          Tax-Exempt   Taxable         Tax-Exempt   Taxable
+Bank Sweep Interest:      $0.00        $1.81           $0.00        $3.41
+Cash Dividends:           $0.00        $510.29         $0.00        $1,274.39
+Treasury Bill Interest:   $0.00        $0.00           $0.00        $684.71
+Total Income:             $0.00        $512.10         $0.00        $1,962.50
+
+================================================================================
+CASH BALANCE DETAIL
+================================================================================
+Ending Cash (Bank Sweep):       $47,668.07
+Ending Money Fund (SNVXX):      $72,491.12
+Ending Cash (Brokerage):        $0.00
+Total Cash & Cash Investments:  $120,159.19
+
+================================================================================
+BANK SWEEP ACTIVITY
+================================================================================
+Date    Description                              Amount
+07/01   Beginning Balance                        $47,376.54
+07/01   BANK CREDIT FROM BROKERAGE              $12,094.18
+07/02   BANK CREDIT FROM BROKERAGE              $0.15
+07/07   BANK CREDIT FROM BROKERAGE              $0.20
+07/09   BANK TRANSFER TO BROKERAGE              ($12,082.59)
+07/15   BANK INTEREST - CHARLES SCHWAB BANK     $1.81
+07/15   BANK CREDIT FROM BROKERAGE              $277.78
+07/31   Ending Balance                           $47,668.07
+07/31   Interest Rate                            0.05%
+Interest Period: 06/16/25 - 07/15/25
+
+================================================================================
+MARGIN LOAN INFORMATION
+================================================================================
+Opening Margin Loan Balance:     $0.00
+Closing Margin Loan Balance:     $0.00
+Funds Available to Withdraw:     $251,352.59
+Securities Buying Power:         $520,994.62
+Margin Loan Rates:               10.825% - 12.575%
+
+================================================================================
+END OF STATEMENT
+================================================================================

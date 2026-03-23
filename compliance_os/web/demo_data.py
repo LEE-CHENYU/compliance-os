@@ -10,6 +10,7 @@ from compliance_os.compliance.schemas import Deadline
 
 
 REFERENCE_DATE = date(2026, 3, 19)
+UNRESOLVED_ANSWERS = {"Need to confirm", "Need to collect", "Unknown"}
 
 
 def _deadline(
@@ -55,6 +56,370 @@ INITIAL_STATE = {
         "Draft a follow-up to Fan Chen.",
         "Show me every document related to Form 3520.",
     ],
+    "discovery_sessions": [
+        {
+            "id": "discovery-1040nr",
+            "concern_id": "concern-1040nr",
+            "case_type": "Tax compliance review",
+            "current_stage": "Post-filing review before amendment planning",
+            "urgency_label": "Need clarity before the 2025 filing deadline",
+            "professional_status": "No tax professional is retained yet; expert routing is still open.",
+            "current_tools": "Prior self-filed returns, Gmail threads, and the accounting notes repository.",
+            "initial_understanding": "The likely issue is that 2023 and 2024 may have been filed as Form 1040 during a period that still qualified for nonresident treatment under the F-1 exempt-individual window. Before amendment planning, the system needs filing history, 8843 history, and state-return context.",
+            "watch_outs": [
+                "Do not start amendments until the residency position is confirmed.",
+                "The federal answer changes California and foreign-reporting downstream work.",
+            ],
+            "questions": [
+                {
+                    "id": "dq-1040-entry",
+                    "label": "First U.S. entry under F-1",
+                    "prompt": "When did you first enter the U.S. under F-1 status?",
+                    "help_text": "This anchors the exempt-individual window for the tax residency analysis.",
+                    "options": ["Oct 2023", "2024", "Need to confirm"],
+                    "answer": "Oct 2023",
+                    "status": "captured",
+                    "follow_up_item": "Confirm the first U.S. entry date from passport stamps or the I-94 history.",
+                },
+                {
+                    "id": "dq-1040-8843",
+                    "label": "Form 8843 filing history",
+                    "prompt": "Did you file Form 8843 for both 2023 and 2024?",
+                    "help_text": "This is one of the first facts an expert will ask for in the residency correction analysis.",
+                    "options": ["Yes, both years", "Only one year", "Need to confirm"],
+                    "answer": "Need to confirm",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Locate or reconstruct the Form 8843 filing history before amendment planning.",
+                },
+                {
+                    "id": "dq-1040-preparer",
+                    "label": "Original filing workflow",
+                    "prompt": "How were the original Form 1040 returns prepared?",
+                    "help_text": "This affects how much reconstruction work is needed and where the filing assumptions came from.",
+                    "options": ["TurboTax / self-filed", "CPA prepared", "Need to confirm"],
+                    "answer": "TurboTax / self-filed",
+                    "status": "captured",
+                    "follow_up_item": "Confirm which software or preparer produced the original returns.",
+                },
+                {
+                    "id": "dq-1040-state",
+                    "label": "California return status",
+                    "prompt": "Was a California state return filed for 2024?",
+                    "help_text": "Federal residency treatment can change the state filing correction plan.",
+                    "options": ["Yes", "No", "Need to confirm"],
+                    "answer": "Need to confirm",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Confirm the California filing status before building the correction plan.",
+                },
+            ],
+        },
+        {
+            "id": "discovery-3520",
+            "concern_id": "concern-3520",
+            "case_type": "Foreign gift reporting review",
+            "current_stage": "Pre-filing threshold and donor analysis",
+            "urgency_label": "Need evidence packaging before the April filing window",
+            "professional_status": "Still self-reviewing before expert confirmation.",
+            "current_tools": "Bank transfer records, transaction analysis notes, and outreach drafts.",
+            "initial_understanding": "The key question is whether repeated family wire transfers create a Form 3520 filing obligation, especially if related-party aggregation applies. The system needs a clean ledger, donor identities, and a confirmed reporting theory before filing.",
+            "watch_outs": [
+                "Do not rely on general student-exemption logic for gift reporting.",
+                "The penalty exposure is high if the threshold analysis is wrong.",
+            ],
+            "questions": [
+                {
+                    "id": "dq-3520-ledger",
+                    "label": "Wire ledger completeness",
+                    "prompt": "Is there already a clean ledger of all 2025 family wire receipts?",
+                    "help_text": "A by-date ledger is the minimum evidence layer for threshold review.",
+                    "options": ["Yes, complete", "Partial only", "Need to collect"],
+                    "answer": "Partial only",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Finish the 2025 family wire ledger with dates, amounts, and sender names.",
+                },
+                {
+                    "id": "dq-3520-donors",
+                    "label": "Donor identity evidence",
+                    "prompt": "Do you have donor names and relationship details tied to each transfer?",
+                    "help_text": "This matters for related-party aggregation and support if the form must be filed.",
+                    "options": ["Yes", "Partially", "Need to collect"],
+                    "answer": "Partially",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Document donor identities and family relationships for each transfer.",
+                },
+                {
+                    "id": "dq-3520-related-party",
+                    "label": "Related-party aggregation theory",
+                    "prompt": "Has anyone confirmed whether related-party aggregation is the right interpretation for this pattern?",
+                    "help_text": "This is one of the highest-value expert questions in the review.",
+                    "options": ["Yes, confirmed", "No, still open", "Need to confirm"],
+                    "answer": "No, still open",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Get one professional answer on related-party aggregation before filing.",
+                },
+                {
+                    "id": "dq-3520-bank-records",
+                    "label": "Bank statement backup",
+                    "prompt": "Are the matching bank statements ready to support the transfer history?",
+                    "help_text": "The ledger should tie back to statements so the case record is audit-ready.",
+                    "options": ["Yes", "Partially", "Need to collect"],
+                    "answer": "Partially",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Collect matching bank statements for the family wire receipts.",
+                },
+            ],
+        },
+        {
+            "id": "discovery-sevis",
+            "concern_id": "concern-sevis",
+            "case_type": "Immigration timeline review",
+            "current_stage": "Pre-petition record cleanup",
+            "urgency_label": "Needs resolution before H-1B petition prep",
+            "professional_status": "Counsel has answered some questions, but the evidence package is incomplete.",
+            "current_tools": "SEVIS timeline notes, paystubs, employer correction evidence, Gmail correspondence.",
+            "initial_understanding": "The open question is whether the SEVIS employment history and supporting records are clean enough for later petition stages. The product should help assemble the exact employer timeline and flag any unsupported gaps before counsel review.",
+            "watch_outs": [
+                "Do not rely on memory for employment dates when documentary evidence exists.",
+                "This issue is less about theory and more about evidence completeness.",
+            ],
+            "questions": [
+                {
+                    "id": "dq-sevis-timeline",
+                    "label": "Employer timeline completeness",
+                    "prompt": "Do you already have every OPT and STEM OPT employer with start and end dates in one timeline?",
+                    "help_text": "This is the core timeline artifact for the SEVIS cleanup review.",
+                    "options": ["Yes", "Partially", "Need to collect"],
+                    "answer": "Partially",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Build one consolidated OPT/STEM OPT employer timeline with start and end dates.",
+                },
+                {
+                    "id": "dq-sevis-evidence",
+                    "label": "Correction evidence package",
+                    "prompt": "Are the employer correction letter, paystubs, and SEVIS notes linked together already?",
+                    "help_text": "The evidence package should be reusable for any future immigration review.",
+                    "options": ["Yes", "Partially", "Need to collect"],
+                    "answer": "Partially",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Link employer correction evidence, paystubs, and SEVIS notes into one packet.",
+                },
+                {
+                    "id": "dq-sevis-counsel",
+                    "label": "Counsel answer on cleanup timing",
+                    "prompt": "Has counsel already said whether cleanup must happen before the petition stage?",
+                    "help_text": "This determines whether the issue is immediate or just something to preserve.",
+                    "options": ["Yes", "No", "Need to confirm"],
+                    "answer": "Yes",
+                    "status": "captured",
+                    "follow_up_item": "Get a direct counsel answer on whether cleanup is required before petition prep.",
+                },
+            ],
+        },
+        {
+            "id": "discovery-passport",
+            "concern_id": "concern-passport",
+            "case_type": "Passport dependency review",
+            "current_stage": "Pre-petition readiness",
+            "urgency_label": "Renewal timing can block the later petition package",
+            "professional_status": "Counsel gave a directional answer; execution is still pending.",
+            "current_tools": "Passport expiry date, consulate planning notes, counsel email thread.",
+            "initial_understanding": "This is not a theory-heavy issue. The main job is to avoid a preventable filing blocker by starting renewal early enough and preserving both old and new passport copies for the petition record.",
+            "watch_outs": [
+                "Registration may be fine now, but the full petition needs a valid passport.",
+            ],
+            "questions": [
+                {
+                    "id": "dq-passport-started",
+                    "label": "Renewal process started",
+                    "prompt": "Has the passport renewal process already been started?",
+                    "help_text": "This is the highest-value execution fact for this concern.",
+                    "options": ["Yes", "No", "Need to confirm"],
+                    "answer": "No",
+                    "status": "needs_follow_up",
+                    "follow_up_item": "Start the passport renewal process before the petition window tightens.",
+                },
+                {
+                    "id": "dq-passport-copies",
+                    "label": "Old and new passport copies",
+                    "prompt": "Do you have a plan to keep copies of both the current and renewed passports?",
+                    "help_text": "The petition record should preserve both versions once the renewal is complete.",
+                    "options": ["Yes", "No", "Need to confirm"],
+                    "answer": "Yes",
+                    "status": "captured",
+                    "follow_up_item": "Prepare to preserve both old and new passport copies for the petition packet.",
+                },
+            ],
+        },
+    ],
+    "upload_requests": [
+        {
+            "id": "upload-2023-return",
+            "concern_id": "concern-1040nr",
+            "title": "2023 filed federal return package",
+            "description": "Needed to compare the original filing position against the possible 1040-NR amendment theory.",
+            "priority": "required",
+            "status": "missing",
+            "target_folder": "Tax filings",
+            "accepted_types": ["PDF", "scan"],
+            "document_seed": {
+                "id": "doc-2023-return-upload",
+                "title": "2023 filed federal return package",
+                "type": "tax-return",
+                "source_path": "Data Room / Tax filings / 2023_federal_return.pdf",
+                "excerpt": "Original 2023 filed Form 1040 package uploaded for amendment comparison and residency review.",
+                "room_folder": "Tax filings",
+                "ingestion_status": "ready",
+            },
+        },
+        {
+            "id": "upload-2024-return",
+            "concern_id": "concern-1040nr",
+            "title": "2024 filed federal return package",
+            "description": "Needed to confirm whether the same residency assumption flowed into the next filing year.",
+            "priority": "required",
+            "status": "missing",
+            "target_folder": "Tax filings",
+            "accepted_types": ["PDF", "scan"],
+            "document_seed": {
+                "id": "doc-2024-return-upload",
+                "title": "2024 filed federal return package",
+                "type": "tax-return",
+                "source_path": "Data Room / Tax filings / 2024_federal_return.pdf",
+                "excerpt": "Original 2024 filed return uploaded for consistency review against the possible 1040-NR correction plan.",
+                "room_folder": "Tax filings",
+                "ingestion_status": "ready",
+            },
+        },
+        {
+            "id": "upload-8843-history",
+            "concern_id": "concern-1040nr",
+            "title": "Form 8843 filing history",
+            "description": "Needed to confirm whether 8843 was filed and in which years, which affects the residency review narrative.",
+            "priority": "required",
+            "status": "missing",
+            "target_folder": "Tax filings",
+            "accepted_types": ["PDF", "scan"],
+            "document_seed": {
+                "id": "doc-8843-history-upload",
+                "title": "Form 8843 filing history",
+                "type": "supporting-form",
+                "source_path": "Data Room / Tax filings / 8843_history.pdf",
+                "excerpt": "Form 8843 filings and proof of submission uploaded to support the residency correction analysis.",
+                "room_folder": "Tax filings",
+                "ingestion_status": "ready",
+            },
+        },
+        {
+            "id": "upload-wire-ledger",
+            "concern_id": "concern-3520",
+            "title": "2025 family wire ledger",
+            "description": "A dated ledger of all family wire receipts with sender names and posted amounts.",
+            "priority": "required",
+            "status": "missing",
+            "target_folder": "Financial evidence",
+            "accepted_types": ["CSV", "XLSX", "PDF"],
+            "document_seed": {
+                "id": "doc-wire-ledger-upload",
+                "title": "2025 family wire ledger",
+                "type": "financial-ledger",
+                "source_path": "Data Room / Financial evidence / 2025_family_wire_ledger.xlsx",
+                "excerpt": "Wire ledger uploaded for Form 3520 threshold review and related-party aggregation analysis.",
+                "room_folder": "Financial evidence",
+                "ingestion_status": "ready",
+            },
+        },
+        {
+            "id": "upload-donor-sheet",
+            "concern_id": "concern-3520",
+            "title": "Donor relationship sheet",
+            "description": "Maps each sender to a relationship and donor identity for aggregation analysis.",
+            "priority": "required",
+            "status": "missing",
+            "target_folder": "Financial evidence",
+            "accepted_types": ["PDF", "XLSX"],
+            "document_seed": {
+                "id": "doc-donor-sheet-upload",
+                "title": "Donor relationship sheet",
+                "type": "supporting-evidence",
+                "source_path": "Data Room / Financial evidence / donor_relationship_sheet.xlsx",
+                "excerpt": "Donor names, family relationships, and transfer groupings uploaded for the Form 3520 case record.",
+                "room_folder": "Financial evidence",
+                "ingestion_status": "ready",
+            },
+        },
+        {
+            "id": "upload-sevis-timeline",
+            "concern_id": "concern-sevis",
+            "title": "OPT/STEM OPT employer timeline",
+            "description": "One consolidated employer timeline with start and end dates for each period.",
+            "priority": "required",
+            "status": "missing",
+            "target_folder": "Immigration timeline",
+            "accepted_types": ["PDF", "XLSX"],
+            "document_seed": {
+                "id": "doc-sevis-timeline-upload",
+                "title": "OPT/STEM OPT employer timeline",
+                "type": "immigration-timeline",
+                "source_path": "Data Room / Immigration timeline / opt_stem_employer_timeline.xlsx",
+                "excerpt": "Consolidated employer timeline uploaded to support the SEVIS cleanup review.",
+                "room_folder": "Immigration timeline",
+                "ingestion_status": "ready",
+            },
+        },
+        {
+            "id": "upload-passport-copy",
+            "concern_id": "concern-passport",
+            "title": "Current passport scan",
+            "description": "Current passport scan for renewal tracking and future petition packaging.",
+            "priority": "required",
+            "status": "missing",
+            "target_folder": "Identity and travel",
+            "accepted_types": ["PDF", "image"],
+            "document_seed": {
+                "id": "doc-passport-copy-upload",
+                "title": "Current passport scan",
+                "type": "identity-document",
+                "source_path": "Data Room / Identity and travel / current_passport_scan.pdf",
+                "excerpt": "Current passport scan uploaded to track renewal timing and preserve identity evidence.",
+                "room_folder": "Identity and travel",
+                "ingestion_status": "ready",
+            },
+        },
+    ],
+    "ingestion_jobs": [
+        {
+            "id": "job-tax-readme",
+            "concern_id": "concern-1040nr",
+            "title": "2025 tax document tracker",
+            "status": "ready",
+            "progress": 100,
+            "detail": "Residency, state filing, and W-2 references extracted into the structured case record.",
+        },
+        {
+            "id": "job-tax-register",
+            "concern_id": "concern-1040nr",
+            "title": "Tax and compliance issues register",
+            "status": "needs_review",
+            "progress": 100,
+            "detail": "Cross-document fields were extracted, but Form 8843 history is still unresolved.",
+        },
+        {
+            "id": "job-wire-analysis",
+            "concern_id": "concern-3520",
+            "title": "International wire and account analysis",
+            "status": "ready",
+            "progress": 100,
+            "detail": "Transfer dates, amounts, and open aggregation questions were parsed into the case record.",
+        },
+        {
+            "id": "job-sevis-analysis",
+            "concern_id": "concern-sevis",
+            "title": "SEVIS employment record analysis",
+            "status": "processing",
+            "progress": 72,
+            "detail": "Matching employer names, timeline edges, and evidence references across the immigration packet.",
+        },
+    ],
     "documents": [
         {
             "id": "doc-tax-readme",
@@ -62,6 +427,9 @@ INITIAL_STATE = {
             "type": "tax",
             "source_path": "/Users/lichenyu/accounting/tax/2025/README.txt",
             "excerpt": "Residency determination needed: 1040 vs 1040-NR; NY and CA state filing implications; Claudius W-2 retrieval and employer correction context.",
+            "room_folder": "Tax filings",
+            "ingestion_status": "ready",
+            "uploaded_at": "2026-03-12T09:20:00-07:00",
             "linked_concern_ids": ["concern-1040nr", "concern-3520", "concern-w2"],
         },
         {
@@ -70,6 +438,9 @@ INITIAL_STATE = {
             "type": "expert-routing",
             "source_path": "/Users/lichenyu/accounting/outgoing/wolf_group/consultation_request_draft.txt",
             "excerpt": "Summarizes the full multi-year amendment issue: 1040 to 1040-NR, Form 5472/pro forma 1120, foreign gifts, foreign accounts, and state return questions.",
+            "room_folder": "Professional correspondence",
+            "ingestion_status": "ready",
+            "uploaded_at": "2026-03-13T15:10:00-07:00",
             "linked_concern_ids": ["concern-1040nr", "concern-fanchen"],
         },
         {
@@ -78,6 +449,9 @@ INITIAL_STATE = {
             "type": "risk-register",
             "source_path": "/Users/lichenyu/accounting/concerns/tax_and_compliance_issues_021226.txt",
             "excerpt": "Tracks the cascade effect of filing as Form 1040, Form 3520 threshold analysis, possible FBAR/FATCA implications, and open lawyer questions.",
+            "room_folder": "Tax filings",
+            "ingestion_status": "needs_review",
+            "uploaded_at": "2026-03-12T12:10:00-07:00",
             "linked_concern_ids": ["concern-1040nr", "concern-3520"],
         },
         {
@@ -86,6 +460,9 @@ INITIAL_STATE = {
             "type": "immigration",
             "source_path": "/Users/lichenyu/accounting/outgoing/columbia_isso/sevis_employment_analysis_030426.txt",
             "excerpt": "Maps OPT/STEM OPT/CPT periods, unemployment limits, open-ended SEVIS records, and a potential unauthorized-employment concern that needed documentary cleanup.",
+            "room_folder": "Immigration timeline",
+            "ingestion_status": "processing",
+            "uploaded_at": "2026-03-04T10:00:00-07:00",
             "linked_concern_ids": ["concern-sevis", "concern-passport"],
         },
         {
@@ -94,6 +471,9 @@ INITIAL_STATE = {
             "type": "legal-correspondence",
             "source_path": "/Users/lichenyu/accounting/outgoing/mt_law/cindy_cpt_passport_response_031426.txt",
             "excerpt": "Confirms passport renewal should happen sooner rather than later and that CPT at Yangtze depends on school rules for self-employment and unpaid positions.",
+            "room_folder": "Professional correspondence",
+            "ingestion_status": "ready",
+            "uploaded_at": "2026-03-14T16:30:00-07:00",
             "linked_concern_ids": ["concern-sevis", "concern-passport"],
         },
         {
@@ -102,6 +482,9 @@ INITIAL_STATE = {
             "type": "financial",
             "source_path": "/Users/lichenyu/accounting/reports/Non_Zelle_Unmatched.txt",
             "excerpt": "Shows 7 international family wires, related-party gift concerns, business vs personal cash movements, and unresolved transfer destinations.",
+            "room_folder": "Financial evidence",
+            "ingestion_status": "ready",
+            "uploaded_at": "2026-03-10T08:45:00-07:00",
             "linked_concern_ids": ["concern-3520"],
         },
     ],
@@ -431,7 +814,73 @@ class DemoWorkspaceStore:
                 1 for d in data["deadlines"] if d["status"] in {"urgent", "overdue"}
             ),
         }
+        for session in data["discovery_sessions"]:
+            captured = []
+            follow_up = []
+            for question in session["questions"]:
+                if question["status"] == "captured":
+                    captured.append(f"{question['label']}: {question['answer']}")
+                else:
+                    follow_up.append(question["follow_up_item"])
+            session["captured_facts"] = captured
+            session["missing_items"] = follow_up
+            session["captured_count"] = len(captured)
+            session["remaining_count"] = len(follow_up)
+            total = len(session["questions"]) or 1
+            session["progress_percent"] = round((len(captured) / total) * 100)
+            session["upload_requests"] = [
+                request for request in data["upload_requests"]
+                if request["concern_id"] == session["concern_id"]
+            ]
+            session["ready_uploads"] = sum(
+                1 for request in session["upload_requests"] if request["status"] == "ready"
+            )
         return data
+
+    def answer_discovery(self, question_id: str, answer: str) -> dict:
+        for session in self.state["discovery_sessions"]:
+            for question in session["questions"]:
+                if question["id"] == question_id:
+                    question["answer"] = answer
+                    question["status"] = (
+                        "needs_follow_up" if answer in UNRESOLVED_ANSWERS else "captured"
+                    )
+                    session["last_updated_at"] = datetime.now().isoformat(timespec="seconds")
+                    return self.workspace()
+        raise KeyError(question_id)
+
+    def simulate_upload(self, request_id: str) -> dict:
+        request = self._get_item("upload_requests", request_id)
+        request["status"] = "ready"
+        request["uploaded_at"] = datetime.now().isoformat(timespec="seconds")
+
+        document_seed = deepcopy(request["document_seed"])
+        document_seed["uploaded_at"] = request["uploaded_at"]
+        document_seed["linked_concern_ids"] = [request["concern_id"]]
+
+        if not any(doc["id"] == document_seed["id"] for doc in self.state["documents"]):
+            self.state["documents"].insert(0, document_seed)
+
+        job_id = f"job-{request_id}"
+        try:
+            job = self._get_item("ingestion_jobs", job_id)
+            job["status"] = "ready"
+            job["progress"] = 100
+            job["detail"] = "Upload complete. Structured fields extracted and linked to the case record."
+        except KeyError:
+            self.state["ingestion_jobs"].insert(
+                0,
+                {
+                    "id": job_id,
+                    "concern_id": request["concern_id"],
+                    "title": request["title"],
+                    "status": "ready",
+                    "progress": 100,
+                    "detail": "Upload complete. Structured fields extracted and linked to the case record.",
+                },
+            )
+
+        return self.workspace()
 
     def assistant_reply(self, prompt: str, concern_id: str | None = None) -> dict:
         prompt_normalized = (prompt or "").strip()
@@ -576,6 +1025,18 @@ class DemoWorkspaceStore:
             if concern_id in doc["linked_concern_ids"]
         ]
 
+    def _discovery_session(self, concern_id: str) -> dict:
+        for session in self.state["discovery_sessions"]:
+            if session["concern_id"] == concern_id:
+                return session
+        raise KeyError(concern_id)
+
+    def _upload_requests_for(self, concern_id: str) -> list[dict]:
+        return [
+            request for request in self.state["upload_requests"]
+            if request["concern_id"] == concern_id
+        ]
+
     def _related_threads(self, concern_id: str) -> list[dict]:
         return [
             thread for thread in self.state["threads"]
@@ -597,4 +1058,3 @@ class DemoWorkspaceStore:
             ],
             key=lambda risk: ordered.get(risk["severity"], 99),
         )
-

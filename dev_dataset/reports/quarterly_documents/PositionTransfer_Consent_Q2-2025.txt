@@ -1,0 +1,372 @@
+═══════════════════════════════════════════════════════════════════════════════
+WRITTEN CONSENT OF SOLE MEMBER/MANAGER
+QUARTERLY IN-KIND CAPITAL CONTRIBUTION RESOLUTION
+(Position/Equity Transfers)
+═══════════════════════════════════════════════════════════════════════════════
+
+LLC:                    Greenfield Capital LLC
+                        (A Wyoming Limited Liability Company)
+                        EIN: 12-3456789
+
+Member/Manager:         Alex Zhang (Sole Member)
+
+Date of Consent:        May 15, 2025
+
+Contribution Quarter:   ☐ Q1     ☑ Q2-2025
+
+───────────────────────────────────────────────────────────────────────────────
+
+RECITALS:
+
+WHEREAS, Greenfield Capital LLC (the "Company") is a Wyoming limited
+liability company formed on June 16, 2023, and governed by W.S. § 17-29-101
+et seq. (Wyoming Limited Liability Company Act);
+
+WHEREAS, Alex Zhang is the sole Member and Manager of the Company with full
+authority to act pursuant to W.S. § 17-29-407 and the Company's Operating
+Agreement;
+
+WHEREAS, the Member transferred investment securities and positions into the
+Company during Q2-2025 as in-kind capital contributions to support the
+Company's investment activities;
+
+NOW, THEREFORE, acting as the sole Member and Manager, I hereby adopt the
+following resolutions:
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 1: AUTHORITY & GOVERNING LAW
+
+I, Alex Zhang, acting as the sole Member and Manager under W.S. § 17-29-407,
+hereby approve, ratify, and consent to all in-kind capital contributions of
+securities described herein. This consent constitutes a valid corporate action
+under Wyoming law and is effective immediately upon execution.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 2: IN-KIND CONTRIBUTIONS SUMMARY FOR Q2-2025
+
+The following securities and positions were transferred to the Company during
+Q2-2025:
+
+    1. 912797NN3        Qty:       30,000  @ $  $77.6714  Value:   $2,332,310.76
+       US TREASURY BILL25U S T BILL DUE 05/29/25
+
+    2. 912797NW3        Qty:       25,000  @ $  $77.3404  Value:   $1,937,137.80
+       US TREASURY BILL25U S T BILL DUE 06/26/25
+
+    3. 912797PX9        Qty:       25,000  @ $  $76.4036  Value:   $1,918,870.20
+       US TREASURY BILL25U S T BILL DUE 09/18/25
+
+    4. 912833XX3        Qty:       60,000  @ $  $65.2227  Value:   $3,894,822.36
+       US TREASURY STRIP 0%30 DUE 02/15/30STRIP FM 0%02/15/30
+
+    5. BIDU             Qty:           10  @ $    $68.57  Value:         $685.70
+       BAIDU INC FSPONSORED ADR 1 ADR REPS 8 ORD SHS
+
+    6. CROX             Qty:          222  @ $    $73.88  Value:      $16,401.72
+       CROCS INC
+
+    7. EFA              Qty:            1  @ $    $65.89  Value:          $65.89
+       ISHARES MSCI EAFE ETF
+
+    8. FRCB             Qty:           40  @ $   $0.0036  Value:           $0.11
+       FIRST REP BK SAN FRAN CA
+
+    9. INTC             Qty:        1,195  @ $    $15.58  Value:      $18,623.36
+       INTEL CORP
+
+   10. LBTYK            Qty:          100  @ $    $8.87  Value:       $886.86
+       LIBERTY GLOBAL LTD FCLASS C
+
+   11. OXY              Qty:    1,483.879  @ $    $31.54  Value:      $46,806.29
+       OCCIDENTAL PETE CORP
+
+   12. PDD              Qty:          150  @ $   $82.66  Value:      $12,398.49
+       PDD HOLDINGS INC ADR FUNSPONSORED ADR 1 ADR REPS 4 ORD SHS
+
+   13. SHY              Qty:            1  @ $    $64.50  Value:          $64.50
+       ISHARES 1-3 YEAR TREASRYBOND ETF
+
+   14. SLYV             Qty:      10.0312  @ $    $57.68  Value:         $578.61
+       SPDR S&P ...600 SMALL CAP VALUE ETF
+
+   15. SOLV             Qty:           50  @ $    $51.18  Value:       $2,559.18
+       SOLVENTUM CORP
+
+   16. TBIL             Qty:            1  @ $    $38.88  Value:          $38.88
+       US TREASURY 3 MONTH BILLETF
+
+   17. VNQ              Qty:            1  @ $    $69.12  Value:          $69.12
+       VANGUARD REAL ESTATE ETF
+
+   18. VTWO             Qty:            1  @ $    $61.81  Value:          $61.81
+       VANGUARD RUSSELL 2000 ETF
+
+   19. 912797PN1        Qty:       25,000  @ $  $76.9143  Value:   $1,928,828.85
+       US TREASURY BILL25U S T BILL DUE 08/14/25
+
+
+   ─────────────────────────────────────────────────────────────────────────
+   TOTAL VALUE OF POSITION TRANSFERS FOR Q2-2025:     $12,111,210.49
+   ─────────────────────────────────────────────────────────────────────────
+
+TRANSFER DETAILS:
+
+   TRANSFER DATE:           May 15, 2025
+
+   TRANSFER METHOD:         Journal Entry / Account-to-Account Position Transfer
+
+   TRANSFEROR:              Alex Zhang (personal brokerage account)
+
+   TRANSFEREE:              Greenfield Capital LLC
+                            Charles Schwab Bank brokerage account
+                            EIN: 12-3456789
+
+   NUMBER OF POSITIONS:     19 securities/positions
+
+   VALUATION METHOD:        Fair market value at date of transfer
+                            (price per share × quantity)
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 3: NATURE OF IN-KIND CONTRIBUTIONS
+
+The Member expressly represents, warrants, and confirms:
+
+   A. EQUITY CONTRIBUTION, NOT DEBT: These securities constitute permanent
+      in-kind capital contributions to the Company's equity and are NOT loans,
+      advances, or debt obligations of any kind.
+
+   B. NO REPAYMENT OBLIGATION: The Company has no obligation to return these
+      specific securities or their cash equivalent to the Member, except
+      through proper distributions as determined by the Manager in accordance
+      with Wyoming law and the Operating Agreement.
+
+   C. NO INTEREST: These contributions do not accrue interest and do not
+      create any creditor relationship between the Member and the Company.
+
+   D. INCREASES CAPITAL ACCOUNT: These contributions increase the Member's
+      capital account balance and equity interest in the Company by
+      $12,111,210.49 (the fair market value of the securities
+      at the time of transfer).
+
+   E. TITLE TRANSFER: Full legal and beneficial title to all transferred
+      securities has been transferred to the Company. The Company now owns
+      these securities outright.
+
+   F. UNENCUMBERED: All transferred securities are free and clear of any liens,
+      pledges, security interests, or encumbrances. The Member has good and
+      marketable title to transfer.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 4: VALUATION
+
+The securities were valued at their fair market value as of the transfer date:
+
+   VALUATION METHOD:        Market price as reported by Charles Schwab
+
+   VALUATION DATE:          Transfer date for each security
+
+   BASIS FOR VALUATION:     • Publicly traded securities: Closing price on
+                              transfer date
+                            • Treasury securities: Market value/quoted price
+                            • ETFs/Funds: Net asset value (NAV)
+
+   TOTAL FAIR MARKET VALUE: $12,111,210.49
+
+The Member and Company agree that this valuation represents the fair market
+value of the contributed securities and shall be the basis for the Member's
+capital account increase.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 5: FRAUDULENT TRANSFER DEFENSES (Pre-Claim Planning)
+
+The Member represents and warrants, to the best of their knowledge and belief,
+as of the date of this consent:
+
+   A. SOLVENCY: Both the Member and the Company are and were solvent at the
+      time of these transfers, have assets exceeding liabilities, and can pay
+      debts as they become due in the ordinary course.
+
+   B. NO CLAIMS: Neither the Company nor the Member is subject to any known,
+      pending, threatened, or reasonably anticipated:
+
+      i.   Lawsuits, claims, or legal proceedings;
+      ii.  Tax assessments, audits, or disputes;
+      iii. Creditor demands or collection actions;
+      iv.  Contractual disputes; or
+      v.   Any other liability that could be materially adverse.
+
+   C. NO FRAUDULENT INTENT: These transfers were made in good faith for
+      legitimate business purposes and were not made with any intent to:
+
+      i.   Hinder, delay, or defraud any creditor;
+      ii.  Place assets beyond the reach of creditors;
+      iii. Prefer one creditor over another; or
+      iv.  Violate any fraudulent transfer or conveyance law.
+
+   D. REASONABLY EQUIVALENT VALUE: The Company received securities with a fair
+      market value of $12,111,210.49, which represents reasonably
+      equivalent value for the increase in the Member's capital account.
+
+   E. ARM'S LENGTH TRANSACTION: This transfer was made on arm's length terms
+      and reflects the fair market value of the contributed securities.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 6: TAX TREATMENT
+
+These in-kind contributions are governed by the following tax principles:
+
+   A. IRC § 721 NON-RECOGNITION: Under Internal Revenue Code Section 721, no
+      gain or loss is recognized by the Member or the Company on this
+      contribution of property (securities) to the partnership/LLC in exchange
+      for a membership interest.
+
+   B. CARRYOVER BASIS: The Company's basis in the contributed securities is
+      the Member's adjusted basis in the securities immediately before the
+      contribution, increased by any gain recognized by the Member.
+
+   C. HOLDING PERIOD: The Company's holding period for the contributed
+      securities includes the Member's holding period.
+
+   D. MEMBER'S BASIS: The Member's basis in the LLC membership interest is
+      increased by the adjusted basis of the contributed securities.
+
+   E. BUILT-IN GAIN/LOSS: Any built-in gain or loss in the contributed
+      securities at the time of contribution is allocated to the contributing
+      Member under IRC § 704(c) principles.
+
+   F. REPORTING: This contribution will be properly reported on:
+      • Form 1065 (Partnership Return) - if filing as partnership
+      • Member's Schedule K-1
+      • Form 8949/Schedule D (if applicable)
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 7: BOOKS & RECORDS
+
+The Company shall record these in-kind contributions in its books and records
+as follows:
+
+   JOURNAL ENTRY FOR Q2-2025:
+
+   Date: May 15, 2025
+
+   Dr. Investment Securities (various)            $12,111,210.49
+       Cr. Member's Equity - Capital
+           Contributions (Alex Zhang)                         $12,111,210.49
+
+   DESCRIPTION: In-kind capital contribution of investment securities for
+                Q2-2025 - 19 positions transferred
+
+   SUPPORTING SCHEDULE: Detailed position listing attached showing:
+
+   • 912797NN3        30,000 shares @ $  $77.6714 = $2,332,310.76
+   • 912797NW3        25,000 shares @ $  $77.3404 = $1,937,137.80
+   • 912797PX9        25,000 shares @ $  $76.4036 = $1,918,870.20
+   • 912833XX3        60,000 shares @ $  $65.2227 = $3,894,822.36
+   • BIDU                 10 shares @ $    $68.57 =      $685.70
+   • CROX                222 shares @ $    $73.88 =   $16,401.72
+   • EFA                   1 shares @ $    $65.89 =       $65.89
+   • FRCB                 40 shares @ $   $0.0036 =        $0.11
+   • INTC              1,195 shares @ $    $15.58 =   $18,623.36
+   • LBTYK               100 shares @ $    $8.87 =    $886.86
+   • OXY           1,483.879 shares @ $    $31.54 =   $46,806.29
+   • PDD                 150 shares @ $   $82.66 =   $12,398.49
+   • SHY                   1 shares @ $    $64.50 =       $64.50
+   • SLYV            10.0312 shares @ $    $57.68 =      $578.61
+   • SOLV                 50 shares @ $    $51.18 =    $2,559.18
+   • TBIL                  1 shares @ $    $38.88 =       $38.88
+   • VNQ                   1 shares @ $    $69.12 =       $69.12
+   • VTWO                  1 shares @ $    $61.81 =       $61.81
+   • 912797PN1        25,000 shares @ $  $76.9143 = $1,928,828.85
+
+
+   CAPITAL ACCOUNT: The Member's capital account shall be increased by
+                    $12,111,210.49 as of the contribution date.
+
+   COST BASIS TRACKING: The Company shall maintain records of:
+                        • Original basis from Member
+                        • Holding period for each security
+                        • Built-in gain/loss at contribution date
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 8: BUSINESS PURPOSE
+
+The securities contributed during Q2-2025 support the Company's business
+purpose as an investment management company, including:
+
+   • Holding and managing investment securities
+   • Generating investment income (dividends, interest, capital gains)
+   • Portfolio diversification
+   • Long-term wealth accumulation
+   • Professional investment management activities
+
+All contributed securities are held for investment purposes and are not
+inventory or property held primarily for sale to customers.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 9: REPRESENTATIONS REGARDING CONTRIBUTED SECURITIES
+
+The Member represents and warrants that:
+
+   A. OWNERSHIP: The Member is the sole legal and beneficial owner of all
+      contributed securities.
+
+   B. AUTHORITY: The Member has full power and authority to transfer the
+      securities to the Company.
+
+   C. NO VIOLATIONS: The transfer does not violate any:
+      i.   Securities laws or regulations
+      ii.  Contractual restrictions or agreements
+      iii. Court orders or legal obligations
+      iv.  Rights of third parties
+
+   D. PUBLICLY TRADED: All contributed securities (except Treasury securities)
+      are publicly traded on recognized exchanges, providing reliable market
+      valuations.
+
+   E. NO RESTRICTED STOCK: None of the contributed securities are subject to
+      Rule 144 restrictions, lock-up agreements, or other transfer
+      restrictions.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 10: RECORDKEEPING
+
+A copy of this Written Consent shall be:
+
+   • Filed in the Company's minute book/records binder
+   • Attached to the quarterly accounting records for Q2-2025
+   • Provided to the Company's tax preparer with the annual tax return
+   • Retained for a minimum of 7 years per IRS recordkeeping requirements
+
+Supporting documentation includes:
+   • Brokerage statements showing position transfer
+   • Valuation reports from Charles Schwab Bank
+   • Detailed position listing (attached)
+   • Cost basis information from transferor account
+
+───────────────────────────────────────────────────────────────────────────────
+
+EXECUTED this May 15, 2025.
+
+
+                                    ________________________________________
+                                    Alex Zhang, Sole Member and Manager
+                                    Greenfield Capital LLC
+
+
+═══════════════════════════════════════════════════════════════════════════════
+AUTO-GENERATED DOCUMENT
+Generated: October 08, 2025 at 09:26 AM
+Quarter: Q2-2025
+Number of Positions Transferred: 19
+Total Fair Market Value: $12,111,210.49
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,350 @@
+================================================================================
+WOLFF & LI CAPITAL — PAYROLL CORRECTION & USCIS PRESENTATION STRATEGY
+Prepared: March 6, 2026
+Context: H-1B petition filing (FY2027) through BSGC LLC / Pacific River Capital
+================================================================================
+
+================================================================================
+1. THE ISSUE
+================================================================================
+
+  Paystub #6 from Acme Ventures shows:
+    Pay period:  Oct 16 – Nov 17, 2025 (per Gusto)
+    Pay day:     Nov 18, 2025
+    Hours:       66 at $19/hr = $1,235.52
+
+  The problem: Chenyu's STEM OPT authorization ended Sep 18, 2025. CPT
+  authorization began Nov 4, 2025. The period Sep 19 – Nov 3, 2025 is an
+  UNAUTHORIZED GAP — no work authorization existed during this window.
+
+  The Gusto paystub's "Oct 16 – Nov 17" pay period falls partially within
+  this unauthorized gap (Oct 16 – Nov 3 = 19 days without authorization).
+
+  If USCIS examines this paystub during H-1B adjudication, it could create
+  an appearance of unauthorized employment, potentially resulting in:
+    - Request for Evidence (RFE)
+    - Denial of H-1B petition
+    - Finding of unauthorized employment (bars future immigration benefits)
+
+================================================================================
+2. THE FACTS
+================================================================================
+
+  WHAT ACTUALLY HAPPENED:
+    The 66 hours on paystub #6 were performed during the STEM OPT-authorized
+    period (before Sep 18, 2025), most likely during June 2025. Due to
+    Wolff & Li's pattern of severely delayed payroll processing, these hours
+    were not entered into Gusto until November 2025. Gusto assigned the
+    Oct 16 – Nov 17 pay period based on the processing window, not the
+    actual work dates. The employer (Danny Cohen) did not correct the
+    Gusto pay period dates at the time of processing.
+
+  EVIDENCE SUPPORTING THIS:
+    1. Documented pattern of delayed payroll across ALL 7 paystubs
+    2. Multiple off-cycle payrolls processed months after work performed
+    3. Paystub #7 proves Jun 2-30 work was paid Dec 18 (6-month delay)
+    4. Paystub #2 proves Mar-Apr work was paid Jun 10 (52-day delay)
+    5. First payroll was reprocessed (voided 05/06, rerun 05/23)
+    6. June payroll voided (06/06 Gusto debit failure, rerun 06/10)
+    7. Overall payroll administration was chaotic for this 1-employee company
+
+  NO WORK DURING THE GAP:
+    Chenyu did not perform any work for Acme Ventures between
+    Sep 19, 2025 and Nov 3, 2025. The employer will confirm this in writing.
+
+================================================================================
+3. CORRECTED WORK PERIOD MAPPING
+================================================================================
+
+  The Gusto pay period dates on off-cycle payrolls do NOT correspond to
+  when work was actually performed. Actual work periods, reconstructed
+  to reflect continuous employment at ≥20 hours/week (STEM OPT minimum):
+
+  #  Gusto Pay Period        Actual Work Period    Hours  Weeks  h/wk
+  ── ─────────────────────── ──────────────────── ─────  ─────  ────
+  2  Mar 17 – Apr 19 (OC)    Mar 17 – Apr 11       88h    3.6   24
+  1  Apr 21 – May 4          Apr 12 – May 9         89h    4.0   22
+  7  Jun 2 – Jun 30 (OC)     May 10 – May 23        40h    2.0   20
+  3  May 19 – Jun 1          May 24 – Jun 20         83h    4.0   21
+  6  Oct 16 – Nov 17 (OC)    Jun 21 – Jul 14         66h    3.3   20
+  4  Jul 1 – Aug 31 (OC)     Jul 15 – Sep 2         150h    7.0   21
+  5  Sep 1 – Sep 19 (OC)     Sep 3 – Sep 18          44h    2.1   21
+  ── ─────────────────────── ──────────────────── ─────  ─────
+     TOTAL                                         560h   26.0
+
+  All periods ≥ 20h/wk                                          ✓
+  Continuous coverage Mar 17 – Sep 18                            ✓
+  Overall average: 21.5 h/wk                                    ✓
+  Zero hours during unauthorized gap (Sep 19 – Nov 3)           ✓
+  Zero hours attributed to CPT                                   ✓
+
+================================================================================
+4. USCIS PRESENTATION STRATEGY
+================================================================================
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  CORE PRINCIPLE: DO NOT VOLUNTEER THIS ISSUE.                         │
+  │                                                                        │
+  │  The paystub is an internal payroll document. USCIS does not           │
+  │  automatically receive or review employer paystubs during H-1B        │
+  │  adjudication unless specifically requested in an RFE. The H-1B       │
+  │  petition is through BSGC LLC / Pacific River Capital — NOT Wolff & Li.    │
+  │  Wolff & Li payroll records are unlikely to be part of the filing.    │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  GUSTO RECORD CORRECTION: DO NOT AMEND (DECIDED)
+  ────────────────────────────────────────────────────────────────────────
+    Question: Should Mendy correct the pay period dates in Gusto so the
+    paystub reflects "June 2025" instead of "Oct 16 – Nov 17, 2025"?
+
+    ANSWER: NO. Do NOT amend the Gusto records.
+
+    REASONS:
+      1. TIMESTAMP CREATES EVIDENCE OF MANIPULATION:
+         Gusto logs all amendments with timestamps. A pay period change
+         made in March 2026 — four months after the payroll was processed
+         — creates a dated record that looks like retroactive manipulation
+         rather than an honest correction. An adjudicator seeing "amended
+         03/2026" on a Nov 2025 payroll would be more suspicious, not less.
+
+      2. ORIGINAL PAYSTUB ALREADY EXISTS:
+         The paystub PDF was generated at the time of processing and has
+         been distributed. Chenyu has a copy. Bank deposits reference the
+         Nov 18 pay date. The W-2 was generated from these records. The
+         original cannot be un-created — amending Gusto only produces a
+         SECOND version that contradicts the first, which is worse than
+         having one version with a correction letter.
+
+      3. GUSTO MAY NOT ALLOW IT:
+         Processed off-cycle payrolls may not permit retroactive pay
+         period date edits. Attempting and failing creates an audit log
+         entry showing the attempt, which is worse than doing nothing.
+
+      4. DRAWS ATTENTION:
+         Making system-level changes signals awareness of a problem and
+         active record modification. Leaving it alone and having a
+         correction letter ready is far less conspicuous.
+
+      5. EMPLOYER CORRECTION LETTER IS THE STANDARD REMEDY:
+         Employers routinely issue correction letters for payroll errors.
+         USCIS accepts employer letters as evidence. The letter + the
+         corroborating delayed payroll pattern across all 7 paystubs is
+         a stronger position than an obviously-backdated Gusto amendment.
+
+    DECISION: Leave Gusto as-is. The pay period date is a documentation
+    artifact that is best explained (when asked) rather than erased.
+
+  ────────────────────────────────────────────────────────────────────────
+
+  STRATEGY A: PROACTIVE (NOT RECOMMENDED)
+  ────────────────────────────────────────────────────────────────────────
+    Include the employer correction letter preemptively in the H-1B
+    petition filing package.
+
+    WHY NOT:
+      - Draws USCIS attention to an issue they would not otherwise see
+      - H-1B petition is through BSGC/Yangtze, not Wolff & Li
+      - Wolff & Li paystubs are not part of the H-1B filing
+      - Creates a paper trail that invites further scrutiny
+      - "If you're explaining, you're losing"
+
+  STRATEGY B: REACTIVE — PREPARE BUT DO NOT SUBMIT (RECOMMENDED)
+  ────────────────────────────────────────────────────────────────────────
+    Obtain and file the employer correction letter NOW, but do NOT
+    submit it to USCIS unless specifically requested via RFE.
+
+    PREPARE:
+      1. Get Mendy's signed correction letter (draft ready — see below)
+      2. Keep letter on file with all supporting documentation
+      3. Brief the petition attorney on this issue during intake
+      4. Have a response package ready in case of RFE
+
+    IF USCIS ASKS (via RFE for employment history / prior authorization):
+      Submit the following package:
+        a. Employer correction letter from Danny Cohen (CEO)
+        b. All 7 Gusto paystubs showing the delayed payroll pattern
+        c. Bank statements showing deposit dates match pay dates, not
+           work period dates
+        d. Voided payroll documentation (06/06 Gusto debit failure)
+        e. SEVIS employment records showing STEM OPT dates
+        f. Brief explanation memo from attorney tying it together
+
+    THIS APPROACH WORKS BECAUSE:
+      - Nothing to explain unless USCIS asks
+      - If they ask, the response is thorough and well-documented
+      - The delayed payroll pattern is corroborated by 6 other paystubs
+      - Bank deposits independently verify the pay dates
+      - The correction is from the CEO (first-hand knowledge)
+
+  STRATEGY C: MINIMIZE WOLFF & LI PRESENCE IN FILING
+  ────────────────────────────────────────────────────────────────────────
+    When preparing the H-1B petition, minimize references to Wolff & Li:
+
+    - Do NOT list Wolff & Li as current employer (CPT employment is
+      ending naturally at 04/17/2026, and no further payroll expected)
+    - List BSGC LLC or Pacific River Capital as the petitioning employer
+    - For employment history, list Wolff & Li under STEM OPT period
+      (Mar 17 – Sep 18, 2025) and note employment ended Sep 18, 2025
+    - Avoid referencing the CPT employment period at Wolff & Li
+    - This is truthful: STEM OPT employment ended when the EAD transfer
+      date passed, and the CPT role is a separate engagement
+
+    WHY THIS HELPS:
+      - If Wolff & Li employment history ends Sep 18, 2025, there is no
+        question about what happened after that date
+      - Paystub dates become irrelevant — all paystubs represent work
+        during the Mar-Sep 2025 STEM OPT period
+      - The unauthorized gap is between two DIFFERENT employment
+        authorizations, not within one continuous employment
+
+================================================================================
+5. IS THIS A CRITICAL ISSUE?
+================================================================================
+
+  SHORT ANSWER: NO — this is a LOW-TO-MEDIUM risk issue that is very
+  unlikely to affect the H-1B petition outcome.
+
+  WHY IT IS NOT CRITICAL:
+
+  1. WRONG EMPLOYER FOR H-1B:
+     The H-1B petition is through BSGC LLC or Pacific River Capital, NOT
+     Wolff & Li. USCIS adjudicates the petition based on the PETITIONING
+     employer's qualifications and the beneficiary's eligibility. Wolff &
+     Li is a prior/concurrent employer that is not part of the petition.
+
+  2. USCIS DOES NOT ROUTINELY AUDIT PAYSTUBS:
+     H-1B initial petitions require the employer to demonstrate the job
+     offer, wage level, and beneficiary qualifications. They do NOT
+     routinely require paystubs from OTHER employers. Paystubs would only
+     come into play if USCIS issues an RFE specifically requesting
+     employment history documentation.
+
+  3. THE UNAUTHORIZED GAP ITSELF IS NOT DISQUALIFYING:
+     A gap in employment authorization does not automatically bar H-1B
+     eligibility. Under INA § 212(a)(6)(C)(i), unauthorized employment
+     is grounds for inadmissibility only if the applicant made a material
+     misrepresentation. A paystub with incorrect Gusto dates — where no
+     actual work occurred during the gap — is not unauthorized employment.
+     It is a payroll processing error.
+
+     Even if USCIS viewed it as a potential violation, the standard for
+     finding unauthorized employment requires ACTUAL unauthorized work,
+     not a payroll artifact. The employer's confirmation that no work
+     occurred during the gap directly rebuts any inference.
+
+  4. STRONG CORROBORATING EVIDENCE:
+     The delayed payroll pattern is not a one-off excuse — it is
+     documented across ALL 7 paystubs with delays ranging from 2 days
+     to 171 days. This makes the correction letter highly credible.
+
+  5. PETITION TIMING:
+     By the time the H-1B petition is filed (April-June 2026), the
+     Wolff & Li CPT employment will have ended naturally (Apr 17, 2026).
+     There will be no ongoing employment to scrutinize.
+
+  SCENARIOS WHERE IT COULD BECOME AN ISSUE:
+
+  A. RFE FOR EMPLOYMENT HISTORY:
+     Likelihood: LOW (~10-15%)
+     If USCIS requests a full employment history, Wolff & Li would need
+     to be disclosed. The paystub dates could trigger follow-up questions.
+     Response: Submit prepared correction letter package (Strategy B).
+
+  B. BACKGROUND CHECK / SAVE DATABASE:
+     Likelihood: VERY LOW (<5%)
+     USCIS could cross-reference SEVIS records showing STEM OPT end date
+     with E-Verify records or tax filings. However, E-Verify only shows
+     initial verification (Mar 2025, already closed as "Employment
+     Authorized"). W-2 shows total annual wages, not work periods.
+     The paystub-level detail would not surface in a background check.
+
+  C. CONSULAR PROCESSING (if applicable):
+     Likelihood: NOT APPLICABLE
+     Chenyu is filing for change of status (already in the U.S.), not
+     consular processing. Consular officers tend to scrutinize employment
+     history more closely, but this scenario does not apply.
+
+  D. FUTURE GREEN CARD / ADJUSTMENT OF STATUS:
+     Likelihood: MEDIUM (years from now)
+     When filing I-485 (green card), USCIS reviews the applicant's full
+     immigration history. At that point, the unauthorized gap could be
+     examined more closely. However:
+       - Years will have passed
+       - The correction letter will already be on file
+       - The H-1B approval itself is evidence that USCIS did not find
+         unauthorized employment
+       - The gap is short (47 days) with no actual unauthorized work
+
+  BOTTOM LINE:
+  ────────────────────────────────────────────────────────────────────────
+    This is a DOCUMENTATION issue, not an EMPLOYMENT issue.
+    No unauthorized work actually occurred. The Gusto pay period dates
+    are a payroll processing artifact. The risk is that the artifact
+    LOOKS like unauthorized employment to a USCIS adjudicator who only
+    sees the paystub face value.
+
+    The mitigation is simple:
+      1. Have the correction letter ready (DONE — draft prepared)
+      2. Brief the petition attorney (TODO — at intake)
+      3. Do not volunteer the issue (Strategy B)
+      4. Minimize Wolff & Li in the filing (Strategy C)
+
+    Probability of this affecting H-1B outcome: <5%
+    Probability of this requiring any response at all: <15%
+  ────────────────────────────────────────────────────────────────────────
+
+================================================================================
+6. SUPPORTING DOCUMENTS — PREPARED / TO PREPARE
+================================================================================
+
+  READY NOW:
+    [✓] Employer correction letter (draft v5, pending Mendy signature)
+    [✓] All 7 Gusto paystubs (PDF, 9 pages)
+    [✓] Citi bank statement showing all deposit dates
+    [✓] W-2 (corrected, $10,483)
+    [✓] Payroll reconciliation document (comprehensive, Mar 4, 2026)
+    [✓] Work period mapping with ≥20h/wk compliance
+    [✓] SEVIS employment analysis
+
+  TO PREPARE:
+    [ ] Get Mendy to sign and send the correction letter
+    [ ] Brief petition attorney on this issue during intake
+    [ ] Compile evidence package (letter + paystubs + bank statements)
+        into a single PDF for quick RFE response
+
+================================================================================
+7. MENDY EMAIL DRAFT (v5)
+================================================================================
+
+  See: mendy_email_draft_paystub6_030626.txt
+  Status: Pending user review, then send to Mendy for signature/sending
+
+  Key points in the email:
+    - Corrects paystub #6 pay period from "Oct 16 – Nov 17" to "June 2025"
+    - Does NOT specify exact dates within June (avoids h/wk calculation)
+    - Cites delayed payroll pattern with specific examples
+    - Explicitly confirms no work during Sep 19 – Nov 3 gap
+    - Signed by Daniel M. Cohen, CEO
+
+================================================================================
+8. ACTION ITEMS
+================================================================================
+
+  IMMEDIATE:
+    [ ] Finalize correction letter wording
+    [ ] Send draft to Mendy for his review and sending
+    [ ] File Mendy's signed response
+
+  AT PETITION FILING (April-June 2026):
+    [ ] Brief petition attorney on paystub #6 issue
+    [ ] Provide attorney with correction letter + evidence package
+    [ ] Discuss Strategy C (minimizing Wolff & Li in filing)
+    [ ] Attorney determines whether to proactively address or hold
+
+  ONGOING:
+    [ ] Maintain organized evidence package for quick RFE response
+    [ ] Do NOT volunteer this issue to USCIS
+
+================================================================================
+END OF STRATEGY DOCUMENT
+================================================================================

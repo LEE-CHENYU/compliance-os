@@ -1,0 +1,129 @@
+H-1B Cap Registration & G-28 Review — MT Law LLC
+=================================================
+Date received: 03/10/2026
+From: Jiaqi Xiao (Jacky) <jxiao@mtlawllc.com>
+CC: Cindy Chen, Kelly Lee, Yuan Dipersio
+Thread ID: 19cd9b54912f0413
+
+Source files (saved to legal/immigration/):
+  - h1b_g28_mt_law_031026.pdf          (Form G-28, 3 pages)
+  - h1b_registration_draft_031026.pdf  (H-1BR, 1 page)
+  - h1b_registration_beneficiaries_031026.csv
+
+=====================================
+FORM G-28 — Notice of Entry of Appearance as Attorney
+=====================================
+
+Part 1: Attorney Information
+  Name:           Xinzi Chen (Cindy)
+  USCIS Acct:     059603265440
+  Firm:           MT LAW LLC
+  Address:        430 Bedford St, Ste 200, Lexington, MA 02420-1548
+  Phone:          800-345-1899
+  Email:          cindy@mtlawllc.com
+  Fax:            888-345-1388
+  Bar:            MA #699143
+  No disciplinary orders
+
+Part 3: Client Information
+  Name:           Alex Zhang
+  Entity:         Greenfield Capital LLC
+  Title:          Owner, Managing Member
+  Phone:          646-555-0142
+  Email:          contact.greenfield@gmail.com
+  Mailing Addr:   100 Main St Ste A, Cheyenne, WY 82001 (NW Registered Agent)
+
+Part 4: Notice Options (to be set during online acceptance)
+  1.a. Send notices to attorney address:        No (pending)
+  1.b. Send secure ID docs to attorney address: No (pending)
+  1.c. Send I-94 notice to client address:      No (pending)
+  NOTE: Jacky's instructions say to CHECK ALL THREE BOXES during online review.
+
+  Client signature:   BLANK — needs electronic signature (full legal name)
+  Attorney signature: Xinzi Chen, dated 03-10-2026
+
+=====================================
+H-1BR — USCIS H-1B Registration
+=====================================
+
+Registrant / Employer
+  Company:        Greenfield Capital LLC
+  DBA:            (none)
+  EIN:            12-3456789
+  Office Address: 100 Main St Ste A, Cheyenne, WY 82001
+
+Authorized Individual
+  Name:           Alex Zhang
+  Position:       Owner, Managing Member
+  Phone:          646-555-0142
+  Email:          contact.greenfield@gmail.com
+
+Beneficiary
+  Name:           Alex Zhang
+  Gender:         Male
+  Date of Birth:  03/15/1997
+  Country Birth:  CHN
+  Nationality:    CHN
+  Passport:       G88855571
+  Passport Exp:   06/30/2026  *** EXPIRES IN ~3.5 MONTHS ***
+  Country Issue:  CHN
+  Master's Cap:   Yes (eligible for advanced degree lottery)
+  Wage Level:     Level III
+  SOC Code:       13-2099 (Financial Specialists, All Other)
+  Area of Employment: Albany, California, Alameda County
+
+Signature:        BLANK — needs electronic signature
+
+=====================================
+BENEFICIARIES CSV
+=====================================
+Company: Greenfield Capital LLC
+Beneficiary: Alex Zhang, DOB 1997-03-15
+
+=====================================
+ACTION ITEMS
+=====================================
+
+1. Log into my.USCIS.gov with company signatory account
+   → My Company → H-1B Registrations → View draft
+
+2. ACCEPT Form G-28:
+   - Verify company info (confirmed correct above)
+   - CHECK ALL THREE BOXES for notice delivery
+   - Attest to statement confirming attorney representation
+   - Provide electronic signature: full legal name "Alex Zhang"
+   - Click "Submit the G-28"
+
+3. ACCEPT H-1B Registration:
+   - Verify company + beneficiary info (confirmed correct above)
+   - Click all agreement checkboxes
+   - Provide electronic signature: full legal name "Alex Zhang"
+   - Click "Finish and send"
+
+4. EMAIL JACKY (jxiao@mtlawllc.com) to confirm acceptance
+   - System does NOT auto-notify him
+   - He needs confirmation to proceed with submission
+
+=====================================
+ITEMS TO VERIFY / FLAG
+=====================================
+
+1. PASSPORT EXPIRATION (06/30/2026)
+   - Expires in ~3.5 months from registration date
+   - May need renewal before actual H-1B petition filing (if selected)
+   - Ask MT Law if this is a concern at registration stage
+
+2. EIN VERIFICATION
+   - H-1BR shows EIN 12-3456789
+   - This should be BSGC's EIN (NOT Pacific River Capital)
+   - Confirm against EIN confirmation letter / SS-4
+
+3. MAILING ADDRESS
+   - Uses WY registered agent (100 Main St Ste A, Sheridan WY)
+   - Not personal Albany address (420 Maple Ave Apt 300, Albany CA 94706)
+   - Fine for corporate filings; ensure USCIS correspondence is forwarded
+
+4. SELF-PETITIONING STRUCTURE
+   - Alex Zhang is both the employer (authorized signatory) AND beneficiary
+   - This is a known complex H-1B scenario
+   - MT Law is handling this — the G-28 and registration reflect this structure

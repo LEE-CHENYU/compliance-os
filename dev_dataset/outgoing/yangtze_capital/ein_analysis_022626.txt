@@ -1,0 +1,196 @@
+================================================================================
+PACIFIC RIVER CAPITAL — EIN ANALYSIS & RESOLUTION OPTIONS
+Date: February 26, 2026
+Context: March 4 H-1B registration deadline requires EIN
+================================================================================
+
+================================================================================
+1. CURRENT STATUS
+================================================================================
+
+  Entity:       Pacific River Capital Inc. (California C-Corp)
+  Registered:   Through Northwest Registered Agent
+  President:    Meiling Wang (mother)
+  Sole Director: Meiling Wang
+  EIN Status:   APPLICATION PENDING
+
+  EIN Application Timeline:
+    - Faxed to IRS: ~February 23, 2026
+    - Processing time: 4-6 weeks
+    - Expected arrival: ~late March / early April 2026
+    - H-1B registration deadline: March 4, 2026
+    - GAP: EIN will NOT arrive before registration deadline
+
+================================================================================
+2. THE PROBLEM
+================================================================================
+
+  H-1B electronic registration requires the petitioning company's EIN.
+  Without an EIN, Pacific River Capital CANNOT be registered for the FY2027
+  H-1B lottery.
+
+  BSGC LLC (the Wyoming SMLLC) already has an EIN and can be registered.
+  But using BSGC means:
+    - User is 100% owner = controlling interest
+    - 18-month validity (not 3-year)
+    - Less favorable than C-Corp strategy
+
+================================================================================
+3. OPTIONS FROM NORTHWEST REGISTERED AGENT
+================================================================================
+
+  Northwest (Viviane Belle) provided 3 options:
+
+  OPTION 1: Apply online with SSN (FREE, instant)
+  ─────────────────────────────────────────────────────────────────────────
+    - Someone with a US SSN applies on IRS.gov
+    - Receives EIN immediately
+    - Cost: $0
+    - PROBLEM: Mother (Meiling Wang) does not have an SSN or ITIN
+    - User (Alex Zhang) has an SSN but is supposed to NOT be a corporate
+      officer/responsible party to maintain C-Corp independence for
+      3-year H-1B validity
+    - Using user's SSN as "responsible party" on EIN application could
+      undermine the argument that user is NOT controlling the company
+    - Stepanova also warned: being EIN responsible party = "management
+      decision" that undermines independence
+
+  OPTION 2: Northwest applies with SSN ($39, instant)
+  ─────────────────────────────────────────────────────────────────────────
+    - Northwest uses someone's SSN to apply on behalf
+    - Same issue: whose SSN?
+    - Cost: $39
+    - Same problem as Option 1
+
+  OPTION 3: Wait 4-6 weeks (fax application already submitted)
+  ─────────────────────────────────────────────────────────────────────────
+    - Already in process
+    - No SSN required (mother as responsible party, uses address)
+    - Preserves C-Corp independence
+    - PROBLEM: Will not arrive before March 4
+
+================================================================================
+4. RECOMMENDED PATH — Mother Calls IRS Directly
+================================================================================
+
+  IRS PHONE EIN:
+    Phone: (267) 941-1099
+    Hours: 6:00 AM - 11:00 PM ET, Monday-Friday
+    Method: Say "Mandarin please" for free IRS interpreter service
+    Result: EIN issued on the spot during the call
+
+  WHO CALLS: Meiling Wang (mother, as president/sole director)
+
+  WHAT SHE NEEDS:
+    - Legal name of entity: Pacific River Capital Inc.
+    - State of incorporation: California
+    - Address: [company registered address]
+    - Responsible party: Meiling Wang
+    - Responsible party ID: Her passport number (no SSN/ITIN needed
+      if entity type is corporation — IRS sometimes accepts passport
+      for foreign responsible parties calling by phone)
+    - Type of entity: Corporation (C-Corp)
+    - Reason for applying: Started a new business
+
+  ADVANTAGE:
+    - Preserves mother as responsible party (NOT the user)
+    - Maintains C-Corp independence for 3-year H-1B validity argument
+    - Instant EIN — can register for H-1B lottery same day
+    - No cost
+
+  RISK:
+    - IRS phone line may require SSN/ITIN even by phone
+    - If so, mother would need an ITIN first (Form W-7, 7-11 weeks)
+    - Language barrier even with interpreter
+    - Phone line wait times can be long
+
+  EXISTING PREP:
+    - Chinese-language phone script: irs_ein_phone_script.txt
+    - Chinese translation of EIN form: northwest_ein_form_translation.txt
+
+================================================================================
+5. FALLBACK IF PHONE EIN FAILS
+================================================================================
+
+  FALLBACK A: Register BSGC LLC only (has EIN)
+    - Accept 18-month validity
+    - File through BSGC with user as 100% owner
+    - Still valid under Modernization Rule
+    - Can always file a new H-1B through Pacific River Capital later
+
+  FALLBACK B: Change responsible party to user (user's SSN)
+    - Gets instant EIN online
+    - BUT undermines C-Corp independence argument
+    - Stepanova explicitly warned against this
+    - "Responsible party" is a TAX designation, but USCIS may interpret
+      it as a corporate control indicator
+    - NOT RECOMMENDED unless all other options fail
+
+  FALLBACK C: Apply for mother's ITIN first (Form W-7)
+    - Processing: 7-11 weeks — way too slow for March 4
+    - NOT VIABLE for current deadline
+
+================================================================================
+6. DUAL REGISTRATION STRATEGY
+================================================================================
+
+  IF Pacific River Capital EIN is obtained before March 4:
+    → Register BOTH entities (Pacific River Capital + BSGC LLC)
+    → Each beneficiary gets ONE lottery entry (doesn't improve odds)
+    → But if selected: CHOOSE which entity files the petition
+    → Choose Pacific River Capital for 3-year validity
+    → Choose BSGC LLC only if Pacific River Capital has other issues
+
+  IF Pacific River Capital EIN is NOT obtained:
+    → Register BSGC LLC only
+    → Accept 18-month validity
+    → Still a fully viable H-1B petition
+
+================================================================================
+7. TIMELINE — CRITICAL PATH
+================================================================================
+
+  TODAY (Feb 26):   Mother calls IRS (267) 941-1099
+  Feb 27-28:        If phone EIN obtained, confirm with attorney
+  Mar 1-2:          Attorney submits registration data to USCIS portal
+  Mar 4 (noon ET):  Registration window opens
+  Mar 4-19:         Attorney submits electronic registration
+  ~Mar 31:          Lottery results announced
+
+  IF PHONE EIN FAILS:
+  Feb 27:           Decide to register BSGC LLC only
+  Mar 1-2:          Attorney submits BSGC data
+  Mar 4-19:         Registration submitted
+
+================================================================================
+8. EIN RESPONSIBLE PARTY — LEGAL ANALYSIS
+================================================================================
+
+  The "responsible party" on an EIN application (Form SS-4) is:
+    "The individual or entity that controls, manages, or directs the
+     entity and the disposition of its funds and assets."
+
+  ATTORNEY POSITIONS:
+    STEPANOVA (Murthy): "If you are an agent for the company, then that
+                        becomes a management decision" — user should NOT
+                        be responsible party
+    BOX (Mehta):        Did not specifically address EIN responsible party
+    ARORA:              Did not address this issue
+
+  ANALYSIS:
+    The EIN "responsible party" designation is technically a TAX concept
+    (IRS Rev. Proc. 2014-10) identifying who IRS contacts for tax matters.
+    It does NOT necessarily equal a corporate officer, director, or
+    controlling shareholder.
+
+    HOWEVER, if USCIS sees that the H-1B beneficiary is listed as the
+    "responsible party" (i.e., the person who "controls, manages, or
+    directs the entity"), this directly contradicts the claim that the
+    beneficiary does NOT have controlling interest in the company.
+
+    CONCLUSION: Mother (Meiling Wang) should be the responsible party.
+    This is consistent with her role as president and sole director.
+
+================================================================================
+END OF EIN ANALYSIS
+================================================================================

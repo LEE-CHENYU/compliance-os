@@ -1,0 +1,120 @@
+Hi Cindy,
+
+I'm writing regarding the Legal Services Agreement your firm prepared for me
+(Exhibit A, dated February 9, 2026, signed by Shengxi Tian, Esq.). I'd like
+to move forward on Sections I and II, with some updates.
+
+────────────────────────────────────────────────────────────────────
+SECTION I — CORPORATE SETUP (Pacific River Capital Inc.)
+────────────────────────────────────────────────────────────────────
+
+Since we last spoke, I've already completed the following on my own:
+  - Articles of Incorporation filed with CA Secretary of State (02/12/2026)
+  - EIN obtained from IRS (45-6789012)
+  - Registered agent set up through Northwest Registered Agent
+
+I still need the remaining deliverables from Section I:
+  1. Bylaws
+  2. Minutes of the first board/shareholder meeting
+  3. Stock certificates
+  4. Statement of Information (Form SI-550, due ~May 13, 2026)
+
+Could you provide:
+  - An updated fee quote reflecting that articles, EIN, and registered agent
+    are already done? (The original quote was $1,112 for the full package.)
+  - Expected timeline for these remaining items?
+
+Note: This C-Corporation is being registered for the FY2027 H-1B lottery
+(through a separate attorney). If selected, the corporate governance documents
+will be needed for the petition filing, so timing is important.
+
+────────────────────────────────────────────────────────────────────
+SECTION II — CPA REVIEW (TY 2023 & TY 2024)
+────────────────────────────────────────────────────────────────────
+
+Below is a summary of the tax situation. I'd like your CPA to review and
+advise on what needs to be corrected.
+
+BACKGROUND:
+  - F-1 student (arrived U.S. 10/21/2023), currently on CPT
+  - Both TY 2023 and TY 2024 returns were filed on Form 1040 (U.S. resident),
+    NOT Form 1040-NR
+  - Need to confirm whether resident filing was correct, or if I should have
+    filed as nonresident (Form 1040-NR)
+  - This determination cascades into nearly every issue below
+
+TY 2023 ISSUES:
+  1. W-2 wages reported as $10,140 on 1040, but actual W-2 shows $9,487.76
+     — overstated by $652.24 (no tax impact at this income level, but a
+     compliance mismatch)
+  2. Schedule C reported $323 gross receipts / -$888 net loss through
+     BSGC LLC — need to verify this is consistent with immigration status
+
+TY 2024 ISSUES:
+  1. Unreported 1042-S income: ~$1,416 in interest and ~$78 in dividends
+     from Schwab and TD Ameritrade (issued as 1042-S because accounts are
+     flagged as NRA) — none of this appears on Schedule B
+  2. Brokerage accounts (Schwab, TDA) have me classified as nonresident alien
+     (W-8BEN on file) while I file as resident (Form 1040) — need to
+     reconcile
+  3. Possible missing W-2 from TechLaw AI Inc. (W-4 signed
+     12/16/2024) — need to confirm whether any wages were paid
+
+FORM 3520 — FOREIGN GIFT REPORTING:
+  - 2024: Received ~$77,949 in overseas wires (3 transfers) — just under
+    $78K threshold, likely no Form 3520 required, but need confirmation
+  - 2025: Received ~$272,891 in overseas wires (7 transfers from various
+    family members) — Form 3520 almost certainly required for 2025
+    (due 04/15/2026)
+  - Need guidance on related-party aggregation rules (multiple family
+    members sending ~$39K each)
+
+FORM 5472 — FOREIGN-OWNED LLC REPORTING:
+  - BSGC LLC (single-member LLC) received ~$398K in capital contributions
+    in 2025
+  - If I'm treated as U.S. resident and the overseas funds are gifts,
+    Form 5472 likely NOT required — but need CPA confirmation
+
+FBAR/FATCA:
+  - Have foreign financial accounts in China — need to confirm whether
+    FBAR (FinCEN 114) and/or FATCA (Form 8938) filings are required for
+    2023, 2024, and 2025
+
+SPECIFIC DELIVERABLES REQUESTED:
+  1. Residency status determination (resident vs. nonresident) for TY 2023
+     and TY 2024
+  2. Assessment of whether amended returns (1040-X) are needed for either
+     year, and if so, what specifically needs to be corrected
+  3. Form 3520 analysis and preparation for 2025 (and 2024 if required)
+  4. Form 5472 determination
+  5. FBAR/FATCA filing assessment
+  6. Guidance on the overseas funds (~$507K total across 2024-2026):
+     gift vs. loan vs. nominee treatment, and the tax implications of each
+
+Could you confirm:
+  1. Which of the following deliverables are covered under the $780 quote
+     in Section II, and which would be billed separately?
+
+     a. Residency status determination (resident vs. nonresident)
+     b. Review of TY 2023 and TY 2024 returns for errors/omissions
+     c. Preparation of amended returns (Form 1040-X) if needed
+     d. Form 3520 preparation and filing (2025, and 2024 if required)
+     e. Form 5472 + pro forma 1120 determination and filing if required
+     f. FBAR (FinCEN 114) and FATCA (Form 8938) assessment and filing
+     g. Advisory on gift vs. loan vs. nominee treatment for ~$507K in
+        overseas transfers
+
+  2. For any items not covered, what would the additional fee be?
+
+  3. What is the expected timeline? Note that the 2025 Form 3520 deadline
+     is April 15, 2026.
+
+────────────────────────────────────────────────────────────────────
+
+I have all supporting documents available (tax returns, W-2s, 1042-S forms,
+bank statements, wire transfer records) and can provide them whenever you're
+ready.
+
+Thank you,
+Alex Zhang
+(646) 555-0142

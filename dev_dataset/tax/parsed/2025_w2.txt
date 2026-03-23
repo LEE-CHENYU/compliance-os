@@ -1,0 +1,72 @@
+```json
+{
+  "form": "W-2",
+  "tax_year": "2025",
+  "employee_ssn_box_a": "987-65-4321",
+  "employer_ein_box_b": "33-3333333",
+  "employer_name_box_c": "Acme Ventures Inc",
+  "employer_address_box_c": {
+    "line1": "33 W 88th St, Apt 5",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10024"
+  },
+  "control_number_box_d": null,
+  "employee_name_box_e": {
+    "first_name": "Chenyu",
+    "last_name": "Li",
+    "suffix": null
+  },
+  "employee_address_box_f": {
+    "line1": "888 Main St",
+    "line2": "Apt 345",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10044"
+  },
+  "boxes_1_to_20": {
+    "1_wages_tips_other_compensation": "12480.00",
+    "2_federal_income_tax_withheld": "1143.06",
+    "3_social_security_wages": "12480.00",
+    "4_social_security_tax_withheld": "773.76",
+    "5_medicare_wages_and_tips": "12480.00",
+    "6_medicare_tax_withheld": "180.96",
+    "7_social_security_tips": null,
+    "8_allocated_tips": null,
+    "9": null,
+    "10_dependent_care_benefits": null,
+    "11_nonqualified_plans": null,
+    "12a": {
+      "code": null,
+      "amount": null
+    },
+    "12b": {
+      "code": null,
+      "amount": null
+    },
+    "12c": {
+      "code": null,
+      "amount": null
+    },
+    "12d": {
+      "code": null,
+      "amount": null
+    },
+    "13_checkboxes": {
+      "statutory_employee": false,
+      "retirement_plan": false,
+      "third_party_sick_pay": false
+    },
+    "14_other": null,
+    "15_state_and_employer_state_id": {
+      "state": "NY",
+      "employer_state_id_number": "333989594"
+    },
+    "16_state_wages_tips_etc": "12480.00",
+    "17_state_income_tax": "555.58",
+    "18_local_wages_tips_etc": "12480.00",
+    "19_local_income_tax": "412.62",
+    "20_locality_name": "New York City"
+  }
+}
+```

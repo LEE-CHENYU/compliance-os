@@ -1,0 +1,138 @@
+================================================================================
+EMAIL STATUS TRACKER — February 13, 2026
+================================================================================
+Compiled from Gmail inbox review (devuser42@gmail.com)
+
+================================================================================
+IMMIGRATION ATTORNEYS — H-1B FY2027
+================================================================================
+
+1. AJAY K. ARORA, Attorney-at-Law (h1b1.com)
+   Status:     REPLY SENT — data sheets attached, $663 fee pending payment
+   Thread ID:  19c588dd9299b0fb
+   Contact:    info@h1b1.com / (212) 268-3580
+   Location:   1270 Broadway, Suite 510, New York, NY 10001
+   Fee:        $663 registration (incl. $168 USCIS) → $2,730 total petition
+   Consult:    $98/15min (credited toward $1,950+ retainer)
+   Action:     [x] Sent initial inquiry
+               [x] Received detailed response with process outline
+               [x] Filled and sent data sheets (Registration + Petition)
+               [ ] PAY $663 via Helcim credit card link
+               [ ] Schedule $98 consultation re: compliance matters
+   Notes:      Already replied from Gmail directly (not via script).
+               Data sheet deadline: March 1, 2026.
+               Registration window: March 4-19, 2026.
+
+2. SHAH PEERALLY LAW GROUP (dharshini@peerallylaw.com)
+   Status:     AWAITING YOUR REPLY — she asked "when do you want to schedule?"
+   Thread ID:  19c590211d7f9faa
+   Contact:    dharshini@peerallylaw.com / shah@peerallylaw.com
+   Fee:        $117 initial consultation
+   Action:     [x] Initial phone call made
+               [x] Received availability (7pm, 8pm PST same day)
+               [x] Sent detailed overview + questions
+               [x] Dharshini replied asking for preferred time
+               [ ] REPLY with preferred consultation time
+   Notes:      Need to respond with available time or suggest next week.
+
+3. SOPHIA OSTER / NPZ LAW GROUP (visaserve.com)
+   Status:     AWAITING THEIR RESPONSE — sent 2 follow-ups
+   Thread ID:  19c58b61de50329e
+   Contact:    sophia_oster@visaserve.com / (201) 670-0006 ext 104
+   Location:   487 Goffle Road, Ridgewood, NJ 07450
+   Action:     [x] Received initial "send details" request
+               [x] Sent detailed overview
+               [x] Sent timeline follow-up (March 4 deadline)
+               [ ] Waiting for substantive response + fee info
+   Notes:      NJ-based firm. Multiple offices (NJ, NYC, FL, IN, India).
+
+4. XU LAW GROUP (edwin@xulawgroup.com)
+   Status:     AWAITING YOUR REPLY — asked for more details about case
+   Thread ID:  19c58dc12cd29713
+   Contact:    edwin@xulawgroup.com / (917) 924-1805
+   Location:   One World Trade Center, Floor 85, New York
+   Action:     [ ] REPLY with case details (similar to other intakes)
+   Notes:      Edwin Bermudez is intake specialist (not attorney).
+
+5. SABRINA LI LAW OFFICES (operations@sabrinali.law)
+   Status:     AWAITING YOUR ACTION — invitation to schedule consultation
+   Thread ID:  19c58c5005e3a756
+   Contact:    operations@sabrinali.law / (213) 375-8096
+   Attorney:   Elizabeth Luevano, Esq.
+   Action:     [ ] Click scheduling link to book consultation
+               [ ] Or decide not to pursue
+   Notes:      Consultation fee credited if hiring within 7 days.
+               Sabrina Li is a Certified Immigration Specialist.
+               LA-based.
+
+6. KG IMMIGRATION LAW (info@kgimmigrationlaw.com)
+   Status:     AWAITING THEIR RESPONSE
+   Thread ID:  19c58ea81d844dd0
+   Action:     [x] Sent detailed inquiry
+               [ ] Waiting for response
+   Notes:      No response yet.
+
+================================================================================
+CPA FIRMS — TAX COMPLIANCE
+================================================================================
+
+1. DIMOV TAX (team@dimovtax.com)
+   Status:     AWAITING THEIR RESPONSE — auto-reply received
+   Thread ID:  19c597e20bc1a1c7
+   Contact:    team@dimovtax.com / (866) 681-2140
+   Action:     [x] Submitted inquiry via website
+               [x] Received auto-reply ("within 24 hours")
+               [x] Received email verification test
+               [ ] Wait for substantive response (expected by ~4pm 02/14)
+               [ ] If no response, send follow-up email
+   Notes:      Auto-reply timestamp: 02/13/2026 4:12pm PST.
+               24-hour window expires ~4pm 02/14/2026.
+
+2. CHRISTOPHER HUANG CPAs (Kevin Thai / Hannah Huang)
+   Status:     NEED TO EMAIL HANNAH FOR QUOTATION
+   Thread ID:  19c597fde95f01dd
+   Contact:    Kevin.Thai@chrishcpa.com / Hannah.Huang@chrishcpa.com
+   Phone:      (408) 437-8928
+   Location:   303 Ray St, Pleasanton, CA (also San Jose HQ)
+   Action:     [x] Spoke with Kevin Thai by phone
+               [x] Kevin sent email with Hannah's contact info
+               [ ] EMAIL Hannah Huang for quotation
+   Notes:      Hannah handles all quotations.
+               Kevin was pleasant on call.
+
+3. SPOTT, LUCEY & WALL (Tyler Dixon)
+   Status:     MEETING BOOKED
+   Contact:    Tyler.Dixon@slw.cpa / (415) 217-6941
+   Location:   601 Montgomery St, Suite 1400, SF, CA 94111
+   Action:     [ ] Attend meeting with Tyler Dixon
+               [ ] Get fee estimates
+   Notes:      Top-ranked firm from DD. No email in inbox yet.
+
+4. DILLINGER CARTER & ASSOCIATES
+   Status:     NOT YET CONTACTED
+   Contact:    hello@DillingerCPA.com / (800) 385-6757
+   Action:     [ ] Schedule free 15-min consultation
+   Notes:      Free consult via meetme.so/DillingerCPA.
+
+================================================================================
+PRIORITY ACTIONS (sorted by urgency)
+================================================================================
+
+IMMEDIATE:
+  [ ] Pay $663 to Arora via Helcim link (H-1B registration)
+  [ ] Reply to Dharshini (Shah Peerally) with consultation time
+
+SOON (next 1-2 days):
+  [ ] Reply to Xu Law Group with case details
+  [ ] Email Hannah Huang (Christopher Huang CPAs) for tax quotation
+  [ ] Decide on Sabrina Li consultation
+  [ ] Wait for Dimov Tax response (by ~4pm 02/14)
+
+PENDING (waiting on others):
+  [ ] NPZ Law Group / visaserve — awaiting response
+  [ ] KG Immigration Law — awaiting response
+  [ ] SLW meeting — date TBD
+
+================================================================================
+END OF STATUS TRACKER
+================================================================================

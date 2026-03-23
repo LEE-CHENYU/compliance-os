@@ -1,0 +1,452 @@
+================================================================================
+NSKT GLOBAL — DUE DILIGENCE REPORT
+Prepared: February 19, 2026
+Purpose: Evaluate for F-1 nonresident alien tax compliance engagement
+================================================================================
+
+================================================================================
+1. FIRM OVERVIEW
+================================================================================
+
+  Name:           NSKT Global (also operates as "NSKT Global USA")
+  Website:        https://www.nsktglobal.com/usa/
+  Founded:        2017
+  CEO/Founder:    Nikhil Mahajan
+  Employees:      11-20 (sources vary; ~12 per ZoomInfo/Salary.com)
+  Revenue:        $1M-$4M estimated
+  BBB File:       Opened October 20, 2023
+
+  Registered Address (FL):
+    3181 N Bay Village Ct, Suite 200
+    Bonita Springs, FL 34135-7222
+
+  Additional US Offices (per website/directories):
+    - 99 Wall Street #5952, New York, NY 10005
+    - 453 S Spring Street, Ste 400, PMB 1748, Los Angeles, CA 90013
+    - 1019 Highway 17S, Suite 216, North Myrtle Beach, SC 29582
+    - Charlotte City Center, 25 N Tryon St, Ste 1600, Charlotte, NC 28202
+
+  Non-US Presence:
+    - Dubai, UAE: Level 14, Boulevard Plaza Tower 1, Downtown Dubai
+      (Partner: Kashif Husein — Governance, Risk & Compliance)
+    - India: Back office operations (per their own website description)
+
+  IMPORTANT NOTE ON OFFICE ADDRESSES:
+    Multiple listed addresses across 5+ US states for a firm of 12 people
+    raises questions. Some of these may be virtual office / registered agent
+    addresses rather than staffed offices. The 99 Wall Street address in
+    particular is a well-known virtual office building. This is common in
+    the industry but should be noted — the firm likely operates primarily
+    remote/virtual with back-office support in India.
+
+================================================================================
+2. SERVICES — NONRESIDENT ALIEN TAX SPECIALIZATION
+================================================================================
+
+  NSKT Global explicitly markets nonresident alien (NR) tax services:
+
+  Confirmed services per their website:
+    [x] Form 1040-NR preparation (federal)
+    [x] State tax returns for NR filers
+    [x] Form 8843 (Statement for Exempt Individuals)
+    [x] F-1 visa holder tax returns
+    [x] J visa tax obligations
+    [x] OPT/CPT student tax situations
+    [x] Tax treaty benefit claims (US-China treaty relevant here)
+    [x] FICA tax recovery (Form 843 + Form 8316)
+    [x] ITIN applications
+
+  They have a dedicated landing page:
+    https://www.nsktglobal.com/usa/student-tax-services
+
+  Blog content demonstrating subject matter knowledge:
+    - "Nonresident Alien Tax Filing and IRS Penalties: What to Do If You
+       Filed Wrong" (Oct 2025)
+    - "Resident Alien Tax Rules: Guide for International Students"
+    - "Form 8843 Simplified: A Step-by-Step Guide for Students"
+    - "Breaking Down the Big Beautiful Bill: Tax Changes for Nonresidents,
+       F-1 Visa Holders, and Foreign Investors" (2026)
+
+  ASSESSMENT: Strong marketing presence for NR tax services. The blog
+  content suggests genuine subject matter familiarity. However, marketing
+  content alone does not confirm depth of execution capability — especially
+  for complex amendment scenarios (1040 → 1040-NR).
+
+================================================================================
+3. INTERNATIONAL COMPLIANCE FORMS
+================================================================================
+
+  Form 5472 + Pro Forma 1120:
+    [x] Blog post specifically addressing foreign-owned LLCs and Form 5472
+        (published June 2025, updated Nov 2025)
+    [x] Content discusses the $19,500 minimum penalty for failure to file
+    [x] URL: nsktglobal.com/usa/blog/foreign-owned-llc-form-5472-tax-filing
+
+  FBAR (FinCEN 114):
+    [x] Multiple blog posts on FBAR compliance
+    [x] "FBAR vs Form 8938 Compliance: Avoiding Penalties and Errors in
+         2026" (published Feb 11, 2026 — very recent)
+    [x] "FBAR (FinCEN 114) vs Form 8938: A Comprehensive Guide"
+
+  Form 8938 (FATCA):
+    [x] Covered in their FBAR/8938 comparison articles
+    [x] "FBAR & FATCA Reporting for Expats"
+
+  Form 8843:
+    [x] Dedicated guide: "Form 8843 Simplified: A Step-by-Step Guide"
+
+  Form 3520 (Foreign Gifts):
+    [x] Blog post: "Gift Tax Reporting for US Expats 2025: Form 3520"
+    [x] Also covers foreign inheritance reporting
+
+  CRITICAL NOTE FOR YOUR CASE: As an F-1 nonresident alien (exempt from
+  SPT for first 5 calendar years), you should NOT need to file:
+    - FBAR (only applies to US persons)
+    - Form 8938 (only applies to specified persons — generally US persons)
+    - Form 3520 (only applies to US persons)
+  This was correctly identified in your reply5_draft to Dimov Tax. The key
+  question is whether NSKT Global understands this distinction and won't
+  try to upsell unnecessary filings. Their blog content focuses heavily on
+  expats and residents, which is a different population than NRAs.
+
+================================================================================
+4. 1040 → 1040-NR AMENDMENT CAPABILITY
+================================================================================
+
+  Their blog post "Nonresident Alien Tax Filing and IRS Penalties: What to
+  Do If You Filed Wrong" (Oct 2025) directly addresses the scenario of
+  incorrect filing status.
+
+  The blog post title and description suggest they handle the specific
+  situation of: NRA who incorrectly filed Form 1040 (resident) and needs
+  to correct to 1040-NR.
+
+  HOWEVER: The actual article content could not be fully extracted due to
+  their website using dynamic JavaScript rendering. The substance of their
+  guidance could not be independently verified.
+
+  WHAT TO ASK IN CONSULTATION:
+    1. Have you handled 1040 → 1040-NR amendments specifically?
+    2. How many such amendments have you completed in the last year?
+    3. What is the process — do you file Form 1040-X, or superseding return?
+    4. For 2023 and 2024 amendments, what is the timeline?
+    5. Are there any complications with Schedule C income on a 1040-NR?
+       (NRAs can only report ECI on 1040-NR — need to confirm LLC income
+        qualifies as ECI)
+
+================================================================================
+5. REVIEWS & REPUTATION
+================================================================================
+
+  BBB:
+    Rating:         A (not accredited)
+    Complaints:     0 complaints on file
+    File Opened:    October 20, 2023
+    Rating basis:   "Length of time business has been operating"
+    Note:           A rating with no accreditation means they haven't
+                    sought/paid for BBB accreditation but also have no
+                    complaint history.
+
+  Clutch.co:
+    Reviews:        4 verified reviews
+    Rating:         Positive (specific star rating not extracted)
+    Project size:   $2,340 - $8,580
+    Hourly rate:    $78 - $116/hr
+    Themes:         Good value for cost, timely delivery, effective
+                    communication, regular progress reviews, weekly video
+                    meetings, adherence to deadlines
+    Negative:       One client noted they need more staff to handle
+                    simultaneous projects
+
+  Capterra:
+    Rating:         Positive
+    Themes:         Reliable, collaborative, good follow-up
+
+  Chamber of Commerce:
+    Rating:         5.0 stars (3 reviewers)
+
+  Sulekha:
+    Rating:         5.0 from multiple reviewers
+
+  Google Reviews:   NOT FOUND — no Google Maps business listing with
+                    reviews identified in research
+
+  Yelp:             NOT FOUND — no Yelp listing identified
+
+  Trustpilot:       NOT FOUND — no Trustpilot profile identified
+
+  Reddit:           NOT FOUND — no Reddit discussions about the firm
+
+  GLASSDOOR (Employee Reviews):
+    NEGATIVE — "Avoid at All Costs"
+    - "Terrible work-life balance"
+    - "Expected to work 16 hours a day with no weekends off"
+    - "No HR department to address concerns"
+    - "No clear policies — chaotic and unstructured work environment"
+    - Feels like "only one employee is doing all the work"
+
+  ASSESSMENT:
+    Client-facing reviews are positive but sparse (4 Clutch, 3 Chamber).
+    The absence of Google/Yelp reviews is notable for a firm that has
+    existed since 2017. The Glassdoor reviews paint a concerning picture
+    of internal operations — overworked staff at a small firm could mean
+    your tax return gets rushed or handled by junior offshore staff with
+    minimal review. This is a yellow flag, not a red flag, but warrants
+    probing during consultation.
+
+================================================================================
+6. PRINCIPALS & CREDENTIALS
+================================================================================
+
+  NIKHIL MAHAJAN — Founder & CEO
+    Credentials:    CPA, CFE (Certified Fraud Examiner), CSOE (Certified
+                    SOX Expert), IRS-certified tax preparer
+    LinkedIn title: "Director — Forensic, Valuation & Litigation Support
+                    (CPA, ABV, CFF, CVA, CFE)"
+    Prior career:   KPMG (Big 4) → Mazars → NSKT Global
+    Experience:     15+ years, Fortune 500 advisory background
+    Focus areas:    Forensic accounting, fraud investigation, SOX,
+                    internal audit, process optimization
+
+    NOTE ON CPA LICENSE:
+      State of CPA licensure could not be confirmed from public sources.
+      His LinkedIn title references "ABV, CFF, CVA" which are AICPA
+      credentials (Accredited in Business Valuation, Certified in
+      Financial Forensics, Certified Valuation Analyst). These suggest
+      a FORENSIC ACCOUNTING background, not a tax preparation background.
+
+      This is an important distinction: Mahajan's credentials are heavily
+      weighted toward forensic/fraud work, not international tax. The tax
+      preparation work may be handled by other team members or offshore
+      staff.
+
+      RECOMMENDATION: Verify CPA license at CPAverify.org before engaging.
+
+  KASHIF HUSEIN — Partner (UAE Operations)
+    Role:           Governance, Risk & Compliance Services
+    Location:       Dubai, UAE
+
+  Other team members: Not publicly identified by name.
+    The firm claims a team of "CPAs, Enrolled Agents, and certified tax
+    preparers" but does not list them on the website.
+
+  CONCERN: For a firm claiming 12 employees across the US, UAE, and India,
+  the lack of publicly named team members (beyond the CEO and one UAE
+  partner) is unusual. Most reputable CPA firms list their partners,
+  managers, and senior staff with credentials.
+
+================================================================================
+7. RED FLAGS & CONCERNS
+================================================================================
+
+  RED FLAG #1 — PRIMARILY A FORENSIC/CONSULTING FIRM, NOT A TAX FIRM
+    The BBB categorizes them as "Forensic Accounting." The CEO's background
+    is in fraud investigation, SOX, and internal audit. The tax preparation
+    services appear to be a bolt-on revenue stream rather than the firm's
+    core competency. The blog content on NR taxes may be SEO-driven
+    marketing rather than reflective of deep practitioner expertise.
+
+  RED FLAG #2 — OFFSHORE BACK OFFICE (INDIA)
+    The firm explicitly states it has "back offices in both the US and
+    India." For routine bookkeeping this is common, but for complex NR
+    tax compliance (1040-NR amendments, Form 5472), you want to know:
+    - Who specifically will prepare your return?
+    - Will it be a US-based CPA or an offshore preparer?
+    - What is the review process?
+
+  RED FLAG #3 — EMPLOYEE EXPERIENCE (GLASSDOOR)
+    "16 hours a day, no weekends, no HR, chaotic" — this suggests the firm
+    may be running too lean for its workload. Combined with offshore
+    operations, this could mean quality control issues.
+
+  RED FLAG #4 — VIRTUAL OFFICES
+    5+ US addresses for 12 employees. The 99 Wall Street, NYC address is
+    a known virtual/coworking space. The firm may not have meaningful
+    physical presence at most listed locations.
+
+  RED FLAG #5 — NO NAMED TAX PROFESSIONALS ON WEBSITE
+    Unlike firms like Dimov Tax (where George responds to clients directly)
+    or Christopher Huang CPAs (where Kevin Thai and Hannah Huang are named),
+    NSKT Global does not identify which CPA or EA would handle your return.
+
+  RED FLAG #6 — PRIMARILY INTERNATIONAL CLIENT BASE
+    The firm appears to serve a primarily South Asian / Indian diaspora
+    clientele (listed on Sulekha, prominent UAE presence, Hindi-language
+    Instagram content). This is not inherently negative, but the firm's
+    primary expertise may be in Indian tax treaty issues rather than
+    Chinese tax treaty issues relevant to your case.
+
+  RED FLAG #7 — LIMITED INDEPENDENT REVIEW PRESENCE
+    Founded 2017, but only 4 Clutch reviews, 3 Chamber reviews, no
+    Google/Yelp reviews. For a 7+ year old firm, this is thin. The
+    Clutch reviews mention project sizes of $2K-$9K which are more
+    typical of consulting/bookkeeping engagements than complex individual
+    tax returns.
+
+  NO RED FLAGS FOUND:
+    [x] No disciplinary actions found against the firm or Nikhil Mahajan
+    [x] No complaints filed with BBB
+    [x] No fraud allegations or IRS investigations
+    [x] No negative client reviews (only negative employee reviews)
+    [x] No Trustpilot/Reddit complaints
+
+================================================================================
+8. FEE STRUCTURE
+================================================================================
+
+  Specific fee quotes for NR tax preparation: NOT PUBLICLY LISTED
+
+  From Clutch reviews:
+    - Project sizes: $2,340 - $8,580
+    - Hourly rate: $78 - $116/hr
+    - These appear to be for consulting/bookkeeping projects, not
+      individual tax returns
+
+  Their website states: "Fair and affordable pricing" with fees "tailored
+  depending upon the complexity of your return." They offer discounts for
+  seniors, military, and nonprofits.
+
+  Free consultation appears to be available per their website.
+
+  WHAT TO EXPECT FOR YOUR CASE (estimate based on comparable firms):
+    A firm handling all of the below would likely quote $2,340-$4,680+:
+    - 2023 amended return (1040 → 1040-NR): $624-$1,170
+    - 2024 amended return (1040 → 1040-NR): $624-$1,170
+    - 2025 1040-NR with Schedule C:          $780-$1,560
+    - Form 5472 + pro forma 1120:            $390-$1,170
+    - Form 8843 (all 3 years):               $78-$234
+    These are market estimates — NSKT Global may price differently.
+    Request an itemized quote.
+
+================================================================================
+9. SINGLE-MEMBER LLC / SCHEDULE C FOR NONRESIDENTS
+================================================================================
+
+  NSKT Global's blog content on sole proprietor tax filing and foreign-
+  owned LLCs suggests awareness of:
+    - Schedule C reporting for disregarded entity SMLLCs
+    - Form 5472 + pro forma 1120 for foreign-owned disregarded entities
+    - Foreign-owned LLC compliance requirements
+
+  However, the specific intersection of:
+    - NRA owning a Wyoming SMLLC
+    - Schedule C on Form 1040-NR (ECI reporting)
+    - Form 5472 + pro forma 1120 filing (separate paper filing)
+    - Treatment of e-commerce income as ECI for NRA
+  ...is highly specialized. Their blog content does not specifically
+  address this exact combination.
+
+  KEY QUESTIONS FOR CONSULTATION:
+    1. How do you handle Schedule C income on a 1040-NR?
+    2. Does e-commerce income from a US LLC qualify as ECI?
+    3. Who files the Form 5472 + pro forma 1120 — me or the LLC?
+    4. How do you handle the Wyoming SMLLC annual report?
+    5. What about state-level tax obligations for the LLC?
+
+================================================================================
+10. CONTACT INFORMATION
+================================================================================
+
+  Phone:          (888) 316-7116 (primary US toll-free)
+                  (888) 701-6758 (alternative US number)
+                  (888) 316-7404 (per BBB listing)
+  Email:          Not publicly listed; CEO's email format is
+                  n***@nsktglobal.com (per ZoomInfo)
+                  Common format: [first]@nsktglobal.com or
+                  [firstinitial][last]@nsktglobal.com
+  Contact form:   https://www.nsktglobal.com/usa/contact-us
+  Website:        https://www.nsktglobal.com/usa/
+  LinkedIn:       https://www.linkedin.com/company/nskt-global/
+  Instagram:      @nsktglobal
+  Twitter/X:      @NsktGlobal
+
+  Consultation:   Free consultation appears to be available per website
+                  (booking method: via contact form or phone)
+
+================================================================================
+11. OVERALL ASSESSMENT & RECOMMENDATION
+================================================================================
+
+  SUITABILITY SCORE: 5/10 (MARGINAL — PROCEED WITH CAUTION)
+
+  STRENGTHS:
+    + Explicit marketing for F-1/NR tax services
+    + Blog content covering all relevant forms (1040-NR, 5472, FBAR,
+      8938, 8843, 3520)
+    + No disciplinary actions or client complaints
+    + BBB A rating (clean record)
+    + Free consultation available
+    + Potentially competitive pricing ($78-$116/hr)
+
+  WEAKNESSES:
+    - Forensic accounting firm that added tax services (not core competency)
+    - CEO's credentials are forensic/valuation, not international tax
+    - No named tax professionals beyond the CEO
+    - Offshore back office raises quality control questions
+    - Virtual office addresses across 5+ states for 12 employees
+    - Very thin independent review history for a 7-year-old firm
+    - Glassdoor: overworked, understaffed, no HR, chaotic environment
+    - Cannot confirm who specifically would prepare your return
+    - Blog content may be SEO-driven marketing, not practitioner expertise
+
+  COMPARISON TO DIMOV TAX (your current leading CPA candidate):
+    Dimov Tax has:
+    - Dedicated NR tax practice with named practitioners
+    - George personally responding to client inquiries
+    - Explicit experience with F-1 filing corrections
+    - Dimov Tax asked the right question about your residency status
+    - Established client review presence
+    NSKT Global has not demonstrated equivalent depth for your specific case.
+
+  RECOMMENDATION:
+    1. TAKE THE FREE CONSULTATION — it costs nothing and you'll learn
+       quickly whether they have genuine expertise or are marketing-driven.
+
+    2. ASK THESE LITMUS TEST QUESTIONS:
+       a. "I filed 1040 as a resident for 2023 and 2024 while on F-1.
+           What is the correct form I should have filed?"
+          → Correct answer: 1040-NR, because F-1 holders are exempt
+            individuals for SPT purposes for first 5 calendar years
+       b. "Do I need to file FBAR for my Chinese bank accounts?"
+          → Correct answer: NO — FBAR only applies to US persons, and
+            as an NRA you are not a US person
+       c. "Who specifically will prepare my return, and where are they
+           located?"
+          → You want a US-based CPA or EA, not offshore staff
+
+    3. IF THEY PASS THE CONSULTATION, request an itemized fee quote
+       broken down by:
+       - 2023 amendment (1040 → 1040-NR)
+       - 2024 amendment (1040 → 1040-NR)
+       - 2025 1040-NR with Schedule C
+       - Form 5472 + pro forma 1120
+       - Form 8843 (each year)
+
+    4. DO NOT ENGAGE based solely on their website content or blog posts.
+       The marketing is polished but the underlying firm structure raises
+       enough questions to warrant direct verification.
+
+================================================================================
+SOURCES
+================================================================================
+
+  Website:        https://www.nsktglobal.com/usa/
+  Student Tax:    https://www.nsktglobal.com/usa/student-tax-services
+  BBB Profile:    https://www.bbb.org/us/fl/bonita-springs/profile/forensic-accounting/nskt-global-0653-90440682
+  Clutch:         https://clutch.co/profile/nskt-global
+  Capterra:       https://www.capterra.com/services/sp/98/nskt-global/
+  Glassdoor:      https://www.glassdoor.com/Reviews/Employee-Review-NSKT-Global-E6384494-RVW89115117.htm
+  LinkedIn (CEO): https://www.linkedin.com/in/nikhil-mahajan-66bab1160/
+  LinkedIn (Co):  https://www.linkedin.com/company/nskt-global/
+  Crunchbase:     https://www.crunchbase.com/organization/nskt-global
+  ZoomInfo:       https://www.zoominfo.com/c/nskt-global/557965639
+  Sulekha:        https://us.sulekha.com/new-york-ny/financial-taxation-service/nskt-global-1799623
+  Blog (5472):    https://www.nsktglobal.com/usa/blog/foreign-owned-llc-form-5472-tax-filing
+  Blog (FBAR):    https://www.nsktglobal.com/usa/blog/fbar-vs-form-8938-compliance-avoiding-penalties-and-errors-in-2026
+  Blog (NR):      https://www.nsktglobal.com/usa/blog/nonresident-alien-tax-filing-irs-penalties
+  Blog (8843):    https://www.nsktglobal.com/usa/blog/form-8843-students-guide
+  Blog (3520):    https://www.nsktglobal.com/usa/blog/gift-tax-reporting-us-expats-form-3520-2025
+
+================================================================================
+END OF DUE DILIGENCE REPORT
+================================================================================

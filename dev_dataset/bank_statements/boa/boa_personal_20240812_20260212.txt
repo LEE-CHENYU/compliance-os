@@ -1,0 +1,441 @@
+Description                                                                         Summary Amt.
+Beginning balance as of 08/12/2024                                                     29,140.88
+Total credits                                                                          82,211.36
+Total debits                                                                         -109,894.02
+Ending balance as of 02/12/2026                                                         1,458.22
+
+
+Date        Description                                                                   Amount  Running Bal.
+08/12/2024  Beginning balance as of 08/12/2024                                                       29,140.88
+08/12/2024  Zelle payment from PERSON_A Conf# xrq693r74                                 100.00     29,240.88
+08/12/2024  Online Banking payment to CRD 7191 Confirmation# XXXXX31723                  -161.82     29,079.06
+08/12/2024  Zelle payment to THE LAW OFFICES OF FUQIANG ZHANG, P.C. Conf# j5hp12n75      -150.00     28,929.06
+08/13/2024  Zelle payment from PERSON_B Conf# 99alx2s1q                                  75.00     29,004.06
+08/14/2024  WIRE TYPE:INTL OUT DATE:240814 TIME:1717 ET TRN:XXXXXXXXXX317509 SERVICE REF:255903 BNF:FUTU SECURITIES INTL (HK) ID:XXXXX6001225 BNF BK:ICBC (ASIA) LTD. ID:XXXXX0990460 PMT DET:50 6294950 POP Capital Injection/Infusion  -10,000.00     19,004.06
+08/14/2024  Wire Transfer Fee                                                             -45.00     18,959.06
+08/15/2024  C106300 XYZ DIGI DES:DIR DEP ID:P219166E3751745 INDN:ZHANG ALEX CO ID:XXXXX83648 PPD    2,216.42     21,175.48
+08/16/2024  WIRE TYPE:INTL OUT DATE:240816 TIME:1500 ET TRN:XXXXXXXXXX458641 SERVICE REF:286835 BNF:FUTU SECURITIES INTL (HK) ID:XXXXX6001225 BNF BK:ICBC (ASIA) LTD. ID:XXXXX0990460 PMT DET:50 6766872 POP Capital Injection/Infusion  -20,000.00      1,175.48
+08/16/2024  Wire Transfer Fee                                                             -45.00      1,130.48
+08/19/2024  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD    7,781.44      8,911.92
+08/19/2024  Zelle payment from PERSON_A Conf# zqtjmwgkc                                 200.00      9,111.92
+08/19/2024  VENMO DES:CASHOUT ID:XXXXX29981526 INDN:ALEX ZHANG CO ID:XXXXX81992 PPD          9.00      9,120.92
+08/19/2024  Online Banking payment to CRD 7191 Confirmation# XXXXX75019                   -39.44      9,081.48
+08/20/2024  DRI*NVIDIA 08/19 PURCHASE XXX-XX84089 MN                                      -21.76      9,059.72
+08/20/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 08/20/24                             -0.24      9,059.48
+08/26/2024  Zelle payment to PERSON_R Conf# ruyd82dzu                                  -857.84      8,201.64
+08/26/2024  VENMO DES:PAYMENT ID:XXXXX67785723 INDN:ALEX ZHANG CO ID:XXXXX81992 WEB        -43.50      8,158.14
+08/30/2024  C106300 XYZ DIGI DES:DIR DEP ID:PB87B9A9333A100 INDN:ZHANG ALEX CO ID:XXXXX83648 PPD    2,216.40     10,374.54
+09/03/2024  Zelle payment from PERSON_A Conf# w5q3oyqwz                                 200.00     10,574.54
+09/03/2024  Zelle payment from PERSON_A Conf# z2i16oww4                                 150.00     10,724.54
+09/03/2024  UBER *ONE 08/31 PURCHASE HELP.UBER.COM CA                                      -9.99     10,714.55
+09/03/2024  Zelle payment to Person_S Conf# rkvqsovjj                                 -23.40     10,691.15
+09/03/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/03/24                             -0.01     10,691.14
+09/04/2024  Zelle payment from PERSON_A Conf# swgy0u3v5                                 100.00     10,791.14
+09/04/2024  Zelle payment to PERSON_T Conf# o0v4u2hn6                                     -10.00     10,781.14
+09/05/2024  Zelle payment from PERSON_A Conf# s3yz33kaq                                 100.00     10,881.14
+09/05/2024  Zelle payment from PERSON_A Conf# yo47mxe5q                                 100.00     10,981.14
+09/06/2024  Zelle payment from PERSON_A Conf# uv2ulb1wl                                 300.00     11,281.14
+09/09/2024  Zelle payment from PERSON_A Conf# whklf4gcb                                 200.00     11,481.14
+09/09/2024  CITIBIK*1 RIDE 09/07 PURCHASE LYFT.COM CA                                      -9.13     11,472.01
+09/09/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/09/24                             -0.87     11,471.14
+09/10/2024  OPENAI 09/09 PURCHASE HTTPSOPENAI.C CA                                        -10.89     11,460.25
+09/10/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/10/24                             -0.11     11,460.14
+09/13/2024  C106300 XYZ DIGI DES:DIR DEP ID:PDD01AB6EE2166F INDN:ZHANG ALEX CO ID:XXXXX83648 PPD    2,216.42     13,676.56
+09/20/2024  CITIBIK*1 RIDE 09/17 PURCHASE LYFT.COM CA                                      -5.22     13,671.34
+09/20/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/20/24                             -0.78     13,670.56
+09/23/2024  DRI*NVIDIA 09/19 PURCHASE XXX-XX84089 MN                                      -21.76     13,648.80
+09/23/2024  Online Banking payment to CRD 7191 Confirmation# XXXXX51744                  -138.95     13,509.85
+09/23/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/23/24                             -0.24     13,509.61
+09/30/2024  C106300 XYZ DIGI DES:DIR DEP ID:PEB7C2E2D1030C1 INDN:ZHANG ALEX CO ID:XXXXX83648 PPD    2,216.40     15,726.01
+09/30/2024  Zelle payment to NEXTOU LLC for "Alex Zhang"; Conf# fvt03ib5d                  -81.50     15,644.51
+09/30/2024  Zelle payment to YUHANG MA Conf# n0zlqbe21                                    -45.00     15,599.51
+10/01/2024  UBER *ONE 09/30 PURCHASE HELP.UBER.COM CA                                      -9.99     15,589.52
+10/01/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/01/24                             -0.01     15,589.51
+10/04/2024  CITIBIK*1 RIDE 10/02 PURCHASE LYFT.COM CA                                      -5.22     15,584.29
+10/04/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/04/24                             -0.78     15,583.51
+10/07/2024  CITIBIK*1 RIDE 10/04 PURCHASE LYFT.COM CA                                      -5.22     15,578.29
+10/07/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/07/24                             -0.78     15,577.51
+10/11/2024  OPENAI 10/10 PURCHASE HTTPSOPENAI.C CA                                        -10.89     15,566.62
+10/11/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/11/24                             -0.11     15,566.51
+10/15/2024  Zelle payment from CMBOOK LIMITED LIABILITY COMPANY for "Dry Cleaning Jacket - JC Eco Laundry"; Conf# 99apbehl6      280.00     15,846.51
+10/15/2024  Zelle payment from HAOHAN SONG Conf# 99apg59bz                                 54.00     15,900.51
+10/15/2024  Zelle payment from CHUNHAN CHEN Conf# etn0idimf                                29.32     15,929.83
+10/15/2024  ANTHROPIC 10/11 PURCHASE HTTPSWWW.ANTH CA                                     -16.33     15,913.50
+10/15/2024  Zelle payment to HAOHAN SONG Conf# lsm4kvpnu                                 -119.55     15,793.95
+10/15/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/15/24                             -0.67     15,793.28
+10/21/2024  DRI*NVIDIA 10/19 PURCHASE NVIDIA.com MN                                       -21.76     15,771.52
+10/21/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/21/24                             -0.24     15,771.28
+10/24/2024  CITIBIK*2 RIDES 10/22 PURCHASE LYFT.COM CA                                    -10.22     15,761.06
+10/24/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/24/24                             -0.78     15,760.28
+10/28/2024  Zelle payment from JIAN SUN Conf# 99aq37aaz                                    30.00     15,790.28
+10/28/2024  CITIBIK*1 RIDE 10/26 PURCHASE LYFT.COM CA                                     -11.50     15,778.78
+10/28/2024  Online Banking payment to CRD 7191 Confirmation# XXXXX78682                  -162.41     15,616.37
+10/28/2024  Zelle payment to TEERAYUTH VICHKULWRAPAN Conf# qo4c21lti                      -41.70     15,574.67
+10/28/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/28/24                             -0.50     15,574.17
+11/01/2024  UBER *ONE 10/31 PURCHASE HELP.UBER.COM CA                                      -9.99     15,564.18
+11/01/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 11/01/24                             -0.01     15,564.17
+11/04/2024  GOOGLE *CLOUD ZP3LRP 11/01 PURCHASE g.co/HelpPay# CA                           -0.47     15,563.70
+11/04/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 11/04/24                             -0.53     15,563.17
+11/06/2024  C106300 XYZ DIGI DES:DIR DEP ID:PXXXXXXXXXX4549 INDN:ZHANG ALEX CO ID:XXXXX83648 PPD      789.85     16,353.02
+11/06/2024  C106300 XYZ DIGI DES:DIR DEP ID:P3E439A434D974D INDN:ZHANG ALEX CO ID:XXXXX83648 PPD      555.69     16,908.71
+11/06/2024  Lyft *Ride W 11/06 PURCHASE SAN FRANCISCO CA                                  -13.99     16,894.72
+11/06/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 11/06/24                             -0.01     16,894.71
+11/08/2024  C106300 XYZ DIGI DES:DIR DEP ID:PXXXXX113266B7C INDN:ZHANG ALEX CO ID:XXXXX83648 PPD      789.85     17,684.56
+11/13/2024  Zelle payment to ALEX ZHANG Conf# mv8s7749t                                 -2,000.00     15,684.56
+11/13/2024  Zelle payment to ALEX ZHANG Conf# nmuleoj00                                 -1,500.00     14,184.56
+11/14/2024  Online Banking payment to CRD 7191 Confirmation# XXXXX88961                  -151.11     14,033.45
+11/14/2024  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD  -13,500.00        533.45
+11/20/2024  DRI*NVIDIA 11/19 PURCHASE NVIDIA.com MN                                       -21.76        511.69
+11/20/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 11/20/24                             -0.24        511.45
+11/22/2024  C106300 XYZ DIGI DES:DIR DEP ID:P8F0E72E6140155 INDN:ZHANG ALEX CO ID:XXXXX83648 PPD      789.85      1,301.30
+11/22/2024  C106300 XYZ DIGI DES:DIR DEP ID:P1D836CAB200ABC INDN:ZHANG ALEX CO ID:XXXXX83648 PPD      626.94      1,928.24
+11/25/2024  Google TV 11/22 PURCHASE XXX-XX30000 CA                                        -3.99      1,924.25
+11/25/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 11/25/24                             -0.01      1,924.24
+12/02/2024  UBER *ONE 11/30 PURCHASE HELP.UBER.COM CA                                      -9.99      1,914.25
+12/02/2024  GOOGLE *CLOUD 4LX6Lx 12/01 PURCHASE g.co/helppay# CA                          -37.57      1,876.68
+12/02/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 12/02/24                             -0.44      1,876.24
+12/06/2024  C106300 XYZ DIGI DES:DIR DEP ID:PDF1DA445DD7F50 INDN:ZHANG ALEX CO ID:XXXXX83648 PPD      789.85      2,666.09
+12/09/2024  Zelle payment from DAVID TRAN for "RENT"; Conf# 99asjpzrl                     475.00      3,141.09
+12/09/2024  MTA*NYCT PAYGO 12/07 PURCHASE NEW YORK NY                                      -2.90      3,138.19
+12/09/2024  OPENAI 12/08 PURCHASE HTTPSOPENAI.C CA                                         -6.53      3,131.66
+12/09/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 12/09/24                             -0.57      3,131.09
+12/10/2024  OPENAI *CHATGPT SUBSCR 12/09 PURCHASE HTTPSOPENAI.C CA                        -21.78      3,109.31
+12/10/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 12/10/24                             -0.22      3,109.09
+12/11/2024  Zelle payment from YIWEI HAN Conf# 99asrssxh                                   50.00      3,159.09
+12/12/2024  Zelle payment to DAVID TRAN for "Return Deposit"; Conf# qg58zngyn            -250.00      2,909.09
+12/16/2024  WIRE TYPE:INTL IN DATE:241216 TIME:1440 ET TRN:XXXXXXXXXX308077 SEQ:TTXXXXXXXXXX2166/990221 ORIG:1/ZHANG ALEX ID:XXXXX3895907 PMT DET: $7.80 F EE DEDUCTLIVING EXPENSES   19,000.08     21,909.17
+12/16/2024  Online Banking payment to CRD 7191 Confirmation# XXXXX31251                  -205.00     21,704.17
+12/16/2024  Wire Transfer Fee                                                             -15.00     21,689.17
+12/17/2024  Zelle payment to ALEX ZHANG Conf# pzy2su6xq                                 -3,500.00     18,189.17
+12/18/2024  Zelle payment to Joy Conf# ok2ig82ck                                         -450.00     17,739.17
+12/19/2024  Zelle payment to ALEX ZHANG Conf# lupxoblph                                 -3,000.00     14,739.17
+12/20/2024  DRI*NVIDIA 12/19 PURCHASE NVIDIA.com MN                                       -21.76     14,717.41
+12/20/2024  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 12/20/24                             -0.24     14,717.17
+12/23/2024  Zelle payment from YIWEI HAN for "rent"; Conf# 99atgvn0z                      473.00     15,190.17
+12/23/2024  Zelle payment to ALEX ZHANG Conf# j4frypyr0                                 -3,000.00     12,190.17
+12/26/2024  Zelle payment to ALEX ZHANG Conf# p0g71zyeq                                 -3,500.00      8,690.17
+12/27/2024  Zelle payment to ANGEL ZHAGUI Conf# lb78z1pdt                                 -35.00      8,655.17
+12/30/2024  Zelle payment to PERSON_L Conf# oycbsc2po                                 -30.00      8,625.17
+12/30/2024  Zelle payment to YIWEI HAN Conf# q8gr8w3ux                                   -250.00      8,375.17
+12/30/2024  Online Banking payment to CRD 7191 Confirmation# XXXXX47296                   -50.68      8,324.49
+12/31/2024  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD   -7,000.00      1,324.49
+01/02/2025  Zelle payment from JOY DEBNTH Conf# ie7fktrdb                                   5.00      1,329.49
+01/02/2025  GOOGLE *CLOUD 3ZMZG4 01/01 PURCHASE g.co/helppay# CA                           -1.16      1,328.33
+01/02/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/02/25                             -0.84      1,327.49
+01/06/2025  Zelle payment from ALEX ZHANG Conf# hsxVvyzoB                                    1.00      1,328.49
+01/06/2025  Zelle payment to MEIQI ZHAO Conf# rjwd3hbe8                                  -126.45      1,202.04
+01/10/2025  OPENAI *CHATGPT SUBSCR 01/09 PURCHASE HTTPSOPENAI.C CA                        -21.78      1,180.26
+01/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/10/25                             -0.22      1,180.04
+01/13/2025  OPENAI 01/11 PURCHASE HTTPSOPENAI.C CA                                        -10.89      1,169.15
+01/13/2025  Online Banking payment to CRD 7191 Confirmation# XXXXX95643                   -89.43      1,079.72
+01/13/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/13/25                             -0.11      1,079.61
+01/14/2025  VENMO DES:CASHOUT ID:XXXXX06764076 INDN:ALEX ZHANG CO ID:XXXXX81992 PPD        110.00      1,189.61
+01/17/2025  Lyft *Citi B 01/17 PURCHASE SAN FRANCISCO CA                                  -11.64      1,177.97
+01/17/2025  Monthly Maintenance Fee                                                       -12.00      1,165.97
+01/17/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/17/25                             -0.36      1,165.61
+01/21/2025  DRI*NVIDIA 01/19 PURCHASE XXX-XX84089 MN                                      -21.76      1,143.85
+01/21/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/21/25                             -0.24      1,143.61
+01/24/2025  CARNEGIE HALL 01/23 PURCHASE INFO@CARNEGIE NY                                 -14.00      1,129.61
+01/27/2025  Zelle payment to JINZHUO TIAN Conf# qv2xd374a                                 -72.00      1,057.61
+01/28/2025  Lyft *Citi B 01/28 PURCHASE SAN FRANCISCO CA                                  -57.98        999.63
+01/28/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/28/25                             -0.02        999.61
+01/29/2025  Lyft *Citi B 01/28 REFUND SAN FRANCISCO CA                                     52.55      1,052.16
+01/30/2025  OPENAI 01/29 PURCHASE OPENAI.COM CA                                           -10.89      1,041.27
+01/30/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/30/25                             -0.11      1,041.16
+01/31/2025  OPENAI 01/30 PURCHASE OPENAI.COM CA                                           -10.89      1,030.27
+01/31/2025  Online Banking payment to CRD 7191 Confirmation# XXXXX88895                  -150.12        880.15
+01/31/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/31/25                             -0.11        880.04
+02/03/2025  Google CLOUD LC6zTW 02/01 PURCHASE XXX-XX30000 CA                              -0.06        879.98
+02/03/2025  Lyft *Citi B 02/02 PURCHASE SAN FRANCISCO CA                                   -5.43        874.55
+02/03/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 02/03/25                             -1.51        873.04
+02/04/2025  Zelle payment from YUXIAO WANG Conf# yd04nxfdp                                 60.00        933.04
+02/05/2025  Zelle payment from YI LU for "Sublease Deposit"; Conf# zvc9yakh6              150.00      1,083.04
+02/05/2025  OPENAI 02/04 PURCHASE OPENAI.COM CA                                           -10.89      1,072.15
+02/05/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 02/05/25                             -0.11      1,072.04
+02/06/2025  Zelle payment from ROHAN CHANDRASEKHAR Conf# hxckj1sn5                         27.00      1,099.04
+02/06/2025  Zelle payment from Kareem Agag Conf# MPBW07ZN8                                 27.00      1,126.04
+02/07/2025  Lyft *Citi B 02/07 PURCHASE SAN FRANCISCO CA                                   -7.09      1,118.95
+02/07/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 02/07/25                             -0.91      1,118.04
+02/10/2025  Lyft *Citi B 02/08 PURCHASE SAN FRANCISCO CA                                   -5.43      1,112.61
+02/10/2025  LYFT *RIDE SAT 4PM 02/08 PURCHASE LYFT.COM CA                                 -27.16      1,085.45
+02/10/2025  OPENAI *CHATGPT SUBSCR 02/09 PURCHASE OPENAI.COM CA                           -21.78      1,063.67
+02/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 02/10/25                             -1.63      1,062.04
+02/12/2025  Zelle payment from ZAIXU LI for "Octagon 2.14-2.16"; Conf# 99axy7wsa           78.00      1,140.04
+02/14/2025  Monthly Maintenance Fee                                                       -12.00      1,128.04
+02/18/2025  Zelle payment from Houru Chen for "Rent"; Conf# AYQOU4GVZ                   1,399.00      2,527.04
+02/18/2025  Zelle payment from Houru Chen for "Test"; Conf# QZ368J6DZ                       1.00      2,528.04
+02/20/2025  Zelle payment from RUNING LAO for "rent for March"; Conf# 99ayrub79         1,150.00      3,678.04
+02/20/2025  Online Banking transfer to SAV 0366 Confirmation# XXXXX45894                 -528.04      3,150.00
+02/20/2025  Zelle payment to RUNING LAO Conf# ouz9gw6pk                                -1,150.00      2,000.00
+02/21/2025  OPENAI 02/20 PURCHASE OPENAI.COM CA                                           -10.89      1,989.11
+02/21/2025  Zelle payment to Kareem Agag Conf# qwnniu25l                                  -29.00      1,960.11
+02/21/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 02/21/25                             -0.11      1,960.00
+02/24/2025  Zelle payment from MIDTOWN SOLUTION, INC for "fee"; Conf# u09ozsg17           200.00      2,160.00
+02/24/2025  Zelle payment from PERSON_S Conf# 99az5hpdr                                20.00      2,180.00
+02/24/2025  OPENAI 02/21 PURCHASE OPENAI.COM CA                                           -10.89      2,169.11
+02/24/2025  OPENAI 02/22 PURCHASE OPENAI.COM CA                                           -10.89      2,158.22
+02/24/2025  OPENAI 02/23 PURCHASE OPENAI.COM CA                                           -10.89      2,147.33
+02/24/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 02/24/25                             -0.33      2,147.00
+02/25/2025  Online Banking payment to CRD 7191 Confirmation# XXXXX87379                   -85.09      2,061.91
+03/03/2025  BKOFAMERICA MOBILE 03/01 XXXXX72798 DEPOSIT *MOBILE NY                      1,000.00      3,061.91
+03/05/2025  Zelle payment from MIDTOWN SOLUTION, INC for "fee"; Conf# v60mh5iuy         1,150.00      4,211.91
+03/06/2025  Zelle payment to ALEX ZHANG Conf# lsp7x890r                                   -515.00      3,696.91
+03/10/2025  OPENAI 03/09 PURCHASE OPENAI.COM CA                                           -10.89      3,686.02
+03/10/2025  OPENAI *CHATGPT SUBSCR 03/09 PURCHASE OPENAI.COM CA                           -21.78      3,664.24
+03/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 03/10/25                             -0.33      3,663.91
+03/14/2025  Online Banking payment to CRD 7191 Confirmation# XXXXX22956                  -103.91      3,560.00
+03/17/2025  OPENAI 03/14 PURCHASE OPENAI.COM CA                                           -10.89      3,549.11
+03/17/2025  Zelle payment to ZEYU DUAN Conf# px2pa13bw                                    -10.00      3,539.11
+03/17/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 03/17/25                             -0.11      3,539.00
+03/18/2025  Monthly Maintenance Fee                                                       -12.00      3,527.00
+03/24/2025  Zelle payment from Houru Chen Conf# LBT89A734                               1,400.00      4,927.00
+03/24/2025  Zelle payment from MIDTOWN SOLUTION, INC for "Fee"; Conf# x4tmsmlpv           575.00      5,502.00
+03/25/2025  Zelle payment from PERSON_M for "exch"; Conf# va6fac9yr                   2,000.00      7,502.00
+03/25/2025  OPENAI 03/25 PURCHASE OPENAI.COM CA                                           -10.89      7,491.11
+03/25/2025  OPENAI 03/24 PURCHASE OPENAI.COM CA                                           -10.89      7,480.22
+03/25/2025  Lyft *Citi B 03/25 PURCHASE SAN FRANCISCO CA                                   -5.43      7,474.79
+03/25/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 03/25/25                             -0.79      7,474.00
+03/27/2025  OPENAI 03/26 PURCHASE OPENAI.COM CA                                           -10.89      7,463.11
+03/27/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 03/27/25                             -0.11      7,463.00
+03/28/2025  BKOFAMERICA MOBILE 03/28 XXXXX68839 DEPOSIT *MOBILE NY                      1,000.00      8,463.00
+03/28/2025  ANTHROPIC 03/27 PURCHASE ANTHROPIC.COM CA                                     -10.89      8,452.11
+03/28/2025  ANTHROPIC 03/27 PURCHASE ANTHROPIC.COM CA                                     -10.89      8,441.22
+03/28/2025  Zelle payment to ALEX ZHANG Conf# mz1sds9yw                                 -3,500.00      4,941.22
+03/28/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 03/28/25                             -0.22      4,941.00
+03/31/2025  Lyft *Citi B 03/29 PURCHASE SAN FRANCISCO CA                                   -5.43      4,935.57
+03/31/2025  Zelle payment to ALEX ZHANG Conf# k2313f33j                                 -2,500.00      2,435.57
+03/31/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 03/31/25                             -0.57      2,435.00
+04/03/2025  Lyft *Citi B 04/03 PURCHASE SAN FRANCISCO CA                                   -7.92      2,427.08
+04/03/2025  Lyft *Citi B 04/03 PURCHASE SAN FRANCISCO CA                                   -7.92      2,419.16
+04/03/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 04/03/25                             -0.16      2,419.00
+04/09/2025  Online Banking payment to CRD 7191 Confirmation# XXXXX32209                  -236.63      2,182.37
+04/09/2025  Zelle payment to Alex Zhang Conf# j5ya70d00                                   -500.00      1,682.37
+04/09/2025  Zelle payment to Alex Zhang Conf# jstlbbb0b                                    -10.00      1,672.37
+04/10/2025  OPENAI *CHATGPT SUBSCR 04/09 PURCHASE OPENAI.COM CA                           -21.78      1,650.59
+04/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 04/10/25                             -0.22      1,650.37
+04/21/2025  Zelle payment to Person_S Conf# rm9fewxw6                                -282.90      1,367.47
+04/23/2025  Zelle payment to UNITALENT LLC Conf# n02ejkfwe                               -150.00      1,217.47
+04/24/2025  Zelle payment from LINGXUAN SUN Conf# puakxm537                                20.00      1,237.47
+04/24/2025  Online Banking payment to CRD 7191 Confirmation# XXXXX50076                   -78.42      1,159.05
+04/28/2025  Zelle payment to QIZHENG WANG Conf# rauqbj811                                 -80.00      1,079.05
+04/28/2025  LYFT *RIDE SAT 6PM 04/26 PURCHASE LYFT.COM CA                                 -40.20      1,038.85
+04/28/2025  Lyft *Citi B 04/26 PURCHASE SAN FRANCISCO CA                                  -12.88      1,025.97
+04/28/2025  Lyft *Citi B 04/27 PURCHASE SAN FRANCISCO CA                                   -5.43      1,020.54
+04/28/2025  Lyft *Citi B 04/27 PURCHASE SAN FRANCISCO CA                                   -9.57      1,010.97
+04/28/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 04/28/25                             -1.92      1,009.05
+04/29/2025  Lyft *Citi B 04/28 PURCHASE SAN FRANCISCO CA                                  -11.64        997.41
+04/29/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 04/29/25                             -0.36        997.05
+04/30/2025  Zelle payment to ALEX ZHANG Conf# kuuea7ybv                                   -900.00         97.05
+05/01/2025  Zelle payment from Alex Zhang Conf# 0JDS7DP8Z                                  520.00        617.05
+05/01/2025  Online Banking transfer to SAV 0366 Confirmation# XXXXX56171                 -484.54        132.51
+05/02/2025  GOOGLE *CLOUD 9T9DVQ 05/01 PURCHASE g.co/HelpPay# CA                          -19.35        113.16
+05/02/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 05/02/25                             -0.65        112.51
+05/09/2025  OPENAI 05/08 PURCHASE OPENAI.COM CA                                           -10.89        101.62
+05/09/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 05/09/25                             -0.11        101.51
+05/12/2025  OPENAI 05/09 PURCHASE OPENAI.COM CA                                            -6.53         94.98
+05/12/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 05/12/25                             -0.47         94.51
+05/16/2025  Monthly Maintenance Fee                                                       -12.00         82.51
+05/19/2025  Zelle payment from MENACHEM M WOLFF for "thanks for dinner"; Conf# 99b9304em       44.00        126.51
+05/19/2025  Lyft *Citi B 05/17 PURCHASE SAN FRANCISCO CA                                   -5.43        121.08
+05/19/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 05/19/25                             -0.57        120.51
+05/30/2025  MTA*NYCT PAYGO 05/28 PURCHASE NEW YORK NY                                      -2.90        117.61
+05/30/2025  WINDSURF 05/29 PURCHASE WINDSURF.COM CA                                        -7.51        110.10
+05/30/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 05/30/25                             -0.59        109.51
+06/02/2025  Zelle payment from PERSON_M for "Exch"; Conf# E1uGlmmH5                     500.00        609.51
+06/02/2025  MTA*NYCT PAYGO 05/31 PURCHASE NEW YORK NY                                      -2.90        606.61
+06/02/2025  MTA*NYCT PAYGO 05/31 PURCHASE NEW YORK NY                                      -2.90        603.71
+06/02/2025  Google CLOUD SL6LxV 06/01 PURCHASE XXX-XX30000 CA                              -3.69        600.02
+06/02/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 06/02/25                             -0.51        599.51
+06/05/2025  CITIBIK*1 RIDE 06/03 PURCHASE LYFT.COM CA                                      -5.43        594.08
+06/05/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 06/05/25                             -0.57        593.51
+06/11/2025  APPLE.COM/BILL 06/09 PURCHASE 866-712-7753 CA                                  -9.99        583.52
+06/11/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 06/11/25                             -0.01        583.51
+06/13/2025  APPLE COM BILL 06/12 PURCHASE CUPERTINO CA                                     -3.59        579.92
+06/13/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 06/13/25                             -0.41        579.51
+06/16/2025  Monthly Maintenance Fee                                                       -12.00        567.51
+06/17/2025  OPENAI 06/16 PURCHASE OPENAI.COM CA                                           -10.89        556.62
+06/17/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 06/17/25                             -0.11        556.51
+06/23/2025  OPENAI 06/20 PURCHASE OPENAI.COM CA                                           -10.89        545.62
+06/23/2025  OPENAI 06/20 PURCHASE OPENAI.COM CA                                           -10.89        534.73
+06/23/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 06/23/25                             -0.22        534.51
+07/02/2025  Google CLOUD KP2KRR 07/01 PURCHASE XXX-XX30000 CA                             -27.56        506.95
+07/02/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 07/02/25                             -0.44        506.51
+07/10/2025  APPLE.COM/BILL 07/09 PURCHASE 866-712-7753 CA                                  -9.99        496.52
+07/10/2025  OPENAI *CHATGPT SUBSCR 07/09 PURCHASE OPENAI.COM CA                           -21.78        474.74
+07/10/2025  Lyft *Ride T 07/10 PURCHASE SAN FRANCISCO CA                                   -7.08        467.66
+07/10/2025  Lyft *Ride T 07/10 PURCHASE SAN FRANCISCO CA                                  -10.93        456.73
+07/10/2025  Lyft *Citi B 07/10 PURCHASE SAN FRANCISCO CA                                   -6.67        450.06
+07/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 07/10/25                             -1.55        448.51
+07/11/2025  CITIBIK*2 RIDES 07/09 PURCHASE LYFT.COM CA                                    -13.76        434.75
+07/11/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 07/11/25                             -0.24        434.51
+07/14/2025  CITIBIK*1 RIDE 07/10 PURCHASE LYFT.COM CA                                      -5.43        429.08
+07/14/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 07/14/25                             -0.57        428.51
+07/15/2025  Mobile Banking payment to CRD 7191 Confirmation# 132q636ut                   -289.29        139.22
+07/18/2025  Zelle payment from MOWEI JIANG Conf# T0Z2XMQXC                                 24.00        163.22
+07/18/2025  Monthly Maintenance Fee                                                       -12.00        151.22
+07/21/2025  LYFT *RIDE SAT 11PM 07/19 PURCHASE LYFT.COM CA                                -26.24        124.98
+07/21/2025  LYFT *RIDE SUN 1AM 07/20 PURCHASE LYFT.COM CA                                 -21.84        103.14
+07/21/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 07/21/25                             -0.92        102.22
+07/22/2025  Lyft *Ride M 07/21 PURCHASE SAN FRANCISCO CA                                  -14.20         88.02
+07/22/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 07/22/25                             -0.80         87.22
+07/23/2025  Lyft *Ride M 07/21 PURCHASE SAN FRANCISCO CA                                  -32.89         54.33
+07/23/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 07/23/25                             -0.11         54.22
+07/24/2025  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD    1,500.00      1,554.22
+07/25/2025  Lyft *Ride T 07/24 PURCHASE SAN FRANCISCO CA                                   -8.65      1,545.57
+07/25/2025  ARCO #42435 AM 07/24 PURCHASE BAKERSFIELD CA                                  -59.92      1,485.65
+07/25/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 07/25/25                             -0.43      1,485.22
+07/29/2025  VENMO DES:PAYMENT ID:XXXXX16778030 INDN:ALEX ZHANG CO ID:XXXXX81992 WEB        -44.00      1,441.22
+07/30/2025  Zelle payment from JINGYAN XU Conf# ny198oio3                                  33.00      1,474.22
+08/04/2025  Google CLOUD 7wz5wS 08/01 PURCHASE XXX-XX30000 CA                              -5.29      1,468.93
+08/04/2025  COINBASE INC. DES:E75AEB1F ID:RTL-BT5FEAHQ INDN:ALEX ZHANG CO ID:XXXXX00623 WEB   -1,000.00        468.93
+08/04/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 08/04/25                             -0.71        468.22
+08/05/2025  VENMO DES:PAYMENT ID:XXXXX76072686 INDN:ALEX ZHANG CO ID:XXXXX81992 WEB        -45.00        423.22
+08/11/2025  APPLE.COM/BILL 08/09 PURCHASE 866-712-7753 CA                                  -9.99        413.23
+08/11/2025  OPENAI *CHATGPT SUBSCR 08/09 PURCHASE OPENAI.COM CA                           -21.78        391.45
+08/11/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 08/11/25                             -0.23        391.22
+08/15/2025  Mobile Banking payment to CRD 7191 Confirmation# 1dq536fr6                   -254.46        136.76
+08/18/2025  Lyft *Citi B 08/16 PURCHASE SAN FRANCISCO CA                                   -7.50        129.26
+08/18/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 08/18/25                             -0.50        128.76
+08/19/2025  Google YouTube Videos 08/18 PURCHASE XXX-XX30000 CA                            -3.79        124.97
+08/19/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 08/19/25                             -0.21        124.76
+08/21/2025  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD    1,000.00      1,124.76
+08/21/2025  Zelle payment to Person_S Conf# kdy3pv76x                                -280.42        844.34
+08/25/2025  Zelle payment from PERSON_M Conf# kWuAtjT2F                                 500.00      1,344.34
+08/25/2025  Lyft *Ride S 08/23 PURCHASE SAN FRANCISCO CA                                   -5.81      1,338.53
+08/25/2025  COINBASE INC. DES:367DB87F ID:RTL-ZCFZGP2B INDN:ALEX ZHANG CO ID:XXXXX00623 WEB     -100.00      1,238.53
+08/25/2025  COINBASE INC. DES:367DB87F ID:RTL-B8VALNY9 INDN:ALEX ZHANG CO ID:XXXXX00623 WEB       -2.00      1,236.53
+08/25/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 08/25/25                             -0.19      1,236.34
+08/26/2025  Lyft *Ride M 08/25 PURCHASE SAN FRANCISCO CA                                   -6.48      1,229.86
+08/26/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 08/26/25                             -0.52      1,229.34
+08/28/2025  LYFT *RIDE TUE 8AM 08/26 PURCHASE LYFT.COM CA                                 -76.93      1,152.41
+08/28/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 08/28/25                             -0.07      1,152.34
+08/29/2025  Mobile Banking payment to CRD 7191 Confirmation# pty53hop1                   -119.56      1,032.78
+08/29/2025  Zelle payment to PERSON_I Conf# jy454r691                                   -300.00        732.78
+09/02/2025  Google YouTube Videos 08/29 PURCHASE XXX-XX30000 CA                            -3.99        728.79
+09/02/2025  Google YouTube Videos 08/30 PURCHASE XXX-XX30000 CA                            -3.59        725.20
+09/02/2025  GOOGLE *CLOUD FNCXCK 09/01 PURCHASE g.co/helppay# CA                           -3.77        721.43
+09/02/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/02/25                             -0.65        720.78
+09/04/2025  Zelle payment to YI LUO Conf# k1n7d1tu2                                      -180.00        540.78
+09/04/2025  Zelle payment to YI LUO Conf# jwx3g7ych                                       -20.00        520.78
+09/05/2025  Lyft *Ride T 09/05 PURCHASE SAN FRANCISCO CA                                  -11.86        508.92
+09/05/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/05/25                             -0.14        508.78
+09/08/2025  Lyft *Ride T 09/05 PURCHASE SAN FRANCISCO CA                                  -11.26        497.52
+09/08/2025  OPENAI 09/07 PURCHASE OPENAI.COM CA                                           -10.89        486.63
+09/08/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/08/25                             -0.85        485.78
+09/10/2025  APPLE.COM/BILL 09/09 PURCHASE 866-712-7753 CA                                  -9.99        475.79
+09/10/2025  OPENAI *CHATGPT SUBSCR 09/09 PURCHASE OPENAI.COM CA                           -21.78        454.01
+09/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/10/25                             -0.23        453.78
+09/11/2025  Zelle payment to YIXING WANG Conf# nubfx8l33                                  -38.00        415.78
+09/15/2025  Zelle payment from PERSON_P Conf# xcf9jlizi                                  42.50        458.28
+09/15/2025  Zelle payment from MOWEI JIANG Conf# T0Z8WTLF7                                 32.00        490.28
+09/17/2025  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD    1,000.00      1,490.28
+09/17/2025  Google YouTube Videos 09/16 PURCHASE XXX-XX30000 CA                            -3.99      1,486.29
+09/17/2025  Zelle payment to Joy Conf# jmyk6iu5d                                       -1,400.00         86.29
+09/17/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/17/25                             -0.01         86.28
+09/18/2025  Lyft *Ride T 09/16 PURCHASE SAN FRANCISCO CA                                   -8.26         78.02
+09/18/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/18/25                             -0.74         77.28
+09/24/2025  BOOKSY 09/23 PURCHASE XXX-XX353553 IL                                         -45.00         32.28
+09/24/2025  Lyft *Ride W 09/24 PURCHASE SAN FRANCISCO CA                                  -13.66         18.62
+09/24/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/24/25                             -0.34         18.28
+09/25/2025  Lyft *Ride W 09/24 PURCHASE SAN FRANCISCO CA                                  -11.89          6.39
+09/25/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 09/25/25                             -0.11          6.28
+09/29/2025  Zelle payment from PERSON_M Conf# mnYogVMle                               3,000.00      3,006.28
+09/29/2025  Zelle payment to ANURAG BHAVSAR Conf# jgpl0phwd                               -30.00      2,976.28
+09/30/2025  VENMO* Chenyu 09/30 PMNT SENT Visa Direct NY                                  -25.00      2,951.28
+10/02/2025  GOOGLE *CLOUD XT83TQ 10/01 PURCHASE g.co/helppay# CA                           -6.01      2,945.27
+10/02/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/02/25                             -0.99      2,944.28
+10/03/2025  OPENAI 10/02 PURCHASE OPENAI.COM CA                                           -10.89      2,933.39
+10/03/2025  OPENAI 10/02 PURCHASE OPENAI.COM CA                                           -10.89      2,922.50
+10/03/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/03/25                             -0.22      2,922.28
+10/06/2025  Online Banking transfer from SAV 0366 Confirmation# XXXXX83494                 80.00      3,002.28
+10/06/2025  Online Banking transfer from SAV 0366 Confirmation# XXXXX80656                  0.80      3,003.08
+10/06/2025  Coinbase 10/04 PMNT SENT Oakland CA                                          -640.00      2,363.08
+10/06/2025  COINBASE INC. DES:0E87656C ID:RTL-XBDNQ4ZF INDN:ALEX ZHANG CO ID:XXXXX00623 WEB   -2,359.00          4.08
+10/07/2025  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD    1,500.00      1,504.08
+10/09/2025  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD    1,500.00      3,004.08
+10/09/2025  APPLE COM BILL 10/09 PURCHASE CUPERTINO CA                                     -9.99      2,994.09
+10/09/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/09/25                             -0.01      2,994.08
+10/10/2025  OPENAI *CHATGPT SUBSCR 10/09 PURCHASE OPENAI.COM CA                           -21.78      2,972.30
+10/10/2025  Zelle payment to Joy Conf# kx93g1l9k                                       -1,400.00      1,572.30
+10/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/10/25                             -0.22      1,572.08
+10/14/2025  OPENAI 10/12 PURCHASE OPENAI.COM CA                                           -10.89      1,561.19
+10/14/2025  OPENAI 10/13 PURCHASE OPENAI.COM CA                                            -6.53      1,554.66
+10/14/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/14/25                             -0.58      1,554.08
+10/15/2025  OPENAI 10/14 PURCHASE OPENAI.COM CA                                            -7.62      1,546.46
+10/15/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/15/25                             -0.38      1,546.08
+10/20/2025  Zelle payment from Person_M Conf# UVXOYH8M0                               3,000.00      4,546.08
+10/20/2025  Zelle payment from JIAYI ZHANG for "doppio"; Conf# 99brjkhes                   35.00      4,581.08
+10/23/2025  Zelle payment to Alex Zhang Conf# r0k72wmwh                                   -100.00      4,481.08
+10/27/2025  Zelle payment to RUTVIJ SEELAM Conf# ks08npz37                                -33.38      4,447.70
+10/27/2025  Zelle payment to ZHUOYAN WANG Conf# rg10i9fis                                -100.00      4,347.70
+10/27/2025  APPLECARD GSBANK DES:PAYMENT ID:74600446 INDN:Alex Zhang CO ID:XXXXX99999 WEB     -216.53      4,131.17
+10/30/2025  Google YouTube Videos 10/29 PURCHASE XXX-XX30000 CA                            -3.99      4,127.18
+10/30/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 10/30/25                             -0.01      4,127.17
+10/31/2025  Zelle payment to Alex Zhang Conf# q8fa49zio                                   -500.00      3,627.17
+10/31/2025  BANK OF JACKSON DES:EXT-TRAN ID:XXXXX26618 INDN:ALEX ZHANG CO ID:XXXXX4099 PPD     -100.00      3,527.17
+11/03/2025  Zelle payment from Person_M Conf# QCYI41B0D                               3,000.00      6,527.17
+11/03/2025  Google CLOUD DD98QX 11/01 PURCHASE XXX-XX30000 CA                              -7.34      6,519.83
+11/03/2025  COINBASE 11/02 PMNT SENT https://www.f CA                                      -2.00      6,517.83
+11/03/2025  Mobile Banking payment to CRD 7191 Confirmation# ylsb03zip                   -390.60      6,127.23
+11/03/2025  Zelle payment to GREENFIELD CAPITAL LLC Conf# ljohko2kw           -1,000.00      5,127.23
+11/03/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 11/03/25                             -0.66      5,126.57
+11/10/2025  APPLE.COM/BILL 11/09 PURCHASE 866-712-7753 CA                                  -9.99      5,116.58
+11/10/2025  OPENAI *CHATGPT SUBSCR 11/09 PURCHASE OPENAI.COM CA                           -21.78      5,094.80
+11/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 11/10/25                             -0.23      5,094.57
+11/13/2025  Zelle payment to Joy Conf# jkyzm30b4                                       -1,400.00      3,694.57
+11/19/2025  Mobile Banking payment to CRD 7191 Confirmation# 18llog3q9                   -924.27      2,770.30
+11/21/2025  Zelle payment from JIAYI ZHANG for "cross"; Conf# 99bvgbvqv                    60.00      2,830.30
+11/21/2025  Zelle payment to JIAYI ZHANG Conf# qeur0ult9                                  -60.00      2,770.30
+11/28/2025  Google YouTube Videos 11/27 PURCHASE XXX-XX30000 CA                            -3.99      2,766.31
+11/28/2025  Google YouTube Videos 11/26 PURCHASE XXX-XX30000 CA                            -3.99      2,762.32
+11/28/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 11/28/25                             -0.02      2,762.30
+12/01/2025  Zelle payment from Person_M Conf# HNCVIPGIP                               3,000.00      5,762.30
+12/01/2025  Zelle payment from Person_M Conf# 9SUVCVXP4                               2,000.00      7,762.30
+12/02/2025  GOOGLE *CLOUD J8T287 12/01 PURCHASE g.co/helppay# CA                           -4.65      7,757.65
+12/02/2025  APPLECARD GSBANK DES:PAYMENT ID:74600446 INDN:Alex Zhang CO ID:XXXXX99999 WEB     -133.24      7,624.41
+12/02/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 12/02/25                             -0.35      7,624.06
+12/05/2025  Zelle payment to QIANBI HE Conf# fubid8yqi                                   -200.00      7,424.06
+12/08/2025  Zelle payment to Joy Conf# j60yui1js                                       -1,400.00      6,024.06
+12/09/2025  APPLE COM BILL 12/09 PURCHASE CUPERTINO CA                                     -9.99      6,014.07
+12/09/2025  COINBASE INC. DES:742C1C10 ID:RTL-PRD727XD INDN:ALEX ZHANG CO ID:XXXXX00623 WEB     -463.00      5,551.07
+12/09/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 12/09/25                             -0.01      5,551.06
+12/10/2025  OPENAI *CHATGPT SUBSCR 12/09 PURCHASE OPENAI.COM CA                           -21.78      5,529.28
+12/10/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 12/10/25                             -0.22      5,529.06
+12/16/2025  OPENAI 12/15 PURCHASE OPENAI.COM CA                                           -10.89      5,518.17
+12/16/2025  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 12/16/25                             -0.11      5,518.06
+12/22/2025  Mobile Banking payment to CRD 7191 Confirmation# bnz5sq44l                   -263.33      5,254.73
+12/23/2025  GOOGLE *CLOUD Fx9H44 12/22 PURCHASE g.co/HelpPay# CA                         -100.00      5,154.73
+12/24/2025  Zelle payment from Person_M Conf# WABTNYKUA                               1,000.00      6,154.73
+01/02/2026  GOOGLE *CLOUD 8M4zXJ 01/01 PURCHASE g.co/HelpPay# CA                          -10.55      6,144.18
+01/02/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/02/26                             -0.45      6,143.73
+01/08/2026  SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID:XXXXX86224 PPD    5,000.00     11,143.73
+01/09/2026  APPLE COM BILL 01/09 PURCHASE CUPERTINO CA                                     -9.99     11,133.74
+01/09/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/09/26                             -0.01     11,133.73
+01/12/2026  OPENAI *CHATGPT SUBSCR 01/09 PURCHASE OPENAI.COM CA                           -21.78     11,111.95
+01/12/2026  Zelle payment to Joy Conf# rerr3lh3k                                       -1,400.00      9,711.95
+01/12/2026  TRANSFER ALEX ZHANG:Person_B Confirmation# XXXXX79091                     -6,750.00      2,961.95
+01/12/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/12/26                             -0.22      2,961.73
+01/13/2026  Mobile Banking payment to CRD 7191 Confirmation# 13xkvs4jg                   -170.44      2,791.29
+01/14/2026  PAYPAL *VUDU LLC 01/13 PURCHASE 402-935-7733 CA                                -3.99      2,787.30
+01/14/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/14/26                             -0.01      2,787.29
+01/16/2026  WELLS FARGO BA 01/16 #XXXXX6908 WITHDRWL WELLS FARGO BANK San Jose CA      -1,003.00      1,784.29
+01/16/2026  WELLS FARGO BA 01/16 #XXXXX6908 WITHDRWL WELLS FARGO BANK San Jose CA FEE       -2.50      1,781.79
+01/20/2026  OPENAI 01/16 PURCHASE OPENAI.COM CA                                           -10.89      1,770.90
+01/20/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/20/26                             -0.11      1,770.79
+01/26/2026  OPENAI 01/24 PURCHASE OPENAI.COM CA                                           -21.78      1,749.01
+01/26/2026  OPENAI *CHATGPT SUBSCR 01/25 PURCHASE OPENAI.COM CA                          -206.96      1,542.05
+01/26/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/26/26                             -0.26      1,541.79
+01/28/2026  Mobile Banking payment to CRD 7191 Confirmation# ih8s6nsp4                    -96.95      1,444.84
+01/30/2026  OPENROUTER, INC 01/29 PURCHASE OPENROUTER.AI NY                               -10.80      1,434.04
+01/30/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 01/30/26                             -0.20      1,433.84
+02/02/2026  OPENROUTER, INC 01/30 PURCHASE OPENROUTER.AI NY                               -10.80      1,423.04
+02/02/2026  GOOGLE *CLOUD WG3C76 02/01 PURCHASE g.co/HelpPay# CA                          -13.00      1,410.04
+02/02/2026  Zelle payment to CHIBUZO EZEOKOLI Conf# mykjpr6ru                             -45.00      1,365.04
+02/02/2026  APPLECARD GSBANK DES:PAYMENT ID:74600446 INDN:Alex Zhang CO ID:XXXXX99999 WEB      -66.62      1,298.42
+02/02/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 02/02/26                             -0.20      1,298.22
+02/03/2026  Zelle payment from ALEX ZHANG Conf# 1ebcMjqPn                                  500.00      1,798.22
+02/03/2026  Zelle payment to JONAS KIANLAM TAN Conf# n8u05yars                            -10.00      1,788.22
+02/04/2026  VENMO DES:PAYMENT ID:XXXXX49643044 INDN:ALEX ZHANG CO ID:XXXXX81992 WEB        -20.00      1,768.22
+02/05/2026  Zelle payment to MT LAW LLC for "1 hour consulting fee"; Conf# pylhnkrll     -300.00      1,468.22
+02/10/2026  APPLE.COM/BILL 02/09 PURCHASE 866-712-7753 CA                                  -9.99      1,458.23
+02/10/2026  KEEP THE CHANGE TRANSFER TO ACCT 0001 FOR 02/10/26                             -0.01      1,458.22

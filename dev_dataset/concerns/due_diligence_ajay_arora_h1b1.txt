@@ -1,0 +1,982 @@
+================================================================================
+COMPREHENSIVE DUE DILIGENCE REPORT
+AJAY K. ARORA, ATTORNEY-AT-LAW, P.C. / h1b1.com
+================================================================================
+Date:           February 26, 2026
+Purpose:        Evaluate retention for FY2027 H-1B registration filing
+Deadline:       March 4, 2026 (USCIS registration window opens)
+Compiled by:    AI research assistant (Claude)
+Prior research: concerns/due_diligence_immigration_firms.txt (Feb 12-13, 2026)
+Consultation:   Conducted Feb 16, 2026 ($98 paid via Helcim)
+
+================================================================================
+OVERALL SCORE: 6.5 / 10 (FOR REGISTRATION ONLY)
+              5.0 / 10 (FOR FULL PETITION ENGAGEMENT)
+================================================================================
+
+  Justification: Arora is a legitimate, experienced, clean-record immigration
+  attorney who is competent for mechanical H-1B registration. His 32+ years
+  of exclusive immigration practice, AILA membership since 1995, zero
+  disciplinary history, and published fee transparency are genuine strengths.
+  However, the live consultation on Feb 16 revealed substantive weaknesses:
+  failed the STEM OPT expertise test, communication style requires excessive
+  redirection, and initial entity recommendation was reversed when challenged.
+  For registration-only ($663), these weaknesses are largely irrelevant —
+  registration is data entry. For a full petition requiring legal strategy
+  on a complex owner-beneficiary case with compliance concerns, a more
+  specialized attorney is advisable.
+
+================================================================================
+1. BAR ADMISSION & DISCIPLINARY RECORD
+================================================================================
+
+  ATTORNEY:       Ajay Kumar Arora
+  FULL NAME:      Ajay Kumar Arora (per Justia directory)
+  NY OCA ID:      2600310 (per prior research; verify at link below)
+  BAR ADMISSION:  New York State, approximately 1993
+  STATUS:         ACTIVE — in good standing
+  VERIFY:         https://iapps.courts.state.ny.us/attorney/AttorneySearch
+                  (search "Ajay Kumar Arora")
+
+  OTHER BARS SEARCHED:
+    New Jersey:       NOT FOUND
+    Pennsylvania:     NOT FOUND (attended Temple Law in PA but no PA bar)
+    California:       NOT FOUND
+    Connecticut:      NOT FOUND
+
+  NOTE: Immigration law is exclusively federal. A single state bar admission
+  is legally sufficient to practice immigration law nationwide before USCIS,
+  EOIR (immigration courts), and federal appellate courts. The lack of
+  additional state bars is NOT a concern for immigration practice.
+
+  DISCIPLINARY RECORD:
+    NY Attorney Grievance Committee:   NO RECORD FOUND
+    Avvo (disciplinary flag):          NONE
+    Justia directory:                  NONE
+    FindLaw directory:                 NONE
+    AILA directory:                    Listed, no flags
+    Federal courts (PACER search):     No disciplinary actions found
+
+  RELATED COURT CASES (name disambiguation):
+    "United States v. A & P Arora, Ltd., and Ajay Arora"
+      → 46 F.3d 1152 (10th Cir. 1995)
+      → DIFFERENT PERSON: Oklahoma/Kansas civil case re HUD housing project
+      → NOT the NYC immigration attorney
+    "Arora v. Honolulu Star-Advertiser" (D. Hawaii 2023)
+      → DIFFERENT PERSON: Hawaii defamation case
+      → NOT the NYC immigration attorney
+    "Defebo v. Arora" (Luzerne County PA)
+      → DIFFERENT PERSON: confirmed not related
+
+  VERDICT: CLEAN RECORD — Zero disciplinary actions, zero malpractice
+  suits, zero complaints found in any public database across 32+ years
+  of practice. This is genuinely strong.
+
+  Sources:
+    - https://lawyers.justia.com/lawyer/ajay-kumar-arora-1220993
+    - https://www.avvo.com/attorneys/10001-ny-ajay-arora-923573.html
+    - https://www.ailalawyer.com/english/AttorneyDetail.aspx?P=4530&A=61529
+    - https://lawyers.findlaw.com/profile/view/1054037_1
+    - https://law.justia.com/cases/federal/appellate-courts/F3/46/1152/591874/
+
+================================================================================
+2. FIRM STRUCTURE & LEGAL ENTITY
+================================================================================
+
+  LEGAL NAME:     Ajay K. Arora, Attorney-at-Law, P.C.
+  ALSO KNOWN AS:  The Law Offices of Ajay K. Arora
+  ENTITY TYPE:    Professional Corporation (P.C.)
+                  → This IS a law firm, NOT a consulting company
+                  → P.C. entities require a licensed attorney as principal
+                  → Subject to NY Rules of Professional Conduct
+  WEBSITE:        https://www.h1b1.com
+  ADDRESS:        1270 Broadway, Suite 510, New York, NY 10001
+  PHONE:          (212) 268-3580
+  EMAIL:          info@h1b1.com
+  ESTABLISHED:    ~1993 (approximately 33 years of operation)
+
+  OFFICE BUILDING VERIFICATION:
+    1270 Broadway (also known as the Wilson Building):
+      - Built: 1912
+      - Stories: 12
+      - Total area: 117,650 sq ft
+      - Location: Midtown South, Manhattan (Herald Square area)
+      - Type: Commercial office building (NOT a virtual office building)
+      - Assessed value: ~$26 million
+      - Multiple commercial tenants
+      - Available suites listed on OptimalSpaces, SquareFoot, LoopNet
+      - Suite 510 is a dedicated commercial suite (not WeWork/Regus)
+
+    ASSESSMENT: This is a real, commercial office in a legitimate midtown
+    Manhattan building. Not a virtual office, mailbox, or co-working address.
+    The 212 area code phone number is consistent with a Manhattan office.
+
+  Sources:
+    - https://www.squarefoot.com/building/ny/new-york/1270-broadway/
+    - https://www.propertyshark.com/mason/Property/12747/1270-Broadway-New-York-NY-10001/
+    - https://www.commercialcafe.com/commercial-property/us/ny/new-york/1270-broadway/
+    - https://www.loopnet.com/Listing/1270-Broadway-New-York-NY/26040721/
+    - https://www.h1b1.com/contact-us/
+
+  FIRM SIZE:
+    Attorneys:      1 (Ajay K. Arora — sole practitioner)
+    Associates:     NONE confirmed
+    Of Counsel:     NONE confirmed
+    Support Staff:  Unknown count, but:
+                    - Client reviews reference "the team" as friendly/helpful
+                    - Firm is currently hiring a Business Immigration Paralegal
+                      (part-time or full-time, flexible schedule, on-site only)
+                    - ZoomInfo estimates 1-10 total employees
+    Estimated:      2-5 total (1 attorney + 1-4 support staff)
+
+  HIRING STATUS (as of Feb 2026):
+    Actively seeking: Business Immigration Paralegal
+    Requirements:     2+ years recent paralegal experience
+    Employment:       Part-time or full-time with flexible scheduling
+    Work mode:        On-site only (confirms real office)
+    Contact:          info@h1b1.com
+
+    WHAT THIS TELLS US: The firm is expanding capacity. Hiring for experienced
+    paralegals (not entry-level) suggests immediate workload demands. This
+    could indicate healthy business OR could indicate prior paralegal left
+    and firm is understaffed. Either way, during the transition period,
+    support quality may be affected.
+
+  Sources:
+    - https://www.h1b1.com/firm-profile/
+    - https://www.h1b1.com/help-wanted/
+
+================================================================================
+3. ONLINE PRESENCE & REVIEWS
+================================================================================
+
+  ┌────────────────────────┬────────────────────────────────────────────────┐
+  │ Platform               │ Rating / Status                               │
+  ├────────────────────────┼────────────────────────────────────────────────┤
+  │ Avvo                   │ 8.3 / 10                                      │
+  │                        │ 117 reviews: 111 five-star (94.9%),           │
+  │                        │ 5 four-star (4.3%), 1 one-star (0.9%)         │
+  │                        │ Clients' Choice Award 2014                    │
+  │                        │ Peer endorsements on record                   │
+  │ Google Maps            │ No reviews found (no Google Business listing) │
+  │ Yelp                   │ Listing exists (updated Sept 2025)            │
+  │                        │ No visible public reviews (Yelp may filter)   │
+  │ Trustpilot             │ No profile found                              │
+  │ BBB                    │ No profile found                              │
+  │ Martindale-Hubbell     │ No rating found                               │
+  │ Super Lawyers          │ No listing found                              │
+  │ Reddit (r/immigration) │ ZERO mentions                                 │
+  │ Reddit (r/h1b)         │ ZERO mentions                                 │
+  │ Reddit (r/USCIS)       │ ZERO mentions                                 │
+  │ VisaJourney            │ ZERO mentions                                 │
+  │ Trackitt               │ ZERO mentions                                 │
+  │ ImmiHelp               │ ZERO mentions                                 │
+  │ TeamBlind              │ ZERO mentions                                 │
+  │ LinkedIn               │ Profile exists (linkedin.com/in/ajay-k-arora- │
+  │                        │ 6067449/) — minimal public info               │
+  │ AILA Directory         │ Listed, member since 1995                     │
+  │ FindLaw                │ Profile exists                                │
+  │ Justia                 │ Profile exists                                │
+  └────────────────────────┴────────────────────────────────────────────────┘
+
+  AVVO REVIEW ANALYSIS (PRIMARY REVIEW SOURCE):
+
+    Positive Review Themes (111 five-star reviews):
+      - "Very knowledgeable and goes above and beyond for his clients"
+      - "Remarkable efficiency in handling the case, especially on tight timeline"
+      - "H1B was approved even earlier than I expected"
+      - "Replied to email for all queries within a day"
+      - "Green card obtained in 4.5 months"
+      - "Friendly, patient support team"
+      - "Much faster in filing to USCIS"
+      - "Highly professional and knowledgeable"
+      - "No confusion — everything explained clearly"
+
+    Peer Endorsements (Avvo):
+      - "An unending fount of knowledge in all areas of Immigration Law"
+      - "Strategic advice and creative solutions"
+
+    Negative Reviews (1 one-star):
+      - Content not extractable (Avvo blocks scraping of individual reviews)
+      - With only 1 negative review out of 117, insufficient data to
+        identify patterns from negative reviews
+
+  ASSESSMENT OF ONLINE PRESENCE:
+
+    STRENGTHS:
+    - 94.9% five-star rate on Avvo is strong
+    - Peer endorsements add credibility
+    - Clients' Choice Award (though from 2014) is legitimate
+    - Consistent themes: responsive, knowledgeable, fast processing
+
+    CONCERNS:
+    - COMPLETE ABSENCE from all independent immigration forums (Reddit,
+      VisaJourney, Trackitt, ImmiHelp, TeamBlind) — over 32 years, not
+      a single mention anywhere. This is highly unusual.
+    - No Google Maps listing / no Google reviews — a significant gap for
+      a business in 2026. Most clients check Google first.
+    - No Yelp reviews visible (listing exists but no public reviews)
+    - No BBB profile — no third-party accountability mechanism
+    - No Martindale-Hubbell rating — no peer-reviewed legal rating
+    - No Super Lawyers listing — not recognized by this service
+    - 117 Avvo reviews over 32+ years = ~3.7 reviews per year — modest
+      volume for a multi-decade practice
+
+    INTERPRETATION:
+    The absence from forums can be read two ways:
+      (a) POSITIVE: No dissatisfied clients posting complaints anywhere
+      (b) NEUTRAL: Modest case volume + client demographic unlikely to
+          use English-language forums (many immigration clients don't
+          post on Reddit/VisaJourney)
+    The lack of Google presence is more concerning in 2026, as it means
+    no independent verification channel outside Avvo.
+
+  Sources:
+    - https://www.avvo.com/attorneys/10001-ny-ajay-arora-923573.html
+    - https://www.yelp.com/biz/ajay-k-arora-attorney-at-law-p-c-new-york
+    - https://www.linkedin.com/in/ajay-k-arora-6067449/
+    - https://www.ailalawyer.com/english/AttorneyDetail.aspx?P=4530&A=61529
+
+================================================================================
+4. PROFESSIONAL BACKGROUND
+================================================================================
+
+  EDUCATION:
+    Undergraduate:    Pennsylvania State University
+                      University of Wales at Swansea, U.K.
+    Law School:       Temple University School of Law, Philadelphia, PA
+    Degree:           Juris Doctor (J.D.), 1993
+    ABA Accredited:   YES — Temple Law is a fully ABA-accredited law school
+                      (Ranked ~50-60 nationally by US News)
+
+  CAREER TIMELINE:
+    1993:             J.D. from Temple Law; began practicing immigration law
+    1995:             Joined AILA (American Immigration Lawyers Association)
+    ~1995:            Established own practice (P.C.)
+    Ongoing:          Immigration columnist for Asia Online
+                      Contributed articles to News India-Times
+    2014:             Avvo Clients' Choice Award
+    2016:             AILA member badge displayed on Avvo
+    2026:             32+ years of continuous immigration law practice
+
+  PROFESSIONAL MEMBERSHIPS:
+    AILA:             Member since 1995 (31 years continuous)
+                      Source: AILA directory listing
+
+  AWARDS & RECOGNITION:
+    Avvo Clients' Choice Award:     2014
+    Super Lawyers:                  NOT LISTED
+    Best Lawyers in America:        NOT LISTED
+    Martindale-Hubbell Rating:      NOT RATED
+    Chambers USA:                   NOT LISTED
+    ABIL:                           NOT A MEMBER (invite-only group)
+
+  PUBLICATIONS & MEDIA:
+    - Immigration columnist for Asia Online (publication period unknown)
+    - Contributed articles to News India-Times
+    - No books published
+    - No speaking engagements found
+    - No podcast or radio appearances found
+    - No law review articles found
+    - Website has extensive educational content on H-1B, immigration topics
+
+  PERSONAL IMMIGRATION EXPERIENCE:
+    Per firm website: "Having gone through the various steps of U.S.
+    Immigration personally, Mr. Arora is familiar with issues faced by
+    newly arrived immigrants and non-immigrants."
+    → Arora is himself an immigrant, adding firsthand experience dimension
+
+  COMPARISON TO OTHER ATTORNEYS CONSIDERED:
+    ┌───────────────┬──────────┬────────────┬───────────────┬──────────────┐
+    │ Attorney      │ Yrs Exp  │ Avvo       │ Super Lawyers │ AILA Role    │
+    ├───────────────┼──────────┼────────────┼───────────────┼──────────────┤
+    │ Arora         │ 32+      │ 8.3        │ No            │ Member       │
+    │ Mehta         │ 30+      │ N/A        │ Yes           │ Fmr Chair YL │
+    │ Alcorn        │ 15+      │ N/A        │ Yes           │ N/A          │
+    │ Nachman (NPZ) │ 37       │ 10.0       │ Yes           │ Fmr NJ Chair │
+    │ Kerosky (K&G) │ 40+      │ 10.0 (peer)│ 18 yrs        │ N/A          │
+    │ Shah Peerally │ 22       │ 10.0       │ Rising Star   │ Member       │
+    │ Xu (Toni)     │ 6        │ N/A        │ Rising Star   │ N/A          │
+    └───────────────┴──────────┴────────────┴───────────────┴──────────────┘
+
+    Arora's 8.3 Avvo is notably lower than 10.0 ratings for Nachman,
+    Kerosky, and Shah Peerally. However, Avvo ratings are partly
+    algorithmic and influenced by profile completeness, endorsements
+    claimed, and reviews. 8.3 is still "Superb" category on Avvo.
+
+  Sources:
+    - https://www.h1b1.com/firm-profile/
+    - https://www.ailalawyer.com/english/AttorneyDetail.aspx?P=4530&A=61529
+    - https://www.avvo.com/attorneys/10001-ny-ajay-arora-923573.html
+
+================================================================================
+5. h1b1.com WEBSITE ANALYSIS
+================================================================================
+
+  DOMAIN REGISTRATION:
+    Domain:           h1b1.com
+    Registered:       November 5, 1999 (26+ YEARS OLD)
+    Registrar:        Tucows Domains Inc.
+    Expiry:           November 5, 2025 (NOTE: may need renewal check)
+    Last Updated:     October 22, 2024
+    Hosting:          Liquid Web, L.L.C (Lansing, Michigan)
+    IP:               159.135.17.59
+    Name Servers:     ns.liquidweb.com, ns1.liquidweb.com
+    SSL:              Sectigo Limited (expired Sept 17, 2022 per webrate —
+                      may have been renewed; site loads via HTTPS currently)
+
+    DOMAIN AGE SIGNIFICANCE: Registered in 1999 — 26+ years. This predates
+    almost all H-1B-related domain registrations. It demonstrates long-term
+    commitment to the domain and practice. NOT a recently created website.
+
+  SAFETY RATINGS:
+    Norton ConnectSafe:   SAFE
+    Google Safe Browsing: SAFE (no malware, phishing, unwanted software)
+    McAfee Site Advisor:  SAFE
+
+  WEBSITE CONTENT ANALYSIS:
+    - Clearly identifies as: "Ajay K. Arora, Attorney-at-Law, P.C."
+      → Unambiguously a law firm, not a consulting company
+    - Tagline: "USA Immigration Explained" — educational positioning
+    - Homepage prominently features H-1B services as primary practice area
+    - 40+ practice area pages covering all major immigration categories
+    - ALL fees published transparently on dedicated page (RARE for law firms)
+    - No guaranteed results language — appropriately cautious:
+      "USCIS will review the petition and send an approval notice if it
+      is satisfied that all conditions for approval are met"
+    - AILA badge (2016) and Avvo badge displayed
+    - No blog / no recent content updates visible
+    - No client testimonials on the website itself (reviews are on Avvo)
+    - Website design appears dated (early-2010s aesthetic)
+    - Mobile usability: 100% (per webrate)
+    - Desktop speed: 83% / Mobile speed: 70%
+
+  DEDICATED OWNER-BENEFICIARY H-1B PAGE:
+    URL: https://www.h1b1.com/practices/self-employment-sponsorship-
+         50percentplus-beneficiary-ownership-modernization/
+    Content covers:
+      - H-1B Modernization Rule (effective Jan 17, 2025)
+      - 50%+ beneficiary ownership is now permitted
+      - Entity types acceptable (LLC, S-Corp, C-Corp — NOT sole proprietorship)
+      - EIN requirement
+      - 18-month validity limitation for owner-beneficiary petitions
+      - "Projected figures may be used" for startup revenue
+      - Duty time allocation (majority on specialty occupation duties)
+      - Documentation strategy recommendations
+
+    ASSESSMENT: This is the MOST DETAILED published guidance on owner-
+    beneficiary H-1B found among all firms researched. Only Cyrus Mehta
+    has comparable published depth (via blog posts). This dedicated page
+    strongly suggests Arora has handled or is actively marketing to handle
+    this type of case.
+
+  RED FLAGS IN WEBSITE:
+    1. SSL certificate was expired as of Sept 2022 per webrate.org check
+       (may since be renewed — site loads HTTPS currently). Suggests
+       possible IT maintenance gaps.
+    2. Domain expiry November 5, 2025 — needs renewal if not already done.
+       If it lapsed, that would be a significant infrastructure concern.
+    3. Website design is dated — not necessarily a legal quality issue,
+       but contrasts with modern firms' online presence.
+    4. No blog or recent content updates — website appears static.
+    5. "Help Wanted" page seeking paralegal — could indicate understaffing.
+
+  GREEN FLAGS IN WEBSITE:
+    1. Full fee transparency — ALL fees published (consultation, registration,
+       petition, RFE, government fees). This is EXTREMELY RARE among
+       immigration law firms. Of all 8+ firms researched, only Arora and
+       MT Law (now withdrawn) published complete fee schedules.
+    2. No guarantee language — appropriately conservative marketing
+    3. Clear law firm identification — no ambiguity about entity type
+    4. 26-year-old domain — not a fly-by-night operation
+    5. Dedicated Modernization Rule page — current legal developments
+    6. 40+ practice area pages — comprehensive coverage
+    7. "About one-third of our caseload is from individuals or companies
+       dissatisfied with their current immigration service provider"
+       → Positions as a "fix it" attorney for mishandled cases
+
+  Sources:
+    - https://www.h1b1.com/
+    - https://www.h1b1.com/firm-profile/
+    - https://www.h1b1.com/immigration-law-services-fees/
+    - https://www.h1b1.com/practices/self-employment-sponsorship-50percentplus-beneficiary-ownership-modernization/
+    - https://www.h1b1.com/practices/electronic-registration/
+    - https://www.h1b1.com/help-wanted/
+    - https://webrate.org/site/h1b1.com/
+
+================================================================================
+6. FEE STRUCTURE — COMPLETE BREAKDOWN
+================================================================================
+
+  ALL FEES PUBLISHED ON WEBSITE (verified Feb 26, 2026):
+
+  ── CONSULTATION ─────────────────────────────────────────────────────────
+  15-minute mini-consultation (phone):    $98
+  30-minute consultation (phone):         $195
+  Free initial case evaluation (online):  $0 (general overview only)
+  NOTE: Consultation fee creditable toward legal fee if retained within
+  30 days.
+
+  ── H-1B REGISTRATION ───────────────────────────────────────────────────
+  Legal fee + USCIS $168 fee:             $663 (all-inclusive)
+  Attorney legal portion:                 $495
+
+  ── H-1B PETITION (if selected) ─────────────────────────────────────────
+  Legal fee:                              $2,730
+    Payment structure:
+      $1,560 deposit to commence work
+      $1,170 balance due upon signing petition
+  NOTE: Attorney assumes "personal responsibility as attorney-on-record"
+
+  ── RFE / NOID RESPONSE ─────────────────────────────────────────────────
+  Standard RFE response:                  $780 - $1,170
+
+  ── USCIS GOVERNMENT FEES (on top of legal fees) ────────────────────────
+  I-129 Filing Fee:          $359 (<26 employees) / $608 (26+ employees)
+  ACWIA Training Fee:        $585 (<26 employees) / $1,170 (26+ employees)
+  Fraud Detection Fee:       $390
+  Asylum Program Fee:        $234 (<26 employees) / $468 (26+ employees)
+  Premium Processing:        $2,313 (optional, 15 business day adjudication)
+
+  ── TOTAL COST ESTIMATE (employer with <26 employees) ───────────────────
+                                 Without Premium    With Premium
+  Legal fees:
+    Registration:                $663               $663
+    Petition:                    $2,730             $2,730
+    Legal subtotal:              $3,393             $3,393
+  Government fees:
+    At registration:             (included in $663)  (included in $663)
+    At petition:                 $1,568             $1,568
+    Premium processing:          —                  $2,313
+    Gov't subtotal:              $1,568             $3,880
+  ─────────────────────────────────────────────────────────────────────
+  GRAND TOTAL:                   $4,961             $7,274
+
+  ── MARKET COMPARISON ───────────────────────────────────────────────────
+  Registration-only cost comparison:
+    Murthy:           $558  ($390 legal + $168 USCIS)
+    Arora:            $663  ($495 legal + $168 USCIS included)
+    Shah Peerally:    $714  ($546 legal + $168 USCIS)
+    VisaNation:       $753  ($585 legal + $168 USCIS)
+
+  Full engagement cost comparison:
+    Murthy:           $3,568 (reg LRA) / $3,958 (full)
+    Manifest:         $4,466
+    Alcorn:           $4,466+
+    Arora:            $4,793 (NOTE: Arora's $663 includes $168 so gov't
+                      at petition is $1,568 not $1,736)
+    Hibee:            $4,856
+    Shah Peerally:    $5,012
+    Mehta/Box:        $5,246 (DECLINED CASE)
+
+  ASSESSMENT: Arora's $663 registration fee is in the mid-range:
+  $105 more than Murthy, $51 less than Peerally. The $495 legal
+  component for registration is reasonable. Full engagement at $4,793
+  all-in is competitive for NYC.
+
+  $663 for registration is NOT unusually low — it is market-standard.
+  Murthy charges $558 for registration-only. The legal component ($495)
+  for what is essentially 15-30 minutes of data entry + SOC/wage level
+  selection is actually premium, but includes attorney review of the
+  registration details which has value.
+
+  Sources:
+    - https://www.h1b1.com/immigration-law-services-fees/
+    - https://www.immi-usa.com/h1b-visa-application-filing-fees/
+    - https://www.upcounsel.com/h1b-attorney-cost
+
+================================================================================
+7. CASE HISTORY / TRACK RECORD
+================================================================================
+
+  ── DOL LCA DATA (GuestWorkerVisas.com — independent, not self-claimed) ─
+  Total LCA Filings:     84
+  Certified:             80 (95.2%)
+  Denied:                0 (0%)
+  Withdrawn:             4 (4.8%)
+
+  Top Employers:
+    - Automated Building Management Systems, Inc. (10+ filings)
+    - Prime Labs LLC (4 filings)
+    - Pisgah Laboratories Inc. (3 filings)
+    - Bestex Research Group LLC (3 filings)
+    - Demyst Data Ltd.
+    - Outfit Technologies Inc.
+    - MW Advisory Referrals LLC
+
+  Salary Range:
+    Lowest:  $21/hour (Client Services Associate)
+    Highest: $206,700/year (Senior Engineer Manager)
+    Typical: $54,600 - $93,600
+
+  Job Categories:
+    Engineering (software, mechanical, electrical, civil)
+    Technical (data scientist, analyst, developer)
+    Management/supervisory roles
+    Healthcare/dental positions
+    Accounting and finance roles
+    Research (chemist, researcher)
+
+  Geographic Distribution:
+    Primary: New York, New Jersey
+    Secondary: Connecticut, Texas, California, North Carolina,
+               Pennsylvania, Florida, Illinois
+
+  CRITICAL CAVEATS:
+    1. These are LCA certifications (DOL), NOT H-1B petition approvals (USCIS)
+    2. LCA certification is near-automatic (~93%+ system-wide) — it is a
+       completeness check, not a merit review
+    3. Actual USCIS H-1B petition approval rate is UNKNOWN and not publicly
+       available for ANY individual attorney
+    4. 84 total LCAs over a 32-year career suggests MODEST case volume
+       (~2.6 per year average — though filing patterns may be concentrated
+       in recent years)
+    5. Arora does NOT claim any approval statistics on his website
+       (commendably honest — many firms inflate these numbers)
+
+  ── USCIS AAO (Administrative Appeals Office) CASES ─────────────────────
+  Published AAO decisions involving Arora:  NONE FOUND
+  This is neither positive nor negative — most routine H-1B work does
+  not generate published AAO decisions.
+
+  ── FEDERAL COURT CASES (PACER) ─────────────────────────────────────────
+  Cases involving this Ajay Arora as attorney: NONE FOUND
+  Cases involving this Ajay Arora as party:    NONE FOUND
+  (Confirmed: "A & P Arora" 10th Circuit case is DIFFERENT person)
+
+  ── BUSINESS OWNER H-1B EXPERTISE ──────────────────────────────────────
+  EVIDENCE FOR:
+    + Dedicated website page on self-employment/50%+ ownership H-1B
+    + Content covers Modernization Rule (Jan 2025) in detail
+    + Correctly explains LLC/S-Corp/C-Corp options
+    + Correctly notes sole proprietorships don't qualify
+    + Correctly explains 18-month validity limitation
+    + FAQ section addresses "paper company" concerns
+    + During consultation, correctly stated Modernization Rule
+      eliminates owner-beneficiary barrier
+    + Recommended "passive investor" structure (conservative, correct)
+
+  EVIDENCE AGAINST:
+    + No published case studies of successful owner H-1B petitions
+    + No testimonials mentioning owner-beneficiary cases specifically
+    + LCA data shows filings for various EMPLOYERS (not self-petitioners)
+    + Cannot independently verify he has ACTUALLY filed an owner-beneficiary
+      petition under the Modernization Rule (which only took effect Jan 2025)
+
+  ASSESSMENT: Arora clearly understands the Modernization Rule and has
+  published the most detailed guidance of any firm researched. However,
+  the rule is only 13 months old — it is unknown whether he has actually
+  filed and won a case under these new rules. Compare: Sophie Alcorn
+  has a PUBLISHED WIN (H-1B approved in 6 days for 100% sole founder CEO).
+
+  Sources:
+    - https://guestworkervisas.com/attorney_cases.php?first=AJAY&last=ARORA
+    - https://www.h1b1.com/practices/self-employment-sponsorship-50percentplus-beneficiary-ownership-modernization/
+    - https://www.h1b1.com/practices/h-1b-faqs/
+    - https://www.uscis.gov/administrative-appeals/aao-decisions
+
+================================================================================
+8. FIRST-HAND CONSULTATION EVALUATION (February 16, 2026)
+================================================================================
+
+  This section is based on a 21-minute paid consultation ($98) with
+  Ajay Arora on February 16, 2026. Full transcript available in:
+  /Users/devuser/accounting/outgoing/h1b_arora_021326/consultation_transcript_021626.txt
+
+  ── QUESTION 1: Entity Choice (BSGC LLC vs Pacific River Capital) ─────────────
+
+  ASKED:    Which entity should petition — BSGC (SMLLC, sole member) or
+            Pacific River Capital (C-Corp, mother as president)?
+  ANSWER:   Initially recommended Pacific River Capital. When pressed for
+            reasoning, walked it back to "It doesn't matter."
+  CORRECT:  The final answer was correct — under the Modernization Rule,
+            entity type does not matter. However, initial recommendation
+            lacked reasoning and was reversed when challenged.
+
+  KEY POINTS CORRECTLY STATED:
+    + Under Modernization Rules, 100% ownership is no longer a barrier
+    + USCIS does not restrict entity type (LLC vs C-Corp)
+    + No need for independent board of directors
+    + Recommended (not required) someone else sign petition
+    + Entity choice should be based on tax considerations
+    + Company docs not normally attached to H-1B petition
+    + Family investment company structure is fine
+    + "Financial Specialist" is a good job title
+    + Can register BOTH entities ($663 each)
+
+  COMMUNICATION ISSUE: Had to ask the entity question THREE TIMES before
+  getting a direct answer. Arora diverged into tangential topics
+  (multiple registrations, job titles, duty descriptions) before
+  directly addressing the BSGC vs Yangtze comparison.
+
+  ── QUESTION 2: STEM OPT Compliance (THE EXPERTISE TEST) ───────────────
+
+  ASKED:    LLC had ongoing activity during STEM OPT period when only
+            Tiger Cloud was authorized employer. What is the risk?
+  ANSWER:   DEFLECTED / DISMISSED
+
+  SPECIFIC RESPONSES:
+    - "We don't have an opinion on how you maintain your, you know,
+       comply with STEM OPT guidelines when you have STEM OPT."
+    - Suggested treating the gap as "unemployment" (150-day tolerance)
+    - "Unlikely to be an RFE" because currently on F-1 CPT, not OPT
+    - Did not engage with the substance of the question
+
+  WHAT A GOOD ATTORNEY SHOULD HAVE DONE (and Arora did NOT do):
+    x Did NOT distinguish regular OPT vs STEM OPT self-employment rules
+    x Did NOT ask follow-up questions about nature of LLC activity
+    x Did NOT discuss passive investment vs "employment" under 8 CFR 214.2(f)
+    x Did NOT address discoverability risk (Schedule C vs SEVIS)
+    x Did NOT discuss INA 212(a)(6)(C)(i) misrepresentation risk
+    x Did NOT recommend a disclosure/non-disclosure strategy
+    x Explicitly refused to engage: "we don't have an opinion"
+    x Said "unlikely to be an RFE" without substantive analysis
+
+  COMPARISON:
+    Kaitlyn Box (Mehta & Partners) — NAILED the STEM OPT issue, raised
+    the $78K fee exemption for COS, and ultimately the firm declined
+    the case because of the complexity — showing they actually understood
+    the risks.
+    Sophie Alcorn — substantively addressed STEM OPT via email, raised
+    the $78K fee issue.
+    Anna Stepanova (Murthy) — engaged with STEM OPT but failed on
+    Modernization Rule.
+    Arora — refused to engage with STEM OPT at all.
+
+  ── COMMUNICATION STYLE ────────────────────────────────────────────────
+
+  PATTERN: Consistently diverged from direct questions into tangential topics.
+
+  Documented instances from the 21-minute call:
+    [01:46] Asked which entity → talked about multiple registrations
+    [11:46] Asked why Yangtze over SMLLC → talked about job titles
+    [13:40] Had to explicitly say "Let's don't diverge. Like, let's
+            answer one question, one by one." to redirect
+    [14:11] Asked SAME entity question a THIRD time before getting answer
+    [17:15] Tried to raise STEM OPT → Arora cut off mid-sentence
+    [17:37] Re-raised STEM OPT a second time → dismissed with "no opinion"
+
+  INTERPRETATION: Could indicate:
+    (a) Billing optimization — tangents consume paid consultation time
+    (b) Liability avoidance — refusing specific opinions before retention
+    (c) Lack of depth on STEM OPT compliance specifically
+    (d) General communication style (verbose, not concise)
+
+  ── OVERALL CONSULTATION VERDICT ───────────────────────────────────────
+
+  PASS: Entity choice question (correct final answer, correct on
+        Modernization Rule, correct on entity type irrelevance)
+  FAIL: STEM OPT compliance question (refused to engage, no analysis,
+        no follow-up questions, "we don't have an opinion")
+  FAIL: Communication efficiency (required excessive redirection,
+        tangential answers, same question asked 3 times)
+
+  SOURCE: Full evaluation in:
+    /Users/devuser/accounting/outgoing/h1b_arora_021326/consultation_evaluation_021626.txt
+
+================================================================================
+9. RED FLAGS — COMPREHENSIVE ANALYSIS
+================================================================================
+
+  1. FAILED STEM OPT EXPERTISE TEST (CRITICAL)
+     During the paid consultation, Arora explicitly refused to engage
+     with the most important compliance question. "We don't have an
+     opinion" is a disqualifying statement for a full petition engagement
+     where STEM OPT compliance is a central issue.
+     SEVERITY: HIGH (for petition) / LOW (for registration only)
+
+  2. SOLO PRACTITIONER — SINGLE POINT OF FAILURE
+     Arora is the sole licensed attorney. No associates, no of counsel,
+     no partner. If he is sick, on vacation, has a family emergency, or
+     is simply overloaded during peak H-1B season (March-June), there
+     is no backup attorney. Currently hiring a paralegal, which may
+     indicate capacity strain.
+     SEVERITY: MODERATE
+
+  3. COMMUNICATION STYLE — TANGENTIAL AND VERBOSE
+     The consultation required asking the same question three times and
+     explicitly redirecting the conversation. This pattern wastes paid
+     time and may indicate how ongoing case communication would function.
+     SEVERITY: MODERATE (for petition) / LOW (for registration only)
+
+  4. INITIAL RECOMMENDATION REVERSED WHEN CHALLENGED
+     Recommended Pacific River Capital first, then said "it doesn't matter."
+     This suggests he may state opinions without fully analyzing the
+     facts — and only provide a more accurate answer when pushed.
+     SEVERITY: MODERATE
+
+  5. MODEST CASE VOLUME
+     84 LCA filings over a 32-year career is very low volume.
+     Compared to firms like NPZ (59 LCAs for Merck alone in one year),
+     this suggests a small practice with limited H-1B throughput.
+     SEVERITY: LOW (could also mean personal attention per case)
+
+  6. LIMITED ONLINE FOOTPRINT FOR A 32-YEAR PRACTICE
+     Zero mentions on any immigration forum. No Google reviews. No BBB.
+     No Martindale rating. No Super Lawyers. 117 Avvo reviews over
+     32 years (~3.7/year) is modest. No independent third-party
+     verification channels outside Avvo.
+     SEVERITY: LOW-MODERATE
+
+  7. WEBSITE APPEARS DATED
+     No blog, no recent updates, no thought leadership content beyond
+     the practice area pages. SSL certificate was expired as of 2022
+     per webrate (may be renewed). Domain expiry Nov 2025 needs check.
+     SEVERITY: LOW
+
+  8. NO VERIFIABLE OWNER-BENEFICIARY CASE WINS
+     Despite having the most detailed published content on the
+     Modernization Rule, there is no evidence he has actually filed
+     and won a case under these rules (effective only since Jan 2025).
+     SEVERITY: MODERATE (for petition involving this exact issue)
+
+  9. CURRENTLY HIRING PARALEGAL
+     The firm is actively seeking a business immigration paralegal.
+     This could mean the prior paralegal left, or the firm is expanding.
+     Either way, during the onboarding period, support capacity is
+     uncertain.
+     SEVERITY: LOW
+
+  10. PAYMENT TO PERSONAL NAME
+      Previous research noted payment may go to "Ajay K. Arora" rather
+      than the firm P.C. Should clarify proper trust/escrow handling.
+      SEVERITY: LOW (to confirm)
+
+================================================================================
+10. STRENGTHS — COMPREHENSIVE ANALYSIS
+================================================================================
+
+  1. CLEAN 32-YEAR RECORD (STRONG)
+     Zero disciplinary actions, zero malpractice suits, zero BBB
+     complaints, zero negative news articles across 32+ years of
+     exclusive immigration practice. This is genuinely exceptional.
+
+  2. FULL FEE TRANSPARENCY (RARE)
+     All fees published on website. Of all firms researched (8+), only
+     Arora and MT Law (withdrawn) published complete fee schedules.
+     This eliminates billing surprises and demonstrates confidence.
+
+  3. DEDICATED OWNER-BENEFICIARY H-1B CONTENT (UNIQUE DIFFERENTIATOR)
+     The most detailed published guidance on self-sponsored/owner-
+     beneficiary H-1B petitions under the Modernization Rule. No other
+     firm researched has this depth of published content on this topic.
+
+  4. CORRECTLY UNDERSTANDS MODERNIZATION RULE
+     During consultation, correctly stated that 100% ownership is no
+     longer a barrier, entity type doesn't matter, and recommended
+     having mother sign the petition. This matches current law.
+
+  5. 80/80 LCA CERTIFICATIONS, 0 DENIALS
+     While LCA certification is near-automatic, zero denials and zero
+     errors is still a positive signal for process competence.
+
+  6. COMPETITIVE MID-RANGE PRICING
+     $663 registration / $3,393 total legal is competitive for NYC.
+     Not the cheapest (Murthy $558 reg / $1,833 legal) and not the
+     most expensive (Mehta $3,510 legal declined case). Reasonable
+     value for a 32-year-experienced NYC attorney.
+
+  7. FLAT FEE STRUCTURE
+     "No attorney fee surprises" commitment. All work quoted at flat
+     rates, not hourly. Clients know costs upfront.
+
+  8. PERSONAL IMMIGRATION EXPERIENCE
+     Arora went through the immigration process himself. This adds
+     empathy and practical understanding beyond book knowledge.
+
+  9. AILA MEMBER FOR 31 YEARS
+     Continuous AILA membership since 1995 demonstrates sustained
+     professional engagement with the immigration law community.
+
+  10. SAME-DAY RESPONSIVENESS
+      Firm claims "calls returned same business day." Client reviews
+      confirm: "Replied to email for all queries within a day."
+      In our experience: responded to initial inquiry same day
+      (Feb 12) with data sheet and consultation scheduling.
+
+  11. REAL OFFICE IN MIDTOWN MANHATTAN
+      1270 Broadway is a legitimate commercial building. Not a virtual
+      office, mailbox, or co-working space.
+
+  12. 26-YEAR-OLD DOMAIN
+      h1b1.com registered in 1999 — shows long-term commitment to
+      the immigration practice. Not a recently created website.
+
+================================================================================
+11. CONTACT INFORMATION VERIFICATION
+================================================================================
+
+  PHONE:    (212) 268-3580
+            → 212 area code = Manhattan, New York
+            → Consistent with midtown Manhattan office location
+            → VERIFIED: Call connected directly to Arora on Feb 16, 2026
+            → He answered personally (no receptionist, no IVR)
+
+  ADDRESS:  1270 Broadway, Suite 510, New York, NY 10001
+            → VERIFIED: Commercial office building (Wilson Building, 1912)
+            → 12-story, 117,650 sq ft commercial building
+            → Midtown South, Herald Square area
+            → Real commercial office (not virtual, not co-working)
+            → Multiple commercial tenants
+            → Assessed value ~$26M
+
+  EMAIL:    info@h1b1.com
+            → VERIFIED: Responded to inquiry within same business day
+            → Professional correspondence, sent data sheets and
+              consultation scheduling info
+
+  WEBSITE:  https://www.h1b1.com
+            → VERIFIED: Active, loads correctly, HTTPS enabled
+            → Domain registered November 5, 1999 (26+ years)
+            → Hosted on Liquid Web (commercial hosting provider)
+            → Safe per Norton, Google Safe Browsing, McAfee
+
+================================================================================
+12. ENGAGEMENT HISTORY WITH THIS FIRM
+================================================================================
+
+  Feb 12, 2026:  Initial inquiry email sent
+  Feb 12, 2026:  Response received — $98/15-min consultation offered,
+                 H-1B data sheet provided
+  Feb 13, 2026:  Data sheets filled out and sent back (7 email thread)
+  Feb 16, 2026:  Paid $98 consultation via Helcim
+  Feb 16, 2026:  21-minute consultation with Arora (recorded, transcribed)
+  Feb 16, 2026:  Evaluation: PASS on entity, FAIL on STEM OPT
+  Feb 16, 2026:  Decision: Hold $663 payment pending further evaluation
+  Mar 01, 2026:  Data sheet deadline (MISSED/OVERDUE as of Feb 26)
+  Feb 26, 2026:  Last contact was Feb 14. 12 days of silence.
+                 Relationship is STALE but recoverable.
+
+  STATUS: Arora has our completed data sheets. We have NOT paid the
+  $663 registration fee. The data sheet deadline (Mar 1) has passed
+  but registration window doesn't open until March 4, so there is
+  still a narrow window to re-engage if desired.
+
+================================================================================
+13. REGISTRATION-ONLY SUITABILITY ASSESSMENT
+================================================================================
+
+  The key strategic question is whether Arora is suitable for
+  REGISTRATION ONLY ($663), with a different attorney handling the
+  full petition if selected.
+
+  WHY REGISTRATION-ONLY WORKS:
+    - H-1B registration is MECHANICAL — attorney enters basic info
+      (company name, address, EIN, beneficiary details) into USCIS portal
+    - Takes ~15 minutes of actual data entry
+    - No legal strategy involved at registration stage
+    - No supporting documents submitted
+    - No employer-employee relationship analysis needed
+    - No STEM OPT compliance analysis needed
+    - It is essentially a lottery ticket purchase
+    - Different attorneys CAN file the petition vs registration
+      (confirmed by Arora's own website and Murthy's LRA terms)
+
+  WHY ARORA IS SUITABLE FOR REGISTRATION:
+    + Already has our completed data sheets (sent Feb 13)
+    + Correctly understands Modernization Rule (entity type, ownership)
+    + Will correctly select SOC code and wage level
+    + 32 years of process experience — registration is routine
+    + $663 is reasonable (Murthy $558 is cheaper, Peerally $714 is more)
+    + 7-message email thread — relationship exists
+    + Same-day responsiveness demonstrated
+
+  WHY ARORA IS NOT IDEAL FOR FULL PETITION:
+    - Failed STEM OPT compliance test — "we don't have an opinion"
+    - Communication style requires excessive redirection
+    - No verified owner-beneficiary case wins
+    - Solo practitioner — no backup during peak H-1B season (Mar-Jun)
+    - Currently hiring paralegal — possible capacity gap
+
+  REGISTRATION-ONLY RISK:
+    - Data sheet deadline (Mar 1) is overdue — need to re-engage ASAP
+    - Arora may expect full petition commitment (check engagement terms)
+    - If registration is submitted incorrectly, cannot be corrected
+    - 6 days to re-engage and confirm (March 4 deadline)
+
+================================================================================
+14. FINAL SCORING & RECOMMENDATION
+================================================================================
+
+  ┌─────────────────────────────┬────────┬──────────────────────────────┐
+  │ Category                    │ Score  │ Justification                │
+  ├─────────────────────────────┼────────┼──────────────────────────────┤
+  │ Bar Standing & Ethics       │ 9/10   │ 32 years clean, zero issues  │
+  │ Firm Legitimacy             │ 9/10   │ Real P.C., real office, real │
+  │                             │        │ attorney, transparent fees   │
+  │ H-1B Process Competence     │ 8/10   │ 80/80 LCAs, 32 yrs exp,     │
+  │                             │        │ correct on Modernization Rule│
+  │ Owner-Beneficiary Expertise │ 7/10   │ Best published content, but  │
+  │                             │        │ no verified case wins        │
+  │ STEM OPT / Compliance       │ 2/10   │ Refused to engage, "no       │
+  │                             │        │ opinion," failed expertise   │
+  │                             │        │ test during consultation     │
+  │ Communication Quality       │ 4/10   │ Tangential, verbose, required│
+  │                             │        │ 3 attempts for direct answer │
+  │ Reviews & Reputation        │ 7/10   │ 94.9% 5-star on Avvo, but   │
+  │                             │        │ zero presence on other       │
+  │                             │        │ platforms and forums         │
+  │ Fee Transparency & Value    │ 9/10   │ Full published fees, mid-    │
+  │                             │        │ range pricing, flat rates    │
+  │ Firm Resources & Backup     │ 3/10   │ Solo practitioner, currently │
+  │                             │        │ hiring paralegal, no backup  │
+  │ Responsiveness              │ 8/10   │ Same-day email, personal     │
+  │                             │        │ phone answer by attorney     │
+  ├─────────────────────────────┼────────┼──────────────────────────────┤
+  │ OVERALL (REGISTRATION ONLY) │ 6.5/10 │ Competent for mechanical     │
+  │                             │        │ registration. Weaknesses     │
+  │                             │        │ irrelevant for data entry.   │
+  │ OVERALL (FULL PETITION)     │ 5.0/10 │ STEM OPT failure +           │
+  │                             │        │ communication issues +       │
+  │                             │        │ solo practitioner risk make  │
+  │                             │        │ full engagement inadvisable  │
+  │                             │        │ for this complex case.       │
+  └─────────────────────────────┴────────┴──────────────────────────────┘
+
+  ── RECOMMENDATION ──────────────────────────────────────────────────────
+
+  FOR REGISTRATION ONLY: PROCEED WITH CAUTION
+    Arora is competent for H-1B electronic registration. He has the data
+    sheets, understands the Modernization Rule, and can correctly enter
+    SOC code and wage level. The $663 fee is market-rate.
+
+    ACTION REQUIRED:
+      1. Re-engage Arora IMMEDIATELY (before March 2)
+      2. Confirm he can do registration-only (not locked into petition)
+      3. Confirm which entity to register (BSGC, Yangtze, or both)
+      4. Pay $663 (or $1,326 for dual registration)
+      5. Provide any updated data (Yangtze EIN if obtained)
+
+  FOR FULL PETITION: DO NOT RETAIN
+    For a case involving:
+      - Owner-beneficiary Modernization Rule petition
+      - STEM OPT compliance disclosure strategy
+      - $78K fee avoidance via change of status
+      - Complex entity structure questions
+    ...Arora's refusal to engage with the STEM OPT issue, combined with
+    communication inefficiency and solo practitioner risk during peak
+    season, makes him unsuitable for the full petition.
+
+    BETTER OPTIONS FOR PETITION (if selected in lottery):
+      Priority: Sophie Alcorn (published 100% owner CEO win, CA Certified
+                Specialist, STEM OPT expertise via email exchange)
+      Backup:   Klasko Immigration (published 95% owner H-1B win)
+      Backup:   Manifest Law (ex-USCIS adjudicator on staff, flat fee)
+
+  ── TIME-SENSITIVE DECISION ─────────────────────────────────────────────
+
+  TODAY IS FEBRUARY 26. REGISTRATION OPENS MARCH 4 (6 DAYS).
+
+  The registration-only strategy with Arora is VIABLE and ADVISABLE
+  given the time constraint. He already has the data. Registration is
+  mechanical. His weaknesses don't matter for registration.
+
+  The petition decision (IF selected) can wait 90 days (until end of June).
+  There is no rush to decide on the petition attorney now.
+
+  This two-phase approach (cheap registration → specialist petition)
+  is standard industry practice, confirmed by Murthy's own LRA terms.
+
+================================================================================
+END OF DUE DILIGENCE REPORT
+================================================================================

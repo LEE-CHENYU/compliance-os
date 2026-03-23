@@ -1,0 +1,39 @@
+To: david@nyc-cpa.com
+Subject: Consultation Request — F-1 Nonresident Tax Corrections + International Forms
+
+Dear Mr. Cohen,
+
+I am writing to request a consultation regarding a multi-year tax
+correction and international compliance matter.
+
+Background:
+- F-1 visa holder (arrived Oct 2023), MS in Applied Analytics
+- Incorrectly filed Form 1040 (resident) for 2023 and 2024 with a
+  prior CPA — should have been 1040-NR as an F-1 exempt individual
+  under the Substantial Presence Test (first 5 calendar years)
+- Need to amend 2023 and 2024 from 1040 to 1040-NR
+- Need to file 2025 return correctly as 1040-NR
+
+Additional complexities:
+- Single-member LLC (Wyoming) with Schedule C e-commerce income
+- Foreign-owned SMLLC requiring Form 5472 + pro forma 1120
+- ~$273K in foreign gifts from non-US family (China) — need to
+  determine if Form 3520 is required under NR status
+- 4-5 foreign financial accounts (China/HK) — need to determine if
+  FBAR/Form 8938 are required under NR status
+
+Key questions for the consultation:
+1. Do you confirm NR status for an F-1 holder in years 1-5?
+2. What is the proper procedure to amend 1040 to 1040-NR?
+3. Which international forms (3520, FBAR, 8938) are eliminated by
+   NR status, and which still apply?
+4. What is your fee estimate for the full engagement (2023 amendment,
+   2024 amendment, 2025 return, LLC return, any required international
+   forms)?
+
+I am happy to schedule at your earliest convenience. Given filing
+deadlines, timing is a factor.
+
+Thank you,
+Alex Zhang
+(646) 555-0142

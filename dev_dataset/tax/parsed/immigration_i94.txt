@@ -1,0 +1,42 @@
+================================================================================
+PARSED: I-94 MOST RECENT ARRIVAL/DEPARTURE RECORD
+Source: /Users/devuser/accounting/legal/immigration/i94_most_recent.pdf
+Parsed: 2026-02-12
+================================================================================
+
+DOCUMENT TYPE: U.S. Customs and Border Protection - Most Recent I-94
+
+--------------------------------------------------------------------------------
+PERSONAL INFORMATION
+--------------------------------------------------------------------------------
+Full Name:              ALEX ZHANG
+  Last/Surname:         LI
+  First (Given) Name:   CHENYU
+Date of Birth:          March 15, 1997 (1997-03-15)
+Passport/Document No.:  G88855571
+Country of Citizenship: China
+
+--------------------------------------------------------------------------------
+ADMISSION DETAILS
+--------------------------------------------------------------------------------
+Admission I-94 Record Number: 712738099B5
+Class of Admission:           F1 (Academic Student)
+Arrival/Issued Date:          October 21, 2023 (2023-10-21)
+Admitted Until Date:          D/S (Duration of Status)
+
+--------------------------------------------------------------------------------
+TRAVEL HISTORY
+--------------------------------------------------------------------------------
+Most recent entry to the U.S.: October 21, 2023
+  - This record reflects the most recent I-94 on file with CBP.
+  - No additional prior travel entries are shown on this document.
+
+--------------------------------------------------------------------------------
+NOTES
+--------------------------------------------------------------------------------
+- OMB No.: 1651-0111
+- Form Expiration Date: 10/31/2025
+- As of April 26, 2013, DHS automated the admission process; a printout from
+  the CBP website constitutes a lawful record of admission per 8 CFR 1.4(d).
+- F1 status with D/S means the individual is admitted for the duration of
+  their student status as long as they maintain valid F-1 program enrollment.

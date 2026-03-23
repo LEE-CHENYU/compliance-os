@@ -1,0 +1,290 @@
+================================================================================
+GREENFIELD CAPITAL LLC
+PRO FORMA FINANCIAL STATEMENTS — FISCAL YEAR 2025
+================================================================================
+Prepared: February 14, 2026
+EIN: 12-3456789
+Entity Type: Single-Member LLC (Disregarded Entity)
+Sole Member: Alex Zhang
+State of Formation: Wyoming (June 16, 2023)
+Tax Filing: Schedule C / Schedule D on Form 1040
+
+NOTE TO CPA: This is a pro forma prepared from bank/brokerage transaction
+records. Exact figures should be verified against year-end Schwab 1099
+composite statement, Citibank 1099-INT, and year-end account statements.
+Cost basis for security sales should be taken from 1099-B.
+
+================================================================================
+PROFIT & LOSS STATEMENT (Income Statement)
+For the Year Ended December 31, 2025
+================================================================================
+
+REVENUE
+────────────────────────────────────────────────────────────────────────────────
+  Operating Revenue (E-commerce / Services)
+    eBay marketplace sales                                   $       148.85
+    Amazon marketplace sales                                 $       328.79
+    Stripe payments received                                 $        13.00
+                                                             ──────────────
+    Total Operating Revenue                                  $       490.64
+
+  Investment Income
+    Qualified dividends (OXY)                                $       555.56
+    Ordinary dividends (ETFs: TBIL, SHY, VNQ, VTWO, EFA)    $        8.42
+    Reinvested dividends (SLYV)                              $        11.64
+    Bond interest (US Treasury Note 4.875% due 04/26)        $       475.32
+    Money market fund income (SNVXX — gross)                 $     2,333.35
+                                                             ──────────────
+    Total Investment Income                                  $     3,384.28
+
+  Options Trading Income (Net)
+    Premiums received (sold puts: AXP, GOOGL, NVDA, PDD,
+      BABA)                                                  $     5,182.23
+    Premiums paid to close positions                         $    (1,564.28)
+                                                             ──────────────
+    Net Options Premium Income                               $     3,962.09
+
+  Realized Gains / Losses on Securities (PROCEEDS ONLY)
+    *** CPA: Compute gains/losses from 1099-B ***
+    Occidental Petroleum (OXY) — sold 09/16/2025             $    18,605.67
+    Intel Corp (INTC) — sold 11/28-12/02/2025                $    20,218.49
+    US Treasury Note 2.125% 05/26 — sold 11/25/2025         $   195,435.38
+    US Treasury Bills — matured (4 lots)                     $   81,900.00
+    PDD put assignment (stock acquired) — 04/09 & 07/08      $    (2,342.50)
+                                                             ──────────────
+    Total Sale/Maturity Proceeds                             $   314,332.39
+    Cost Basis                                               $   (TBD—1099-B)
+    Net Realized Gain / (Loss)                               $   TBD
+
+  Capital Gain Distributions (from funds)
+    Long-term capital gains (SNVXX)                          $         0.02
+    Short-term capital gains (SNVXX)                         $         0.30
+                                                             ──────────────
+    Total Capital Gain Distributions                         $         0.31
+
+                                                             ══════════════
+  TOTAL GROSS REVENUE (excl. unrealized gains)               $    7,837.32
+    + Security sale proceeds (1099-B reconciliation)         $   314,332.39
+                                                             ══════════════
+
+EXPENSES
+────────────────────────────────────────────────────────────────────────────────
+  Software & Technology
+    Anthropic / Claude AI                                    $       500.84
+    Cursor AI (net of refund)                                $         0.00
+    NicheScraper                                             $        38.96
+    Aqua Voice                                               $         7.79
+                                                             ──────────────
+    Total Software                                           $       547.59
+
+  Professional Services
+    Legal fees — MT Law LLC (H-1B registration)              $       401.70
+    Contractor / service payments (Zelle)                    $       195.00
+                                                             ──────────────
+    Total Professional Services                              $       596.70
+
+  Bank & Financial Fees
+    Bank service charges (Citibank account analysis)         $        58.50
+    Wire transfer fees                                       $        26.52
+    ADR management fees (PDD, BIDU)                          $         2.48
+                                                             ──────────────
+    Total Bank & Financial Fees                              $       87.50
+
+  Other Expenses
+    Cash withdrawal (unclassified)                           $       546.00
+    Miscellaneous                                            $        27.31
+                                                             ──────────────
+    Total Other Expenses                                     $       573.31
+
+                                                             ══════════════
+  TOTAL OPERATING EXPENSES                                   $     1,805.10
+                                                             ══════════════
+
+────────────────────────────────────────────────────────────────────────────────
+NET OPERATING INCOME (excl. security gains)                  $     6,032.22
+────────────────────────────────────────────────────────────────────────────────
+
+NOTE: Net income including realized gains/losses on securities will depend
+on cost basis determination from Schwab 1099-B composite statement.
+
+================================================================================
+BALANCE SHEET
+As of December 31, 2025
+================================================================================
+
+ASSETS
+────────────────────────────────────────────────────────────────────────────────
+
+  Cash & Cash Equivalents
+    Citibank Business Checking (CHK_1234)                    $       TBD [1]
+    Schwab Money Market (SNVXX — within XXX567)              $       TBD [1]
+                                                             ──────────────
+    Total Cash                                               $       TBD
+
+  Investments — US Treasury Securities (at face value)
+    US T-Bill 912797PV3 (maturity TBD)                       $   78,000.00
+    US T-Bill 912797RA7                                      $    39,000.00
+    US T-Bill 912797RV1                                      $    19,500.00
+    US T-Bill 912797ST5                                      $    39,000.00
+    US T-Bill 912797SY4                                      $    39,000.00
+    US T-Bill 912797TF4                                      $    39,000.00
+    US Treasury Note 91282CKK6 (4.875% due 04/26)           $    39,000.00
+    US Treasury Note 9128335A4                               $    58,500.00
+    US Treasury Note 912833XX3                               $   93,600.00
+                                                             ──────────────
+    Total Treasuries (face value)                            $   444,600.00
+
+    *** NOTE: Also holds matured T-Bills (912797NN3, NW3,
+        PN1, PX9) — proceeds of $81,900 should be in
+        cash/money market. CPA to verify from statements. ***
+
+  Investments — Equities (shares held, market value TBD)
+    Occidental Petroleum (OXY):      2,447.758 shares
+    Intel Corp (INTC):               1,769 shares
+    Crocs Inc (CROX):                584 shares
+    Lululemon (LULU):                428 shares
+    PDD Holdings (PDD):              350 shares
+    Liberty Global (LBTYK):          200 shares
+    Solventum Corp (SOLV):           100 shares
+    First Republic Bank (FRCB):      40 shares
+    Baidu Inc (BIDU):                20 shares
+    SPDR S&P 600 SCV ETF (SLYV):    20.34 shares
+    iShares MSCI EAFE (EFA):         2 shares
+    iShares 1-3Y Treasury (SHY):     2 shares
+    Vanguard Russell 2000 (VTWO):    2 shares
+    Vanguard Real Estate (VNQ):      2 shares
+    US Treasury 3M Bill ETF (TBIL):  2 shares
+                                                             ──────────────
+    Total Equities (market value)                            $       TBD [1]
+
+  Investments — Open Option Positions
+    PDD $74 Put exp 01/16/2026:      1 contract (short)
+    PDD $70 Put exp 06/18/2026:      1 contract (short)
+                                                             ──────────────
+    Total Options Liability (mark-to-market)                 $       TBD [1]
+
+  Other Assets
+    Accounts receivable                                      $         0.00
+    Prepaid expenses                                         $         0.00
+                                                             ──────────────
+    Total Other Assets                                       $         0.00
+
+                                                             ══════════════
+  TOTAL ASSETS                                               $       TBD [1]
+                                                             ══════════════
+
+LIABILITIES
+────────────────────────────────────────────────────────────────────────────────
+  Accounts payable                                           $         0.00
+  Credit card balance                                        $       TBD [2]
+  Open short options (mark-to-market obligation)             $       TBD [1]
+                                                             ──────────────
+  TOTAL LIABILITIES                                          $       TBD
+                                                             ══════════════
+
+MEMBER'S EQUITY
+────────────────────────────────────────────────────────────────────────────────
+  Capital contributions (cumulative through 12/31/2025)      $   432,529.52
+  Distributions (cumulative through 12/31/2025)              $  (123,891.50)
+  Retained earnings / (accumulated deficit)                  $       TBD [3]
+                                                             ──────────────
+  TOTAL MEMBER'S EQUITY                                      $   335,894.15
+    + 2025 net income/loss (TBD from 1099-B)
+                                                             ══════════════
+
+  TOTAL LIABILITIES + MEMBER'S EQUITY                        $       TBD
+                                                             ══════════════
+
+NOTES:
+[1] Exact cash balances and market values at 12/31/2025 should be taken
+    from Schwab year-end statement and Citibank December statement. This
+    pro forma does not have access to year-end statements.
+[2] LLC credit card balance at 12/31/2025 not available in records.
+[3] Retained earnings depend on cumulative P&L including all realized
+    gains/losses computed from 1099-B cost basis.
+
+================================================================================
+ACCOUNTS SUMMARY
+================================================================================
+
+  BUSINESS ACCOUNTS:
+    1. Citibank Business Checking (CHK_1234) — primary operating account
+    2. Charles Schwab LLC Brokerage (XXX567) — investment account
+    3. Business credit card (issuer TBD)
+
+  PERSONAL ACCOUNTS USED FOR BUSINESS:
+    None — all business transactions flow through LLC accounts.
+    Capital contributions come from personal accounts (Citibank CHK_5678,
+    Schwab XXX890) but are properly documented as member contributions.
+
+  FOREIGN ACCOUNTS USED FOR BUSINESS:
+    None.
+
+================================================================================
+SUPPLEMENTAL SCHEDULES
+================================================================================
+
+SCHEDULE A: CAPITAL CONTRIBUTIONS — 2025
+────────────────────────────────────────────────────────────────────────────────
+  Q1-2025 Contributions                                      $   126,265.63
+  Q1-2025 Distributions                                      $   (76,549.00)
+  Q2-2025 Contributions (incl. $190K in-kind securities)     $   234,222.07
+  Q2-2025 Distributions                                      $    (7,567.50)
+  Q3-2025 Contributions                                      $    53,820.00
+  Q3-2025 Distributions                                      $   (29,775.00)
+  Q4-2025 Contributions                                      $         0.00
+  Q4-2025 Distributions                                      $         0.00
+                                                             ──────────────
+  Net 2025 Capital Activity                                  $   325,472.32
+
+  NOTE: Q2-2025 contributions include in-kind transfer of securities
+  ($12,111,210.49 face value, ~$190K market value) from personal
+  Schwab account (XXX890) to LLC Schwab account (XXX567) on 05/01/2025.
+  Securities transferred: US Treasury Strips, T-Bills, equities (OXY,
+  INTC, PDD, CROX, BIDU, LBTYK, SOLV, LULU, and various ETFs).
+
+SCHEDULE B: OPTIONS TRADING ACTIVITY — 2025
+────────────────────────────────────────────────────────────────────────────────
+  OPENED (Sold to Open — cash received):
+    04/08  AXP  $164 Put  exp 03/20/26     $1,294.25   Closed 06/30 ($219.69)
+    04/08  GOOGL $101 Put exp 03/20/26       $724.86   Closed 08/15 ($84.75)
+    04/08  NVDA  $62 Put  exp 03/20/26       $642.97   Closed 06/30 ($214.75)
+    04/08  NVDA  $62 Put  exp 03/20/26     $810.66   Open at year-end? [4]
+    04/08  PDD   $66 Put  exp 03/20/26     $880.86   Closed 08/20 ($170.55)
+    06/30  BABA $82 Put  exp 06/18/26     $828.63   Closed 09/16 ($204.87)
+
+  ASSIGNED (Exercised — stock acquired):
+    04/09  PDD $74 Put  exp 01/16/26      ($1,222.65)  → Acquired PDD shares
+    07/08  PDD $70 Put  exp 06/18/26        ($604.50)  → Acquired PDD shares
+
+  STILL OPEN AT 12/31/2025:
+    PDD  $74 Put  exp 01/16/2026    1 contract (short)
+    PDD  $70 Put  exp 06/18/2026    1 contract (short)
+    [4] NVDA $62 Put exp 03/20/2026 — verify if still open
+
+  Total Premium Received:    $5,182.23
+  Total Paid to Close:      ($1,220.14)
+  Total Assigned:           ($1,827.15)
+  Net Options P&L:           $2,134.94
+
+================================================================================
+DATA SOURCES
+================================================================================
+  - Schwab LLC Brokerage (XXX567): CSV export 02/25/2025 – 02/12/2026
+  - Citibank Business Checking (CHK_1234): CSV export 04/09/2024 – 09/29/2025
+  - Master Capital Account Ledger: Generated 10/08/2025
+  - Quarterly Capital Contribution/Distribution Consents: Q3-2024 – Q3-2025
+
+  MISSING DATA (CPA should request):
+  - Citibank CHK_1234 transactions 10/01/2025 – 12/31/2025
+  - Citibank CHK_1234 December 2025 month-end statement (for cash balance)
+  - Schwab XXX567 December 2025 month-end statement (for market values)
+  - Schwab 2025 1099 Composite Statement (for 1099-B, 1099-DIV, 1099-INT)
+  - Citibank 2025 1099-INT (for business checking interest)
+  - Credit card year-end statement
+  - Q4-2025 capital contribution/distribution records (if any)
+  - Wyoming Annual Report / registered agent invoice (for state filing expense)
+
+================================================================================
+END OF PRO FORMA FINANCIAL STATEMENTS
+================================================================================

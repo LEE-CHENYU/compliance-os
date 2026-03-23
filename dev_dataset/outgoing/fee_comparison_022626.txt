@@ -1,0 +1,149 @@
+================================================================================
+H-1B FY2027 — IMMIGRATION ATTORNEY FEE COMPARISON (COMPREHENSIVE)
+Updated: February 26, 2026 (evening)
+================================================================================
+
+================================================================================
+ATTORNEY LEGAL FEES
+================================================================================
+
+                     │ Consult  │ Reg Fee   │ Petition  │ Total Legal │ RFE
+  ───────────────────┼──────────┼───────────┼───────────┼─────────────┼──────
+  Murthy (reg LRA)   │ $195     │ $390      │ $1,443*   │ $1,833      │ TBD
+  Murthy (petition)  │ $195     │ N/A       │ $2,223    │ $2,223      │ TBD
+  Arora (h1b1.com)   │ $98†    │ $663‡     │ $2,730    │ $3,393‡     │ $780
+  Manifest Law       │ TBD      │ bundled   │ bundled   │ $2,730      │ TBD
+  Alcorn (Sophie)    │ $390     │ $2,730    │ TBD       │ $2,730+     │ TBD
+  Hibee/Sun & Ren    │ N/A      │ bundled   │ bundled   │ $3,120      │ TBD
+  Shah Peerally      │ $117     │ $546      │ $2,730    │ $3,276      │ TBD
+  Box/Mehta          │ $312†    │ bundled   │ bundled   │ $3,510      │ incl
+  ───────────────────┴──────────┴───────────┴───────────┴─────────────┴──────
+
+  † = credited toward engagement    ‡ = includes $168 USCIS reg fee
+  * = "upgrade" fee if selected, subject to firm availability
+
+  NOTES:
+  - Murthy legal fees increase 2% automatically each December 31
+  - Arora: $1,560 deposit + $1,170 balance for petition
+  - Box/Mehta: $1,404 upfront (40%) + $2,106 balance. DECLINED CASE.
+  - Hibee: Retainer unsigned since January
+  - Alcorn: $2,730 is for registration; petition fee TBD separately
+  - Manifest: Not yet contacted. $2,730 total per earlier research.
+
+================================================================================
+GOVERNMENT FEES (DHS) — Same for all firms, paid by employer
+================================================================================
+
+  For employer with ≤25 full-time employees:
+  ─────────────────────────────────────────────────────────────────────────
+  H-1B Registration (USCIS)          $168    (at registration)
+  I-129 Base Filing Fee              $359    (at petition filing)
+  Fraud Prevention & Detection       $390    (at petition filing)
+  Asylum Program Fee                 $234    (at petition filing)
+  ACWIA Training Fee                 $585    (at petition filing)
+  ─────────────────────────────────────────────────────────────────────────
+  SUBTOTAL (registration):           $168
+  SUBTOTAL (petition filing):        $1,568
+  TOTAL GOV'T FEES:                  $1,736
+  ─────────────────────────────────────────────────────────────────────────
+
+  OPTIONAL:
+  Premium Processing                 $2,313  (15 business day adjudication)
+  ─────────────────────────────────────────────────────────────────────────
+
+  NOT APPLICABLE (our case):
+  $78,000 fee — EXEMPT for change of status (F-1 → H-1B)
+  $3,120 H-1B dependent employer fee — only if 50+ employees with 50%+ H/L
+
+================================================================================
+TOTAL COST — ALL-IN (legal + government, no premium processing)
+================================================================================
+
+  ┌──────────────────┬──────────┬──────────┬──────────┬──────────────────┐
+  │ Firm             │ Legal    │ Gov't    │ TOTAL    │ Status           │
+  ├──────────────────┼──────────┼──────────┼──────────┼──────────────────┤
+  │ Murthy (reg LRA) │ $1,833   │ $1,736   │ $3,568   │ ELIMINATED       │
+  │ Murthy (petition)│ $2,223   │ $1,736   │ $3,958   │ ELIMINATED       │
+  │ Manifest Law     │ $2,730   │ $1,736   │ $4,466   │ Not contacted    │
+  │ Alcorn (Sophie)  │ $2,730+  │ $1,736   │ $4,466+  │ MISSED APPT      │
+  │ Hibee/Sun & Ren  │ $3,120   │ $1,736   │ $4,856   │ Awaiting reply   │
+  │ Shah Peerally    │ $3,276   │ $1,736   │ $5,012   │ Not pursued      │
+  │ Arora (h1b1)     │ $3,225   │ $1,568*  │ $4,793   │ Data sheet overdu│
+  │ Box/Mehta        │ $3,510   │ $1,736   │ $5,246   │ DECLINED CASE    │
+  └──────────────────┴──────────┴──────────┴──────────┴──────────────────┘
+
+  * Arora's $663 reg fee includes the $168 USCIS fee, so gov't at
+    petition is only $1,568.
+
+  WITH PREMIUM PROCESSING: Add $2,313 to all totals above.
+
+================================================================================
+REGISTRATION-ONLY COST (if not selected in lottery)
+================================================================================
+
+  ┌──────────────────┬──────────┬──────────┬──────────┐
+  │ Firm             │ Legal    │ USCIS    │ TOTAL    │
+  ├──────────────────┼──────────┼──────────┼──────────┤
+  │ Murthy           │ $390     │ $168     │ $558     │
+  │ Arora            │ $663     │ included │ $663     │
+  │ Shah Peerally    │ $546     │ $168     │ $714     │
+  │ Alcorn           │ $2,730   │ unknown  │ $2,730+  │
+  │ Hibee            │ $3,120*  │ unknown  │ $3,120*  │
+  └──────────────────┴──────────┴──────────┴──────────┘
+  * Bundled pricing — paying for full engagement upfront
+
+================================================================================
+QUALITATIVE COMPARISON — ATTORNEY COMPETENCE
+================================================================================
+
+                     │ Modern.  │ STEM OPT │ $78K  │ Entity  │ March 4
+                     │ Rule     │ Engage   │ Fee    │ Advice  │ Timeline
+  ───────────────────┼──────────┼──────────┼────────┼─────────┼─────────
+  Box (Mehta)        │ Excel    │ Excel    │ Raised │ C-Corp  │ Yes*
+  Alcorn (Sophie)    │ Good     │ Good†    │ Raised │ C-Corp  │ TBD
+  Arora (h1b1)       │ Good     │ FAILED   │ No     │ Unclear │ Yes
+  Stepanova (Murthy) │ FAILED   │ Good     │ No     │ FAILED  │ No
+  Hibee/Sun & Ren    │ Unknown  │ Unknown  │ Unknown│ Unknown │ Unknown
+  ───────────────────┴──────────┴──────────┴────────┴─────────┴─────────
+
+  * Box said yes to March 4, then firm DECLINED the case
+  † Alcorn's STEM OPT engagement was via email, not live consultation
+
+================================================================================
+ATTORNEY STATUS TRACKER — As of Feb 26, 2026
+================================================================================
+
+  ┌──────────────────┬───────────────────────────────────────────────────┐
+  │ Box/Mehta        │ DECLINED — Too complex for their risk tolerance  │
+  │ Stepanova/Murthy │ ELIMINATED — Failed on Modernization Rule        │
+  │ Arora (h1b1)     │ STALE — Data sheet deadline overdue. Possible    │
+  │                  │ for registration-only if re-engaged quickly.     │
+  │ Alcorn (Sophie)  │ MISSED APPT — Must reply within 48 hrs to       │
+  │                  │ reschedule. Most promising remaining option.     │
+  │ Hibee/Sun & Ren  │ PENDING — Email sent today re: attorney structure│
+  │                  │ Awaiting reply. Retainer unsigned since January. │
+  │ Klasko           │ NOT CONTACTED — Published 95% owner H-1B win.   │
+  │                  │ High priority to contact.                        │
+  │ Corstange Law    │ NOT CONTACTED — Niche startup immigration firm.  │
+  │ Serotte/Nagarajan│ NOT CONTACTED — 7.5/10 DD score.                │
+  │ Manifest Law     │ NOT CONTACTED — $2,730 flat fee.                │
+  │ Shah Peerally    │ NOT PURSUED — Deprioritized after Arora consult. │
+  └──────────────────┴───────────────────────────────────────────────────┘
+
+================================================================================
+RECOMMENDED STRATEGY
+================================================================================
+
+  TWO-PHASE APPROACH:
+    Phase 1: Arora for registration only ($663) — he's competent on
+             process, already has data, understands Modernization Rule
+    Phase 2: Boutique attorney for petition IF selected (~April-June)
+             → Priority: Alcorn (reschedule ASAP)
+             → Backup: Klasko, Corstange
+
+  ALTERNATIVE: Hibee full engagement ($3,120) if they confirm Wenjie Sun
+  personally handles the case and engagement is with Sun & Ren PLLC.
+
+================================================================================
+END OF FEE COMPARISON
+================================================================================

@@ -1,0 +1,567 @@
+================================================================================
+GREENFIELD CAPITAL LLC
+FACTS SHEET
+================================================================================
+Generated: October 8, 2025
+Document Control: Master Reference for LLC Accounting & Compliance
+================================================================================
+
+
+SECTION 1: ENTITY INFORMATION
+================================================================================
+
+Legal Name:              Greenfield Capital LLC
+Jurisdiction:            Wyoming
+Formation Date:          June 16, 2023
+Entity Type:             Single-Member Limited Liability Company (SMLLC)
+EIN:                     12-3456789
+Registered Agent:        Registered Agents Inc
+Registered Address:      100 Main St Ste A, Cheyenne, WY 82001
+Member:                  Alex Zhang
+Ownership:               100% (Single Member)
+Management Type:         Member-Managed
+
+
+SECTION 2: ACCOUNTS
+================================================================================
+
+LLC ACCOUNTS (Greenfield Capital LLC):
+----------------------------------------------
+
+Account 1 - Business Checking:
+  Bank:                  Citibank, N.A.
+  Account Number:        *****1234 (CHK_1234)
+  Account Type:          Business Checking
+  Purpose:               Operating account for business transactions
+
+Account 2 - Investment Brokerage:
+  Brokerage:             Charles Schwab & Co., Inc.
+  Account Number:        ****567 (XXX567)
+  Account Type:          Limited Liability Company Brokerage
+  Purpose:               Investment management and securities trading
+
+
+PERSONAL ACCOUNTS (Member: Alex Zhang):
+--------------------------------------
+
+Account 3 - Personal Checking:
+  Bank:                  Citibank, N.A.
+  Account Number:        *****5678 (CHK_5678)
+  Account Type:          Personal Checking
+
+Account 4 - Personal Bank Account:
+  Bank:                  Bank of America
+  Account Number:        BOA
+  Account Type:          Personal Banking
+
+Account 5 - Personal Brokerage:
+  Brokerage:             Charles Schwab & Co., Inc.
+  Account Number:        ****890 (XXX890)
+  Account Type:          Individual Brokerage Account
+
+
+SECTION 3: CAPITAL ACCOUNT SUMMARY
+================================================================================
+(As of October 8, 2025)
+
+CAPITAL CONTRIBUTIONS:
+---------------------
+Total Contributions (All Time):              $432,529.52
+
+  Cash Contributions:                        $213,207.79
+    - Direct deposits/transfers              $153,018.22
+    - Zelle payments                         $  6,476.82
+    - Wire transfers                         $  2,861.66
+    - Checking transfers                     $ 50,071.09
+    - Journal transfers                      $  780.00
+
+  Securities Contributions:                  $219,321.73
+    - Stocks & ETFs (05/01/2025)             $95,062.83
+    - Treasury Securities (05/01/2025)       $100,775.56
+    - Treasury Bill (05/15/2025)             $ 19,288.29
+    - Options (net of transfers)             $  4,195.04
+
+
+DISTRIBUTIONS:
+-------------
+Total Distributions (All Time):              $96,635.37
+
+  Cash Distributions:                        $94,808.22
+    - Teller withdrawals                     $ 28,080.00
+    - Journal transfers to personal          $ 26,520.00
+    - Wire fees                              $     39.78
+    - Checking transfers to personal         $ 40,181.70
+    - MoneyLink to personal                  ($       13.26)*
+
+  Securities Distributions:                  $  1,827.15
+    - Put options transferred out            $  1,827.15
+
+*Note: Small discrepancies may exist due to rounding
+
+
+NET CAPITAL ACCOUNT BALANCE:                 $335,894.15
+================================================================================
+
+
+SECTION 4: QUARTERLY BREAKDOWN
+================================================================================
+
+Q3-2024 (July - September 2024):
+  Contributions:                             $   7,728.87
+  Distributions:                             $  7,800.00
+  Net:                                       $    -91.19
+
+Q4-2024 (October - December 2024):
+  Contributions:                             $  10,492.95
+  Distributions:                             $       0.00
+  Net:                                       $  10,492.95
+
+Q1-2025 (January - March 2025):
+  Contributions:                             $ 126,265.63
+  Distributions:                             $  59,708.22
+  Net:                                       $  66,557.41
+
+Q2-2025 (April - June 2025):
+  Contributions:                             $ 234,222.07
+  Distributions:                             $   5,902.65
+  Net:                                       $ 228,319.42
+
+Q3-2025 (July - September 2025):
+  Contributions:                             $  53,820.00
+  Distributions:                             $  23,224.50
+  Net:                                       $  30,595.50
+
+Q4-2025 (October - December 2025):
+  Contributions:                             $       0.00
+  Distributions:                             $   1,170.00
+  Net:                                       $  -1,500.00
+  Status:                                    In Progress
+
+
+SECTION 5: MAJOR TRANSACTIONS
+================================================================================
+
+SIGNIFICANT SECURITIES TRANSFER (05/01/2025):
+---------------------------------------------
+Total Value:                                 $200,071.93
+
+Securities transferred from XXX890 (personal) to XXX567 (LLC):
+  - INTC (Intel Corp)                        $  18,623.36
+  - PDD (PDD Holdings ADR)                   $  12,398.49
+  - Treasury Securities (3 T-Bills)          $  61,883.19
+  - Treasury Strip (0% due 02/15/30)         $  38,948.22
+  - OXY (Occidental Petroleum)               $  46,806.29
+  - CROX (Crocs Inc)                         $  16,401.72
+  - Various ETFs & Stocks                    $   5,010.66
+
+Purpose:                Consolidation of investment portfolio into LLC structure
+Tax Treatment:          Capital contribution at fair market value on transfer date
+
+
+CASHIER'S CHECK TRANSACTION (02/27/2025):
+-----------------------------------------
+Total Withdrawal:                            $78,000.00
+
+Breakdown:
+  - To XXX890 (Personal):                    $ 19,500.00  (Distribution)
+  - To XXX567 (LLC):                         $ 58,500.00  (Internal transfer - excluded)
+
+Net Effect on Capital:
+  Recorded Distribution:                     $ 19,500.00
+  (The $58K that went to XXX567 is internal transfer within LLC, not a
+   contribution or distribution)
+
+
+ROUND-TRIP TRANSACTIONS:
+-----------------------
+Date Range: 02/26/2025 - 02/27/2025
+  CHK_1234 → CHK_5678:                       $ 39,000.00  (Distribution)
+  CHK_5678 → CHK_1234:                       $ 39,000.00  (Contribution)
+  Net Effect:                                $      0.00
+
+Purpose:                Temporary transfer for operational purposes
+Status:                 Fully documented; money returned to LLC next day
+
+
+SECTION 6: RECONCILIATION STATUS
+================================================================================
+
+Total Transactions Processed:                939
+Matched Transaction Groups:                  54
+Unmatched Transactions:                      202
+Reconciliation Rate:                         78.5%
+
+RECONCILIATION CHECKS:
+---------------------
+✗ FAIL    Moneylink Matched
+✗ FAIL    Journal Matched
+✓ PASS    Cashiers Check 100K
+✓ PASS    Position Transfers Balanced
+✗ FAIL    Contributions Sourced
+✗ FAIL    Distributions Traced
+
+Overall Status:         SOME CHECKS FAILED (Investigation completed)
+
+
+TRANSACTIONS BY ACCOUNT:
+-----------------------
+BOA (Personal Bank of America):              466 transactions
+CHK_1234 (LLC Business Checking):            84 transactions
+CHK_5678 (Personal Checking):                62 transactions
+XXX567 (LLC Brokerage):                      163 transactions
+XXX890 (Personal Brokerage):                 164 transactions
+
+
+SECTION 7: INVESTIGATION FINDINGS
+================================================================================
+
+ITEM 1: $59,409.57 Checking Transfer (02/25/2025)
+  Status:               ✓ RESOLVED
+  Finding:              Matched CHK_5678 → CHK_1234 (Reference #001685)
+  Classification:       Capital contribution
+
+ITEM 2: $6,069.52 MoneyLink (08/19/2024)
+  Status:               ⚠️ PARTIAL - Data gap
+  Finding:              From XXX890 to BOA
+  Issue:                XXX890 data only available from 10/2024 onward
+  Action Required:      Export XXX890 history for Aug-Sep 2024
+
+ITEM 3: $5,460 Journal Transfer to "...007" (04/17/2025)
+  Status:               ✓ RESOLVED - IRA Contribution
+  Finding:              Transfer to Schwab IRA account ending in 007
+  Classification:       Personal IRA contribution (2025 tax year)
+  Reconciliation:       Correctly unmatched (not LLC-related)
+
+ITEM 4: $8,580 Business Teller Withdrawals
+  Status:               ✓ RESOLVED
+  Finding:              Cash withdrawals from CHK_1234
+    - $7,800 on 07/23/2024
+    - $ 780 on 04/30/2025
+  Classification:       Distributions (cash not deposited to other tracked accounts)
+
+
+SECTION 8: KEY ACCOUNTING PRINCIPLES APPLIED
+================================================================================
+
+ENTITY CLASSIFICATION:
+---------------------
+CHK_1234 + XXX567 = Greenfield Capital LLC (SINGLE ENTITY)
+CHK_5678 + BOA + XXX890 = Personal accounts (SEPARATE FROM LLC)
+
+INTERNAL vs EXTERNAL TRANSFERS:
+------------------------------
+Internal (Excluded from capital account):
+  - CHK_1234 ↔ XXX567 transfers
+  - MoneyLink/wire transfers between LLC accounts
+  - $58K cashier's checks that stayed within LLC
+
+External (Included in capital account):
+  - Personal accounts → LLC accounts = Contributions
+  - LLC accounts → Personal accounts = Distributions
+  - LLC → Cash withdrawals = Distributions
+
+SECURITIES VALUATION:
+--------------------
+  - Stocks/ETFs: Quantity × Market Price per Share
+  - Options: Quantity × Price × 100 (contracts)
+  - Treasury Securities: (Face Value / 100) × Price per $78
+
+DOUBLE-COUNTING PREVENTION:
+--------------------------
+  - $58K cashier's checks to XXX567: EXCLUDED (internal transfer)
+  - $78K withdrawal: ADJUSTED to $20K (only amount that left LLC)
+  - Round-trip transfers: INCLUDED (money genuinely left and returned on different dates)
+
+
+SECTION 9: COMPLIANCE STATUS
+================================================================================
+
+OPERATING AGREEMENT:            ✓ Created (pending signature)
+CAPITAL ACCOUNT LEDGER:         ✓ Maintained
+CONTRIBUTION DOCUMENTATION:     ✓ Quarterly consents prepared
+DISTRIBUTION DOCUMENTATION:     ✓ Quarterly authorizations prepared
+SEPARATE ACCOUNTS:              ✓ Maintained (no commingling detected)
+TRANSACTION RECORDS:            ✓ Comprehensive ledger created
+RECONCILIATION:                 ✓ Completed (78.5% matched)
+
+WYOMING ANNUAL REPORT:
+  Due Date:                     June 16 each year
+  Fee:                          $47
+  Status:                       [To be verified]
+
+TAX COMPLIANCE:
+  Entity Type:                  Single-Member LLC (likely disregarded entity)
+  Tax Treatment:                Report on owner's personal return (Schedule C or E)
+  Form 1065:                    May be required if elected partnership treatment
+  K-1:                          Not required if disregarded entity
+
+
+SECTION 10: IMPORTANT DATES
+================================================================================
+
+LLC Formation:                  June 16, 2023
+First Recorded Transaction:     April 9, 2024 (CHK_1234)
+Major Securities Transfer:      May 1, 2025 ($200,071.93)
+Cashier's Check Event:          February 27, 2025 ($78K withdrawal)
+IRA Contribution:               April 17, 2025 ($5,460 to account 007)
+Reconciliation Report Date:     October 8, 2025
+Operating Agreement Date:       October 8, 2025 (created/unsigned)
+
+
+SECTION 11: DATA SOURCES
+================================================================================
+
+PRIMARY TRANSACTION DATA:
+------------------------
+1. CHK_1234_CURRENT_VIEW.csv
+   - Citibank business checking account
+   - Account ending in 1234
+   - Date range: April 9, 2024 - October 8, 2025
+
+2. Limit_Liability_Company_XXX239_Transactions_20251008-155741.csv
+   - Schwab LLC brokerage account
+   - Account ending in 239
+   - Date range: [Full history available]
+
+3. CHK_5678 transactions (personal checking)
+4. BOA transactions (personal Bank of America)
+5. XXX890 transactions (personal Schwab brokerage)
+   - NOTE: Historical data gap (Aug-Sep 2024 missing)
+
+
+GENERATED REPORTS:
+-----------------
+1. Master_Transaction_Ledger.csv
+   - Combined ledger of all 939 transactions
+   - Includes match IDs, classification, related accounts
+
+2. BSGC_Master_Capital_Account_Ledger.txt
+   - Comprehensive capital account history
+   - Includes securities transfers at market value
+
+3. Reconciliation_Summary.txt
+   - High-level reconciliation results
+   - Check status and statistics
+
+4. Entity_Capital_Account_Summary.txt
+   - Quarterly breakdown by entity
+   - Separates LLC vs Personal brokerage (XXX890)
+
+5. Matched_Transactions_Report.txt
+   - Details of all matched transaction groups
+
+6. Unmatched_Transactions_Report.txt
+   - List of transactions without matches
+
+7. Investigation_Results.txt
+   - Detailed investigation of key unmatched items
+
+8. Non_Zelle_Unmatched.txt
+   - Subset of unmatched transactions excluding Zelle
+
+
+QUARTERLY DOCUMENTS (Generated):
+-------------------------------
+Location: Generated_BSGC_Unified_Documents/
+
+Q3-2024:
+  - BSGC_Capital_Contribution_Consent_Q3-2024.txt
+  - BSGC_Distribution_Authorization_Q3-2024.txt
+
+Q4-2024:
+  - BSGC_Capital_Contribution_Consent_Q4-2024.txt
+
+Q1-2025:
+  - BSGC_Capital_Contribution_Consent_Q1-2025.txt
+  - BSGC_Distribution_Authorization_Q1-2025.txt
+
+Q2-2025:
+  - BSGC_Capital_Contribution_Consent_Q2-2025.txt
+  - BSGC_Distribution_Authorization_Q2-2025.txt
+
+Q3-2025:
+  - BSGC_Capital_Contribution_Consent_Q3-2025.txt
+  - BSGC_Distribution_Authorization_Q3-2025.txt
+
+
+LEGAL DOCUMENTS:
+---------------
+1. BSGC_Operating_Agreement.txt
+   - Wyoming SMLLC Operating Agreement
+   - Created: October 8, 2025
+   - Status: Pending signature and notarization
+
+
+SECTION 12: TECHNICAL NOTES
+================================================================================
+
+SCRIPTS CREATED:
+---------------
+1. reconcile_all_accounts.py
+   - Main reconciliation engine
+   - Updated to treat CHK_1234 + XXX567 as single entity
+   - Classifies internal LLC transfers vs external contributions/distributions
+
+2. generate_bsgc_unified_documents.py
+   - Generates quarterly contribution and distribution documents
+   - Combines CHK_1234 and XXX567 transactions
+
+3. generate_bsgc_capital_ledger.py
+   - Creates master capital account ledger
+   - Includes securities transfers at market value
+   - Handles Treasury securities pricing (per $78)
+   - Excludes double-counting of internal transfers
+
+
+CLASSIFICATION LOGIC:
+--------------------
+INTERNAL_LLC_TRANSFER:
+  - Transfers between CHK_1234 ↔ XXX567
+  - Wire transfers, MoneyLink within LLC
+  - Excluded from capital account
+
+CAPITAL_CONTRIBUTION:
+  - Money/securities INTO LLC from personal accounts
+  - Sources: CHK_5678, BOA, XXX890
+  - Increases capital account
+
+DISTRIBUTION:
+  - Money/securities OUT of LLC to personal or cash
+  - Destinations: CHK_5678, BOA, XXX890, cash withdrawals
+  - Decreases capital account
+
+
+SECTION 13: OUTSTANDING ITEMS
+================================================================================
+
+ACTION REQUIRED:
+---------------
+1. Export XXX890 transaction history for Aug-Sep 2024 from Schwab
+   - Purpose: Verify $6,069.52 MoneyLink transaction source
+   - Priority: MEDIUM
+
+2. Sign and notarize Operating Agreement
+   - Document: BSGC_Operating_Agreement.txt
+   - Priority: HIGH
+
+3. Verify Wyoming Annual Report filing status
+   - Due: June 16 each year
+   - Fee: $47
+   - Priority: HIGH (check if 2024 and 2025 were filed)
+
+4. Review and file 2024 tax returns (if not yet filed)
+   - Priority: HIGH (Tax season)
+
+5. Review investment performance and rebalancing needs
+   - Current holdings documented in capital ledger
+   - Priority: MEDIUM
+
+
+QUESTIONS TO RESOLVE:
+--------------------
+1. Is the LLC treated as disregarded entity or partnership for tax purposes?
+2. Have all Wyoming annual reports been filed since formation (2023-2025)?
+3. Should the $39K round-trip (02/26-27) be excluded from capital account?
+   (Currently included but nets to $0)
+4. Are there any outstanding loans or liabilities not reflected in accounts?
+
+
+SECTION 14: SUMMARY STATISTICS
+================================================================================
+
+CAPITAL ACCOUNT HEALTH:
+----------------------
+Total Contributed:                           $432,529.52
+Total Distributed:                           $96,635.37
+Net Equity:                                  $335,894.15
+Contribution/Distribution Ratio:             4.48:1
+Average Quarterly Contribution:              $ 72,088.26
+Average Quarterly Distribution:              $ 19,327.07
+
+TIME PERIOD ANALYSIS:
+--------------------
+LLC Age:                                     2 years, 4 months (as of Oct 2025)
+Transaction Period Analyzed:                 April 2024 - October 2025 (18 months)
+Most Active Quarter:                         Q2-2025 ($234K contributions)
+Largest Single Contribution:                 $200,071.93 (Securities - 05/01/2025)
+Largest Single Distribution:                 $39,000.00 (Round-trip - 02/26/2025)
+
+ACCOUNT ACTIVITY:
+----------------
+Total Cash Flows (All Accounts):             Approximately $1.2M+
+LLC Operating Account (CHK_1234):            84 transactions
+LLC Investment Account (XXX567):             163 transactions
+Transaction Classification Rate:             100% (all transactions classified)
+Documentation Coverage:                      100% (all quarters documented)
+
+
+SECTION 15: RECOMMENDED RECORD RETENTION
+================================================================================
+
+PERMANENT (Retain Indefinitely):
+--------------------------------
+- Articles of Organization
+- Operating Agreement
+- EIN confirmation letter
+- LLC formation documents
+
+7 YEARS MINIMUM:
+---------------
+- Tax returns
+- Capital account ledgers
+- Financial statements
+- Contribution/distribution documentation
+- Bank and brokerage statements
+- Invoices and receipts
+- Contracts and agreements
+- Minutes of meetings
+- Reconciliation reports
+
+CURRENT/ACTIVE:
+--------------
+- Insurance policies
+- Licenses and permits
+- Wyoming annual report confirmations
+- Registered agent agreements
+
+
+SECTION 16: CONTACT INFORMATION
+================================================================================
+
+WYOMING SECRETARY OF STATE:
+--------------------------
+Online Services:        wyobiz.wyo.gov
+Phone:                  (307) 777-7311
+Annual Report:          File online or by mail
+Fee Payment:            Credit card or check
+
+REGISTERED AGENT:
+----------------
+Registered Agents Inc
+100 Main St Ste A
+Sheridan, WY 82801
+Purpose:                Service of process, official correspondence
+
+FINANCIAL INSTITUTIONS:
+----------------------
+Citibank (CHK_1234):    Business checking
+Charles Schwab (XXX567): LLC brokerage account
+
+
+================================================================================
+END OF FACTS SHEET
+================================================================================
+
+Document Control:
+- Created: October 8, 2025
+- Version: 1.0
+- Next Review: April 2026 (Semi-annual)
+- Classification: Confidential - Business Owner Use Only
+
+This facts sheet summarizes all material information regarding Bamboo Shoot
+Growth Capital LLC as of the date above. All figures are based on available
+transaction data and reconciliation analysis. For detailed transaction-level
+information, refer to the Master Transaction Ledger and Capital Account Ledger.
+
+For questions or discrepancies, review the underlying source documents and
+generated reports listed in Section 11.

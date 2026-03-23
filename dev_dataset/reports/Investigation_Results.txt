@@ -1,0 +1,313 @@
+================================================================================
+INVESTIGATION RESULTS - NON-ZELLE UNMATCHED TRANSACTIONS
+Generated: 2025-10-08
+================================================================================
+
+ITEM 1: $59,409.57 CHECKING TRANSFER (02/25/2025)
+================================================================================
+
+STATUS: ✓ RESOLVED - MATCHED
+
+FINDING:
+  The $59,409.57 transfer OUT from CHK_5678 on 02/25/2025 has a matching
+  DEPOSIT IN to CHK_1234 on the same day.
+
+EVIDENCE:
+  CHK_5678 (Personal Citibank):
+    02-25-2025: -$59,409.57 | CHECKING_TRANSFER_OUT
+    Description: "Transfer to Checking 11:07a #0000 ONLINE Reference # 001685"
+
+  CHK_1234 (Business Citibank):
+    02-25-2025: +$59,409.57 | DEPOSIT
+    Description: "DEPOSIT 7290 ONLINE Reference # 001685"
+
+  Reference numbers match: #001685
+
+PURPOSE:
+  This transfer funded the business checking account CHK_1234, which then:
+    - Withdrew $78,000 cash on 02/27/2025 (2 days later)
+    - Converted to 4 cashier's checks ($20K each)
+    - Deposited into investment accounts
+
+RECONCILIATION ACTION:
+  ✓ Add this pair to matched transactions
+  ✓ Update reconciliation script to match checking transfers by reference number
+
+TAX IMPLICATION:
+  - Owner contributed $59,409.57 to business checking
+  - This is a capital contribution to CHK_1234 entity
+  - $78,000 withdrawn 2 days later = partial distribution ($18,590.43 net out)
+
+
+================================================================================
+ITEM 2: $6,069.52 MONEYLINK INTO BOA (08/19/2024)
+================================================================================
+
+STATUS: ⚠️ PARTIALLY RESOLVED - DATA GAP
+
+FINDING:
+  MoneyLink transfer FROM Schwab account XXX890 TO Bank of America on 08/19/2024.
+  However, the XXX890 CSV file only has data from 10/30/2024 onward.
+
+EVIDENCE:
+  BOA (Bank of America):
+    08/19/2024: +$6,069.52 | MONEYLINK_IN
+    Description: "SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619
+                  INDN:ALEX ZHANG CO ID:XXXXX86224 PPD"
+
+  Account XXX92619 = Personal Brokerage XXX890 (last 5 digits shown)
+
+  XXX890 CSV file date range: 10/30/2024 to 10/06/2025
+  Transaction date: 08/19/2024 (BEFORE available data)
+
+CONTEXT:
+  Surrounding BOA transactions on 08/14-08/19/2024:
+    08/14/2024: -$7,800.00 | Wire to FUTU SECURITIES INTL (HK)
+    08/14/2024: -$35.10     | Wire fee
+    08/16/2024: -$15,600.00 | Wire to FUTU SECURITIES INTL (HK)
+    08/16/2024: -$35.10     | Wire fee
+    08/19/2024: +$6,069.52  | MoneyLink FROM Schwab XXX890 ⬅️
+
+  Total wired out: $23,470.20
+  Money came back: $6,069.52
+
+HYPOTHESIS:
+  The $6,069.52 may be related to the Hong Kong brokerage account activity:
+    - Option A: Partial refund/return from FUTU Securities
+    - Option B: Unrelated - regular transfer from Schwab to BOA for cash needs
+    - Option C: Dividend/distribution from XXX890 brokerage account
+
+RESOLUTION:
+  ✓ Source identified: Schwab personal brokerage XXX890
+  ✗ Cannot verify outflow from XXX890 (data unavailable for Aug 2024)
+
+ACTION REQUIRED:
+  1. Export XXX890 transaction history for 08/01/2024 - 09/30/2024 from Schwab
+  2. Locate the matching $6,069.52 outflow
+  3. If not found, check if this was a dividend or distribution
+
+
+================================================================================
+ITEM 3: $5,460 JOURNAL TRANSFER TO "...007" (04/17/2025)
+================================================================================
+
+STATUS: ✓ RESOLVED - IRA CONTRIBUTION IDENTIFIED
+
+FINDING:
+  Journal transfer OUT from XXX890 to Schwab IRA account ending in "007"
+
+EVIDENCE:
+  XXX890 (Personal Brokerage):
+    04/17/2025: -$5,460.00 | JOURNAL_TRANSFER_OUT
+    Description: "JOURNAL TO ...007"
+
+ACCOUNT IDENTIFIED:
+  ✓ Schwab IRA Account XXX...007 (Traditional or Roth IRA)
+  ✓ Personal retirement account
+  ✓ Internal transfer within Schwab
+
+PURPOSE:
+  IRA Contribution for tax year 2024 or 2025
+
+RECONCILIATION STATUS:
+  This transaction is CORRECTLY unmatched because:
+    - IRA account XXX007 is not included in the 5-account reconciliation
+    - This is a personal retirement account (separate from business/LLC)
+    - Internal transfer between personal investment accounts
+    - No impact on LLC capital accounts
+
+TAX IMPLICATIONS:
+
+  CONTRIBUTION LIMITS:
+    - 2024 IRA limit: $5,460 (under age 50) or $6,240 (age 50+)
+    - 2025 IRA limit: $5,460 (under age 50) or $6,240 (age 50+)
+    - This $5,460 contribution is at the maximum for standard limit
+
+  IF TRADITIONAL IRA:
+    ✓ May be tax-deductible on 2024 or 2025 personal tax return
+    ✓ Reduces taxable income by $5,460
+    ✓ Subject to income phase-out limits (MAGI thresholds)
+    ✓ Must be made by tax filing deadline (April 15, 2025 for 2024 contribution)
+
+  IF ROTH IRA:
+    ✗ Not tax-deductible
+    ✓ Tax-free growth and withdrawals in retirement
+    ✓ Subject to income phase-out limits (MAGI thresholds)
+    ✓ Must be made by tax filing deadline (April 15, 2025 for 2024 contribution)
+
+  CONTRIBUTION YEAR:
+    - Transaction date: 04/17/2025
+    - This is AFTER the 04/15/2025 deadline for 2024 contributions
+    - Therefore: This is a 2025 tax year IRA contribution
+    - Will be reported on 2025 tax return (filed in 2026)
+
+DOCUMENTATION REQUIRED:
+
+  For Tax Preparer:
+    1. Schwab Form 5498 (IRA Contribution Information)
+       - Will be issued in May 2026 for 2025 contributions
+       - Shows $5,460 contribution to IRA
+
+    2. Verify contribution type:
+       - Traditional IRA → May claim deduction on 2025 return
+       - Roth IRA → No deduction, but note for basis tracking
+
+    3. Confirm no excess contribution:
+       - Total 2025 IRA contributions should not exceed $5,460
+       - Check if any other IRA contributions made elsewhere
+
+  For Personal Records:
+    - Save transaction confirmation from Schwab
+    - Note: "2025 IRA contribution - $5,460 on 04/17/2025"
+    - Keep Form 5498 when received in 2026
+
+RECONCILIATION TREATMENT:
+  ✓ This transaction should REMAIN unmatched
+  ✓ IRA account is personal retirement (not business-related)
+  ✓ Not included in LLC capital account calculations
+  ✓ Does not affect Greenfield Capital LLC
+
+NO ACTION REQUIRED:
+  This is a legitimate personal IRA contribution and is correctly classified
+  as unmatched in the business/LLC reconciliation system
+
+
+================================================================================
+ITEM 4: $8,580 BUSINESS TELLER WITHDRAWALS FROM CHK_1234
+================================================================================
+
+STATUS: ✓ RESOLVED - DISTRIBUTIONS IDENTIFIED
+
+FINDING:
+  Business checking account CHK_1234 had cash withdrawals totaling $86,580,
+  but only $78,000 was matched as cashier's checks. The remaining $8,580
+  was unmatched.
+
+EVIDENCE:
+  CHK_1234 (Business Checking) - All Teller Withdrawals:
+
+  Q3-2024:
+    07/23/2024: -$7,800.00 | TELLER WITHDRAWAL ⬅️ UNMATCHED
+
+  Q1-2025:
+    02/27/2025: -$78,000.00 | TELLER WITHDRAWAL ✓ MATCHED (cashier's checks)
+
+  Q2-2025:
+    04/30/2025: -$780.00 | TELLER WITHDRAWAL ⬅️ UNMATCHED
+
+  TOTAL UNMATCHED: $8,580.00
+
+RECONCILIATION:
+  The $78,000 withdrawal on 02/27/2025 was already matched:
+    - Converted to 4 cashier's checks
+    - Deposited: $58K to LLC XXX567, $20K to personal XXX890
+    ✓ Fully accounted for
+
+  The $8,580 unmatched consists of:
+    - $7,800 on 07/23/2024
+    - $780 on 04/30/2025
+
+DESTINATION:
+  These cash withdrawals did NOT appear as deposits in:
+    ✗ CHK_5678 (Personal Citibank)
+    ✗ BOA (Personal Bank of America)
+    ✗ XXX567 (LLC Brokerage)
+    ✗ XXX890 (Personal Brokerage)
+
+  Therefore: Cash was used for purposes outside tracked accounts
+
+LIKELY USES:
+  1. Personal cash usage (ATM withdrawals for daily expenses)
+  2. Large cash purchases
+  3. Payments to individuals/businesses (contractors, services)
+  4. Cash kept at home
+  5. Payments in other currencies (international travel)
+
+TAX CLASSIFICATION:
+
+  Since CHK_1234 is a BUSINESS checking account:
+
+  IF CHK_1234 belongs to LLC (Greenfield Capital LLC):
+    - $8,580 = Distributions to owner
+    - Must be documented on quarterly distribution forms
+    - Taxable to owner as business income/capital distributions
+    - Include in K-1 reporting
+
+  IF CHK_1234 is sole proprietorship or personal business:
+    - $8,580 = Owner draws
+    - Reduce owner's equity
+    - Not separately taxable (business income already taxed)
+
+  IF CHK_1234 is S-Corp:
+    - $8,580 = Shareholder distributions
+    - Must be documented
+    - Not deductible to corporation
+    - May be taxable dividend if exceeds basis
+
+DOCUMENTATION REQUIRED:
+
+  Q3-2024 Distribution:
+    Date: 07/23/2024
+    Amount: $7,800.00
+    Method: Teller cash withdrawal
+    Purpose: [To be determined - personal use]
+
+  Q2-2025 Distribution:
+    Date: 04/30/2025
+    Amount: $780.00
+    Method: Teller cash withdrawal
+    Purpose: [To be determined - personal use]
+
+ACTION REQUIRED:
+  1. Determine entity type of CHK_1234
+  2. Create distribution authorizations for:
+     - Q3-2024: $7,800
+     - Q2-2025: $780
+  3. Add to quarterly documents
+  4. Provide to tax preparer
+  5. Update capital account ledger
+
+
+================================================================================
+SUMMARY OF INVESTIGATION RESULTS
+================================================================================
+
+ITEM 1: $59,409.57 Checking Transfer
+  Status: ✓ RESOLVED
+  Finding: Matched to CHK_1234 deposit (same reference #001685)
+  Action: Update reconciliation script to match by reference number
+
+ITEM 2: $6,069.52 MoneyLink from XXX890
+  Status: ⚠️ PARTIAL - Data gap (XXX890 CSV starts 10/2024, transaction 08/2024)
+  Finding: Identified source as XXX890, cannot verify outflow
+  Action: Export XXX890 history for Aug-Sep 2024 from Schwab
+
+ITEM 3: $5,460 Journal to "...007"
+  Status: ✓ RESOLVED - IRA CONTRIBUTION
+  Finding: Transfer to Schwab IRA account (personal retirement)
+  Classification: Personal IRA funding - correctly unmatched in LLC reconciliation
+  Tax Note: 2025 IRA contribution, may be deductible if Traditional IRA
+
+ITEM 4: $8,580 Business teller withdrawals
+  Status: ✓ RESOLVED
+  Finding: Cash distributions from business to owner (not deposited elsewhere)
+  Action: Create distribution documents for tax purposes
+
+RECONCILIATION STATUS:
+  ✓ 3 of 4 items FULLY RESOLVED
+  ⚠️ 1 item PARTIAL (data gap - need older XXX890 export)
+
+NEXT STEPS:
+  1. Update reconciliation script with checking transfer matching logic
+  2. Export older XXX890 data from Schwab (Jan-Sep 2024) to verify $6,069.52
+  3. Create distribution authorizations for CHK_1234 cash withdrawals ($8,580)
+  4. Determine CHK_1234 entity ownership structure
+  5. Note 2025 IRA contribution for tax filing
+
+PRIORITY:
+  CRITICAL: Document business distributions for taxes ($8,580)
+  MEDIUM: Export older XXX890 data ($6,069.52 source verification)
+  LOW: Update checking transfer matching (already understood)
+  INFO: IRA contribution noted for 2025 tax return
+
+================================================================================

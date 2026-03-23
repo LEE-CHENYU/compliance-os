@@ -1,0 +1,147 @@
+================================================================================
+PARSED: FY2026 H-1B CAP PETITION (PREVIOUS ATTEMPT - BSGC AS PETITIONER)
+Fiscal Year: FY2026 (employment start: October 1, 2025)
+Attorney: MT Law LLC (Cindy Chen / Xinzi Chen)
+Petitioner: Greenfield Capital LLC
+Beneficiary: Alex Zhang
+Status: Registration submitted, Part I paid. Outcome unknown from docs on file.
+Parsed: 2026-02-12
+================================================================================
+
+================================================================================
+FORM G-28: NOTICE OF ENTRY OF APPEARANCE AS ATTORNEY
+================================================================================
+Attorney Information:
+  Name:               Xinzi (Cindy) Chen
+  Firm:               MT Law LLC
+  USCIS Account:      059603256780
+  Bar Number:         699143 (Massachusetts)
+  Address:            430 Bedford St Ste 200, Lexington, MA 02420
+  Phone:              (800) 345-1899
+  Email:              cindy@mtlawllc.com
+  Fax:                (888) 345-1388
+  Signed:             03/12/2025
+
+Client Information:
+  Name:               Alex Zhang
+  Entity:             Greenfield Capital LLC
+  Title:              Manager
+  Phone:              (646) 555-0142
+  Email:              contact.greenfield@gmail.com
+  Mailing Address:    100 Main St Ste A, Cheyenne, WY 82001-6317
+
+Notice Options:
+  Send notices to attorney address: No
+  Send secure docs to attorney: No
+  Send I-94 to client address: No
+
+================================================================================
+FORM H-1BR: USCIS H-1B REGISTRATION
+================================================================================
+Registrant / Employer:
+  Business Name:      Greenfield Capital LLC
+  EIN:                931924106
+  Primary Address:    100 Main St Ste A, Cheyenne, WY 82001
+
+Authorized Individual:
+  Name:               Alex Zhang
+  Position:           Manager
+  Phone:              (646) 555-0142
+  Email:              contact.greenfield@gmail.com
+
+Beneficiary:
+  Full Name:          Alex Zhang
+  Gender:             Male
+  Date of Birth:      03/15/1997
+  Country of Birth:   CHN (China)
+  Country of Nationality: CHN (China)
+  Passport Number:    G88855571
+  Passport Expiration: 2026-06-30
+  Country of Issuance: CHN (China)
+  Master's Cap Eligible: YES
+
+Note: Registration Number and Beneficiary Confirmation Number fields are blank
+      in the document on file, suggesting this was a draft or pre-submission copy.
+
+================================================================================
+INVOICE: MT LAW LLC - PART I (BEFORE LOTTERY)
+================================================================================
+Invoice Date:       03/11/2025
+Invoice Number:     H-1B#
+Status:             PAID
+
+Bill To:
+  Petitioner:       Greenfield Capital LLC
+  Beneficiary:      Alex Zhang
+
+Line Items:
+  Legal Fee (Part I - Before Lottery):    $234.00
+  H-1B Registration Filing Fee (USCIS):   $167.70
+  -----------------------------------------------
+  Subtotal:                               $401.70
+  Payment Received:                       $401.70
+  TOTAL DUE:                              $0.00
+
+================================================================================
+FY2026 H-1B TIMELINE AND KEY DATES
+================================================================================
+Registration Period:    March 1 - March 20, 2025
+G-28 Signed:            March 12, 2025
+Invoice Paid:           March 11, 2025
+Lottery Results:        (Not documented - outcome unknown from files on hand)
+If Selected:
+  Filing Period:        April 1 - June 30, 2025
+  H-1B Start Date:     October 1, 2025
+  Valid Through:        ~September 2028 (3 years)
+
+================================================================================
+H-1B STATUS OVERVIEW (MT LAW GUIDE - KEY POINTS)
+================================================================================
+
+REQUIREMENTS:
+- U.S. employer must file petition (cannot be self-petitioned)
+- Exception: Own business can sponsor IF employer-employee relationship exists
+  (another employee supervises and has authority to fire the beneficiary)
+- Must pay higher of "actual wage" or "prevailing wage" per DOL
+- Position must qualify as "specialty occupation" (min. Bachelor's degree)
+
+FY2026 CAP:
+- 65,000 regular cap (Bachelor's degree)
+- 20,000 U.S. Master's cap (Master's or above from U.S. institution)
+- Alex Zhang was Master's Cap Eligible (Columbia University MS)
+
+EMPLOYER OBLIGATIONS:
+a. Pay legal and filing fees for H-1B petition
+b. Pay return travel if beneficiary involuntarily terminated before H-1B expires
+c. Notify all other employees about H-1B sponsorship and proposed wage
+d. Maintain "public inspection file" for government investigation
+
+REQUIRED DOCUMENTS FROM PETITIONER:
+- Financial information (past 3 years tax returns)
+- Business registration documents
+- Brochures, website printouts, marketing materials
+
+REQUIRED DOCUMENTS FROM BENEFICIARY:
+- I-20 copies (all academic study in U.S.)
+- F-1 visa copies from passport
+- Entry/departure stamps and I-94
+- Academic transcripts and credentials
+
+CAP-GAP RULE:
+- OPT holders can extend OPT to Sept 30 if H-1B petition is pending/approved
+- Must indicate changing status in U.S. (not consular processing)
+
+================================================================================
+NOTES FOR FY2027 PETITION
+================================================================================
+- FY2026 petition used BSGC as petitioner with MT Law LLC as attorney
+- For FY2027, MT Law agreement (signed via DocuSign) again names BSGC as
+  petitioner, but user indicated wanting to use a DIFFERENT entity
+- Passport G88855571 expires 2026-06-30 -- needs renewal before FY2027
+  petition filing if consular processing is needed
+- Master's Cap eligible (Columbia University degree)
+- Attorney contact for FY2027: Cindy Chen at cindy@mtlawllc.com / (781) 780-6634
+
+================================================================================
+END OF PARSED DOCUMENT
+================================================================================

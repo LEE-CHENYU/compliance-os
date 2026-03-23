@@ -6,31 +6,83 @@ import { getAnswers, saveAnswer } from "@/lib/api";
 export interface StepDef {
   key: string;
   label: string;
+  track?: string; // "tax" | "immigration" | "corporate" | undefined (shared)
   condition?: (answers: Record<string, unknown>) => boolean;
 }
 
 const ALL_STEPS: StepDef[] = [
+  // --- Shared intake ---
   { key: "concern_area", label: "Concerns" },
-  { key: "current_stage", label: "Stage" },
   { key: "existing_help", label: "Professionals" },
-  {
-    key: "residency_status",
-    label: "Residency",
-    condition: (a) => {
-      const concerns = (a.concern_area as string[]) || [];
-      return concerns.includes("Immigration") || concerns.includes("Tax Filing");
-    },
-  },
   { key: "timeline_urgency", label: "Timeline" },
+
+  // --- Tax track ---
   {
-    key: "prior_filings",
-    label: "Prior Filings",
-    condition: (a) => {
-      const concerns = (a.concern_area as string[]) || [];
-      return concerns.includes("Tax Filing");
-    },
+    key: "tax_residency_status",
+    label: "Tax Residency",
+    track: "tax",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Tax Filing"),
   },
-  { key: "entities", label: "Entities" },
+  {
+    key: "tax_filing_stage",
+    label: "Filing Stage",
+    track: "tax",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Tax Filing"),
+  },
+  {
+    key: "tax_prior_filings",
+    label: "Prior Filings",
+    track: "tax",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Tax Filing"),
+  },
+  {
+    key: "tax_income_sources",
+    label: "Income Sources",
+    track: "tax",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Tax Filing"),
+  },
+  {
+    key: "tax_entities",
+    label: "Tax Entities",
+    track: "tax",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Tax Filing"),
+  },
+
+  // --- Immigration track ---
+  {
+    key: "imm_visa_category",
+    label: "Visa Status",
+    track: "immigration",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Immigration"),
+  },
+  {
+    key: "imm_subdomain",
+    label: "Immigration Need",
+    track: "immigration",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Immigration"),
+  },
+  {
+    key: "imm_stage",
+    label: "Case Stage",
+    track: "immigration",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Immigration"),
+  },
+
+  // --- Corporate track ---
+  {
+    key: "corp_entities",
+    label: "Entities",
+    track: "corporate",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Corporate Compliance"),
+  },
+  {
+    key: "corp_obligations",
+    label: "Obligations",
+    track: "corporate",
+    condition: (a) => ((a.concern_area as string[]) || []).includes("Corporate Compliance"),
+  },
+
+  // --- Summary ---
   { key: "summary", label: "Summary" },
 ];
 
@@ -40,7 +92,6 @@ export function useWizard(caseId: string) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Compute visible steps based on current answers
   const visibleSteps = ALL_STEPS.filter(
     (s) => !s.condition || s.condition(answers)
   );
@@ -49,7 +100,6 @@ export function useWizard(caseId: string) {
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === visibleSteps.length - 1;
 
-  // Load existing answers on mount
   useEffect(() => {
     getAnswers(caseId)
       .then((data) => {

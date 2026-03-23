@@ -1,0 +1,321 @@
+================================================================================
+CONSULTATION PREP — CYRUS D. MEHTA & PARTNERS PLLC
+Date: Thursday, February 19, 2026, 2:00 PM EST (11:00 AM PST)
+Attorney: Kaitlyn Box, Partner
+Format: Zoom (Meeting ID: 880 8529 9249, Passcode: 105990)
+Fee: $312 (30 min, up to 1 hr for complex matters; credited if retained within 30 days)
+Contact: Lashawn Wilkins <lwilkins@cyrusmehta.com>
+================================================================================
+
+================================================================================
+1. WHO IS KAITLYN BOX
+================================================================================
+
+  - Partner at Cyrus D. Mehta & Partners PLLC (elevated Jan 1, 2025)
+  - Joined the firm in 2020 out of law school — rapid ascent to partner
+  - Co-authors blog posts with Cyrus Mehta on owner-beneficiary H-1B,
+    Modernization Rule, and entrepreneur immigration topics
+  - The firm's blog (blog.cyrusmehta.com) is considered the leading
+    publication on owner-beneficiary H-1B issues, with 17+ years of
+    articles on this exact topic
+  - Mehta himself: Chambers USA "Star Individual" (20 consecutive years),
+    AILA Edith Lowenstein Award (highest honor), ABIL member (top 20 US
+    immigration lawyers)
+
+  WHAT THIS MEANS: Box has been trained by and works alongside the most
+  decorated owner-beneficiary H-1B expert in the country. She should have
+  deep knowledge of the Modernization Rule and entity structuring. The
+  question is whether she has the judgment and depth on STEM OPT compliance.
+
+================================================================================
+2. WHAT THEY ALREADY KNOW (from our email to info@cyrusmehta.com)
+================================================================================
+
+  We sent a detailed consultation request (Feb 17) covering:
+    - F-1 status, currently on CPT, MS in Financial Engineering (STEM)
+    - Proposed title: Financial Specialist
+    - Two entities: (a) Wyoming SMLLC (100% owner), (b) CA C-Corp
+      (mother as president/sole director)
+    - Q1: 18-month vs 3-year validity — C-Corp strategy
+    - Q2: STEM OPT compliance — LLC Schedule C income, unreported to
+      SEVP/DSO, outside I-983 scope, one employer never signed I-983
+    - Referenced Mehta's own articles by name
+    - Noted a prior attorney refused to engage on Q2
+
+  ASSUME: Box has read this email and has had time to prepare. If she
+  hasn't read it, that itself is a data point about the firm's process.
+
+================================================================================
+3. INTEL FROM SOPHIE ALCORN'S REPLY (use to cross-check Box's answers)
+================================================================================
+
+  Alcorn's team provided substantive answers in their email reply that
+  serve as benchmarks. Box should match or exceed these:
+
+  A. ENTITY / VALIDITY:
+     Alcorn says: Modernization Rule defaults to 18 months for majority
+     owner. "If it's a company owned by a family member, you might be able
+     to qualify for a 3-year H-1B." Must choose ONE company for lottery.
+
+     → PROBE: Does Box agree the C-Corp with mother as president could
+       yield 3-year validity? Or does USCIS look through family structures?
+
+  B. $78K FEE:
+     Alcorn says: There is a $78,000 H-1B fee on certain petitions.
+     F-1 change of status is EXEMPT. Consular processing would trigger it.
+
+     → THIS IS NEW INFO no other attorney has raised. Ask Box directly:
+       "Is there a $78K fee issue I should be aware of? Does COS vs
+       consular processing affect it?"
+     → If she raises it unprompted = strong signal of current knowledge
+     → If she doesn't know about it = concerning gap
+
+  C. STEM OPT / COS RISK:
+     Alcorn says: Self-employment generally not permitted on STEM OPT
+     (unlike standard OPT). USCIS "almost invariably requests evidence of
+     maintenance of status such as pay stubs and tax returns" during COS.
+     Consular processing "effectively resets any potential status issues,
+     provided no permanent bar is triggered."
+
+     → PROBE: Does Box agree COS triggers status scrutiny? Does she see
+       consular processing as a possible escape valve?
+     → CRITICAL: Does she engage on the risk, or deflect like Arora?
+
+================================================================================
+4. LESSONS FROM ARORA CONSULTATION (mistakes to avoid)
+================================================================================
+
+  In the Arora consultation (Feb 16, $98, 21 min), we identified:
+
+  ARORA'S FAILURES:
+    - Gave initial recommendation (use C-Corp) without reasoning, then
+      reversed it when challenged ("it doesn't matter")
+    - Diverged from direct questions into tangents (had to redirect 3x)
+    - On STEM OPT: "We don't have an opinion" — explicit refusal to engage
+    - Did NOT distinguish regular OPT vs STEM OPT self-employment rules
+    - Did NOT discuss discoverability risk (Schedule C vs SEVIS)
+    - Did NOT address INA §212(a)(6)(C)(i) misrepresentation risk
+    - Did NOT recommend a strategy (disclose vs remain silent)
+    - Dismissed risk as "unlikely to be an RFE" without analysis
+
+  ARORA'S USEFUL DATA POINTS (confirmed correct):
+    - Owner=beneficiary is now OK under Modernization Rule
+    - Entity type (LLC vs Corp) doesn't matter for USCIS
+    - Company docs not normally attached to H-1B petition
+    - "Financial Specialist" is a good job title
+    - Recommend (not require) someone else sign the petition
+    - 150-day aggregate unemployment tolerance on OPT/STEM OPT
+
+  → Use Arora's correct data points to validate Box's answers
+  → If Box gives DIFFERENT answers on these basics, probe why
+
+================================================================================
+5. QUESTIONS — PRIORITY ORDER
+================================================================================
+
+  Open with: "Thank you for taking the time. I sent a detailed email to
+  info@ — have you had a chance to review it?"
+
+  ──────────────────────────────────────────────────────────────────────
+  BLOCK A: ENTITY STRATEGY (10 minutes)
+  ──────────────────────────────────────────────────────────────────────
+
+  A1. "Given my two entities — the Wyoming SMLLC where I'm 100% owner,
+      and the California C-Corp where my mother is president and sole
+      director — which should file the H-1B petition, and why?"
+
+      GOOD ANSWER: Nuanced analysis of both options. C-Corp may allow
+      3-year validity if mother's oversight role is genuine. SMLLC caps
+      at 18 months. But USCIS may look through family structures.
+      BAD ANSWER: Snap recommendation without reasoning, or "it doesn't
+      matter" without explaining the validity period implications.
+
+  A2. "Does USCIS treat a family member (mother) as an independent
+      decision-maker, or do they apply de facto control analysis and
+      still cap at 18 months?"
+
+      GOOD ANSWER: Cites specific USCIS guidance or case outcomes. May
+      say it's a gray area but provides strategic framework.
+      BAD ANSWER: "It should be fine" without analysis.
+
+  A3. "Can I only register ONE company for the lottery, or can I
+      register through both?"
+
+      Alcorn says: ONE company only. Arora said: can register both
+      ($663 each). These conflict — get Box's answer.
+
+  A4. "$78K fee question — am I affected? Does COS vs consular
+      processing matter?"
+
+      Only ask this if Box doesn't raise it herself. If she raises it
+      unprompted, that's a strong positive signal.
+
+  ──────────────────────────────────────────────────────────────────────
+  BLOCK B: STEM OPT COMPLIANCE (15 minutes — THE CRITICAL TEST)
+  ──────────────────────────────────────────────────────────────────────
+
+  B1. "During my STEM OPT period (2022-2024), I operated a single-member
+      LLC that generated Schedule C income from e-commerce. This was not
+      reported to my DSO and was outside my I-983 training plan. Does
+      this constitute unauthorized employment under 8 CFR 214.2(f)?"
+
+      GOOD ANSWER: Distinguishes standard OPT (self-employment OK) from
+      STEM OPT (employer-employee relationship required). Analyzes whether
+      passive e-commerce rises to "employment." Asks follow-up questions
+      about the nature of the activity.
+      BAD ANSWER: "We don't have an opinion" or "it's fine, don't worry."
+
+  B2. "One employer during that period never signed my I-983. What are
+      the implications?"
+
+      GOOD ANSWER: Distinguishes between missing I-983 (procedural) vs
+      unauthorized employment (substantive). May cite 150-day unemployment
+      tolerance. Discusses whether the gap constitutes a status violation.
+      BAD ANSWER: Dismisses without analysis.
+
+  B3. "When filing for H-1B change of status, USCIS requests pay stubs
+      and tax returns. My tax returns show Schedule C income from the LLC.
+      What is the discoverability risk?"
+
+      GOOD ANSWER: Analyzes the gap between SEVIS records (no LLC) and
+      tax records (LLC income). Discusses whether USCIS cross-references.
+      Provides realistic risk assessment.
+      BAD ANSWER: "USCIS doesn't look at that" without explanation.
+
+  B4. "Is there INA §212(a)(6)(C)(i) misrepresentation exposure?"
+
+      GOOD ANSWER: Analyzes whether anything in the prior record could
+      be construed as a willful misrepresentation to gain an immigration
+      benefit. Discusses the legal standard.
+      BAD ANSWER: Doesn't know what the section is, or dismisses it.
+
+  B5. "Should I affirmatively disclose this in the H-1B petition, or
+      remain silent?"
+
+      THIS IS THE MOST IMPORTANT QUESTION. The right attorney should
+      have a clear recommendation with reasoning.
+      GOOD ANSWER: Weighs pros/cons of disclosure. May recommend
+      disclosure with a legal memo explaining the situation. Or may
+      recommend silence with specific reasoning about burden of proof.
+      BAD ANSWER: No opinion, or "we'll figure it out later."
+
+  B6. "What is the practical risk level — low, medium, or high — for
+      the H-1B change-of-status application given this history?"
+
+      GOOD ANSWER: Concrete risk assessment with reasoning. May
+      distinguish between risks at different stages (lottery, petition,
+      COS adjudication, future green card).
+      BAD ANSWER: Vague reassurance without substance.
+
+  ──────────────────────────────────────────────────────────────────────
+  BLOCK C: ENGAGEMENT & LOGISTICS (5 minutes)
+  ──────────────────────────────────────────────────────────────────────
+
+  C1. "If I retain your firm, who would handle my case day-to-day —
+      you, Mr. Mehta, or both?"
+
+  C2. "What is the total fee estimate for H-1B registration + petition
+      filing, including the STEM OPT compliance analysis?"
+
+  C3. "The registration window opens March 4. What is your timeline
+      to get registration submitted?"
+
+  C4. "Is the $312 consultation fee credited toward the engagement?"
+      (Per website: yes, if retained within 30 days)
+
+  C5. "If we also need to address the STEM OPT issue with a legal memo
+      or affirmative disclosure strategy, is that included or separate?"
+
+================================================================================
+6. EVALUATION CRITERIA — PASS / FAIL
+================================================================================
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │ MUST-PASS (any failure = do not retain for STEM OPT issue):        │
+  │                                                                     │
+  │ [ ] Engages substantively on STEM OPT compliance (does NOT refuse) │
+  │ [ ] Distinguishes STEM OPT from standard OPT self-employment rules │
+  │ [ ] Addresses discoverability risk (Schedule C vs SEVIS)           │
+  │ [ ] Provides a disclosure recommendation (disclose vs silent)      │
+  │ [ ] Gives a concrete risk assessment, not just "it'll be fine"     │
+  │                                                                     │
+  │ STRONG POSITIVES:                                                   │
+  │ [ ] Raises $78K fee issue unprompted                              │
+  │ [ ] Asks follow-up questions about the LLC activity                │
+  │ [ ] Cites specific regulations (8 CFR 214.2(f), INA §212(a)(6))   │
+  │ [ ] Discusses COS vs consular processing as strategic options      │
+  │ [ ] Provides a clear entity recommendation with reasoning          │
+  │ [ ] Mentions practical USCIS adjudication patterns (not just law)  │
+  │                                                                     │
+  │ RED FLAGS:                                                          │
+  │ [ ] "We don't have an opinion" on STEM OPT                        │
+  │ [ ] "It's fine, don't worry about it" without analysis             │
+  │ [ ] Doesn't ask follow-up questions about LLC activity             │
+  │ [ ] Unfamiliar with Modernization Rule's 18-month provision        │
+  │ [ ] Gives contradictory answers when challenged                    │
+  │ [ ] Diverges into tangents / doesn't answer direct questions       │
+  │ [ ] Pressures to retain immediately without substantive answers    │
+  │ [ ] Doesn't know about the $78K fee (if it applies)              │
+  └─────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+7. DECISION FRAMEWORK
+================================================================================
+
+  SCENARIO A — Box passes all must-pass criteria:
+    → Strong candidate for full engagement (registration + petition +
+      STEM OPT compliance strategy)
+    → Ask for fee quote and timeline
+    → Compare with Alcorn ($390 consult + $2,730 registration)
+    → Decision factor: depth of STEM OPT analysis vs Alcorn's email
+
+  SCENARIO B — Box is strong on entity/H-1B but weak on STEM OPT:
+    → Consider retaining Mehta firm for H-1B filing only
+    → Seek separate compliance counsel for STEM OPT issue
+    → This was the Arora fallback plan — same logic applies
+
+  SCENARIO C — Box fails (deflects, dismisses, lacks depth):
+    → Do not retain
+    → Alcorn becomes the leading candidate ($390 consult + $2,730)
+    → Consider scheduling Alcorn consultation immediately
+    → Also consider: Mehta himself ($370) as a separate consultation
+
+  SCENARIO D — Box is excellent but defers to Mehta on STEM OPT:
+    → Acceptable if she explicitly says "this needs Cyrus's input"
+    → Ask if Mehta would be involved in the STEM OPT analysis
+    → May indicate honest self-awareness rather than a gap
+
+================================================================================
+8. COMPARISON TABLE — ATTORNEYS IN PLAY
+================================================================================
+
+  Attorney         | Consult | Registration | STEM OPT  | Status
+  ─────────────────┼─────────┼──────────────┼───────────┼──────────────
+  Kaitlyn Box      | $312    | TBD          | TODAY      | Testing
+  Cyrus Mehta      | $370    | TBD          | Available  | Backup
+  Sophie Alcorn    | $390    | $2,730       | Engaged*   | Strong lead
+  Arora            | $98    | $663         | FAILED     | Dropped
+  Shautsova        | TBD     | TBD          | Unknown    | Replied
+  Shah Peerally    | $117    | $546         | Unknown    | No reply
+
+  * Alcorn's email substantively addressed STEM OPT risk, $78K fee,
+    and COS vs consular processing — the only attorney to do so in
+    writing before a paid consultation.
+
+================================================================================
+9. NOTES
+================================================================================
+
+  - Record the call (confirm Zoom recording or use phone recording)
+  - Take notes on specific answers to each question
+  - Note any follow-up questions Box asks (shows depth)
+  - Note if she references Mehta's published work or specific USCIS
+    guidance (shows preparation)
+  - Track time: if she tries to end at 30 min with Q2 unanswered,
+    ask to continue (complex matters go up to 1 hour per website)
+  - Payment: not yet confirmed — Lashawn did not answer payment Q.
+    May be billed after.
+
+================================================================================
+END OF CONSULTATION PREP
+================================================================================

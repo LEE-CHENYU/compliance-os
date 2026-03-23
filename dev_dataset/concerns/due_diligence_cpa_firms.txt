@@ -1,0 +1,742 @@
+================================================================================
+DUE DILIGENCE — CPA FIRMS FOR TAX COMPLIANCE
+Compiled: 02/12/2026
+================================================================================
+
+CONTEXT:
+  Alex Zhang needs a CPA for:
+    - 2025 federal tax return (1040) with W-2s, Schedule C, brokerage income
+    - Form 3520 for $272,891 in foreign gifts (2025)
+    - Form 5472 for foreign-owned SMLLC (BSGC LLC)
+    - FBAR filing (2024 delinquent + 2025)
+    - Form 8938 (FATCA) if threshold met
+    - Possible 2024 amended returns (1040-X)
+    - F-1 visa holder tax issues, dual-status considerations
+    - US-China cross-border wire transfers from family
+
+STATUS SUMMARY:
+  Dimov Tax (George Dimov)         — ACTIVE (auto-reply received, awaiting response)
+  Dillinger Carter (John Dillinger) — ACTIVE (not yet contacted)
+  Christopher Huang CPAs           — ACTIVE (spoke with Kevin Thai, quotation pending)
+  Spott, Lucey & Wall (Tyler Dixon) — ACTIVE (meeting booked, callback received)
+
+================================================================================
+FIRM 1: DIMOV TAX (DIMOVTAX.COM)
+================================================================================
+Also Known As:    George Dimov CPA, NYC Accounting & Consulting,
+                  Dimov Consulting Inc., Dimov Associates
+Website:          https://dimovtax.com
+Address:          211 E 43rd St, Suite 628, New York, NY 10017
+                  Also: San Francisco, Washington DC, Seattle
+Phone:            (866) 681-2140
+Email:            (via website contact form)
+Founded:          2008 (~18 years)
+Firm Size:        11-50 employees (13-20 staff)
+Lead CPA:         George Dimov, CPA
+
+CONTACT STATUS:
+  - Submitted inquiry via website
+  - Auto-reply received 02/12/2026 ("team will respond within 24 hours")
+
+--------------------------------------------------------------------------------
+CREDENTIALS
+--------------------------------------------------------------------------------
+  George Dimov, C.P.A.
+    NY CPA License:   #07-121798
+    Other Licenses:    CA, CO, NJ, MD, WA
+    Education:         MS Accountancy (Baruch College, CUNY, GPA 3.8)
+                       BS Finance (Florida International University)
+    Memberships:       AICPA, PCAOB
+    Experience:        20+ years
+    Disciplinary:      None found
+
+  Other Staff:
+    Stan Shraybman, MBA, EA — Senior Tax Manager
+    Anvar Akhtamov, EA, CPA — Senior Tax Accountant
+    Xintian Wang, CPA — Senior Tax Manager (Chinese name, potentially
+                        relevant for Mandarin communication)
+
+--------------------------------------------------------------------------------
+SPECIALTY FIT FOR YOUR NEEDS
+--------------------------------------------------------------------------------
+  Form 3520 (Foreign Gift):      YES — dedicated page with detailed guides
+  Form 5472 (Foreign-Owned LLC): YES — explicit instructions published
+  FBAR (FinCEN 114):             YES — explicitly offered
+  Form 8938 (FATCA):             YES — explicitly offered
+  F-1/H-1B Visa Tax:             YES — dedicated pages for F-1, J-1, H-1B, L-1
+  Dual-Status Returns:           YES — Substantial Presence Test guidance published
+  Form 5471:                     YES
+  Form 8865:                     YES
+  US-China Specific:             NO — broad international (42+ countries) but no
+                                 China-specific treaty expertise advertised
+  Streamlined Disclosure:        NOT EXPLICIT — "IRS Disclosure Programs" mentioned
+                                 broadly
+
+  OVERALL FIT:                   STRONG on compliance forms; MODERATE on China-specific
+
+--------------------------------------------------------------------------------
+FEE STRUCTURE
+--------------------------------------------------------------------------------
+  Published:          Flat fees starting at $308 for simple returns
+  International Add-ons: $390-$780 per form (estimated)
+  Complex International: Custom quote required
+  Consultation:       Not specified
+
+  More transparent than most CPA firms (published starting prices).
+
+--------------------------------------------------------------------------------
+REVIEWS & REPUTATION
+--------------------------------------------------------------------------------
+  Yelp (SF):          586 reviews (claimed 5-star)
+  Yelp (NYC):         291 reviews (claimed 5-star)
+  Yelp (DC):          109 reviews
+  Yelp (Seattle):     89 reviews
+  Trustpilot:         4.7/5 (165 reviews)
+  Clutch.co:          28 verified reviews
+  Glassdoor:          4.2/5 (23 employee reviews)
+  BBB:                A+ rated, BBB Accredited since 09/30/2024 (under "NYC
+                      Accounting & Consulting" entity), 1 complaint in 3 years,
+                      0 closed complaints in past 12 months
+  Inc. 5000:          2024 honoree (#2279); 2025 honoree (#214, 1,784% 3-yr growth)
+
+  Trustpilot Detail:  4.7/5 — 152 five-star (92%), 9 one-star (6%)
+                      Negative: case reassigned between staff, upfront payment
+                      required then poor follow-through, promised senior callback
+                      never materialized
+  Revenue:            ~$2M (estimated, Kona Equity)
+  Crunchbase:         Profile exists
+
+  Positive: Knowledge, responsiveness, broad international coverage
+  Negative: Some missed deadlines during peak season, billing surprises,
+            clerical errors noted by some clients, case shuffling between
+            team members (Trustpilot)
+
+--------------------------------------------------------------------------------
+RED FLAGS
+--------------------------------------------------------------------------------
+  1. Unusually high Yelp review volume (1,000+) for 13-20 person firm
+  2. Multiple entity names — confusing for complaint tracking
+  3. BBB now confirms A+ and Accredited (since 09/2024) — under entity
+     "NYC Accounting & Consulting," 1 complaint in 3 years
+  4. Negative reviews cite missed deadlines — concerning for penalty-heavy
+     international forms (FBAR, Form 3520)
+  5. No China-specific tax treaty expertise advertised
+  6. financescam.com listing exists — LOW CREDIBILITY: site accepts anonymous
+     tips, provides no verifiable evidence, uses vague language ("clients
+     describe," "some allege"), no methodology for complaint verification,
+     no journalistic standards. Allegations include communication issues,
+     billing disputes, and errors requiring correction — but no specific
+     dates, amounts, or documentation provided. Likely a complaint
+     aggregator site, not an investigative source.
+  7. Glassdoor employee reviews mention stressful environment, aggressive
+     leadership communication, limited training — potential turnover risk
+     for your file continuity
+
+--------------------------------------------------------------------------------
+STRENGTHS
+--------------------------------------------------------------------------------
+  1. Broadest international form coverage of all three firms
+  2. Explicit F-1/H-1B visa tax pages — direct experience
+  3. Published pricing (most transparent of the three)
+  4. Inc. 5000 honoree — genuine third-party recognition
+  5. Multi-state CPA licensing
+  6. Xintian Wang (CPA) may offer Mandarin capability
+  7. 18 years in business, multiple office locations
+  8. Dedicated Form 3520, 5472, FBAR content demonstrates knowledge
+
+================================================================================
+FIRM 2: DILLINGER CARTER & ASSOCIATES (DILLINGERCPA.COM)
+================================================================================
+Legal Name:       DillingerCPA, a Professional Corporation
+Website:          https://dillingercpa.com
+Address:          840 Hinckley Rd, Suite 242, Burlingame, CA 94010
+                  (formerly 400 Oyster Point Blvd, South San Francisco)
+Phone:            (800) 385-6757
+Email:            hello@DillingerCPA.com
+Founded:          2015 (PC incorporation; Dillinger has 25+ years personal exp.)
+Firm Size:        Small (4 named team members + bookkeepers/payroll staff)
+Lead CPA:         John Dillinger, CPA, CGMA, PFS
+
+CONTACT STATUS:
+  - Not yet contacted
+  - Free 15-minute phone consultation available via meetme.so/DillingerCPA
+
+--------------------------------------------------------------------------------
+CREDENTIALS
+--------------------------------------------------------------------------------
+  John Dillinger, CPA, CGMA, PFS
+    CPA License:       California AND Texas
+    CGMA:              Chartered Global Management Accountant
+    PFS:               Personal Financial Specialist (AICPA)
+    Education:         MS Taxation (Golden Gate University)
+                       MS Accounting & Financial Management
+                       BS Social Science (Washington State University)
+    Prior Experience:  PricewaterhouseCoopers — International Tax practice
+                       IRS — Revenue Agent, Self-Employed/Small Business Division
+    Memberships:       AICPA, Texas Society of CPAs, MENSA
+    Disciplinary:      None found
+
+  Bobby Carter — VP, Financial Advisor (MS Financial Planning, NOT a CPA)
+  Nancy O'Malley — EA (Enrolled Agent)
+  Margaret Casey — Emeritus
+
+  NOTE: Tax work rests primarily on Dillinger and O'Malley (EA).
+
+--------------------------------------------------------------------------------
+SPECIALTY FIT FOR YOUR NEEDS
+--------------------------------------------------------------------------------
+  Form 3520 (Foreign Gift):      YES — explicitly listed on services page
+  Form 5472 (Foreign-Owned LLC): YES — explicitly listed
+  FBAR (FinCEN 114):             YES — explicitly listed
+  Form 8938 (FATCA):             NOT LISTED (likely capable)
+  F-1/H-1B Visa Tax:             NOT ADVERTISED — no visible experience
+  Dual-Status Returns:           NOT ADVERTISED
+  Form 5471:                     YES — also a speaking engagement topic
+  Form 8865:                     YES — explicitly listed
+  US-China Specific:             NO — no China-specific experience visible
+  Streamlined Disclosure:        LIKELY — "IRS Disclosure Programs" referenced
+  IRS Voluntary Disclosure:      YES — explicitly claimed expertise
+
+  OVERALL FIT:                   STRONG on compliance forms + IRS disclosure;
+                                 WEAK on F-1/H-1B and China-specific issues
+
+  UNIQUE VALUE: Former PwC International Tax + Former IRS Agent — rare combo
+                in a small firm. Strong for FBAR delinquent filing strategy.
+
+--------------------------------------------------------------------------------
+SPEAKING ENGAGEMENTS (VERIFIABLE)
+--------------------------------------------------------------------------------
+  - Knowledge Congress: "Understanding Form 5471 & Owning Foreign Corporations"
+  - Knowledge Congress: Foreign Corporation Event ("nationally recognized expert")
+  - International Living: "US Tax Requirements when Buying Property Overseas"
+  - Ameriprise, Merrill Lynch: Tax-related presentations
+
+--------------------------------------------------------------------------------
+FEE STRUCTURE
+--------------------------------------------------------------------------------
+  NOT PUBLISHED
+
+  One Yelp reviewer described rates as "average."
+  Free 15-minute phone consultation available.
+
+  → MUST REQUEST DETAILED FEE SCHEDULE BEFORE ENGAGEMENT
+
+--------------------------------------------------------------------------------
+REVIEWS & REPUTATION
+--------------------------------------------------------------------------------
+  Yelp:             Small number of reviews, all positive
+                    "Expertise, responsiveness, and results were far superior"
+                    "Very knowledgeable and helpful, constructive suggestions"
+  Google:           No reviews found
+  BBB:              No profile
+  Reddit:           No mentions
+
+  Review footprint is THIN — not unusual for referral-based small firm,
+  but limited independent validation.
+
+--------------------------------------------------------------------------------
+RED FLAGS
+--------------------------------------------------------------------------------
+  1. Very thin online review presence for 25+ year experience claim
+  2. No published fees
+  3. No demonstrated F-1/H-1B or China-specific experience
+  4. Small team — limited depth if Dillinger is unavailable
+  5. Website appears somewhat outdated ("recently passed HIRE ACT" — 2010)
+  6. "Carter" is a financial planner, not a CPA — tax work is Dillinger + EA
+
+--------------------------------------------------------------------------------
+STRENGTHS
+--------------------------------------------------------------------------------
+  1. Former PwC International Tax — Big Four background rare in small firms
+  2. Former IRS Agent — invaluable for disclosure/delinquent filing strategy
+  3. Explicitly covers Forms 3520, 5472, FBAR, 5471, 8865, 926
+  4. Speaking engagements on international tax at verifiable platforms
+  5. Clean record — zero complaints, zero disciplinary actions
+  6. MS Taxation + dual CPA + CGMA + PFS = strong credentials
+  7. Free 15-min consultation available
+  8. Best fit for IRS disclosure/FBAR delinquency remediation
+
+================================================================================
+FIRM 3: CHRISTOPHER HUANG CPAs, INC. (CHRISHCPA.COM)
+================================================================================
+Website:          https://www.chrishcpa.com
+Address (HQ):     1879 Lundy Ave, Suite 122, San Jose, CA 95131
+                  Also: Pleasanton, Millbrae, Santa Clara, Dublin, Irvine CA,
+                  Bellevue WA + Beijing, Suzhou, Hangzhou, Shenzhen, Hong Kong
+Phone:            (408) 437-8928
+Fax:              (408) 437-0928
+Founded:          2005 (~21 years)
+Firm Size:        ~18 employees
+CA Entity #:      C2751341
+
+CONTACT STATUS:
+  - Spoke with Kevin Thai (accountant) by phone
+  - Hannah Huang (VP/manager) handles quotations
+  - Email: Hannah.Huang@chrishcpa.com (quotation)
+           Kevin.Thai@chrishcpa.com (accountant contact)
+
+--------------------------------------------------------------------------------
+CREDENTIALS
+--------------------------------------------------------------------------------
+  Christopher Huang, CPA
+    CA CPA License:    #83861
+    WA CPA License:    Firm #6436
+    Education:         MS Taxation (San Jose State University)
+                       BS Accounting (San Francisco State University)
+                       Peking University alumnus
+    Experience:        20+ years; previously at "numerous large public
+                       accounting firms and industry"
+    Affiliations:      Advisor to President, Peking University Education
+                       Foundation USA; CFO, Peking University Alumni Assn of
+                       Northern California
+    Disciplinary:      None found
+
+  Hannah Huang, Ph.D. — VP & General Manager
+    Education:         Ph.D., University of Minnesota-Twin Cities
+    Background:        15+ years in Semiconductors/Nanotechnology
+    NOTE:              NOT a CPA or tax professional — administrative role
+
+  Kevin Thai — Accountant (no public credentials found)
+
+  NOTE: Firm has sponsored H-1B visas for Staff Accountant positions
+  (2015, 2016, 2022).
+
+--------------------------------------------------------------------------------
+SPECIALTY FIT FOR YOUR NEEDS
+--------------------------------------------------------------------------------
+  Form 3520 (Foreign Gift):      NOT LISTED — must ask directly
+  Form 5472 (Foreign-Owned LLC): NOT LISTED — may fall under "international
+                                 entity consultation"
+  FBAR (FinCEN 114):             NOT LISTED — implied by international focus
+  Form 8938 (FATCA):             NOT LISTED
+  F-1/H-1B Visa Tax:             NOT ADVERTISED — but firm sponsors H-1Bs itself
+                                 and core client base is Chinese nationals
+  Dual-Status Returns:           NOT ADVERTISED
+  US-China Specific:             YES — this is the firm's core identity
+  Streamlined Disclosure:        NOT LISTED
+  Government Audit Representation: YES — IRS, FTB, Sales Tax
+
+  OVERALL FIT:                   STRONGEST on US-China cross-border context;
+                                 WEAKEST on explicit international form expertise
+
+  UNIQUE VALUE: Only firm with offices in China + Mandarin-speaking staff.
+                Deep Chinese community network (Peking University).
+                Best cultural/language fit for your situation.
+
+--------------------------------------------------------------------------------
+FEE STRUCTURE
+--------------------------------------------------------------------------------
+  NOT PUBLISHED
+
+  Website says "affordable prices."
+  One Yelp reviewer notes per-form billing model.
+  Quotation via Hannah Huang (Hannah.Huang@chrishcpa.com).
+
+  → MUST REQUEST DETAILED WRITTEN QUOTE BEFORE ENGAGEMENT
+
+--------------------------------------------------------------------------------
+REVIEWS & REPUTATION
+--------------------------------------------------------------------------------
+  Yelp (San Jose):    4.5/5 (8 reviews)
+  Yelp (Irvine):      ~4/5 (42 reviews)
+  Yelp (Millbrae):    4/5 (10 reviews)
+  Yelp (Bellevue):    14 reviews
+  Glassdoor:          4.0/5 (21 employee reviews)
+  BBB:                No profile
+  Reddit:             No mentions
+
+  Positive: Knowledgeable, friendly, good pricing, long-term clients
+  Negative: Junior staff concerns, $7,800+ error reported by long-term
+            client, slow response times
+
+--------------------------------------------------------------------------------
+RED FLAGS
+--------------------------------------------------------------------------------
+  1. $7,800+ error reported by 5-year client — accuracy concern
+  2. "Some CPAs are very junior and unprofessional" — reviewer complaint
+  3. Hannah Huang (VP) has Ph.D. in semiconductors, NOT accounting
+  4. Key forms (3520, 5472, FBAR) NOT listed on website
+  5. Slow responsiveness noted by multiple reviewers
+  6. No BBB profile
+  7. Low Glassdoor compensation score (2.4/5) — turnover risk
+  8. ZIP code on their Pleasanton address may be wrong (95466 vs 94566)
+
+--------------------------------------------------------------------------------
+STRENGTHS
+--------------------------------------------------------------------------------
+  1. Only firm with offices in China + Hong Kong
+  2. Mandarin, Cantonese, and 7 other languages supported
+  3. Deep Chinese community network (Peking University affiliations)
+  4. 21 years in business, ~18 employees, 7 US offices
+  5. MS Taxation, dual-state CPA licensure
+  6. Firm itself sponsors H-1B visas — understands immigration context
+  7. Per-form billing model may be more transparent
+  8. Best cultural/language match for US-China cross-border situation
+  9. No disciplinary actions in 21 years
+
+================================================================================
+FIRM 4: SPOTT, LUCEY & WALL, INC. CPAs (SLW.CPA)
+================================================================================
+Website:          https://slw.cpa
+Address:          601 Montgomery St, Suite 1400, San Francisco, CA 94111
+                  Also: 107 Spring St, Seattle, WA 98104
+Phone:            (415) 217-6900 (main) / (415) 217-6941 (Tyler Dixon direct)
+Email:            Tyler.Dixon@slw.cpa / info@slw.cpa
+Founded:          January 1, 1979 (~47 years — "45+" claim is conservative)
+Firm Size:        ~30-42 employees, 6 active partners + 2 emeritus
+Entity:           Corporation (Inc.)
+
+CONTACT STATUS:
+  - Callback received from Tyler Dixon
+  - Meeting booked
+
+--------------------------------------------------------------------------------
+CREDENTIALS — FIRM POLICY
+--------------------------------------------------------------------------------
+  UNIQUE: Firm REQUIRES all personnel to obtain:
+    1. Master's Degree in Taxation (MS-Tax)
+    2. Graduate Certificate in International Taxation
+  Both from Golden Gate University. Full tuition support provided.
+
+  ALL 8 partners/emeritus verified to hold both credentials.
+  Junior staff may be in-progress (firm-funded).
+
+  NOTE: "Certificate in International Taxation" is a 15-unit graduate
+  academic certificate from GGU (5 courses), NOT a professional board
+  credential (like AICPA). Still substantive — focused international
+  tax coursework — but university-issued, not a certification body.
+
+--------------------------------------------------------------------------------
+KEY PERSONNEL
+--------------------------------------------------------------------------------
+  Tyler Dixon, CPA — Partner, International Tax (YOUR CONTACT)
+    CA CPA:            Licensed 2016
+    Education:         BS Business Admin (Cal Poly SLO, 2013)
+                       MS Taxation with honors (GGU, 2020)
+                       Certificate in International Taxation (GGU, 2022)
+    Thesis:            "U.S. tax implications for U.S. beneficiaries of
+                       foreign trusts"
+    Joined Firm:       2013 (13+ years tenure)
+    Made Partner:      July 2023
+    Specialty:         Cross-border consulting, foreign-owned US corps,
+                       expatriation (IRC 877A), pre-immigration planning,
+                       foreign trusts
+    Disciplinary:      None found
+
+  Li Zhang, CPA — Partner
+    Education:         BA French (Beijing Foreign Languages University, 1992)
+                       BS Accounting (CSU Hayward, 2002)
+                       MS Taxation (GGU, 2008)
+                       Certificate in International Taxation (GGU, 2013)
+    With Firm:         2002 (22+ years)
+    Specialty:         Foreign partnerships/businesses from MAINLAND CHINA,
+                       FIRPTA, pre-immigration planning
+    CalCPA:            Chair, International Tax Committee (SF Chapter)
+
+  Ming P. Fang, CPA — Partner
+    Education:         BS Accounting (SFSU, 1999)
+                       MS Taxation with high honors (GGU, 2005)
+                       Certificate in International Taxation (GGU, 2006)
+    With Firm:         1999 (25+ years)
+    Specialty:         PFIC taxation, high-net-worth portfolios
+    CalCPA:            SF Chapter Vice President (2025/2026)
+    Languages:         Spanish, Cantonese
+
+  Russell T. Mansky, CPA — Partner Emeritus
+    Specialty:         Streamlined disclosure / offshore voluntary compliance,
+                       expatriation, controlled foreign corporations
+    Thesis:            "Tax issues surrounding U.S. citizens surrendering
+                       citizenship or terminating residency"
+
+  Devan Friday, CPA — Partner
+    Thesis:            "U.S. taxation of foreign pensions and retirement plans"
+    Specialty:         Foreign-owned US corps, foreign nationals in US
+    NOTE:              Posted about Bittner v. US (FBAR Supreme Court case)
+
+  Krystle Owynn, CPA — Partner
+    Specialty:         GILTI, high-net-worth, trusts/estates,
+                       Europe/Australia/Asia cross-border
+
+  Jordan Reichelt, CPA — Partner (Seattle)
+    Specialty:         GILTI, globally mobile executives, foreign business
+                       structuring
+
+--------------------------------------------------------------------------------
+SPECIALTY FIT FOR YOUR NEEDS
+--------------------------------------------------------------------------------
+  Form 3520 (Foreign Gift/Trust): YES — Tyler Dixon's thesis topic;
+                                  firm explicitly handles foreign trusts
+  Form 5472 (Foreign-Owned LLC):  YES — "Foreign-owned U.S. businesses"
+                                  is an explicit service
+  FBAR (FinCEN 114):              YES — Devan Friday follows FBAR case law;
+                                  Russell Mansky does streamlined disclosure
+  Form 8938 (FATCA):              YES — implied by full international practice
+  F-1/H-1B Visa Tax:              YES — "foreign nationals visiting and working
+                                  in the U.S." is listed; firm sponsors H-1Bs
+  Dual-Status Returns:            YES — pre-immigration planning is core service
+  US-China Specific:              YES — Li Zhang specializes in Mainland China
+                                  business/partnerships
+  Streamlined Disclosure:         YES — Russell Mansky explicitly lists this
+  Pre-Immigration Planning:       YES — core advertised service
+
+  OVERALL FIT:                    STRONGEST across ALL dimensions
+
+--------------------------------------------------------------------------------
+FEE STRUCTURE
+--------------------------------------------------------------------------------
+  NOT PUBLISHED (except ITIN: $1,560 flat fee)
+
+  Typical for boutique international tax firms serving HNW clients.
+  Fees likely higher than generalist CPA firms.
+
+  → REQUEST DETAILED FEE ESTIMATE AT MEETING
+
+--------------------------------------------------------------------------------
+REVIEWS & REPUTATION
+--------------------------------------------------------------------------------
+  Google:             No reviews found
+  Yelp:               Listing exists, minimal reviews
+  BBB:                Profile exists, not accredited, ZERO complaints
+  Glassdoor:          3.3/5 (5 employee reviews, mixed)
+  Reddit:             No mentions
+  ClearlyRated:       Profile exists, no ratings
+
+  NOTE: Thin review footprint is typical for boutique HNW international
+  tax firms — clients don't leave public reviews. No negative reviews found.
+
+--------------------------------------------------------------------------------
+RED FLAGS
+--------------------------------------------------------------------------------
+  1. "Certificate in International Taxation" is GGU academic certificate,
+     not a professional board credential — framing could be misleading
+  2. Tyler Dixon became partner July 2023 — relatively new partner
+  3. No public client reviews to independently verify satisfaction
+  4. Fee opacity — likely premium pricing for boutique specialization
+  5. Lower Glassdoor score (3.3/5) — but only 5 reviews
+
+  NO ACTUAL RED FLAGS DETECTED. Zero complaints, zero disciplinary actions,
+  zero negative client reviews.
+
+--------------------------------------------------------------------------------
+STRENGTHS
+--------------------------------------------------------------------------------
+  1. EVERY partner holds MS-Tax + International Tax Certificate — deepest
+     international tax bench of any firm evaluated
+  2. 47-year firm — longest established of all CPA firms compared
+  3. Li Zhang has specific Mainland China expertise (Beijing education)
+  4. Tyler Dixon's thesis on foreign trusts directly relevant to Form 3520
+  5. Russell Mansky explicitly does streamlined/voluntary disclosure
+  6. Devan Friday tracks FBAR case law (Bittner v. US)
+  7. 6 active partners = institutional depth and redundancy
+  8. CalCPA leadership roles (Zhang chairs International Tax Committee)
+  9. Zero complaints/disciplinary in 47 years
+  10. Does NOT outsource work — all work done in-house
+  11. Pre-immigration planning is core service
+  12. Meeting already booked — fastest engagement path
+
+================================================================================
+COMPARISON TABLE
+================================================================================
+
+                    Dimov Tax       Dillinger Carter  Chris Huang CPAs  SLW (Spott Lucey Wall)
+                    (active)        (active)          (active)          (MEETING BOOKED)
+──────────────────────────────────────────────────────────────────────────────────────────────────────
+Location            NYC + SF +      Burlingame, CA    San Jose + 6 US + San Francisco + Seattle
+                    DC + Seattle                      5 China offices
+Firm Size           13-20           4 named           ~18               30-42 (6 partners)
+Years (firm)        18              11 (PC)           21                47
+Years (lead CPA)    20+             25+               20+               13 (Dixon), 25 (Fang)
+Lead CPA            George Dimov    John Dillinger    Christopher Huang Tyler Dixon
+Big Four Exp.       No              YES (PwC Intl Tax) No               No
+IRS Experience      No              YES (Revenue Agt)  No               No
+CPA License         NY, CA + 4      CA, TX            CA, WA            CA, WA
+MS-Tax Required     No              YES (Dillinger)   YES (Huang)       YES (ALL staff)
+Intl Tax Cert       No              No                No                YES (ALL partners)
+
+Form 3520           YES (published) YES (listed)      NOT LISTED        YES (Dixon thesis)
+Form 5472           YES (published) YES (listed)      NOT LISTED        YES (explicit service)
+FBAR                YES             YES               NOT LISTED        YES (Friday + Mansky)
+Form 8938           YES             NOT LISTED        NOT LISTED        YES (implied)
+F-1/H-1B Tax        YES (dedicated) NOT ADVERTISED    IMPLIED           YES (foreign nationals)
+US-China Specific   NO              NO                YES (core)        YES (Li Zhang, China)
+Streamlined Disc.   BROAD           LIKELY            NOT LISTED        YES (Mansky explicit)
+Pre-Immigration     NO              NO                NO                YES (core service)
+IRS Representation  YES             YES               YES               YES
+
+Fee Transparency    PARTIAL ($308+) NONE              NONE              NONE
+Consultation Fee    Not specified   FREE (15 min)     Not specified     Not specified
+
+Yelp Reviews        1,075+ total    Few, all positive 80+ across locs   Minimal
+Glassdoor           4.2/5           N/A               4.0/5             3.3/5 (5 reviews)
+BBB                 Not accredited  No profile        No profile        No complaints
+Inc. Recognition    2024 Inc. 5000  No                No                No
+
+Disciplinary        None            None              None              None
+Error Reports       Some (deadlines)None              YES ($8K+ error) None
+──────────────────────────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+ASSESSMENT BY YOUR SPECIFIC NEEDS
+================================================================================
+
+1. DELINQUENT 2024 FBAR + STREAMLINED DISCLOSURE STRATEGY
+   Best:   SLW — Mansky explicitly does streamlined disclosure
+   Second: Dillinger Carter — former IRS agent + PwC intl tax
+   Third:  Dimov Tax — IRS disclosure programs referenced
+   Fourth: Christopher Huang — not advertised
+
+2. FORM 3520 ($272,891 FOREIGN GIFTS FROM CHINA)
+   Best:   SLW — Tyler Dixon's thesis on foreign trusts; Li Zhang China exp.
+   Second: Dimov Tax — dedicated guide published
+   Third:  Dillinger Carter — explicitly listed
+   Fourth: Christopher Huang — not listed
+
+3. FORM 5472 (BSGC LLC — FOREIGN-OWNED SMLLC)
+   Best:   SLW — explicit "foreign-owned US businesses" service
+   Second: Dimov Tax — detailed instructions published
+   Third:  Dillinger Carter — explicitly listed
+   Fourth: Christopher Huang — not listed
+
+4. F-1 VISA TAX ISSUES / DUAL-STATUS
+   Best:   Dimov Tax — dedicated F-1, H-1B, dual-status pages
+   Second: SLW — "foreign nationals in the US" + pre-immigration planning
+   Third:  Christopher Huang — implied (Chinese F-1 students are core market)
+   Fourth: Dillinger Carter — not advertised
+
+5. US-CHINA CROSS-BORDER CONTEXT (WIRE TRANSFERS, FAMILY, CULTURE)
+   Best:   Christopher Huang — offices in China, Mandarin, Peking U network
+   Second: SLW — Li Zhang (Beijing education, Mainland China specialty),
+           Ming Fang (Cantonese)
+   Third:  Dimov Tax — broad international, Xintian Wang on staff
+   Fourth: Dillinger Carter — no China-specific experience
+
+6. DEPTH OF INTERNATIONAL TAX BENCH
+   Best:   SLW — 6 partners ALL with MS-Tax + Intl Tax Cert, each with
+           different sub-specialization
+   Second: Dimov Tax — multiple EAs and CPAs on staff
+   Third:  Christopher Huang — ~18 employees, multiple offices
+   Fourth: Dillinger Carter — essentially solo practitioner + EA
+
+================================================================================
+OVERALL RANKING
+================================================================================
+
+1. SLW (SPOTT, LUCEY & WALL) — Clear frontrunner
+   - Deepest international tax expertise of any firm evaluated
+   - EVERY partner holds MS-Tax + International Tax Certificate
+   - Tyler Dixon's thesis directly relevant to Form 3520
+   - Li Zhang has specific Mainland China expertise
+   - Russell Mansky does streamlined/voluntary disclosure
+   - 47-year clean record, zero complaints
+   - Meeting already booked — fastest path to engagement
+   - Weakness: likely premium pricing, no public fee info
+
+2. DILLINGER CARTER — Strongest IRS-side credentials
+   - Former PwC International Tax + former IRS Agent is uniquely valuable
+   - Strong on compliance forms (3520, 5472, 5471, FBAR)
+   - Best backup if SLW pricing is too high
+   - Free 15-min consultation available
+   - Weakness: no F-1/H-1B experience, no China context, very small team
+
+3. DIMOV TAX — Most well-rounded generalist
+   - Covers the most forms explicitly (3520, 5472, FBAR, 8938, F-1/H-1B)
+   - Published educational content demonstrates knowledge
+   - Partial fee transparency ($308+ starting)
+   - Weakness: no China-specific specialty, deadline miss complaints
+
+4. CHRISTOPHER HUANG — Best cultural/language match
+   - Only firm with China offices and Mandarin capability
+   - Understands Chinese family dynamics around wire transfers
+   - But key forms (3520, 5472, FBAR) not listed on website
+   - $8K+ error report is concerning for penalty-heavy filings
+   - Best as supplementary advisor, not primary compliance firm
+
+RECOMMENDATION:
+   Prioritize SLW — they cover every dimension of your needs and the
+   meeting is already booked. Use the meeting to get fee estimates and
+   confirm fit. Schedule Dillinger's free 15-min consult as a backup.
+   Wait for Dimov's response. Get Christopher Huang's quote for comparison.
+
+================================================================================
+NEXT STEPS
+================================================================================
+  [ ] Attend SLW meeting with Tyler Dixon — ask about:
+      - Delinquent 2024 FBAR filing strategy (streamlined?)
+      - Form 3520 for $272,891 in Chinese family gifts
+      - Form 5472 for single-member LLC (BSGC)
+      - F-1 visa holder dual-status considerations
+      - Possible 2024 amended returns
+      - Fee structure and estimated engagement cost
+      - Who else at firm would work on your returns
+  [ ] Wait for Dimov Tax response (within 24 hours of 02/12/2026)
+  [ ] Schedule Dillinger Carter free 15-min consultation
+      (meetme.so/DillingerCPA or (800) 385-6757)
+  [ ] Email Hannah Huang at Christopher Huang CPAs for fee quotation
+      (Hannah.Huang@chrishcpa.com)
+  [ ] Compare all fee quotes
+  [ ] Verify CPA licenses directly:
+      - Dimov: NY #07-121798 at eservices.nysed.gov
+      - Dixon (SLW): CA Board at dca.ca.gov/cba
+      - Dillinger: CA Board at dca.ca.gov/cba
+      - Huang: CA #83861 at dca.ca.gov/cba
+
+================================================================================
+MARKET FEE BENCHMARKS (2026)
+================================================================================
+Sources: CPA Trendlines, NATP, MoneyRates, TraderStatus, various CPA fee pages
+Updated: 02/16/2026
+
+INDIVIDUAL TAX RETURN WITH SCHEDULE C (LLC/SELF-EMPLOYMENT INCOME):
+  Simple 1040 (W-2 only):                 $156 - $468
+  1040 + Schedule C (self-employment):     $312 - $624
+  Complex (Sched C + investments +
+    multiple schedules):                   $624 - $1,170+
+
+FBAR (FinCEN Form 114):
+  H&R Block (expat service):              Starting at $38
+  Typical CPA add-on:                     $156 - $390
+  Complex (multiple accounts, delinquent): $390 - $780+
+  Note: Delinquent FBAR with streamlined disclosure procedures will cost
+  significantly more due to the narrative and compliance work required.
+
+AMENDED RETURN (FORM 1040-X):
+  Simple amendment (one item):             $117 - $312
+  Moderate complexity:                     $312 - $624
+  Complex (multiple changes, NOL
+    carryback, multiple years):            $624 - $1,170+
+  Per CPA hourly rates ($117-$351/hr),
+  the actual cost depends heavily on the
+  scope of changes required.
+
+FORM 3520 (FOREIGN GIFTS):
+  Flat fee (one provider quoted):          ~$234
+  Typical range for CPA preparation:       $234 - $780
+  Complex (multiple gifts, trust
+    reporting, large amounts):             $390 - $1,560+
+
+FORM 8938 (FATCA):                         $156 - $390 (add-on)
+
+FORM 5472 (FOREIGN-OWNED LLC):             $390 - $1,170
+
+YOUR ESTIMATED TOTAL ENGAGEMENT (all forms combined):
+  Low estimate (if straightforward):       $1,950 - $3,120
+  Mid estimate (moderate complexity):      $3,120 - $5,460
+  High estimate (complex, delinquent
+    FBAR streamlined, amended returns,
+    multiple years):                       $5,460 - $11,700+
+
+NOTE: 2026 tax prep prices have surged ~45.7% vs 2024 (NATP data). The base
+charge for Form 1040 with schedules rose from $126 (2024 avg) to $184 (2026 avg)
+before any complexity premiums. Major metro areas (NYC, SF) will be at the
+higher end of all ranges.
+
+DIMOV TAX PUBLISHED PRICING:
+  Starting at $308 for simple returns (flat fee model).
+  International form add-ons estimated at $390-$780 each.
+  Custom quote required for complex international situations.
+  Their pricing page exists (dimovtax.com/pricing/) but actual fee
+  schedules require JavaScript rendering and are not fully accessible.
+
+================================================================================
+END OF DUE DILIGENCE REPORT
+================================================================================

@@ -1,0 +1,57 @@
+Corporate Lawyer Consulting 02-06
+
+Previous issues to solve
+	•	Whether to keep the single-member LLC (SMLLC) (see questions below)
+	•	Key risk: STEM OPT/H-1B non-operating / no self-employment requirement
+
+Issues to address:
+	E-commerce operating history; IRS reporting industry category; tax-filing consistency
+
+Employment history checklist: i-983, all W-2s, paystubs
+	•	Review any operating activities related to the SMLLC after the first 12 months of OPT, and prepare potential remedies.
+	•	I-983 was not obtained for one 1-month employment; assess the compliance impact and prepare potential remedies.
+	•	Explain the software founding experience (as part of Wolff and Li Capital STEM OPT employment).
+	•	Potential STEM OPT-period self-employment compliance risk.
+
+Income tax residency determination / tax-filing consistency
+	•	Confirm which returns were filed (Form 1040 vs. 1040-NR) and Form 8843 history 
+
+Form 3520
+	•	Depends on income-tax residency determination. If treated as a U.S. resident for income tax, then amend.
+
+Form 5472 + pro forma 1120
+	•	Likely need to amend, because we made a capital contribution.
+
+$507k: mine or my mother’s
+	•	Path A: Treat it as a gift. Amend Form 3520 if U.S. resident for income tax. Then we cannot use the $507k to fund the C-corp directly as my mother’s equity.
+	•	Path B: Treat it not as a gift, amend a custodial/nominee structure, but we would need to resolve the conflicting history in the Schwab account information; potentially risky.
+
+Estate tax planning for emergencies (will draft later)
+
+⸻
+
+To-do before 3/4
+	1.	Set up a bank account (East West or others that does not require my mother to be physically in the US).
+	2.	Set up my mother’s personal stock account (capital gains tax-free).
+	3.	Schwab durable POA for trading authority so I can operate via the new investment company (C-corp).
+	4.	C-corp incorporation funding: $273k–$312k (loan or not?). If lending, ~$2k–$3k tax on interest, but it could create creditor control over the new C-corp.
+	5.	Get a co-working space.
+
+⸻
+
+Remaining questions
+
+1) Funding the new C-corp through my account
+	1.	Would it be acceptable if my mother funds the new C-corp through my account? How should we explain that this is my mother’s capital contribution rather than mine?
+	2.	If possible, how should we write the instruction from my mother (e.g., the funds are sent to me solely to transmit to the corporation for her stock subscription (or loan), and I have no beneficial ownership of the funds)? How should we draft the corporation’s subscription agreement / board approval / cap table to reflect that my mother is still the purchaser?
+	3.	If this is risky because the IRS could treat a foreign transfer as a gift by default, should I instead treat the existing $507k as being held in custody for my mother?
+
+2) Single-member LLC related
+	1.	Does a Wyoming LLC shield against personal creditors, except for personal torts, personal guarantees, fraud, or veil-piercing scenarios?
+	2.	Is it still possible to retain the LLC as a passive asset-protection vehicle during future H-1B employment? If so, what is the ideal corporate arrangement?
+	3.	Would closing the LLC help shield against prior self-employment compliance risks?
+
+3) Federal estate/gift tax planning — please confirm my understanding
+	1.	Gift tax: For nonresidents who are not U.S. citizens (donor status determined under the domicile rule, which differs from income-tax residency), transfers subject to gift tax generally include only U.S.-situated real property and tangible personal property. IRC § 2501(a)(2): for a nonresident not a citizen, the general gift tax “shall not apply to the transfer of intangible property” (with certain exceptions).
+	2.	Estate tax: NRNC (nonresident, noncitizen) vs. U.S. persons (U.S. citizens, U.S. domiciliaries): estate tax for NRNC applies above $46,800 of U.S.-situs assets; estate tax for U.S. persons applies above ~$10–$11M worldwide.
+	3.	State-level: California and Wyoming have no inheritance tax.

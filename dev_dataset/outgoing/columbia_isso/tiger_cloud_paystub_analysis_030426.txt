@@ -1,0 +1,346 @@
+================================================================================
+TIGER CLOUD LLC — PAYSTUB ANALYSIS & W-2 RECONCILIATION
+Employer: Tiger Cloud LLC (via Justworks Employment Group LLC, EIN 11-1111111)
+STEM OPT Employer EIN: 87-3138342
+Prepared: March 4, 2026
+================================================================================
+
+================================================================================
+1. EMPLOYMENT OVERVIEW
+================================================================================
+
+  Employer:        Tiger Cloud LLC
+  PEO:             Justworks Employment Group LLC (EIN 11-1111111)
+  STEM OPT EIN:    87-3138342
+  Address:         1540 Broadway, Suite 1010, New York, NY 10036
+  SEVIS Period:    01/23/2024 – 12/16/2024 (328 days per SEVIS record)
+
+  PHASES:
+    Full-Time:     01/23/2024 – 09/30/2024 (FT, salaried)
+    Part-Time:     10/01/2024 – 12/16/2024 (PT, hourly)
+                   Material change I-983 signed 12/09/2024, effective 10/01/2024
+
+  I-983 TERMS:
+    Original:      40 hrs/week, $5,070/month ($60,840/year), signed 10/27/2023
+    Material Change: 20 hrs/week, $19/hour, signed 12/09/2024, effective 10/01/2024
+    Material change approved by Columbia ISSO: 12/11/2024
+
+================================================================================
+2. FULL-TIME PERIOD PAYSTUBS (JAN – SEP 2024)
+================================================================================
+
+  18 semi-monthly paystubs at $2,535.00 each ($60,840/year)
+  Pay dates: 01/12, 01/31, 02/15, 02/29, 03/15, 03/29, 04/15, 04/30,
+             05/15, 05/31, 06/14, 06/28, 07/15, 07/31, 08/15, 08/30,
+             09/13, 09/30
+
+  FT TOTAL: 18 x $2,535.00 = $45,630.00
+
+  Last FT paystub:
+    Period:    09/16/2024 – 09/30/2024
+    Pay date:  09/30/2024
+    Gross:     $2,535.00
+    YTD Gross: $45,630.00
+
+  Pre-tax deductions (YTD through 09/30/2024):
+    Dental:    $57.91
+    Medical:   $2,848.08
+    Vision:    $29.06
+    TOTAL:     $2,935.06
+
+  NOTE: Pre-tax deductions stopped after the FT period. All PT paystubs
+  show $0.00 current pre-tax deductions (benefits likely terminated when
+  switching to PT).
+
+================================================================================
+3. PART-TIME PERIOD PAYSTUBS (OCT – NOV 2024)
+================================================================================
+
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │ #  Pay Date   Period           Gross     Breakdown                         │
+  ├─────────────────────────────────────────────────────────────────────────────┤
+  │ 1  11/06/24   09/22 – 10/05   $499.20   0h reg + 40h PTO @ $12           │
+  │ 2  11/06/24   10/06 – 10/19   $748.80   20h reg @ $12 + 40h PTO @ $12   │
+  │ 3  11/08/24   10/20 – 11/02   $748.80   40h reg @ $19                    │
+  │ 4  11/22/24   11/03 – 11/16   $748.80   40h reg @ $19                    │
+  │ 5  11/22/24   10/01 – 10/19   $574.08   Off-cycle rate correction        │
+  │ 6  12/06/24   11/17 – 11/30   $748.80   40h reg @ $19                    │
+  ├─────────────────────────────────────────────────────────────────────────────┤
+  │    PT TOTAL                  $4,068.48                                     │
+  └─────────────────────────────────────────────────────────────────────────────┘
+
+  PAYSTUB DETAIL:
+
+  [1] Period 09/22 – 10/05 (paid 11/06/2024)
+      Regular hourly: $12.48 x 0h = $0.00
+      PTO:            $12.48 x 40h = $499.20
+      Gross:          $499.20    YTD: $46,878.00
+      NOTE: Zero regular work hours. Entire payment is PTO payout.
+      This is likely a transitional period — FT salary already covered
+      through 09/30. The PT period officially starts 10/01 per I-983.
+
+  [2] Period 10/06 – 10/19 (paid 11/06/2024)
+      Regular hourly: $12.48 x 20h = $249.60
+      PTO:            $12.48 x 40h = $499.20
+      Gross:          $748.80    YTD: $46,878.00
+      NOTE: 20h regular work over 2-week period = 10h/week.
+      Rate is $12/hr, NOT the $19/hr stated on I-983.
+      YTD same as paystub #1 (processed simultaneously).
+
+  [3] Period 10/20 – 11/02 (paid 11/08/2024)
+      Regular hourly ($12): 0h = $0.00
+      Regular hourly ($19): 40h = $748.80
+      Gross:          $748.80    YTD: $47,626.80
+      NOTE: Rate corrected to $19/hr starting this period.
+      40h over 2 weeks = 20h/week. Meets I-983 minimum.
+
+  [4] Period 11/03 – 11/16 (paid 11/22/2024)
+      Regular hourly ($19): 40h = $748.80
+      Gross:          $748.80    YTD: $48,949.68
+      NOTE: 40h / 2 weeks = 20h/week. Meets I-983 minimum.
+      YTD includes off-cycle correction processed same date.
+
+  [5] Period 10/01 – 10/19 OFF-CYCLE (paid 11/22/2024)
+      Salary (off-cycle): $574.08
+      Gross:          $574.08    YTD: $48,949.68
+      NOTE FROM PAYSTUB: "Cheney was paid $12/hour for time worked
+      10/1/24-10/19/24. We agreed to increase the pay to $19/hour.
+      This represents the additional $6/hour for the time worked
+      between 10/1-10/19."
+      Calculation: $6/hr difference x 92 hours = $574.08
+      This retroactively corrects the rate to $19/hr for 10/1-10/19.
+
+  [6] Period 11/17 – 11/30 (paid 12/06/2024)
+      Regular hourly ($19): 40h = $748.80
+      Gross:          $748.80    YTD: $49,698.48
+      NOTE: FINAL PAYSTUB. 40h / 2 weeks = 20h/week.
+      This is the last payment received from Tiger Cloud LLC.
+
+================================================================================
+4. W-2 RECONCILIATION
+================================================================================
+
+  2024 W-2 Issuer:   Justworks Employment Group LLC (EIN 11-1111111)
+  W-2 Box 1:         $46,763.42
+  W-2 Box 2:         $4,763.93 (Federal Income Tax withheld)
+
+  CALCULATION:
+    FT Salary (Jan–Sep, 18 periods):          $45,630.00
+    PT Paystubs (Oct–Nov, 6 paystubs):          $4,068.48
+    ──────────────────────────────────────────────────────
+    YTD GROSS EARNINGS:                        $49,698.48
+    Less: Pre-tax deductions (health ins.):    -$2,935.06
+      Dental:    $57.91
+      Medical:   $2,848.08
+      Vision:    $29.06
+    ──────────────────────────────────────────────────────
+    W-2 BOX 1 (Wages, tips, other comp):       $46,763.42  VERIFIED
+
+  TAXES WITHHELD (from final paystub YTD):
+    Federal Income Tax:   $4,763.93  (matches W-2 Box 2)
+    Social Security:      $2,899.35
+    Medicare:             $678.01
+    NY State Income Tax:  $2,135.84
+    NYC Income Tax:       $1,595.77
+
+================================================================================
+5. RATE DISCREPANCY & CORRECTION TIMELINE
+================================================================================
+
+  I-983 Material Change specifies: $19/hour, effective 10/01/2024
+
+  ACTUAL PAYROLL TIMELINE:
+    10/01 – 10/05:  Paid at $12/hr (PTO only, 0h regular work)
+    10/06 – 10/19:  Paid at $12/hr (20h regular + 40h PTO)
+    10/20 – 11/02:  Rate corrected to $19/hr (40h regular)
+    11/03 onward:   $19/hr (continued at correct rate)
+    11/22:          Off-cycle correction of $574 for 10/01-10/19 period
+                    ($6/hr x 92h = $574)
+
+  EFFECTIVE RESULT:
+    After the off-cycle correction, the total compensation for 10/01-10/19
+    is equivalent to $19/hr. The initial underpayment at $12/hr was fully
+    remedied. However, the initial $12/hr rate appearing on paystubs creates
+    a documentary discrepancy with the I-983.
+
+  CONCERN: If USCIS reviews paystubs, the initial $12/hr rate on paystubs
+  #1 and #2 conflicts with the I-983's $19/hr. The off-cycle correction
+  resolves the financial discrepancy but creates a paper trail showing the
+  employer initially set the wrong rate.
+
+================================================================================
+6. UNPAID GAP: 12/01/2024 – 12/16/2024
+================================================================================
+
+  SEVIS shows Tiger Cloud LLC employment ending: 12/16/2024
+  Last paystub covers through:                   11/30/2024
+  Gap with NO paystub:                           12/01 – 12/16 (16 days)
+
+  NO PAYSTUB EXISTS for this 16-day period.
+
+  POSSIBLE EXPLANATIONS:
+    a) Employment actually ended 11/30 and 12/16 is a delayed SEVIS
+       reporting date
+    b) Employee worked 12/01-12/16 but was never paid (wage theft)
+    c) Employee was on unpaid leave / not scheduled for those 16 days
+    d) Payroll was simply not processed for the final period
+
+  IMMIGRATION IMPACT:
+    If employment is deemed to have ended 11/30 rather than 12/16, the
+    gap between Tiger Cloud end and Claudius start (12/16) is 0 days
+    (back-to-back). But if employment continued unpaid through 12/16,
+    the question is whether unpaid "employment" satisfies STEM OPT
+    requirements (I-983 requires compensation).
+
+  UNEMPLOYMENT IMPACT:
+    If the disputed Tiger Cloud period is treated as unemployment under
+    an actual-day counting method:
+      OPT unemployment:          ~88 days
+      STEM OPT unemployment:      18 days (existing)
+      + 15 days (12/01-12/15):    15 days (potential additional)
+      ────────────────────────────────────────
+      REVISED CUMULATIVE TOTAL:  ~121 days out of 150 allowed
+      REMAINING MARGIN:          ~29 days
+
+    This is still within the 150-day limit but reduces the safety
+    margin from ~44 days to ~29 days.
+
+================================================================================
+7. HOURS ANALYSIS — I-983 COMPLIANCE
+================================================================================
+
+  I-983 Material Change requires: 20 hours/week minimum
+
+  Period             Reg. Hours  PTO Hours  Hrs/Week  Rate    Compliant?
+  ─────────────────────────────────────────────────────────────────────────
+  09/22 – 10/05*     0h          40h        0h/wk     $12    NO (PTO only)
+  10/06 – 10/19      20h         40h        10h/wk    $12    CONCERN
+  10/20 – 11/02      40h         0h         20h/wk    $19    YES
+  11/03 – 11/16      40h         0h         20h/wk    $19    YES
+  11/17 – 11/30      40h         0h         20h/wk    $19    YES
+  12/01 – 12/16      [NO PAYSTUB — NO DATA]                  UNKNOWN
+
+  * Period 09/22-10/05 overlaps with FT salary period (through 09/30).
+    The PT period per I-983 starts 10/01, so only 10/01-10/05 is relevant.
+
+  CONCERNS:
+    1. Period 10/01-10/19 (first 19 days of PT): Only 20 hours of actual
+       regular work recorded across 19 days. At a minimum, I-983 requires
+       20h/week. The 20h over ~3 weeks is well below the minimum.
+       The 80h of PTO does NOT count as actual work hours for I-983 purposes.
+
+    2. Period 12/01-12/16: No paystub exists. If employee was still listed
+       in SEVIS but not working, this could be an I-983 compliance issue.
+
+  MITIGATING FACTORS:
+    - The transition period (late Sep / early Oct) is understandable as
+      an administrative adjustment from FT to PT
+    - Justworks payroll transition may have caused delayed processing
+      (all early PT paystubs were paid late — 11/06 for Sep/Oct periods)
+    - From 10/20 onward, hours consistently meet the 20h/week minimum
+    - The employer corrected the rate retroactively, showing good faith
+
+================================================================================
+8. FINANCIAL SUMMARY
+================================================================================
+
+  FULL-TIME PERIOD (Jan 1 – Sep 30, 2024):
+    Expected: $60,840/yr x 9 months = $45,630    Actual: $45,630    MATCH
+
+  PART-TIME PERIOD (Oct 1 – Nov 30, 2024):
+    Expected at $19/hr x 20h/wk x ~8.7 weeks:    ~$3,257
+    Actual gross (PT paystubs):                    $4,068
+    Difference: +$811 (explained by PTO payouts of $998
+                         partially offset by initial underpayment)
+
+  ANNUAL TOTALS:
+    Total gross:                $49,698.48
+    Pre-tax deductions:         -$2,935.06
+    W-2 Box 1:                 $46,763.42
+    Federal tax withheld:       $4,763.93
+    Total taxes withheld:      $12,072.89
+
+  EFFECTIVE HOURLY ANALYSIS (PT period):
+    Total PT gross:             $4,068.48
+    Total regular work hours:   160h (20+40+40+40 = 140h regular + 20h from
+                                correction period)
+    Total PTO hours:            80h
+    Effective rate (gross/regular hrs): $4,068 / 160h = $25.43/hr
+    (Inflated by PTO payouts; actual work rate is $19/hr as corrected)
+
+================================================================================
+9. IMMIGRATION IMPLICATIONS
+================================================================================
+
+  A. WAGE LEVEL VS. I-983:
+     I-983 states $19/hr. After off-cycle correction, all periods from
+     10/01 onward are effectively compensated at $19/hr or above.
+     The initial $12/hr paystubs could raise questions if USCIS reviews
+     detailed payroll records, but the correction demonstrates the
+     employer honored the $19/hr commitment.
+
+  B. HOURS COMPLIANCE:
+     The first ~3 weeks of PT (10/01-10/19) show below 20h/week of
+     actual work. This is a technical I-983 violation but is mitigated
+     by the transition context and the fact that Justworks was still
+     processing the payroll changeover.
+
+  C. UNPAID 12/01-12/16:
+     These 16 days are the most concerning gap. If USCIS sees SEVIS
+     employment through 12/16 but no payroll evidence after 11/30,
+     it raises questions about whether employment was real and whether
+     the I-983 wage requirement was met during this period.
+
+     RECOMMENDATION: Clarify with Tiger Cloud / Amanda Klier whether
+     the actual employment end date was 11/30 or 12/16. If 11/30,
+     consider whether SEVIS end date should be corrected.
+
+  D. UNEMPLOYMENT COUNT IMPACT:
+     Scenario 1 (employment ended 12/16 as in SEVIS):
+       No additional unemployment — Claudius started same day (12/16)
+       Cumulative total: ~106 / 150 days
+
+     Scenario 2 (employment effectively ended 11/30):
+       15-day unemployment gap: 12/01 – 12/15
+       Cumulative total: ~121 / 150 days (29 days remaining)
+
+     Either way, within the 150-day limit, but Scenario 2 is tighter.
+
+  E. MATERIAL CHANGE TIMING:
+     I-983 material change was signed 12/09/2024 but effective 10/01/2024.
+     This retroactive effective date means the PT arrangement was
+     reported ~2 months late. The Columbia ISSO approved it 12/11/2024.
+     USCIS could question why the change was not reported at the time
+     it occurred, though DSO approval provides some cover.
+
+================================================================================
+10. SOURCE DOCUMENTS
+================================================================================
+
+  Paystubs (Justworks):
+    FT: /Users/devuser/Desktop/Important Docs /employment/VCV/paystubs_2024/
+        Paystub20240112 through Paystub20240930 (18 files)
+    PT: Same directory:
+        Paystub20241106-1.pdf  (period 09/22 – 10/05)
+        Paystub20241106-2.pdf  (period 10/06 – 10/19)
+        Paystub20241108.pdf    (period 10/20 – 11/02)
+        Paystub20241122-1.pdf  (period 11/03 – 11/16)
+        Paystub20241122-2.pdf  (period 10/01 – 10/19, off-cycle)
+        Paystub20241206.pdf    (period 11/17 – 11/30)
+
+  W-2:
+    /Users/devuser/accounting/tax/2024/2024_w2_justworks_wolffli.pdf
+
+  I-983 Forms:
+    Original: /Users/devuser/Desktop/Important Docs /stem opt/i983/
+              vcv_outdated_versions/I983-ink signed.pdf
+    Material Change: /Users/devuser/Desktop/Important Docs /stem opt/
+              i983/vcv/Cheney i983 Form_signed_120924.pdf
+
+  SEVIS Record:
+    /Users/devuser/accounting/outgoing/columbia_isso/
+    sevis_employment_analysis_030426.txt
+
+================================================================================
+END OF ANALYSIS
+================================================================================

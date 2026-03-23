@@ -1,0 +1,64 @@
+```json
+{
+  "form_type": "W-2",
+  "tax_year": "2024",
+  "employee_social_security_number": "XXX-XX-4321",
+  "control_number": "M000000",
+  "employer": {
+    "name": "JUSTWORKS EMPLOYMENT GROUP LLC",
+    "ein": "11-1111111",
+    "address_lines": [
+      "P.O. BOX 7119 CHURCH STREET STATION",
+      "NEW YORK, NY 10008"
+    ]
+  },
+  "employee": {
+    "name": "ALEX ZHANG",
+    "address_lines": [
+      "42 W 33RD ST, 15D, NEW YORK, NY 10001",
+      "NEW YORK, NY 10025"
+    ]
+  },
+  "boxes": {
+    "1_wages_tips_other_compensation": "59953.10",
+    "2_federal_income_tax_withheld": "6107.60",
+    "3_social_security_wages": "59953.10",
+    "4_social_security_tax_withheld": "3717.11",
+    "5_medicare_wages_and_tips": "59953.10",
+    "6_medicare_tax_withheld": "869.25",
+    "7_social_security_tips": "",
+    "8_allocated_tips": "",
+    "9": "",
+    "10_dependent_care_benefits": "",
+    "11_nonqualified_plans": "",
+    "12": {
+      "12a": {
+        "code": "DD",
+        "amount": "6347.16"
+      },
+      "12b": "",
+      "12c": "",
+      "12d": "",
+      "12e": ""
+    },
+    "13_checkboxes": {
+      "statutory_employee": false,
+      "retirement_plan": false,
+      "third_party_sick_pay": false
+    },
+    "14_other": {
+      "label": "NY-PFL",
+      "amount": "237.62"
+    },
+    "15_state_and_employer_state_id": {
+      "state": "NY",
+      "employer_state_id_number": "462283648"
+    },
+    "16_state_wages_tips_etc": "59953.10",
+    "17_state_income_tax": "2738.25",
+    "18_local_wages_tips_etc": "59953.10",
+    "19_local_income_tax": "2045.86",
+    "20_locality_name": "NYC"
+  }
+}
+```

@@ -1,0 +1,85 @@
+═══════════════════════════════════════════════════════════════════════════════
+QUARTERLY CAPITAL ACTIVITY SUMMARY
+Greenfield Capital LLC
+EIN: 12-3456789
+═══════════════════════════════════════════════════════════════════════════════
+
+Generated: October 08, 2025 at 09:26 AM
+
+
+───────────────────────────────────────────────────────────────────────────────
+Q1-2025
+───────────────────────────────────────────────────────────────────────────────
+
+CAPITAL CONTRIBUTIONS (Incoming):
+
+  • 02/25/2025         $2,861.66  Wire            WIRED FUNDS RECEIVED
+  • 02/27/2025         $2,340.00  Journal         JOURNAL FRM ...619
+  • 02/28/2025        $19,500.00  Check           CASHIERS CHECK
+  • 03/03/2025        $19,500.00  Check           CASHIERS CHECK
+  • 03/03/2025        $19,500.00  Check           CASHIERS CHECK
+  • 03/06/2025        $17,160.00  Journal         JOURNAL FRM ...619
+
+  TOTAL CONTRIBUTIONS:     $80,861.66
+
+DISTRIBUTIONS: None this quarter
+
+NET CAPITAL CHANGE:          $80,861.66
+
+
+───────────────────────────────────────────────────────────────────────────────
+Q2-2025
+───────────────────────────────────────────────────────────────────────────────
+
+CAPITAL CONTRIBUTIONS (Incoming):
+
+  • 04/23/2025             $0.78  MoneyLink/ACH   Tfr Citibank NA, BAMBOO SHOOT GRO
+  • 05/14/2025         $3,510.00  MoneyLink/ACH   Tfr Citibank NA, BAMBOO SHOOT GRO
+  • 05/14/2025         $3,510.00  MoneyLink/ACH   Tfr Citibank NA, BAMBOO SHOOT GRO
+  • 06/30/2025        $11,700.00  Journal         JOURNAL FRM ...619
+
+  TOTAL CONTRIBUTIONS:      $18,720.78
+
+DISTRIBUTIONS (Outgoing):
+
+  • 04/07/2025         $3,900.00  JOURNAL TO ...619
+
+  TOTAL DISTRIBUTIONS:       $3,900.00
+
+NET CAPITAL CHANGE:           $14,820.78
+
+
+───────────────────────────────────────────────────────────────────────────────
+Q3-2025
+───────────────────────────────────────────────────────────────────────────────
+
+CAPITAL CONTRIBUTIONS (Incoming):
+
+  • 07/08/2025         $7,020.00  Journal         JOURNAL FRM ...619
+  • 08/26/2025        $23,400.00  MoneyLink/ACH   Tfr CITIBANK NA, ALEX ZHANG
+  • 09/22/2025        $23,400.00  MoneyLink/ACH   Tfr Citibank NA, ALEX ZHANG
+
+  TOTAL CONTRIBUTIONS:      $53,820.00
+
+DISTRIBUTIONS (Outgoing):
+
+  • 09/11/2025        $22,620.00  JOURNAL TO ...619
+
+  TOTAL DISTRIBUTIONS:      $22,620.00
+
+NET CAPITAL CHANGE:           $31,200.00
+
+
+═══════════════════════════════════════════════════════════════════════════════
+OVERALL TOTALS (All Periods)
+═══════════════════════════════════════════════════════════════════════════════
+
+Total Capital Contributions:      $153,402.44
+Total Distributions:               $26,520.00
+                              ───────────────
+Net Capital Invested:             $126,882.44
+
+Number of Contribution Transactions:        13
+Number of Distribution Transactions:         2
+
+═══════════════════════════════════════════════════════════════════════════════

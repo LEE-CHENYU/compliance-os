@@ -1,0 +1,560 @@
+================================================================================
+INEMER, COHEN & WOLF LLP — DUE DILIGENCE REPORT
+Prepared: February 19, 2026
+Purpose: Evaluate for F-1 nonresident alien tax compliance engagement
+================================================================================
+
+================================================================================
+1. FIRM OVERVIEW
+================================================================================
+
+  Name:           Inemer, Cohen & Wolf LLP
+  Also Known As:  Inemer & Wolf LLP (original name, 2004-present)
+  Websites:       https://www.nyc-cpa.com (main)
+                  https://www.us-taxcpas.com (international tax)
+                  https://www.internationaltax-cpa.com (international tax, Spanish)
+                  https://www.nyrealestateaccounting.com (real estate)
+                  https://www.nyc-cpa-hospitality.com (hospitality)
+  Address:        1430 Broadway, Suite 1503, New York, NY 10018
+  Phone:          (212) 944-2555
+  Email:          joe@nyc-cpa.com (Joseph Wolf)
+                  david@nyc-cpa.com (David Cohen)
+  Hours:          Monday-Friday 8:30 AM - 5:30 PM
+  Founded:        2004 (as Inemer & Wolf LLP; ~22 years in operation)
+  Firm Size:      Boutique — 3 named partners + at least 1 senior staff member
+  Type:           LLP (Limited Liability Partnership)
+
+  HISTORY:
+    2004: Ira Inemer and Joe Wolf form Inemer & Wolf, LLP
+    Later: David Cohen merges in from Gilbert, Cohen & Wolf, LLP
+           (his prior firm with Joe Wolf), becoming Inemer, Cohen & Wolf LLP
+
+  NOTE ON MULTIPLE WEBSITES:
+    The firm operates 5 separate websites targeting different niches:
+    general CPA, international tax (2 sites), real estate, and hospitality.
+    This is a marketing strategy, not an indication of firm size. All sites
+    point to the same 3-partner firm at the same address. This is common
+    for small NYC firms but worth noting — the web presence is larger than
+    the actual firm.
+
+================================================================================
+2. SERVICES — NONRESIDENT ALIEN TAX SPECIALIZATION
+================================================================================
+
+  The firm explicitly markets NR/international tax services via two
+  dedicated websites (us-taxcpas.com and internationaltax-cpa.com).
+
+  Confirmed services per their website:
+    [x] Tax return preparation for resident and non-resident aliens
+    [x] ITIN application assistance
+    [x] FBAR (foreign bank account reporting) — explicitly listed
+    [x] Expatriate and foreign national taxes
+    [x] Pre-immigration tax planning
+    [x] Estate and gift tax planning
+    [x] Foreign tax credit planning
+    [x] Tax treaty review and application
+    [x] Compensation/relocation consulting
+    [x] International tax planning and compliance
+    [x] Tax structuring for foreign businesses entering US market
+    [x] Transfer pricing
+    [x] Export incentive planning (IC-DISC)
+
+  NOT explicitly confirmed on website (but likely handled given practice area):
+    [ ] Form 1040-NR preparation (not named, but NR tax services are offered)
+    [ ] Form 5472 + pro forma 1120 (not named on website)
+    [ ] Form 8938 (FATCA) (not named on website)
+    [ ] Form 8843 (not named on website)
+    [ ] Form 3520 (foreign gift reporting) (not named on website)
+    [ ] 1040 to 1040-NR amendments (not named on website)
+    [ ] Schedule C on 1040-NR for NRA (not named on website)
+    [ ] Single-member LLC / disregarded entity for NRA (not named on website)
+
+  ASSESSMENT:
+    The firm has a legitimate international tax practice with David Cohen's
+    Deloitte background as the anchor. Their NR alien tax page (us-taxcpas.com)
+    discusses residency determination via the Substantial Presence Test and
+    mentions preparing returns for both resident and non-resident aliens.
+
+    HOWEVER: Unlike firms like Dimov Tax that have dedicated pages for each
+    specific form (5472, 8938, 8843, etc.), Inemer Cohen & Wolf describes
+    services at a high level without naming specific forms. This could mean:
+    (a) they handle them but don't market at that granular level, or
+    (b) they handle simpler NR situations (wage earners) but may not have
+    deep experience with complex NRA compliance (SMLLC + 5472 + amendments).
+
+    The firm's primary specializations appear to be:
+    1. Real estate accounting (investors, developers, property managers)
+    2. Hospitality industry (restaurants, hotels)
+    3. International tax for businesses entering the US market
+    The NR individual tax work appears to be a secondary practice area.
+
+================================================================================
+3. INTERNATIONAL COMPLIANCE FORMS
+================================================================================
+
+  Form 5472 + Pro Forma 1120:
+    [ ] NOT explicitly mentioned on any website page
+    However, the firm handles "foreign business operations in the US" and
+    "business structure and entity selection," which would encompass this.
+    NEEDS DIRECT VERIFICATION in consultation.
+
+  FBAR (FinCEN 114):
+    [x] Explicitly listed on their expatriate services page
+    [x] Listed on their NR alien tax services page
+
+  Form 8938 (FATCA):
+    [ ] NOT explicitly mentioned
+    Likely handled given FBAR expertise, but not confirmed.
+
+  Form 8843 (Statement for Exempt Individuals):
+    [ ] NOT explicitly mentioned
+    This is a basic NR filing requirement — any firm doing NR work should
+    handle it, but its absence from their website is notable.
+
+  Form 3520 (Foreign Gift Reporting):
+    [ ] NOT explicitly mentioned
+    "Estate and gift tax planning" is listed, but Form 3520 for foreign
+    gifts received is a different matter from gift tax planning.
+
+  CRITICAL NOTE FOR YOUR CASE:
+    As an F-1 nonresident alien (exempt from SPT for first 5 calendar years),
+    you are NOT a "United States person" under IRC Section 7701(a)(30).
+    Therefore, for tax years 2023, 2024, and 2025, you should NOT need:
+      - FBAR (only applies to US persons)
+      - Form 8938 (only applies to specified persons — generally US persons)
+      - Form 3520 (only applies to US persons receiving foreign gifts)
+
+    The FBAR, 8938, and 3520 obligations will begin in the FIRST tax year
+    you become a resident alien (likely 2028 or later, depending on visa
+    status changes). If any CPA firm tells you to file these now, that is
+    a red flag indicating they may not understand the NRA distinction.
+
+    The forms you DO need:
+      - Form 1040-NR (corrected, for 2023, 2024, and 2025)
+      - Form 8843 (each year)
+      - Form 5472 + pro forma 1120 (for the SMLLC — this IS required
+        regardless of NRA status, as it's an entity-level filing)
+      - Schedule C on Form 1040-NR (for ECI from the SMLLC)
+
+================================================================================
+4. 1040 TO 1040-NR AMENDMENT CAPABILITY
+================================================================================
+
+  NOT explicitly addressed on their website.
+
+  Their NR alien tax services page discusses determining residency status
+  via the Substantial Presence Test, which suggests awareness of the issue.
+  But the specific scenario of amending incorrectly filed 1040 (resident)
+  returns to 1040-NR (nonresident) is not discussed anywhere on their sites.
+
+  WHAT TO ASK IN CONSULTATION:
+    1. Have you handled 1040 to 1040-NR corrections specifically?
+    2. How many such corrections have you done in the last 2 years?
+    3. What is the procedure — do you file Form 1040-X, or a superseding
+       1040-NR, or both?
+    4. For 2023 (now ~2 years old), is there any statute of limitations
+       concern for the amendment?
+    5. Do you handle the situation where the original 1040 was e-filed
+       with an SSN, and the corrected 1040-NR may need paper filing?
+    6. How do you handle refund claims for overpaid tax on the original
+       1040 (since NRA taxation is different — no standard deduction,
+       different rates, etc.)?
+
+================================================================================
+5. REVIEWS & REPUTATION
+================================================================================
+
+  TRUSTINDEX (aggregating Google + Yelp):
+    Rating:         5.0 out of 5.0 stars
+    Total Reviews:  20 (18 from Google, 2 from Yelp)
+    Breakdown:      19 five-star, 1 four-star, 0 negative
+    Response Rate:  67% (firm replies to reviews)
+
+  NOTABLE REVIEW THEMES:
+    + "Extremely efficient and professional"
+    + "Good fast efficient" with "excellent" results
+    + David Cohen specifically praised: "efficient, understanding and as
+      knowledgeable as can be"
+    + Cecilia Feng (staff) specifically praised
+    + Multiple clients mention long-term relationships (10+ years)
+    + "One on one personal relationship" — indicates personalized service
+    + "Seamless" transitions for new clients
+
+  CHAMBER OF COMMERCE:
+    Rating:         4.9 stars (15 reviewers)
+
+  YELP:
+    Listing:        Active (updated February 2026)
+    Rating:         Could not be extracted (403 error on Yelp page)
+
+  GOOGLE REVIEWS:
+    Rating:         Not independently verified — the user mentioned 4.8 stars.
+                    Trustindex aggregation shows 5.0 across 18 Google reviews.
+                    The 4.8 figure may be from Google Maps directly, which
+                    could have slightly different review counts.
+
+  BBB:
+    NOT FOUND — No BBB profile identified for Inemer, Cohen & Wolf LLP.
+    The BBB result returned "Cohen and Wolf, P.C." — a completely different
+    law firm in Westport, Connecticut (not related).
+
+  GLASSDOOR:
+    NOT FOUND — No Glassdoor employee reviews for this firm.
+
+  TRUSTPILOT:
+    NOT FOUND — No Trustpilot profile.
+
+  REDDIT:
+    NOT FOUND — No Reddit discussions about this firm.
+
+  NEGATIVE REVIEWS:
+    NONE FOUND across all platforms searched.
+
+  ASSESSMENT:
+    Review presence is modest (20 reviews total) but uniformly positive.
+    For a 3-partner boutique firm that has been operating for 22 years,
+    20 reviews is thin but not alarming — small firms often don't actively
+    solicit reviews. The absence of ANY negative reviews is notable and
+    positive. The firm appears to maintain long-term client relationships,
+    which is a good sign for quality of service.
+
+    The user's mention of "4.8 stars" is plausible — it likely reflects
+    the Google Maps rating, which may differ slightly from Trustindex's
+    aggregation.
+
+================================================================================
+6. PRINCIPALS & CREDENTIALS
+================================================================================
+
+  JOSEPH (JOE) WOLF, CPA — Partner
+    Education:      BBA in Accounting, Baruch College (CUNY)
+    Career:         6 years as controller/principal at 2 wholesale-
+                    manufacturing companies
+                    5 years at small and mid-sized public accounting firms
+                    Partner at Gilbert, Cohen & Wolf, LLP
+                    Sole practitioner before co-founding Inemer & Wolf (2004)
+    Big 4:          NO
+    Specialty:      General accounting, small business, tax preparation
+    LinkedIn:       https://www.linkedin.com/in/joewolfcpa/
+    Email:          joe@nyc-cpa.com
+    Disciplinary:   None found
+
+  DAVID COHEN, CPA — Partner
+    Education:      Not specified (Brooklyn-based)
+    Career:         Started at medium-sized NYC CPA firm
+                    Moved to DELOITTE & TOUCHE Financial Services Center
+                      as TAX SUPERVISOR in international banking and
+                      brokerage accounts
+                    Opened private practice in Park Slope, Brooklyn
+                    Partner at Gilbert, Cohen & Wolf, LLP
+                    Merged into Inemer & Wolf, becoming Inemer, Cohen & Wolf
+    Big 4:          YES — Deloitte & Touche (tax supervisor level)
+    Specialty:      International taxation, real estate, hospitality
+    Email:          david@nyc-cpa.com
+    Disciplinary:   None found
+
+    DELOITTE VERIFICATION:
+      David Cohen's Deloitte background is confirmed across ALL FIVE of the
+      firm's websites, consistently described as "tax supervisor in their
+      international banking and brokerage accounts center" at "Deloitte and
+      Touche's Financial Services Center."
+
+      IMPORTANT NUANCE: "Tax supervisor" at Deloitte is NOT the same as
+      "partner." The user described him as an "ex-Deloitte partner" — this
+      appears to be inaccurate. A tax supervisor is a mid-level position
+      (typically 3-5 years into a career at a Big 4 firm), well below
+      partner level. The firm's own biography does NOT claim he was a
+      Deloitte partner.
+
+      This does NOT diminish his qualifications — Deloitte experience at
+      any level in international banking tax is valuable and relevant. But
+      the distinction between "tax supervisor" and "partner" should be noted
+      for accuracy. He has since built 20+ years of independent practice
+      experience in international tax.
+
+    NOTABLE: David Cohen also founded the Dancing Camel Brewery in Tel Aviv,
+    Israel's first microbrewery (2006). He made aliyah (immigrated to Israel)
+    in 2003. It is unclear whether David is primarily based in New York or
+    Israel. His email at the firm is active, and reviews mention him by name
+    in positive terms, so he appears to be an active partner. However, this
+    is worth clarifying in consultation — is David the person who would
+    handle your international tax work, or is that delegated to staff?
+
+  IRA INEMER, CPA — Partner
+    Education:      BS in Accounting, Brooklyn College
+    Career:         Tax partner at Ash & Parsont, CPAs
+                    Sole practitioner
+                    Co-founded Inemer & Wolf, LLP (2004) with Joe Wolf
+    Big 4:          NO
+    Specialty:      General accounting and tax for individuals and businesses
+    Disciplinary:   None found
+
+  CECILIA FENG — Senior Tax Accountant (Staff)
+    Title:          Senior Tax Accountant
+    Prior:          Tax Accountant at Hong & Ruchelsman (law firm)
+    LinkedIn:       https://www.linkedin.com/in/ceciliafeng/
+    ZoomInfo email: ****@internationaltax-cpa.com
+    Note:           Praised by name in client reviews. Chinese name suggests
+                    possible Mandarin/Chinese language capability — potentially
+                    relevant for your case. She appears to be the firm's
+                    international tax staff member.
+
+================================================================================
+7. RED FLAGS & CONCERNS
+================================================================================
+
+  YELLOW FLAG #1 — DAVID COHEN'S LOCATION AND INVOLVEMENT
+    David Cohen founded a brewery in Tel Aviv in 2006 after making aliyah
+    in 2003. It is unclear how actively he practices at the firm. His email
+    is active and clients praise him in recent reviews, but if he is primarily
+    in Israel, his day-to-day involvement in US tax preparation may be limited.
+    ASK: "Will David Cohen personally be involved in my case?"
+
+  YELLOW FLAG #2 — "EX-DELOITTE PARTNER" CLAIM IS OVERSTATED
+    The user was told there is an "ex-Deloitte partner." David Cohen was a
+    TAX SUPERVISOR at Deloitte, not a partner. This is a meaningful
+    distinction (supervisor = ~3-5 years experience, partner = ~12-15+ years
+    at Big 4). The firm itself does NOT claim partner-level Deloitte
+    experience. If someone at the firm or a referral source misrepresented
+    this, that is a minor credibility concern.
+
+  YELLOW FLAG #3 — WEBSITE DOES NOT DETAIL SPECIFIC FORMS
+    Unlike Dimov Tax which has dedicated pages for Form 5472, Form 3520,
+    FBAR, Form 8938, F-1 visa tax, etc., Inemer Cohen & Wolf describes
+    services in general terms. The absence of Form 5472, Form 8843, and
+    Form 8938 from their website is notable for a firm marketing
+    international tax services. This could indicate their NR practice
+    focuses on simpler situations (wage-earning expats, foreign businesses)
+    rather than complex individual NRA compliance.
+
+  YELLOW FLAG #4 — PRIMARY SPECIALIZATION IS NOT NRA TAX
+    The firm's three main practice areas are: (1) real estate, (2)
+    hospitality, and (3) foreign businesses entering the US market. NR
+    individual tax for F-1 holders appears to be a secondary offering.
+    Your case requires deep NRA expertise (amendments, SMLLC, ECI
+    classification, Form 5472), not general international tax knowledge.
+
+  YELLOW FLAG #5 — SMALL FIRM WITH BROAD MARKETING
+    Five separate websites for a 3-partner firm is aggressive marketing.
+    The international tax sites (us-taxcpas.com, internationaltax-cpa.com)
+    may attract clients beyond the firm's core capacity. A boutique firm
+    this size may not have the bandwidth to handle your complex multi-year
+    amendment project alongside their regular client load during tax season.
+
+  NO RED FLAGS FOUND:
+    [x] No disciplinary actions found against any partner
+    [x] No complaints filed with BBB (no BBB profile exists)
+    [x] No negative client reviews on any platform
+    [x] No fraud allegations or IRS investigations
+    [x] No Glassdoor complaints about internal operations
+    [x] No Reddit or Trustpilot complaints
+    [x] Firm has been operating for 22 years — longevity is positive
+    [x] All three partners are identified by name with credentials
+
+================================================================================
+8. FEE STRUCTURE
+================================================================================
+
+  PUBLICLY LISTED FEES: NONE
+  The firm does not publish fee information on any of its 5 websites.
+
+  CONSULTATION: FREE — the firm offers free consultations per their website
+  (us-taxcpas.com/consultation.htm)
+
+  ESTIMATED FEES FOR YOUR CASE (based on NYC market rates for boutique firms):
+    A firm handling all of the below would likely quote $2,340-$5,460+:
+    - 2023 amended return (1040 to 1040-NR):    $624-$1,170
+    - 2024 amended return (1040 to 1040-NR):    $624-$1,170
+    - 2025 1040-NR with Schedule C:             $780-$1,560
+    - Form 5472 + pro forma 1120:               $390-$1,170
+    - Form 8843 (each year, 3 years):           $78-$234
+    These are market estimates — actual fees may vary. Request itemized quote.
+
+  NYC boutique CPA firms typically charge $234-$390/hr for partner time.
+  The firm's Midtown Manhattan location (1430 Broadway) suggests pricing
+  consistent with mid-to-upper range NYC CPA rates.
+
+================================================================================
+9. SINGLE-MEMBER LLC / SCHEDULE C FOR NONRESIDENTS
+================================================================================
+
+  The firm has a dedicated e-commerce/online retail accounting page
+  (nyc-cpa.com/online-retail-accounting-services.htm) offering:
+    - Outsourced accounting and bookkeeping for online retailers
+    - Tax planning and preparation for e-commerce businesses
+    - Sales tax handling
+    - Inventory management
+    - QuickBooks support
+
+  HOWEVER, this page does NOT address:
+    - Nonresident alien ownership of US LLCs
+    - Schedule C on Form 1040-NR
+    - Form 5472 + pro forma 1120 for foreign-owned disregarded entities
+    - Classification of e-commerce income as ECI for NRAs
+    - Wyoming SMLLC compliance requirements
+
+  The firm's "business structure and entity selection" service (listed on
+  the international tax sites) suggests awareness of LLC structuring for
+  foreign nationals, but no specific content confirms experience with the
+  NRA + SMLLC + Schedule C + Form 5472 intersection.
+
+  KEY QUESTIONS FOR CONSULTATION:
+    1. How do you handle Schedule C income on a 1040-NR for an NRA?
+    2. Does e-commerce income from a US Wyoming LLC qualify as ECI?
+    3. Who files the Form 5472 + pro forma 1120 — the individual or the LLC?
+    4. Is the pro forma 1120 filed separately or attached to the 1040-NR?
+    5. What about Wyoming annual report and registered agent requirements?
+    6. What about state-level tax obligations (Wyoming has no state income
+       tax, but what about New York if the NRA has presence there)?
+    7. Do you handle sales tax compliance for e-commerce SMLLCs?
+
+================================================================================
+10. CONTACT INFORMATION
+================================================================================
+
+  Phone:          (212) 944-2555
+  Email:          joe@nyc-cpa.com (Joseph Wolf, Partner)
+                  david@nyc-cpa.com (David Cohen, Partner)
+  Websites:       https://www.nyc-cpa.com (main)
+                  https://www.us-taxcpas.com (international tax)
+                  https://www.internationaltax-cpa.com (international tax)
+  Consultation:   https://www.us-taxcpas.com/consultation.htm (free)
+  Address:        1430 Broadway, Suite 1503, New York, NY 10018
+  Hours:          Monday-Friday 8:30 AM - 5:30 PM
+  Social Media:   Facebook: https://www.facebook.com/InemerCohenWolf
+                  LinkedIn: https://www.linkedin.com/company/97388312/
+  Staff Contact:  Cecilia Feng (Senior Tax Accountant, international tax)
+                  Email domain: @internationaltax-cpa.com
+
+================================================================================
+11. OVERALL ASSESSMENT & RECOMMENDATION
+================================================================================
+
+  SUITABILITY SCORE: 6/10 (MODERATE — WORTH A CONSULTATION)
+
+  STRENGTHS:
+    + Legitimate 22-year-old NYC CPA firm (longevity is a strong positive)
+    + David Cohen has genuine Deloitte & Touche experience in international
+      banking tax — this is real, verifiable Big 4 background
+    + Explicit NR alien tax practice with dedicated website
+    + FBAR assistance explicitly offered
+    + Uniformly positive reviews (5.0/5.0 on Trustindex, 4.9 on Chamber)
+    + Zero negative reviews across all platforms
+    + Zero complaints or disciplinary actions found
+    + Free consultation available
+    + Cecilia Feng (Senior Tax Accountant) may provide Chinese language
+      capability relevant to your case
+    + Three named, credentialed CPA partners (transparency)
+    + E-commerce accounting services offered
+    + Personalized, boutique-level service (not a tax mill)
+
+  WEAKNESSES:
+    - Primary specializations are real estate and hospitality, not NRA tax
+    - Website does not mention Form 5472, Form 8938, Form 8843, or 1040-NR
+      by name — only general "NR alien tax services"
+    - No blog content or educational material demonstrating NRA expertise
+      (unlike Dimov Tax which publishes detailed form-specific guides)
+    - "Ex-Deloitte partner" claim is overstated — he was a tax supervisor
+    - David Cohen's current location/involvement uncertain (Israel brewery)
+    - Small firm (3 partners + staff) may lack bandwidth for complex
+      multi-year amendment project during tax season
+    - Five websites for a 3-partner firm suggests marketing-heavy approach
+    - Fee structure unknown and likely at NYC premium rates
+    - No specific evidence of handling 1040-to-1040-NR amendments
+    - No specific evidence of handling NRA-owned SMLLC compliance
+
+  COMPARISON TO OTHER CPA CANDIDATES:
+    vs. Dimov Tax (George Dimov):
+      Dimov has dedicated pages for every relevant form (5472, 3520, FBAR,
+      8938, F-1 visa tax). Dimov publishes flat fees starting at $308.
+      Dimov asked the right question about your residency status.
+      Dimov appears to have deeper NRA-specific expertise.
+      EDGE: Dimov Tax
+
+    vs. NSKT Global:
+      Inemer Cohen & Wolf is significantly stronger than NSKT Global — it's
+      a real 22-year-old firm with named partners, genuine Big 4 background,
+      and physical NYC presence. NSKT Global has virtual offices, offshore
+      operations, and forensic (not tax) background.
+      EDGE: Inemer Cohen & Wolf
+
+    vs. Christopher Huang CPAs / Spott Lucey & Wall:
+      Insufficient data for direct comparison — those firms are still being
+      evaluated separately.
+
+  RECOMMENDATION:
+    1. TAKE THE FREE CONSULTATION — the firm offers free consultations,
+       which is a zero-cost way to gauge their actual expertise.
+
+    2. ASK THESE LITMUS TEST QUESTIONS:
+       a. "I filed Form 1040 as a resident for 2023 and 2024 while on
+           F-1 visa. I arrived October 2023. What should I have filed?"
+          CORRECT ANSWER: Form 1040-NR. F-1 holders are exempt individuals
+          for Substantial Presence Test purposes for the first 5 calendar
+          years. You were an NRA for both 2023 and 2024.
+
+       b. "Do I need to file FBAR for my Chinese bank accounts?"
+          CORRECT ANSWER: NO — FBAR applies only to "United States persons"
+          per 31 USC 5314. As an NRA, you are not a US person.
+          (If they say yes, this is a disqualifying red flag.)
+
+       c. "Do I need to file Form 3520 for the $273K in foreign gifts
+           from my family in China?"
+          CORRECT ANSWER: NO — Form 3520 applies only to US persons.
+          As an NRA, you are not required to report foreign gifts.
+          (If they say yes, this is a disqualifying red flag.)
+
+       d. "Who specifically will prepare my returns?"
+          You want to know if David Cohen handles international tax
+          personally, or if Cecilia Feng handles it, or if it gets
+          delegated to someone else.
+
+       e. "Have you handled 1040-to-1040-NR amendments before? How many?"
+          This is the crux of your case — their answer will reveal depth.
+
+    3. IF THEY PASS THE CONSULTATION, request an itemized fee quote:
+       - 2023 amendment (1040 to 1040-NR + Form 8843)
+       - 2024 amendment (1040 to 1040-NR + Form 8843)
+       - 2025 Form 1040-NR with Schedule C + Form 8843
+       - Form 5472 + pro forma 1120 (SMLLC)
+
+    4. VERIFY DAVID COHEN'S ACTIVE INVOLVEMENT:
+       Given his Israel brewery venture, confirm he is actively practicing
+       at the firm and would be personally involved in (or reviewing) your
+       international tax work.
+
+    5. DO NOT ENGAGE based solely on the "ex-Deloitte partner" referral.
+       The Deloitte connection is real but overstated (supervisor, not
+       partner). The firm's actual NRA expertise needs direct verification.
+
+================================================================================
+SOURCES
+================================================================================
+
+  Main Website:       https://www.nyc-cpa.com
+  About (main):       https://www.nyc-cpa.com/about-us.htm
+  Int'l Tax Site:     https://www.us-taxcpas.com
+  Int'l Tax About:    https://www.us-taxcpas.com/about-us.htm
+  NR Alien Services:  https://www.us-taxcpas.com/non-resident-alien-tax-services.htm
+  Int'l Tax Site 2:   https://www.internationaltax-cpa.com
+  About (Int'l 2):    https://www.internationaltax-cpa.com/about.htm
+  Services (Int'l):   https://www.internationaltax-cpa.com/our-services.htm
+  Expat Tax Page:     https://www.internationaltax-cpa.com/expatriate-and-foreign-taxes.htm
+  Real Estate Site:   https://www.nyrealestateaccounting.com
+  Hospitality Site:   https://www.nyc-cpa-hospitality.com
+  E-commerce Page:    https://www.nyc-cpa.com/online-retail-accounting-services.htm
+  Consultation:       https://www.us-taxcpas.com/consultation.htm
+  Trustindex Reviews: https://www.trustindex.io/reviews/www.nyc-cpa.com
+  Yelp:               https://www.yelp.com/biz/inemer-cohen-and-wolf-new-york-2
+  TaxBuzz (Cohen):    https://www.taxbuzz.com/new-york/new-york/david-cohen-cpa
+  LinkedIn (Wolf):    https://www.linkedin.com/in/joewolfcpa/
+  LinkedIn (Feng):    https://www.linkedin.com/in/ceciliafeng/
+  LinkedIn (Firm):    https://www.linkedin.com/company/97388312/
+  ZoomInfo (Feng):    https://www.zoominfo.com/p/Cecilia-Feng/1979551370
+  ZoomInfo (Wolf):    https://www.zoominfo.com/p/Joseph-Wolf/8744169584
+  Dancing Camel:      https://www.dancingcamel.com/our_story
+  Chamber Commerce:   https://www.chamberofcommerce.com/business-directory/new-york/new-york/certified-public-accountant/2004529639-inemer-cohen-wolf-llp
+
+================================================================================
+END OF DUE DILIGENCE REPORT
+================================================================================

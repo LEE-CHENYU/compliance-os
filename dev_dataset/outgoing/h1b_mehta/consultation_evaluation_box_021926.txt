@@ -1,0 +1,275 @@
+================================================================================
+KAITLYN BOX CONSULTATION EVALUATION — Thursday Feb 19, 2:00 PM EST (~37 min)
+================================================================================
+Fee: $312 (Zelle to cm@cyrusmehta.com or credit card by phone)
+Call: Zoom (Meeting ID: 880 8529 9249)
+Recording: consultation_recording_box_021926.m4a
+Transcript: consultation_transcript_box_021926.txt
+
+================================================================================
+EVALUATION AGAINST PREP CRITERIA
+================================================================================
+
+MUST-PASS CRITERIA:
+─────────────────────────────────────────────────────────────────────────────────
+  [PASS] Engages substantively on STEM OPT compliance
+         → Did NOT refuse. Spent ~15 minutes on STEM OPT questions.
+         → Asked follow-up questions about the LLC's nature and activities.
+         → Distinguished between passive investment (arguable not employment)
+           and e-commerce activity (could be problematic).
+
+  [PASS] Distinguishes STEM OPT from standard OPT self-employment rules
+         → Stated: "Generally for STEM OPT purposes, any employment that's
+           not part of and not disclosed in the training plan is likely to
+           be treated as unauthorized employment."
+
+  [PASS] Addresses discoverability risk (Schedule C vs SEVIS)
+         → Said USCIS "doesn't typically for H-1B purposes require complete
+           copies of your tax returns showing all income."
+         → But warned if USCIS does find out through other means, it could
+           be treated as misrepresentation.
+
+  [PASS] Provides a disclosure recommendation
+         → CLEAR RECOMMENDATION: "My inclination would probably be to
+           disclose it but explain that you were a passive investor and
+           were not performing job duties for the entity."
+         → Reasoned: "If you don't disclose it and USCIS does find out...
+           there is a risk that they could view that as misrepresentation...
+           failing to disclose relevant information."
+
+  [PASS] Gives concrete risk assessment
+         → Not a vague "it'll be fine" — gave nuanced, conditional
+           assessment. E-commerce "could be problematic." Passive investment
+           has a better argument. Missing I-983 was "beyond your control."
+
+  RESULT: 5/5 MUST-PASS CRITERIA MET
+
+STRONG POSITIVES:
+─────────────────────────────────────────────────────────────────────────────────
+  [✓] $78K fee — Raised it when the topic came up. Explained COS exemption
+      vs consular processing risk. Noted "gray area" for F-1 in US.
+      Not fully unprompted (user asked about COS vs consular), but showed
+      current knowledge without needing to be educated.
+
+  [✓] Asked follow-up questions about LLC activity
+      → "Tell me more about the LLC, what was the nature of the business,
+         what was your role in it?"
+      → This is exactly what Arora failed to do.
+
+  [✓] Discussed COS vs consular processing strategically
+      → Recommended COS to avoid $78K fee complications.
+      → Noted consular processing could trigger fee confusion.
+
+  [✓] Clear entity recommendation with reasoning
+      → C-Corp preferred over SMLLC.
+      → SMLLC = self-employment, capped at 18 months, USCIS strict.
+      → C-Corp = family member treated as independent, not self-employment,
+        standard 3-year validity possible.
+      → BUT warned: family-owned company invites scrutiny on whether
+        job is real and salary will be paid.
+
+  [✓] Practical USCIS adjudication patterns mentioned throughout
+      → "There is some tendency from USCIS to think that if a family
+         member's company is sponsoring you, maybe it's not valid."
+      → "It's fairly recent that they even allow [self-employment petitions]
+         so...USCIS tends to be quite strict on those petitions."
+
+  [✓] Provided strategy for missing I-983
+      → Argued failure was on employer's side, not the user's.
+      → "You didn't intend to engage in any unauthorized employment."
+      → Framing: employer failed to comply, user terminated immediately.
+
+  [✓] Gave documentation guidance for C-Corp
+      → Incorporation docs, share certificates, financials, bank statements,
+        proof of ability to pay offered wage, P&L or budget.
+      → Suggested involving corporate lawyer for exact structure.
+
+RED FLAGS:
+─────────────────────────────────────────────────────────────────────────────────
+  [NONE] — No red flags triggered from the prep document criteria.
+
+================================================================================
+COMPARISON: BOX vs ARORA vs ALCORN (email)
+================================================================================
+
+                        │ ARORA (Feb 16)     │ BOX (Feb 19)       │ ALCORN (email)
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+Entity recommendation   │ Reversed when      │ C-Corp, consistent │ C-Corp possible
+                        │ challenged         │ reasoning          │ for 3-year
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+18-month vs 3-year      │ Didn't distinguish │ Family = independent│ 18-month default
+                        │                    │ NOT self-employment │ for majority owner
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+$78K fee               │ Not mentioned      │ Raised, explained  │ Raised, explained
+                        │                    │ COS exemption      │ COS exemption
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+STEM OPT engagement     │ "We don't have     │ Full engagement,   │ Mentioned risk,
+                        │ an opinion"        │ follow-up Qs,      │ limited detail
+                        │                    │ strategy provided  │ (email only)
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+Disclosure recommendation│ None              │ Disclose + explain │ Not addressed
+                        │                    │ passive investment │ in email
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+Missing I-983 analysis  │ "Maybe you were    │ Employer's failure,│ Not addressed
+                        │ not employed"      │ not yours. You     │ in email
+                        │                    │ terminated promptly│
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+Discoverability risk    │ Not discussed      │ USCIS doesn't      │ USCIS requests
+                        │                    │ typically require  │ pay stubs/tax
+                        │                    │ full tax returns   │ returns for COS
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+Communication style     │ Tangential,        │ Direct, organized, │ N/A (email)
+                        │ required 3x redir  │ asked good Qs      │
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+Fee (registration+pet.) │ $663 reg only      │ $3,510 total       │ $2,730 reg only
+                        │                    │ ($1,404 upfront)   │ (petition TBD)
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+Consultation fee        │ $98               │ $312 (credited)    │ $390
+────────────────────────┼────────────────────┼────────────────────┼──────────────────
+
+================================================================================
+KEY DISCREPANCY: DUAL REGISTRATION
+================================================================================
+
+  BOX says: "Multiple companies can enter you in the H-1B lottery...
+  I don't see any harm in doing that provided that both companies
+  would genuinely employ you if you are selected."
+
+  ALCORN says: "You can only have 1 company sponsor you for the lottery."
+
+  This is a FACTUAL CONFLICT that needs resolution. Under the H-1B
+  Modernization Rule and current USCIS policy, both registrations from
+  related entities by the same beneficiary may be flagged. The rules
+  prohibit duplicate registrations from the SAME employer, but related
+  entities with overlapping ownership could be scrutinized.
+
+  ACTION: Verify this point independently before deciding strategy.
+
+================================================================================
+FEE COMPARISON (full engagement estimate)
+================================================================================
+
+  MEHTA/BOX:
+    Consultation:        $312 (credited if retained within 30 days)
+    Registration:        $1,404 upfront (40% of $3,510)
+    Petition (balance):  $2,106 (due only if selected)
+    STEM OPT (if RFE):   Included in petition fee
+    STEM OPT (separate): Additional (amount TBD)
+    Legal memo:          Not standard; would summarize in email
+    TOTAL IF SELECTED:   $3,510 + govt fees
+    TOTAL IF NOT:        $1,404 (+ $312 if not retained within 30 days)
+
+  ALCORN:
+    Consultation:        $390
+    Registration:        $2,730 upfront
+    Petition:            TBD (fee schedule requested)
+    STEM OPT:            TBD
+    TOTAL:               TBD (awaiting full fee schedule)
+
+  ARORA (for reference — DROPPED):
+    Consultation:        $98
+    Registration:        $663
+    Petition:            TBD
+    TOTAL:               Unknown
+
+================================================================================
+COMMUNICATION & PROCESS CONCERNS
+================================================================================
+
+  LASHAWN ISSUE (raised by user during consultation):
+    User directly complained to Box about Lashawn's handling:
+    - Unclear scheduling messages
+    - No follow-up when user didn't confirm
+    - Payment information not provided proactively
+    - Required user to call to get basic information
+    - "Ambiguous language" and "too much overhead for the client"
+
+    Box's response: Diplomatic. Apologized. Noted that confirmation is
+    required to secure the appointment slot. Did not promise changes.
+
+    ASSESSMENT: The user was transparent about the admin frustration.
+    Box handled it professionally. However, no concrete assurance that
+    the experience would be different during engagement. This remains
+    a yellow flag for client experience, though Box herself communicated
+    clearly throughout the consultation.
+
+  BOX'S COMMUNICATION STYLE:
+    - Direct and organized — answered questions in order
+    - Asked good follow-up questions (LLC nature, role)
+    - Did not diverge into tangents (unlike Arora)
+    - Provided conditional/nuanced answers rather than false certainty
+    - 37 minutes well-used — covered all major topics
+
+================================================================================
+OVERALL ASSESSMENT
+================================================================================
+
+  VERDICT: PASS — STRONG CANDIDATE FOR RETENTION
+
+  Kaitlyn Box demonstrated:
+    1. Genuine expertise on owner-beneficiary H-1B under Modernization Rule
+    2. Willingness to engage on STEM OPT compliance (the critical test)
+    3. A clear disclosure strategy (disclose + frame as passive investor)
+    4. Knowledge of the $78K fee and COS vs consular processing
+    5. Practical USCIS adjudication awareness
+    6. Good communication — organized, responsive, no tangents
+
+  She is the ONLY attorney so far to:
+    - Provide a clear disclosure recommendation with reasoning
+    - Offer a specific strategy for the LLC (passive investor framing)
+    - Provide a specific strategy for the missing I-983 (employer failure)
+    - Give a complete fee quote for registration + petition ($3,510)
+
+  CONCERNS:
+    - Early career (5 years) — independent judgment untested
+    - All published work co-authored with Mehta — unclear how much is her own
+    - Admin experience (Lashawn) was poor
+    - Dual registration advice conflicts with Alcorn — needs verification
+    - Firm had a data breach in May 2025 (SSNs, passports compromised)
+
+================================================================================
+DECISION FRAMEWORK
+================================================================================
+
+  OPTION A: Retain Box/Mehta firm ($1,404 now, $2,106 if selected)
+    PROS: Strongest STEM OPT analysis, clear strategy, reasonable fees,
+          $312 consultation credited, documentation guidance provided
+    CONS: Admin issues, data breach history, early-career attorney
+    TIMELINE: Docs needed by March 3
+
+  OPTION B: Wait for Alcorn fee schedule, compare, then decide
+    PROS: Alcorn may have more founder-specific experience, CA-based
+    CONS: Losing time (March 4 deadline), $2,730 upfront is higher,
+          haven't had live consultation yet (only email exchange)
+    RISK: If Alcorn is slow to reply, may miss the deadline
+
+  OPTION C: Retain Box for registration + petition, consult Alcorn
+    separately for STEM OPT compliance second opinion
+    PROS: Hedges risk, gets registration moving immediately
+    CONS: Higher total cost, potential conflicting advice
+
+  RECOMMENDED: Option A (retain Box/Mehta) unless Alcorn replies
+  with significantly lower fees or you want a second opinion on STEM
+  OPT strategy specifically. Box passed all criteria convincingly.
+  The March 4 deadline makes delay risky.
+
+================================================================================
+IMMEDIATE NEXT STEPS
+================================================================================
+
+  1. Decide whether to retain — Box said to email her directly
+     (email should be in the Zoom invitation)
+  2. If retaining: request engagement agreement, provide $1,404
+  3. Prepare C-Corp documentation by March 3:
+     - Articles of incorporation
+     - Share certificates
+     - EIN confirmation
+     - Bank statements / capital contribution records
+     - Officer documentation (mother as president/director)
+     - Budget or financial projections showing ability to pay salary
+  4. Verify dual registration question (Box vs Alcorn conflict)
+  5. Correct degree name: MS in Applied Analytics (not Financial Engineering)
+
+================================================================================
+END OF EVALUATION
+================================================================================

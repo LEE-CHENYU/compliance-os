@@ -36,12 +36,15 @@ def test_generate_summary_updates_status(client, case_id):
 
 
 def test_chat_generates_followups(client, case_id):
-    # Save answers that trigger follow-up rules
+    # Save answers that trigger follow-up rules (using new track-based keys)
     client.post(f"/api/cases/{case_id}/discovery", json={
-        "step": "residency_status", "question_key": "residency_status", "answer": "F-1",
+        "step": "concern_area", "question_key": "concern_area", "answer": ["Tax Filing"],
     })
     client.post(f"/api/cases/{case_id}/discovery", json={
-        "step": "prior_filings", "question_key": "prior_filings", "answer": ["1040"],
+        "step": "tax_residency_status", "question_key": "tax_residency_status", "answer": "Nonresident alien",
+    })
+    client.post(f"/api/cases/{case_id}/discovery", json={
+        "step": "tax_prior_filings", "question_key": "tax_prior_filings", "answer": ["1040"],
     })
     resp = client.get(f"/api/cases/{case_id}/chat")
     assert resp.status_code == 200

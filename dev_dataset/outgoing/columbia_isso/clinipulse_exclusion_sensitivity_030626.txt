@@ -1,0 +1,124 @@
+================================================================================
+CLINIPULSE EXCLUSION SENSITIVITY NOTE
+Prepared: March 6, 2026
+Related base file: sevis_employment_analysis_030426.txt
+================================================================================
+
+QUESTION
+
+What happens to the OPT/STEM OPT unemployment calculation if CliniPulse LLC
+(02/20/2025 - 03/11/2025) is excluded as valid STEM OPT employment?
+
+SHORT ANSWER
+
+Using an actual unemployment-day method, excluding CliniPulse increases the
+STEM OPT-period unemployment count from 18 days to 38 days. Depending on how
+the separate Tiger Cloud date issue is resolved, the cumulative total becomes
+either about 126/150 days or about 141/150 days. Both remain under the
+150-day aggregate limit, but the worst-case margin shrinks to about 9 days.
+
+BASELINE FROM THE EXISTING SEVIS ANALYSIS
+
+The base analysis treats CliniPulse LLC as valid STEM OPT employment because:
+
+1. It appears in the SEVIS employment record as:
+   - CliniPulse LLC (93-3367148)
+   - Start: 02/20/2025
+   - End:   03/11/2025
+
+2. The base analysis states that an I-983 is on file for CliniPulse.
+
+Under that baseline, the STEM OPT unemployment periods are:
+
+- Claudius ended 02/06/2025, so unemployment begins 02/07/2025
+- CliniPulse starts 02/20/2025
+- Actual unemployment period: 02/07/2025 - 02/19/2025 = 13 days
+
+- CliniPulse ended 03/11/2025, so unemployment begins 03/12/2025
+- Wolff & Li starts 03/17/2025
+- Actual unemployment period: 03/12/2025 - 03/16/2025 = 5 days
+
+Baseline STEM OPT unemployment:
+
+- 13 + 5 = 18 days
+
+Baseline cumulative totals from the main report:
+
+- Scenario 1: about 106 / 150 days
+- Scenario 2: about 121 / 150 days
+
+WHY THERE ARE TWO SCENARIOS
+
+The two scenarios do NOT come from CliniPulse. They come from a separate
+Tiger Cloud uncertainty:
+
+- SEVIS shows Tiger Cloud ending on 12/16/2024
+- Paystub evidence only runs through 11/30/2024
+
+That creates a possible extra unemployment period from 12/01/2024 to
+12/15/2024 if Tiger Cloud is treated as having ended on 11/30/2024 and
+Claudius is treated as starting on 12/16/2024.
+
+Scenario 1:
+
+- Trust the SEVIS end date of 12/16/2024
+- Result: no extra unemployment days from Tiger Cloud
+
+Scenario 2:
+
+- Treat Tiger Cloud as effectively ending on 11/30/2024
+- Result: add 15 more unemployment days
+
+RECALCULATION IF CLINIPULSE IS EXCLUDED
+
+If CliniPulse is not counted as valid employment, then the two separate gaps
+around CliniPulse collapse into one continuous gap:
+
+- Claudius end:      02/06/2025
+- Wolff & Li start:  03/17/2025
+- Actual unemployment period: 02/07/2025 - 03/16/2025 = 38 days
+
+That replaces the baseline 18 STEM OPT days with 38 STEM OPT days.
+
+Revised STEM OPT unemployment:
+
+- 38 days
+
+Revised cumulative totals:
+
+1. Scenario 1 + exclude CliniPulse
+   - OPT unemployment: about 88 days
+   - STEM OPT unemployment: 38 days
+   - Total: about 126 / 150 days
+   - Remaining margin: about 24 days
+
+2. Scenario 2 + exclude CliniPulse
+   - OPT unemployment: about 88 days
+   - Tiger Cloud additional days: 15 days
+   - STEM OPT unemployment with CliniPulse excluded: 38 days
+   - Total: about 141 / 150 days
+   - Remaining margin: about 9 days
+
+INTERPRETATION
+
+This is a stress-test calculation, not the current documented baseline.
+
+The current documented baseline still treats CliniPulse as valid STEM OPT
+employment because:
+
+- it appears in the SEVIS record, and
+- the existing analysis says an I-983 is on file.
+
+So, unless there is new evidence that CliniPulse should be disregarded, the
+main-file baseline remains:
+
+- Scenario 1: about 106 / 150
+- Scenario 2: about 121 / 150
+
+BOTTOM LINE
+
+If CliniPulse is excluded:
+
+- unemployment does increase materially,
+- the total is still below 150 days, but
+- the worst-case margin becomes narrow (about 9 days).

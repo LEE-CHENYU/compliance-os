@@ -1,0 +1,445 @@
+================================================================================
+MATCHED TRANSACTIONS REPORT
+Generated: 2025-10-08 11:05:10
+================================================================================
+
+Total Matched Groups: 54
+
+
+MATCH GROUP #1 - ML0001
+--------------------------------------------------------------------------------
+  2025-05-14 | CHK_1234 |    -4,500.00 | MONEYLINK_OUT
+    OTHER DECREASE SCHWAB BROKERAGEMONEYLINK 0514255586224127092
+  2025-05-14 | XXX567   |     4,500.00 | MONEYLINK_IN
+    Tfr Citibank NA, BAMBOO SHOOT GRO
+  NET: $0.00
+
+MATCH GROUP #2 - ML0002
+--------------------------------------------------------------------------------
+  2025-05-14 | CHK_1234 |    -4,500.00 | MONEYLINK_OUT
+    OTHER DECREASE SCHWAB BROKERAGEMONEYLINK 0514255586224127092
+  2025-05-14 | XXX567   |     4,500.00 | MONEYLINK_IN
+    Tfr Citibank NA, BAMBOO SHOOT GRO
+  NET: $0.00
+
+MATCH GROUP #3 - ML0003
+--------------------------------------------------------------------------------
+  2025-04-23 | CHK_1234 |        -1.00 | MONEYLINK_OUT
+    OTHER DECREASE SCHWAB BROKERAGEMONEYLINK 0423255586224127092
+  2025-04-23 | XXX567   |         1.00 | MONEYLINK_IN
+    Tfr Citibank NA, BAMBOO SHOOT GRO
+  NET: $0.00
+
+MATCH GROUP #4 - CK0029
+--------------------------------------------------------------------------------
+  2025-03-06 | CHK_1234 |       516.00 | CHECKING_TRANSFER_IN
+    DEPOSIT 7290 ONLINE Reference # 004379
+  2025-03-06 | CHK_5678 |      -516.00 | CHECKING_TRANSFER_OUT
+    Transfer to Checking 03:40p #0000 ONLINE Reference # 004379
+  NET: $0.00
+
+MATCH GROUP #5 - CK0027
+--------------------------------------------------------------------------------
+  2025-02-27 | CHK_1234 |    50,000.00 | CHECKING_TRANSFER_IN
+    DEPOSIT 7290 ONLINE Reference # 000597
+  2025-02-26 | CHK_1234 |   -50,000.00 | CHECKING_TRANSFER_OUT
+    OTHER DECREASE7290 ONLINE Reference # 005700
+  NET: $0.00
+
+MATCH GROUP #6 - CC0033
+--------------------------------------------------------------------------------
+  2025-02-27 | CHK_1234 |  -100,000.00 | TELLER_WITHDRAWAL
+    TELLER WITHDRAWAL
+  2025-03-03 | XXX567   |    25,000.00 | CASHIERS_CHECK_DEPOSIT
+    CASHIERS CHECK
+  2025-03-03 | XXX567   |    25,000.00 | CASHIERS_CHECK_DEPOSIT
+    CASHIERS CHECK
+  2025-02-28 | XXX567   |    25,000.00 | CASHIERS_CHECK_DEPOSIT
+    CASHIERS CHECK
+  2025-02-27 | XXX890   |    25,000.00 | CASHIERS_CHECK_DEPOSIT
+    CASHIERS CHECK
+  NET: $0.00
+
+MATCH GROUP #7 - CK0031
+--------------------------------------------------------------------------------
+  2025-02-25 | CHK_1234 |    76,166.11 | CHECKING_TRANSFER_IN
+    DEPOSIT 7290 ONLINE Reference # 001685
+  2025-02-25 | CHK_5678 |   -76,166.11 | CHECKING_TRANSFER_OUT
+    Transfer to Checking 11:07a #0000 ONLINE Reference # 001685
+  NET: $0.00
+
+MATCH GROUP #8 - CK0028
+--------------------------------------------------------------------------------
+  2025-02-25 | CHK_1234 |    -1,000.00 | CHECKING_TRANSFER_OUT
+    OTHER DECREASE7290 ONLINE Reference # 006632
+  2025-02-25 | CHK_5678 |     1,000.00 | CHECKING_TRANSFER_IN
+    Transfer From Checking 11:08a #0000 ONLINE Reference # 006632
+  NET: $0.00
+
+MATCH GROUP #9 - CK0032
+--------------------------------------------------------------------------------
+  2024-11-13 | CHK_1234 |        10.00 | CHECKING_TRANSFER_IN
+    DEPOSIT 7290 ONLINE Reference # 007182
+  2024-11-13 | CHK_5678 |       -10.00 | CHECKING_TRANSFER_OUT
+    Transfer to Checking 11:56a #0000 ONLINE Reference # 007182
+  NET: $0.00
+
+MATCH GROUP #10 - ML0004
+--------------------------------------------------------------------------------
+  2025-09-22 | CHK_5678 |   -30,000.00 | MONEYLINK_OUT
+    SCHWAB BROKERAGE MONEYLINK 558622412709239 : ACH Electronic Debit
+  2025-09-22 | XXX567   |    30,000.00 | MONEYLINK_IN
+    Tfr Citibank NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #11 - ML0017
+--------------------------------------------------------------------------------
+  2025-09-12 | CHK_5678 |    29,000.00 | MONEYLINK_IN
+    SCHWAB BROKERAGE MONEYLINK : ACH Electronic Credit
+  2025-09-11 | XXX890   |   -29,000.00 | MONEYLINK_OUT
+    Tfr Citibank NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #12 - ML0005
+--------------------------------------------------------------------------------
+  2025-09-09 | CHK_5678 |   -15,000.00 | MONEYLINK_OUT
+    SCHWAB BROKERAGE MONEYLINK : ACH Electronic Debit
+  2025-09-09 | XXX890   |    15,000.00 | MONEYLINK_IN
+    Tfr CITIBANK NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #13 - ML0006
+--------------------------------------------------------------------------------
+  2025-08-26 | CHK_5678 |   -30,000.00 | MONEYLINK_OUT
+    SCHWAB BROKERAGE MONEYLINK 558622412709239 : ACH Electronic Debit
+  2025-08-26 | XXX567   |    30,000.00 | MONEYLINK_IN
+    Tfr CITIBANK NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #14 - ML0007
+--------------------------------------------------------------------------------
+  2025-05-14 | CHK_5678 |   -45,000.00 | MONEYLINK_OUT
+    ACH Electronic Debit - SCHWAB BROKERAGE MONEYLINK
+  2025-05-14 | XXX890   |    45,000.00 | MONEYLINK_IN
+    Tfr Citibank NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #15 - ML0008
+--------------------------------------------------------------------------------
+  2025-04-08 | CHK_5678 |    -5,000.00 | MONEYLINK_OUT
+    ACH Electronic Debit - SCHWAB BROKERAGE MONEYLINK
+  2025-04-08 | XXX890   |     5,000.00 | MONEYLINK_IN
+    Tfr Citibank NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #16 - ML0009
+--------------------------------------------------------------------------------
+  2025-03-20 | CHK_5678 |   -45,000.00 | MONEYLINK_OUT
+    ACH Electronic Debit - SCHWAB BROKERAGE MONEYLINK
+  2025-03-20 | XXX890   |    45,000.00 | MONEYLINK_IN
+    Tfr Citibank NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #17 - CK0030
+--------------------------------------------------------------------------------
+  2025-02-27 | CHK_5678 |   -50,000.00 | CHECKING_TRANSFER_OUT
+    Transfer to Checking 01:37p #0000 ONLINE Reference # 000597
+  2025-02-26 | CHK_5678 |    50,000.00 | CHECKING_TRANSFER_IN
+    Transfer From Checking 09:58a #0000 ONLINE Reference # 005700
+  NET: $0.00
+
+MATCH GROUP #18 - ML0020
+--------------------------------------------------------------------------------
+  2025-01-27 | CHK_5678 |    16,000.00 | MONEYLINK_IN
+    ACH Electronic Credit SCHWAB BROKERAGE MONEYLINK
+  2025-01-24 | XXX890   |   -16,000.00 | MONEYLINK_OUT
+    Tfr Citibank NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #19 - ML0010
+--------------------------------------------------------------------------------
+  2025-01-13 | CHK_5678 |   -47,000.00 | MONEYLINK_OUT
+    ACH Electronic Debit - SCHWAB BROKERAGE MONEYLINK
+  2025-01-13 | XXX890   |    47,000.00 | MONEYLINK_IN
+    Tfr CITIBANK NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #20 - ML0011
+--------------------------------------------------------------------------------
+  2025-01-03 | CHK_5678 |   -70,000.00 | MONEYLINK_OUT
+    ACH Electronic Debit - SCHWAB BROKERAGE MONEYLINK
+  2025-01-03 | XXX890   |    70,000.00 | MONEYLINK_IN
+    Tfr CITIBANK NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #21 - ML0012
+--------------------------------------------------------------------------------
+  2024-12-31 | CHK_5678 |    -9,000.00 | MONEYLINK_OUT
+    ACH Electronic Debit - SCHWAB BROKERAGE MONEYLINK
+  2024-12-31 | XXX890   |     9,000.00 | MONEYLINK_IN
+    Tfr Citibank NA, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #22 - ML0013
+--------------------------------------------------------------------------------
+  2024-11-14 | BOA      |   -13,500.00 | MONEYLINK_OUT
+    SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID
+  2024-11-14 | XXX890   |    13,500.00 | MONEYLINK_IN
+    Tfr Bank of America, N, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #23 - ML0014
+--------------------------------------------------------------------------------
+  2024-12-31 | BOA      |    -7,000.00 | MONEYLINK_OUT
+    SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID
+  2024-12-31 | XXX890   |     7,000.00 | MONEYLINK_IN
+    Tfr BANK OF AMERICA, N, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #24 - ML0019
+--------------------------------------------------------------------------------
+  2025-07-24 | BOA      |     1,500.00 | MONEYLINK_IN
+    SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID
+  2025-07-23 | XXX890   |    -1,500.00 | MONEYLINK_OUT
+    Tfr BANK OF AMERICA, N, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #25 - ML0018
+--------------------------------------------------------------------------------
+  2025-08-21 | BOA      |     1,000.00 | MONEYLINK_IN
+    SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID
+  2025-08-20 | XXX890   |    -1,000.00 | MONEYLINK_OUT
+    Tfr BANK OF AMERICA, N, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #26 - ML0016
+--------------------------------------------------------------------------------
+  2025-09-17 | BOA      |     1,000.00 | MONEYLINK_IN
+    SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID
+  2025-09-16 | XXX890   |    -1,000.00 | MONEYLINK_OUT
+    Tfr Bank of America, N, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #27 - ML0015
+--------------------------------------------------------------------------------
+  2025-10-07 | BOA      |     1,500.00 | MONEYLINK_IN
+    SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG CO ID
+  2025-10-06 | XXX890   |    -1,500.00 | MONEYLINK_OUT
+    Tfr BANK OF AMERICA, N, ALEX ZHANG
+  NET: $0.00
+
+MATCH GROUP #28 - JR0021
+--------------------------------------------------------------------------------
+  2025-09-11 | XXX567   |   -29,000.00 | JOURNAL_TRANSFER_OUT
+    JOURNAL TO ...619
+  2025-09-11 | XXX890   |    29,000.00 | JOURNAL_TRANSFER_IN
+    JOURNAL FRM ...239
+  NET: $0.00
+
+MATCH GROUP #29 - PT0034
+--------------------------------------------------------------------------------
+  2025-07-08 | XXX567   |         0.00 | POSITION_TRANSFER_OUT
+    PUT PDD HOLDINGS INC ADR$70 EXP 06/18/26
+  2025-07-08 | XXX890   |         0.00 | POSITION_TRANSFER_IN
+    PUT PDD HOLDINGS INC ADR$70 EXP 06/18/26
+  NET: $0.00
+
+MATCH GROUP #30 - JR0023
+--------------------------------------------------------------------------------
+  2025-07-08 | XXX567   |     9,000.00 | JOURNAL_TRANSFER_IN
+    JOURNAL FRM ...619
+  2025-07-08 | XXX890   |    -9,000.00 | JOURNAL_TRANSFER_OUT
+    JOURNAL TO ...239
+  NET: $0.00
+
+MATCH GROUP #31 - JR0024
+--------------------------------------------------------------------------------
+  2025-06-30 | XXX567   |    15,000.00 | JOURNAL_TRANSFER_IN
+    JOURNAL FRM ...619
+  2025-06-30 | XXX890   |   -15,000.00 | JOURNAL_TRANSFER_OUT
+    JOURNAL TO ...239
+  NET: $0.00
+
+MATCH GROUP #32 - PT0036
+--------------------------------------------------------------------------------
+  2025-05-15 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    US TREASURY BILL25U S T BILL DUE 08/14/25
+  2025-05-15 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    US TREASURY BILL25U S T BILL DUE 08/14/25
+  NET: $0.00
+
+MATCH GROUP #33 - PT0037
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    INTEL CORP
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    INTEL CORP
+  NET: $0.00
+
+MATCH GROUP #34 - PT0038
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    PDD HOLDINGS INC ADR FUNSPONSORED ADR 1 ADR REPS 4 ORD SHS
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    PDD HOLDINGS INC ADR FUNSPONSORED ADR 1 ADR REPS 4 ORD SHS
+  NET: $0.00
+
+MATCH GROUP #35 - PT0039
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    US TREASURY STRIP 0%30 DUE 02/15/30STRIP FM 0%02/15/30
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    US TREASURY STRIP 0%30 DUE 02/15/30STRIP FM 0%02/15/30
+  NET: $0.00
+
+MATCH GROUP #36 - PT0040
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    VANGUARD RUSSELL 2000 ETF
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    VANGUARD RUSSELL 2000 ETF
+  NET: $0.00
+
+MATCH GROUP #37 - PT0041
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    ISHARES 1-3 YEAR TREASRYBOND ETF
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    ISHARES 1-3 YEAR TREASRYBOND ETF
+  NET: $0.00
+
+MATCH GROUP #38 - PT0042
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    SPDR S&P ...600 SMALL CAP VALUE ETF
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    SPDR S&P ...600 SMALL CAP VALUE ETF
+  NET: $0.00
+
+MATCH GROUP #39 - PT0043
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    CROCS INC
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    CROCS INC
+  NET: $0.00
+
+MATCH GROUP #40 - PT0044
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    VANGUARD REAL ESTATE ETF
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    VANGUARD REAL ESTATE ETF
+  NET: $0.00
+
+MATCH GROUP #41 - PT0045
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    OCCIDENTAL PETE CORP
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    OCCIDENTAL PETE CORP
+  NET: $0.00
+
+MATCH GROUP #42 - PT0046
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    ISHARES MSCI EAFE ETF
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    ISHARES MSCI EAFE ETF
+  NET: $0.00
+
+MATCH GROUP #43 - PT0047
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    FIRST REP BK SAN FRAN CA
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    FIRST REP BK SAN FRAN CA
+  NET: $0.00
+
+MATCH GROUP #44 - PT0048
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    BAIDU INC FSPONSORED ADR 1 ADR REPS 8 ORD SHS
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    BAIDU INC FSPONSORED ADR 1 ADR REPS 8 ORD SHS
+  NET: $0.00
+
+MATCH GROUP #45 - PT0049
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    US TREASURY BILL25U S T BILL DUE 09/18/25
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    US TREASURY BILL25U S T BILL DUE 09/18/25
+  NET: $0.00
+
+MATCH GROUP #46 - PT0050
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    US TREASURY BILL25U S T BILL DUE 06/26/25
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    US TREASURY BILL25U S T BILL DUE 06/26/25
+  NET: $0.00
+
+MATCH GROUP #47 - PT0051
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    US TREASURY BILL25U S T BILL DUE 05/29/25
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    US TREASURY BILL25U S T BILL DUE 05/29/25
+  NET: $0.00
+
+MATCH GROUP #48 - PT0052
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    SOLVENTUM CORP
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    SOLVENTUM CORP
+  NET: $0.00
+
+MATCH GROUP #49 - PT0053
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    LIBERTY GLOBAL LTD FCLASS C
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    LIBERTY GLOBAL LTD FCLASS C
+  NET: $0.00
+
+MATCH GROUP #50 - PT0054
+--------------------------------------------------------------------------------
+  2025-05-01 | XXX567   |         0.00 | POSITION_TRANSFER_IN
+    US TREASURY 3 MONTH BILLETF
+  2025-05-01 | XXX890   |         0.00 | POSITION_TRANSFER_OUT
+    US TREASURY 3 MONTH BILLETF
+  NET: $0.00
+
+MATCH GROUP #51 - PT0035
+--------------------------------------------------------------------------------
+  2025-04-09 | XXX567   |         0.00 | POSITION_TRANSFER_OUT
+    PUT PDD HOLDINGS INC $74 EXP 01/16/26
+  2025-04-09 | XXX890   |         0.00 | POSITION_TRANSFER_IN
+    PUT PDD HOLDINGS INC $74 EXP 01/16/26
+  NET: $0.00
+
+MATCH GROUP #52 - JR0022
+--------------------------------------------------------------------------------
+  2025-04-07 | XXX567   |    -5,000.00 | JOURNAL_TRANSFER_OUT
+    JOURNAL TO ...619
+  2025-04-07 | XXX890   |     5,000.00 | JOURNAL_TRANSFER_IN
+    JOURNAL FRM ...239
+  NET: $0.00
+
+MATCH GROUP #53 - JR0025
+--------------------------------------------------------------------------------
+  2025-03-06 | XXX567   |    22,000.00 | JOURNAL_TRANSFER_IN
+    JOURNAL FRM ...619
+  2025-03-06 | XXX890   |   -22,000.00 | JOURNAL_TRANSFER_OUT
+    JOURNAL TO ...239
+  NET: $0.00
+
+MATCH GROUP #54 - JR0026
+--------------------------------------------------------------------------------
+  2025-02-27 | XXX567   |     3,000.00 | JOURNAL_TRANSFER_IN
+    JOURNAL FRM ...619
+  2025-02-27 | XXX890   |    -3,000.00 | JOURNAL_TRANSFER_OUT
+    JOURNAL TO ...239
+  NET: $0.00

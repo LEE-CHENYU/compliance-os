@@ -1,0 +1,101 @@
+================================================================================
+PARSED DOCUMENT: MT Law LLC Payment Options
+Source: citizens_payment_options_2958.pdf
+Parsed: 2026-02-12
+================================================================================
+
+FIRM INFORMATION
+----------------
+Name:       MT Law LLC (Attorneys & Counselors at Law)
+Address:    430 Bedford Street, Suite 200, Lexington, MA 02420
+Phone:      (800) 345-1899
+Fax:        (888) 345-1388
+Website:    www.mtlawllc.com
+
+================================================================================
+
+OPTION 1: PAYMENT BY CHECK
+---------------------------
+Payable To:     MT Law LLC
+Mailing Address:
+    MT Law LLC
+    Attn: [The person handling your case]
+    430 Bedford Street, Suite 200
+    Lexington, MA 02420
+Phone:          (800) 345-1899
+Fees:           None noted
+
+================================================================================
+
+OPTION 2: PAYMENT BY WIRE TRANSFER
+------------------------------------
+Beneficiary Name:       MT Law LLC
+Beneficiary Address:    430 Bedford St, Suite 200, Lexington, MA 02420
+Account Number:         ******2958 (last 4 digits: 2958)
+Account Name:           MT Law LLC Escrow Account
+Message/Memo:           [Name of the Applicant]
+
+  DOMESTIC WIRE:
+  ~~~~~~~~~~~~~~
+  Bank Name:            Citizens Bank, NA (National Association)
+  Routing Number (ACH): 211070175
+  Routing Number (WIRE):011500120
+  Bank Address:         1776 Massachusetts Ave, Lexington, MA 02420
+
+  INTERNATIONAL WIRE:
+  ~~~~~~~~~~~~~~~~~~~
+  Bank Name:            Citizens Bank, NA (National Association)
+  SWIFT Code:           CTZIUS33XXX
+  Bank Address:         One Citizens Drive, Riverside, RI 02915
+
+  International Wire Notes:
+  - An extra $12 USD fee applies to cover international transfer handling charges.
+  - Some banks in China may restrict individual-to-foreign-business transfers.
+    In that case, use the beneficiary name: Shengxi Tian
+    (sole legal representative of MT Law LLC).
+
+================================================================================
+
+OPTION 3: PAYMENT BY CREDIT CARD (via LawPay)
+-----------------------------------------------
+English Payment Link:   https://www.mtlawllc.com/en/payment
+Chinese Payment Link:   https://www.mtlawllc.com/cn/payment
+Instructions:           Follow the "Payment by Online Method" instructions on the webpage.
+Fees:                   4% surcharge on the payment amount
+
+================================================================================
+
+OPTION 4: PAYMENT BY ZELLE
+----------------------------
+Zelle Account:          tian@mtlawllc.com
+Fees:                   None noted
+
+================================================================================
+
+FEE SUMMARY
+------------
+  Check:                No additional fees
+  Domestic Wire:        No additional fees (standard bank fees may apply)
+  International Wire:   $12 USD surcharge required
+  Credit Card (LawPay): 4% surcharge on total amount
+  Zelle:                No additional fees
+
+================================================================================
+
+FRAUD ALERT (IMPORTANT)
+------------------------
+E-mail accounts of attorneys and professionals are being targeted by hackers
+in an attempt to initiate fraudulent wire requests. If you receive an e-mail
+from this office requesting that you wire or otherwise transfer funds:
+
+  1. You MUST confirm the request and any corresponding instructions via
+     telephone BEFORE initiating any transfer.
+  2. Call your attorney or paralegal immediately using contact information
+     found from an independent source (such as the retainer agreement).
+  3. The firm is NOT responsible for any wires sent to an incorrect bank account.
+  4. Report any unusual emails by calling the headquarters office in
+     Lexington, MA at 1-800-345-1899.
+
+================================================================================
+END OF PARSED DOCUMENT
+================================================================================

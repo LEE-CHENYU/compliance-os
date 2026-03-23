@@ -1,0 +1,235 @@
+================================================================================
+CORPORATE LAWYER CANDIDATES — Post-Incorporation Governance Documents
+Prepared: March 9, 2026
+================================================================================
+
+SCOPE:
+  Pacific River Capital Inc. (California C-Corporation, incorporated 02/12/2026)
+  Already completed: Articles of Incorporation, EIN (45-6789012), Registered Agent
+
+  Documents needed:
+    1. Corporate Bylaws (CA Corporations Code compliant)
+    2. Organizational Minutes (first board meeting)
+    3. Stock Certificates
+
+  Purpose: H-1B petition support — must demonstrate proper corporate
+  governance and employer-employee relationship
+
+================================================================================
+CANDIDATE 1: BEND LAW GROUP, PC (San Francisco)
+================================================================================
+
+  Website:        https://www.bendlawgroup.com
+  Email:          info@bendlawgroup.com
+  Phone:          (415) 633-6841
+  Address:        2181 Greenwich St, San Francisco, CA 94123
+  Founded By:     Doug Bend (CA Bar #270968)
+  Type:           Professional Corporation (PC)
+
+  SERVICES:
+    - LLC and corporation formation (50+ entities/year)
+    - Startup and small business law
+    - Entity structuring, contracts, trademarks
+
+  REVIEWS:
+    - 200+ five-star reviews (Google + Yelp)
+    - Yelp: 142 reviews (as of Feb 2026)
+    - BBB: Profile exists
+
+  CA BAR CONFIRMED:
+    - Donald Douglas Bend, CA Bar #270968
+    - Verified via apps.calbar.ca.gov
+
+  PRICING: Not published — inquiry email sent 03/09/2026
+
+  PROS:
+    + Bay Area local — same jurisdiction as Pacific River Capital
+    + High volume (50+ formations/year) — efficient, likely competitive
+    + Excellent reviews (200+ five-star)
+    + Startup-focused — likely familiar with H-1B-related corporate setup
+    + CA-barred attorney confirmed
+    + Super Lawyers profile exists
+
+  CONS:
+    - Pricing unknown until quote received
+    - Uses intake form process — may take longer to get a simple quote
+
+  STATUS: Inquiry email drafted (outgoing/bend_law_group/inquiry_030926.txt)
+
+================================================================================
+CANDIDATE 2: eMINUTES (Los Angeles / New York)
+================================================================================
+
+  Website:        https://eminutes.com
+  Phone:          Not listed in search
+  Type:           Law firm (attorneys admitted in CA, NY, TX)
+
+  SERVICES:
+    - Full entity formation package: $682 flat fee
+    - Includes: articles, bylaws, org minutes, stock certificates, EIN,
+      registered agent (6 months), S-election forms if needed
+    - Post-formation: corporate minutes management, resident agent
+
+  VOLUME:
+    - 14,776 CA Statements of Information handled per year
+    - High-volume, systematized practice
+
+  CA BAR CONFIRMED:
+    - Attorneys admitted in California, New York, and Texas
+
+  PRICING: $682 flat fee (full formation package)
+    - May not discount for post-incorporation-only scope
+    - Need to ask if partial package available
+
+  PROS:
+    + Published flat fee — transparent
+    + Very high volume — efficient
+    + Multi-state bar admissions (CA confirmed)
+    + Specializes exclusively in entity formation
+
+  CONS:
+    - $682 includes services already completed (articles, EIN, agent)
+    - May not offer reduced pricing for partial scope
+    - Less personalized than boutique firm
+
+  STATUS: Not yet contacted
+
+================================================================================
+CANDIDATE 3: MELISSA MARSH / YOURLEGALCORNER (Los Angeles)
+================================================================================
+
+  Website:        https://yourlegalcorner.com
+  Phone:          Not listed in search
+  Location:       Los Angeles, CA
+  Attorney:       Melissa Marsh
+
+  SERVICES:
+    - Full incorporation package: $1,169 plus costs
+    - Includes 16 items: custom 30-page bylaws, 10+ page org minutes,
+      first shareholder meeting minutes, stock certificates, stock ledger,
+      corporate seal, and more
+    - Corporate Compliance Plan: $389/year (unlimited phone consultations)
+
+  PRICING: $1,169 (full package) — likely too expensive for 3 docs only
+    - Need to ask about post-incorporation-only pricing
+
+  PROS:
+    + Very thorough documentation (30-page bylaws, 10+ page minutes)
+    + Published pricing — transparent
+    + CA-based attorney
+    + Detailed articles on CA corporate governance
+
+  CONS:
+    - $1,169 is for full 16-item package — overkill for 3 documents
+    - LA-based, not Bay Area
+    - Need to confirm willingness to do partial scope
+
+  STATUS: Not yet contacted
+
+================================================================================
+CANDIDATE 4: MT LAW LLC (Lexington, MA) — CURRENT COUNSEL
+================================================================================
+
+  Website:        https://www.mtlawllc.com
+  Phone:          (800) 345-1899
+  Address:        430 Bedford Street, Suite 200, Lexington, MA 02420
+  Attorney:       Shengxi Tian, Esq. / Cindy Chen
+
+  SERVICES:
+    - Legal Services Agreement signed (Exhibit A, dated 02/09/2026)
+    - Section I: Corporate Setup — $1,112 (full package)
+    - Section II: CPA Review — $780
+
+  CURRENT STATUS:
+    - Governance docs inquiry sent 03/06/2026, awaiting response
+    - Asked for adjusted quote reflecting articles/EIN/agent already done
+    - Cindy also handling H-1B registration for BSGC entity
+
+  PRICING: $1,112 original — fair adjusted price ~$390-$546 for 3 docs
+
+  PROS:
+    + Already has signed agreement and context
+    + Familiar with H-1B requirements for corporate docs
+    + Handles both immigration + corporate — single point of contact
+
+  CONS:
+    - Massachusetts-based — may not be CA-barred
+    - Primarily an immigration firm, not corporate law specialist
+    - Awaiting response since 03/06 (3 days, no reply)
+    - CA Corporations Code compliance uncertain
+
+  STATUS: Awaiting response to 03/06 inquiry
+
+================================================================================
+CANDIDATE 5: AMERILAWYER / SPIEGEL & UTRERA, P.A. (Budget Option)
+================================================================================
+
+  Website:        https://www.amerilawyer.com
+  Type:           Legal services company (P.A.)
+
+  SERVICES:
+    - Corporate kit: $23.36 (includes bylaws, org minutes, stock
+      certificates, corporate seal, stock ledger, banking resolution)
+    - 30-day trial of unlimited legal advice included
+    - Templates customized by "veteran corporate lawyer"
+
+  PRICING: $23.36
+
+  PROS:
+    + Extremely affordable
+    + Includes all 3 needed documents
+    + 30-day legal advice included
+
+  CONS:
+    - Template-based, not custom-drafted for specific situation
+    - Not a traditional law firm — document service with attorney review
+    - May not adequately address H-1B-specific requirements
+    - Corporate docs under USCIS scrutiny need to look professional
+    - Quality concerns for immigration use case
+
+  STATUS: Not recommended for H-1B-related documents
+
+================================================================================
+COMPARISON TABLE
+================================================================================
+
+                    Bend Law    eMinutes    Melissa     MT Law      AmeriLawyer
+                    Group                   Marsh
+  ─────────────────────────────────────────────────────────────────────────────
+  Location          SF, CA      LA/NY       LA, CA      Lexington   National
+                                                        MA
+  CA Bar            YES         YES         YES         UNKNOWN     UNKNOWN
+  Published Fee     No          $682        $1,169      $1,112*     $23.36
+  Est. for 3 docs   TBD         $682**      TBD**       ~$390-700   $23.36
+  Reviews           200+ ★★★★★  N/A         N/A         N/A         N/A
+  H-1B Aware        Likely      Unlikely    Unlikely    YES         No
+  Turnaround        TBD         TBD         TBD         Pending     Immediate
+  ─────────────────────────────────────────────────────────────────────────────
+
+  * MT Law original quote for full package; adjusted quote pending
+  ** Full package price; post-inc-only pricing not yet confirmed
+
+================================================================================
+RECOMMENDATION
+================================================================================
+
+  1. Wait for MT Law response (sent 03/06) — if ~$390-700, easiest path
+  2. Get Bend Law Group quote (inquiry sent 03/09) — best Bay Area option
+  3. eMinutes as backup if both above are too expensive or slow
+
+  DO NOT USE AmeriLawyer for H-1B-related documents — template quality
+  insufficient for USCIS scrutiny.
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+  [x] Draft inquiry email to Bend Law Group (outgoing/bend_law_group/)
+  [x] Send email to Bend Law Group (03/09/2026, Message ID: 19cd436ad10bce88)
+  [ ] Follow up with MT Law if no response by 03/11
+  [ ] Contact eMinutes for post-inc-only pricing if needed
+  [ ] Compare quotes and select
+
+================================================================================
+END
+================================================================================

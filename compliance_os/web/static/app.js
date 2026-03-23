@@ -2,7 +2,17 @@ const state = {
   workspace: null,
   selectedConcernId: null,
   selectedThreadId: null,
+  activeTab: "overview",
   messages: [],
+};
+
+const TAB_COPY = {
+  overview:
+    "Get the current read on this concern: why it matters now, what to do next, and which deterministic deadlines or risks need attention.",
+  cowork:
+    "Use the co-work surface to ask questions with context, inspect the concern, and generate follow-up drafts before taking action.",
+  evidence:
+    "Review only the evidence linked to this concern: Gmail threads, supporting documents, and the selected thread detail.",
 };
 
 const elements = {
@@ -10,9 +20,12 @@ const elements = {
   workspaceSubtitle: document.getElementById("workspace-subtitle"),
   modeLabel: document.getElementById("mode-label"),
   asOfLabel: document.getElementById("as-of-label"),
+  tabDescription: document.getElementById("tab-description"),
   statConcerns: document.getElementById("stat-concerns"),
   statThreads: document.getElementById("stat-threads"),
   statDeadlines: document.getElementById("stat-deadlines"),
+  tabButtons: Array.from(document.querySelectorAll(".tab-btn")),
+  tabPanels: Array.from(document.querySelectorAll("[data-tab-panel]")),
   concernList: document.getElementById("concern-list"),
   threadList: document.getElementById("thread-list"),
   concernTitle: document.getElementById("concern-title"),
@@ -51,6 +64,13 @@ function linkedThreads(concernId) {
   return state.workspace.threads.filter((thread) =>
     thread.linked_concern_ids.includes(concernId)
   );
+}
+
+function visibleThreads() {
+  if (!state.selectedConcernId) {
+    return [];
+  }
+  return linkedThreads(state.selectedConcernId);
 }
 
 function linkedDeadlines(concernId) {
@@ -122,10 +142,7 @@ function renderConcernList() {
     `;
     button.addEventListener("click", () => {
       state.selectedConcernId = concern.id;
-      const firstThread = linkedThreads(concern.id)[0];
-      if (firstThread) {
-        state.selectedThreadId = firstThread.id;
-      }
+      syncSelectedThread();
       render();
     });
     elements.concernList.appendChild(button);
@@ -134,8 +151,15 @@ function renderConcernList() {
 
 function renderThreadList() {
   elements.threadList.innerHTML = "";
+  const threads = visibleThreads();
 
-  state.workspace.threads.forEach((thread) => {
+  if (!threads.length) {
+    elements.threadList.innerHTML =
+      '<p class="empty-state">No Gmail threads are linked to this concern yet.</p>';
+    return;
+  }
+
+  threads.forEach((thread) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `list-item ${
@@ -200,6 +224,13 @@ function renderConcernHero() {
     item.textContent = step;
     elements.nextSteps.appendChild(item);
   });
+}
+
+function syncSelectedThread() {
+  const threads = visibleThreads();
+  if (!threads.some((thread) => thread.id === state.selectedThreadId)) {
+    state.selectedThreadId = threads[0]?.id ?? null;
+  }
 }
 
 function renderDocuments() {
@@ -416,6 +447,21 @@ function renderAssistantFeed() {
   });
 }
 
+function renderTabs() {
+  elements.tabDescription.textContent = TAB_COPY[state.activeTab];
+
+  elements.tabButtons.forEach((button) => {
+    const isActive = button.dataset.tab === state.activeTab;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  elements.tabPanels.forEach((panel) => {
+    const isActive = panel.dataset.tabPanel === state.activeTab;
+    panel.classList.toggle("active", isActive);
+  });
+}
+
 function pushLocalAssistantMessage(text) {
   state.messages.push({ role: "assistant", text });
   renderAssistantFeed();
@@ -446,7 +492,9 @@ async function runAssistant(prompt) {
 }
 
 function render() {
+  syncSelectedThread();
   renderWorkspaceMeta();
+  renderTabs();
   renderConcernList();
   renderThreadList();
   renderConcernHero();
@@ -462,7 +510,7 @@ async function boot() {
   const response = await fetch("/api/workspace");
   state.workspace = await response.json();
   state.selectedConcernId = state.workspace.concerns[0]?.id ?? null;
-  state.selectedThreadId = state.workspace.threads[0]?.id ?? null;
+  syncSelectedThread();
   state.messages = [
     {
       role: "assistant",
@@ -478,6 +526,13 @@ elements.assistantForm.addEventListener("submit", async (event) => {
   const prompt = elements.assistantInput.value;
   elements.assistantInput.value = "";
   await runAssistant(prompt);
+});
+
+elements.tabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    state.activeTab = button.dataset.tab;
+    renderTabs();
+  });
 });
 
 boot();

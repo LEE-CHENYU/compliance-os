@@ -1,0 +1,389 @@
+================================================================================
+REGISTRATION-ONLY DECISION: ARORA vs HIBEE
+Date: February 27, 2026
+Entity: BSGC LLC (Wyoming SMLLC, 100% owner, existing EIN)
+Deadline: March 4, 2026 (registration window opens)
+================================================================================
+
+  NOTE: Pacific River Capital (C-Corp) EIN has NOT been received. Using BSGC LLC
+  for registration. This means: 100% owner = controlling interest =
+  18-month initial validity under the Modernization Rule. Acceptable.
+
+================================================================================
+1. HEAD-TO-HEAD COMPARISON — REGISTRATION ONLY
+================================================================================
+
+  ┌────────────────────────────┬─────────────────────────┬─────────────────────────┐
+  │ Factor                     │ ARORA (h1b1.com)        │ HIBEE (Sun & Ren PLLC)  │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ DD Score (overall)         │ 6.5/10 (reg only)       │ 5.5/10                  │
+  │ DD Score (petition)        │ 5.0/10                  │ 5.5/10                  │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Entity Type                │ P.C. (law firm)         │ Consulting company      │
+  │                            │                         │ (Hibee Inc.) + law firm  │
+  │                            │                         │ (Sun & Ren PLLC)        │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Contract With              │ Ajay K. Arora, P.C.     │ Hibee International     │
+  │                            │ (law firm directly)     │ Consulting Inc.         │
+  │                            │                         │ (NOT the law firm)      │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Attorney of Record         │ Ajay Arora (confirmed,  │ Wenjie Sun (confirmed   │
+  │                            │ sole practitioner)      │ in Feb 27 email reply)  │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Bar Status                 │ NY, ~1993, ACTIVE       │ NY #5126982, 2013,      │
+  │                            │ 32+ years, CLEAN        │ ACTIVE, CLEAN           │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Malpractice Insurance      │ Unknown (not asked)     │ YES (Sun & Ren PLLC,    │
+  │                            │                         │ confirmed in email)     │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Registration Fee           │ $663 (incl. $168 USCIS) │ $636 ($468 + $168 USCIS)│
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Petition Fee (if selected) │ $2,730                  │ $2,652                  │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Total Legal (reg+petition) │ $3,393                  │ $3,120                  │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Non-refundable upfront     │ Unknown                 │ $468 (explicitly        │
+  │                            │                         │ non-refundable)         │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Modernization Rule         │ GOOD — correctly        │ UNKNOWN — not tested.   │
+  │ Understanding              │ understands 100% owner  │ Website does NOT mention│
+  │                            │ is now permitted.       │ owner-beneficiary H-1B. │
+  │                            │ Detailed website page.  │                         │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ STEM OPT Competence        │ FAILED — "we don't have │ UNKNOWN — not tested.   │
+  │                            │ an opinion"             │ Not advertised.         │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ $78K Fee Knowledge        │ Not raised              │ Not tested              │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Already Has Our Data       │ YES — filled data sheets│ PARTIAL — retainer sent │
+  │                            │ sent Feb 13 (7 emails)  │ Jan 22, never signed.   │
+  │                            │                         │ May need new data.      │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Consultation Done          │ YES — Feb 16, 21 min,   │ NO consultation done.   │
+  │                            │ $98 paid, recorded     │ Only email exchange.    │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Registration-Only Option   │ LIKELY — but not        │ TWO-PHASE confirmed:    │
+  │                            │ explicitly confirmed.   │ $468+$168 for reg only, │
+  │                            │ Need to ask.            │ $2,652 only if selected │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Can Meet Deadline          │ YES — if re-engaged by  │ YES — confirmed "before │
+  │                            │ Mar 2 (data sheets      │ March 19 deadline"      │
+  │                            │ already submitted)      │ in Feb 27 email         │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Independent Reviews        │ Avvo: 117 (94.9% 5-star)│ ZERO on any platform   │
+  │                            │ Google: 0               │ Google: 0               │
+  │                            │ Forums: 0               │ Forums: 0               │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Experience                 │ 32+ years immigration   │ Sun: 13 years (2013)    │
+  │                            │ exclusively             │ Ren: 10 years (2016)    │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ AILA Membership            │ YES (since 1995)        │ NOT CONFIRMED           │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Professional Recognition   │ Avvo 8.3, Clients'      │ Rising Stars 2016-2025  │
+  │                            │ Choice 2014             │ Martindale Distinguished│
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Firm Size                  │ Solo practitioner       │ 2 partners (Sun + Ren)  │
+  │                            │ + hiring paralegal      │ + Hibee consulting staff│
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Communication              │ Tangential, verbose,    │ Responsive (replied     │
+  │                            │ required 3 redirects    │ same day to our email)  │
+  │                            │ during consultation     │ Clear, organized reply  │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Location                   │ NYC (1270 Broadway)     │ NYC (14 Penn Plaza)     │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ WeChat Communication       │ Unknown                 │ YES — they use WeChat   │
+  │                            │                         │ groups for coordination │
+  ├────────────────────────────┼─────────────────────────┼─────────────────────────┤
+  │ Relationship Status        │ STALE — 12 days silence │ ACTIVE — replied today  │
+  │                            │ Last contact Feb 14     │ (Feb 27)               │
+  └────────────────────────────┴─────────────────────────┴─────────────────────────┘
+
+================================================================================
+2. WHAT MATTERS FOR REGISTRATION (and what doesn't)
+================================================================================
+
+  REGISTRATION IS MECHANICAL. The attorney:
+    1. Enters employer info (BSGC LLC name, address, EIN)
+    2. Enters beneficiary info (name, DOB, passport, country)
+    3. Enters job info (title, SOC code, work location, wage level)
+    4. Submits passport bio page copy
+    5. Clicks submit on myUSCIS portal
+
+  THIS TAKES ~15 MINUTES. No legal strategy. No documents. No analysis.
+
+  WHAT MATTERS FOR REGISTRATION:
+    ✓ Can they enter data correctly? → Both can.
+    ✓ Can they select correct SOC code and wage level? → Both can.
+    ✓ Can they meet the March 4-19 deadline? → Both confirmed.
+    ✓ Do they already have our data? → Arora: YES. Hibee: PARTIAL.
+    ✓ Is the fee reasonable? → Both comparable ($663 vs $636).
+
+  WHAT DOES NOT MATTER FOR REGISTRATION:
+    ✗ STEM OPT competence (irrelevant at registration stage)
+    ✗ Modernization Rule depth (irrelevant — just data entry)
+    ✗ Communication style (minimal interaction needed)
+    ✗ Entity structure (Hibee vs law firm — irrelevant for data entry)
+    ✗ Malpractice insurance (no legal judgment involved)
+    ✗ Published case wins (no legal strategy involved)
+
+================================================================================
+3. RISK ANALYSIS — WHAT COULD GO WRONG
+================================================================================
+
+  ARORA RISKS:
+  ─────────────────────────────────────────────────────────────────────────
+  1. Stale relationship (12 days no contact, data sheet deadline missed)
+     → MITIGATION: Email immediately, relationship is recoverable
+  2. May expect petition commitment (engagement terms unclear)
+     → MITIGATION: Ask explicitly about registration-only option
+  3. Solo practitioner during peak H-1B season
+     → MITIGATION: Registration is quick, low effort
+  4. Data entry error
+     → MITIGATION: Review registration before submission
+     → PROBABILITY: Very low — 80/80 LCA certifications, no errors
+
+  HIBEE RISKS:
+  ─────────────────────────────────────────────────────────────────────────
+  1. Contract is with Hibee (consulting company), NOT Sun & Ren (law firm)
+     → CONCERN: If dispute arises, you're suing a consulting company
+     → MITIGATION: For registration only ($636), the exposure is small
+  2. Non-attorney co-founder (Chuyi Wang) involved in operations
+     → CONCERN: NY ethics Rule 5.4 fee-splitting with non-lawyers
+     → MITIGATION: For registration only, this is low risk
+  3. Modernization Rule understanding UNTESTED
+     → CONCERN: What if they don't understand owner-beneficiary rules?
+     → MITIGATION: For registration, they just need to enter data.
+       BUT: SOC code selection and wage level DO affect the weighted
+       lottery (Level IV = 4x, Level III = 3x, Level II = 2x, Level I = 1x).
+       An attorney who understands owner-beneficiary nuances may select
+       a more optimal SOC code / wage level.
+  4. Need to provide all company data (they don't have BSGC info)
+     → CONCERN: Time pressure to submit data before March 4
+     → MITIGATION: Data submission is straightforward
+  5. Retainer was for BSGC LLC originally (Jan 22 email)
+     → This is actually aligned — we're now using BSGC LLC anyway
+
+  SHARED RISKS:
+  ─────────────────────────────────────────────────────────────────────────
+  1. Wrong SOC code → affects weighted lottery odds
+  2. Wrong wage level → affects weighted lottery odds
+  3. Data entry error → registration could be rejected
+  4. Missed deadline → catastrophic (miss FY2027 entirely)
+
+================================================================================
+4. THE WEIGHTED LOTTERY FACTOR — SOC CODE & WAGE LEVEL
+================================================================================
+
+  THIS IS THE ONE AREA WHERE REGISTRATION IS NOT PURELY MECHANICAL.
+
+  FY2027 uses wage-based weighted selection:
+    Level IV = 4x entries
+    Level III = 3x entries
+    Level II = 2x entries
+    Level I = 1x entry
+
+  The wage level is determined by:
+    (a) The SOC code selected (which occupation)
+    (b) The work location (which geographic area)
+    (c) The offered wage (which prevailing wage level it falls into)
+
+  For a "Financial Specialist" at BSGC LLC:
+    - SOC code matters — different financial SOC codes have different
+      prevailing wages for the same location
+    - The offered wage must meet or exceed the prevailing wage for that
+      SOC code in that location
+    - A higher wage level = more lottery entries = better odds
+
+  WHO IS BETTER AT THIS?
+
+  ARORA: Has extensive H-1B practice. Selected SOC codes for 80+ LCA
+  filings. Suggested "Financial Specialist" as job title during
+  consultation. Has detailed website content on registration including
+  SOC code selection.
+
+  HIBEE: Claims 1,000+ H-1B cases. Presumably experienced with SOC
+  code selection. But no specific evidence of their approach.
+
+  EDGE: ARORA — he's already discussed the job title and likely has a
+  SOC code in mind. He's also demonstrated understanding that the
+  Modernization Rule allows non-specialty duties (business ownership)
+  alongside specialty duties.
+
+================================================================================
+5. SWITCHING ATTORNEYS AFTER REGISTRATION
+================================================================================
+
+  ARORA → BOUTIQUE (if selected):
+    Clean switch. Registration attorney submits registration. If selected,
+    new attorney files the I-129 petition. No overlap. The new attorney
+    starts fresh with the LCA and petition preparation.
+
+    ARORA'S POSITION: His website says he "assumes personal responsibility
+    as attorney-on-record" but this is for the petition, not registration.
+    His registration engagement may allow switching. MUST CONFIRM.
+
+  HIBEE → BOUTIQUE (if selected):
+    Same clean switch possible. Hibee's fee structure explicitly separates
+    registration ($468+$168) from petition ($2,652). Their email confirmed
+    Stage 2 is only payable "after selection and before filing Form I-129."
+    This structure NATURALLY supports switching — you just don't pay
+    Stage 2 to Hibee and engage a different attorney instead.
+
+    HIBEE'S POSITION: Their two-phase fee breakdown explicitly supports
+    this. Stage 1 ($636) covers registration. Stage 2 ($4,220 incl.
+    gov't fees) is separate. You are NOT locked in.
+
+  EDGE: HIBEE — their fee structure explicitly separates the two phases.
+  Arora's engagement terms are less clear.
+
+================================================================================
+6. SCORING — REGISTRATION ONLY WITH BSGC LLC
+================================================================================
+
+  ┌─────────────────────────────┬──────────┬──────────┐
+  │ Category                    │ ARORA    │ HIBEE    │
+  ├─────────────────────────────┼──────────┼──────────┤
+  │ Data entry competence       │ 9/10     │ 8/10     │
+  │ Already has our data        │ 10/10    │ 5/10     │
+  │ SOC code / wage level       │ 9/10     │ 7/10     │
+  │ Can meet deadline           │ 9/10     │ 9/10     │
+  │ Fee (registration only)     │ 7/10     │ 8/10     │
+  │ Registration-only clarity   │ 6/10     │ 9/10     │
+  │ Relationship status         │ 5/10     │ 9/10     │
+  │ Switching flexibility       │ 6/10     │ 9/10     │
+  │ Contract structure          │ 9/10     │ 5/10     │
+  │   (with law firm directly)  │ (P.C.)   │ (consult)│
+  │ Attorney credentials        │ 8/10     │ 7/10     │
+  │ Reviews / reputation        │ 7/10     │ 2/10     │
+  ├─────────────────────────────┼──────────┼──────────┤
+  │ WEIGHTED AVERAGE            │ 7.5/10   │ 7.0/10   │
+  │ (reg-only factors weighted) │          │          │
+  └─────────────────────────────┴──────────┴──────────┘
+
+================================================================================
+7. DECISION MATRIX
+================================================================================
+
+  SCENARIO A: ARORA FOR REGISTRATION
+  ─────────────────────────────────────────────────────────────────────────
+  Pros:
+    + Already has completed data sheets for BSGC LLC
+    + Demonstrated Modernization Rule knowledge
+    + Better SOC code / wage level selection confidence
+    + Contract directly with law firm (P.C.)
+    + 32 years experience, 80/80 LCA record
+    + 117 Avvo reviews (94.9% five-star)
+  Cons:
+    - Stale relationship (12 days, must re-engage immediately)
+    - Registration-only option NOT explicitly confirmed
+    - Solo practitioner (minor risk for registration)
+    - Communication style (minor issue for registration)
+  Cost: $663
+
+  SCENARIO B: HIBEE FOR REGISTRATION
+  ─────────────────────────────────────────────────────────────────────────
+  Pros:
+    + Active relationship (replied today, Feb 27)
+    + Two-phase fee structure explicitly supports registration-only
+    + Cheaper by $27 ($636 vs $663)
+    + Original retainer was for BSGC LLC — aligned with current plan
+    + Wenjie Sun confirmed as attorney of record
+    + Malpractice insurance confirmed
+    + 2 partners (backup available)
+  Cons:
+    - Contract with Hibee (consulting company), NOT law firm
+    - Zero independent reviews anywhere
+    - Modernization Rule understanding UNTESTED
+    - Need to submit all BSGC data (they may not have it ready)
+    - Non-attorney co-founder involved in operations
+    - SOC code selection confidence UNKNOWN
+  Cost: $636
+
+  SCENARIO C: BOTH (dual registration via two firms)
+  ─────────────────────────────────────────────────────────────────────────
+  NOT APPLICABLE — Using BSGC LLC only (Pacific River Capital has no EIN).
+  Cannot register the same entity through two different attorneys.
+
+================================================================================
+8. RECOMMENDATION
+================================================================================
+
+  RECOMMENDED: ARORA FOR REGISTRATION ($663)
+
+  REASONING:
+    1. He already has the completed data sheets — fastest path to filing
+    2. He demonstrated understanding of the Modernization Rule and
+       owner-beneficiary rules, which affects SOC code selection
+    3. Contract is directly with a law firm (P.C.), not a consulting company
+    4. 117 Avvo reviews provide at least SOME independent verification
+    5. 80/80 LCA record = zero process errors
+    6. The $27 price difference ($663 vs $636) is negligible
+
+  WHY NOT HIBEE:
+    1. Contract with consulting company, not law firm — introduces
+       unnecessary structural risk even for registration
+    2. Zero independent reviews — we literally cannot verify service quality
+    3. Modernization Rule understanding untested — risk for SOC code selection
+    4. Would need to submit all BSGC data from scratch (time pressure)
+
+  HOWEVER, HIBEE REMAINS A VIABLE BACKUP IF:
+    - Arora cannot confirm registration-only engagement, OR
+    - Arora is unresponsive when re-engaged (must respond by Mar 2)
+
+  ACTION PLAN:
+  ─────────────────────────────────────────────────────────────────────────
+  TODAY (Feb 27):
+    1. Email Arora: "I want to proceed with H-1B registration for BSGC LLC.
+       Can we do registration only ($663)? I may use a different attorney
+       for the petition if selected. Can you confirm this is OK?"
+    2. If Arora responds YES → pay $663, confirm BSGC LLC data, proceed
+    3. If Arora doesn't respond by Feb 28 EOD → engage Hibee as backup
+
+  BY MARCH 2:
+    4. Confirm registration details with chosen attorney
+    5. Review SOC code and wage level selection before submission
+    6. Provide passport bio page if not already submitted
+
+  MARCH 4-19:
+    7. Attorney submits registration during the window
+    8. Confirm submission receipt
+
+  ~MARCH 31:
+    9. Lottery results
+    10. If selected → engage boutique attorney (Alcorn priority) for petition
+
+================================================================================
+9. POST-REGISTRATION: PETITION ATTORNEY PIPELINE
+================================================================================
+
+  If selected in the lottery (~25-30% odds), you have 90 days to file
+  the petition. The petition attorney does NOT need to be the registration
+  attorney. Pipeline for petition:
+
+  PRIORITY 1: Sophie Alcorn
+    - Published 100% owner CEO H-1B approval (6-day processing)
+    - CA Certified Immigration Specialist
+    - Substantively addressed STEM OPT via email
+    - MISSED Feb 25 consultation — need to reschedule ASAP
+    - Action: Reply to "Let's Get Back on Track" email immediately
+
+  PRIORITY 2: Klasko Immigration
+    - Published 95% owner H-1B case win
+    - Large firm with deep resources
+    - Not yet contacted
+    - Action: Contact this week
+
+  PRIORITY 3: Manifest Law
+    - Ex-USCIS adjudicator on staff
+    - $2,730 flat fee
+    - Not yet contacted
+    - Action: Contact this week
+
+  BACKUP: Hibee (if Arora does registration, Hibee could still do petition)
+    - $2,652 petition fee
+    - Wenjie Sun as attorney of record
+    - But: untested on Modernization Rule and STEM OPT
+
+================================================================================
+END OF DECISION DOCUMENT
+================================================================================

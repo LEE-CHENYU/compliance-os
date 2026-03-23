@@ -1,0 +1,250 @@
+================================================================================
+STRATEGY: CHEAP REGISTRATION → BOUTIQUE PETITION IF SELECTED
+Date: February 26, 2026
+Context: March 4 H-1B registration deadline, 6 days away
+================================================================================
+
+================================================================================
+1. THE CONCEPT
+================================================================================
+
+  PHASE 1 — REGISTRATION (before March 4):
+    Use a cheaper, process-oriented firm to submit the electronic
+    H-1B registration into the FY2027 lottery. Registration is
+    MECHANICAL — the attorney enters basic company info (name, address,
+    EIN, beneficiary details) into the USCIS portal. No legal strategy
+    is involved. No supporting documents. It takes ~15 minutes.
+    It is essentially a lottery ticket.
+
+  PHASE 2 — PETITION (IF selected, April-June 2026):
+    Engage a boutique/specialist attorney who deeply understands:
+      - Owner-beneficiary Modernization Rule
+      - STEM OPT compliance / disclosure strategy
+      - C-Corp vs LLC validity period analysis
+      - $78K fee avoidance via COS
+    You would have ~90 DAYS after selection (April through end of June)
+    to find and retain the right petition attorney.
+
+  RATIONALE:
+    - Lottery selection rate is ~25-30%. There's a ~70% chance you
+      DON'T need to pay for a petition at all.
+    - Registration requires no legal nuance — any competent firm can do it.
+    - The hard legal work (STEM OPT compliance, entity analysis, petition
+      drafting) only matters IF selected.
+    - Saves potentially $2,340-4,000 if not selected.
+
+================================================================================
+2. INDUSTRY VALIDATION — THIS IS STANDARD PRACTICE
+================================================================================
+
+  MURTHY'S OWN FEE SCHEDULE explicitly supports this model:
+    - LRA is "limited to completion of electronic registration"
+    - If selected, you "may ask to then 'upgrade' your case"
+    - Petition filing is subject to firm availability
+    - You are NOT obligated to use the registration firm for petition
+
+  This is not a hack — it's how many firms structure their H-1B practice.
+  Registration is a volume business; petition preparation is where the
+  real legal work (and fees) are.
+
+================================================================================
+3. REGISTRATION COST COMPARISON
+================================================================================
+
+  ┌──────────────────┬──────────┬──────────────┬───────────────────────────┐
+  │ Firm             │ Reg Fee  │ USCIS $168   │ Total Reg Cost            │
+  ├──────────────────┼──────────┼──────────────┼───────────────────────────┤
+  │ Murthy           │ $390     │ Separate     │ $558                      │
+  │ Arora (h1b1)     │ $663     │ Included     │ $663                      │
+  │ Hibee            │ $3,120*  │ Unknown      │ $3,120* (bundled)         │
+  │ Alcorn           │ $2,730*  │ Unknown      │ $2,730* (may include more)│
+  └──────────────────┴──────────┴──────────────┴───────────────────────────┘
+  * Hibee and Alcorn bundle registration + petition. Reg-only pricing
+    may not be available.
+
+================================================================================
+4. CANDIDATE FIRMS FOR REGISTRATION ONLY
+================================================================================
+
+  OPTION A — ARORA ($663)
+  ─────────────────────────────────────────────────────────────────────────
+  Pros:
+    + Already has our data (filled out data sheets on Feb 13)
+    + Correctly understands Modernization Rule
+    + 7 messages in existing email thread — relationship established
+    + Can handle mechanical registration competently
+    + Consultation fee ($98) may be credited toward registration
+  Cons:
+    - Data sheet deadline was March 1 (now 3 days overdue) — may need
+      to re-engage quickly
+    - May expect petition commitment (check engagement terms)
+    - Failed on STEM OPT — but irrelevant for registration phase
+    - Communication style issues (tangential) — but irrelevant for reg
+  Risk:
+    - Need to confirm registration-only engagement is available
+    - Need to confirm WHICH entity to register (BSGC LLC vs Pacific River Capital)
+
+  OPTION B — MURTHY ($558)
+  ─────────────────────────────────────────────────────────────────────────
+  Pros:
+    + Cheapest option ($558 total)
+    + Explicitly offers registration-only LRA
+    + Fee schedule just received — can engage immediately
+    + Large firm, process-oriented, handles volume registrations
+  Cons:
+    - Stepanova doesn't understand Modernization Rule (but registration
+      doesn't require legal strategy — it's data entry)
+    - Consultation evaluation was FAIL — bad taste
+    - Would need to provide new data/documents to a new firm in 6 days
+  Risk:
+    - If they bungle something due to knowledge gaps
+    - Negative signal to engage a firm you've evaluated as failed
+
+  OPTION C — HIBEE ($3,120 bundled)
+  ─────────────────────────────────────────────────────────────────────────
+  Pros:
+    + Existing unsigned retainer — fastest to engage
+    + Sun & Ren PLLC is a real law firm (Wenjie Sun, NY Bar #5126982)
+    + Already familiar with the case from January exchange
+    + Bundled pricing covers registration through petition
+  Cons:
+    - $3,120 is the full bundle — paying upfront for petition you may not need
+    - DD score only 5.5/10 — consulting company structure, not law firm
+    - Unanswered questions about attorney structure (email sent today)
+    - No malpractice insurance confirmation
+    - Xiaochen Lai bar status unverified
+  Risk:
+    - If the engagement is with Hibee (consulting company) rather than
+      Sun & Ren PLLC (law firm), NY ethics issues (Rule 5.4 fee-splitting)
+    - Unclear who would actually handle the petition
+
+  OPTION D — NEW FIRM (Klasko, Corstange, etc.)
+  ─────────────────────────────────────────────────────────────────────────
+  Pros:
+    + Fresh start with a firm that may be excellent
+    + Klasko published a 95% owner H-1B case win
+  Cons:
+    - Not yet contacted — 6 days is very tight
+    - Would need consultation + engagement + data sheet in <1 week
+    - Risk of not making March 4 deadline
+  Risk:
+    - Time is the enemy. Very low probability of engaging a new firm
+      from scratch before March 4.
+
+================================================================================
+5. THE EIN BLOCKER — CRITICAL CONSTRAINT
+================================================================================
+
+  PACIFIC RIVER CAPITAL (C-Corp):
+    - EIN application faxed Feb 23
+    - Processing time: 4-6 weeks → arrives ~late March/early April
+    - CANNOT register without EIN
+    - SOLUTION: Mother calls IRS (267) 941-1099 for instant phone EIN
+    - RISK: If phone EIN fails, Pacific River Capital cannot be registered
+
+  BSGC LLC (SMLLC):
+    - HAS an existing EIN
+    - Can be registered immediately
+    - BUT: 100% owner = controlling interest = 18-month validity only
+    - If registered through BSGC, locked into BSGC for the petition
+
+  STRATEGIC DECISION:
+    If EIN is obtained for Pacific River Capital before March 4:
+      → Register through BOTH entities (Pacific River Capital + BSGC)
+      → If selected, choose Pacific River Capital for 3-year validity
+    If EIN is NOT obtained:
+      → Register through BSGC LLC only
+      → Accept 18-month validity (still valid, just more frequent renewal)
+
+================================================================================
+6. SWITCHING ATTORNEYS BETWEEN PHASES — MECHANICS
+================================================================================
+
+  The registration and petition are TWO SEPARATE USCIS processes:
+    1. Registration: Employer submits basic info via myUSCIS portal
+    2. Petition: Employer files Form I-129 with full documentation
+
+  There is NO legal or technical barrier to using different attorneys
+  for each phase. The registration attorney submits the electronic
+  registration; the petition attorney prepares and files the I-129.
+
+  The LCA (Labor Condition Application) is filed AFTER selection but
+  BEFORE petition. The petition attorney handles the LCA. This is
+  a clean handoff point.
+
+  WHAT THE REGISTRATION ATTORNEY NEEDS:
+    - Employer info (name, address, EIN, NAICS code)
+    - Beneficiary info (name, DOB, passport, country of birth)
+    - Job info (title, SOC code, work location, wage level)
+    - Passport bio page copy
+
+  WHAT THE PETITION ATTORNEY NEEDS (only if selected):
+    - Everything above, PLUS:
+    - Specialty occupation analysis
+    - Beneficiary qualifications (degree, transcripts, credentials eval)
+    - Employer ability to pay (tax returns, bank statements)
+    - Job description, duties breakdown
+    - STEM OPT compliance analysis/disclosure strategy
+    - Entity analysis (C-Corp vs LLC, 18-mo vs 3-yr)
+    - Supporting evidence
+
+================================================================================
+7. RECOMMENDED PATH
+================================================================================
+
+  1. [IMMEDIATE] Resolve Pacific River Capital EIN
+     → Mother calls IRS (267) 941-1099
+     → If successful: register BOTH entities
+     → If not: register BSGC LLC only
+
+  2. [BY MARCH 2] Engage Arora for registration only ($663)
+     → Confirm registration-only engagement is available
+     → Provide entity info for whichever entity(ies) have EINs
+     → Pay $663 (or $663 x 2 if dual registration)
+
+  3. [MARCH 4-19] Registration submitted by Arora
+     → Mechanical process, Arora is competent for this
+
+  4. [~MARCH 31] Lottery results
+     → If NOT selected: $663 total cost. Done.
+     → If selected: proceed to Phase 2
+
+  5. [APRIL-JUNE, IF SELECTED] Engage boutique attorney for petition
+     → Priority: Alcorn (Sophie) — reschedule ASAP
+     → Backup: Klasko Immigration, Corstange Law
+     → 90-day window to file petition
+     → This is where the real legal strategy matters
+
+  ALTERNATIVE: If Hibee replies satisfactorily to our attorney structure
+  questions AND confirms Wenjie Sun will personally handle the case,
+  consider Hibee for the full engagement at $3,120. This avoids the
+  two-phase complexity and gives continuity of representation.
+
+================================================================================
+8. RISK MATRIX
+================================================================================
+
+  ┌────────────────────────────┬──────────┬──────────────────────────────┐
+  │ Risk                       │ Severity │ Mitigation                   │
+  ├────────────────────────────┼──────────┼──────────────────────────────┤
+  │ EIN not obtained by Mar 4  │ HIGH     │ Mother calls IRS immediately │
+  │ Arora won't do reg-only    │ MEDIUM   │ Fall back to Murthy ($558)   │
+  │ No boutique atty by June   │ LOW      │ 90 days is plenty of time    │
+  │ Registration error         │ LOW      │ Registration is simple data  │
+  │ Dual-reg scrutiny          │ LOW      │ Both entities are legitimate │
+  │ Not selected in lottery    │ HIGH     │ ~70% probability. Accept it. │
+  │ Weighted lottery hurts us  │ MEDIUM   │ Wage level determines weight │
+  └────────────────────────────┴──────────┴──────────────────────────────┘
+
+================================================================================
+9. DECISION NEEDED
+================================================================================
+
+  [ ] Confirm: registration-only with Arora (or which firm)?
+  [ ] Confirm: which entity to register (BSGC, Yangtze, or both)?
+  [ ] Confirm: mother will call IRS for Pacific River Capital EIN?
+  [ ] Confirm: timeline to contact Arora (must be before ~March 2)
+
+================================================================================
+END OF STRATEGY DOCUMENT
+================================================================================

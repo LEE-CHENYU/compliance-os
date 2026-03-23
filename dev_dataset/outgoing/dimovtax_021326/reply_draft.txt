@@ -1,0 +1,46 @@
+To: team@dimovtax.com
+Subject: Re: New Contact: chenyu li
+
+Dear George,
+
+Thank you for the quick response. Here are the answers to your questions:
+
+  - Legal status: F-1 student visa
+  - Visa type: F-1 (Duration of Status)
+  - Visa granted: October 2023
+  - First arrival in U.S.: 10/21/2023
+  - Days in U.S. in 2025: Approximately 365 (full year resident)
+
+  - Sources of income:
+    - W-2 wages from multiple employers (2023-2025)
+    - Schedule C income from single-member LLC (investment management)
+    - Brokerage income: stocks, options, treasury securities
+    - No rental income, no crypto, no RSU/ESPP
+    - No K-1s
+
+  - Approximate total income from all sources: ~$62,400-$78,000
+
+  - Non-U.S. accounts exceeding $7,800 in aggregate: Yes
+    - Approximately 4-5 accounts: China-based bank accounts
+      with family deposits, plus a Futu Securities brokerage
+      account in Hong Kong
+
+  - Lived outside the U.S. for 12+ months: No (full-year U.S. resident)
+
+  - Foreign income exceeding $94K USD: No
+
+  - Taxes owed to non-U.S. government: No
+
+Additional forms needed:
+  1. Form 3520 — received foreign gifts from family in China during 2025
+  2. Form 5472 — own a single-member LLC (Wyoming) with potential
+     foreign-person ownership implications
+  3. FBAR (FinCEN 114) — 2025 filing + delinquent 2024 filing
+  4. Form 8938 (FATCA) — if threshold is met
+  5. Possible 2024 amended return (1040-X)
+
+Could you please provide an estimated fee quote for the full engagement?
+
+Thank you,
+Alex Zhang
+(646) 555-0142

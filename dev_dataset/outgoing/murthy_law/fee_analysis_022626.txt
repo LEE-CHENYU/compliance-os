@@ -1,0 +1,179 @@
+================================================================================
+MURTHY LAW FIRM — FEE SCHEDULE ANALYSIS
+Date: February 26, 2026
+Source: Email from clientservice@murthy.com (Shaquae Snook, Client Service
+        Specialist I), sent at attorney Stepanova's request
+Attachments: H1BcoCapReg_PS_FY27.pdf, H1BcoII_PS.pdf
+================================================================================
+
+================================================================================
+1. FEE SCHEDULE — REGISTRATION ONLY (H1BcoCapReg_PS_FY27.pdf)
+================================================================================
+
+  MURTHY LEGAL FEES:
+  ─────────────────────────────────────────────────────────────────────────
+  H-1B Cap Registration              $390    Due upon signing LRA
+  ─────────────────────────────────────────────────────────────────────────
+
+  OPTIONAL ADDITIONAL LEGAL FEES (if selected and if firm has availability):
+  ─────────────────────────────────────────────────────────────────────────
+  H-1B Cap Petition                  $1,443  If requested, upon invoice
+  H-4 Application (initial dep.)     $390    If requested, upon invoice
+  H-4 Application (addtl dep.)       $78    If requested, upon invoice
+  I-765 Application (spouse EAD)     $390    If requested and eligible
+  ─────────────────────────────────────────────────────────────────────────
+
+  GOVERNMENT FEES (not included in Murthy's fees):
+  ─────────────────────────────────────────────────────────────────────────
+  H-1B Registration (DHS)            $168    Subject to change
+  ─────────────────────────────────────────────────────────────────────────
+
+  CRITICAL NOTE FROM FAQ:
+    "Our representation is limited to completion of electronic registration
+     for the FY27 H-1B lottery with USCIS."
+    → LRA covers registration ONLY
+    → Petition filing is a SEPARATE engagement, subject to availability
+    → You are NOT obligated to use Murthy for the petition
+
+================================================================================
+2. FEE SCHEDULE — FULL PETITION (H1BcoII_PS.pdf)
+================================================================================
+
+  MURTHY LEGAL FEES:
+  ─────────────────────────────────────────────────────────────────────────
+  H-1B Petition                      $2,223  Due upon signing agreement
+  ─────────────────────────────────────────────────────────────────────────
+
+  OPTIONAL ADDITIONAL LEGAL FEES:
+  ─────────────────────────────────────────────────────────────────────────
+  H-4 Application (initial dep.)     $390    Upon invoice
+  H-4 Application (addtl dep.)       $78    Upon invoice
+  I-765 Application (spouse EAD)     $390    If requested and eligible
+  ─────────────────────────────────────────────────────────────────────────
+
+  NOTE: Legal fees increase 2% automatically on December 31 each year.
+
+  NOTE: If Audit, RFE, NOID, or similar query is received, additional
+  legal fees will be assessed based on complexity.
+
+================================================================================
+3. GOVERNMENT FEES (DHS) — BOTH SCHEDULES
+================================================================================
+
+  For employer with ≤25 employees:
+  ─────────────────────────────────────────────────────────────────────────
+  I-129 Filing Fee (DHS)             $359    (or $608 if >25 employees)
+  Fraud Prevention & Detection       $390
+  Asylum Program Fee                 $234    (or $468 if >25 employees)
+  ACWIA Training Fee                 $585    (or $1,170 if >25 employees)
+  Premium Processing (optional)      $2,313
+  ─────────────────────────────────────────────────────────────────────────
+  Gov't Total (no premium):          $1,568
+  Gov't Total (with premium):        $3,880
+  ─────────────────────────────────────────────────────────────────────────
+
+  501(c)(3) nonprofits: $359 filing fee regardless of size,
+  Asylum Program fee waived.
+
+  $3,120 additional if employer has 50+ employees with 50%+ in H-1B/L-1.
+  → NOT applicable to our case (startup, <25 employees).
+
+================================================================================
+4. TOTAL COST ANALYSIS — MURTHY
+================================================================================
+
+  SCENARIO A: Registration only (not selected in lottery)
+  ─────────────────────────────────────────────────────────────────────────
+  Murthy legal:    $390
+  USCIS reg fee:   $168
+  TOTAL:           $558
+  ─────────────────────────────────────────────────────────────────────────
+
+  SCENARIO B: Registration + Petition (reg via registration LRA)
+  ─────────────────────────────────────────────────────────────────────────
+  Murthy legal:    $390 (reg) + $1,443 (petition) = $1,833
+  USCIS fees:      $168 (reg) + $1,568 (filing) = $1,736
+  TOTAL:           $3,568 (no premium)
+  + Premium:       $5,881
+  ─────────────────────────────────────────────────────────────────────────
+
+  SCENARIO C: Petition only (via separate petition agreement)
+  ─────────────────────────────────────────────────────────────────────────
+  Murthy legal:    $2,223
+  USCIS fees:      $1,568
+  TOTAL:           $3,791 (no premium)
+  ─────────────────────────────────────────────────────────────────────────
+
+================================================================================
+5. KEY FAQ FINDINGS FROM REGISTRATION DOCUMENT
+================================================================================
+
+  Q1:  LRA is limited to registration only. Petition is separate.
+       Employer may be required to prepare petition in ADVANCE of
+       registration if candidate has OPT expiring April 2026 (cap-gap).
+       This may apply to our case.
+
+  Q2:  Speaking to an attorney requires a PAID consultation.
+
+  Q3:  Only document needed pre-registration: passport bio page copy.
+
+  Q4:  If selected + LRA signed, firm provides document checklist.
+
+  Q5:  Registration window: minimum 14 days. First day ≠ advantage.
+       Murthy will register "everyone who engages us for services in
+       the timeframe allowed to do so."
+
+  Q6:  If selected, you "may ask to 'upgrade' your case." Petition
+       filing is subject to firm availability.
+
+  Q7:  Lottery results via USCIS electronic notification (~March 31).
+
+  Q8:  Petition filing speed depends on documentation readiness.
+
+  Q9:  WEIGHTED LOTTERY confirmed for FY2027:
+       Level IV = 4x, Level III = 3x, Level II = 2x, Level I = 1x.
+
+  Q10: $78,000 FEE — Presidential Proclamation, Sep 19, 2025:
+       → Applies to petitions filed on/after Sep 21, 2025 for
+         beneficiaries OUTSIDE the US or consular processing
+       → Does NOT apply to COS, amendments, changes, extensions
+         for beneficiaries INSIDE the US
+       → CONFIRMS: COS filing strategy avoids $78K fee
+
+================================================================================
+6. COMPARISON WITH OTHER FIRMS
+================================================================================
+
+  ┌──────────────────┬──────────┬──────────┬──────────┬──────────────────┐
+  │ Firm             │ Reg Fee  │ Petition │ Total    │ Notes            │
+  ├──────────────────┼──────────┼──────────┼──────────┼──────────────────┤
+  │ Murthy (reg LRA) │ $390     │ $1,443   │ $1,833   │ Cheapest legal   │
+  │ Murthy (petition)│ N/A      │ $2,223   │ $2,223   │ Petition-only    │
+  │ Arora (h1b1)     │ $495*    │ $2,730   │ $3,225*  │ *excl USCIS $168 │
+  │ Box/Mehta        │ bundled  │ bundled  │ $3,510   │ DECLINED CASE    │
+  │ Alcorn (Sophie)  │ $2,730   │ TBD      │ $2,730+  │ Reg + more?      │
+  │ Hibee/Sun & Ren  │ bundled  │ bundled  │ $3,120   │ Retainer unsigned│
+  │ Manifest Law     │ bundled  │ bundled  │ $2,730   │ Not contacted    │
+  │ Shah Peerally    │ $546     │ $2,730   │ $3,276   │ Not pursued      │
+  └──────────────────┴──────────┴──────────┴──────────┴──────────────────┘
+
+  Murthy is the cheapest option by a significant margin. However, this
+  firm is ELIMINATED on substance — Stepanova failed on the Modernization
+  Rule, the foundation of the entire H-1B strategy.
+
+================================================================================
+7. VERDICT
+================================================================================
+
+  MURTHY FEE SCHEDULE: Received and analyzed. Competitively priced.
+  MURTHY AS ATTORNEY: ELIMINATED — Stepanova failed on substance.
+
+  The fee schedule is useful as:
+    1. A benchmark for negotiating with other firms
+    2. Evidence that registration-only engagement is industry standard
+    3. Confirmation of $78K fee COS exemption from a major firm
+    4. Reference for government fee calculations
+
+================================================================================
+END OF FEE ANALYSIS
+================================================================================

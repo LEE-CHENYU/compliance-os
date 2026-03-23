@@ -1,0 +1,181 @@
+================================================================================
+PARSED: I-20 HISTORY AND SCHOOL TRANSFER TIMELINE
+Student: Alex Zhang (Zhang Alex on passport)
+SEVIS ID: N0045267912
+Class of Admission: F-1
+DOB: March 15, 1997
+Country: China (Nanjing)
+Parsed: 2026-02-12
+================================================================================
+
+================================================================================
+CURRENT I-20 (ACTIVE)
+================================================================================
+School:         California Institute of Advanced Management (CIAM)
+Address:        1000 S. Fremont Ave, Mailbox #45 #10402, Bldg A10, 4th Floor
+                Alhambra, CA 91803
+School Code:    LOS214F54450000 (approved 12 April 2016)
+DSO Contact:    Melissa Valle, Director of International Student Success
+
+Form Issue Reason:  CONTINUED ATTENDANCE
+Date Issued:        November 12, 2025
+Place Issued:       Alhambra, CA
+
+Program:            Master's - Business Administration and Management (52.0201)
+Start of Classes:   25 October 2025
+Program Dates:      25 October 2025 - 24 December 2027
+Current Session:    25 October 2025 - 12 December 2025
+
+Employment Authorization:
+  Type:     CPT (Curricular Practical Training)
+  Status:   APPROVED
+  Mode:     Part-Time
+  Dates:    04 November 2025 - 17 April 2026
+  Employer: Acme Ventures Inc.
+  Location: New York, NY
+
+Financials (12 months):
+  Tuition and Fees:     $10,544
+  Living Expenses:      $14,483
+  TOTAL:                $25,027
+  Funding: Personal Funds $25,027
+
+Travel Endorsement:
+  Signed by Melissa Valle on 11/12/2025 (Alhambra, CA)
+
+================================================================================
+PRIOR I-20 #2: CIAM - INITIAL CPT APPROVAL (Issued 11/03/2025)
+================================================================================
+School:         California Institute of Advanced Management (CIAM)
+DSO Contact:    Sandy Chou, Admissions Coordinator
+
+Form Issue Reason:  CONTINUED ATTENDANCE
+Date Issued:        November 3, 2025
+Place Issued:       Alhambra, CA
+
+Same program details as current I-20.
+Current Session:    25 October 2025 - 17 December 2025
+
+Employment Authorization:
+  Type:     CPT - Part-Time - APPROVED
+  Dates:    04 November 2025 - 17 April 2026
+  Employer: Acme Ventures Inc. (New York, NY)
+
+Travel Endorsement:
+  Signed by Sandy Chou on November 3, 2025 (Alhambra, CA)
+
+Note: This was the initial CPT approval I-20. The later 11/12 version
+      updated the DSO contact and session end date.
+
+================================================================================
+PRIOR I-20 #3: CIAM - TRANSFER PENDING FROM WESTCLIFF (Issued 10/17/2025)
+================================================================================
+School:         California Institute of Advanced Management (CIAM)
+DSO Contact:    Alice Lo, Admissions Coordinator
+
+Form Issue Reason:  TRANSFER PENDING - Westcliff University
+Date Issued:        October 17, 2025
+Place Issued:       Alhambra, CA
+
+Same program and financial details.
+No Employment Authorizations.
+No Current Session Dates listed.
+No Travel Endorsement.
+
+Note: This was the transfer-in I-20 issued by CIAM when the SEVIS record
+      was being transferred from Westcliff University.
+
+================================================================================
+PRIOR I-20 #4: WESTCLIFF - CONTINUED ATTENDANCE (Issued 09/19/2025)
+================================================================================
+School:         Westcliff University (San Francisco Campus)
+Address:        17877 Von Karman Ave Ste 400, Irvine, CA 92614
+School Code:    LOS214F53813007 (approved 03 March 2015)
+DSO Contact:    Derek Liew, International Student Advisor
+
+Form Issue Reason:  CONTINUED ATTENDANCE
+Date Issued:        September 19, 2025
+Place Issued:       Irvine, CA
+
+Program:            Master's - Business Administration and Management (52.0201)
+                    + Artificial Intelligence (11.0102)
+Start of Classes:   19 September 2025
+Program Dates:      19 September 2025 - 19 September 2027
+Current Session:    19 September 2025 - 21 December 2025
+
+No Employment Authorizations.
+
+Financials (12 months):
+  Tuition and Fees:     $12,004
+  Living Expenses:      $16,080
+  Books:                $386
+  TOTAL:                $28,471
+  Funding: Personal Funds $28,471
+
+Remarks: "This student will be transferring to Westcliff University to begin
+          their program of study for the Fall 2025 Semester. The student has
+          requested to be enrolled in the MBA Program with a concentration in
+          both Business Administration and Applied AI in Business."
+
+================================================================================
+PRIOR I-20 #5: WESTCLIFF - TRANSFER PENDING FROM COLUMBIA (Issued 09/19/2025)
+================================================================================
+School:         Westcliff University (San Francisco Campus)
+DSO Contact:    Shaylee Hendrickson, Document Processor
+
+Form Issue Reason:  TRANSFER PENDING - Columbia University in the City of New York
+Date Issued:        September 19, 2025
+Place Issued:       Irvine, CA
+
+Same program and financial details as Westcliff continued attendance above.
+No Employment Authorizations.
+No Current Session Dates listed.
+
+Remarks: Same transfer note as above.
+
+Note: This was the initial transfer-in I-20 from Westcliff when SEVIS
+      was being transferred from Columbia University.
+
+================================================================================
+SCHOOL TRANSFER TIMELINE
+================================================================================
+
+1. Columbia University in the City of New York
+   - Original school (entered US 10/21/2023 on F-1)
+   - Had OPT, STEM OPT authorizations
+   - SEVIS transferred out ~September 2025
+
+2. Westcliff University (San Francisco Campus)
+   - Transfer Pending I-20 issued: 09/19/2025 (from Columbia)
+   - Continued Attendance I-20 issued: 09/19/2025
+   - Program: MBA + Applied AI in Business
+   - Session: 09/19/2025 - 12/21/2025
+   - Brief enrollment before transferring to CIAM
+
+3. California Institute of Advanced Management (CIAM) [CURRENT]
+   - Transfer Pending I-20 issued: 10/17/2025 (from Westcliff)
+   - Continued Attendance I-20 issued: 11/03/2025 (with CPT)
+   - Updated I-20 issued: 11/12/2025 (current, with CPT)
+   - Program: MBA (Business Administration and Management)
+   - Program dates: 10/25/2025 - 12/24/2027
+   - CPT authorized: 11/04/2025 - 04/17/2026 at Acme Ventures Inc.
+
+================================================================================
+CPT EMPLOYMENT AUTHORIZATION DETAILS
+================================================================================
+Type:               Curricular Practical Training (CPT)
+Full/Part-Time:     Part-Time
+Status:             APPROVED
+Start Date:         November 4, 2025
+End Date:           April 17, 2026
+Employer:           Acme Ventures Inc.
+Location:           New York, NY
+
+Note: CPT authorization allows off-campus employment directly related to
+      the student's major field of study. Part-time CPT is 20 hours/week
+      or less. This does not count against OPT eligibility unless 12+ months
+      of full-time CPT is used.
+
+================================================================================
+END OF PARSED DOCUMENT
+================================================================================

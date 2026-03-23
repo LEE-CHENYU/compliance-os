@@ -1,0 +1,112 @@
+================================================================================
+WRITTEN CONSENT OF MEMBER IN LIEU OF MEETING
+DISTRIBUTION AUTHORIZATION - Q2-2025
+================================================================================
+
+LLC Name: Greenfield Capital LLC
+State of Formation: Wyoming
+EIN: 12-3456789
+Date of Formation: June 16, 2023
+
+================================================================================
+SECTION 1: AUTHORITY & GOVERNING LAW
+================================================================================
+
+Pursuant to Wyoming Statute § 17-29-405 (Limitations on Distributions), the
+undersigned Member of Greenfield Capital LLC, acting in
+place of a meeting, hereby approves and authorizes the following distributions:
+
+================================================================================
+SECTION 2: DISTRIBUTIONS SUMMARY FOR Q2-2025
+================================================================================
+
+Period: April 07, 2025 through April 30, 2025
+
+1. Date: April 07, 2025
+   Amount: $3,900.00
+   Account: Investment Brokerage (Charles Schwab)
+   Method: JOURNAL TO ...619
+
+2. Date: April 30, 2025
+   Amount: $780.00
+   Account: Business Checking (Citibank)
+   Method: TELLER WITHDRAWAL
+
+TOTAL DISTRIBUTIONS FOR Q2-2025: $4,680.00
+
+================================================================================
+SECTION 3: WYOMING SOLVENCY TESTS (W.S. § 17-29-405)
+================================================================================
+
+The Member certifies that, after giving effect to these distributions:
+
+  A. BALANCE SHEET TEST: The Company's total assets will exceed the sum of
+     its total liabilities plus the amount that would be needed to satisfy
+     preferential rights upon dissolution.
+
+  B. EQUITY INSOLVENCY TEST: The Company will be able to pay its debts as
+     they become due in the ordinary course of business.
+
+  C. SURPLUS TEST: The Company has surplus capital available for distribution
+     in the amount of at least $4,680.00.
+
+================================================================================
+SECTION 4: FRAUDULENT TRANSFER DEFENSES
+================================================================================
+
+  A. NO CREDITOR PREJUDICE: These distributions will not render the Company
+     insolvent or unable to meet its obligations.
+
+  B. BUSINESS JUDGMENT: These distributions are authorized in the exercise of
+     sound business judgment and are in the best interests of the Company.
+
+  C. DISCRETIONARY: These distributions are discretionary and not required
+     by contract or other obligation.
+
+================================================================================
+SECTION 5: BOOKS & RECORDS
+================================================================================
+
+The Company's books and records shall reflect the following journal entry:
+
+  Dr. Member's Capital - Alex Zhang      $    4,680.00
+      Cr. Cash (Operating Account)           $    4,680.00
+
+================================================================================
+EXECUTION
+================================================================================
+
+IN WITNESS WHEREOF, the undersigned Member has executed this Written Consent
+as of the dates set forth above.
+
+MEMBER:
+
+_________________________________
+Alex Zhang
+Member, Greenfield Capital LLC
+
+Date: _______________________
+
+================================================================================
+TAX IMPLICATIONS
+================================================================================
+
+These distributions are taxable to the Member and will be reported on:
+  - Form 1065 (Partnership Return)
+  - Schedule K-1 (Member's Share of Income)
+
+Total distributions for Q2-2025: $4,680.00
+
+================================================================================
+RECORDKEEPING INSTRUCTIONS
+================================================================================
+
+1. Sign and date this authorization
+2. File in LLC minute book under Q2-2025
+3. Attach bank statements showing withdrawals
+4. Update capital account ledger
+5. Provide copy to tax preparer
+6. Retain for at least 7 years
+
+Generated: 2025-10-08 11:08:27
+================================================================================

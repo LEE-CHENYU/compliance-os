@@ -1,0 +1,231 @@
+================================================================================
+FY2027 H-1B ELECTRONIC REGISTRATION — MASTER STATUS DOCUMENT
+As of: March 6, 2026
+================================================================================
+
+STRATEGY: Dual-entity registration through two separate attorneys.
+          If selected, switch to a specialized immigration attorney for
+          the petition filing (90-day window post-selection).
+
+================================================================================
+REGISTRATION 1: PACIFIC RIVER CAPITAL — via Arora
+================================================================================
+
+  ATTORNEY:       Ajay K. Arora, Attorney-at-Law, P.C.
+                  1270 Broadway, Suite 510, New York, NY 10001
+                  Tel: 212-268-3580 | Email: info@h1b1.com
+
+  ENTITY:         Pacific River Capital
+  ENTITY TYPE:    California C-Corporation (General Stock Corporation)
+  EIN:            45-6789012
+  INCORPORATED:   02/12/2026 (CA Secretary of State, File No. B20260000000)
+  ADDRESS:        500 K St Ste B, Sacramento, CA 95814
+  AGENT:          Northwest Registered Agent, Inc.
+  PRESIDENT:      Meiling Wang (mother, sole director/shareholder)
+  BENEFICIARY:    Alex Zhang (employee, NOT officer or controlling shareholder)
+  PETITION TYPE:  Standard employer-employee (3-year validity if approved)
+
+  SIGNATORY:      Meiling Wang, President/Sole Director
+  SIGNATORY PHONE: (646) 555-0199
+  SIGNATORY EMAIL: info@pacific-river-capital.com
+  USCIS ACCOUNT:  To be created under info@pacific-river-capital.com
+
+  JOB DETAILS:
+    Title:        Financial Specialist (SOC 13-2099.00)
+    Salary:       $96,597.54/year (Level III, SF-Oakland-Fremont MSA)
+    Type:         Full-time (40 hours/week)
+    Work location: 420 Maple Ave Apt 300, Berkeley, CA 94710 (Alameda County)
+    Duties:       Data analytics, ML, quantitative financial modeling,
+                  portfolio management, fund accounting, compliance
+
+  FEES PAID TO ARORA:
+    Consultation:       $98 (Helcim, Feb 16, 2026)
+    BSGC registration:  $663 (Helcim, Mar 3, 2026) — now redirected to Yangtze
+    Entity change fee:  $195 (Helcim, Mar 6, 2026)
+    TOTAL:              $956
+
+  STATUS:
+    - $195 entity change fee PAID, confirmed by Arora (Mar 6)
+    - Arora confirmed: only data sheet needed, no corporate docs
+    - Arora discontinuing BSGC registration, proceeding with Yangtze only
+    - Data sheet FILLED, pending review and submission
+    - USCIS Organizational Account: NOT YET CREATED (need info@pacific-river-capital.com)
+    - Must invite "Ajay Arora" / info@h1b1.com as legal representative
+
+  DOCUMENTS ON FILE:
+    - Articles of Incorporation (CA, filed 02/12/2026)
+    - SS-4 EIN Application (faxed 02/23/2026)
+    - Data sheet: Data_Sheet_H1B_Registration_2026_Yangtze_FILLED.docx
+    - Saved to: legal/immigration/pacific_river_capital_articles_and_ss4.pdf
+
+================================================================================
+REGISTRATION 2: BSGC LLC — via MT Law
+================================================================================
+
+  ATTORNEY:       MT Law LLC
+                  430 Bedford Street, Suite 200, Lexington, MA 02420
+                  Contacts: Cindy Chen (cindy@mtlawllc.com)
+                            Jiaqi Xiao (jxiao@mtlawllc.com, (781) 430-8638)
+
+  ENTITY:         Greenfield Capital LLC
+  ENTITY TYPE:    Wyoming single-member LLC
+  EIN:            12-3456789
+  ADDRESS:        100 Main St Ste A, Cheyenne, WY 82001
+  BENEFICIARY:    Alex Zhang (100% owner/managing member)
+  PETITION TYPE:  Owner-beneficiary (Modernization Rule, 18-month validity)
+
+  SIGNATORY:      Alex Zhang, Owner/Managing Member
+  SIGNATORY PHONE: (646) 555-0142
+  SIGNATORY EMAIL: contact.greenfield@gmail.com
+  USCIS ACCOUNT:  contact.greenfield@gmail.com (existing from FY2025, reuse TBD)
+
+  JOB DETAILS:
+    Title:        Financial Specialist (SOC 13-2099.00)
+    Salary:       $96,597.54/year (Level III, SF-Oakland-Fremont MSA)
+    Type:         Full-time (40 hours/week)
+    Work location: 420 Maple Ave Apt 300, Berkeley, CA 94710 (Alameda County)
+
+  FEES:
+    MT Law fee:         $402 (paid Feb 2026, includes $168 USCIS registration fee)
+
+  STATUS:
+    - Worksheet received from Cindy Chen (Mar 5)
+    - Worksheet FILLED and sent back (Mar 6)
+    - Asked Cindy re: reusing existing USCIS account from FY2025
+    - Awaiting Cindy's response on USCIS account and next steps
+    - Worksheet deadline: March 9, 2026
+
+  PRIOR HISTORY WITH MT LAW:
+    - FY2025 registration through BSGC LLC — NOT SELECTED (Apr 1, 2025)
+    - Non-selection confirmed final (Aug 14, 2025)
+    - MT Law has all BSGC info on file from prior year
+
+================================================================================
+KEY DATES & DEADLINES
+================================================================================
+
+  Registration window:        March 4 – March 19, 2026 (noon ET)
+  MT Law worksheet deadline:  March 9, 2026
+  Arora review of BSGC reg:   ~March 11, 2026 (now Yangtze instead)
+  Selection notifications:    By March 31, 2026
+  If selected — LCA filing:   First week of April 2026
+  If selected — petition due: 90 days after selection (~end of June 2026)
+
+  TRAVEL WARNING (from MT Law):
+    Do NOT travel outside U.S. between now and October 1, 2026.
+    Presidential Proclamation imposes $78K H-1B visa fee if employer's
+    beneficiary travels abroad while petition is pending.
+
+================================================================================
+TOTAL FEES SUMMARY
+================================================================================
+
+  Arora (Pacific River Capital):
+    Consultation:             $98
+    Registration:             $663
+    Entity change:            $195
+    Subtotal:                 $956
+
+  MT Law (BSGC LLC):
+    Fee (incl. $168 USCIS):   $402 (paid Feb 2026)
+    Subtotal:                 $402
+
+  GRAND TOTAL:                $1,357
+
+================================================================================
+BENEFICIARY DETAILS (shared across both registrations)
+================================================================================
+
+  Name:             ALEX ZHANG (no middle name)
+  Gender:           Male
+  DOB:              03/15/1997
+  Country of birth: China
+  Citizenship:      China
+  Passport:         G88855571 (China, expires 06/30/2026)
+  SEVIS ID:         N0045267912
+  Current status:   F-1 (D/S), entered U.S. 10/21/2023
+  Education:        MS Applied Analytics, Columbia University (Feb 2023)
+                    MBA, CIAM (10/2025 - 12/2027)
+  Cap:              Master's cap eligible
+  Prior H-1B:       FY2025 registered (BSGC via MT Law) — not selected
+
+  ⚠️ PASSPORT EXPIRES 06/30/2026 — renewal may be needed before petition
+
+================================================================================
+CORRESPONDENCE LOG — ARORA
+================================================================================
+
+  Thread: "FY2027 H-1B Cap Petition — Initial Consultation Request"
+  + new thread: "H1B registration through Pacific River Capital Inc. c/o Chenyu"
+
+  DATE             DIR    SUMMARY
+  ──────────────── ────── ──────────────────────────────────────────────────────
+  Feb 13 11:50am   OUT   Initial consultation request
+  Feb 13 04:46pm   IN    Fee info, process overview
+  Feb 14-16        ---   Scheduled and completed phone consultation ($98)
+  Feb 22-28        ---   Fee structure, data sheet exchanges
+  Feb 28 11:01am   OUT   Sent BSGC data sheet
+  Feb 28 11:12am   IN    Data sheet confirmed, pay $663
+  Mar 03           ---   Payment link sent, $663 paid, confirmed
+  Mar 04 11:18am   OUT   Asked about engagement letter
+  Mar 04 11:22am   OUT   Asked about SEVIS employer entries
+  Mar 04 12:57pm   IN    SEVIS not relevant at registration stage
+  Mar 04 01:16pm   OUT   Engagement letter clarification
+  Mar 04 04:29pm   IN    Engagement letter at petition stage only
+  Mar 04 01:31pm   OUT   Asked for pre-submission review
+  Mar 04 04:50pm   IN    "By middle of next week" for review
+  Mar 04 04:53pm   IN    "Will not submit without employer review"
+  Mar 05 12:44pm   IN    USCIS Organizational Account setup instructions
+  Mar 05 07:55pm   IN    Create new org account, use new email for Yangtze,
+                         data sheet needed, legal fee $663 for 2nd entity
+  Mar 05 11:37am   OUT   Replied with BSGC/Yangtze sections, asked questions
+  Mar 06 02:09pm   IN    $195 entity change fee, payment link, data sheet attached
+  Mar 06 03:28pm   IN    Confirmed: Yangtze only, discontinue BSGC, $663/entity
+  Mar 06           OUT   Paid $195, asked for receipt + corporate docs question
+  Mar 06 04:00pm   IN    "$195 received. Only data sheet needed."
+
+================================================================================
+CORRESPONDENCE LOG — MT LAW
+================================================================================
+
+  Thread: "FY 2027 H-1B Cap Petition_LI, Chenyu (Greenfield Capital LLC)"
+
+  DATE             DIR    SUMMARY
+  ──────────────── ────── ──────────────────────────────────────────────────────
+  Feb 02           IN     Legal services agreement, invoice, payment options
+  Feb 10           IN     Payment received, paid invoice attached
+  Mar 05 03:37pm   IN     Worksheet sent (pre-filled from FY2025), deadline Mar 9
+                          Travel warning: no international travel until Oct 1
+  Mar 06           OUT    Returned filled worksheet, asked about reusing USCIS account
+
+================================================================================
+OPEN ACTION ITEMS
+================================================================================
+
+  [ ] Create USCIS Organizational Account for Pacific River Capital (info@pacific-river-capital.com)
+  [ ] Invite Arora (info@h1b1.com) as legal representative on Yangtze account
+  [ ] Send completed Yangtze data sheet to Arora (pending your review)
+  [ ] Await Cindy (MT Law) response on USCIS account reuse for BSGC
+  [ ] Renew Chinese passport before 06/30/2026 expiry
+
+================================================================================
+OPEN CONCERNS
+================================================================================
+
+  1. PASSPORT EXPIRATION: G88855571 expires 06/30/2026. If selected in
+     lottery, petition filing window extends to ~end of June. May need
+     renewal before or during petition process.
+
+  2. SEVIS EMPLOYER ENTRIES: Open-ended entries from OPT/STEM OPT.
+     Not relevant at registration stage per Arora. Address before petition.
+
+  3. STEM OPT COMPLIANCE: Arora declined to analyze. May need separate
+     compliance attorney. See: consultation_evaluation_021626.txt
+
+  4. ATTORNEY SWITCH STRATEGY: Both Arora and MT Law are registration-only.
+     Plan to switch to specialized attorney for petition if selected.
+     No formal engagement letters = no contractual barrier.
+
+================================================================================
+END OF STATUS DOCUMENT
+================================================================================
