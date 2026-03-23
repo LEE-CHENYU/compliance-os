@@ -29,3 +29,14 @@ Thumbs.db
 user_data/
 uploads/
 output/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Database
+data/
+
+# Uploads
+uploads/
