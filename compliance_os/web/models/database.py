@@ -20,6 +20,9 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     engine = create_engine(f"sqlite:///{db_path}", echo=False)
     from compliance_os.web.models.tables import CaseRow, DiscoveryAnswerRow, ChatMessageRow, DocumentRow  # noqa: F401
     Base.metadata.create_all(engine)
+    # Guardian check flow tables (v2)
+    from compliance_os.web.models.tables_v2 import Base as BaseV2  # noqa: F401
+    BaseV2.metadata.create_all(engine)
     return engine
 
 
