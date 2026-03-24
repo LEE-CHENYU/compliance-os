@@ -23,6 +23,8 @@ dependencies = [
     "sqlalchemy>=2.0",
     "python-multipart>=0.0.9",
     "pymupdf>=1.24",
+    "rapidfuzz>=3.0",
+    "python-dateutil>=2.8",
 ]
 
 [project.optional-dependencies]

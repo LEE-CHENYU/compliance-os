@@ -79,16 +79,16 @@ class Condition:
             return ctx.comparisons.get(self.field)
         return None
 
-    def _resolve_date_value(self, today: date) -> date:
+    def _resolve_date_value(self, ref_date: date) -> date:
         if self.value == "today":
-            return today
+            return ref_date
         if isinstance(self.value, str) and "_months_ago" in self.value:
             n = int(self.value.split("_")[0])
-            return today - relativedelta(months=n)
+            return ref_date - relativedelta(months=n)
         if isinstance(self.value, str) and "_days_from_now" in self.value:
             n = int(self.value.split("_")[0])
-            return today + relativedelta(days=n)
-        return today
+            return ref_date + relativedelta(days=n)
+        return ref_date
 
     def _parse_date(self, val: Any) -> date | None:
         if isinstance(val, date):
