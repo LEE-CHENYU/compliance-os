@@ -156,10 +156,12 @@ Show extracted fields from tax return, cross-checked against answers from B1:
 Same pattern as Track A — only ask about detected issues.
 
 Example rules:
-- `nra_scorp` → ask who filed it (CPA / self / not sure), explain retroactive void
+- `nra_scorp_invalid` → ask who filed it (CPA / self / not sure), explain retroactive void
 - `missing_5472` → confirm it wasn't filed separately, explain $25K/year penalty
-- `foreign_capital_undocumented` → if `foreign_capital` answer is Yes, ask if there's a capital contribution agreement
-- `corporate_veil_risk` → if `separate_bank_account` answer is No, explain liability exposure
+- `foreign_capital_undocumented` (see YAML rule below) → ask if there's a capital contribution agreement
+- `corporate_veil_risk` (see YAML rule below) → explain liability exposure
+
+Note: `foreign_capital_undocumented` and `corporate_veil_risk` are follow-up rules that trigger based on B1 answers (not extraction). Their YAML definitions are in the Track B rules section below.
 
 **B5 — Entity health snapshot**
 Entity summary (name, state, type) with:
@@ -223,6 +225,8 @@ Condition:
 - `mismatch` with `source: comparison` — resolves to `comparisons[field].status in ("mismatch", "needs_review")`. A field matches if its comparison status is `"match"`.
 - `missing` with `source: extraction_a` or `extraction_b` — true if the field was not extracted or has null/empty value.
 - `gt` / `lt` on date fields — compares extracted date against a computed date value.
+- `lt` on semantic comparison fields — compares the similarity score (0-1 float) against the threshold value.
+- `contains` on array fields — true if the array includes the specified element (e.g., `schedules_present contains "schedule_c"`).
 
 **Date magic values:**
 
@@ -312,10 +316,10 @@ For date comparisons: `field: start_date, operator: lt, value: "12_months_ago"` 
   track: stem_opt
   type: comparison
   conditions:
-    - field: duties_similarity
+    - field: duties
       operator: lt
       value: 0.6
-      source: comparison
+      source: comparison            # Semantic comparison returns similarity score 0-1
   severity: warning
   finding:
     title: "Job duties may not clearly relate to your STEM degree"
@@ -493,6 +497,36 @@ For date comparisons: `field: start_date, operator: lt, value: "12_months_ago"` 
     action: "Self-employment on OPT has strict rules. Verify with DSO."
     consequence: "Unauthorized work risk"
     immigration_impact: true
+
+- id: foreign_capital_undocumented
+  track: entity
+  type: logic
+  conditions:
+    - field: foreign_capital_transfer
+      operator: eq
+      value: "yes"
+      source: answers               # B1 Q5
+  severity: warning
+  finding:
+    title: "Foreign capital transfer without documentation"
+    action: "Get a capital contribution agreement drafted. Without it, IRS can recharacterize as income."
+    consequence: "Income recharacterization"
+    immigration_impact: false
+
+- id: corporate_veil_risk
+  track: entity
+  type: logic
+  conditions:
+    - field: separate_bank_account
+      operator: eq
+      value: "no"
+      source: answers               # B1 Q4
+  severity: warning
+  finding:
+    title: "No separate business bank account"
+    action: "Open a dedicated business account. Mixing funds can pierce the corporate veil."
+    consequence: "Personal liability"
+    immigration_impact: false
 
 - id: wrong_form_type
   track: entity
@@ -709,6 +743,48 @@ tax_return:
   state_returns_filed: string[] # [NY, CA, TX, etc.]
 ```
 
+### Answer Schemas
+
+**Track A (A1 — Stage select):**
+
+```yaml
+a1_answers:
+  stage:                        # Q1
+    type: enum
+    values: ["stem_opt", "opt", "applying_stem", "pre_completion", "not_sure"]
+    labels: ["On STEM OPT", "On post-completion OPT", "Applying for STEM extension", "Pre-completion (CPT)", "Not sure"]
+  years_in_us:                  # Q2
+    type: integer
+    description: "How many years on F-1 in the US"
+```
+
+**Track B (B1 — Entity info):**
+
+```yaml
+b1_answers:
+  entity_type:                  # Q1
+    type: enum
+    values: ["smllc", "multi_llc", "c_corp", "s_corp", "not_sure"]
+    labels: ["Single-member LLC", "Multi-member LLC", "C-Corporation", "S-Corporation", "Not sure"]
+  owner_residency:              # Q2
+    type: enum
+    values: ["us_citizen_or_pr", "on_visa", "outside_us"]
+    labels: ["Yes", "No — on a visa", "No — outside US"]
+  state_of_formation:           # Q3
+    type: string
+    description: "State abbreviation (e.g., DE, WY)"
+  separate_bank_account:        # Q4
+    type: enum
+    values: ["yes", "no", "not_sure"]
+  foreign_capital_transfer:     # Q5
+    type: enum
+    values: ["yes", "no"]
+  visa_type:                    # Q6 (conditional: shown only if owner_residency == "on_visa")
+    type: enum
+    values: ["f1_opt_stem", "h1b", "l1", "o1", "other"]
+    labels: ["F-1 (OPT/STEM)", "H-1B", "L-1", "O-1", "Other"]
+```
+
 ### Field Mapping (I-983 → Employment Letter)
 
 The two documents use different names for equivalent fields. The comparison engine uses this mapping:
@@ -742,7 +818,10 @@ If extraction fails or returns low-confidence results:
 - **Partial extraction** (some fields extracted, others missing): Show extracted fields with empty cells for missing ones. Mark missing fields as "Could not extract — you can fill this in manually." Proceed with comparison on available fields only.
 - **Low confidence** (confidence < 0.5 on a field): Show the value with a "Verify" tag. User can confirm or correct. Low-confidence fields are excluded from auto-comparison but included if user confirms.
 
-Confidence threshold for auto-comparison: **0.7**. Below this, the field is flagged for manual review.
+Confidence bands:
+- **< 0.5** — "Verify" tag shown, excluded from auto-comparison entirely
+- **0.5–0.7** — Included in comparison but flagged with "Low confidence" indicator; user can confirm or correct
+- **≥ 0.7** — Auto-compared without flag
 
 ---
 
