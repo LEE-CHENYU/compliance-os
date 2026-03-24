@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from compliance_os.web.models.database import get_engine
 from compliance_os.web.routers import cases, discovery, documents
+from compliance_os.web.routers import checks as checks_v2, extraction, review
 
 
 @asynccontextmanager
@@ -37,6 +38,11 @@ app.add_middleware(
 app.include_router(cases.router)
 app.include_router(discovery.router)
 app.include_router(documents.router)
+
+# Guardian check flow (v2)
+app.include_router(checks_v2.router)
+app.include_router(extraction.router)
+app.include_router(review.router)
 
 
 @app.get("/healthz")
