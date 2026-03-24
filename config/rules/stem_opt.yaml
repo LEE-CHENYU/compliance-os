@@ -1,0 +1,189 @@
+version: "1.0.0"
+
+rules:
+  # === Comparison rules (fire when cross-check finds a mismatch) ===
+
+  - id: job_title_mismatch
+    track: stem_opt
+    type: comparison
+    conditions:
+      - field: job_title
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Job title mismatch between I-983 and employment letter"
+      action: "File an amended I-983 with your DSO using your actual current title"
+      consequence: "RFE trigger"
+      immigration_impact: true
+
+  - id: location_mismatch
+    track: stem_opt
+    type: comparison
+    conditions:
+      - field: work_location
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Work location on I-983 doesn't match employment letter"
+      action: "Submit a modified I-983 reflecting your actual work location"
+      consequence: "DHS site visit failure"
+      immigration_impact: true
+
+  - id: salary_mismatch
+    track: stem_opt
+    type: comparison
+    conditions:
+      - field: compensation
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Compensation differs between I-983 and employment letter"
+      action: "File a modified I-983 reporting the material change"
+      consequence: "Unreported material change"
+      immigration_impact: true
+
+  - id: start_date_mismatch
+    track: stem_opt
+    type: comparison
+    conditions:
+      - field: start_date
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Employment start date doesn't match I-983"
+      action: "Verify correct date with DSO and file correction if needed"
+      consequence: "Unauthorized employment gap"
+      immigration_impact: true
+
+  - id: employer_name_mismatch
+    track: stem_opt
+    type: comparison
+    conditions:
+      - field: employer_name
+        operator: mismatch
+        source: comparison
+    severity: critical
+    finding:
+      title: "Employer name doesn't match between documents"
+      action: "Ensure I-983 employer name exactly matches E-Verify enrollment"
+      consequence: "Authorization invalid"
+      immigration_impact: true
+
+  - id: duties_low_relevance
+    track: stem_opt
+    type: comparison
+    conditions:
+      - field: duties
+        operator: lt
+        value: 0.6
+        source: comparison
+    severity: warning
+    finding:
+      title: "Job duties may not clearly relate to your STEM degree"
+      action: "Work with employer to revise I-983 training plan with STEM-specific goals"
+      consequence: "Major-relatedness failure"
+      immigration_impact: true
+
+  # === Logic rules (fire based on extracted dates + answers) ===
+
+  - id: i983_evaluation_due
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: start_date
+        operator: lt
+        value: "12_months_ago"
+        source: extraction_a
+      - field: stage
+        operator: eq
+        value: "stem_opt"
+        source: answers
+    severity: warning
+    finding:
+      title: "12-month I-983 self-evaluation may be due"
+      action: "Complete evaluation with employer signature within 10 days of anniversary"
+      consequence: "SEVIS termination risk"
+      immigration_impact: true
+
+  - id: grace_period_employment
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: end_date
+        operator: lt
+        value: "today"
+        source: extraction_a
+      - field: stage
+        operator: neq
+        value: "stem_opt"
+        source: answers
+    severity: critical
+    finding:
+      title: "OPT may have ended — you cannot work during the 60-day grace period"
+      action: "Stop working immediately if OPT has ended without STEM extension"
+      consequence: "Unauthorized employment"
+      immigration_impact: true
+
+  # === Advisory rules (gated on user situation) ===
+
+  - id: advisory_fbar
+    track: stem_opt
+    type: advisory
+    conditions:
+      - field: years_in_us
+        operator: gt
+        value: 5
+        source: answers
+    severity: info
+    finding:
+      title: "FBAR (FinCEN 114)"
+      action: "Do you have foreign bank accounts over $10K total?"
+      consequence: "Up to $100K fine"
+      immigration_impact: true
+
+  - id: advisory_fatca_8938
+    track: stem_opt
+    type: advisory
+    conditions:
+      - field: years_in_us
+        operator: gt
+        value: 5
+        source: answers
+    severity: info
+    finding:
+      title: "Form 8938"
+      action: "Do you hold foreign assets over $50K?"
+      consequence: "$10K+ penalty"
+      immigration_impact: true
+
+  - id: advisory_ar11
+    track: stem_opt
+    type: advisory
+    conditions:
+      - field: work_location
+        operator: mismatch
+        source: comparison
+    severity: info
+    finding:
+      title: "AR-11"
+      action: "Did you report your address change to USCIS?"
+      consequence: "Affects green card"
+      immigration_impact: true
+
+  - id: advisory_multistate_tax
+    track: stem_opt
+    type: advisory
+    conditions:
+      - field: work_location
+        operator: mismatch
+        source: comparison
+    severity: info
+    finding:
+      title: "State tax filing"
+      action: "Are you working in a different state than your employer?"
+      consequence: "Back taxes owed"
+      immigration_impact: false
