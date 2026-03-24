@@ -2,192 +2,280 @@
 
 import { useRouter } from "next/navigation";
 
-const FORMS = [
-  "I-20", "I-94", "I-983", "I-797", "EAD (I-766)", "I-129", "AR-11", "DS-160",
-  "1040-NR", "Form 8843", "Form 3520", "Form 8938", "Schedule C", "Schedule NEC", "W-8BEN",
-  "Form 5472", "Pro forma 1120", "1120-S", "EIN Letter", "Articles of Org",
-];
-const DEADLINES = ["FBAR (FinCEN 114)", "DE Annual Report", "60-day Grace Period", "90-day Unemployment", "10-day Address Report"];
-const PHRASES = [
-  "Substantial Presence Test", "Effectively Connected Income", "Disregarded Entity",
-  "Duration of Status", "Material Change", "Unauthorized Employment", "Cap-Gap Extension",
-  "Corporate Veil", "SEVIS Termination", "Treaty Rate",
-];
+const FORMS = ["I-20","I-94","I-983","I-797","EAD (I-766)","I-129","AR-11","DS-160","1040-NR","Form 8843","Form 3520","Form 8938","Schedule C","Schedule NEC","W-8BEN","Form 5472","Pro forma 1120","1120-S","EIN Letter","Articles of Org"];
+const DEADLINES = ["FBAR (FinCEN 114)","DE Annual Report","60-day Grace Period","90-day Unemployment","10-day Address Report"];
+const PHRASES = ["Substantial Presence Test","Effectively Connected Income","Disregarded Entity","Duration of Status","Material Change","Unauthorized Employment","Cap-Gap Extension","Corporate Veil","SEVIS Termination","Treaty Rate"];
+const SLAB_LABELS = ["I-983","Form 5472","1040-NR","FBAR","EAD","AR-11","I-797"];
 
 export default function Home() {
   const router = useRouter();
 
   return (
     <>
+      <style jsx global>{`
+        body {
+          background:
+            radial-gradient(ellipse 80% 60% at 20% 10%, rgba(91,141,238,0.1) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 50% at 75% 25%, rgba(120,150,210,0.08) 0%, transparent 55%),
+            linear-gradient(180deg, #d5dded 0%, #dde5f0 30%, #e8eff6 60%, #f0f4f9 100%);
+          background-attachment: fixed;
+        }
+        body::before {
+          content: '';
+          position: fixed; inset: 0;
+          background-image: radial-gradient(rgba(91,141,238,0.05) 1px, transparent 1px);
+          background-size: 32px 32px;
+          pointer-events: none; z-index: 0;
+        }
+
+        .iso-scene { width: 680px; height: 600px; perspective: 1800px; position: relative; }
+        .iso-cube {
+          position: absolute; top: 48%; left: 42%;
+          transform-style: preserve-3d;
+          transform: translate(-50%, -50%) rotateX(-20deg) rotateY(-35deg);
+        }
+        .slab {
+          position: absolute; width: 300px;
+          transform-style: preserve-3d;
+          animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+          animation-fill-mode: both;
+        }
+        .s-front {
+          position: absolute; width: 300px; height: 52px; left: 0; top: 0;
+          background: linear-gradient(180deg, #ffffff 0%, #f6f8fd 100%);
+          border: 1px solid rgba(91,141,238,0.12);
+          border-top-color: #fff;
+          box-shadow: 0 8px 40px rgba(50,80,140,0.12), 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .s-side {
+          position: absolute; width: 210px; height: 52px;
+          left: 300px; top: 0;
+          transform-origin: left center; transform: rotateY(90deg);
+          background: linear-gradient(180deg, #e4eaf6 0%, #dae2f2 100%);
+          border: 1px solid rgba(91,141,238,0.08);
+        }
+        .s-cap {
+          position: absolute; width: 300px; height: 210px;
+          left: 0; top: 0;
+          transform-origin: center top; transform: rotateX(-90deg);
+          background: linear-gradient(160deg, #ffffff 0%, #f4f7fd 100%);
+          border: 1px solid rgba(91,141,238,0.06);
+        }
+        .s-label {
+          position: absolute; left: 20px; top: 50%;
+          transform: translateY(-50%);
+          font-size: 13px; font-weight: 600;
+          color: rgba(50,90,170,0.55);
+          text-shadow: 0 0 12px rgba(255,255,255,0.4);
+          letter-spacing: 0.02em;
+          pointer-events: none; z-index: 2;
+        }
+
+        .slab-0 { top: 0;    animation: k0 10s infinite; }
+        .slab-1 { top: 62px;  animation: k1 10s infinite; }
+        .slab-2 { top: 124px; animation: k2 10s infinite; }
+        .slab-3 { top: 186px; animation: k3 10s infinite; }
+        .slab-4 { top: 248px; animation: k4 10s infinite; }
+        .slab-5 { top: 310px; animation: k5 10s infinite; }
+        .slab-6 { top: 372px; animation: k6 10s infinite; }
+
+        @keyframes k0 {
+          0%,14%{transform:translateX(0) translateZ(0)}
+          18%,38%{transform:translateX(40px) translateZ(0)}
+          42%,62%{transform:translateX(40px) translateZ(20px)}
+          66%,86%{transform:translateX(-14px) translateZ(0)}
+          90%,100%{transform:translateX(0) translateZ(0)}
+        }
+        @keyframes k1 {
+          0%,18%{transform:translateX(0) translateZ(0)}
+          22%,42%{transform:translateX(-32px) translateZ(0)}
+          46%,66%{transform:translateX(-32px) translateZ(-22px)}
+          70%,90%{transform:translateX(16px) translateZ(0)}
+          94%,100%{transform:translateX(0) translateZ(0)}
+        }
+        @keyframes k2 {
+          0%,10%{transform:translateX(0) translateZ(0)}
+          14%,34%{transform:translateX(52px) translateZ(0)}
+          38%,58%{transform:translateX(52px) translateZ(16px)}
+          62%,82%{transform:translateX(-20px) translateZ(0)}
+          86%,100%{transform:translateX(0) translateZ(0)}
+        }
+        @keyframes k3 {
+          0%,22%{transform:translateX(0) translateZ(0)}
+          26%,46%{transform:translateX(-26px) translateZ(28px)}
+          50%,70%{transform:translateX(24px) translateZ(0)}
+          74%,94%{transform:translateX(24px) translateZ(-16px)}
+          98%,100%{transform:translateX(0) translateZ(0)}
+        }
+        @keyframes k4 {
+          0%,16%{transform:translateX(0) translateZ(0)}
+          20%,40%{transform:translateX(44px) translateZ(-20px)}
+          44%,64%{transform:translateX(-28px) translateZ(0)}
+          68%,88%{transform:translateX(-28px) translateZ(24px)}
+          92%,100%{transform:translateX(0) translateZ(0)}
+        }
+        @keyframes k5 {
+          0%,20%{transform:translateX(0) translateZ(0)}
+          24%,44%{transform:translateX(-36px) translateZ(12px)}
+          48%,68%{transform:translateX(18px) translateZ(0)}
+          72%,92%{transform:translateX(18px) translateZ(-18px)}
+          96%,100%{transform:translateX(0) translateZ(0)}
+        }
+        @keyframes k6 {
+          0%,12%{transform:translateX(0) translateZ(0)}
+          16%,36%{transform:translateX(34px) translateZ(0)}
+          40%,60%{transform:translateX(34px) translateZ(26px)}
+          64%,84%{transform:translateX(-22px) translateZ(0)}
+          88%,100%{transform:translateX(0) translateZ(0)}
+        }
+
+        .cube-shadow {
+          position: absolute; bottom: 0; left: 42%;
+          transform: translateX(-50%);
+          width: 420px; height: 240px;
+          background: radial-gradient(ellipse, rgba(40,70,130,0.1) 0%, transparent 60%);
+          pointer-events: none; filter: blur(8px);
+        }
+
+        .section-panel {
+          position: relative; z-index: 1;
+          max-width: 1200px; margin: 0 auto 40px;
+          padding: 80px 60px;
+          background: rgba(255,255,255,0.45);
+          backdrop-filter: blur(20px) saturate(1.1);
+          border: 1px solid rgba(255,255,255,0.6);
+          border-radius: 28px;
+          box-shadow: 0 4px 32px rgba(91,141,238,0.04);
+        }
+      `}</style>
+
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-10 py-3.5 flex items-center justify-between bg-[#e0e8f3]/60 backdrop-blur-2xl border-b border-blue-200/20">
-        <div className="text-lg font-extrabold text-[#0d1424] tracking-tight">Guardian</div>
-        <div className="flex gap-8 text-sm font-medium text-[#7b8ba5]">
-          <a href="#cloud" className="hover:text-[#1a2036]">What we check</a>
-          <a href="#how" className="hover:text-[#1a2036]">How it works</a>
+      <nav style={{position:'fixed',top:0,left:0,right:0,zIndex:100,padding:'14px 40px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(220,230,244,0.6)',backdropFilter:'blur(24px) saturate(1.2)',borderBottom:'1px solid rgba(91,141,238,0.08)'}}>
+        <div style={{fontSize:18,fontWeight:800,letterSpacing:'-0.01em',color:'#0d1424',display:'flex',alignItems:'center',gap:10}}>
+          <div style={{width:24,height:24,display:'flex',flexDirection:'column',gap:3,transform:'perspective(200px) rotateX(-8deg) rotateY(12deg)'}}>
+            <div style={{height:5,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',borderRadius:1,width:24,transform:'translateX(2px)'}} />
+            <div style={{height:5,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',borderRadius:1,width:24,transform:'translateX(-1px)'}} />
+            <div style={{height:5,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',borderRadius:1,width:24,transform:'translateX(3px)'}} />
+          </div>
+          Guardian
         </div>
-        <button
-          onClick={() => router.push("/check/stem-opt")}
-          className="px-5 py-2 rounded-lg bg-[#1a2036] text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all"
-        >
+        <div style={{display:'flex',gap:32,fontSize:14,fontWeight:500,color:'#7b8ba5'}}>
+          <a href="#cloud" style={{textDecoration:'none',color:'inherit'}}>What we check</a>
+          <a href="#how" style={{textDecoration:'none',color:'inherit'}}>How it works</a>
+        </div>
+        <button onClick={() => router.push("/check/stem-opt")} style={{padding:'9px 22px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
           Find my risks
         </button>
       </nav>
 
       {/* Hero */}
-      <section className="min-h-screen pt-28 pb-16 px-12 max-w-[1360px] mx-auto grid grid-cols-[1fr_1.3fr] items-center gap-6">
-        <div className="max-w-[500px]">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-[#5b8dee] bg-white/60 backdrop-blur border border-blue-200/20 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#5b8dee] shadow-[0_0_8px_rgba(91,141,238,0.4)]" />
+      <section style={{position:'relative',zIndex:1,minHeight:'100vh',display:'grid',gridTemplateColumns:'1fr 1.3fr',alignItems:'center',maxWidth:1360,margin:'0 auto',padding:'120px 48px 80px',gap:16}}>
+        <div style={{maxWidth:500}}>
+          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 16px',borderRadius:24,fontSize:12,fontWeight:600,color:'#5b8dee',marginBottom:24,background:'rgba(255,255,255,0.6)',backdropFilter:'blur(12px)',border:'1px solid rgba(91,141,238,0.12)'}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'#5b8dee',boxShadow:'0 0 8px rgba(91,141,238,0.4)'}} />
             Your compliance memory
           </div>
-          <h1 className="text-[50px] font-extrabold leading-[1.06] tracking-[-0.04em] text-[#0d1424] mb-5">
+          <h1 style={{fontSize:50,fontWeight:800,letterSpacing:'-0.04em',lineHeight:1.06,marginBottom:20,color:'#0d1424'}}>
             Check your documents before USCIS does
           </h1>
-          <p className="text-[17px] text-[#556480] leading-relaxed mb-9">
+          <p style={{fontSize:17,color:'#556480',lineHeight:1.65,marginBottom:36}}>
             We cross-check your immigration and tax filings to find mismatches, missing forms, and deadline risks you don&apos;t know about yet.
           </p>
-          <div className="flex gap-3 mb-12">
-            <button
-              onClick={() => router.push("/check/stem-opt")}
-              className="px-8 py-4 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] hover:-translate-y-0.5 transition-all"
-            >
+          <div style={{display:'flex',gap:12,marginBottom:48}}>
+            <button onClick={() => router.push("/check/stem-opt")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)'}}>
               Find my risks
             </button>
-            <a
-              href="#cloud"
-              className="px-8 py-4 rounded-xl bg-white/70 text-[#3a5a8c] font-medium text-[15px] border border-blue-200/20 backdrop-blur hover:bg-white/85 transition-all"
-            >
+            <a href="#cloud" style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',textDecoration:'none',backdropFilter:'blur(12px)'}}>
               See what we check
             </a>
           </div>
-          <div className="flex gap-7">
-            {[
-              ["47", "Forms tracked"],
-              ["23", "Deadlines"],
-              ["156", "Key phrases"],
-            ].map(([num, label]) => (
-              <div key={label}>
-                <div className="text-2xl font-bold text-[#0d1424]">{num}</div>
-                <div className="text-xs text-[#8e9ab5] mt-0.5">{label}</div>
+          <div style={{display:'flex',gap:28}}>
+            {[["47","Forms tracked"],["23","Deadlines"],["156","Key phrases"]].map(([n,l]) => (
+              <div key={l}>
+                <div style={{fontSize:24,fontWeight:700,color:'#0d1424'}}>{n}</div>
+                <div style={{fontSize:12,color:'#8e9ab5',marginTop:2}}>{l}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Cube placeholder — will be replaced with Three.js later */}
-        <div className="flex items-center justify-center h-[600px] relative">
-          <div className="text-center text-[#8e9ab5] text-sm">
-            <div className="w-48 h-48 rounded-lg bg-white/40 backdrop-blur border border-white/60 shadow-lg mx-auto mb-4 flex items-center justify-center text-[#5b8dee] font-semibold">
-              3D Cube
+        {/* 3D Sliced Cube */}
+        <div style={{display:'flex',alignItems:'center',justifyContent:'center',position:'relative',height:640}}>
+          <div className="iso-scene">
+            <div className="iso-cube">
+              {SLAB_LABELS.map((label, i) => (
+                <div key={label} className={`slab slab-${i}`}>
+                  <div className="s-cap" />
+                  <div className="s-front"><span className="s-label">{label}</span></div>
+                  <div className="s-side" />
+                </div>
+              ))}
             </div>
-            <p>Interactive visual loads here</p>
           </div>
+          <div className="cube-shadow" />
         </div>
       </section>
 
       {/* Form Cloud */}
-      <section id="cloud" className="max-w-[1200px] mx-auto mb-10">
-        <div className="bg-white/45 backdrop-blur-xl border border-white/60 rounded-[28px] shadow-sm px-16 py-20">
-          <h2 className="text-4xl font-extrabold tracking-tight text-center text-[#0d1424] mb-3">
-            This is what you&apos;re supposed to track
-          </h2>
-          <p className="text-base text-[#556480] text-center max-w-[480px] mx-auto mb-10 leading-relaxed">
-            Forms, deadlines, key phrases, reporting windows. One missed item can cost $25,000 or your status.
-          </p>
-          <div className="flex flex-wrap justify-center gap-1.5 max-w-[820px] mx-auto">
-            {FORMS.map((f) => (
-              <span key={f} className="px-4 py-2 rounded-lg text-[12.5px] font-medium bg-white/65 backdrop-blur border border-blue-200/10 text-[#3d6bc5] hover:bg-white/85 hover:-translate-y-0.5 transition-all cursor-default">
-                {f}
-              </span>
-            ))}
-            {DEADLINES.map((d) => (
-              <span key={d} className="px-4 py-2 rounded-lg text-[12.5px] font-semibold bg-white/65 backdrop-blur border border-blue-200/10 text-[#3d6bc5] hover:bg-white/85 hover:-translate-y-0.5 transition-all cursor-default">
-                {d}
-              </span>
-            ))}
-            {PHRASES.map((p) => (
-              <span key={p} className="px-4 py-2 rounded-lg text-[12.5px] italic font-normal bg-white/65 backdrop-blur border border-blue-200/10 text-[#7b8ba5] hover:bg-white/85 hover:-translate-y-0.5 transition-all cursor-default">
-                {p}
-              </span>
-            ))}
-          </div>
+      <div id="cloud" className="section-panel">
+        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',marginBottom:12,color:'#0d1424',textAlign:'center'}}>
+          This is what you&apos;re supposed to track
+        </h2>
+        <p style={{fontSize:16,color:'#556480',maxWidth:480,margin:'0 auto 40px',lineHeight:1.6,textAlign:'center'}}>
+          Forms, deadlines, key phrases, reporting windows. One missed item can cost $25,000 or your status.
+        </p>
+        <div style={{display:'flex',flexWrap:'wrap',justifyContent:'center',gap:7,maxWidth:820,margin:'0 auto'}}>
+          {FORMS.map(f => <span key={f} style={{padding:'8px 16px',borderRadius:8,fontSize:12.5,fontWeight:500,background:'rgba(255,255,255,0.65)',backdropFilter:'blur(8px)',border:'1px solid rgba(91,141,238,0.06)',color:'#3d6bc5',cursor:'default'}}>{f}</span>)}
+          {DEADLINES.map(d => <span key={d} style={{padding:'8px 16px',borderRadius:8,fontSize:12.5,fontWeight:600,background:'rgba(255,255,255,0.65)',backdropFilter:'blur(8px)',border:'1px solid rgba(91,141,238,0.06)',color:'#3d6bc5',cursor:'default'}}>{d}</span>)}
+          {PHRASES.map(p => <span key={p} style={{padding:'8px 16px',borderRadius:8,fontSize:12.5,fontWeight:400,fontStyle:'italic',background:'rgba(255,255,255,0.65)',backdropFilter:'blur(8px)',border:'1px solid rgba(91,141,238,0.06)',color:'#7b8ba5',cursor:'default'}}>{p}</span>)}
         </div>
-      </section>
+      </div>
 
       {/* Two Tracks */}
-      <section className="max-w-[1200px] mx-auto mb-10">
-        <div className="bg-white/45 backdrop-blur-xl border border-white/60 rounded-[28px] shadow-sm px-16 py-20">
-          <h2 className="text-4xl font-extrabold tracking-tight text-center text-[#0d1424] mb-3">
-            Pick your check
-          </h2>
-          <p className="text-base text-[#556480] text-center mb-10">
-            Two focused tracks. Upload documents, get answers.
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              onClick={() => router.push("/check/stem-opt")}
-              className="text-left bg-white/60 backdrop-blur rounded-2xl p-9 border border-white/70 hover:bg-white/80 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(91,141,238,0.08)] hover:border-blue-200/30 transition-all"
-            >
-              <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100/50 flex items-center justify-center text-xl mb-5">🎓</div>
-              <h3 className="text-xl font-bold mb-2 tracking-tight">STEM OPT Check</h3>
-              <p className="text-sm text-[#556480] leading-relaxed mb-5">
-                Upload your I-983 and employment letter. We cross-check every field and tell you what doesn&apos;t match.
-              </p>
-              <div className="flex flex-col gap-1.5 text-[13px] text-[#4a5f80]">
-                {["Job title consistency", "Work location vs I-983", "Salary match", "Duties vs STEM degree", "Employer name vs E-Verify", "12-month evaluation status"].map((c) => (
-                  <span key={c} className="flex items-center gap-2.5">
-                    <span className="w-1 h-1 rounded-sm bg-blue-200" />
-                    {c}
-                  </span>
-                ))}
+      <div className="section-panel">
+        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>Pick your check</h2>
+        <p style={{fontSize:16,color:'#556480',textAlign:'center',marginBottom:40}}>Two focused tracks. Upload documents, get answers.</p>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          {[
+            {icon:'🎓',title:'STEM OPT Check',desc:'Upload your I-983 and employment letter. We cross-check every field and tell you what doesn\'t match.',checks:["Job title consistency","Work location vs I-983","Salary match","Duties vs STEM degree","Employer name vs E-Verify","12-month evaluation status"],href:'/check/stem-opt'},
+            {icon:'🏢',title:'Entity Check',desc:'Answer 5 questions and upload your tax return. We check if your entity structure matches what was filed.',checks:["S-Corp eligibility for NRAs","Form 5472 filing status","Entity type vs tax return","Foreign capital documentation","Schedule C on OPT/STEM","1040 vs 1040-NR"],href:'/check/entity'},
+          ].map(card => (
+            <button key={card.title} onClick={() => router.push(card.href)} style={{textAlign:'left',background:'rgba(255,255,255,0.6)',backdropFilter:'blur(16px)',borderRadius:20,padding:36,border:'1px solid rgba(255,255,255,0.7)',cursor:'pointer',transition:'all 0.3s'}}>
+              <div style={{width:44,height:44,borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,marginBottom:18,background:'rgba(91,141,238,0.06)'}}>{card.icon}</div>
+              <h3 style={{fontSize:20,fontWeight:700,marginBottom:8,letterSpacing:'-0.02em'}}>{card.title}</h3>
+              <p style={{fontSize:14,color:'#556480',lineHeight:1.6,marginBottom:20}}>{card.desc}</p>
+              <div style={{display:'flex',flexDirection:'column',gap:7,fontSize:13,color:'#4a5f80'}}>
+                {card.checks.map(c => <span key={c} style={{display:'flex',alignItems:'center',gap:10}}>
+                  <span style={{width:4,height:4,borderRadius:1,background:'#b0c4e8',flexShrink:0}} />{c}
+                </span>)}
               </div>
             </button>
-            <button
-              onClick={() => router.push("/check/entity")}
-              className="text-left bg-white/60 backdrop-blur rounded-2xl p-9 border border-white/70 hover:bg-white/80 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(91,141,238,0.08)] hover:border-blue-200/30 transition-all"
-            >
-              <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100/50 flex items-center justify-center text-xl mb-5">🏢</div>
-              <h3 className="text-xl font-bold mb-2 tracking-tight">Entity Check</h3>
-              <p className="text-sm text-[#556480] leading-relaxed mb-5">
-                Answer 5 questions and upload your tax return. We check if your entity structure matches what was filed.
-              </p>
-              <div className="flex flex-col gap-1.5 text-[13px] text-[#4a5f80]">
-                {["S-Corp eligibility for NRAs", "Form 5472 filing status", "Entity type vs tax return", "Foreign capital documentation", "Schedule C on OPT/STEM", "1040 vs 1040-NR"].map((c) => (
-                  <span key={c} className="flex items-center gap-2.5">
-                    <span className="w-1 h-1 rounded-sm bg-blue-200" />
-                    {c}
-                  </span>
-                ))}
-              </div>
-            </button>
-          </div>
+          ))}
         </div>
-      </section>
+      </div>
 
       {/* How it works */}
-      <section id="how" className="max-w-[680px] mx-auto py-20 px-12">
-        <h2 className="text-4xl font-extrabold tracking-tight text-center text-[#0d1424] mb-12">How it works</h2>
+      <section id="how" style={{maxWidth:680,margin:'0 auto',padding:'80px 48px',position:'relative',zIndex:1}}>
+        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:48,color:'#0d1424'}}>How it works</h2>
         {[
-          ["01", "Choose your check", "STEM OPT document cross-check or entity compliance check.", "10 sec"],
-          ["02", "Upload 1–2 documents", "I-983 + employment letter, or your tax return. We extract every field.", "30 sec"],
-          ["03", "See what we found", "Side-by-side comparison. Matches, mismatches, and missing items.", "~15 sec"],
-          ["04", "Answer 3 quick questions", "Only about the issues we found. Each one explains why it matters.", "1 min"],
-          ["05", "Get your case snapshot", "Timeline, findings, next steps, and things to watch — all in one view.", "Instant"],
-        ].map(([num, title, desc, time]) => (
-          <div key={num} className="flex gap-5 py-5 border-b border-blue-200/15 items-start">
-            <span className="text-[13px] font-bold text-[#c0cde0] w-7 pt-0.5">{num}</span>
-            <div className="flex-1">
-              <h4 className="text-base font-semibold mb-1">{title}</h4>
-              <p className="text-sm text-[#556480] leading-relaxed">{desc}</p>
+          ["01","Choose your check","STEM OPT document cross-check or entity compliance check.","10 sec"],
+          ["02","Upload 1\u20132 documents","I-983 + employment letter, or your tax return. We extract every field.","30 sec"],
+          ["03","See what we found","Side-by-side comparison. Matches, mismatches, and missing items.","~15 sec"],
+          ["04","Answer 3 quick questions","Only about the issues we found. Each one explains why it matters.","1 min"],
+          ["05","Get your case snapshot","Timeline, findings, next steps, and things to watch \u2014 all in one view.","Instant"],
+        ].map(([num,title,desc,time]) => (
+          <div key={num} style={{display:'flex',gap:20,padding:'22px 0',borderBottom:'1px solid rgba(91,141,238,0.06)',alignItems:'flex-start'}}>
+            <span style={{fontSize:13,fontWeight:700,color:'#c0cde0',minWidth:28,paddingTop:3}}>{num}</span>
+            <div style={{flex:1}}>
+              <h4 style={{fontSize:16,fontWeight:600,marginBottom:4}}>{title}</h4>
+              <p style={{fontSize:14,color:'#556480',lineHeight:1.5}}>{desc}</p>
             </div>
-            <span className="text-xs font-medium text-[#5b8dee] bg-blue-50/60 px-3 py-1 rounded-lg whitespace-nowrap">{time}</span>
+            <span style={{fontSize:12,fontWeight:500,color:'#5b8dee',background:'rgba(91,141,238,0.06)',padding:'4px 12px',borderRadius:8,whiteSpace:'nowrap'}}>{time}</span>
           </div>
         ))}
       </section>
 
-      {/* Footer */}
-      <footer className="text-center py-12 text-[13px] text-[#8e9ab5] leading-relaxed">
+      <footer style={{position:'relative',zIndex:1,padding:48,textAlign:'center',fontSize:13,color:'#8e9ab5',lineHeight:1.7}}>
         Documents sent to OpenAI for field extraction only. Never stored or shared beyond that.<br />
         No account needed. Your check URL is your bookmark. Return anytime.
       </footer>
