@@ -37,6 +37,12 @@ const YES_NO_UNSURE = [
   { value: "not_sure", label: "Not sure" },
 ];
 
+const FORMATION_AGE = [
+  { value: "this_year", label: "This year" },
+  { value: "1_2_years", label: "1\u20132 years ago" },
+  { value: "3_plus_years", label: "3+ years ago" },
+];
+
 type Answers = Record<string, string>;
 
 export default function EntityInfo() {
@@ -53,6 +59,7 @@ export default function EntityInfo() {
     answers.state_of_formation &&
     answers.separate_bank_account &&
     answers.foreign_capital_transfer &&
+    answers.formation_age &&
     (!showVisa || answers.visa_type);
 
   async function handleContinue() {
@@ -116,6 +123,7 @@ export default function EntityInfo() {
 
         <ChipGroup label="Do you have a separate business bank account?" options={YES_NO_UNSURE} field="separate_bank_account" />
         <ChipGroup label="Have you transferred money from a foreign account to fund the business?" options={YES_NO} field="foreign_capital_transfer" />
+        <ChipGroup label="When was the entity formed?" options={FORMATION_AGE} field="formation_age" />
 
         <button
           onClick={handleContinue}

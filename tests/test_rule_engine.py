@@ -86,7 +86,7 @@ def test_findings_sorted_by_severity(engine):
 
 def test_entity_rules_load():
     e = RuleEngine.from_yaml("config/rules/entity.yaml")
-    assert len(e.rules) == 12
+    assert len(e.rules) == 15
     ids = [r.id for r in e.rules]
     assert "nra_scorp_invalid" in ids
     assert "advisory_boi_foreign" in ids

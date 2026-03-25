@@ -113,6 +113,65 @@ rules:
       consequence: "Contradicts immigration status"
       immigration_impact: true
 
+  # === Formation age rules ===
+
+  - id: first_year_filing_deadlines
+    track: entity
+    type: logic
+    conditions:
+      - field: formation_age
+        operator: eq
+        value: "this_year"
+        source: answers
+    severity: warning
+    finding:
+      title: "First-year filing deadlines are approaching"
+      action: "New entities must file their first tax return, state annual report, and any required information returns (5472, BOI) within their first year. Miss these and penalties start immediately."
+      consequence: "Multiple first-year penalties"
+      immigration_impact: false
+
+  - id: cumulative_5472_penalty
+    track: entity
+    type: logic
+    conditions:
+      - field: formation_age
+        operator: eq
+        value: "3_plus_years"
+        source: answers
+      - field: owner_residency
+        operator: neq
+        value: "us_citizen_or_pr"
+        source: answers
+      - field: entity_type
+        operator: eq
+        value: "smllc"
+        source: answers
+    severity: critical
+    finding:
+      title: "Potential cumulative $25K/year Form 5472 penalties"
+      action: "If Form 5472 was never filed, penalties accumulate for every year since formation. For a 3+ year old entity, that could be $75K+ in penalties. There is no statute of limitations. File immediately and consult a CPA about penalty abatement."
+      consequence: "$75K+ cumulative penalty"
+      immigration_impact: false
+
+  - id: no_revenue_still_must_file
+    track: entity
+    type: logic
+    conditions:
+      - field: owner_residency
+        operator: neq
+        value: "us_citizen_or_pr"
+        source: answers
+      - field: entity_type
+        operator: eq
+        value: "smllc"
+        source: answers
+    severity: info
+    finding:
+      title: "Filing required even with zero revenue"
+      action: "Foreign-owned single-member LLCs must file Form 5472 + pro forma 1120 every year, regardless of whether the entity earned any income."
+      consequence: "$25K/year if missed"
+      immigration_impact: false
+
   # === Advisory rules ===
 
   - id: advisory_state_annual_report
