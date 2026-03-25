@@ -124,7 +124,7 @@ Return ONLY valid JSON, no explanation."""
         import anthropic
         client = anthropic.Anthropic(api_key=anthropic_key)
         response = client.messages.create(
-            model="claude-3-haiku-20240307",
+            model="claude-sonnet-4-20250514",
             max_tokens=4096,
             messages=[{"role": "user", "content": prompt}],
             system="You are a document field extractor. Return only valid JSON, no explanation or markdown.",
