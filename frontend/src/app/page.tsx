@@ -157,6 +157,18 @@ export default function Home() {
           border-radius: 28px;
           box-shadow: 0 4px 32px rgba(91,141,238,0.04);
         }
+
+        /* === Mobile responsive === */
+        @media (max-width: 768px) {
+          .hero-grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 100px 20px 40px !important; min-height: auto !important; }
+          .hero-grid h1 { font-size: 36px !important; }
+          .hero-visual-wrap { display: none !important; }
+          .section-panel { padding: 32px 20px; margin: 0 12px 20px; border-radius: 20px; }
+          .track-grid { grid-template-columns: 1fr !important; }
+          .vault-grid { grid-template-columns: 1fr !important; }
+          .nav-links-desktop { display: none !important; }
+          nav { padding: 12px 16px !important; }
+        }
       `}</style>
 
       {/* Nav */}
@@ -169,7 +181,7 @@ export default function Home() {
           </div>
           Guardian
         </div>
-        <div style={{display:'flex',gap:32,fontSize:14,fontWeight:500,color:'#7b8ba5'}}>
+        <div className="nav-links-desktop" style={{display:'flex',gap:32,fontSize:14,fontWeight:500,color:'#7b8ba5'}}>
           <a href="#cloud" style={{textDecoration:'none',color:'inherit'}}>What we check</a>
           <a href="#how" style={{textDecoration:'none',color:'inherit'}}>How it works</a>
         </div>
@@ -198,7 +210,7 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section style={{position:'relative',zIndex:1,minHeight:'100vh',display:'grid',gridTemplateColumns:'1fr 1.3fr',alignItems:'center',maxWidth:1360,margin:'0 auto',padding:'120px 48px 80px',gap:16}}>
+      <section className="hero-grid" style={{position:'relative',zIndex:1,minHeight:'100vh',display:'grid',gridTemplateColumns:'1fr 1.3fr',alignItems:'center',maxWidth:1360,margin:'0 auto',padding:'120px 48px 80px',gap:16}}>
         <div style={{maxWidth:500}}>
           <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 16px',borderRadius:24,fontSize:12,fontWeight:600,color:'#5b8dee',marginBottom:24,background:'rgba(255,255,255,0.6)',backdropFilter:'blur(12px)',border:'1px solid rgba(91,141,238,0.12)'}}>
             <span style={{width:6,height:6,borderRadius:'50%',background:'#5b8dee',boxShadow:'0 0 8px rgba(91,141,238,0.4)'}} />
@@ -229,7 +241,7 @@ export default function Home() {
         </div>
 
         {/* 3D Sliced Cube */}
-        <div style={{display:'flex',alignItems:'center',justifyContent:'center',position:'relative',height:640}}>
+        <div className="hero-visual-wrap" style={{display:'flex',alignItems:'center',justifyContent:'center',position:'relative',height:640}}>
           <div className="iso-scene">
             <div className="iso-cube">
               {SLAB_LABELS.map((label, i) => (
@@ -264,7 +276,7 @@ export default function Home() {
       <div className="section-panel">
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>Pick your check</h2>
         <p style={{fontSize:16,color:'#556480',textAlign:'center',marginBottom:40}}>Two focused tracks. Upload documents, get answers.</p>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div className="track-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
           {[
             {letter:'A',title:'Young Professional',desc:'Upload your I-983 and employment letter. We cross-check every field and tell you what doesn\'t match.',checks:["Job title consistency","Work location vs I-983","Salary match","Duties vs STEM degree","Employer name vs E-Verify","12-month evaluation status"],href:'/check/stem-opt'},
             {letter:'B',title:'Entrepreneur',desc:'Answer 5 questions and upload your tax return. We check if your entity structure matches what was filed.',checks:["S-Corp eligibility for NRAs","Form 5472 filing status","Entity type vs tax return","Foreign capital documentation","Schedule C on OPT/STEM","1040 vs 1040-NR"],href:'/check/entity'},
@@ -313,7 +325,7 @@ export default function Home() {
         <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:540,margin:'0 auto 40px',lineHeight:1.6}}>
           After your first check, Guardian becomes your living case record. Documents organized by timeline, risks tracked automatically, and prompts when something needs attention.
         </p>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+        <div className="vault-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
           {[
             {num:'1',title:'Timeline view',desc:'Your immigration journey on one screen. Past events, today, upcoming deadlines \u2014 with documents attached to each moment.'},
             {num:'2',title:'Smart upload prompts',desc:'We tell you exactly what to upload next and why it matters. Each new document triggers automatic re-checking.'},
