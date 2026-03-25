@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type ComponentPropsWithoutRef } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, authHeaders, getUser, logout } from "@/lib/auth";
+import ReactMarkdown from "react-markdown";
 
 interface TimelineEvent {
   date: string;
@@ -694,8 +695,19 @@ export default function DashboardPage() {
               {chatMessages.map((msg, i) => (
                 <div key={i} className={msg.role === "user" ? "flex justify-end" : ""}>
                   {msg.role === "assistant" ? (
-                    <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
-                      <div className="text-[13px] text-[#0d1424] leading-relaxed whitespace-pre-wrap">{msg.text}</div>
+                    <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60 chat-md">
+                      <ReactMarkdown components={{
+                        p: (props: ComponentPropsWithoutRef<"p">) => <p className="text-[13px] text-[#0d1424] leading-relaxed mb-2 last:mb-0" {...props} />,
+                        strong: (props: ComponentPropsWithoutRef<"strong">) => <strong className="font-semibold text-[#0d1424]" {...props} />,
+                        ul: (props: ComponentPropsWithoutRef<"ul">) => <ul className="text-[13px] text-[#0d1424] leading-relaxed mb-2 ml-4 space-y-1 list-disc" {...props} />,
+                        ol: (props: ComponentPropsWithoutRef<"ol">) => <ol className="text-[13px] text-[#0d1424] leading-relaxed mb-2 ml-4 space-y-1 list-decimal" {...props} />,
+                        li: (props: ComponentPropsWithoutRef<"li">) => <li className="text-[13px] text-[#0d1424]" {...props} />,
+                        h1: (props: ComponentPropsWithoutRef<"h1">) => <div className="text-[14px] font-bold text-[#0d1424] mb-2" {...props} />,
+                        h2: (props: ComponentPropsWithoutRef<"h2">) => <div className="text-[13px] font-bold text-[#0d1424] mb-1.5 mt-3" {...props} />,
+                        h3: (props: ComponentPropsWithoutRef<"h3">) => <div className="text-[13px] font-semibold text-[#3d6bc5] mb-1 mt-2" {...props} />,
+                        code: (props: ComponentPropsWithoutRef<"code">) => <code className="text-[12px] px-1.5 py-0.5 rounded-md bg-[#5b8dee]/8 text-[#3d6bc5] font-mono" {...props} />,
+                        a: (props: ComponentPropsWithoutRef<"a">) => <a className="text-[#5b8dee] underline" {...props} />,
+                      }}>{msg.text}</ReactMarkdown>
                       {msg.chips && (
                         <div className="flex flex-wrap gap-1.5 mt-3">
                           {msg.chips.map((chip) => (
