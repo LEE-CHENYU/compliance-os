@@ -140,3 +140,137 @@ def chat(
         reply = response.choices[0].message.content
 
     return ChatResponse(reply=reply)
+
+
+class AnswerStore(BaseModel):
+    question_id: str  # e.g. "immigration_stage", "has_entity", "foreign_accounts"
+    answer: str       # the user's chip or text answer
+
+
+# Mapping from question IDs to check answer fields
+ANSWER_MAPPINGS: dict[str, dict] = {
+    "immigration_stage": {
+        "track": "stem_opt",
+        "field": "stage",
+        "value_map": {
+            "Yes, I'm on a visa": "on_visa_unknown",
+            "US citizen / PR": "us_citizen",
+            "Outside the US": "outside_us",
+        },
+        "residency_field": "owner_residency",
+        "residency_map": {
+            "Yes, I'm on a visa": "on_visa",
+            "US citizen / PR": "us_citizen_or_pr",
+            "Outside the US": "outside_us",
+        },
+    },
+    "has_entity": {
+        "track": "entity",
+        "create_check": True,
+    },
+    "tax_filing": {
+        "track": "stem_opt",
+        "field": "tax_form_filed",
+    },
+    "foreign_accounts": {
+        "track": "stem_opt",
+        "field": "has_foreign_accounts",
+        "value_map": {"Yes": "yes", "No": "no"},
+    },
+}
+
+
+@router.post("/answer")
+def store_answer(
+    body: AnswerStore,
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Store a chat answer into the user's check data and re-evaluate rules."""
+    user = _get_user(authorization, db)
+
+    mapping = ANSWER_MAPPINGS.get(body.question_id, {})
+    track = mapping.get("track", "stem_opt")
+
+    # Find or create a check for this track
+    check = db.query(CheckRow).filter(
+        CheckRow.user_id == user.id,
+        CheckRow.track == track,
+    ).first()
+
+    if not check and mapping.get("create_check"):
+        # Create a new check for this track
+        check = CheckRow(track=track, status="saved", user_id=user.id, answers={})
+        db.add(check)
+        db.flush()
+    elif not check:
+        # Add to existing check of any track
+        check = db.query(CheckRow).filter(CheckRow.user_id == user.id).first()
+
+    if check:
+        answers = dict(check.answers or {})
+
+        # Apply value mapping if exists
+        value_map = mapping.get("value_map", {})
+        value = value_map.get(body.answer, body.answer)
+
+        # Store the answer
+        field = mapping.get("field", body.question_id)
+        answers[field] = value
+
+        # Special: residency field mapping
+        if "residency_field" in mapping:
+            res_map = mapping.get("residency_map", {})
+            answers[mapping["residency_field"]] = res_map.get(body.answer, body.answer)
+
+        check.answers = answers
+        db.commit()
+
+        # Re-evaluate rules for all user's checks
+        from pathlib import Path
+        from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine
+        from compliance_os.web.models.tables_v2 import FindingRow
+
+        for user_check in db.query(CheckRow).filter(CheckRow.user_id == user.id).all():
+            rule_file = Path(__file__).resolve().parents[3] / "config" / "rules" / f"{user_check.track}.yaml"
+            if not rule_file.exists():
+                continue
+
+            engine = RuleEngine.from_yaml(str(rule_file))
+
+            ext_a, ext_b = {}, {}
+            for d in user_check.documents:
+                fields = {f.field_name: f.field_value for f in d.extracted_fields}
+                if d.doc_type in ("i983",):
+                    ext_a = fields
+                else:
+                    ext_b = fields
+
+            comp_dict = {c.field_name: {"status": c.status, "confidence": c.confidence} for c in user_check.comparisons}
+
+            ctx = EvaluationContext(
+                answers=user_check.answers or {},
+                extraction_a=ext_a,
+                extraction_b=ext_b,
+                comparisons=comp_dict,
+            )
+
+            # Clear old findings and re-evaluate
+            for old in user_check.findings:
+                db.delete(old)
+
+            for fr in engine.evaluate(ctx):
+                db.add(FindingRow(
+                    check_id=user_check.id,
+                    rule_id=fr.rule_id,
+                    rule_version=engine.version,
+                    severity=fr.severity,
+                    category=fr.category,
+                    title=fr.title,
+                    action=fr.action,
+                    consequence=fr.consequence,
+                    immigration_impact=fr.immigration_impact,
+                ))
+            db.commit()
+
+    return {"ok": True, "stored": body.question_id, "answer": body.answer}

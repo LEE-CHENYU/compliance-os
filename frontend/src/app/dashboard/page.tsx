@@ -190,18 +190,42 @@ export default function DashboardPage() {
     }
   }
 
-  function handleChatAnswer(answer: string) {
-    // Mark the current question as answered
+  async function handleChatAnswer(answer: string) {
+    // Identify which question was answered
     const currentQ = chatMessages.find((m) => m.role === "assistant" && m.chips);
-    if (currentQ) {
-      const qId = currentQ.text.includes("immigration visa") ? "immigration_stage"
+    const qId = currentQ
+      ? currentQ.text.includes("immigration visa") ? "immigration_stage"
         : currentQ.text.includes("business entity") ? "has_entity"
         : currentQ.text.includes("employer") ? "employer_info"
         : currentQ.text.includes("tax return") ? "tax_filing"
         : currentQ.text.includes("bank accounts") ? "foreign_accounts"
-        : "unknown";
-      setChatAnswered((prev) => new Set([...prev, qId]));
+        : "unknown"
+      : "unknown";
+
+    setChatAnswered((prev) => new Set([...prev, qId]));
+
+    // Store answer to backend and re-evaluate rules
+    if (qId !== "unknown") {
+      try {
+        await fetch(`${chatApi}/answer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({ question_id: qId, answer }),
+        });
+        // Refresh dashboard data after re-evaluation
+        const [tl, st, docs] = await Promise.all([
+          fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
+          fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
+          fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
+        ]);
+        setTimeline(tl);
+        setStats(st);
+        setDocuments(docs);
+      } catch {
+        // Non-fatal — answer still goes to LLM
+      }
     }
+
     // Send to LLM for a contextual follow-up
     sendChatMessage(answer);
   }
