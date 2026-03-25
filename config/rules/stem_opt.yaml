@@ -128,6 +128,65 @@ rules:
       consequence: "Unauthorized employment"
       immigration_impact: true
 
+  # === Answer-based logic rules (no documents needed) ===
+
+  - id: unemployment_risk
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: employment_status
+        operator: in
+        value: ["not_employed", "between_jobs"]
+        source: answers
+      - field: stage
+        operator: in
+        value: ["stem_opt", "opt"]
+        source: answers
+    severity: warning
+    finding:
+      title: "Unemployment days are accumulating"
+      action: "OPT allows 90 days total unemployment. STEM OPT allows 150 days cumulative. Track your days carefully and seek employment before the limit."
+      consequence: "Status termination risk"
+      immigration_impact: true
+
+  - id: employer_change_unreported
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: employer_changed
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: stage
+        operator: in
+        value: ["stem_opt", "opt"]
+        source: answers
+    severity: warning
+    finding:
+      title: "Employer change must be reported and documented"
+      action: "Report the change to your DSO within 10 days. On STEM OPT, file a new I-983 with the new employer before starting work. Verify the new employer is E-Verify enrolled."
+      consequence: "Unauthorized employment"
+      immigration_impact: true
+
+  - id: employer_change_stem_i983
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: employer_changed
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: stage
+        operator: eq
+        value: "stem_opt"
+        source: answers
+    severity: warning
+    finding:
+      title: "New I-983 required for employer change on STEM OPT"
+      action: "A new I-983 must be filed with your new employer before you start working. The new employer must be enrolled in E-Verify."
+      consequence: "STEM authorization invalid"
+      immigration_impact: true
+
   # === Advisory rules (gated on user situation) ===
 
   - id: advisory_fbar
