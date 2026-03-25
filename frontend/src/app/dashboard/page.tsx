@@ -284,7 +284,7 @@ export default function DashboardPage() {
             {[
               { num: stats?.documents || 0, label: "Documents", color: "#0d1424" },
               { num: stats?.risks || 0, label: "Needs attention", color: "#f59e0b" },
-              { num: stats?.verified || 0, label: "Fields matched", color: "#10b981" },
+              { num: timeline?.advisories.length || 0, label: "Potential risks", color: "#5b8dee" },
               { num: stats?.next_deadline_days != null ? `${stats.next_deadline_days}d` : "—", label: "Next deadline", color: "#5b8dee" },
             ].map((s) => (
               <div key={s.label} className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-4 md:p-5 shadow-[0_2px_12px_rgba(91,141,238,0.04)]">
