@@ -29,6 +29,7 @@ class CheckRow(Base):
     stage = Column(String, nullable=True)
     status = Column(String, default="intake")
     answers = Column(JSON, default=dict)
+    user_id = Column(String, nullable=True)
     created_at = Column(DateTime, default=_now)
     updated_at = Column(DateTime, default=_now, onupdate=_now)
 
