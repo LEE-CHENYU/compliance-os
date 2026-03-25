@@ -9,6 +9,7 @@ import {
   generateFollowups,
   answerFollowup,
   getSnapshot,
+  updateCheck,
   type Comparison,
   type Followup,
   type Snapshot,
@@ -235,6 +236,7 @@ function FollowupView({
 
 // --- Case Snapshot ---
 function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
+  const [saved, setSaved] = useState(false);
   const { comparisons, findings, advisories } = snapshot;
   const issues = findings.filter((f) => f.severity !== "info");
   const goods = comparisons.filter((c) => c.status === "match");
@@ -254,26 +256,37 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       {/* Timeline */}
       <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-7 mb-6 shadow-[0_4px_24px_rgba(91,141,238,0.06)]">
         <h2 className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-5">Timeline</h2>
-        <div className="relative pl-7 border-l-2 border-[#5b8dee]/20 space-y-6">
-          {startDate && (
-            <div className="relative">
-              <div className="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 border-[3px] border-white shadow-sm" />
-              <div className="text-xs text-[#8e9ab5]">{startDate}</div>
-              <div className="text-sm font-semibold text-[#0d1424]">STEM OPT started</div>
+        <div className="relative ml-4">
+          {/* Vertical line */}
+          <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-emerald-300 via-[#5b8dee] to-gray-200" />
+
+          <div className="space-y-0">
+            {startDate && (
+              <div className="relative flex items-start gap-5 pb-8">
+                <div className="relative z-10 mt-0.5 w-4 h-4 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 border-[3px] border-white shadow-sm flex-shrink-0" />
+                <div>
+                  <div className="text-[11px] font-medium text-[#8e9ab5] tracking-wide">{startDate}</div>
+                  <div className="text-[15px] font-semibold text-[#0d1424]">STEM OPT started</div>
+                </div>
+              </div>
+            )}
+            <div className="relative flex items-start gap-5 pb-8">
+              <div className="relative z-10 mt-0.5 w-4 h-4 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] border-[3px] border-white shadow-[0_0_8px_rgba(91,141,238,0.3)] flex-shrink-0" />
+              <div>
+                <div className="text-[11px] font-semibold text-[#5b8dee] tracking-wide">TODAY</div>
+                <div className="text-[15px] font-semibold text-[#0d1424]">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</div>
+              </div>
             </div>
-          )}
-          <div className="relative">
-            <div className="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] border-[3px] border-white shadow-sm" />
-            <div className="text-xs text-[#5b8dee] font-medium">Today</div>
-            <div className="text-sm font-semibold text-[#0d1424]">{new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}</div>
+            {endDate && (
+              <div className="relative flex items-start gap-5">
+                <div className="relative z-10 mt-0.5 w-4 h-4 rounded-full bg-gray-200 border-[3px] border-white flex-shrink-0" />
+                <div>
+                  <div className="text-[11px] font-medium text-[#8e9ab5] tracking-wide">{endDate}</div>
+                  <div className="text-[15px] text-[#556480]">STEM OPT ends</div>
+                </div>
+              </div>
+            )}
           </div>
-          {endDate && (
-            <div className="relative">
-              <div className="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full bg-gray-200 border-[3px] border-white" />
-              <div className="text-xs text-[#8e9ab5]">{endDate}</div>
-              <div className="text-sm text-[#556480]">STEM OPT ends</div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -281,20 +294,21 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       {issues.length > 0 && (
         <div className="mb-6">
           <h2 className="text-xs font-semibold text-[#c0392b] uppercase tracking-widest mb-3 flex items-center gap-2">
-            <span className="w-5 h-5 rounded-lg bg-red-50 flex items-center justify-center text-[10px]">⚠️</span>
             Needs Attention ({issues.length})
           </h2>
           <div className="flex flex-col gap-3">
             {issues.map((f) => (
-              <div key={f.id} className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 px-6 py-5 shadow-[0_4px_24px_rgba(91,141,238,0.05)] transition-all hover:shadow-[0_8px_32px_rgba(91,141,238,0.08)]">
+              <div key={f.id} className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 px-6 py-5 shadow-[0_4px_24px_rgba(91,141,238,0.05)]">
                 <div className="font-semibold text-[15px] text-[#0d1424] mb-1.5">{f.title}</div>
                 <div className="text-[13px] text-[#556480] leading-relaxed mb-3">{f.action}</div>
-                <div className="flex gap-2">
-                  <span className="text-xs px-3 py-1 rounded-lg bg-amber-50/80 text-amber-700 font-medium border border-amber-100/50">
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-[11px] px-3 py-1 rounded-full font-semibold backdrop-blur-sm"
+                    style={{ background: 'rgba(245,158,11,0.12)', color: '#b45309', border: '1px solid rgba(245,158,11,0.15)' }}>
                     {f.consequence}
                   </span>
                   {f.immigration_impact && (
-                    <span className="text-xs px-3 py-1 rounded-lg bg-red-50/80 text-red-600 font-medium border border-red-100/50">
+                    <span className="text-[11px] px-3 py-1 rounded-full font-semibold backdrop-blur-sm"
+                      style={{ background: 'rgba(239,68,68,0.1)', color: '#dc2626', border: '1px solid rgba(239,68,68,0.12)' }}>
                       Immigration impact
                     </span>
                   )}
@@ -308,14 +322,14 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       {/* Looks good */}
       {goods.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-3 flex items-center gap-2">
-            <span className="w-5 h-5 rounded-lg bg-emerald-50 flex items-center justify-center text-[10px]">✓</span>
+          <h2 className="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-3">
             Looks Good ({goods.length})
           </h2>
-          <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 px-6 py-4 shadow-[0_2px_12px_rgba(91,141,238,0.04)]">
+          <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 px-6 py-5 shadow-[0_2px_12px_rgba(91,141,238,0.04)]">
             <div className="flex flex-wrap gap-2">
               {goods.map((g) => (
-                <span key={g.id} className="text-[13px] px-3 py-1.5 rounded-lg bg-emerald-50/60 text-emerald-700 font-medium border border-emerald-100/40">
+                <span key={g.id} className="text-[12px] px-3.5 py-1.5 rounded-full font-semibold backdrop-blur-sm capitalize"
+                  style={{ background: 'rgba(16,185,129,0.1)', color: '#059669', border: '1px solid rgba(16,185,129,0.12)' }}>
                   {g.field_name.replace(/_/g, " ")}
                 </span>
               ))}
@@ -330,14 +344,17 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
           <h2 className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">
             Also worth checking
           </h2>
-          <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_2px_12px_rgba(91,141,238,0.04)] divide-y divide-white/40">
-            {advisories.map((a) => (
-              <div key={a.id} className="flex items-center gap-3 px-6 py-4">
+          <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_2px_12px_rgba(91,141,238,0.04)] overflow-hidden">
+            {advisories.map((a, i) => (
+              <div key={a.id} className={`flex items-center gap-3 px-6 py-4 ${i > 0 ? 'border-t border-blue-50/40' : ''}`}>
                 <div className="flex-1 text-[13px]">
                   <span className="font-semibold text-[#3d6bc5]">{a.title}</span>
                   <span className="text-[#556480]"> — {a.action}</span>
                 </div>
-                <span className="text-xs font-medium text-red-500 whitespace-nowrap px-3 py-1 rounded-lg bg-red-50/60 border border-red-100/40">{a.consequence}</span>
+                <span className="text-[11px] font-semibold whitespace-nowrap px-3 py-1 rounded-full backdrop-blur-sm"
+                  style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.1)' }}>
+                  {a.consequence}
+                </span>
               </div>
             ))}
           </div>
@@ -346,10 +363,27 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
 
       {/* Save CTA */}
       <div className="text-center pt-8">
-        <button className="px-10 py-4 rounded-2xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] hover:-translate-y-0.5 transition-all">
-          Save as my case
-        </button>
-        <p className="text-xs text-[#8e9ab5] mt-3">Bookmark this URL to return anytime</p>
+        {saved ? (
+          <div className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 px-8 py-6 shadow-[0_4px_24px_rgba(91,141,238,0.06)] inline-block">
+            <div className="text-emerald-500 text-2xl mb-2">✓</div>
+            <div className="font-semibold text-[#0d1424] mb-1">Case saved</div>
+            <p className="text-xs text-[#8e9ab5]">Bookmark this URL to return anytime</p>
+            <p className="text-xs text-[#5b8dee] mt-2 font-medium select-all">{typeof window !== 'undefined' ? window.location.href : ''}</p>
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={async () => {
+                await updateCheck(snapshot.check.id, { status: "saved" });
+                setSaved(true);
+              }}
+              className="px-10 py-4 rounded-2xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
+            >
+              Save as my case
+            </button>
+            <p className="text-xs text-[#8e9ab5] mt-3">Bookmark this URL to return anytime</p>
+          </>
+        )}
       </div>
     </div>
   );
