@@ -59,6 +59,7 @@ export default function DashboardPage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<{ role: "assistant" | "user"; text: string; chips?: string[] }[]>([]);
   const [chatAnswered, setChatAnswered] = useState<Set<string>>(new Set());
+  const [chatLoading, setChatLoading] = useState(false);
   const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string }[]>([]);
 
   useEffect(() => {
@@ -160,11 +161,35 @@ export default function DashboardPage() {
     }
   }, [timeline, chatAnswered, chatMessages.length]);
 
+  const chatApi = typeof window !== "undefined" && window.location.hostname === "localhost"
+    ? "http://localhost:8000/api/chat"
+    : "/api/chat";
+
+  async function sendChatMessage(text: string) {
+    const newMessages = [...chatMessages, { role: "user" as const, text }];
+    setChatMessages(newMessages);
+    setChatLoading(true);
+
+    try {
+      const history = newMessages.map((m) => ({ role: m.role, text: m.text }));
+      const resp = await fetch(chatApi, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
+      });
+      const data = await resp.json();
+      setChatMessages((prev) => [...prev, { role: "assistant", text: data.reply }]);
+    } catch {
+      setChatMessages((prev) => [...prev, { role: "assistant", text: "Sorry, I couldn\u2019t process that. Please try again." }]);
+    } finally {
+      setChatLoading(false);
+      setTimeout(() => {
+        document.getElementById("chat-scroll")?.scrollTo({ top: 99999, behavior: "smooth" });
+      }, 100);
+    }
+  }
+
   function handleChatAnswer(answer: string) {
-    setChatMessages((prev) => [
-      ...prev,
-      { role: "user", text: answer },
-    ]);
     // Mark the current question as answered
     const currentQ = chatMessages.find((m) => m.role === "assistant" && m.chips);
     if (currentQ) {
@@ -176,14 +201,8 @@ export default function DashboardPage() {
         : "unknown";
       setChatAnswered((prev) => new Set([...prev, qId]));
     }
-    // TODO: store answer to backend and trigger re-evaluation
-    // For now, queue next question after a brief delay
-    setTimeout(() => {
-      setChatMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: "Got it, thanks! That helps us check more accurately.", chips: undefined },
-      ]);
-    }, 500);
+    // Send to LLM for a contextual follow-up
+    sendChatMessage(answer);
   }
 
   const user = getUser();
@@ -659,23 +678,24 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-blue-50/40 flex-shrink-0">
               <div>
                 <div className="text-[14px] font-semibold text-[#0d1424]">Guardian Assistant</div>
-                <div className="text-[11px] text-[#7b8ba5]">Helping you find more risks</div>
+                <div className="text-[11px] text-[#7b8ba5]">Ask anything about your compliance</div>
               </div>
               <button onClick={() => setChatOpen(false)} className="text-[#7b8ba5] hover:text-[#0d1424] text-lg w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-all">&times;</button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4" id="chat-scroll">
               {chatMessages.length === 0 && (
-                <div className="text-[13px] text-[#556480] leading-relaxed bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
-                  We&apos;re checking if there&apos;s anything else we should look into for you...
+                <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
+                  <div className="text-[13px] text-[#0d1424] leading-relaxed mb-1">Hi! I&apos;m your Guardian assistant.</div>
+                  <div className="text-[12px] text-[#556480] leading-relaxed">I can answer questions about your immigration, tax, or business compliance. I also have context about your uploaded documents and findings.</div>
                 </div>
               )}
               {chatMessages.map((msg, i) => (
                 <div key={i} className={msg.role === "user" ? "flex justify-end" : ""}>
                   {msg.role === "assistant" ? (
                     <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
-                      <div className="text-[13px] text-[#0d1424] leading-relaxed">{msg.text}</div>
+                      <div className="text-[13px] text-[#0d1424] leading-relaxed whitespace-pre-wrap">{msg.text}</div>
                       {msg.chips && (
                         <div className="flex flex-wrap gap-1.5 mt-3">
                           {msg.chips.map((chip) => (
@@ -691,12 +711,48 @@ export default function DashboardPage() {
                       )}
                     </div>
                   ) : (
-                    <div className="inline-block px-4 py-2 rounded-2xl text-[12px] font-medium bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white max-w-[80%]">
+                    <div className="inline-block px-4 py-2.5 rounded-2xl text-[13px] font-medium bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white max-w-[85%]">
                       {msg.text}
                     </div>
                   )}
                 </div>
               ))}
+              {chatLoading && (
+                <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
+                  <div className="flex gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-[#5b8dee] animate-bounce" style={{animationDelay:'0ms'}} />
+                    <div className="w-2 h-2 rounded-full bg-[#5b8dee] animate-bounce" style={{animationDelay:'150ms'}} />
+                    <div className="w-2 h-2 rounded-full bg-[#5b8dee] animate-bounce" style={{animationDelay:'300ms'}} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="p-4 border-t border-blue-50/40 flex-shrink-0">
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const input = (e.target as HTMLFormElement).elements.namedItem("msg") as HTMLInputElement;
+                const msg = input.value.trim();
+                if (!msg || chatLoading) return;
+                input.value = "";
+                await sendChatMessage(msg);
+              }} className="flex gap-2">
+                <input
+                  name="msg"
+                  type="text"
+                  placeholder="Ask about your compliance..."
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-white/70 bg-white/60 text-[13px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
+                  disabled={chatLoading}
+                />
+                <button
+                  type="submit"
+                  disabled={chatLoading}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-[13px] font-medium flex-shrink-0 disabled:opacity-50"
+                >
+                  Send
+                </button>
+              </form>
             </div>
           </div>
         )}

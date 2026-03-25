@@ -17,6 +17,7 @@ from compliance_os.web.routers import cases, discovery, documents
 from compliance_os.web.routers import checks as checks_v2, extraction, review
 from compliance_os.web.routers import auth as auth_router
 from compliance_os.web.routers import dashboard
+from compliance_os.web.routers import chat as chat_router
 
 
 @asynccontextmanager
@@ -66,6 +67,7 @@ app.include_router(extraction.router)
 app.include_router(review.router)
 app.include_router(auth_router.router)
 app.include_router(dashboard.router)
+app.include_router(chat_router.router)
 
 
 @app.get("/healthz")
