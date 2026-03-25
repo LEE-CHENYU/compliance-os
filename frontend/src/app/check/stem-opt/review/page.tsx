@@ -83,8 +83,10 @@ function ReviewFlow() {
   if (phase === "extracting" || phase === "comparing") {
     return (
       <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="text-center">
-          <div className="w-12 h-12 rounded-full border-2 border-[#5b8dee] border-t-transparent animate-spin mx-auto mb-6" />
+        <div className="bg-white/50 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_8px_40px_rgba(91,141,238,0.08)] px-16 py-14 text-center max-w-md">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5b8dee]/10 to-[#4a74d4]/5 flex items-center justify-center mx-auto mb-6">
+            <div className="w-8 h-8 rounded-full border-2 border-[#5b8dee] border-t-transparent animate-spin" />
+          </div>
           <h2 className="text-xl font-bold text-[#0d1424] mb-2">
             {phase === "extracting" ? "Extracting fields from your documents..." : "Comparing fields..."}
           </h2>
@@ -127,19 +129,19 @@ function ExtractionGrid({ comparisons }: { comparisons: Comparison[] }) {
   };
 
   return (
-    <div className="bg-white/60 backdrop-blur rounded-2xl border border-white/70 overflow-hidden mb-8">
-      <div className="grid grid-cols-4 text-xs font-semibold text-[#7b8ba5] uppercase tracking-wider border-b border-blue-100/20">
-        <div className="px-5 py-3">Field</div>
-        <div className="px-5 py-3">I-983</div>
-        <div className="px-5 py-3">Employment Letter</div>
-        <div className="px-5 py-3">Status</div>
+    <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden mb-8 shadow-[0_4px_32px_rgba(91,141,238,0.05)]">
+      <div className="grid grid-cols-4 text-xs font-semibold text-[#7b8ba5] uppercase tracking-wider bg-white/30 backdrop-blur">
+        <div className="px-5 py-3.5">Field</div>
+        <div className="px-5 py-3.5">I-983</div>
+        <div className="px-5 py-3.5">Employment Letter</div>
+        <div className="px-5 py-3.5">Status</div>
       </div>
       {comparisons.map((c) => (
-        <div key={c.id} className={`grid grid-cols-4 text-sm border-b border-blue-50/30 ${c.status === "mismatch" ? "bg-amber-50/30" : ""}`}>
-          <div className="px-5 py-3 font-medium text-[#3a5a8c] capitalize">{c.field_name.replace(/_/g, " ")}</div>
-          <div className="px-5 py-3 text-[#0d1424]">{c.value_a || <span className="text-[#b0bdd0] italic">—</span>}</div>
-          <div className="px-5 py-3 text-[#0d1424]">{c.value_b || <span className="text-[#b0bdd0] italic">—</span>}</div>
-          <div className={`px-5 py-3 font-medium ${STATUS_COLOR[c.status]}`}>
+        <div key={c.id} className={`grid grid-cols-4 text-sm border-t border-white/40 ${c.status === "mismatch" ? "bg-amber-50/20" : c.status === "needs_review" ? "bg-blue-50/15" : ""}`}>
+          <div className="px-5 py-3.5 font-medium text-[#3a5a8c] capitalize">{c.field_name.replace(/_/g, " ")}</div>
+          <div className="px-5 py-3.5 text-[#0d1424] text-[13px]">{c.value_a || <span className="text-[#b0bdd0] italic">—</span>}</div>
+          <div className="px-5 py-3.5 text-[#0d1424] text-[13px]">{c.value_b || <span className="text-[#b0bdd0] italic">—</span>}</div>
+          <div className={`px-5 py-3.5 font-medium text-[13px] ${STATUS_COLOR[c.status]}`}>
             {STATUS_ICON[c.status]} {c.status === "match" ? "Match" : c.status === "mismatch" ? "Mismatch" : "Review"}
           </div>
         </div>
@@ -190,19 +192,22 @@ function FollowupView({
       <ExtractionGrid comparisons={comparisons} />
 
       <h2 className="text-xl font-bold text-[#0d1424] mb-4">Quick questions</h2>
-      <div className="flex flex-col gap-4 mb-8">
+      <div className="flex flex-col gap-3 mb-8">
         {followups.map((fup) => (
-          <div key={fup.id} className="bg-white/60 backdrop-blur rounded-xl border border-white/70 p-5 border-l-4 border-l-[#5b8dee]">
-            <p className="font-medium text-[14px] text-[#0d1424] mb-3">{fup.question_text}</p>
+          <div
+            key={fup.id}
+            className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 p-6 shadow-[0_4px_24px_rgba(91,141,238,0.06)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.1)] transition-all"
+          >
+            <p className="font-medium text-[14px] text-[#0d1424] mb-4 leading-relaxed">{fup.question_text}</p>
             <div className="flex flex-wrap gap-2">
               {(fup.chips || []).map((chip) => (
                 <button
                   key={chip}
                   onClick={() => handleAnswer(fup, chip)}
-                  className={`px-4 py-2 rounded-full text-sm transition-all ${
+                  className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     fup.answer === chip
-                      ? "bg-[#5b8dee] text-white shadow-sm"
-                      : "bg-blue-50/60 text-[#3a5a8c] hover:bg-blue-100/60"
+                      ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_2px_12px_rgba(74,116,212,0.3)]"
+                      : "bg-white/70 backdrop-blur border border-blue-100/30 text-[#3a5a8c] hover:bg-white/90 hover:border-blue-200/40 hover:shadow-sm"
                   }`}
                 >
                   {chip}
@@ -234,7 +239,6 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
   const issues = findings.filter((f) => f.severity !== "info");
   const goods = comparisons.filter((c) => c.status === "match");
 
-  // Extract dates for timeline
   const startDate = snapshot.extractions?.i983?.find((f) => f.field_name === "start_date")?.field_value;
   const endDate = snapshot.extractions?.i983?.find((f) => f.field_name === "end_date")?.field_value;
 
@@ -243,31 +247,31 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       <h1 className="text-3xl font-extrabold tracking-tight text-[#0d1424] mb-2">
         Your STEM OPT Check
       </h1>
-      <p className="text-sm text-[#556480] mb-8">
+      <p className="text-[15px] text-[#556480] mb-8">
         Based on your I-983 and employment letter
       </p>
 
       {/* Timeline */}
-      <div className="bg-white/60 backdrop-blur rounded-2xl border border-white/70 p-6 mb-6">
-        <h2 className="text-sm font-semibold text-[#7b8ba5] uppercase tracking-wider mb-4">Timeline</h2>
-        <div className="relative pl-6 border-l-2 border-blue-200/40 space-y-5">
+      <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-7 mb-6 shadow-[0_4px_24px_rgba(91,141,238,0.06)]">
+        <h2 className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-5">Timeline</h2>
+        <div className="relative pl-7 border-l-2 border-[#5b8dee]/20 space-y-6">
           {startDate && (
             <div className="relative">
-              <div className="absolute -left-[25px] top-1 w-3 h-3 rounded-full bg-green-400 border-2 border-white" />
+              <div className="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 border-[3px] border-white shadow-sm" />
               <div className="text-xs text-[#8e9ab5]">{startDate}</div>
-              <div className="text-sm font-medium">STEM OPT started ✓</div>
+              <div className="text-sm font-semibold text-[#0d1424]">STEM OPT started</div>
             </div>
           )}
           <div className="relative">
-            <div className="absolute -left-[25px] top-1 w-3 h-3 rounded-full bg-[#5b8dee] border-2 border-white" />
-            <div className="text-xs text-[#8e9ab5]">Today</div>
-            <div className="text-sm font-medium">{new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" })}</div>
+            <div className="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] border-[3px] border-white shadow-sm" />
+            <div className="text-xs text-[#5b8dee] font-medium">Today</div>
+            <div className="text-sm font-semibold text-[#0d1424]">{new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}</div>
           </div>
           {endDate && (
             <div className="relative">
-              <div className="absolute -left-[25px] top-1 w-3 h-3 rounded-full bg-gray-300 border-2 border-white" />
+              <div className="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full bg-gray-200 border-[3px] border-white" />
               <div className="text-xs text-[#8e9ab5]">{endDate}</div>
-              <div className="text-sm">STEM OPT ends</div>
+              <div className="text-sm text-[#556480]">STEM OPT ends</div>
             </div>
           )}
         </div>
@@ -276,20 +280,23 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       {/* Findings */}
       {issues.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-sm font-semibold text-red-600 uppercase tracking-wider mb-3">
-            ⚠️ Needs Attention ({issues.length})
+          <h2 className="text-xs font-semibold text-[#c0392b] uppercase tracking-widest mb-3 flex items-center gap-2">
+            <span className="w-5 h-5 rounded-lg bg-red-50 flex items-center justify-center text-[10px]">⚠️</span>
+            Needs Attention ({issues.length})
           </h2>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {issues.map((f) => (
-              <div key={f.id} className={`rounded-xl px-5 py-4 text-sm ${f.severity === "critical" ? "bg-red-50/60 border border-red-200/30" : "bg-amber-50/60 border border-amber-200/30"}`}>
-                <div className="font-semibold text-[#0d1424] mb-1">{f.title}</div>
-                <div className="text-[#556480]">{f.action}</div>
-                <div className="flex gap-2 mt-2">
-                  <span className={`text-xs px-2 py-0.5 rounded ${f.severity === "critical" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"}`}>
+              <div key={f.id} className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 px-6 py-5 shadow-[0_4px_24px_rgba(91,141,238,0.05)] transition-all hover:shadow-[0_8px_32px_rgba(91,141,238,0.08)]">
+                <div className="font-semibold text-[15px] text-[#0d1424] mb-1.5">{f.title}</div>
+                <div className="text-[13px] text-[#556480] leading-relaxed mb-3">{f.action}</div>
+                <div className="flex gap-2">
+                  <span className="text-xs px-3 py-1 rounded-lg bg-amber-50/80 text-amber-700 font-medium border border-amber-100/50">
                     {f.consequence}
                   </span>
                   {f.immigration_impact && (
-                    <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700">🛂 Immigration impact</span>
+                    <span className="text-xs px-3 py-1 rounded-lg bg-red-50/80 text-red-600 font-medium border border-red-100/50">
+                      Immigration impact
+                    </span>
                   )}
                 </div>
               </div>
@@ -301,11 +308,18 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       {/* Looks good */}
       {goods.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-sm font-semibold text-green-600 uppercase tracking-wider mb-3">
-            ✓ Looks Good ({goods.length})
+          <h2 className="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-3 flex items-center gap-2">
+            <span className="w-5 h-5 rounded-lg bg-emerald-50 flex items-center justify-center text-[10px]">✓</span>
+            Looks Good ({goods.length})
           </h2>
-          <div className="bg-green-50/40 rounded-xl px-5 py-3 text-sm text-[#556480]">
-            {goods.map((g) => g.field_name.replace(/_/g, " ")).join(" · ")}
+          <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 px-6 py-4 shadow-[0_2px_12px_rgba(91,141,238,0.04)]">
+            <div className="flex flex-wrap gap-2">
+              {goods.map((g) => (
+                <span key={g.id} className="text-[13px] px-3 py-1.5 rounded-lg bg-emerald-50/60 text-emerald-700 font-medium border border-emerald-100/40">
+                  {g.field_name.replace(/_/g, " ")}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -313,17 +327,17 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       {/* Advisories */}
       {advisories.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-sm font-semibold text-[#7b8ba5] uppercase tracking-wider mb-3">
+          <h2 className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">
             Also worth checking
           </h2>
-          <div className="flex flex-col gap-2">
+          <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_2px_12px_rgba(91,141,238,0.04)] divide-y divide-white/40">
             {advisories.map((a) => (
-              <div key={a.id} className="flex items-start gap-3 py-3 border-b border-blue-50/30 last:border-0">
-                <div className="flex-1 text-sm">
-                  <span className="font-medium text-[#3d6bc5]">{a.title}</span>
+              <div key={a.id} className="flex items-center gap-3 px-6 py-4">
+                <div className="flex-1 text-[13px]">
+                  <span className="font-semibold text-[#3d6bc5]">{a.title}</span>
                   <span className="text-[#556480]"> — {a.action}</span>
                 </div>
-                <span className="text-xs text-red-600 whitespace-nowrap">{a.consequence}</span>
+                <span className="text-xs font-medium text-red-500 whitespace-nowrap px-3 py-1 rounded-lg bg-red-50/60 border border-red-100/40">{a.consequence}</span>
               </div>
             ))}
           </div>
@@ -331,8 +345,8 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       )}
 
       {/* Save CTA */}
-      <div className="text-center pt-6 border-t border-blue-100/20">
-        <button className="px-8 py-4 rounded-xl bg-[#1a2036] text-white font-semibold text-[15px] shadow-md hover:shadow-lg transition-all">
+      <div className="text-center pt-8">
+        <button className="px-10 py-4 rounded-2xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] hover:-translate-y-0.5 transition-all">
           Save as my case
         </button>
         <p className="text-xs text-[#8e9ab5] mt-3">Bookmark this URL to return anytime</p>

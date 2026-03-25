@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useState } from "react";
+import { Suspense, useCallback, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument } from "@/lib/api-v2";
 
@@ -31,6 +31,8 @@ function StemOptUpload() {
     { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter, verification letter, or contract", file: null, uploading: false, uploaded: false },
   ]);
 
+  const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   const allUploaded = slots.every((s) => s.uploaded);
 
   const handleFile = useCallback(async (index: number, file: File) => {
@@ -55,8 +57,12 @@ function StemOptUpload() {
 
         <div className="flex flex-col gap-4 mb-8">
           {slots.map((slot, i) => (
-            <label
+            <div
               key={slot.docType}
+              onClick={() => {
+                if (slot.uploading || slot.uploaded) return;
+                fileRefs.current[i]?.click();
+              }}
               className={`relative flex flex-col items-center px-6 py-8 rounded-xl border-2 border-dashed transition-all cursor-pointer ${
                 slot.uploaded
                   ? "border-green-300 bg-green-50/50"
@@ -64,9 +70,10 @@ function StemOptUpload() {
               }`}
             >
               <input
+                ref={(el) => { fileRefs.current[i] = el; }}
                 type="file"
                 accept=".pdf"
-                className="sr-only"
+                style={{ position: 'absolute', width: 1, height: 1, opacity: 0, overflow: 'hidden' }}
                 onChange={(e) => {
                   const f = e.target.files?.[0];
                   if (f) handleFile(i, f);
@@ -87,7 +94,7 @@ function StemOptUpload() {
                   <div className="text-xs text-[#b0bdd0] mt-3">Drop PDF here or click to browse</div>
                 </>
               )}
-            </label>
+            </div>
           ))}
         </div>
 

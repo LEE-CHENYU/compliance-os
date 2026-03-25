@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 from compliance_os.web.models.database import get_session
 from compliance_os.web.models.schemas_v2 import (
@@ -126,7 +129,7 @@ def run_evaluation(check_id: str, db: Session = Depends(get_session)):
     )
 
     # Load rules based on track
-    rule_file = f"config/rules/{check.track}.yaml"
+    rule_file = str(PROJECT_ROOT / "config" / "rules" / f"{check.track}.yaml")
     engine = RuleEngine.from_yaml(rule_file)
 
     # Clear old findings
