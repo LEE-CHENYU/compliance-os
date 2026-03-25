@@ -243,25 +243,75 @@ def generate_followups(check_id: str, db: Session = Depends(get_session)):
     for old in check.followups:
         db.delete(old)
 
-    # Generate follow-up questions based on mismatched comparisons
-    if check.track == "entity":
-        source_a = "Your answers"
-        source_b = "your tax return"
-    else:
-        source_a = "Your I-983"
-        source_b = "your employment letter"
+    # Generate human-readable follow-up questions.
+    # Never spit jargon — translate field mismatches into plain English.
+    PLAIN_QUESTIONS: dict[str, dict] = {
+        # Track A (stem_opt) field mismatches
+        "job_title": {
+            "question": "Your documents show two different job titles. What is your actual current job title?",
+            "chips_fn": lambda a, b: [a, b, "Something else"] if a and b else ["Enter your title"],
+        },
+        "work_location": {
+            "question": "Where do you actually work day-to-day? Your documents show different locations.",
+            "chips_fn": lambda a, b: [a or "Office location", b or "Other location", "I work remotely"],
+        },
+        "compensation": {
+            "question": "Your documents show different salary amounts. What is your actual annual compensation?",
+            "chips_fn": lambda a, b: [a, b, "Different amount"] if a and b else ["Enter amount"],
+        },
+        "start_date": {
+            "question": "Your documents show different employment start dates. When did you actually start working?",
+            "chips_fn": lambda a, b: [a, b, "Different date"] if a and b else ["Enter date"],
+        },
+        "employer_name": {
+            "question": "The employer name doesn't match across your documents. What is the exact legal name of your employer?",
+            "chips_fn": lambda a, b: [a, b, "Something else"] if a and b else ["Enter employer name"],
+        },
+        "supervisor": {
+            "question": "Your documents list different supervisors. Who is your current direct supervisor?",
+            "chips_fn": lambda a, b: [a, b, "Someone else"] if a and b else ["Enter name"],
+        },
+        "full_time": {
+            "question": "Is your position full-time or part-time?",
+            "chips_fn": lambda a, b: ["Full-time", "Part-time"],
+        },
+        "duties": {
+            "question": "Do your daily work responsibilities closely relate to your degree field?",
+            "chips_fn": lambda a, b: ["Yes, closely related", "Somewhat related", "Not directly related"],
+        },
+        # Track B (entity) field mismatches
+        "entity_type": {
+            "question": "We found a mismatch between your entity type and how your tax return was filed. Did you or your CPA choose to file as an S-Corporation?",
+            "chips_fn": lambda a, b: ["Yes, intentionally", "No, that seems wrong", "Not sure"],
+        },
+        "form_5472": {
+            "question": "As a foreign-owned LLC, you're required to file Form 5472 every year — even with zero revenue. Have you ever filed this form?",
+            "chips_fn": lambda a, b: ["Yes, I've filed it", "No, never heard of it", "Not sure"],
+        },
+        "form_type": {
+            "question": "Your tax return was filed as a standard 1040. As a non-US person, you may need to file 1040-NR instead. Did your CPA discuss this with you?",
+            "chips_fn": lambda a, b: ["Yes, we discussed it", "No, I used TurboTax", "Not sure"],
+        },
+    }
 
-    field_label = lambda f: f.replace("_", " ")
+    # Fallback for any field not in the lookup
+    def _default_question(field: str, val_a: str | None, val_b: str | None) -> tuple[str, list[str]]:
+        name = field.replace("_", " ")
+        return (
+            f"We found a discrepancy in your {name}. Can you confirm which is correct?",
+            [val_a or "Option A", val_b or "Option B", "Not sure"],
+        )
 
     followups = []
     for comp in check.comparisons:
         if comp.status in ("mismatch", "needs_review"):
-            q_text = f'{source_a} show{"s" if source_a != "Your answers" else ""} "{comp.value_a}" but {source_b} shows "{comp.value_b}" for {field_label(comp.field_name)}. Which is correct?'
-            chips = [
-                comp.value_a or f"{source_a} value",
-                comp.value_b or f"{source_b} value",
-                "Something else",
-            ]
+            entry = PLAIN_QUESTIONS.get(comp.field_name)
+            if entry:
+                q_text = entry["question"]
+                chips = entry["chips_fn"](comp.value_a, comp.value_b)
+            else:
+                q_text, chips = _default_question(comp.field_name, comp.value_a, comp.value_b)
+
             row = FollowupRow(
                 check_id=check_id,
                 question_key=f"{comp.field_name}_mismatch",

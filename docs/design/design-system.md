@@ -10,6 +10,22 @@
 
 **Core message:** "Check your documents before USCIS does."
 
+## Content Rules
+
+1. **No jargon in user-facing text.** The whole purpose of this product is to alleviate the burden of remembering form numbers and legal terms. When we need to confirm information, ask in plain English. "As a foreign-owned LLC, you're required to file Form 5472 every year — have you ever filed this form?" is better than "Your answers show 'Required' but your tax return shows 'False' for form 5472."
+
+2. **No emojis.** Use letter labels (A, B), numbers (1, 2, 3), or nothing. The product should feel trustworthy and professional.
+
+3. **No raw field values in questions.** Follow-up questions must translate extracted data into human-readable context. If a comparison finds a mismatch, explain what it means in one sentence before asking the user to confirm.
+
+4. **Form names are acceptable in document labels** (upload slots, document pills) because users who have the form will recognize it. But always pair with a plain description: "Form I-983 — Training Plan signed by you, your employer, and your DSO."
+
+5. **If the user might not have a form, say so.** "Don't have these? Upload whatever document you have — we'll work with it."
+
+6. **Explain consequences in 2-4 words.** Not paragraphs. Severity tags are pills, not banners.
+
+7. **One question at a time in follow-ups.** Each question stands alone with context for why it matters.
+
 ## Color Palette
 
 ### Primary
