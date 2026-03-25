@@ -75,6 +75,9 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
         tax = _get_extracted_dict(check, "tax_return")
         answers = check.answers or {}
 
+        # Human-readable entity type labels
+        ENTITY_LABELS = {"smllc": "Single-member LLC", "multi_llc": "Multi-member LLC", "c_corp": "C-Corporation", "s_corp": "S-Corporation", "not_sure": "Not sure"}
+
         # Entity type vs filing type
         entity_type = answers.get("entity_type", "")
         form_type = tax.get("form_type", "")
@@ -83,7 +86,7 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
             entity_match = "mismatch"
         elif entity_type and form_type:
             entity_match = "match"
-        row = ComparisonRow(check_id=check_id, field_name="entity_type", value_a=entity_type, value_b=form_type, match_type="logic", status=entity_match, confidence=1.0 if entity_match == "match" else 0.0)
+        row = ComparisonRow(check_id=check_id, field_name="entity_type", value_a=ENTITY_LABELS.get(entity_type, entity_type), value_b=form_type, match_type="logic", status=entity_match, confidence=1.0 if entity_match == "match" else 0.0)
         db.add(row)
         results.append(row)
 
@@ -92,15 +95,16 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
         is_smllc = answers.get("entity_type") == "smllc"
         f5472 = tax.get("form_5472_present", "")
         if is_foreign and is_smllc:
-            status = "match" if str(f5472).lower() == "true" else "mismatch"
-            row = ComparisonRow(check_id=check_id, field_name="form_5472", value_a="Required", value_b=str(f5472), match_type="logic", status=status, confidence=1.0 if status == "match" else 0.0)
+            filed = str(f5472).lower() == "true"
+            status = "match" if filed else "mismatch"
+            row = ComparisonRow(check_id=check_id, field_name="form_5472", value_a="Required (foreign-owned LLC)", value_b="Filed" if filed else "Not found in return", match_type="logic", status=status, confidence=1.0 if status == "match" else 0.0)
             db.add(row)
             results.append(row)
 
         # Filing form type check (1040 vs 1040-NR)
         if is_foreign and form_type:
             status = "mismatch" if form_type == "1040" else "match"
-            row = ComparisonRow(check_id=check_id, field_name="form_type", value_a="NRA (should file 1040-NR)", value_b=form_type, match_type="logic", status=status, confidence=1.0 if status == "match" else 0.0)
+            row = ComparisonRow(check_id=check_id, field_name="form_type", value_a="Non-US person — should file 1040-NR", value_b=f"Filed {form_type}", match_type="logic", status=status, confidence=1.0 if status == "match" else 0.0)
             db.add(row)
             results.append(row)
 

@@ -268,9 +268,9 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
           onClick={() => setShowAuthModal(true)}
           className="px-10 py-4 rounded-2xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
         >
-          Save as my case
+          Save to my data room
         </button>
-        <p className="text-xs text-[#8e9ab5] mt-3">Create an account to save and track your case</p>
+        <p className="text-xs text-[#8e9ab5] mt-3">Create an account to save to your personal data room</p>
       </div>
 
       {showAuthModal && (

@@ -80,7 +80,7 @@ function EntityUpload() {
         </div>
 
         <div className="px-4 py-3 rounded-xl bg-green-50/60 border border-green-200/30 text-xs text-green-700 mb-8">
-          &#128274; Documents sent to OpenAI for field extraction only. Never stored or shared beyond that.
+          Your documents are stored securely and used only for compliance checking.
         </div>
 
         <button

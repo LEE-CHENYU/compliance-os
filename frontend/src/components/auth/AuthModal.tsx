@@ -42,7 +42,7 @@ export default function AuthModal({ checkId, onSuccess }: AuthModalProps) {
         className="w-full max-w-sm mx-6 bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 p-8 shadow-[0_16px_64px_rgba(91,141,238,0.15)]"
       >
         <h2 className="text-xl font-extrabold text-[#0d1424] mb-1">Create your account</h2>
-        <p className="text-sm text-[#556480] mb-6">Save this case and access your data room.</p>
+        <p className="text-sm text-[#556480] mb-6">Save your results to your personal data room. We&apos;ll track deadlines and prompt you when something needs attention.</p>
 
         {error && (
           <div className="mb-4 px-4 py-2 rounded-xl text-sm text-red-600 bg-red-50/60 border border-red-100/40">
