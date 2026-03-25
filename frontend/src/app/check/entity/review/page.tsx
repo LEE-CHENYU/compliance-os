@@ -245,7 +245,7 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
 
       {advisories.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">Also worth checking</h2>
+          <h2 className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">Worth looking into</h2>
           <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
             {advisories.map((a, i) => (
               <div key={a.id} className={`flex items-center gap-3 px-6 py-4 ${i > 0 ? 'border-t border-blue-50/40' : ''}`}>

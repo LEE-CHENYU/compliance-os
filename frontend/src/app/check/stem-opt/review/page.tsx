@@ -344,7 +344,7 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       {advisories.length > 0 && (
         <div className="mb-8">
           <h2 className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">
-            Also worth checking
+            Worth looking into
           </h2>
           <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_2px_12px_rgba(91,141,238,0.04)] overflow-hidden">
             {advisories.map((a, i) => (

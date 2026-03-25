@@ -187,7 +187,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480]">
               <span className="w-2 h-2 rounded-full bg-[#8e9ab5]" />
-              Advisories
+              Potential risks
               <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-[#5b8dee]">{timeline?.advisories.length || 0}</span>
             </div>
           </div>
@@ -352,10 +352,10 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          {/* Advisories — with upload action buttons */}
+          {/* Potential risks — with upload action buttons */}
           {timeline && timeline.advisories.length > 0 && (
             <div className="mt-8">
-              <div className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">Also worth checking</div>
+              <div className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">Worth looking into</div>
               <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
                 {timeline.advisories.map((a, i) => (
                   <div key={a.id} className={`px-5 py-4 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
