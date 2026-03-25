@@ -2,7 +2,9 @@
  * Auth client — JWT storage, register, login, helpers.
  */
 
-const API = "http://localhost:8000/api/auth";
+const API = typeof window !== "undefined" && window.location.hostname === "localhost"
+  ? "http://localhost:8000/api/auth"
+  : "/api/auth";
 
 export interface AuthUser {
   user_id: string;

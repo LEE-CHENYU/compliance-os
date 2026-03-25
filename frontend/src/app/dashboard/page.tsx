@@ -35,7 +35,9 @@ interface TimelineData {
   key_facts: { label: string; value: string }[];
 }
 
-const API = "http://localhost:8000/api/dashboard";
+const API = typeof window !== "undefined" && window.location.hostname === "localhost"
+  ? "http://localhost:8000/api/dashboard"
+  : "/api/dashboard";
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   immigration: { bg: "rgba(91,141,238,0.1)", text: "#3d6bc5", border: "rgba(91,141,238,0.12)" },
@@ -242,7 +244,8 @@ export default function DashboardPage() {
                           </div>
                           <button
                             onClick={async () => {
-                              const resp = await fetch(`http://localhost:8000/api/dashboard/documents/${doc.id}/view`, { headers: authHeaders() });
+                              const dashApi = typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8000/api/dashboard" : "/api/dashboard";
+                              const resp = await fetch(`${dashApi}/documents/${doc.id}/view`, { headers: authHeaders() });
                               if (resp.ok) {
                                 const blob = await resp.blob();
                                 const url = URL.createObjectURL(blob);

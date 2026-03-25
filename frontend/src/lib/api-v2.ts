@@ -2,7 +2,9 @@
  * Guardian check flow API client.
  */
 
-const API = "http://localhost:8000/api";
+const API = typeof window !== "undefined" && window.location.hostname === "localhost"
+  ? "http://localhost:8000/api"
+  : "/api";
 
 // --- Types ---
 

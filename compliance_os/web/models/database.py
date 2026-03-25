@@ -5,7 +5,8 @@ from pathlib import Path
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-DATA_DIR = Path(__file__).parents[3] / "data"
+import os
+DATA_DIR = Path(os.environ.get("DATA_DIR", str(Path(__file__).parents[3] / "data")))
 
 
 class Base(DeclarativeBase):
