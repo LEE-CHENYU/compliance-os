@@ -116,7 +116,7 @@ function StemOptUpload() {
 
         {/* Required uploads */}
         <div className="flex flex-col gap-4 mb-4">
-          {requiredSlots.map((slot, i) => {
+          {requiredSlots.map((slot) => {
             const globalIndex = slots.indexOf(slot);
             return (
               <div
