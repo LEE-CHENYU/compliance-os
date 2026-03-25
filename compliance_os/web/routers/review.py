@@ -309,6 +309,13 @@ def generate_followups(check_id: str, db: Session = Depends(get_session)):
     followups = []
     for comp in check.comparisons:
         if comp.status in ("mismatch", "needs_review"):
+            # Skip questions where both values are missing — nothing useful to ask
+            if not comp.value_a and not comp.value_b:
+                continue
+            # Skip needs_review where one side is entirely empty (document didn't extract)
+            if comp.status == "needs_review" and (not comp.value_a or not comp.value_b):
+                continue
+
             entry = PLAIN_QUESTIONS.get(comp.field_name)
             if entry:
                 q_text = entry["question"]
