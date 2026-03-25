@@ -16,30 +16,37 @@ interface UploadSlot {
 
 // Stage-specific document slots
 const STAGE_SLOTS: Record<string, UploadSlot[]> = {
-  stem_opt: [
-    { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter, verification letter, or employment contract", required: true, file: null, uploading: false, uploaded: false },
-    { docType: "i983", label: "Form I-983", sub: "Training Plan for STEM OPT — signed by you, your employer, and your DSO", required: true, file: null, uploading: false, uploaded: false },
-    { docType: "ead", label: "EAD Card (I-766)", sub: "Your Employment Authorization Document — front and back", required: false, file: null, uploading: false, uploaded: false },
+  pre_completion: [
+    { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter or CPT authorization from employer", required: true, file: null, uploading: false, uploaded: false },
+    { docType: "i20", label: "I-20 with CPT Authorization", sub: "I-20 showing CPT endorsement from your DSO", required: true, file: null, uploading: false, uploaded: false },
   ],
   opt: [
     { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter, verification letter, or employment contract", required: true, file: null, uploading: false, uploaded: false },
     { docType: "ead", label: "EAD Card (I-766)", sub: "Your Employment Authorization Document — front and back", required: true, file: null, uploading: false, uploaded: false },
     { docType: "i20", label: "I-20", sub: "Your most recent I-20 with OPT recommendation", required: false, file: null, uploading: false, uploaded: false },
   ],
-  applying_stem: [
-    { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter from a STEM OPT-eligible employer", required: true, file: null, uploading: false, uploaded: false },
-    { docType: "i983", label: "Form I-983 (draft)", sub: "Training Plan — even if not yet signed by DSO", required: true, file: null, uploading: false, uploaded: false },
-    { docType: "ead", label: "Current EAD Card", sub: "Your existing OPT Employment Authorization Document", required: false, file: null, uploading: false, uploaded: false },
+  stem_opt: [
+    { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter, verification letter, or employment contract", required: true, file: null, uploading: false, uploaded: false },
+    { docType: "i983", label: "Form I-983", sub: "Training Plan for STEM OPT — signed by you, your employer, and your DSO", required: true, file: null, uploading: false, uploaded: false },
+    { docType: "ead", label: "EAD Card (I-766)", sub: "Your Employment Authorization Document — front and back", required: false, file: null, uploading: false, uploaded: false },
   ],
-  pre_completion: [
-    { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter or CPT authorization from employer", required: true, file: null, uploading: false, uploaded: false },
-    { docType: "i20", label: "I-20 with CPT Authorization", sub: "I-20 showing CPT endorsement from your DSO", required: true, file: null, uploading: false, uploaded: false },
+  h1b: [
+    { docType: "employment_letter", label: "Employment Letter", sub: "Current offer letter or employment verification", required: true, file: null, uploading: false, uploaded: false },
+    { docType: "i797", label: "I-797 (Approval Notice)", sub: "H-1B approval notice or receipt notice from USCIS", required: true, file: null, uploading: false, uploaded: false },
+    { docType: "i94", label: "I-94", sub: "Most recent arrival/departure record — download from i94.cbp.dhs.gov", required: false, file: null, uploading: false, uploaded: false },
+  ],
+  i140: [
+    { docType: "employment_letter", label: "Employment Letter", sub: "Current employment verification from sponsoring employer", required: true, file: null, uploading: false, uploaded: false },
+    { docType: "i797", label: "I-797 (I-140 Approval)", sub: "I-140 approval or receipt notice", required: true, file: null, uploading: false, uploaded: false },
+    { docType: "i94", label: "I-94", sub: "Most recent arrival/departure record", required: false, file: null, uploading: false, uploaded: false },
+    { docType: "i140_supplement", label: "Priority Date Evidence", sub: "Any document showing your priority date — I-140 receipt, employer letter", required: false, file: null, uploading: false, uploaded: false },
   ],
   not_sure: [
     { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter, verification letter, or employment contract", required: true, file: null, uploading: false, uploaded: false },
     { docType: "i983", label: "Form I-983 (if you have one)", sub: "Training Plan for STEM OPT students", required: false, file: null, uploading: false, uploaded: false },
     { docType: "ead", label: "EAD Card (if you have one)", sub: "Employment Authorization Document", required: false, file: null, uploading: false, uploaded: false },
     { docType: "i20", label: "I-20 (if you have one)", sub: "Your most recent I-20", required: false, file: null, uploading: false, uploaded: false },
+    { docType: "i797", label: "I-797 (if you have one)", sub: "Any USCIS approval or receipt notice", required: false, file: null, uploading: false, uploaded: false },
   ],
 };
 

@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
 
 const STAGES = [
-  { value: "stem_opt", label: "On STEM OPT", sub: "24-month extension active" },
-  { value: "opt", label: "On post-completion OPT", sub: "Initial 12-month period" },
-  { value: "applying_stem", label: "Applying for STEM extension", sub: "" },
-  { value: "pre_completion", label: "Pre-completion (CPT)", sub: "" },
+  { value: "pre_completion", label: "CPT (Pre-completion)", sub: "Curricular Practical Training while enrolled" },
+  { value: "opt", label: "Post-completion OPT", sub: "12-month work authorization after graduation" },
+  { value: "stem_opt", label: "STEM OPT Extension", sub: "24-month STEM extension" },
+  { value: "h1b", label: "H-1B", sub: "Employer-sponsored specialty occupation visa" },
+  { value: "i140", label: "I-140 / Green Card Process", sub: "Employment-based immigrant petition in progress" },
   { value: "not_sure", label: "Not sure", sub: "" },
 ];
 
@@ -32,7 +33,7 @@ export default function StemOptStage() {
   const [employerChanged, setEmployerChanged] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const showEmployerChanged = stage && ["stem_opt", "opt", "applying_stem"].includes(stage);
+  const showEmployerChanged = stage && ["stem_opt", "opt", "h1b"].includes(stage);
   const canContinue = stage && years !== "" && employmentStatus && (!showEmployerChanged || employerChanged);
 
   async function handleContinue() {
