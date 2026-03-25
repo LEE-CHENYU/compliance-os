@@ -5,8 +5,9 @@ import json
 from pathlib import Path
 from typing import Any
 
+import os
+
 import fitz  # PyMuPDF
-from openai import OpenAI
 
 
 SCHEMAS: dict[str, dict[str, str]] = {
@@ -84,7 +85,7 @@ def extract_document(
     if not schema:
         return {}
 
-    result = _call_openai(text, doc_type, schema)
+    result = _call_llm(text, doc_type, schema)
 
     # Map to {field_name: {"value": ..., "confidence": ...}}
     fields: dict[str, dict[str, Any]] = {}
@@ -96,12 +97,14 @@ def extract_document(
     return fields
 
 
-def _call_openai(
+def _call_llm(
     text: str,
     doc_type: str,
     schema: dict[str, str],
 ) -> dict[str, Any]:
-    """Call OpenAI to extract structured fields from document text."""
+    """Call LLM to extract structured fields from document text.
+    Uses Claude (Anthropic) if ANTHROPIC_API_KEY is set, otherwise falls back to OpenAI.
+    """
     field_descriptions = "\n".join(f"- {name}: {desc}" for name, desc in schema.items())
 
     prompt = f"""Extract the following fields from this {doc_type} document.
@@ -115,16 +118,34 @@ Document text:
 
 Return ONLY valid JSON, no explanation."""
 
-    client = OpenAI()
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a document field extractor. Return only valid JSON."},
-            {"role": "user", "content": prompt},
-        ],
-        response_format={"type": "json_object"},
-        temperature=0,
-    )
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
 
-    content = response.choices[0].message.content
-    return json.loads(content)
+    if anthropic_key:
+        import anthropic
+        client = anthropic.Anthropic(api_key=anthropic_key)
+        response = client.messages.create(
+            model="claude-sonnet-4-6-20250514",
+            max_tokens=4096,
+            messages=[{"role": "user", "content": prompt}],
+            system="You are a document field extractor. Return only valid JSON, no explanation or markdown.",
+            temperature=0,
+        )
+        content = response.content[0].text
+        # Strip markdown code fences if present
+        if content.startswith("```"):
+            content = content.split("\n", 1)[1].rsplit("```", 1)[0]
+        return json.loads(content)
+    else:
+        from openai import OpenAI
+        client = OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a document field extractor. Return only valid JSON."},
+                {"role": "user", "content": prompt},
+            ],
+            response_format={"type": "json_object"},
+            temperature=0,
+        )
+        content = response.choices[0].message.content
+        return json.loads(content)
