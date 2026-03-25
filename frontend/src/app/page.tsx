@@ -189,7 +189,7 @@ export default function Home() {
               <button onClick={() => router.push("/login")} style={{padding:'9px 22px',borderRadius:10,background:'transparent',color:'#5b8dee',fontSize:13,fontWeight:600,border:'none',cursor:'pointer'}}>
                 Sign in
               </button>
-              <button onClick={() => router.push("/check/stem-opt")} style={{padding:'9px 22px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
+              <button onClick={() => router.push("/check")} style={{padding:'9px 22px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
                 Find my risks
               </button>
             </>
@@ -211,7 +211,7 @@ export default function Home() {
             We cross-check your immigration and tax filings to find mismatches, missing forms, and deadline risks you don&apos;t know about yet.
           </p>
           <div style={{display:'flex',gap:12,marginBottom:48}}>
-            <button onClick={() => router.push("/check/stem-opt")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)'}}>
+            <button onClick={() => router.push("/check")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)'}}>
               Find my risks
             </button>
             <a href="#cloud" style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',textDecoration:'none',backdropFilter:'blur(12px)'}}>
