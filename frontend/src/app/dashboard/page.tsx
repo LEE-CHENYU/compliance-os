@@ -708,10 +708,12 @@ export default function DashboardPage() {
           onClick={() => setChatOpen(true)}
           className="fixed bottom-5 right-5 z-40 flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(91,141,238,0.1)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.15)] transition-all hover:-translate-y-0.5 group"
         >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] flex items-center justify-center flex-shrink-0">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] flex items-center justify-center flex-shrink-0 p-1.5">
+            <div className="flex flex-col gap-[2px] w-full">
+              <div className="h-[3px] rounded-sm bg-white" style={{width:'100%',transform:'translateX(1px)'}} />
+              <div className="h-[3px] rounded-sm bg-white" style={{width:'100%',transform:'translateX(-0.5px)'}} />
+              <div className="h-[3px] rounded-sm bg-white" style={{width:'100%',transform:'translateX(1.5px)'}} />
+            </div>
           </div>
           <span className="text-[12px] font-medium text-[#3a5a8c] hidden md:inline">
             {chatMessages.some((m) => m.role === "assistant" && m.chips) ? "We have a question for you" : "Guardian Assistant"}
