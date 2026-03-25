@@ -171,12 +171,20 @@ def run_evaluation(check_id: str, db: Session = Depends(get_session)):
     for c in check.comparisons:
         comp_dict[c.field_name] = {"status": c.status, "confidence": c.confidence}
 
-    ctx = EvaluationContext(
-        answers=check.answers or {},
-        extraction_a=i983 or emp,  # Track A: i983 is doc A
-        extraction_b=emp or tax,   # Track A: employment letter is doc B
-        comparisons=comp_dict,
-    )
+    if check.track == "entity":
+        ctx = EvaluationContext(
+            answers=check.answers or {},
+            extraction_a={},
+            extraction_b=tax or {},
+            comparisons=comp_dict,
+        )
+    else:
+        ctx = EvaluationContext(
+            answers=check.answers or {},
+            extraction_a=i983 or {},
+            extraction_b=emp or {},
+            comparisons=comp_dict,
+        )
 
     # Load rules based on track
     rule_file = str(PROJECT_ROOT / "config" / "rules" / f"{check.track}.yaml")
@@ -236,14 +244,29 @@ def generate_followups(check_id: str, db: Session = Depends(get_session)):
         db.delete(old)
 
     # Generate follow-up questions based on mismatched comparisons
+    if check.track == "entity":
+        source_a = "Your answers"
+        source_b = "your tax return"
+    else:
+        source_a = "Your I-983"
+        source_b = "your employment letter"
+
+    field_label = lambda f: f.replace("_", " ")
+
     followups = []
     for comp in check.comparisons:
         if comp.status in ("mismatch", "needs_review"):
+            q_text = f'{source_a} show{"s" if source_a != "Your answers" else ""} "{comp.value_a}" but {source_b} shows "{comp.value_b}" for {field_label(comp.field_name)}. Which is correct?'
+            chips = [
+                comp.value_a or f"{source_a} value",
+                comp.value_b or f"{source_b} value",
+                "Something else",
+            ]
             row = FollowupRow(
                 check_id=check_id,
                 question_key=f"{comp.field_name}_mismatch",
-                question_text=f"Your I-983 shows \"{comp.value_a}\" but your employment letter shows \"{comp.value_b}\" for {comp.field_name.replace('_', ' ')}. Which is correct?",
-                chips=[comp.value_a or "I-983 value", comp.value_b or "Letter value", "Something else"],
+                question_text=q_text,
+                chips=chips,
             )
             db.add(row)
             followups.append(row)
