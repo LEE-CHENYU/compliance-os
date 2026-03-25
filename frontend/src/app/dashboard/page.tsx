@@ -49,6 +49,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [uploadDocType, setUploadDocType] = useState("");
+  const [showUploadPanel, setShowUploadPanel] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -107,8 +109,8 @@ export default function DashboardPage() {
         <div className="text-lg font-extrabold text-[#0d1424]">Guardian</div>
         <div className="flex items-center gap-2 md:gap-4">
           <span className="text-sm text-[#556480] hidden md:inline">{user?.email}</span>
-          <button onClick={() => router.push("/check")} className="px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs md:text-sm font-semibold">
-            + New check
+          <button onClick={() => setShowUploadPanel(true)} className="px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs md:text-sm font-semibold">
+            + Upload document
           </button>
           <button onClick={() => { logout(); router.push("/"); }} className="text-xs md:text-sm text-[#7b8ba5]">
             Sign out
@@ -244,31 +246,39 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          {/* Advisories */}
+          {/* Advisories — with upload action buttons */}
           {timeline && timeline.advisories.length > 0 && (
             <div className="mt-8">
               <div className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">Also worth checking</div>
               <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
                 {timeline.advisories.map((a, i) => (
-                  <div key={a.id} className={`flex items-center gap-3 px-5 py-3.5 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
-                    <div className="flex-1 text-[13px]">
-                      <span className="font-semibold text-[#3d6bc5]">{a.title}</span>
-                      <span className="text-[#556480]"> — {a.action}</span>
+                  <div key={a.id} className={`px-5 py-4 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1 text-[13px]">
+                        <span className="font-semibold text-[#3d6bc5]">{a.title}</span>
+                        <span className="text-[#556480]"> — {a.action}</span>
+                      </div>
+                      <span className="text-[11px] font-semibold px-3 py-1 rounded-full flex-shrink-0" style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.1)" }}>
+                        {a.consequence}
+                      </span>
                     </div>
-                    <span className="text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.1)" }}>
-                      {a.consequence}
-                    </span>
+                    <button
+                      onClick={() => { setUploadDocType(a.title.toLowerCase().replace(/[^a-z0-9]/g, "_")); setShowUploadPanel(true); }}
+                      className="mt-2 text-[12px] font-medium text-[#5b8dee] hover:text-[#4a74d4] transition-colors"
+                    >
+                      Upload related document →
+                    </button>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Hidden file input for upload prompts */}
+          {/* Hidden file input for timeline upload prompts */}
           <input
             ref={fileRef}
             type="file"
-            accept=".pdf"
+            accept=".pdf,.jpg,.jpeg,.png"
             className="hidden"
             onChange={async (e) => {
               const f = e.target.files?.[0];
@@ -277,6 +287,50 @@ export default function DashboardPage() {
               }
             }}
           />
+
+          {/* Upload Panel Modal */}
+          {showUploadPanel && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0d1424]/20 backdrop-blur-sm p-4">
+              <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 p-6 shadow-[0_16px_64px_rgba(91,141,238,0.15)]">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-[#0d1424]">Upload a document</h2>
+                  <button onClick={() => setShowUploadPanel(false)} className="text-[#7b8ba5] hover:text-[#0d1424] text-xl">&times;</button>
+                </div>
+                <p className="text-[13px] text-[#556480] mb-5">Select the document type, then upload. We&apos;ll extract fields and re-check your case automatically.</p>
+
+                <div className="flex flex-col gap-2 mb-5">
+                  {[
+                    { type: "employment_letter", label: "Employment Letter", desc: "Offer letter or employment verification" },
+                    { type: "i983", label: "Form I-983", desc: "STEM OPT Training Plan" },
+                    { type: "ead", label: "EAD Card", desc: "Employment Authorization Document" },
+                    { type: "i20", label: "I-20", desc: "Certificate of Eligibility" },
+                    { type: "i797", label: "I-797", desc: "USCIS Approval or Receipt Notice" },
+                    { type: "tax_return", label: "Tax Return", desc: "1040, 1040-NR, 1120, or other" },
+                    { type: "w2", label: "W-2", desc: "Wage and Tax Statement" },
+                    { type: "other", label: "Other Document", desc: "Any compliance-related document" },
+                  ].map((doc) => (
+                    <button
+                      key={doc.type}
+                      onClick={() => { setUploadDocType(doc.type); setShowUploadPanel(false); fileRef.current?.click(); }}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/60 border border-white/70 hover:bg-white/90 hover:border-blue-200/30 transition-all text-left"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-[#5b8dee]/6 flex items-center justify-center text-xs font-bold text-[#5b8dee]">
+                        {doc.label.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-semibold text-[#0d1424]">{doc.label}</div>
+                        <div className="text-[11px] text-[#7b8ba5]">{doc.desc}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <p className="text-[11px] text-[#8e9ab5] text-center">
+                  Your documents are stored securely and used only for compliance checking.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
