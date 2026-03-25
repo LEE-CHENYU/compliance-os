@@ -84,6 +84,56 @@ def test_findings_sorted_by_severity(engine):
         assert severity_order[severities[i]] <= severity_order[severities[i + 1]]
 
 
+def test_entity_rules_load():
+    e = RuleEngine.from_yaml("config/rules/entity.yaml")
+    assert len(e.rules) == 12
+    ids = [r.id for r in e.rules]
+    assert "nra_scorp_invalid" in ids
+    assert "advisory_boi_foreign" in ids
+
+
+def test_entity_nra_scorp():
+    e = RuleEngine.from_yaml("config/rules/entity.yaml")
+    ctx = EvaluationContext(
+        answers={"owner_residency": "on_visa", "entity_type": "smllc"},
+        extraction_a={},
+        extraction_b={"form_type": "1120-S"},
+        comparisons={},
+    )
+    findings = e.evaluate(ctx)
+    ids = [f.rule_id for f in findings]
+    assert "nra_scorp_invalid" in ids
+
+
+def test_entity_corporate_veil():
+    e = RuleEngine.from_yaml("config/rules/entity.yaml")
+    ctx = EvaluationContext(
+        answers={"owner_residency": "us_citizen_or_pr", "entity_type": "smllc", "separate_bank_account": "no"},
+        extraction_a={}, extraction_b={}, comparisons={},
+    )
+    findings = e.evaluate(ctx)
+    ids = [f.rule_id for f in findings]
+    assert "corporate_veil_risk" in ids
+
+
+def test_entity_advisory_gating():
+    e = RuleEngine.from_yaml("config/rules/entity.yaml")
+    # US citizen should not see BOI advisory
+    ctx = EvaluationContext(
+        answers={"owner_residency": "us_citizen_or_pr", "entity_type": "c_corp"},
+        extraction_a={}, extraction_b={}, comparisons={},
+    )
+    ids = [f.rule_id for f in e.evaluate(ctx)]
+    assert "advisory_boi_foreign" not in ids
+    # Outside US should see BOI
+    ctx2 = EvaluationContext(
+        answers={"owner_residency": "outside_us", "entity_type": "c_corp"},
+        extraction_a={}, extraction_b={}, comparisons={},
+    )
+    ids2 = [f.rule_id for f in e.evaluate(ctx2)]
+    assert "advisory_boi_foreign" in ids2
+
+
 def test_needs_review_triggers_mismatch_rule(engine):
     ctx = EvaluationContext(
         answers={"stage": "stem_opt", "years_in_us": 3},

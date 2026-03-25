@@ -29,8 +29,8 @@ from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine
 
 router = APIRouter(prefix="/api/checks/{check_id}", tags=["review"])
 
-# Field mapping: comparison_field → (i983_field, employment_letter_field, match_type)
-FIELD_MAP = {
+# Track A field mapping: comparison_field → (i983_field, employment_letter_field, match_type)
+STEM_OPT_FIELD_MAP = {
     "job_title": ("job_title", "job_title", "fuzzy"),
     "employer_name": ("employer_name", "employer_name", "exact"),
     "work_location": ("work_site_address", "work_location", "fuzzy"),
@@ -39,6 +39,14 @@ FIELD_MAP = {
     "duties": ("duties_description", "duties_description", "semantic"),
     "supervisor": ("supervisor_name", "manager_name", "fuzzy"),
     "full_time": ("full_time", "full_time", "exact"),
+}
+
+# Track B field mapping: comparison_field → (answer_key, extraction_field, match_type)
+# Compares user answers against tax return extraction
+ENTITY_FIELD_MAP = {
+    "entity_type": ("entity_type", "form_type", "logic"),
+    "form_5472": ("entity_type", "form_5472_present", "logic"),
+    "form_type": ("owner_residency", "form_type", "logic"),
 }
 
 
@@ -56,41 +64,83 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
     if not check:
         raise HTTPException(404, "Check not found")
 
-    i983 = _get_extracted_dict(check, "i983")
-    emp = _get_extracted_dict(check, "employment_letter")
-
     # Clear old comparisons
     for old in check.comparisons:
         db.delete(old)
 
     results = []
-    for comp_field, (a_field, b_field, match_type) in FIELD_MAP.items():
-        if match_type == "semantic":
-            # Semantic comparison placeholder — store as needs_review for now
-            row = ComparisonRow(
-                check_id=check_id,
-                field_name=comp_field,
-                value_a=i983.get(a_field),
-                value_b=emp.get(b_field),
-                match_type="semantic",
-                status="needs_review",
-                confidence=0.5,
-                detail="Semantic comparison requires LLM evaluation",
-            )
-        else:
-            cr = compare_fields(comp_field, i983.get(a_field), emp.get(b_field), match_type)
-            row = ComparisonRow(
-                check_id=check_id,
-                field_name=cr.field_name,
-                value_a=cr.value_a,
-                value_b=cr.value_b,
-                match_type=cr.match_type,
-                status=cr.status,
-                confidence=cr.confidence,
-                detail=cr.detail,
-            )
+
+    if check.track == "entity":
+        # Track B: compare answers vs tax return extraction
+        tax = _get_extracted_dict(check, "tax_return")
+        answers = check.answers or {}
+
+        # Entity type vs filing type
+        entity_type = answers.get("entity_type", "")
+        form_type = tax.get("form_type", "")
+        entity_match = "match"
+        if entity_type == "smllc" and form_type and "1120-S" in str(form_type):
+            entity_match = "mismatch"
+        elif entity_type and form_type:
+            entity_match = "match"
+        row = ComparisonRow(check_id=check_id, field_name="entity_type", value_a=entity_type, value_b=form_type, match_type="logic", status=entity_match, confidence=1.0 if entity_match == "match" else 0.0)
         db.add(row)
         results.append(row)
+
+        # Form 5472 check
+        is_foreign = answers.get("owner_residency") != "us_citizen_or_pr"
+        is_smllc = answers.get("entity_type") == "smllc"
+        f5472 = tax.get("form_5472_present", "")
+        if is_foreign and is_smllc:
+            status = "match" if str(f5472).lower() == "true" else "mismatch"
+            row = ComparisonRow(check_id=check_id, field_name="form_5472", value_a="Required", value_b=str(f5472), match_type="logic", status=status, confidence=1.0 if status == "match" else 0.0)
+            db.add(row)
+            results.append(row)
+
+        # Filing form type check (1040 vs 1040-NR)
+        if is_foreign and form_type:
+            status = "mismatch" if form_type == "1040" else "match"
+            row = ComparisonRow(check_id=check_id, field_name="form_type", value_a="NRA (should file 1040-NR)", value_b=form_type, match_type="logic", status=status, confidence=1.0 if status == "match" else 0.0)
+            db.add(row)
+            results.append(row)
+
+        # EIN match (just extract and show)
+        ein = tax.get("ein")
+        if ein:
+            row = ComparisonRow(check_id=check_id, field_name="ein", value_a=None, value_b=ein, match_type="exact", status="match", confidence=1.0, detail="Extracted from return")
+            db.add(row)
+            results.append(row)
+
+        # Entity name
+        entity_name = tax.get("entity_name")
+        if entity_name:
+            row = ComparisonRow(check_id=check_id, field_name="entity_name", value_a=None, value_b=entity_name, match_type="exact", status="match", confidence=1.0, detail="Extracted from return")
+            db.add(row)
+            results.append(row)
+
+    else:
+        # Track A: compare I-983 vs employment letter
+        i983 = _get_extracted_dict(check, "i983")
+        emp = _get_extracted_dict(check, "employment_letter")
+
+        for comp_field, (a_field, b_field, match_type) in STEM_OPT_FIELD_MAP.items():
+            if match_type == "semantic":
+                row = ComparisonRow(
+                    check_id=check_id, field_name=comp_field,
+                    value_a=i983.get(a_field), value_b=emp.get(b_field),
+                    match_type="semantic", status="needs_review", confidence=0.5,
+                    detail="Semantic comparison requires LLM evaluation",
+                )
+            else:
+                cr = compare_fields(comp_field, i983.get(a_field), emp.get(b_field), match_type)
+                row = ComparisonRow(
+                    check_id=check_id, field_name=cr.field_name,
+                    value_a=cr.value_a, value_b=cr.value_b,
+                    match_type=cr.match_type, status=cr.status,
+                    confidence=cr.confidence, detail=cr.detail,
+                )
+            db.add(row)
+            results.append(row)
 
     db.commit()
     for r in results:
