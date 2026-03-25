@@ -142,7 +142,7 @@ export default function DashboardPage() {
               All Documents
               <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#5b8dee]/8 text-[#5b8dee]">{documents.length}</span>
             </button>
-            <button onClick={() => setView("profile")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "profile" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>My Profile</button>
+            <button onClick={() => setView("profile")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "profile" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Key Facts</button>
           </div>
 
           <div className="mb-7">
@@ -200,7 +200,7 @@ export default function DashboardPage() {
           <div className="flex md:hidden gap-2 mb-4">
             {(["timeline", "documents", "profile"] as const).map((v) => (
               <button key={v} onClick={() => setView(v)} className={`flex-1 py-2 rounded-xl text-xs font-medium transition-all capitalize ${view === v ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-white/50 text-[#556480]"}`}>
-                {v === "documents" ? `Docs (${documents.length})` : v === "profile" ? "Profile" : "Timeline"}
+                {v === "documents" ? `Docs (${documents.length})` : v === "profile" ? "Key Facts" : "Timeline"}
               </button>
             ))}
           </div>
@@ -268,106 +268,52 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Profile View */}
+          {/* Key Facts View */}
           {view === "profile" && (
             <div>
-              <h2 className="text-lg font-bold text-[#0d1424] mb-6">My Profile</h2>
+              <h2 className="text-lg font-bold text-[#0d1424] mb-6">Key Facts</h2>
 
-              {/* Key Facts */}
-              {timeline?.key_facts && timeline.key_facts.length > 0 && (
-                <div className="mb-6">
-                  <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">Key Facts</div>
-                  <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
-                    {timeline.key_facts.map((fact: { label: string; value: string }, i: number) => (
-                      <div key={fact.label} className={`flex justify-between px-5 py-3 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
-                        <span className="text-[13px] text-[#556480]">{fact.label}</span>
-                        <span className="text-[13px] font-semibold text-[#0d1424]">{fact.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {(() => {
+                const CAT_LABELS: Record<string, string> = {
+                  immigration: "Immigration",
+                  employment: "Employment",
+                  tax: "Tax",
+                  entity: "Entity",
+                };
+                const CAT_ORDER = ["immigration", "employment", "tax", "entity"];
+                const grouped: Record<string, { label: string; value: string }[]> = {};
 
-              {/* Extracted Information from Documents */}
-              {timeline?.events && (() => {
-                // Collect all extracted fields across all documents
-                const extractedByCategory: Record<string, { field: string; value: string; source: string }[]> = {
-                  "Immigration": [],
-                  "Employment": [],
-                  "Tax": [],
-                  "Entity": [],
-                };
-                const FIELD_LABELS: Record<string, string> = {
-                  student_name: "Name", sevis_number: "SEVIS Number", school_name: "School",
-                  degree_level: "Degree", major: "Major", employer_name: "Employer",
-                  employer_ein: "Employer EIN", job_title: "Job Title", start_date: "Start Date",
-                  end_date: "End Date", compensation: "Compensation", supervisor_name: "Supervisor",
-                  work_site_address: "Work Location", full_time: "Full-time",
-                  form_type: "Tax Form Filed", tax_year: "Tax Year", total_income: "Total Income",
-                  ein: "Entity EIN", entity_name: "Entity Name", filing_status: "Filing Status",
-                  employee_name: "Employee Name", work_location: "Work Location",
-                  manager_name: "Manager",
-                };
-                for (const event of timeline.events) {
-                  for (const doc of event.documents || []) {
-                    // We don't have extracted fields in timeline events directly,
-                    // but we can show document-level info
-                  }
+                for (const fact of (timeline?.key_facts || []) as { label: string; value: string; category?: string }[]) {
+                  const cat = fact.category || "immigration";
+                  if (!grouped[cat]) grouped[cat] = [];
+                  grouped[cat].push(fact);
                 }
-                // Show what we know from answers
-                return (
-                  <div className="mb-6">
-                    <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">Documents on File</div>
-                    <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
-                      {documents.length > 0 ? documents.map((doc, i) => {
-                        const DOC_LABELS: Record<string, string> = {
-                          employment_letter: "Employment Letter", i983: "Form I-983", ead: "EAD Card",
-                          i20: "I-20", i797: "I-797", i94: "I-94", tax_return: "Tax Return",
-                          w2: "W-2", other: "Other",
-                        };
-                        return (
-                          <div key={doc.id} className={`flex justify-between px-5 py-3 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
-                            <div>
-                              <div className="text-[13px] font-medium text-[#0d1424]">{doc.filename}</div>
-                              <div className="text-[11px] text-[#7b8ba5]">{DOC_LABELS[doc.doc_type] || doc.doc_type}</div>
-                            </div>
-                            <div className="text-[11px] text-[#8e9ab5]">{doc.uploaded_at ? new Date(doc.uploaded_at).toLocaleDateString() : ""}</div>
+
+                return CAT_ORDER.map((cat) => {
+                  const facts = grouped[cat];
+                  if (!facts || facts.length === 0) return null;
+                  return (
+                    <div key={cat} className="mb-5">
+                      <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">{CAT_LABELS[cat] || cat}</div>
+                      <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
+                        {facts.map((fact, i) => (
+                          <div key={`${fact.label}-${i}`} className={`flex justify-between px-5 py-3.5 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
+                            <span className="text-[13px] text-[#556480]">{fact.label}</span>
+                            <span className="text-[13px] font-semibold text-[#0d1424] text-right max-w-[60%] truncate">{fact.value}</span>
                           </div>
-                        );
-                      }) : (
-                        <div className="px-5 py-4 text-[13px] text-[#8e9ab5]">No documents uploaded yet</div>
-                      )}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                );
+                  );
+                });
               })()}
 
-              {/* Summary stats */}
-              <div className="mb-6">
-                <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">Summary</div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-4">
-                    <div className="text-2xl font-bold text-[#0d1424]">{documents.length}</div>
-                    <div className="text-[11px] text-[#7b8ba5]">Documents on file</div>
-                  </div>
-                  <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-4">
-                    <div className="text-2xl font-bold" style={{color: stats?.risks ? "#f59e0b" : "#10b981"}}>{stats?.risks || 0}</div>
-                    <div className="text-[11px] text-[#7b8ba5]">Items to review</div>
-                  </div>
-                  <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-4">
-                    <div className="text-2xl font-bold text-[#10b981]">{stats?.verified || 0}</div>
-                    <div className="text-[11px] text-[#7b8ba5]">Verified fields</div>
-                  </div>
-                  <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-4">
-                    <div className="text-2xl font-bold text-[#5b8dee]">{stats?.next_deadline_days != null ? `${stats.next_deadline_days}d` : "\u2014"}</div>
-                    <div className="text-[11px] text-[#7b8ba5]">Next deadline</div>
-                  </div>
+              {(!timeline?.key_facts || timeline.key_facts.length === 0) && (
+                <div className="text-center py-12">
+                  <div className="text-[#8e9ab5] text-sm mb-3">No facts extracted yet</div>
+                  <div className="text-[12px] text-[#7b8ba5]">Run a check or upload documents to populate your key facts</div>
                 </div>
-              </div>
-
-              <button onClick={() => setShowUploadPanel(true)} className="w-full py-3 rounded-xl bg-white/50 backdrop-blur border border-blue-100/30 text-[13px] font-medium text-[#5b8dee] hover:bg-white/70 transition-all">
-                + Upload more documents to improve your profile
-              </button>
+              )}
             </div>
           )}
 

@@ -193,11 +193,55 @@ def build_timeline(user_id: str, db: Session) -> dict:
                 key_facts.append({"label": "Petition status", "value": a["petition_status"].capitalize()})
         elif check.track == "entity":
             if a.get("entity_type"):
-                key_facts.append({"label": "Entity type", "value": ENTITY_LABELS.get(a["entity_type"], a["entity_type"])})
+                key_facts.append({"label": "Entity type", "value": ENTITY_LABELS.get(a["entity_type"], a["entity_type"]), "category": "entity"})
             if a.get("owner_residency"):
-                key_facts.append({"label": "Owner residency", "value": RESIDENCY_LABELS.get(a["owner_residency"], a["owner_residency"])})
+                key_facts.append({"label": "Owner residency", "value": RESIDENCY_LABELS.get(a["owner_residency"], a["owner_residency"]), "category": "entity"})
             if a.get("state_of_formation"):
-                key_facts.append({"label": "State", "value": a["state_of_formation"]})
+                key_facts.append({"label": "State of formation", "value": a["state_of_formation"], "category": "entity"})
+            if a.get("formation_age"):
+                age_labels = {"this_year": "This year", "1_2_years": "1-2 years ago", "3_plus_years": "3+ years ago"}
+                key_facts.append({"label": "Entity age", "value": age_labels.get(a["formation_age"], a["formation_age"]), "category": "entity"})
+
+        # Extract facts from documents
+        EXTRACT_FIELDS = {
+            "i983": {
+                "student_name": ("Full name", "immigration"),
+                "sevis_number": ("SEVIS number", "immigration"),
+                "school_name": ("School", "immigration"),
+                "major": ("Major / field of study", "immigration"),
+                "employer_name": ("Employer", "employment"),
+                "employer_ein": ("Employer EIN", "employment"),
+                "job_title": ("Job title", "employment"),
+                "start_date": ("Employment start", "employment"),
+                "end_date": ("Employment end", "employment"),
+                "compensation": ("Compensation", "employment"),
+                "work_site_address": ("Work location", "employment"),
+                "supervisor_name": ("Supervisor", "employment"),
+            },
+            "employment_letter": {
+                "employee_name": ("Full name", "immigration"),
+                "employer_name": ("Employer", "employment"),
+                "job_title": ("Job title", "employment"),
+                "compensation": ("Compensation", "employment"),
+                "work_location": ("Work location", "employment"),
+                "manager_name": ("Manager", "employment"),
+                "start_date": ("Start date", "employment"),
+            },
+            "tax_return": {
+                "form_type": ("Tax form filed", "tax"),
+                "tax_year": ("Tax year", "tax"),
+                "total_income": ("Total income", "tax"),
+                "entity_name": ("Entity name", "entity"),
+                "ein": ("Entity EIN", "entity"),
+                "filing_status": ("Filing status", "tax"),
+            },
+        }
+        for doc in check.documents:
+            field_map = EXTRACT_FIELDS.get(doc.doc_type, {})
+            for field in doc.extracted_fields:
+                if field.field_name in field_map and field.field_value and field.field_value != "None":
+                    label, cat = field_map[field.field_name]
+                    key_facts.append({"label": label, "value": field.field_value, "category": cat})
 
     # Deduplicate by label (keep first)
     seen = set()
