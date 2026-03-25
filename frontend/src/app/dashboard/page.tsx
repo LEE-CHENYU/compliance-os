@@ -651,35 +651,38 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Floating Chat Panel */}
-      <div className="fixed bottom-4 right-4 z-40" style={{maxWidth: 380}}>
-        {chatOpen ? (
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_16px_64px_rgba(91,141,238,0.15)] overflow-hidden" style={{width: 360}}>
+      {/* Right-side Chat Panel */}
+      <div className={`fixed top-14 right-0 bottom-0 z-30 transition-all duration-300 ${chatOpen ? "w-80 md:w-96" : "w-0"}`}>
+        {chatOpen && (
+          <div className="h-full bg-white/40 backdrop-blur-xl border-l border-white/50 flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-blue-50/40">
-              <div className="text-[13px] font-semibold text-[#0d1424]">Guardian</div>
-              <button onClick={() => setChatOpen(false)} className="text-[#7b8ba5] hover:text-[#0d1424] text-lg">&times;</button>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-blue-50/40 flex-shrink-0">
+              <div>
+                <div className="text-[14px] font-semibold text-[#0d1424]">Guardian Assistant</div>
+                <div className="text-[11px] text-[#7b8ba5]">Helping you find more risks</div>
+              </div>
+              <button onClick={() => setChatOpen(false)} className="text-[#7b8ba5] hover:text-[#0d1424] text-lg w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-all">&times;</button>
             </div>
 
             {/* Messages */}
-            <div className="p-4 space-y-3 max-h-80 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
               {chatMessages.length === 0 && (
-                <div className="text-[13px] text-[#556480] leading-relaxed">
+                <div className="text-[13px] text-[#556480] leading-relaxed bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
                   We&apos;re checking if there&apos;s anything else we should look into for you...
                 </div>
               )}
               {chatMessages.map((msg, i) => (
                 <div key={i} className={msg.role === "user" ? "flex justify-end" : ""}>
                   {msg.role === "assistant" ? (
-                    <div>
+                    <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
                       <div className="text-[13px] text-[#0d1424] leading-relaxed">{msg.text}</div>
                       {msg.chips && (
-                        <div className="flex flex-wrap gap-1.5 mt-2">
+                        <div className="flex flex-wrap gap-1.5 mt-3">
                           {msg.chips.map((chip) => (
                             <button
                               key={chip}
                               onClick={() => handleChatAnswer(chip)}
-                              className="px-3 py-1.5 rounded-xl text-[12px] font-medium bg-white/70 border border-blue-100/30 text-[#3a5a8c] hover:bg-white/90 hover:border-blue-200/40 transition-all"
+                              className="px-3.5 py-2 rounded-xl text-[12px] font-medium bg-white/70 border border-blue-100/30 text-[#3a5a8c] hover:bg-white/90 hover:border-blue-200/40 transition-all"
                             >
                               {chip}
                             </button>
@@ -688,7 +691,7 @@ export default function DashboardPage() {
                       )}
                     </div>
                   ) : (
-                    <div className="inline-block px-3 py-1.5 rounded-xl text-[12px] font-medium bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white">
+                    <div className="inline-block px-4 py-2 rounded-2xl text-[12px] font-medium bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white max-w-[80%]">
                       {msg.text}
                     </div>
                   )}
@@ -696,20 +699,28 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
-        ) : (
-          <button
-            onClick={() => setChatOpen(true)}
-            className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] flex items-center justify-center transition-all hover:-translate-y-0.5"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            {chatMessages.length > 0 && chatMessages[chatMessages.length - 1].role === "assistant" && chatMessages[chatMessages.length - 1].chips && (
-              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white" />
-            )}
-          </button>
         )}
       </div>
+
+      {/* Chat toggle button — fixed bottom-right when panel is closed */}
+      {!chatOpen && (
+        <button
+          onClick={() => setChatOpen(true)}
+          className="fixed bottom-5 right-5 z-40 flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(91,141,238,0.1)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.15)] transition-all hover:-translate-y-0.5 group"
+        >
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] flex items-center justify-center flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <span className="text-[12px] font-medium text-[#3a5a8c] hidden md:inline">
+            {chatMessages.some((m) => m.role === "assistant" && m.chips) ? "We have a question for you" : "Guardian Assistant"}
+          </span>
+          {chatMessages.some((m) => m.role === "assistant" && m.chips) && (
+            <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
+          )}
+        </button>
+      )}
     </div>
   );
 }
