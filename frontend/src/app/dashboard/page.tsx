@@ -56,6 +56,9 @@ export default function DashboardPage() {
   const [showUploadPanel, setShowUploadPanel] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [view, setView] = useState<"timeline" | "documents" | "profile" | "deadlines">("timeline");
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<{ role: "assistant" | "user"; text: string; chips?: string[] }[]>([]);
+  const [chatAnswered, setChatAnswered] = useState<Set<string>>(new Set());
   const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string }[]>([]);
 
   useEffect(() => {
@@ -93,6 +96,94 @@ export default function DashboardPage() {
     setTimeline(tl);
     setStats(st);
     setDocuments(docs);
+  }
+
+  // Generate proactive questions based on what we know and what's missing
+  useEffect(() => {
+    if (!timeline?.key_facts) return;
+    const facts = new Set((timeline.key_facts as { label: string }[]).map((f) => f.label));
+    const questions: { id: string; text: string; chips: string[] }[] = [];
+
+    // Cross-track: if they did entity check but we don't know immigration status
+    if (facts.has("Entity type") && !facts.has("Immigration stage")) {
+      questions.push({
+        id: "immigration_stage",
+        text: "Since you have a US business entity, are you also on an immigration visa? This helps us check for cross-domain risks like Schedule C restrictions.",
+        chips: ["Yes, I'm on a visa", "US citizen / PR", "Outside the US"],
+      });
+    }
+
+    // If they did immigration check but we don't know about entity
+    if (facts.has("Immigration stage") && !facts.has("Entity type")) {
+      questions.push({
+        id: "has_entity",
+        text: "Do you own or have ownership in any US business entity (LLC, C-Corp, etc.)? Foreign-owned entities have specific filing requirements.",
+        chips: ["Yes", "No", "Not sure"],
+      });
+    }
+
+    // Missing employment details
+    if (!facts.has("Employer") && !facts.has("Job title")) {
+      questions.push({
+        id: "employer_info",
+        text: "Who is your current employer? This helps us verify your employment authorization and check for any document mismatches.",
+        chips: ["I'll upload my employment letter", "Not currently employed"],
+      });
+    }
+
+    // Tax residency unclear
+    if (facts.has("Years in US") && !facts.has("Tax form filed")) {
+      questions.push({
+        id: "tax_filing",
+        text: "Have you filed a US tax return for the most recent tax year? Knowing which form you filed helps us check for common errors.",
+        chips: ["Yes, 1040", "Yes, 1040-NR", "Haven't filed yet", "Not sure"],
+      });
+    }
+
+    // Foreign accounts
+    if (!chatAnswered.has("foreign_accounts")) {
+      questions.push({
+        id: "foreign_accounts",
+        text: "Do you have any bank accounts, investments, or insurance policies outside the US? This determines your FBAR and FATCA obligations.",
+        chips: ["Yes", "No"],
+      });
+    }
+
+    // Filter out already answered
+    const unanswered = questions.filter((q) => !chatAnswered.has(q.id));
+    if (unanswered.length > 0 && chatMessages.length === 0) {
+      setChatMessages([{
+        role: "assistant",
+        text: unanswered[0].text,
+        chips: unanswered[0].chips,
+      }]);
+    }
+  }, [timeline, chatAnswered, chatMessages.length]);
+
+  function handleChatAnswer(answer: string) {
+    setChatMessages((prev) => [
+      ...prev,
+      { role: "user", text: answer },
+    ]);
+    // Mark the current question as answered
+    const currentQ = chatMessages.find((m) => m.role === "assistant" && m.chips);
+    if (currentQ) {
+      const qId = currentQ.text.includes("immigration visa") ? "immigration_stage"
+        : currentQ.text.includes("business entity") ? "has_entity"
+        : currentQ.text.includes("employer") ? "employer_info"
+        : currentQ.text.includes("tax return") ? "tax_filing"
+        : currentQ.text.includes("bank accounts") ? "foreign_accounts"
+        : "unknown";
+      setChatAnswered((prev) => new Set([...prev, qId]));
+    }
+    // TODO: store answer to backend and trigger re-evaluation
+    // For now, queue next question after a brief delay
+    setTimeout(() => {
+      setChatMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: "Got it, thanks! That helps us check more accurately.", chips: undefined },
+      ]);
+    }, 500);
   }
 
   const user = getUser();
@@ -193,7 +284,7 @@ export default function DashboardPage() {
             {[
               { num: stats?.documents || 0, label: "Documents", color: "#0d1424" },
               { num: stats?.risks || 0, label: "Needs attention", color: "#f59e0b" },
-              { num: stats?.verified || 0, label: "Verified fields", color: "#10b981" },
+              { num: stats?.verified || 0, label: "Fields matched", color: "#10b981" },
               { num: stats?.next_deadline_days != null ? `${stats.next_deadline_days}d` : "—", label: "Next deadline", color: "#5b8dee" },
             ].map((s) => (
               <div key={s.label} className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-4 md:p-5 shadow-[0_2px_12px_rgba(91,141,238,0.04)]">
@@ -558,6 +649,66 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Floating Chat Panel */}
+      <div className="fixed bottom-4 right-4 z-40" style={{maxWidth: 380}}>
+        {chatOpen ? (
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_16px_64px_rgba(91,141,238,0.15)] overflow-hidden" style={{width: 360}}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-blue-50/40">
+              <div className="text-[13px] font-semibold text-[#0d1424]">Guardian</div>
+              <button onClick={() => setChatOpen(false)} className="text-[#7b8ba5] hover:text-[#0d1424] text-lg">&times;</button>
+            </div>
+
+            {/* Messages */}
+            <div className="p-4 space-y-3 max-h-80 overflow-y-auto">
+              {chatMessages.length === 0 && (
+                <div className="text-[13px] text-[#556480] leading-relaxed">
+                  We&apos;re checking if there&apos;s anything else we should look into for you...
+                </div>
+              )}
+              {chatMessages.map((msg, i) => (
+                <div key={i} className={msg.role === "user" ? "flex justify-end" : ""}>
+                  {msg.role === "assistant" ? (
+                    <div>
+                      <div className="text-[13px] text-[#0d1424] leading-relaxed">{msg.text}</div>
+                      {msg.chips && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {msg.chips.map((chip) => (
+                            <button
+                              key={chip}
+                              onClick={() => handleChatAnswer(chip)}
+                              className="px-3 py-1.5 rounded-xl text-[12px] font-medium bg-white/70 border border-blue-100/30 text-[#3a5a8c] hover:bg-white/90 hover:border-blue-200/40 transition-all"
+                            >
+                              {chip}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="inline-block px-3 py-1.5 rounded-xl text-[12px] font-medium bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white">
+                      {msg.text}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setChatOpen(true)}
+            className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] flex items-center justify-center transition-all hover:-translate-y-0.5"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            {chatMessages.length > 0 && chatMessages[chatMessages.length - 1].role === "assistant" && chatMessages[chatMessages.length - 1].chips && (
+              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white" />
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
