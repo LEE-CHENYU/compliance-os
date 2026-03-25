@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, getUser, logout } from "@/lib/auth";
 
-const FORMS = ["I-20","I-94","I-983","I-797","EAD (I-766)","I-129","AR-11","DS-160","1040-NR","Form 8843","Form 3520","Form 8938","Schedule C","Schedule NEC","W-8BEN","Form 5472","Pro forma 1120","1120-S","EIN Letter","Articles of Org"];
-const DEADLINES = ["FBAR (FinCEN 114)","DE Annual Report","60-day Grace Period","90-day Unemployment","10-day Address Report"];
-const PHRASES = ["Substantial Presence Test","Effectively Connected Income","Disregarded Entity","Duration of Status","Material Change","Unauthorized Employment","Cap-Gap Extension","Corporate Veil","SEVIS Termination","Treaty Rate"];
+const FORMS = ["I-20","I-94","I-983","I-797","EAD (I-766)","I-765","I-129","I-485","I-131","AR-11","DS-160","1040-NR","Form 8843","Form 3520","Form 8938","Schedule C","Schedule NEC","W-8BEN","Form 5472","Pro forma 1120","1120-S","EIN Letter","Articles of Org"];
+const DEADLINES = ["FBAR (FinCEN 114)","DE Annual Report","60-day Grace Period","90-day Unemployment","10-day Address Report","Advance Parole Validity"];
+const PHRASES = ["Substantial Presence Test","Effectively Connected Income","Disregarded Entity","Duration of Status","Material Change","Unauthorized Employment","Cap-Gap Extension","Corporate Veil","SEVIS Termination","Treaty Rate","Adjustment of Status","Concurrent Filing"];
 const SLAB_LABELS = ["I-983","Form 5472","1040-NR","FBAR","EAD","AR-11","I-797"];
 
 export default function Home() {

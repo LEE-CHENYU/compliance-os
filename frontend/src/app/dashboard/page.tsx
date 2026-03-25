@@ -151,7 +151,7 @@ export default function DashboardPage() {
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Categories</div>
             {["immigration", "tax", "entity"].map((cat) => {
               const DOC_CATS: Record<string, string> = {
-                i983: "immigration", employment_letter: "immigration", ead: "immigration", i20: "immigration", i797: "immigration", i94: "immigration",
+                i983: "immigration", employment_letter: "immigration", ead: "immigration", i20: "immigration", i797: "immigration", i94: "immigration", i485: "immigration", i765: "immigration", i131: "immigration",
                 tax_return: "tax", w2: "tax",
               };
               const count = documents.filter((d) => (DOC_CATS[d.doc_type] || "entity") === cat).length;
@@ -225,7 +225,7 @@ export default function DashboardPage() {
                 }
                 const DOC_LABELS: Record<string, string> = {
                   employment_letter: "Employment Letter", i983: "Form I-983", ead: "EAD Card", i20: "I-20",
-                  i797: "I-797", i94: "I-94", tax_return: "Tax Return", w2: "W-2", other: "Other",
+                  i797: "I-797", i94: "I-94", i485: "I-485", i765: "I-765", i131: "I-131 (Advance Parole)", tax_return: "Tax Return", w2: "W-2", other: "Other",
                 };
                 return Object.entries(grouped).map(([category, docs]) => (
                   <div key={category} className="mb-6">
@@ -475,6 +475,9 @@ export default function DashboardPage() {
                     { type: "ead", label: "EAD Card" },
                     { type: "i20", label: "I-20" },
                     { type: "i797", label: "I-797" },
+                    { type: "i485", label: "I-485" },
+                    { type: "i765", label: "I-765" },
+                    { type: "i131", label: "I-131 (Advance Parole)" },
                     { type: "tax_return", label: "Tax Return" },
                     { type: "w2", label: "W-2" },
                   ].map((doc) => (
