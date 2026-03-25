@@ -222,11 +222,11 @@ export default function Home() {
           <p style={{fontSize:17,color:'#556480',lineHeight:1.65,marginBottom:36}}>
             We cross-check your immigration and tax filings to find mismatches, missing forms, and deadline risks you don&apos;t know about yet.
           </p>
-          <div style={{display:'flex',gap:12,marginBottom:48}}>
-            <button onClick={() => router.push("/check")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)'}}>
+          <div style={{display:'flex',gap:12,marginBottom:48,alignItems:'center',flexWrap:'wrap'}}>
+            <button onClick={() => router.push("/check")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',whiteSpace:'nowrap'}}>
               Find my risks
             </button>
-            <a href="#cloud" style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',textDecoration:'none',backdropFilter:'blur(12px)'}}>
+            <a href="#cloud" style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',textDecoration:'none',backdropFilter:'blur(12px)',whiteSpace:'nowrap',display:'inline-block'}}>
               See what we check
             </a>
           </div>
