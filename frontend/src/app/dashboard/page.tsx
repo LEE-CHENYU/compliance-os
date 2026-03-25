@@ -282,8 +282,12 @@ export default function DashboardPage() {
             className="hidden"
             onChange={async (e) => {
               const f = e.target.files?.[0];
-              if (f && uploadDocType) {
-                await handleUpload(f, uploadDocType);
+              if (f) {
+                setUploading(true);
+                setShowUploadPanel(false);
+                await handleUpload(f, uploadDocType || "other");
+                setUploading(false);
+                setUploadDocType("");
               }
             }}
           />
@@ -296,31 +300,46 @@ export default function DashboardPage() {
                   <h2 className="text-lg font-bold text-[#0d1424]">Upload a document</h2>
                   <button onClick={() => setShowUploadPanel(false)} className="text-[#7b8ba5] hover:text-[#0d1424] text-xl">&times;</button>
                 </div>
-                <p className="text-[13px] text-[#556480] mb-5">Select the document type, then upload. We&apos;ll extract fields and re-check your case automatically.</p>
 
-                <div className="flex flex-col gap-2 mb-5">
+                {/* Drop zone — upload first, classify optional */}
+                <div
+                  onClick={() => { if (!uploading) fileRef.current?.click(); }}
+                  className={`flex flex-col items-center px-6 py-10 rounded-xl border-2 border-dashed transition-all cursor-pointer mb-5 ${
+                    uploading ? "border-blue-300 bg-blue-50/30" : "border-blue-200/40 bg-white/50 hover:border-blue-300/60 hover:bg-white/70"
+                  }`}
+                >
+                  {uploading ? (
+                    <div className="text-sm text-[#5b8dee] font-medium">Uploading and analyzing...</div>
+                  ) : (
+                    <>
+                      <div className="text-[15px] font-semibold text-[#0d1424] mb-1">Drop any document here</div>
+                      <div className="text-xs text-[#8e9ab5]">PDF, JPG, or PNG — we&apos;ll figure out what it is</div>
+                    </>
+                  )}
+                </div>
+
+                {/* Optional: help us classify */}
+                <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">Optional — helps improve accuracy</div>
+                <div className="flex flex-wrap gap-1.5 mb-5">
                   {[
-                    { type: "employment_letter", label: "Employment Letter", desc: "Offer letter or employment verification" },
-                    { type: "i983", label: "Form I-983", desc: "STEM OPT Training Plan" },
-                    { type: "ead", label: "EAD Card", desc: "Employment Authorization Document" },
-                    { type: "i20", label: "I-20", desc: "Certificate of Eligibility" },
-                    { type: "i797", label: "I-797", desc: "USCIS Approval or Receipt Notice" },
-                    { type: "tax_return", label: "Tax Return", desc: "1040, 1040-NR, 1120, or other" },
-                    { type: "w2", label: "W-2", desc: "Wage and Tax Statement" },
-                    { type: "other", label: "Other Document", desc: "Any compliance-related document" },
+                    { type: "employment_letter", label: "Employment Letter" },
+                    { type: "i983", label: "I-983" },
+                    { type: "ead", label: "EAD Card" },
+                    { type: "i20", label: "I-20" },
+                    { type: "i797", label: "I-797" },
+                    { type: "tax_return", label: "Tax Return" },
+                    { type: "w2", label: "W-2" },
                   ].map((doc) => (
                     <button
                       key={doc.type}
-                      onClick={() => { setUploadDocType(doc.type); setShowUploadPanel(false); fileRef.current?.click(); }}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/60 border border-white/70 hover:bg-white/90 hover:border-blue-200/30 transition-all text-left"
+                      onClick={() => setUploadDocType(uploadDocType === doc.type ? "" : doc.type)}
+                      className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                        uploadDocType === doc.type
+                          ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-sm"
+                          : "bg-white/60 border border-blue-100/30 text-[#3a5a8c] hover:bg-white/90"
+                      }`}
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[#5b8dee]/6 flex items-center justify-center text-xs font-bold text-[#5b8dee]">
-                        {doc.label.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="text-[13px] font-semibold text-[#0d1424]">{doc.label}</div>
-                        <div className="text-[11px] text-[#7b8ba5]">{doc.desc}</div>
-                      </div>
+                      {doc.label}
                     </button>
                   ))}
                 </div>
