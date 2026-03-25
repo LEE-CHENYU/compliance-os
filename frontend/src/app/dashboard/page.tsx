@@ -103,22 +103,22 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-8 py-3 flex items-center justify-between bg-[#dce4f0]/60 backdrop-blur-2xl border-b border-blue-200/20">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3 flex items-center justify-between bg-[#dce4f0]/60 backdrop-blur-2xl border-b border-blue-200/20">
         <div className="text-lg font-extrabold text-[#0d1424]">Guardian</div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-[#556480]">{user?.email}</span>
-          <button onClick={() => router.push("/check/stem-opt")} className="px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-sm font-semibold">
+        <div className="flex items-center gap-2 md:gap-4">
+          <span className="text-sm text-[#556480] hidden md:inline">{user?.email}</span>
+          <button onClick={() => router.push("/check")} className="px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs md:text-sm font-semibold">
             + New check
           </button>
-          <button onClick={() => { logout(); router.push("/"); }} className="text-sm text-[#7b8ba5]">
+          <button onClick={() => { logout(); router.push("/"); }} className="text-xs md:text-sm text-[#7b8ba5]">
             Sign out
           </button>
         </div>
       </nav>
 
-      <div className="flex pt-14">
-        {/* Sidebar */}
-        <div className="w-64 flex-shrink-0 p-5 bg-white/30 backdrop-blur-xl border-r border-white/50 min-h-screen">
+      <div className="flex flex-col md:flex-row pt-14">
+        {/* Sidebar — hidden on mobile, shown on md+ */}
+        <div className="hidden md:block w-64 flex-shrink-0 p-5 bg-white/30 backdrop-blur-xl border-r border-white/50 min-h-screen">
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Views</div>
             <div className="text-sm font-semibold text-[#3d6bc5] px-3 py-2 rounded-lg bg-[#5b8dee]/8 mb-1">Timeline</div>
@@ -155,16 +155,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Main */}
-        <div className="flex-1 p-8 max-w-[900px]">
+        <div className="flex-1 p-4 md:p-8 max-w-[900px]">
           {/* Stats */}
-          <div className="flex gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
             {[
               { num: stats?.documents || 0, label: "Documents", color: "#0d1424" },
               { num: stats?.risks || 0, label: "Needs attention", color: "#f59e0b" },
               { num: stats?.verified || 0, label: "Verified fields", color: "#10b981" },
               { num: stats?.next_deadline_days != null ? `${stats.next_deadline_days}d` : "—", label: "Next deadline", color: "#5b8dee" },
             ].map((s) => (
-              <div key={s.label} className="flex-1 bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-5 shadow-[0_2px_12px_rgba(91,141,238,0.04)]">
+              <div key={s.label} className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 p-4 md:p-5 shadow-[0_2px_12px_rgba(91,141,238,0.04)]">
                 <div className="text-3xl font-bold" style={{ color: s.color }}>{s.num}</div>
                 <div className="text-[11px] text-[#7b8ba5] mt-1">{s.label}</div>
               </div>
