@@ -27,8 +27,8 @@ function StemOptUpload() {
   const checkId = params.get("id") || "";
 
   const [slots, setSlots] = useState<UploadSlot[]>([
-    { docType: "i983", label: "Form I-983", sub: "The training plan you signed with your employer and DSO", file: null, uploading: false, uploaded: false },
-    { docType: "employment_letter", label: "Employment Letter", sub: "The offer letter or employment verification from your employer", file: null, uploading: false, uploaded: false },
+    { docType: "i983", label: "Form I-983", sub: "Training Plan for STEM OPT — signed by you, your employer, and your DSO", file: null, uploading: false, uploaded: false },
+    { docType: "employment_letter", label: "Employment Letter", sub: "Offer letter, verification letter, or employment contract", file: null, uploading: false, uploaded: false },
   ]);
 
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);

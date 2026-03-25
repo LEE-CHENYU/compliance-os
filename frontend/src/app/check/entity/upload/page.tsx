@@ -72,9 +72,9 @@ function EntityUpload() {
           ) : (
             <>
               <div className="text-[15px] font-semibold text-[#1a2036] mb-2">Most Recent Tax Return</div>
-              <div className="text-xs text-[#8e9ab5] leading-relaxed">Your business or personal tax return — whatever you filed most recently for this entity.</div>
+              <div className="text-xs text-[#8e9ab5] leading-relaxed">1120, 1065, 5472 + pro forma 1120, or 1040 with Schedule C</div>
               <div className="text-xs text-[#b0bdd0] mt-3">Drop PDF here or click to browse</div>
-              <div className="text-[10px] text-[#b0bdd0] mt-2">Not sure which file? Look for the document your CPA sent you, or download it from your tax software.</div>
+              <div className="text-[10px] text-[#b0bdd0] mt-2">Don&apos;t have these? Upload whatever tax-related document you have — we&apos;ll work with it.</div>
             </>
           )}
         </div>
