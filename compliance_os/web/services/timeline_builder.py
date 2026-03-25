@@ -151,12 +151,69 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     event.setdefault("risks", []).append(finding)
                     break
 
+    # Build key facts from check answers
+    STAGE_LABELS = {
+        "pre_completion": "CPT (Pre-completion)",
+        "opt": "Post-completion OPT",
+        "stem_opt": "STEM OPT Extension",
+        "h1b": "H-1B",
+        "i140": "I-140 / Green Card",
+        "not_sure": "Not sure",
+    }
+    ENTITY_LABELS = {
+        "smllc": "Single-member LLC",
+        "multi_llc": "Multi-member LLC",
+        "c_corp": "C-Corporation",
+        "s_corp": "S-Corporation",
+    }
+    RESIDENCY_LABELS = {
+        "us_citizen_or_pr": "US Citizen / PR",
+        "on_visa": "On a visa",
+        "outside_us": "Outside US",
+    }
+    EMPLOYMENT_LABELS = {
+        "employed": "Employed",
+        "between_jobs": "Between jobs",
+        "not_employed": "Not employed",
+    }
+
+    key_facts: list[dict[str, str]] = []
+    for check in checks:
+        a = check.answers or {}
+        if check.track == "stem_opt":
+            if a.get("stage"):
+                key_facts.append({"label": "Immigration stage", "value": STAGE_LABELS.get(a["stage"], a["stage"])})
+            if a.get("years_in_us"):
+                key_facts.append({"label": "Years in US", "value": f"{a['years_in_us']} years"})
+            if a.get("employment_status"):
+                key_facts.append({"label": "Employment", "value": EMPLOYMENT_LABELS.get(a["employment_status"], a["employment_status"])})
+            if a.get("employer_changed") == "yes":
+                key_facts.append({"label": "Changed employers", "value": "Yes"})
+            if a.get("petition_status"):
+                key_facts.append({"label": "Petition status", "value": a["petition_status"].capitalize()})
+        elif check.track == "entity":
+            if a.get("entity_type"):
+                key_facts.append({"label": "Entity type", "value": ENTITY_LABELS.get(a["entity_type"], a["entity_type"])})
+            if a.get("owner_residency"):
+                key_facts.append({"label": "Owner residency", "value": RESIDENCY_LABELS.get(a["owner_residency"], a["owner_residency"])})
+            if a.get("state_of_formation"):
+                key_facts.append({"label": "State", "value": a["state_of_formation"]})
+
+    # Deduplicate by label (keep first)
+    seen = set()
+    unique_facts = []
+    for f in key_facts:
+        if f["label"] not in seen:
+            seen.add(f["label"])
+            unique_facts.append(f)
+
     return {
         "events": events,
         "documents": all_docs,
         "findings": all_findings,
         "advisories": all_advisories,
         "upload_prompts": upload_prompts,
+        "key_facts": unique_facts,
     }
 
 

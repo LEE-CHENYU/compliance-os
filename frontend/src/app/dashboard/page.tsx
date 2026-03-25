@@ -32,6 +32,7 @@ interface TimelineData {
   findings: unknown[];
   advisories: { id: string; title: string; action: string; consequence: string }[];
   upload_prompts: UploadPrompt[];
+  key_facts: { label: string; value: string }[];
 }
 
 const API = "http://localhost:8000/api/dashboard";
@@ -112,7 +113,14 @@ export default function DashboardPage() {
     <div className="min-h-screen">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3 flex items-center justify-between bg-[#dce4f0]/60 backdrop-blur-2xl border-b border-blue-200/20">
-        <div className="text-lg font-extrabold text-[#0d1424]">Guardian</div>
+        <div className="text-lg font-extrabold text-[#0d1424] flex items-center gap-2.5">
+          <div className="flex flex-col gap-[3px]" style={{transform:'perspective(200px) rotateX(-8deg) rotateY(12deg)'}}>
+            <div className="h-[5px] w-6 rounded-sm" style={{background:'linear-gradient(135deg, #5b8dee, #4a74d4)',transform:'translateX(2px)'}} />
+            <div className="h-[5px] w-6 rounded-sm" style={{background:'linear-gradient(135deg, #5b8dee, #4a74d4)',transform:'translateX(-1px)'}} />
+            <div className="h-[5px] w-6 rounded-sm" style={{background:'linear-gradient(135deg, #5b8dee, #4a74d4)',transform:'translateX(3px)'}} />
+          </div>
+          Guardian
+        </div>
         <div className="flex items-center gap-2 md:gap-4">
           <span className="text-sm text-[#556480] hidden md:inline">{user?.email}</span>
           <button onClick={() => setShowUploadPanel(true)} className="px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs md:text-sm font-semibold">
@@ -127,6 +135,21 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row pt-14">
         {/* Sidebar — hidden on mobile, shown on md+ */}
         <div className="hidden md:block w-64 flex-shrink-0 p-5 bg-white/30 backdrop-blur-xl border-r border-white/50 min-h-screen">
+          {/* Key Facts */}
+          {timeline?.key_facts && timeline.key_facts.length > 0 && (
+            <div className="mb-7">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">My Profile</div>
+              <div className="bg-white/40 backdrop-blur rounded-xl border border-white/50 p-3">
+                {timeline.key_facts.map((fact: { label: string; value: string }, i: number) => (
+                  <div key={fact.label} className={`flex justify-between py-1.5 ${i > 0 ? "border-t border-blue-50/30" : ""}`}>
+                    <span className="text-[11px] text-[#7b8ba5]">{fact.label}</span>
+                    <span className="text-[11px] font-semibold text-[#0d1424]">{fact.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Views</div>
             <button onClick={() => setView("timeline")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "timeline" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Timeline</button>
