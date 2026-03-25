@@ -51,6 +51,8 @@ export default function DashboardPage() {
   const [uploadDocType, setUploadDocType] = useState("");
   const [showUploadPanel, setShowUploadPanel] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [view, setView] = useState<"timeline" | "documents">("timeline");
+  const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string }[]>([]);
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -60,9 +62,11 @@ export default function DashboardPage() {
     Promise.all([
       fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
-    ]).then(([tl, st]) => {
+      fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
+    ]).then(([tl, st, docs]) => {
       setTimeline(tl);
       setStats(st);
+      setDocuments(docs);
       setLoading(false);
     });
   }, [router]);
@@ -77,12 +81,14 @@ export default function DashboardPage() {
       body: form,
     });
     // Refresh
-    const [tl, st] = await Promise.all([
+    const [tl, st, docs] = await Promise.all([
       fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
+      fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
     ]);
     setTimeline(tl);
     setStats(st);
+    setDocuments(docs);
   }
 
   const user = getUser();
@@ -123,7 +129,11 @@ export default function DashboardPage() {
         <div className="hidden md:block w-64 flex-shrink-0 p-5 bg-white/30 backdrop-blur-xl border-r border-white/50 min-h-screen">
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Views</div>
-            <div className="text-sm font-semibold text-[#3d6bc5] px-3 py-2 rounded-lg bg-[#5b8dee]/8 mb-1">Timeline</div>
+            <button onClick={() => setView("timeline")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "timeline" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Timeline</button>
+            <button onClick={() => setView("documents")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "documents" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>
+              All Documents
+              <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#5b8dee]/8 text-[#5b8dee]">{documents.length}</span>
+            </button>
           </div>
 
           <div className="mb-7">
@@ -173,8 +183,72 @@ export default function DashboardPage() {
             ))}
           </div>
 
+          {/* Mobile view toggle */}
+          <div className="flex md:hidden gap-2 mb-4">
+            <button onClick={() => setView("timeline")} className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all ${view === "timeline" ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-white/50 text-[#556480]"}`}>Timeline</button>
+            <button onClick={() => setView("documents")} className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all ${view === "documents" ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-white/50 text-[#556480]"}`}>Documents ({documents.length})</button>
+          </div>
+
+          {/* Documents View */}
+          {view === "documents" && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-[#0d1424]">All Documents</h2>
+                <button onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">+ Upload</button>
+              </div>
+              {(() => {
+                const grouped: Record<string, typeof documents> = {};
+                for (const doc of documents) {
+                  const cat = doc.doc_type === "i983" || doc.doc_type === "employment_letter" || doc.doc_type === "ead" || doc.doc_type === "i20" || doc.doc_type === "i797" || doc.doc_type === "i94"
+                    ? "Immigration" : doc.doc_type === "tax_return" || doc.doc_type === "w2"
+                    ? "Tax" : "Other";
+                  if (!grouped[cat]) grouped[cat] = [];
+                  grouped[cat].push(doc);
+                }
+                const DOC_LABELS: Record<string, string> = {
+                  employment_letter: "Employment Letter", i983: "Form I-983", ead: "EAD Card", i20: "I-20",
+                  i797: "I-797", i94: "I-94", tax_return: "Tax Return", w2: "W-2", other: "Other",
+                };
+                return Object.entries(grouped).map(([category, docs]) => (
+                  <div key={category} className="mb-6">
+                    <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">{category}</div>
+                    <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
+                      {docs.map((doc, i) => (
+                        <div key={doc.id} className={`flex items-center gap-3 px-5 py-3.5 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
+                          <div className="w-8 h-8 rounded-lg bg-[#5b8dee]/6 flex items-center justify-center text-xs font-bold text-[#5b8dee]">
+                            {(DOC_LABELS[doc.doc_type] || doc.doc_type).charAt(0)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[13px] font-semibold text-[#0d1424] truncate">{doc.filename}</div>
+                            <div className="text-[11px] text-[#7b8ba5]">
+                              {DOC_LABELS[doc.doc_type] || doc.doc_type} · {doc.file_size ? `${Math.round(doc.file_size / 1024)}KB` : ""} · {doc.uploaded_at ? new Date(doc.uploaded_at).toLocaleDateString() : ""}
+                            </div>
+                          </div>
+                          <a
+                            href={`http://localhost:8000/api/checks/_/documents/${doc.id}/download`}
+                            className="text-[12px] font-medium text-[#5b8dee] hover:text-[#4a74d4] flex-shrink-0"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            View
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ));
+              })()}
+              {documents.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-[#8e9ab5] text-sm mb-3">No documents yet</div>
+                  <button onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">Upload your first document</button>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Timeline */}
-          <div className="relative pl-7">
+          {view === "timeline" && (<><div className="relative pl-7">
             <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#5b8dee] to-[#5b8dee]/10" />
 
             {timeline?.events.map((event, i) => (
@@ -273,6 +347,7 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
+          </>)}
 
           {/* Hidden file input for timeline upload prompts */}
           <input
