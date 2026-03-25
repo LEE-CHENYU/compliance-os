@@ -33,6 +33,7 @@ interface TimelineData {
   advisories: { id: string; title: string; action: string; consequence: string }[];
   upload_prompts: UploadPrompt[];
   key_facts: { label: string; value: string }[];
+  deadlines: { title: string; date: string; days: number; category: string; severity: string; action: string }[];
 }
 
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
@@ -54,7 +55,7 @@ export default function DashboardPage() {
   const [uploadDocType, setUploadDocType] = useState("");
   const [showUploadPanel, setShowUploadPanel] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [view, setView] = useState<"timeline" | "documents" | "profile">("timeline");
+  const [view, setView] = useState<"timeline" | "documents" | "profile" | "deadlines">("timeline");
   const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string }[]>([]);
 
   useEffect(() => {
@@ -144,6 +145,10 @@ export default function DashboardPage() {
               All Documents
               <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#5b8dee]/8 text-[#5b8dee]">{documents.length}</span>
             </button>
+            <button onClick={() => setView("deadlines")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "deadlines" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>
+              Deadlines
+              {timeline?.deadlines && <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-600">{timeline.deadlines.filter((d: {days: number}) => d.days <= 30).length || ""}</span>}
+            </button>
             <button onClick={() => setView("profile")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "profile" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Key Facts</button>
           </div>
 
@@ -199,10 +204,10 @@ export default function DashboardPage() {
           </div>
 
           {/* Mobile view toggle */}
-          <div className="flex md:hidden gap-2 mb-4">
-            {(["timeline", "documents", "profile"] as const).map((v) => (
-              <button key={v} onClick={() => setView(v)} className={`flex-1 py-2 rounded-xl text-xs font-medium transition-all capitalize ${view === v ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-white/50 text-[#556480]"}`}>
-                {v === "documents" ? `Docs (${documents.length})` : v === "profile" ? "Key Facts" : "Timeline"}
+          <div className="flex md:hidden gap-1.5 mb-4 overflow-x-auto">
+            {(["timeline", "deadlines", "documents", "profile"] as const).map((v) => (
+              <button key={v} onClick={() => setView(v)} className={`flex-shrink-0 px-3 py-2 rounded-xl text-xs font-medium transition-all ${view === v ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-white/50 text-[#556480]"}`}>
+                {v === "documents" ? `Docs` : v === "profile" ? "Facts" : v === "deadlines" ? "Deadlines" : "Timeline"}
               </button>
             ))}
           </div>
@@ -266,6 +271,57 @@ export default function DashboardPage() {
                 <div className="text-center py-12">
                   <div className="text-[#8e9ab5] text-sm mb-3">No documents yet</div>
                   <button onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">Upload your first document</button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Deadlines View */}
+          {view === "deadlines" && (
+            <div>
+              <h2 className="text-lg font-bold text-[#0d1424] mb-6">Upcoming Deadlines</h2>
+              {timeline?.deadlines && timeline.deadlines.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {(timeline.deadlines as { title: string; date: string; days: number; category: string; severity: string; action: string }[]).map((d, i) => {
+                    const isOverdue = d.days < 0;
+                    const isUrgent = d.days >= 0 && d.days <= 30;
+                    const severityColor = isOverdue
+                      ? { bg: "rgba(239,68,68,0.08)", text: "#dc2626", border: "rgba(239,68,68,0.12)" }
+                      : isUrgent
+                      ? { bg: "rgba(245,158,11,0.08)", text: "#d97706", border: "rgba(245,158,11,0.12)" }
+                      : { bg: "rgba(91,141,238,0.06)", text: "#5b8dee", border: "rgba(91,141,238,0.08)" };
+                    const catColor: Record<string, string> = { immigration: "#3d6bc5", tax: "#059669", entity: "#7c3aed" };
+
+                    return (
+                      <div key={`${d.title}-${i}`} className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 px-5 py-4 shadow-[0_2px_12px_rgba(91,141,238,0.04)]">
+                        <div className="flex items-start justify-between gap-3 mb-2">
+                          <div className="flex-1">
+                            <div className="text-[14px] font-semibold text-[#0d1424]">{d.title}</div>
+                            <div className="text-[12px] text-[#556480] mt-1">{d.action}</div>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <div className="text-[20px] font-bold" style={{ color: severityColor.text }}>
+                              {isOverdue ? `${Math.abs(d.days)}d overdue` : `${d.days}d`}
+                            </div>
+                            <div className="text-[11px] text-[#8e9ab5]">{d.date}</div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full capitalize" style={{ background: severityColor.bg, color: severityColor.text, border: `1px solid ${severityColor.border}` }}>
+                            {isOverdue ? "Overdue" : isUrgent ? "Due soon" : "Upcoming"}
+                          </span>
+                          <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full capitalize" style={{ background: "rgba(91,141,238,0.06)", color: catColor[d.category] || "#556480", border: "1px solid rgba(91,141,238,0.08)" }}>
+                            {d.category}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-[#8e9ab5] text-sm mb-3">No deadlines computed yet</div>
+                  <div className="text-[12px] text-[#7b8ba5]">Upload documents to surface your upcoming deadlines</div>
                 </div>
               )}
             </div>

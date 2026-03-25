@@ -251,6 +251,9 @@ def build_timeline(user_id: str, db: Session) -> dict:
             seen.add(f["label"])
             unique_facts.append(f)
 
+    # Build deadlines
+    deadlines = _build_deadlines(checks)
+
     return {
         "events": events,
         "documents": all_docs,
@@ -258,6 +261,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
         "advisories": all_advisories,
         "upload_prompts": upload_prompts,
         "key_facts": unique_facts,
+        "deadlines": deadlines,
     }
 
 
@@ -300,8 +304,152 @@ def build_stats(user_id: str, db: Session) -> dict:
 
 
 def _doc_category(doc_type: str) -> str:
-    if doc_type in ("i983", "employment_letter", "ead", "i94", "i797"):
+    if doc_type in ("i983", "employment_letter", "ead", "i94", "i797", "i485", "i765", "i131"):
         return "immigration"
-    if doc_type in ("tax_return",):
+    if doc_type in ("tax_return", "w2"):
         return "tax"
     return "entity"
+
+
+def _build_deadlines(checks: list) -> list[dict]:
+    """Build upcoming deadlines from check answers and extracted dates."""
+    from dateutil.relativedelta import relativedelta
+
+    today = date.today()
+    deadlines: list[dict] = []
+
+    for check in checks:
+        a = check.answers or {}
+        stage = a.get("stage", "")
+
+        # --- Deadlines from extracted document dates ---
+        for doc in check.documents:
+            fields = {f.field_name: f.field_value for f in doc.extracted_fields}
+
+            if doc.doc_type == "i983":
+                # I-983 12-month evaluation
+                start = fields.get("start_date")
+                if start:
+                    try:
+                        start_dt = datetime.strptime(start, "%Y-%m-%d").date()
+                        eval_due = start_dt + relativedelta(months=12)
+                        days = (eval_due - today).days
+                        deadlines.append({
+                            "title": "I-983 12-month evaluation due",
+                            "date": eval_due.isoformat(),
+                            "days": days,
+                            "category": "immigration",
+                            "severity": "critical" if days < 0 else "warning" if days < 30 else "info",
+                            "action": "Complete self-evaluation with employer signature within 10 days of anniversary",
+                        })
+                    except ValueError:
+                        pass
+
+                # STEM OPT / OPT end date
+                end = fields.get("end_date")
+                if end:
+                    try:
+                        end_dt = datetime.strptime(end, "%Y-%m-%d").date()
+                        days = (end_dt - today).days
+                        deadlines.append({
+                            "title": "OPT/STEM authorization ends",
+                            "date": end_dt.isoformat(),
+                            "days": days,
+                            "category": "immigration",
+                            "severity": "critical" if days < 0 else "warning" if days < 60 else "info",
+                            "action": "Ensure you have a plan: STEM extension, H-1B, or departure within 60-day grace period",
+                        })
+
+                        # Grace period
+                        grace_end = end_dt + relativedelta(days=60)
+                        deadlines.append({
+                            "title": "60-day grace period ends",
+                            "date": grace_end.isoformat(),
+                            "days": (grace_end - today).days,
+                            "category": "immigration",
+                            "severity": "critical" if (grace_end - today).days < 0 else "warning" if (grace_end - today).days < 14 else "info",
+                            "action": "Must depart the US, change status, or have a new petition filed by this date",
+                        })
+                    except ValueError:
+                        pass
+
+        # --- Static annual deadlines ---
+        current_year = today.year
+
+        # Tax filing: April 15
+        tax_deadline = date(current_year, 4, 15)
+        if tax_deadline < today:
+            tax_deadline = date(current_year + 1, 4, 15)
+        deadlines.append({
+            "title": f"{tax_deadline.year - 1} Tax return due",
+            "date": tax_deadline.isoformat(),
+            "days": (tax_deadline - today).days,
+            "category": "tax",
+            "severity": "warning" if (tax_deadline - today).days < 30 else "info",
+            "action": "File 1040-NR (if NRA) or 1040 with all schedules",
+        })
+
+        # FBAR: April 15 (auto-extension to October 15)
+        fbar_deadline = date(current_year, 10, 15)
+        if fbar_deadline < today:
+            fbar_deadline = date(current_year + 1, 10, 15)
+        years_in_us = a.get("years_in_us")
+        if years_in_us and int(years_in_us) > 5:
+            deadlines.append({
+                "title": "FBAR filing deadline",
+                "date": fbar_deadline.isoformat(),
+                "days": (fbar_deadline - today).days,
+                "category": "tax",
+                "severity": "info",
+                "action": "File FinCEN 114 if foreign accounts exceeded $10K aggregate at any point",
+            })
+
+        # Entity: state annual report
+        if check.track == "entity":
+            state = a.get("state_of_formation", "").lower()
+            if "delaware" in state or "de" == state:
+                de_deadline = date(current_year, 6, 1)
+                if de_deadline < today:
+                    de_deadline = date(current_year + 1, 6, 1)
+                deadlines.append({
+                    "title": "Delaware annual report + $300 tax due",
+                    "date": de_deadline.isoformat(),
+                    "days": (de_deadline - today).days,
+                    "category": "entity",
+                    "severity": "warning" if (de_deadline - today).days < 30 else "info",
+                    "action": "File annual report and pay $300 LLC tax to maintain good standing",
+                })
+            elif "wyoming" in state or "wy" == state:
+                # Wyoming: anniversary month
+                deadlines.append({
+                    "title": "Wyoming annual report due",
+                    "date": f"{current_year}-12-31",
+                    "days": (date(current_year, 12, 31) - today).days,
+                    "category": "entity",
+                    "severity": "info",
+                    "action": "File annual report — due first day of anniversary month",
+                })
+
+            # Form 5472 for foreign-owned SMLLC
+            owner = a.get("owner_residency")
+            entity_type = a.get("entity_type")
+            if owner and owner != "us_citizen_or_pr" and entity_type == "smllc":
+                f5472_deadline = tax_deadline  # same as tax return
+                deadlines.append({
+                    "title": "Form 5472 + pro forma 1120 due",
+                    "date": f5472_deadline.isoformat(),
+                    "days": (f5472_deadline - today).days,
+                    "category": "entity",
+                    "severity": "warning" if (f5472_deadline - today).days < 30 else "info",
+                    "action": "Required annually for foreign-owned single-member LLCs, even with $0 revenue",
+                })
+
+    # Deduplicate by title, keep the earliest
+    seen: dict[str, dict] = {}
+    for d in deadlines:
+        if d["title"] not in seen or d["date"] < seen[d["title"]]["date"]:
+            seen[d["title"]] = d
+
+    # Sort by date
+    result = sorted(seen.values(), key=lambda d: d["date"])
+    return result
