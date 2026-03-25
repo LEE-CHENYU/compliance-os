@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { isLoggedIn, getUser, logout } from "@/lib/auth";
 
 const FORMS = ["I-20","I-94","I-983","I-797","EAD (I-766)","I-129","AR-11","DS-160","1040-NR","Form 8843","Form 3520","Form 8938","Schedule C","Schedule NEC","W-8BEN","Form 5472","Pro forma 1120","1120-S","EIN Letter","Articles of Org"];
 const DEADLINES = ["FBAR (FinCEN 114)","DE Annual Report","60-day Grace Period","90-day Unemployment","10-day Address Report"];
@@ -9,6 +11,14 @@ const SLAB_LABELS = ["I-983","Form 5472","1040-NR","FBAR","EAD","AR-11","I-797"]
 
 export default function Home() {
   const router = useRouter();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    setLoggedIn(isLoggedIn());
+    const user = getUser();
+    if (user) setUserEmail(user.email);
+  }, []);
 
   return (
     <>
@@ -163,9 +173,28 @@ export default function Home() {
           <a href="#cloud" style={{textDecoration:'none',color:'inherit'}}>What we check</a>
           <a href="#how" style={{textDecoration:'none',color:'inherit'}}>How it works</a>
         </div>
-        <button onClick={() => router.push("/check/stem-opt")} style={{padding:'9px 22px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
-          Find my risks
-        </button>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          {loggedIn ? (
+            <>
+              <span style={{fontSize:13,color:'#556480'}}>{userEmail}</span>
+              <button onClick={() => router.push("/dashboard")} style={{padding:'9px 22px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer'}}>
+                Dashboard
+              </button>
+              <button onClick={() => { logout(); setLoggedIn(false); }} style={{padding:'9px 22px',borderRadius:10,background:'transparent',color:'#7b8ba5',fontSize:13,fontWeight:500,border:'none',cursor:'pointer'}}>
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => router.push("/login")} style={{padding:'9px 22px',borderRadius:10,background:'transparent',color:'#5b8dee',fontSize:13,fontWeight:600,border:'none',cursor:'pointer'}}>
+                Sign in
+              </button>
+              <button onClick={() => router.push("/check/stem-opt")} style={{padding:'9px 22px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
+                Find my risks
+              </button>
+            </>
+          )}
+        </div>
       </nav>
 
       {/* Hero */}

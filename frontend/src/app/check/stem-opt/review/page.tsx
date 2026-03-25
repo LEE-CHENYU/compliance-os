@@ -9,11 +9,12 @@ import {
   generateFollowups,
   answerFollowup,
   getSnapshot,
-  updateCheck,
   type Comparison,
   type Followup,
   type Snapshot,
 } from "@/lib/api-v2";
+import AuthModal from "@/components/auth/AuthModal";
+import { useRouter } from "next/navigation";
 
 export default function ReviewPage() {
   return (
@@ -236,7 +237,8 @@ function FollowupView({
 
 // --- Case Snapshot ---
 function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
-  const [saved, setSaved] = useState(false);
+  const router = useRouter();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const { comparisons, findings, advisories } = snapshot;
   const issues = findings.filter((f) => f.severity !== "info");
   const goods = comparisons.filter((c) => c.status === "match");
@@ -363,28 +365,21 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
 
       {/* Save CTA */}
       <div className="text-center pt-8">
-        {saved ? (
-          <div className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 px-8 py-6 shadow-[0_4px_24px_rgba(91,141,238,0.06)] inline-block">
-            <div className="text-emerald-500 text-2xl mb-2">✓</div>
-            <div className="font-semibold text-[#0d1424] mb-1">Case saved</div>
-            <p className="text-xs text-[#8e9ab5]">Bookmark this URL to return anytime</p>
-            <p className="text-xs text-[#5b8dee] mt-2 font-medium select-all">{typeof window !== 'undefined' ? window.location.href : ''}</p>
-          </div>
-        ) : (
-          <>
-            <button
-              onClick={async () => {
-                await updateCheck(snapshot.check.id, { status: "saved" });
-                setSaved(true);
-              }}
-              className="px-10 py-4 rounded-2xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
-            >
-              Save as my case
-            </button>
-            <p className="text-xs text-[#8e9ab5] mt-3">Bookmark this URL to return anytime</p>
-          </>
-        )}
+        <button
+          onClick={() => setShowAuthModal(true)}
+          className="px-10 py-4 rounded-2xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
+        >
+          Save as my case
+        </button>
+        <p className="text-xs text-[#8e9ab5] mt-3">Create an account to save and track your case</p>
       </div>
+
+      {showAuthModal && (
+        <AuthModal
+          checkId={snapshot.check.id}
+          onSuccess={() => router.push("/dashboard")}
+        />
+      )}
     </div>
   );
 }
