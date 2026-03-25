@@ -139,7 +139,11 @@ export default function DashboardPage() {
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Categories</div>
             {["immigration", "tax", "entity"].map((cat) => {
-              const count = timeline?.events.filter((e) => e.category === cat).length || 0;
+              const DOC_CATS: Record<string, string> = {
+                i983: "immigration", employment_letter: "immigration", ead: "immigration", i20: "immigration", i797: "immigration", i94: "immigration",
+                tax_return: "tax", w2: "tax",
+              };
+              const count = documents.filter((d) => (DOC_CATS[d.doc_type] || "entity") === cat).length;
               const colors = CATEGORY_COLORS[cat];
               return (
                 <div key={cat} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480] capitalize">
