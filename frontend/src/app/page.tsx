@@ -266,11 +266,11 @@ export default function Home() {
         <p style={{fontSize:16,color:'#556480',textAlign:'center',marginBottom:40}}>Two focused tracks. Upload documents, get answers.</p>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
           {[
-            {icon:'🎓',title:'STEM OPT Check',desc:'Upload your I-983 and employment letter. We cross-check every field and tell you what doesn\'t match.',checks:["Job title consistency","Work location vs I-983","Salary match","Duties vs STEM degree","Employer name vs E-Verify","12-month evaluation status"],href:'/check/stem-opt'},
-            {icon:'🏢',title:'Entity Check',desc:'Answer 5 questions and upload your tax return. We check if your entity structure matches what was filed.',checks:["S-Corp eligibility for NRAs","Form 5472 filing status","Entity type vs tax return","Foreign capital documentation","Schedule C on OPT/STEM","1040 vs 1040-NR"],href:'/check/entity'},
+            {letter:'A',title:'Young Professional',desc:'Upload your I-983 and employment letter. We cross-check every field and tell you what doesn\'t match.',checks:["Job title consistency","Work location vs I-983","Salary match","Duties vs STEM degree","Employer name vs E-Verify","12-month evaluation status"],href:'/check/stem-opt'},
+            {letter:'B',title:'Entrepreneur',desc:'Answer 5 questions and upload your tax return. We check if your entity structure matches what was filed.',checks:["S-Corp eligibility for NRAs","Form 5472 filing status","Entity type vs tax return","Foreign capital documentation","Schedule C on OPT/STEM","1040 vs 1040-NR"],href:'/check/entity'},
           ].map(card => (
             <button key={card.title} onClick={() => router.push(card.href)} style={{textAlign:'left',background:'rgba(255,255,255,0.6)',backdropFilter:'blur(16px)',borderRadius:20,padding:36,border:'1px solid rgba(255,255,255,0.7)',cursor:'pointer',transition:'all 0.3s'}}>
-              <div style={{width:44,height:44,borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,marginBottom:18,background:'rgba(91,141,238,0.06)'}}>{card.icon}</div>
+              <div style={{width:44,height:44,borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:800,color:'#5b8dee',marginBottom:18,background:'rgba(91,141,238,0.06)'}}>{card.letter}</div>
               <h3 style={{fontSize:20,fontWeight:700,marginBottom:8,letterSpacing:'-0.02em'}}>{card.title}</h3>
               <p style={{fontSize:14,color:'#556480',lineHeight:1.6,marginBottom:20}}>{card.desc}</p>
               <div style={{display:'flex',flexDirection:'column',gap:7,fontSize:13,color:'#4a5f80'}}>
@@ -292,6 +292,7 @@ export default function Home() {
           ["03","See what we found","Side-by-side comparison. Matches, mismatches, and missing items.","~15 sec"],
           ["04","Answer 3 quick questions","Only about the issues we found. Each one explains why it matters.","1 min"],
           ["05","Get your case snapshot","Timeline, findings, next steps, and things to watch \u2014 all in one view.","Instant"],
+          ["06","Save to your data room","Your documents, timeline, and risks \u2014 stored securely. We\u2019ll prompt you when something new needs checking.","Ongoing"],
         ].map(([num,title,desc,time]) => (
           <div key={num} style={{display:'flex',gap:20,padding:'22px 0',borderBottom:'1px solid rgba(91,141,238,0.06)',alignItems:'flex-start'}}>
             <span style={{fontSize:13,fontWeight:700,color:'#c0cde0',minWidth:28,paddingTop:3}}>{num}</span>
@@ -304,9 +305,32 @@ export default function Home() {
         ))}
       </section>
 
+      {/* Data Room */}
+      <section className="section-panel" style={{maxWidth:900,margin:'0 auto 40px'}}>
+        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>
+          Your personal compliance vault
+        </h2>
+        <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:540,margin:'0 auto 40px',lineHeight:1.6}}>
+          After your first check, Guardian becomes your living case record. Documents organized by timeline, risks tracked automatically, and prompts when something needs attention.
+        </p>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+          {[
+            {num:'1',title:'Timeline view',desc:'Your immigration journey on one screen. Past events, today, upcoming deadlines \u2014 with documents attached to each moment.'},
+            {num:'2',title:'Smart upload prompts',desc:'We tell you exactly what to upload next and why it matters. Each new document triggers automatic re-checking.'},
+            {num:'3',title:'Risk monitoring',desc:'New risks surface as deadlines approach or documents change. Resolved issues get cleared automatically.'},
+          ].map((item) => (
+            <div key={item.title} style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:24,border:'1px solid rgba(255,255,255,0.6)'}}>
+              <div style={{fontSize:28,fontWeight:800,color:'#5b8dee',marginBottom:12,opacity:0.4}}>{item.num}</div>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:6,color:'#0d1424'}}>{item.title}</h3>
+              <p style={{fontSize:13,color:'#556480',lineHeight:1.5}}>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <footer style={{position:'relative',zIndex:1,padding:48,textAlign:'center',fontSize:13,color:'#8e9ab5',lineHeight:1.7}}>
-        Documents sent to OpenAI for field extraction only. Never stored or shared beyond that.<br />
-        No account needed. Your check URL is your bookmark. Return anytime.
+        Your documents are stored securely and used only for compliance checking.<br />
+        Start free — no account needed for your first check. Create an account to save your case.
       </footer>
     </>
   );

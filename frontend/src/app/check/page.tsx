@@ -24,7 +24,7 @@ export default function CheckSelect() {
             onClick={() => router.push("/check/stem-opt")}
             className="text-left bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 p-7 shadow-[0_4px_24px_rgba(91,141,238,0.06)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.1)] hover:-translate-y-1 hover:border-blue-200/30 transition-all"
           >
-            <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-xl mb-5">🎓</div>
+            <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-lg font-extrabold text-[#5b8dee] mb-5">A</div>
             <h3 className="text-lg font-bold text-[#0d1424] mb-2">Young Professional</h3>
             <p className="text-[13px] text-[#556480] leading-relaxed mb-4">
               F-1 visa, OPT, STEM OPT, H-1B transition. Check if your immigration documents match your employment records.
@@ -43,7 +43,7 @@ export default function CheckSelect() {
             onClick={() => router.push("/check/entity")}
             className="text-left bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 p-7 shadow-[0_4px_24px_rgba(91,141,238,0.06)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.1)] hover:-translate-y-1 hover:border-blue-200/30 transition-all"
           >
-            <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-xl mb-5">🏢</div>
+            <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-lg font-extrabold text-[#5b8dee] mb-5">B</div>
             <h3 className="text-lg font-bold text-[#0d1424] mb-2">Entrepreneur</h3>
             <p className="text-[13px] text-[#556480] leading-relaxed mb-4">
               LLC, C-Corp, foreign-owned entity. Check if your business structure and tax filings are consistent.
