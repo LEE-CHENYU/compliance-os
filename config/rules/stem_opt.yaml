@@ -187,6 +187,101 @@ rules:
       consequence: "STEM authorization invalid"
       immigration_impact: true
 
+  - id: h1b_employer_change
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: employer_changed
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: stage
+        operator: eq
+        value: "h1b"
+        source: answers
+    severity: warning
+    finding:
+      title: "H-1B transfer required for employer change"
+      action: "Your new employer must file a new H-1B petition before you start working. You can begin work once the petition is received by USCIS."
+      consequence: "Unauthorized employment"
+      immigration_impact: true
+
+  - id: h1b_unemployment
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: employment_status
+        operator: in
+        value: ["not_employed", "between_jobs"]
+        source: answers
+      - field: stage
+        operator: eq
+        value: "h1b"
+        source: answers
+    severity: critical
+    finding:
+      title: "H-1B requires active employment — status at risk"
+      action: "H-1B status is tied to your employer. Without employment, you have a limited grace period (up to 60 days). Seek new employment or change status immediately."
+      consequence: "Immediate status loss"
+      immigration_impact: true
+
+  - id: h1b_pending_no_travel
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: petition_status
+        operator: eq
+        value: "pending"
+        source: answers
+      - field: stage
+        operator: eq
+        value: "h1b"
+        source: answers
+    severity: warning
+    finding:
+      title: "Avoid international travel while H-1B is pending"
+      action: "Traveling outside the US while your H-1B change of status is pending can result in abandonment of the petition. Consult an attorney before any travel."
+      consequence: "Petition abandonment"
+      immigration_impact: true
+
+  - id: i140_employer_change_portability
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: employer_changed
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: stage
+        operator: eq
+        value: "i140"
+        source: answers
+    severity: warning
+    finding:
+      title: "I-140 portability depends on approval and timing"
+      action: "If your I-140 has been approved and pending for 180+ days, you may port to a new employer under AC21. If not yet approved, the employer change may require a new petition."
+      consequence: "Priority date at risk"
+      immigration_impact: true
+
+  - id: i140_pending_limited_options
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: petition_status
+        operator: eq
+        value: "pending"
+        source: answers
+      - field: stage
+        operator: eq
+        value: "i140"
+        source: answers
+    severity: info
+    finding:
+      title: "I-140 pending — limited job portability"
+      action: "Until your I-140 is approved for 180 days, you cannot freely change employers while keeping your priority date. Plan accordingly."
+      consequence: "Portability restricted"
+      immigration_impact: true
+
   # === Advisory rules (gated on user situation) ===
 
   - id: advisory_fbar

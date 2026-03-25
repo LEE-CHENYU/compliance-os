@@ -25,16 +25,26 @@ const EMPLOYER_CHANGED = [
   { value: "na", label: "N/A" },
 ];
 
+const PETITION_STATUS = [
+  { value: "approved", label: "Yes, approved" },
+  { value: "pending", label: "Pending" },
+  { value: "not_sure", label: "Not sure" },
+];
+
 export default function StemOptStage() {
   const router = useRouter();
   const [stage, setStage] = useState<string | null>(null);
   const [years, setYears] = useState<number | "">("");
   const [employmentStatus, setEmploymentStatus] = useState<string | null>(null);
   const [employerChanged, setEmployerChanged] = useState<string | null>(null);
+  const [petitionStatus, setPetitionStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const showEmployerChanged = stage && ["stem_opt", "opt", "h1b"].includes(stage);
-  const canContinue = stage && years !== "" && employmentStatus && (!showEmployerChanged || employerChanged);
+  const showEmployerChanged = stage && ["stem_opt", "opt", "h1b", "i140"].includes(stage);
+  const showPetitionStatus = stage && ["h1b", "i140"].includes(stage);
+  const canContinue = stage && years !== "" && employmentStatus
+    && (!showEmployerChanged || employerChanged)
+    && (!showPetitionStatus || petitionStatus);
 
   async function handleContinue() {
     if (!canContinue) return;
@@ -44,6 +54,7 @@ export default function StemOptStage() {
       years_in_us: Number(years),
       employment_status: employmentStatus,
       employer_changed: employerChanged,
+      petition_status: petitionStatus,
     });
     router.push(`/check/stem-opt/upload?id=${check.id}`);
   }
@@ -114,7 +125,7 @@ export default function StemOptStage() {
         {/* Q2: Years */}
         <div className="mb-8">
           <label className="block text-sm font-medium text-[#0d1424] mb-3">
-            How many years have you been in the US on F-1?
+            How many years have you been in the US?
           </label>
           <input
             type="number"
@@ -138,10 +149,24 @@ export default function StemOptStage() {
         {/* Q4: Employer changed (conditional) */}
         {showEmployerChanged && (
           <ChipSelect
-            label="Have you changed employers since your OPT/STEM started?"
+            label={stage === "h1b" || stage === "i140"
+              ? "Have you changed employers since your current petition was filed?"
+              : "Have you changed employers since your OPT/STEM started?"}
             options={EMPLOYER_CHANGED}
             value={employerChanged}
             onChange={setEmployerChanged}
+          />
+        )}
+
+        {/* Q5: Petition status (H-1B and I-140 only) */}
+        {showPetitionStatus && (
+          <ChipSelect
+            label={stage === "i140"
+              ? "Has your I-140 petition been approved?"
+              : "Has your H-1B petition been approved?"}
+            options={PETITION_STATUS}
+            value={petitionStatus}
+            onChange={setPetitionStatus}
           />
         )}
 
