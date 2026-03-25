@@ -5,6 +5,7 @@ import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.auth import UserRow
@@ -65,6 +66,32 @@ def list_documents(
                 "uploaded_at": doc.uploaded_at.isoformat() if doc.uploaded_at else None,
             })
     return docs
+
+
+@router.get("/documents/{doc_id}/view")
+def view_document(
+    doc_id: str,
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Download/view a document by ID."""
+    user = _get_user(authorization, db)
+    # Find the document and verify it belongs to this user
+    from compliance_os.web.models.tables_v2 import DocumentRow as DocRow
+    doc = db.get(DocRow, doc_id)
+    if not doc:
+        raise HTTPException(404, "Document not found")
+    check = db.get(CheckRow, doc.check_id)
+    if not check or check.user_id != user.id:
+        raise HTTPException(403, "Not authorized")
+    file_path = Path(doc.file_path)
+    if not file_path.exists():
+        raise HTTPException(404, "File not found on disk")
+    return FileResponse(
+        path=str(file_path),
+        filename=doc.filename,
+        media_type=doc.mime_type or "application/octet-stream",
+    )
 
 
 @router.post("/upload")

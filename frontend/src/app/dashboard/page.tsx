@@ -224,14 +224,19 @@ export default function DashboardPage() {
                               {DOC_LABELS[doc.doc_type] || doc.doc_type} · {doc.file_size ? `${Math.round(doc.file_size / 1024)}KB` : ""} · {doc.uploaded_at ? new Date(doc.uploaded_at).toLocaleDateString() : ""}
                             </div>
                           </div>
-                          <a
-                            href={`http://localhost:8000/api/checks/_/documents/${doc.id}/download`}
+                          <button
+                            onClick={async () => {
+                              const resp = await fetch(`http://localhost:8000/api/dashboard/documents/${doc.id}/view`, { headers: authHeaders() });
+                              if (resp.ok) {
+                                const blob = await resp.blob();
+                                const url = URL.createObjectURL(blob);
+                                window.open(url, "_blank");
+                              }
+                            }}
                             className="text-[12px] font-medium text-[#5b8dee] hover:text-[#4a74d4] flex-shrink-0"
-                            target="_blank"
-                            rel="noreferrer"
                           >
                             View
-                          </a>
+                          </button>
                         </div>
                       ))}
                     </div>
