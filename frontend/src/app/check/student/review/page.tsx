@@ -252,7 +252,7 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
         Your Student Check
       </h1>
       <p className="text-[15px] text-[#556480] mb-8">
-        Based on your I-20 and employment records
+        Based on your I-20 and uploaded documents
       </p>
 
       {/* Timeline */}

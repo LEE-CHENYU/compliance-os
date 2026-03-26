@@ -29,12 +29,12 @@ function StudentUpload() {
     getCheck(checkId).then((check) => {
       const hasCpt = check.answers?.student_status === "enrolled_cpt";
       const s: UploadSlot[] = [
-        { docType: "i20", label: "I-20", sub: "Your most recent I-20 showing current program and CPT authorization", required: true, file: null, uploading: false, uploaded: false },
+        { docType: "i20", label: "I-20", sub: "Your most recent I-20 — we\u2019ll check your program dates, CPT authorization, and travel signature", required: true, file: null, uploading: false, uploaded: false },
       ];
       if (hasCpt) {
-        s.push({ docType: "employment_letter", label: "Employment / Offer Letter", sub: "The offer letter from your CPT employer", required: true, file: null, uploading: false, uploaded: false });
+        s.push({ docType: "employment_letter", label: "Employment / Offer Letter", sub: "Your CPT employer\u2019s offer letter — helps us cross-check against your I-20", required: false, file: null, uploading: false, uploaded: false });
       }
-      s.push({ docType: "i94", label: "I-94 (optional)", sub: "Most recent arrival record — download from i94.cbp.dhs.gov", required: false, file: null, uploading: false, uploaded: false });
+      s.push({ docType: "i94", label: "I-94", sub: "Most recent arrival record — download from i94.cbp.dhs.gov", required: false, file: null, uploading: false, uploaded: false });
       setSlots(s);
     });
   }, [checkId]);
