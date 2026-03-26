@@ -151,12 +151,39 @@ export default function DashboardPage() {
       });
     }
 
+    // Tax software used
+    if (!chatAnswered.has("tax_software") && !facts.has("Tax form filed")) {
+      questions.push({
+        id: "tax_software",
+        text: "What did you use to file your most recent US tax return? Some software can\u2019t file the correct form for non-US persons, which can lead to serious issues.",
+        chips: ["TurboTax", "H&R Block", "Sprintax", "A CPA did it", "Haven\u2019t filed"],
+      });
+    }
+
     // Foreign accounts
     if (!chatAnswered.has("foreign_accounts")) {
       questions.push({
         id: "foreign_accounts",
         text: "Do you have any bank accounts, investments, or insurance policies outside the US? This determines your FBAR and FATCA obligations.",
         chips: ["Yes", "No"],
+      });
+    }
+
+    // Foreign gifts
+    if (!chatAnswered.has("foreign_gifts")) {
+      questions.push({
+        id: "foreign_gifts",
+        text: "Have you received money from family or anyone abroad totaling over $100,000 in a single year? This includes transfers for tuition, living expenses, or investments.",
+        chips: ["Yes", "No", "Not sure"],
+      });
+    }
+
+    // Form 8843
+    if (!chatAnswered.has("form_8843") && facts.has("Immigration stage")) {
+      questions.push({
+        id: "form_8843",
+        text: "Have you filed Form 8843 with your tax returns? This form is required every year for all F-1 and J-1 visa holders, even with zero income.",
+        chips: ["Yes", "No", "What is that?"],
       });
     }
 

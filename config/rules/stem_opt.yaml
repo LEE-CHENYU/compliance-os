@@ -282,6 +282,80 @@ rules:
       consequence: "Portability restricted"
       immigration_impact: true
 
+  # === Tax filing risk rules (from intake answers) ===
+
+  - id: wrong_tax_form_risk
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: tax_software_used
+        operator: in
+        value: ["turbotax", "hr_block", "freetaxusa"]
+        source: answers
+      - field: years_in_us
+        operator: lt
+        value: 6
+        source: answers
+    severity: warning
+    finding:
+      title: "You may have filed the wrong tax form"
+      action: "TurboTax, H&R Block, and FreeTaxUSA cannot file Form 1040-NR. If you used one of these in your first 5 years in the US on F-1, you likely filed as a resident when you should have filed as a nonresident. This may need to be amended."
+      consequence: "Amended returns needed"
+      immigration_impact: true
+
+  - id: foreign_accounts_fbar_risk
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: has_foreign_accounts
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: years_in_us
+        operator: gt
+        value: 5
+        source: answers
+    severity: warning
+    finding:
+      title: "Foreign bank accounts may require FBAR filing"
+      action: "If your foreign accounts exceeded $10K in combined value at any point during the year, you must file FinCEN Form 114 (FBAR) by April 15 (auto-extended to Oct 15). Penalty for non-filing: up to $16,536/year (non-willful) or 50% of balance (willful)."
+      consequence: "Up to 50% of balance"
+      immigration_impact: false
+
+  - id: foreign_gifts_3520_risk
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: received_foreign_gifts
+        operator: eq
+        value: "yes"
+        source: answers
+    severity: warning
+    finding:
+      title: "Large gifts from abroad may require Form 3520"
+      action: "If you received gifts or inheritances from a foreign person totaling over $100K in a year, you must file Form 3520. Penalty: 25% of the unreported amount. This applies even if the money was for tuition or living expenses."
+      consequence: "25% penalty"
+      immigration_impact: false
+
+  - id: form_8843_missing
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: filed_8843
+        operator: eq
+        value: "no"
+        source: answers
+      - field: years_in_us
+        operator: lt
+        value: 6
+        source: answers
+    severity: info
+    finding:
+      title: "Form 8843 may not have been filed"
+      action: "All F-1 and J-1 visa holders must file Form 8843 every year, even with zero income. This form claims your exempt individual status under the Substantial Presence Test. Check if your previous tax preparer included it."
+      consequence: "Required filing"
+      immigration_impact: false
+
   # === Advisory rules (gated on user situation) ===
 
   - id: advisory_fbar

@@ -177,6 +177,21 @@ ANSWER_MAPPINGS: dict[str, dict] = {
         "field": "has_foreign_accounts",
         "value_map": {"Yes": "yes", "No": "no"},
     },
+    "tax_software": {
+        "track": "stem_opt",
+        "field": "tax_software_used",
+        "value_map": {"TurboTax": "turbotax", "H&R Block": "hr_block", "Sprintax": "sprintax", "A CPA did it": "cpa", "Haven\u2019t filed": "not_filed"},
+    },
+    "foreign_gifts": {
+        "track": "stem_opt",
+        "field": "received_foreign_gifts",
+        "value_map": {"Yes": "yes", "No": "no", "Not sure": "not_sure"},
+    },
+    "form_8843": {
+        "track": "stem_opt",
+        "field": "filed_8843",
+        "value_map": {"Yes": "yes", "No": "no", "What is that?": "no"},
+    },
 }
 
 

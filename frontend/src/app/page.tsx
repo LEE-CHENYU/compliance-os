@@ -13,12 +13,21 @@ export default function Home() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [partyIndex, setPartyIndex] = useState(0);
+  const PARTIES = ["USCIS", "the IRS", "your state", "DHS", "FinCEN"];
 
   useEffect(() => {
     setLoggedIn(isLoggedIn());
     const user = getUser();
     if (user) setUserEmail(user.email);
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPartyIndex((prev) => (prev + 1) % PARTIES.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [PARTIES.length]);
 
   return (
     <>
@@ -217,7 +226,7 @@ export default function Home() {
             Your compliance memory
           </div>
           <h1 style={{fontSize:50,fontWeight:800,letterSpacing:'-0.04em',lineHeight:1.06,marginBottom:20,color:'#0d1424'}}>
-            Check your documents before USCIS does
+            Check your documents before <span style={{color:'#5b8dee',transition:'opacity 0.3s'}}>{PARTIES[partyIndex]}</span> does
           </h1>
           <p style={{fontSize:17,color:'#556480',lineHeight:1.65,marginBottom:36}}>
             We cross-check your immigration and tax filings to find mismatches, missing forms, and deadline risks you don&apos;t know about yet.
@@ -338,6 +347,45 @@ export default function Home() {
               <p style={{fontSize:13,color:'#556480',lineHeight:1.5}}>{item.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Why Guardian */}
+      <section className="section-panel" style={{maxWidth:900,margin:'0 auto 40px'}}>
+        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>
+          Tax software assumes you&apos;re American
+        </h2>
+        <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:560,margin:'0 auto 40px',lineHeight:1.6}}>
+          TurboTax and H&amp;R Block can&apos;t even file the right form for nonresidents. The wrong default can cascade into six-figure penalties.
+        </p>
+
+        <div style={{display:'flex',flexDirection:'column',gap:12,maxWidth:640,margin:'0 auto 32px'}}>
+          {[
+            {form:'Form 1040 vs 1040-NR',risk:'Filing as a resident when you\'re not — contradicts your visa status and claims benefits you\'re not entitled to.',tag:'Amended returns + back taxes'},
+            {form:'FBAR (FinCEN 114)',risk:'Foreign bank accounts over $10K not reported. TurboTax defaults to "No." Penalty: up to 50% of account balance per year.',tag:'Up to 50% of balance'},
+            {form:'Form 5472',risk:'Foreign-owned LLC? This is required every year, even with $0 revenue. Most founders never hear about it.',tag:'$25K per year missed'},
+            {form:'Form 3520',risk:'Received money from family abroad over $100K? Gift reporting is required. The penalty is 25% of the unreported amount.',tag:'25% of amount'},
+            {form:'Form 8938 (FATCA)',risk:'Foreign assets over $50K must be reported separately from FBAR. Many people file one but miss the other.',tag:'$10K+ penalty'},
+          ].map((item) => (
+            <div key={item.form} style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:'16px 20px',border:'1px solid rgba(255,255,255,0.6)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'start',gap:12}}>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:14,fontWeight:600,color:'#0d1424',marginBottom:4}}>{item.form}</div>
+                  <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>{item.risk}</div>
+                </div>
+                <span style={{fontSize:11,fontWeight:600,whiteSpace:'nowrap',padding:'4px 10px',borderRadius:20,background:'rgba(239,68,68,0.08)',color:'#ef4444',border:'1px solid rgba(239,68,68,0.1)',flexShrink:0}}>{item.tag}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{textAlign:'center'}}>
+          <p style={{fontSize:14,color:'#556480',maxWidth:480,margin:'0 auto 20px',lineHeight:1.6}}>
+            Guardian doesn&apos;t file your taxes. It checks what your tax software missed, surfaces the risks you don&apos;t know about, and tells you exactly what to fix.
+          </p>
+          <button onClick={() => router.push("/check")} style={{padding:'14px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3)'}}>
+            Find my risks
+          </button>
         </div>
       </section>
 
