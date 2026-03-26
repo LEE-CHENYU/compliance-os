@@ -65,7 +65,7 @@ function LoginPage() {
         <div className="text-center mb-8">
           <div className="text-2xl font-extrabold text-[#0d1424] mb-2">Guardian</div>
           <p className="text-sm text-[#556480]">
-            {isRegister ? "Create your account" : "Sign in to your case"}
+            {isRegister ? "Create your account" : "Sign in to your data room"}
           </p>
         </div>
 
