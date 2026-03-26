@@ -415,7 +415,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div style={{maxWidth:640,margin:'-24px auto 32px',textAlign:'right'}}>
+        <div style={{maxWidth:640,margin:'-24px auto 32px',textAlign:'left'}}>
           <span style={{fontSize:11,color:'#8e9ab5'}}>*Form 3520, FBAR, and FATCA apply only if you are a US tax resident (meet the Substantial Presence Test). Guardian checks this for you.</span>
         </div>
 
