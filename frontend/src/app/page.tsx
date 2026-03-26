@@ -399,7 +399,7 @@ export default function Home() {
           {[
             {consequence:'50% of your foreign savings',short:'Family bank accounts abroad over $10K? TurboTax defaults to "No."',tag:'FBAR'},
             {consequence:'$25,000 per year, retroactively',short:'Foreign-owned LLC? Required every year, even with $0 revenue.',tag:'Form 5472'},
-            {consequence:'25% of every family transfer',short:'Parents sent money for tuition? Over $100K requires reporting.',tag:'Form 3520'},
+            {consequence:'25% of every family transfer',short:'Parents sent money for tuition? Over $100K requires reporting.*',tag:'Form 3520'},
             {consequence:'Your visa status contradicted',short:'Filing as a resident when you\u2019re not. Affects future applications.',tag:'Wrong form'},
             {consequence:'$10,000+ in additional penalties',short:'Foreign assets over $50K need a separate form from FBAR.',tag:'FATCA'},
           ].map((item) => (
@@ -413,6 +413,10 @@ export default function Home() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div style={{maxWidth:640,margin:'-24px auto 32px',textAlign:'right'}}>
+          <span style={{fontSize:11,color:'#8e9ab5'}}>*Form 3520, FBAR, and FATCA apply only if you are a US tax resident (meet the Substantial Presence Test). Guardian checks this for you.</span>
         </div>
 
         {/* Real case studies — glass cards with gradient accent */}
