@@ -13,6 +13,15 @@ const STAGES = [
   { value: "not_sure", label: "Not sure", sub: "" },
 ];
 
+const TAX_SOFTWARE = [
+  { value: "turbotax", label: "TurboTax" },
+  { value: "hr_block", label: "H&R Block" },
+  { value: "sprintax", label: "Sprintax" },
+  { value: "cpa", label: "A CPA / accountant" },
+  { value: "not_filed", label: "Haven\u2019t filed yet" },
+  { value: "not_sure", label: "Not sure" },
+];
+
 const EMPLOYMENT_STATUS = [
   { value: "employed", label: "Yes, currently employed" },
   { value: "between_jobs", label: "Between jobs" },
@@ -38,11 +47,12 @@ export default function StemOptStage() {
   const [employmentStatus, setEmploymentStatus] = useState<string | null>(null);
   const [employerChanged, setEmployerChanged] = useState<string | null>(null);
   const [petitionStatus, setPetitionStatus] = useState<string | null>(null);
+  const [taxSoftware, setTaxSoftware] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const showEmployerChanged = stage && ["stem_opt", "opt", "h1b", "i140"].includes(stage);
   const showPetitionStatus = stage && ["h1b", "i140"].includes(stage);
-  const canContinue = stage && years !== "" && employmentStatus
+  const canContinue = stage && years !== "" && employmentStatus && taxSoftware
     && (!showEmployerChanged || employerChanged)
     && (!showPetitionStatus || petitionStatus);
 
@@ -55,6 +65,7 @@ export default function StemOptStage() {
       employment_status: employmentStatus,
       employer_changed: employerChanged,
       petition_status: petitionStatus,
+      tax_software_used: taxSoftware,
     });
     router.push(`/check/stem-opt/upload?id=${check.id}`);
   }
@@ -169,6 +180,14 @@ export default function StemOptStage() {
             onChange={setPetitionStatus}
           />
         )}
+
+        {/* Q6: Tax software */}
+        <ChipSelect
+          label="What did you use to file your most recent US tax return?"
+          options={TAX_SOFTWARE}
+          value={taxSoftware}
+          onChange={setTaxSoftware}
+        />
 
         <button
           onClick={handleContinue}
