@@ -202,7 +202,7 @@ export default function DashboardPage() {
         : "unknown"
       : "unknown";
 
-    setChatAnswered((prev) => new Set([...prev, qId]));
+    setChatAnswered((prev) => { const n = new Set(prev); n.add(qId); return n; });
 
     // Store answer to backend and re-evaluate rules
     if (qId !== "unknown") {
