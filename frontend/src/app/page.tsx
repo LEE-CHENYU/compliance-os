@@ -197,13 +197,17 @@ export default function Home() {
         /* === Mobile responsive === */
         @media (max-width: 768px) {
           .hero-grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 100px 20px 40px !important; min-height: auto !important; }
-          .hero-grid h1 { font-size: 36px !important; }
+          .hero-grid h1 { font-size: 32px !important; }
           .hero-visual-wrap { display: none !important; }
-          .section-panel { padding: 32px 20px; margin: 0 12px 20px; border-radius: 20px; }
+          .section-panel { padding: 28px 16px; margin: 0 8px 16px; border-radius: 18px; }
           .track-grid { grid-template-columns: 1fr !important; }
           .vault-grid { grid-template-columns: 1fr !important; }
+          .penalty-section-grid { grid-template-columns: 1fr !important; }
+          .cases-grid { grid-template-columns: 1fr !important; }
           .nav-links-desktop { display: none !important; }
           nav { padding: 12px 16px !important; }
+          .penalty-hero-box { padding: 24px 20px !important; }
+          .penalty-hero-box > div:first-child { font-size: 40px !important; }
         }
       `}</style>
 
@@ -389,7 +393,7 @@ export default function Home() {
         </p>
 
         {/* Penalty hero — glowing callout */}
-        <div className="penalty-hero" style={{textAlign:'center',margin:'0 auto 40px',maxWidth:400,padding:'32px 40px',borderRadius:24,background:'linear-gradient(135deg, rgba(79,70,229,0.06) 0%, rgba(99,102,241,0.03) 100%)',border:'1px solid rgba(79,70,229,0.1)',boxShadow:'0 8px 40px rgba(79,70,229,0.08), inset 0 1px 0 rgba(255,255,255,0.5)'}}>
+        <div className="penalty-hero penalty-hero-box" style={{textAlign:'center',margin:'0 auto 40px',maxWidth:400,padding:'32px 40px',borderRadius:24,background:'linear-gradient(135deg, rgba(79,70,229,0.06) 0%, rgba(99,102,241,0.03) 100%)',border:'1px solid rgba(79,70,229,0.1)',boxShadow:'0 8px 40px rgba(79,70,229,0.08), inset 0 1px 0 rgba(255,255,255,0.5)'}}>
           <div style={{fontSize:56,fontWeight:800,color:'#4f46e5',letterSpacing:'-0.04em',lineHeight:1}}>$1.5M+</div>
           <div style={{fontSize:13,color:'#6366f1',fontWeight:500,marginTop:6}}>potential penalty exposure</div>
           <div style={{fontSize:12,color:'#8e9ab5',marginTop:4}}>from one wrong default in your tax software</div>
@@ -405,10 +409,10 @@ export default function Home() {
             {consequence:'$10,000+ in additional penalties',short:'Foreign assets over $50K need a separate form from FBAR.',tag:'FATCA'},
           ].map((item) => (
             <div key={item.tag} className="penalty-card" style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:14,padding:'14px 18px',border:'1px solid rgba(255,255,255,0.6)',boxShadow:'0 2px 12px rgba(79,70,229,0.03)'}}>
-              <div style={{display:'flex',alignItems:'center',gap:12}}>
-                <div style={{flex:1,display:'flex',alignItems:'baseline',gap:8}}>
-                  <span style={{fontSize:15,fontWeight:700,color:'#1e1b4b',whiteSpace:'nowrap'}}>{item.consequence}</span>
-                  <span style={{fontSize:12,color:'#7b8ba5',lineHeight:1.4}}>{item.short}</span>
+              <div style={{display:'flex',alignItems:'start',gap:10,flexWrap:'wrap'}}>
+                <div style={{flex:1,minWidth:200}}>
+                  <div style={{fontSize:15,fontWeight:700,color:'#1e1b4b'}}>{item.consequence}</div>
+                  <div style={{fontSize:12,color:'#7b8ba5',lineHeight:1.4,marginTop:2}}>{item.short}</div>
                 </div>
                 <span style={{fontSize:10,fontWeight:600,whiteSpace:'nowrap',padding:'3px 9px',borderRadius:20,background:'rgba(79,70,229,0.06)',color:'#6366f1',border:'1px solid rgba(79,70,229,0.08)',flexShrink:0}}>{item.tag}</span>
               </div>
@@ -423,7 +427,7 @@ export default function Home() {
         {/* Real case studies — glass cards with gradient accent */}
         <div style={{maxWidth:640,margin:'0 auto 36px'}}>
           <div style={{fontSize:11,fontWeight:600,color:'#7b8ba5',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:12,textAlign:'center'}}>From the courts</div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+          <div className="cases-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
             <div className="case-card" style={{background:'linear-gradient(160deg, rgba(255,255,255,0.6) 0%, rgba(238,242,255,0.4) 100%)',backdropFilter:'blur(16px)',borderRadius:18,padding:'20px 22px',border:'1px solid rgba(79,70,229,0.08)',boxShadow:'0 4px 24px rgba(79,70,229,0.04)'}}>
               <div style={{fontSize:28,fontWeight:800,color:'#4f46e5',marginBottom:2}}>$10.9M</div>
               <div style={{fontSize:12,fontWeight:600,color:'#0d1424',marginBottom:8}}>Mukhi v. Commissioner</div>
