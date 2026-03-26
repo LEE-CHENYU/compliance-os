@@ -368,7 +368,7 @@ export default function Home() {
 
         {/* Penalty total callout */}
         <div style={{textAlign:'center',margin:'0 auto 32px',maxWidth:480}}>
-          <div style={{fontSize:48,fontWeight:800,color:'#dc2626',letterSpacing:'-0.03em'}}>$1.5M+</div>
+          <div style={{fontSize:48,fontWeight:800,color:'#4f46e5',letterSpacing:'-0.03em'}}>$1.5M+</div>
           <div style={{fontSize:14,color:'#556480'}}>potential penalty exposure from one wrong default</div>
         </div>
 
@@ -383,13 +383,30 @@ export default function Home() {
             <div key={item.tag} style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:'18px 22px',border:'1px solid rgba(255,255,255,0.6)'}}>
               <div style={{display:'flex',alignItems:'start',gap:14}}>
                 <div style={{flex:1}}>
-                  <div style={{fontSize:16,fontWeight:700,color:'#dc2626',marginBottom:4}}>{item.consequence}</div>
+                  <div style={{fontSize:16,fontWeight:700,color:'#1e1b4b',marginBottom:4}}>{item.consequence}</div>
                   <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>{item.desc}</div>
                 </div>
-                <span style={{fontSize:10,fontWeight:600,whiteSpace:'nowrap',padding:'4px 10px',borderRadius:20,background:'rgba(91,141,238,0.06)',color:'#5b8dee',border:'1px solid rgba(91,141,238,0.08)',flexShrink:0,marginTop:2}}>{item.tag}</span>
+                <span style={{fontSize:10,fontWeight:600,whiteSpace:'nowrap',padding:'4px 10px',borderRadius:20,background:'rgba(79,70,229,0.06)',color:'#4f46e5',border:'1px solid rgba(79,70,229,0.08)',flexShrink:0,marginTop:2}}>{item.tag}</span>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Real case studies */}
+        <div style={{maxWidth:640,margin:'0 auto 32px'}}>
+          <div style={{fontSize:12,fontWeight:600,color:'#7b8ba5',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:12,textAlign:'center'}}>Real cases</div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <div style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:'18px 20px',border:'1px solid rgba(255,255,255,0.6)'}}>
+              <div style={{fontSize:24,fontWeight:800,color:'#4f46e5',marginBottom:4}}>$10.9M</div>
+              <div style={{fontSize:13,fontWeight:600,color:'#0d1424',marginBottom:6}}>Mukhi v. Commissioner</div>
+              <div style={{fontSize:12,color:'#556480',lineHeight:1.5}}>Tax Court upheld $10.9M in Form 3520 penalties for unreported foreign trusts. Constitutional challenges rejected. (163 T.C. No. 8, Nov 2024)</div>
+            </div>
+            <div style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:'18px 20px',border:'1px solid rgba(255,255,255,0.6)'}}>
+              <div style={{fontSize:24,fontWeight:800,color:'#4f46e5',marginBottom:4}}>$2.72M</div>
+              <div style={{fontSize:13,fontWeight:600,color:'#0d1424',marginBottom:6}}>Bittner v. United States</div>
+              <div style={{fontSize:12,color:'#556480',lineHeight:1.5}}>IRS assessed $2.72M in FBAR penalties across 272 accounts. Supreme Court reduced to $50K — per report, not per account. (598 U.S. 85, Feb 2023)</div>
+            </div>
+          </div>
         </div>
 
         <div style={{textAlign:'center'}}>
