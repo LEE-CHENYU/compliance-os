@@ -77,6 +77,24 @@ export async function login(email: string, password: string): Promise<AuthUser> 
   return data;
 }
 
+export async function getGoogleAuthUrl(): Promise<string> {
+  const resp = await fetch(`${API}/google/url`);
+  const data = await resp.json();
+  return data.url;
+}
+
+export function handleGoogleCallback(params: URLSearchParams): AuthUser | null {
+  const token = params.get("token");
+  const email = params.get("email");
+  const user_id = params.get("user_id");
+  if (token && email && user_id) {
+    const data = { token, email, user_id };
+    saveAuth(data);
+    return data;
+  }
+  return null;
+}
+
 export async function linkCheckToUser(checkId: string): Promise<void> {
   const token = getToken();
   if (!token) return;
