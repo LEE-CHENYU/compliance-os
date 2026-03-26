@@ -19,7 +19,7 @@ export default function CheckSelect() {
           Pick the area that matters most right now. You can always run the other check later.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <button
             onClick={() => router.push("/check/stem-opt")}
             className="text-left bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 p-7 shadow-[0_4px_24px_rgba(91,141,238,0.06)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.1)] hover:-translate-y-1 hover:border-blue-200/30 transition-all"
@@ -52,6 +52,25 @@ export default function CheckSelect() {
               {["Entity structure", "Tax filing match", "5472 / S-Corp check"].map((t) => (
                 <span key={t} className="text-[11px] px-2.5 py-1 rounded-full font-medium backdrop-blur-sm"
                   style={{ background: "rgba(124,58,237,0.08)", color: "#7c3aed", border: "1px solid rgba(124,58,237,0.1)" }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push("/check/student")}
+            className="text-left bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 p-7 shadow-[0_4px_24px_rgba(91,141,238,0.06)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.1)] hover:-translate-y-1 hover:border-blue-200/30 transition-all"
+          >
+            <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-lg font-extrabold text-[#5b8dee] mb-5">C</div>
+            <h3 className="text-lg font-bold text-[#0d1424] mb-2">International Student</h3>
+            <p className="text-[13px] text-[#556480] leading-relaxed mb-4">
+              F-1 student, CPT, travel planning. Check if your I-20 and employment authorization are consistent.
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {["CPT authorization", "I-20 vs offer letter", "Travel readiness"].map((t) => (
+                <span key={t} className="text-[11px] px-2.5 py-1 rounded-full font-medium backdrop-blur-sm"
+                  style={{ background: "rgba(16,185,129,0.08)", color: "#059669", border: "1px solid rgba(16,185,129,0.1)" }}>
                   {t}
                 </span>
               ))}

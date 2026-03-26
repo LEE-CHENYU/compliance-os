@@ -1,0 +1,180 @@
+version: "1.0.0"
+
+rules:
+  # === CPT vs Employment Letter cross-checks ===
+
+  - id: cpt_employer_mismatch
+    track: student
+    type: comparison
+    conditions:
+      - field: employer_name
+        operator: mismatch
+        source: comparison
+    severity: critical
+    finding:
+      title: "CPT employer on I-20 doesn't match your employment letter"
+      action: "Working for an employer not listed on your CPT authorization is unauthorized employment. Contact your DSO immediately to update your I-20."
+      consequence: "Unauthorized employment"
+      immigration_impact: true
+
+  - id: cpt_dates_mismatch
+    track: student
+    type: comparison
+    conditions:
+      - field: start_date
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Employment dates don't match CPT authorization on I-20"
+      action: "Your employment start or end date differs from what's authorized on your I-20. Working outside the authorized window is unauthorized employment."
+      consequence: "Status violation risk"
+      immigration_impact: true
+
+  - id: cpt_location_mismatch
+    track: student
+    type: comparison
+    conditions:
+      - field: work_location
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Work location doesn't match CPT authorization"
+      action: "If your actual work location differs from what's on your I-20, ask your DSO to issue an updated I-20."
+      consequence: "DHS site visit risk"
+      immigration_impact: true
+
+  - id: cpt_fulltime_mismatch
+    track: student
+    type: comparison
+    conditions:
+      - field: full_time
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Full-time vs part-time status doesn't match between documents"
+      action: "If you're working full-time but authorized for part-time CPT (or vice versa), this needs correction. 12+ months of full-time CPT makes you permanently ineligible for OPT."
+      consequence: "OPT eligibility at risk"
+      immigration_impact: true
+
+  # === Answer-based logic rules ===
+
+  - id: fulltime_cpt_opt_risk
+    track: student
+    type: logic
+    conditions:
+      - field: cpt_fulltime_months
+        operator: gt
+        value: 11
+        source: answers
+    severity: critical
+    finding:
+      title: "12+ months of full-time CPT — OPT eligibility lost"
+      action: "Students with 12 months or more of full-time CPT are permanently ineligible for post-completion OPT. This cannot be reversed. Consult your DSO about your options."
+      consequence: "OPT permanently ineligible"
+      immigration_impact: true
+
+  - id: travel_signature_risk
+    track: student
+    type: logic
+    conditions:
+      - field: planning_travel
+        operator: eq
+        value: "yes"
+        source: answers
+    severity: warning
+    finding:
+      title: "International travel requires preparation"
+      action: "Before traveling, ensure: (1) I-20 travel signature is current (valid 12 months for enrolled, 6 months for OPT), (2) F-1 visa stamp is valid, (3) you have your I-20, passport, and financial documents. Consult your DSO before booking."
+      consequence: "Re-entry risk"
+      immigration_impact: true
+
+  - id: travel_during_pending_cos
+    track: student
+    type: logic
+    conditions:
+      - field: planning_travel
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: pending_status_change
+        operator: eq
+        value: "yes"
+        source: answers
+    severity: critical
+    finding:
+      title: "Traveling with a pending change of status can abandon your petition"
+      action: "If you have a pending H-1B or other change of status petition, leaving the US may be treated as withdrawing your application. Do not travel without consulting an immigration attorney."
+      consequence: "Petition abandonment"
+      immigration_impact: true
+
+  - id: program_end_approaching
+    track: student
+    type: logic
+    conditions:
+      - field: end_date
+        operator: lt
+        value: "60_days_from_now"
+        source: extraction_a
+    severity: warning
+    finding:
+      title: "Program end date is approaching"
+      action: "Your I-20 program end date is within 60 days. You need to either: apply for OPT, extend your program, transfer to another school, or prepare to depart within 60 days of completion."
+      consequence: "Status planning needed"
+      immigration_impact: true
+
+  - id: no_cpt_on_i20
+    track: student
+    type: logic
+    conditions:
+      - field: has_employment
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: has_cpt_authorization
+        operator: eq
+        value: "no"
+        source: answers
+    severity: critical
+    finding:
+      title: "Working without CPT authorization on I-20"
+      action: "If you are working off-campus without CPT authorization printed on your I-20, this is unauthorized employment and a serious status violation. Stop working and contact your DSO immediately."
+      consequence: "Unauthorized employment"
+      immigration_impact: true
+
+  # === Advisory rules ===
+
+  - id: advisory_maintain_fulltime
+    track: student
+    type: advisory
+    conditions: []
+    severity: info
+    finding:
+      title: "Full course load"
+      action: "Are you enrolled in a full course load this semester? Dropping below full-time without DSO approval is a status violation."
+      consequence: "Status violation"
+      immigration_impact: true
+
+  - id: advisory_tax_filing_student
+    track: student
+    type: advisory
+    conditions: []
+    severity: info
+    finding:
+      title: "Form 8843"
+      action: "All F-1 students must file Form 8843 every year, even with zero income. Did you file for the most recent tax year?"
+      consequence: "Filing requirement"
+      immigration_impact: false
+
+  - id: advisory_address_update
+    track: student
+    type: advisory
+    conditions: []
+    severity: info
+    finding:
+      title: "Address update"
+      action: "Have you moved recently? Report any address change to your DSO within 10 days and file Form AR-11 with USCIS."
+      consequence: "Affects status"
+      immigration_impact: true

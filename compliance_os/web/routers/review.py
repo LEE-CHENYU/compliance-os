@@ -41,6 +41,15 @@ STEM_OPT_FIELD_MAP = {
     "full_time": ("full_time", "full_time", "exact"),
 }
 
+# Student track field mapping: I-20 CPT fields vs employment letter
+# I-20 extraction uses same fields as i983 (employer_name, start_date, etc.)
+STUDENT_FIELD_MAP = {
+    "employer_name": ("employer_name", "employer_name", "exact"),
+    "work_location": ("work_site_address", "work_location", "fuzzy"),
+    "start_date": ("start_date", "start_date", "exact"),
+    "full_time": ("full_time", "full_time", "exact"),
+}
+
 # Track B field mapping: comparison_field → (answer_key, extraction_field, match_type)
 # Compares user answers against tax return extraction
 ENTITY_FIELD_MAP = {
@@ -122,6 +131,20 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
             db.add(row)
             results.append(row)
 
+    elif check.track == "student":
+        # Student track: compare I-20 vs employment letter
+        i20 = _get_extracted_dict(check, "i20")
+        emp = _get_extracted_dict(check, "employment_letter")
+
+        for comp_field, (a_field, b_field, match_type) in STUDENT_FIELD_MAP.items():
+            if match_type == "semantic":
+                row = ComparisonRow(check_id=check_id, field_name=comp_field, value_a=i20.get(a_field), value_b=emp.get(b_field), match_type="semantic", status="needs_review", confidence=0.5, detail="Semantic comparison")
+            else:
+                cr = compare_fields(comp_field, i20.get(a_field), emp.get(b_field), match_type)
+                row = ComparisonRow(check_id=check_id, field_name=cr.field_name, value_a=cr.value_a, value_b=cr.value_b, match_type=cr.match_type, status=cr.status, confidence=cr.confidence, detail=cr.detail)
+            db.add(row)
+            results.append(row)
+
     else:
         # Track A: compare I-983 vs employment letter
         i983 = _get_extracted_dict(check, "i983")
@@ -168,6 +191,7 @@ def run_evaluation(check_id: str, db: Session = Depends(get_session)):
 
     # Build evaluation context
     i983 = _get_extracted_dict(check, "i983")
+    i20 = _get_extracted_dict(check, "i20")
     emp = _get_extracted_dict(check, "employment_letter")
     tax = _get_extracted_dict(check, "tax_return")
 
@@ -180,6 +204,13 @@ def run_evaluation(check_id: str, db: Session = Depends(get_session)):
             answers=check.answers or {},
             extraction_a={},
             extraction_b=tax or {},
+            comparisons=comp_dict,
+        )
+    elif check.track == "student":
+        ctx = EvaluationContext(
+            answers=check.answers or {},
+            extraction_a=i20 or {},
+            extraction_b=emp or {},
             comparisons=comp_dict,
         )
     else:

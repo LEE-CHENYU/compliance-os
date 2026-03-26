@@ -275,11 +275,12 @@ export default function Home() {
       {/* Two Tracks */}
       <div className="section-panel">
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>Pick your check</h2>
-        <p style={{fontSize:16,color:'#556480',textAlign:'center',marginBottom:40}}>Two focused tracks. Upload documents, get answers.</p>
-        <div className="track-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <p style={{fontSize:16,color:'#556480',textAlign:'center',marginBottom:40}}>Three focused tracks. Upload documents, get answers.</p>
+        <div className="track-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
           {[
             {letter:'A',title:'Young Professional',desc:'Upload your I-983 and employment letter. We cross-check every field and tell you what doesn\'t match.',checks:["Job title consistency","Work location vs I-983","Salary match","Duties vs STEM degree","Employer name vs E-Verify","12-month evaluation status"],href:'/check/stem-opt'},
             {letter:'B',title:'Entrepreneur',desc:'Answer 5 questions and upload your tax return. We check if your entity structure matches what was filed.',checks:["S-Corp eligibility for NRAs","Form 5472 filing status","Entity type vs tax return","Foreign capital documentation","Schedule C on OPT/STEM","1040 vs 1040-NR"],href:'/check/entity'},
+            {letter:'C',title:'International Student',desc:'Upload your I-20 and offer letter. We check CPT authorization, travel readiness, and document consistency.',checks:["CPT employer match","Authorization dates","Travel signature","Full-time vs part-time","OPT eligibility","Program end date"],href:'/check/student'},
           ].map(card => (
             <button key={card.title} onClick={() => router.push(card.href)} style={{textAlign:'left',background:'rgba(255,255,255,0.6)',backdropFilter:'blur(16px)',borderRadius:20,padding:36,border:'1px solid rgba(255,255,255,0.7)',cursor:'pointer',transition:'all 0.3s'}}>
               <div style={{width:44,height:44,borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:800,color:'#5b8dee',marginBottom:18,background:'rgba(91,141,238,0.06)'}}>{card.letter}</div>

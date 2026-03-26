@@ -60,6 +60,21 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "form_8938_present": "Whether Form 8938 is attached (true/false)",
         "state_returns_filed": "List of state abbreviations for state returns filed",
     },
+    "i20": {
+        "student_name": "Full name of the student",
+        "sevis_number": "SEVIS number (format: N followed by 10 digits)",
+        "school_name": "Name of the school or university",
+        "program": "Program name and degree level (e.g., Master's in Computer Science)",
+        "major": "Major field of study",
+        "program_start_date": "Program start date (YYYY-MM-DD)",
+        "program_end_date": "Program end date (YYYY-MM-DD)",
+        "employer_name": "CPT employer name if CPT is authorized, otherwise null",
+        "work_site_address": "CPT work location/address if authorized, otherwise null",
+        "start_date": "CPT employment start date (YYYY-MM-DD) if authorized, otherwise null",
+        "end_date": "CPT employment end date (YYYY-MM-DD) if authorized, otherwise null",
+        "full_time": "CPT full-time or part-time (true for full-time, false for part-time, null if no CPT)",
+        "travel_signature_date": "Most recent DSO travel signature date (YYYY-MM-DD) if visible",
+    },
 }
 
 
