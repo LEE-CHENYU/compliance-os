@@ -299,7 +299,7 @@ rules:
     severity: warning
     finding:
       title: "You may have filed the wrong tax form"
-      action: "TurboTax, H&R Block, and FreeTaxUSA cannot file Form 1040-NR. If you used one of these in your first 5 years in the US on F-1, you likely filed as a resident when you should have filed as a nonresident. This may need to be amended."
+      action: "TurboTax cannot file Form 1040-NR at all. Other software may default to Form 1040 (resident return) instead of 1040-NR. If you were in your first 5 years in the US on F-1, you likely needed 1040-NR. This may need to be amended."
       consequence: "Amended returns needed"
       immigration_impact: true
 

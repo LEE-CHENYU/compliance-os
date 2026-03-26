@@ -384,7 +384,7 @@ export default function Home() {
           The most popular tax software is defaulting you into mistakes
         </h2>
         <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:560,margin:'0 auto 32px',lineHeight:1.6}}>
-          TurboTax and H&amp;R Block <strong style={{color:'#0d1424'}}>cannot file the correct form</strong> for non-US persons. One wrong default cascades into:
+          TurboTax <strong style={{color:'#0d1424'}}>cannot file Form 1040-NR</strong> at all. Other software often <strong style={{color:'#0d1424'}}>defaults you to the wrong form</strong>. One wrong default cascades into:
         </p>
 
         {/* Penalty hero — glowing callout */}
