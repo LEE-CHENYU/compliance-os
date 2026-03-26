@@ -41,10 +41,14 @@ const API = typeof window !== "undefined" && window.location.hostname === "local
   ? "http://localhost:8000/api/dashboard"
   : "/api/dashboard";
 
-const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  immigration: { bg: "rgba(91,141,238,0.1)", text: "#3d6bc5", border: "rgba(91,141,238,0.12)" },
-  tax: { bg: "rgba(16,185,129,0.1)", text: "#059669", border: "rgba(16,185,129,0.12)" },
-  entity: { bg: "rgba(124,58,237,0.1)", text: "#7c3aed", border: "rgba(124,58,237,0.12)" },
+const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
+  immigration: { bg: "rgba(91,141,238,0.1)", text: "#3d6bc5", border: "rgba(91,141,238,0.12)", label: "Immigration" },
+  student_status: { bg: "rgba(91,141,238,0.1)", text: "#3d6bc5", border: "rgba(91,141,238,0.12)", label: "Immigration" },
+  work_auth: { bg: "rgba(245,158,11,0.1)", text: "#d97706", border: "rgba(245,158,11,0.12)", label: "Employment" },
+  employment: { bg: "rgba(245,158,11,0.1)", text: "#d97706", border: "rgba(245,158,11,0.12)", label: "Employment" },
+  tax: { bg: "rgba(16,185,129,0.1)", text: "#059669", border: "rgba(16,185,129,0.12)", label: "Tax" },
+  entity: { bg: "rgba(124,58,237,0.1)", text: "#7c3aed", border: "rgba(124,58,237,0.12)", label: "Business" },
+  business: { bg: "rgba(124,58,237,0.1)", text: "#7c3aed", border: "rgba(124,58,237,0.12)", label: "Business" },
 };
 
 export default function DashboardPage() {
@@ -294,17 +298,18 @@ export default function DashboardPage() {
 
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Categories</div>
-            {["immigration", "tax", "entity"].map((cat) => {
+            {["immigration", "employment", "tax", "business"].map((cat) => {
               const DOC_CATS: Record<string, string> = {
-                i983: "immigration", employment_letter: "immigration", ead: "immigration", i20: "immigration", i797: "immigration", i94: "immigration", i485: "immigration", i765: "immigration", i131: "immigration",
+                i20: "immigration", i94: "immigration", i797: "immigration", i485: "immigration", i765: "immigration", i131: "immigration",
+                i983: "employment", employment_letter: "employment", ead: "employment",
                 tax_return: "tax", w2: "tax",
               };
-              const count = documents.filter((d) => (DOC_CATS[d.doc_type] || "entity") === cat).length;
-              const colors = CATEGORY_COLORS[cat];
+              const count = documents.filter((d) => (DOC_CATS[d.doc_type] || "business") === cat).length;
+              const colors = CATEGORY_COLORS[cat] || CATEGORY_COLORS.business;
               return (
-                <div key={cat} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480] capitalize">
+                <div key={cat} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480]">
                   <span className="w-2 h-2 rounded-full" style={{ background: colors.text }} />
-                  {cat}
+                  {colors.label}
                   <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-md" style={{ background: colors.bg, color: colors.text }}>{count}</span>
                 </div>
               );
@@ -360,11 +365,14 @@ export default function DashboardPage() {
                 <button onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">+ Upload</button>
               </div>
               {(() => {
+                const DOC_TO_CAT: Record<string, string> = {
+                  i20: "Immigration", i94: "Immigration", i797: "Immigration", i485: "Immigration", i765: "Immigration", i131: "Immigration",
+                  i983: "Employment", employment_letter: "Employment", ead: "Employment",
+                  tax_return: "Tax", w2: "Tax",
+                };
                 const grouped: Record<string, typeof documents> = {};
                 for (const doc of documents) {
-                  const cat = doc.doc_type === "i983" || doc.doc_type === "employment_letter" || doc.doc_type === "ead" || doc.doc_type === "i20" || doc.doc_type === "i797" || doc.doc_type === "i94"
-                    ? "Immigration" : doc.doc_type === "tax_return" || doc.doc_type === "w2"
-                    ? "Tax" : "Other";
+                  const cat = DOC_TO_CAT[doc.doc_type] || "Business";
                   if (!grouped[cat]) grouped[cat] = [];
                   grouped[cat].push(doc);
                 }
@@ -477,7 +485,7 @@ export default function DashboardPage() {
                   immigration: "Immigration",
                   employment: "Employment",
                   tax: "Tax",
-                  entity: "Entity",
+                  entity: "Business",
                 };
                 const CAT_ORDER = ["immigration", "employment", "tax", "entity"];
                 const grouped: Record<string, { label: string; value: string }[]> = {};
