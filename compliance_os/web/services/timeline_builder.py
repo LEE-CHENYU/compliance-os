@@ -283,17 +283,11 @@ def build_stats(user_id: str, db: Session) -> dict:
             if c.status == "match":
                 verified_count += 1
 
-        # Find next deadline from extracted end dates
-        for doc in check.documents:
-            for field in doc.extracted_fields:
-                if field.field_name == "end_date" and field.field_value:
-                    try:
-                        end = datetime.strptime(field.field_value, "%Y-%m-%d").date()
-                        days = (end - date.today()).days
-                        if days > 0 and (next_deadline_days is None or days < next_deadline_days):
-                            next_deadline_days = days
-                    except ValueError:
-                        pass
+    # Use the full deadline builder for next_deadline_days
+    deadlines = _build_deadlines(checks)
+    for d in deadlines:
+        if d["days"] > 0 and (next_deadline_days is None or d["days"] < next_deadline_days):
+            next_deadline_days = d["days"]
 
     return {
         "documents": doc_count,

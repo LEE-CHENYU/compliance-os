@@ -73,6 +73,11 @@ export default function DashboardPage() {
       fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
     ]).then(([tl, st, docs]) => {
+      // If new user with no documents, redirect to check flow
+      if (docs.length === 0 && (!tl.events || tl.events.length <= 1)) {
+        router.push("/check");
+        return;
+      }
       setTimeline(tl);
       setStats(st);
       setDocuments(docs);
