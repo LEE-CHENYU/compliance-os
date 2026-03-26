@@ -298,7 +298,9 @@ def build_stats(user_id: str, db: Session) -> dict:
 
 
 def _doc_category(doc_type: str) -> str:
-    if doc_type in ("i20", "i94", "i797", "i485", "i765", "i131"):
+    if doc_type in ("i20", "i94"):
+        return "student_status"
+    if doc_type in ("i797", "i485", "i765", "i131"):
         return "immigration"
     if doc_type in ("i983", "employment_letter", "ead"):
         return "employment"

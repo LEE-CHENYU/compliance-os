@@ -43,7 +43,7 @@ const API = typeof window !== "undefined" && window.location.hostname === "local
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
   immigration: { bg: "rgba(91,141,238,0.1)", text: "#3d6bc5", border: "rgba(91,141,238,0.12)", label: "Immigration" },
-  student_status: { bg: "rgba(91,141,238,0.1)", text: "#3d6bc5", border: "rgba(91,141,238,0.12)", label: "Immigration" },
+  student_status: { bg: "rgba(59,130,246,0.1)", text: "#2563eb", border: "rgba(59,130,246,0.12)", label: "Student Status" },
   work_auth: { bg: "rgba(245,158,11,0.1)", text: "#d97706", border: "rgba(245,158,11,0.12)", label: "Employment" },
   employment: { bg: "rgba(245,158,11,0.1)", text: "#d97706", border: "rgba(245,158,11,0.12)", label: "Employment" },
   tax: { bg: "rgba(16,185,129,0.1)", text: "#059669", border: "rgba(16,185,129,0.12)", label: "Tax" },
@@ -298,9 +298,10 @@ export default function DashboardPage() {
 
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Categories</div>
-            {["immigration", "employment", "tax", "business"].map((cat) => {
+            {["student_status", "immigration", "employment", "tax", "business"].map((cat) => {
               const DOC_CATS: Record<string, string> = {
-                i20: "immigration", i94: "immigration", i797: "immigration", i485: "immigration", i765: "immigration", i131: "immigration",
+                i20: "student_status", i94: "student_status",
+                i797: "immigration", i485: "immigration", i765: "immigration", i131: "immigration",
                 i983: "employment", employment_letter: "employment", ead: "employment",
                 tax_return: "tax", w2: "tax",
               };
@@ -366,7 +367,8 @@ export default function DashboardPage() {
               </div>
               {(() => {
                 const DOC_TO_CAT: Record<string, string> = {
-                  i20: "Immigration", i94: "Immigration", i797: "Immigration", i485: "Immigration", i765: "Immigration", i131: "Immigration",
+                  i20: "Student Status", i94: "Student Status",
+                  i797: "Immigration", i485: "Immigration", i765: "Immigration", i131: "Immigration",
                   i983: "Employment", employment_letter: "Employment", ead: "Employment",
                   tax_return: "Tax", w2: "Tax",
                 };
@@ -482,12 +484,13 @@ export default function DashboardPage() {
 
               {(() => {
                 const CAT_LABELS: Record<string, string> = {
+                  student_status: "Student Status",
                   immigration: "Immigration",
                   employment: "Employment",
                   tax: "Tax",
                   entity: "Business",
                 };
-                const CAT_ORDER = ["immigration", "employment", "tax", "entity"];
+                const CAT_ORDER = ["student_status", "immigration", "employment", "tax", "entity"];
                 const grouped: Record<string, { label: string; value: string }[]> = {};
 
                 for (const fact of (timeline?.key_facts || []) as { label: string; value: string; category?: string }[]) {
