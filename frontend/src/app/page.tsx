@@ -192,6 +192,7 @@ export default function Home() {
         .case-card { animation: fadeUp 0.6s ease-out both; }
         .case-card:nth-child(1) { animation-delay: 0.6s; }
         .case-card:nth-child(2) { animation-delay: 0.7s; }
+        .case-card:nth-child(3) { animation-delay: 0.8s; }
 
         /* === Mobile responsive === */
         @media (max-width: 768px) {
@@ -422,7 +423,7 @@ export default function Home() {
         {/* Real case studies — glass cards with gradient accent */}
         <div style={{maxWidth:640,margin:'0 auto 36px'}}>
           <div style={{fontSize:11,fontWeight:600,color:'#7b8ba5',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:12,textAlign:'center'}}>From the courts</div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
             <div className="case-card" style={{background:'linear-gradient(160deg, rgba(255,255,255,0.6) 0%, rgba(238,242,255,0.4) 100%)',backdropFilter:'blur(16px)',borderRadius:18,padding:'20px 22px',border:'1px solid rgba(79,70,229,0.08)',boxShadow:'0 4px 24px rgba(79,70,229,0.04)'}}>
               <div style={{fontSize:28,fontWeight:800,color:'#4f46e5',marginBottom:2}}>$10.9M</div>
               <div style={{fontSize:12,fontWeight:600,color:'#0d1424',marginBottom:8}}>Mukhi v. Commissioner</div>
@@ -434,6 +435,12 @@ export default function Home() {
               <div style={{fontSize:12,fontWeight:600,color:'#0d1424',marginBottom:8}}>Bittner v. United States</div>
               <div style={{fontSize:11,color:'#556480',lineHeight:1.5}}>FBAR penalties across 272 accounts. Supreme Court reduced to $50K per report.</div>
               <div style={{fontSize:10,color:'#8e9ab5',marginTop:6}}>Supreme Court, Feb 2023</div>
+            </div>
+            <div className="case-card" style={{background:'linear-gradient(160deg, rgba(255,255,255,0.6) 0%, rgba(238,242,255,0.4) 100%)',backdropFilter:'blur(16px)',borderRadius:18,padding:'20px 22px',border:'1px solid rgba(79,70,229,0.08)',boxShadow:'0 4px 24px rgba(79,70,229,0.04)'}}>
+              <div style={{fontSize:28,fontWeight:800,color:'#4f46e5',marginBottom:2}}>$91K</div>
+              <div style={{fontSize:12,fontWeight:600,color:'#0d1424',marginBottom:8}}>Huang v. United States</div>
+              <div style={{fontSize:11,color:'#556480',lineHeight:1.5}}>TurboTax told her foreign gifts don&apos;t need reporting. IRS assessed $91K in Form 3520 penalties. Court ruled TurboTax reliance may be reasonable cause.</div>
+              <div style={{fontSize:10,color:'#8e9ab5',marginTop:6}}>N.D. California, Ongoing</div>
             </div>
           </div>
         </div>
