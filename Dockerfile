@@ -25,7 +25,7 @@ RUN curl -fsSL "https://caddyserver.com/api/download?os=linux&arch=amd64" -o /us
 RUN pip install --no-cache-dir \
     fastapi uvicorn sqlalchemy python-multipart pymupdf openai \
     python-dotenv pydantic pydantic-settings pyyaml python-dateutil \
-    rapidfuzz bcrypt pyjwt anthropic
+    rapidfuzz bcrypt pyjwt anthropic mistralai
 
 # Copy application code
 COPY compliance_os/ ./compliance_os/

@@ -79,13 +79,69 @@ SCHEMAS: dict[str, dict[str, str]] = {
 
 
 def extract_pdf_text(file_path: str | Path) -> str:
-    """Extract text from a PDF file using PyMuPDF."""
+    """Extract text from a PDF file.
+    Uses Mistral OCR if API key is available (best quality),
+    falls back to PyMuPDF (free, local).
+    """
+    mistral_key = os.environ.get("MISTRAL_API_KEY")
+
+    if mistral_key:
+        try:
+            return _extract_with_mistral_ocr(str(file_path), mistral_key)
+        except Exception:
+            pass  # Fall back to PyMuPDF
+
+    # Fallback: PyMuPDF local extraction
     doc = fitz.open(str(file_path))
     text_parts = []
     for page in doc:
         text_parts.append(page.get_text())
     doc.close()
     return "\n".join(text_parts)
+
+
+def _extract_with_mistral_ocr(file_path: str, api_key: str) -> str:
+    """Use Mistral OCR API for high-quality document parsing."""
+    import base64
+    from mistralai import Mistral
+
+    client = Mistral(api_key=api_key)
+
+    # Read file and encode as base64 data URI
+    with open(file_path, "rb") as f:
+        file_bytes = f.read()
+
+    # Determine MIME type
+    if file_path.lower().endswith(".pdf"):
+        mime = "application/pdf"
+    elif file_path.lower().endswith(".png"):
+        mime = "image/png"
+    elif file_path.lower().endswith((".jpg", ".jpeg")):
+        mime = "image/jpeg"
+    else:
+        mime = "application/octet-stream"
+
+    b64 = base64.b64encode(file_bytes).decode()
+    data_uri = f"data:{mime};base64,{b64}"
+
+    # Call Mistral OCR
+    if mime == "application/pdf":
+        result = client.ocr.process(
+            model="mistral-ocr-latest",
+            document={"type": "document_url", "document_url": data_uri},
+        )
+    else:
+        result = client.ocr.process(
+            model="mistral-ocr-latest",
+            document={"type": "image_url", "image_url": data_uri},
+        )
+
+    # Extract text from all pages
+    text_parts = []
+    for page in result.pages:
+        text_parts.append(page.markdown)
+
+    return "\n\n".join(text_parts)
 
 
 def extract_document(
