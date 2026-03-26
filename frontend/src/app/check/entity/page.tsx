@@ -43,6 +43,15 @@ const FORMATION_AGE = [
   { value: "3_plus_years", label: "3+ years ago" },
 ];
 
+const TAX_SOFTWARE = [
+  { value: "turbotax", label: "TurboTax" },
+  { value: "hr_block", label: "H&R Block" },
+  { value: "sprintax", label: "Sprintax" },
+  { value: "cpa", label: "A CPA / accountant" },
+  { value: "not_filed", label: "Haven\u2019t filed yet" },
+  { value: "not_sure", label: "Not sure" },
+];
+
 type Answers = Record<string, string>;
 
 export default function EntityInfo() {
@@ -60,6 +69,7 @@ export default function EntityInfo() {
     answers.separate_bank_account &&
     answers.foreign_capital_transfer &&
     answers.formation_age &&
+    answers.tax_software_used &&
     (!showVisa || answers.visa_type);
 
   async function handleContinue() {
@@ -124,6 +134,7 @@ export default function EntityInfo() {
         <ChipGroup label="Do you have a separate business bank account?" options={YES_NO_UNSURE} field="separate_bank_account" />
         <ChipGroup label="Have you transferred money from a foreign account to fund the business?" options={YES_NO} field="foreign_capital_transfer" />
         <ChipGroup label="When was the entity formed?" options={FORMATION_AGE} field="formation_age" />
+        <ChipGroup label="What did you use to file your most recent US tax return?" options={TAX_SOFTWARE} field="tax_software_used" />
 
         <button
           onClick={handleContinue}

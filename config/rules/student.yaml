@@ -125,6 +125,21 @@ rules:
       consequence: "Status planning needed"
       immigration_impact: true
 
+  - id: student_wrong_tax_software
+    track: student
+    type: logic
+    conditions:
+      - field: income_reporting
+        operator: in
+        value: ["turbotax", "hr_block"]
+        source: answers
+    severity: warning
+    finding:
+      title: "TurboTax and H&R Block cannot file the correct form for F-1 students"
+      action: "F-1 students in their first 5 years are nonresident aliens and must file Form 1040-NR, not Form 1040. TurboTax and H&R Block do not support 1040-NR. Consider using Sprintax or a CPA experienced with nonresident filings."
+      consequence: "Wrong form filed"
+      immigration_impact: true
+
   - id: no_cpt_on_i20
     track: student
     type: logic

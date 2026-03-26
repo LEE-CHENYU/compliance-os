@@ -22,6 +22,16 @@ const CPT_MONTHS = [
   { value: "12+", label: "12+ months" },
 ];
 
+const INCOME_REPORTING = [
+  { value: "turbotax", label: "TurboTax" },
+  { value: "hr_block", label: "H&R Block" },
+  { value: "sprintax", label: "Sprintax" },
+  { value: "school_service", label: "My school\u2019s tax service" },
+  { value: "cpa", label: "A CPA / accountant" },
+  { value: "not_filed", label: "Haven\u2019t filed yet" },
+  { value: "no_income", label: "No income to report" },
+];
+
 export default function StudentIntake() {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -30,8 +40,10 @@ export default function StudentIntake() {
   const set = (key: string, value: string) => setAnswers((a) => ({ ...a, [key]: value }));
 
   const showCptQuestions = answers.student_status === "enrolled_cpt";
+  const showIncomeQuestion = showCptQuestions || answers.student_status === "between_semesters";
   const canContinue = answers.student_status && answers.planning_travel &&
-    (!showCptQuestions || (answers.has_cpt_authorization && answers.cpt_fulltime_months));
+    (!showCptQuestions || (answers.has_cpt_authorization && answers.cpt_fulltime_months)) &&
+    (!showIncomeQuestion || answers.income_reporting);
 
   function ChipSelect({ label, options, field }: { label: string; options: { value: string; label: string; sub?: string }[]; field: string }) {
     return (
@@ -103,6 +115,14 @@ export default function StudentIntake() {
             <ChipRow label="Is CPT authorization printed on your I-20?" options={YES_NO} field="has_cpt_authorization" />
             <ChipRow label="How many months of full-time CPT have you used total?" options={CPT_MONTHS} field="cpt_fulltime_months" />
           </>
+        )}
+
+        {showIncomeQuestion && (
+          <ChipRow
+            label={showCptQuestions ? "How are you planning to report your CPT income on your taxes?" : "Did you have any US income this year? If so, how are you reporting it?"}
+            options={INCOME_REPORTING}
+            field="income_reporting"
+          />
         )}
 
         <ChipRow label="Are you planning international travel?" options={YES_NO} field="planning_travel" />
