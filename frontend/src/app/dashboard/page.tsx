@@ -42,8 +42,8 @@ const API = typeof window !== "undefined" && window.location.hostname === "local
   : "/api/dashboard";
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
-  immigration: { bg: "rgba(91,141,238,0.1)", text: "#3d6bc5", border: "rgba(91,141,238,0.12)", label: "Immigration" },
-  student_status: { bg: "rgba(59,130,246,0.1)", text: "#2563eb", border: "rgba(59,130,246,0.12)", label: "Student Status" },
+  student_status: { bg: "rgba(6,182,212,0.1)", text: "#0891b2", border: "rgba(6,182,212,0.12)", label: "Student Status" },
+  immigration: { bg: "rgba(99,102,241,0.1)", text: "#4f46e5", border: "rgba(99,102,241,0.12)", label: "Immigration" },
   work_auth: { bg: "rgba(245,158,11,0.1)", text: "#d97706", border: "rgba(245,158,11,0.12)", label: "Employment" },
   employment: { bg: "rgba(245,158,11,0.1)", text: "#d97706", border: "rgba(245,158,11,0.12)", label: "Employment" },
   tax: { bg: "rgba(16,185,129,0.1)", text: "#059669", border: "rgba(16,185,129,0.12)", label: "Tax" },
