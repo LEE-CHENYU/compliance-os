@@ -132,18 +132,20 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
             results.append(row)
 
     elif check.track == "student":
-        # Student track: compare I-20 vs employment letter
+        # Student track: compare I-20 vs employment letter (only if both exist)
         i20 = _get_extracted_dict(check, "i20")
         emp = _get_extracted_dict(check, "employment_letter")
 
-        for comp_field, (a_field, b_field, match_type) in STUDENT_FIELD_MAP.items():
-            if match_type == "semantic":
-                row = ComparisonRow(check_id=check_id, field_name=comp_field, value_a=i20.get(a_field), value_b=emp.get(b_field), match_type="semantic", status="needs_review", confidence=0.5, detail="Semantic comparison")
-            else:
-                cr = compare_fields(comp_field, i20.get(a_field), emp.get(b_field), match_type)
-                row = ComparisonRow(check_id=check_id, field_name=cr.field_name, value_a=cr.value_a, value_b=cr.value_b, match_type=cr.match_type, status=cr.status, confidence=cr.confidence, detail=cr.detail)
-            db.add(row)
-            results.append(row)
+        # Only run CPT cross-checks if employment letter was uploaded
+        if emp:
+            for comp_field, (a_field, b_field, match_type) in STUDENT_FIELD_MAP.items():
+                if match_type == "semantic":
+                    row = ComparisonRow(check_id=check_id, field_name=comp_field, value_a=i20.get(a_field), value_b=emp.get(b_field), match_type="semantic", status="needs_review", confidence=0.5, detail="Semantic comparison")
+                else:
+                    cr = compare_fields(comp_field, i20.get(a_field), emp.get(b_field), match_type)
+                    row = ComparisonRow(check_id=check_id, field_name=cr.field_name, value_a=cr.value_a, value_b=cr.value_b, match_type=cr.match_type, status=cr.status, confidence=cr.confidence, detail=cr.detail)
+                db.add(row)
+                results.append(row)
 
     else:
         # Track A: compare I-983 vs employment letter
