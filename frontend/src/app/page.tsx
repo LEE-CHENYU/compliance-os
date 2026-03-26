@@ -171,6 +171,27 @@ export default function Home() {
           0% { transform: translateX(20px); opacity: 0; }
           100% { transform: translateX(0); opacity: 1; }
         }
+        @keyframes fadeUp {
+          0% { transform: translateY(16px); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes countUp {
+          0% { opacity: 0; transform: scale(0.8); }
+          60% { opacity: 1; transform: scale(1.05); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+        .penalty-card {
+          animation: fadeUp 0.5s ease-out both;
+        }
+        .penalty-card:nth-child(1) { animation-delay: 0.1s; }
+        .penalty-card:nth-child(2) { animation-delay: 0.2s; }
+        .penalty-card:nth-child(3) { animation-delay: 0.3s; }
+        .penalty-card:nth-child(4) { animation-delay: 0.4s; }
+        .penalty-card:nth-child(5) { animation-delay: 0.5s; }
+        .penalty-hero { animation: countUp 0.8s ease-out both; }
+        .case-card { animation: fadeUp 0.6s ease-out both; }
+        .case-card:nth-child(1) { animation-delay: 0.6s; }
+        .case-card:nth-child(2) { animation-delay: 0.7s; }
 
         /* === Mobile responsive === */
         @media (max-width: 768px) {
@@ -362,59 +383,63 @@ export default function Home() {
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>
           The most popular tax software is defaulting you into mistakes
         </h2>
-        <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:600,margin:'0 auto 16px',lineHeight:1.6}}>
-          TurboTax and H&amp;R Block <strong style={{color:'#0d1424'}}>cannot file the correct form</strong> for nonresidents. They treat you as an American by default. This single mistake triggers a cascade of penalties:
+        <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:560,margin:'0 auto 32px',lineHeight:1.6}}>
+          TurboTax and H&amp;R Block <strong style={{color:'#0d1424'}}>cannot file the correct form</strong> for non-US persons. One wrong default cascades into:
         </p>
 
-        {/* Penalty total callout */}
-        <div style={{textAlign:'center',margin:'0 auto 32px',maxWidth:480}}>
-          <div style={{fontSize:48,fontWeight:800,color:'#4f46e5',letterSpacing:'-0.03em'}}>$1.5M+</div>
-          <div style={{fontSize:14,color:'#556480'}}>potential penalty exposure from one wrong default</div>
+        {/* Penalty hero — glowing callout */}
+        <div className="penalty-hero" style={{textAlign:'center',margin:'0 auto 40px',maxWidth:400,padding:'32px 40px',borderRadius:24,background:'linear-gradient(135deg, rgba(79,70,229,0.06) 0%, rgba(99,102,241,0.03) 100%)',border:'1px solid rgba(79,70,229,0.1)',boxShadow:'0 8px 40px rgba(79,70,229,0.08), inset 0 1px 0 rgba(255,255,255,0.5)'}}>
+          <div style={{fontSize:56,fontWeight:800,color:'#4f46e5',letterSpacing:'-0.04em',lineHeight:1}}>$1.5M+</div>
+          <div style={{fontSize:13,color:'#6366f1',fontWeight:500,marginTop:6}}>potential penalty exposure</div>
+          <div style={{fontSize:12,color:'#8e9ab5',marginTop:4}}>from one wrong default in your tax software</div>
         </div>
 
-        <div style={{display:'flex',flexDirection:'column',gap:10,maxWidth:640,margin:'0 auto 32px'}}>
+        {/* Penalty cards — staggered animation */}
+        <div style={{display:'flex',flexDirection:'column',gap:8,maxWidth:640,margin:'0 auto 40px'}}>
           {[
-            {consequence:'50% of your foreign savings',desc:'TurboTax defaults foreign accounts to "No." If your family bank accounts abroad exceeded $10K, you owe FBAR. Penalty: up to half your balance, per year.',tag:'FBAR'},
-            {consequence:'$25,000 per year, retroactively',desc:'Own a US LLC as a non-citizen? Form 5472 is required every year, even with $0 revenue. The penalty has no statute of limitations.',tag:'Form 5472'},
-            {consequence:'25% of every family transfer',desc:'Parents sent money for tuition or housing? If it exceeded $100K in a year, the IRS requires Form 3520. The penalty is 25% of the unreported amount.',tag:'Form 3520'},
-            {consequence:'Your visa status contradicted',desc:'Filing Form 1040 instead of 1040-NR claims you are a US tax resident. This directly contradicts your F-1 or H-1B nonimmigrant status and can affect future applications.',tag:'Wrong form'},
-            {consequence:'$10,000+ in additional penalties',desc:'Foreign assets over $50K require Form 8938 (FATCA) — separate from FBAR. Most people who file one miss the other entirely.',tag:'FATCA'},
+            {consequence:'50% of your foreign savings',short:'Family bank accounts abroad over $10K? TurboTax defaults to "No."',tag:'FBAR'},
+            {consequence:'$25,000 per year, retroactively',short:'Foreign-owned LLC? Required every year, even with $0 revenue.',tag:'Form 5472'},
+            {consequence:'25% of every family transfer',short:'Parents sent money for tuition? Over $100K requires reporting.',tag:'Form 3520'},
+            {consequence:'Your visa status contradicted',short:'Filing as a resident when you\u2019re not. Affects future applications.',tag:'Wrong form'},
+            {consequence:'$10,000+ in additional penalties',short:'Foreign assets over $50K need a separate form from FBAR.',tag:'FATCA'},
           ].map((item) => (
-            <div key={item.tag} style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:'18px 22px',border:'1px solid rgba(255,255,255,0.6)'}}>
-              <div style={{display:'flex',alignItems:'start',gap:14}}>
-                <div style={{flex:1}}>
-                  <div style={{fontSize:16,fontWeight:700,color:'#1e1b4b',marginBottom:4}}>{item.consequence}</div>
-                  <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>{item.desc}</div>
+            <div key={item.tag} className="penalty-card" style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:14,padding:'14px 18px',border:'1px solid rgba(255,255,255,0.6)',boxShadow:'0 2px 12px rgba(79,70,229,0.03)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:12}}>
+                <div style={{flex:1,display:'flex',alignItems:'baseline',gap:8}}>
+                  <span style={{fontSize:15,fontWeight:700,color:'#1e1b4b',whiteSpace:'nowrap'}}>{item.consequence}</span>
+                  <span style={{fontSize:12,color:'#7b8ba5',lineHeight:1.4}}>{item.short}</span>
                 </div>
-                <span style={{fontSize:10,fontWeight:600,whiteSpace:'nowrap',padding:'4px 10px',borderRadius:20,background:'rgba(79,70,229,0.06)',color:'#4f46e5',border:'1px solid rgba(79,70,229,0.08)',flexShrink:0,marginTop:2}}>{item.tag}</span>
+                <span style={{fontSize:10,fontWeight:600,whiteSpace:'nowrap',padding:'3px 9px',borderRadius:20,background:'rgba(79,70,229,0.06)',color:'#6366f1',border:'1px solid rgba(79,70,229,0.08)',flexShrink:0}}>{item.tag}</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Real case studies */}
-        <div style={{maxWidth:640,margin:'0 auto 32px'}}>
-          <div style={{fontSize:12,fontWeight:600,color:'#7b8ba5',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:12,textAlign:'center'}}>Real cases</div>
+        {/* Real case studies — glass cards with gradient accent */}
+        <div style={{maxWidth:640,margin:'0 auto 36px'}}>
+          <div style={{fontSize:11,fontWeight:600,color:'#7b8ba5',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:12,textAlign:'center'}}>From the courts</div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-            <div style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:'18px 20px',border:'1px solid rgba(255,255,255,0.6)'}}>
-              <div style={{fontSize:24,fontWeight:800,color:'#4f46e5',marginBottom:4}}>$10.9M</div>
-              <div style={{fontSize:13,fontWeight:600,color:'#0d1424',marginBottom:6}}>Mukhi v. Commissioner</div>
-              <div style={{fontSize:12,color:'#556480',lineHeight:1.5}}>Tax Court upheld $10.9M in Form 3520 penalties for unreported foreign trusts. Constitutional challenges rejected. (163 T.C. No. 8, Nov 2024)</div>
+            <div className="case-card" style={{background:'linear-gradient(160deg, rgba(255,255,255,0.6) 0%, rgba(238,242,255,0.4) 100%)',backdropFilter:'blur(16px)',borderRadius:18,padding:'20px 22px',border:'1px solid rgba(79,70,229,0.08)',boxShadow:'0 4px 24px rgba(79,70,229,0.04)'}}>
+              <div style={{fontSize:28,fontWeight:800,color:'#4f46e5',marginBottom:2}}>$10.9M</div>
+              <div style={{fontSize:12,fontWeight:600,color:'#0d1424',marginBottom:8}}>Mukhi v. Commissioner</div>
+              <div style={{fontSize:11,color:'#556480',lineHeight:1.5}}>Form 3520 penalties upheld for unreported foreign trusts. Constitutional challenges rejected.</div>
+              <div style={{fontSize:10,color:'#8e9ab5',marginTop:6}}>Tax Court, Nov 2024</div>
             </div>
-            <div style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:'18px 20px',border:'1px solid rgba(255,255,255,0.6)'}}>
-              <div style={{fontSize:24,fontWeight:800,color:'#4f46e5',marginBottom:4}}>$2.72M</div>
-              <div style={{fontSize:13,fontWeight:600,color:'#0d1424',marginBottom:6}}>Bittner v. United States</div>
-              <div style={{fontSize:12,color:'#556480',lineHeight:1.5}}>IRS assessed $2.72M in FBAR penalties across 272 accounts. Supreme Court reduced to $50K — per report, not per account. (598 U.S. 85, Feb 2023)</div>
+            <div className="case-card" style={{background:'linear-gradient(160deg, rgba(255,255,255,0.6) 0%, rgba(238,242,255,0.4) 100%)',backdropFilter:'blur(16px)',borderRadius:18,padding:'20px 22px',border:'1px solid rgba(79,70,229,0.08)',boxShadow:'0 4px 24px rgba(79,70,229,0.04)'}}>
+              <div style={{fontSize:28,fontWeight:800,color:'#4f46e5',marginBottom:2}}>$2.72M</div>
+              <div style={{fontSize:12,fontWeight:600,color:'#0d1424',marginBottom:8}}>Bittner v. United States</div>
+              <div style={{fontSize:11,color:'#556480',lineHeight:1.5}}>FBAR penalties across 272 accounts. Supreme Court reduced to $50K per report.</div>
+              <div style={{fontSize:10,color:'#8e9ab5',marginTop:6}}>Supreme Court, Feb 2023</div>
             </div>
           </div>
         </div>
 
         <div style={{textAlign:'center'}}>
-          <p style={{fontSize:15,color:'#0d1424',fontWeight:600,maxWidth:520,margin:'0 auto 8px',lineHeight:1.5}}>
+          <p style={{fontSize:15,color:'#0d1424',fontWeight:600,maxWidth:420,margin:'0 auto 6px'}}>
             Guardian finds what your tax software missed.
           </p>
-          <p style={{fontSize:14,color:'#556480',maxWidth:480,margin:'0 auto 24px',lineHeight:1.6}}>
-            We don&apos;t file your taxes. We check your documents, surface the risks you don&apos;t know about, and tell you exactly what needs fixing.
+          <p style={{fontSize:13,color:'#556480',maxWidth:400,margin:'0 auto 20px',lineHeight:1.5}}>
+            We check your documents, surface hidden risks, and tell you what to fix.
           </p>
           <button onClick={() => router.push("/check")} style={{padding:'14px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3)'}}>
             Find my risks
