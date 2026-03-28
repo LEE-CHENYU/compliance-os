@@ -27,6 +27,7 @@ def test_schemas_defined():
     assert "cpt_application" in SCHEMAS
     assert "enrollment_verification" in SCHEMAS
     assert "event_invitation" in SCHEMAS
+    assert "identifier_record" in SCHEMAS
     assert "filing_confirmation" in SCHEMAS
     assert "final_evaluation" in SCHEMAS
     assert "identity_document" in SCHEMAS
@@ -93,6 +94,7 @@ def test_schemas_defined():
     assert "job_title" in SCHEMAS["i983"]
     assert "employer_name" in SCHEMAS["employment_letter"]
     assert "form_type" in SCHEMAS["tax_return"]
+    assert "identifier_value" in SCHEMAS["identifier_record"]
 
 
 def test_extract_resume_fields():

@@ -6,8 +6,8 @@ Snapshot date: `2026-03-28`
 
 ## Current inventory
 
-- total files excluding `.DS_Store` and `Thumbs.db`: `585`
-- directly ingestible by the current v1 data-room path (`pdf/png/jpg/jpeg/csv/txt`): `483`
+- total files excluding `.DS_Store` and `Thumbs.db`: `586`
+- directly ingestible by the current v1 data-room path (`pdf/png/jpg/jpeg/csv/txt`): `484`
 
 Top-level file counts:
 - `employment`: `240`
@@ -22,7 +22,7 @@ Top-level file counts:
 - `Personal Info Archive`: `10`
 
 Extension counts:
-- `.pdf`: `265`
+- `.pdf`: `266`
 - `.png`: `151`
 - `.docx`: `57`
 - `.jpg`: `35`
@@ -215,9 +215,29 @@ Extension counts:
   - focus: Bitsync chat-export asset overflow part five from the second numbered archive copy
   - status: completed
   - record: `docs/data-room-batch-45.md`
+- Batch 46:
+  - focus: Bitsync chat-export asset overflow part six from the second numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-46.md`
+- Batch 47:
+  - focus: Bitsync chat-export asset overflow part seven from the second numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-47.md`
+- Batch 48:
+  - focus: Bitsync chat-export asset overflow part eight across the second archive copy and primary archive
+  - status: completed
+  - record: `docs/data-room-batch-48.md`
+- Batch 49:
+  - focus: Bitsync chat-export asset overflow part nine from the primary archive
+  - status: completed
+  - record: `docs/data-room-batch-49.md`
+- Batch 50:
+  - focus: remaining primary chat-export assets plus the residual opaque identifier text artifact
+  - status: completed
+  - record: `docs/data-room-batch-50.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `45` stable under focused tests plus real-source validation.
-2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
-3. Start the next round from still-unbatched source slices instead of reopening resolved batches.
+1. Keep Batches `01` through `50` stable under focused tests plus real-source validation.
+2. Treat classifier generality and non-ingestible format support as the next contract-hardening target; there is no remaining ingestible backlog.
+3. Pull new families into comparison or retrieval only when a concrete check flow needs them.

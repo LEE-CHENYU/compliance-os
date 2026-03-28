@@ -482,6 +482,16 @@ def test_general_path_patterns_cover_unseen_archive_variants():
     )
 
 
+def test_text_file_content_can_classify_identifier_record(tmp_path):
+    path = tmp_path / "token.txt"
+    path.write_text("51da1642a056795f8d9717cb60704640")
+
+    result = classify_file(str(path), "text/plain", allow_ocr=False)
+
+    assert result.doc_type == "identifier_record"
+    assert result.source == "text"
+
+
 def test_classifier_generality_report_keeps_path_exceptions_scoped():
     report = classifier_generality_report()
 

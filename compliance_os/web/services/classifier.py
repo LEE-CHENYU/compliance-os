@@ -479,6 +479,9 @@ PATTERNS: dict[str, list[str]] = {
         r"World Congress in Computer Science",
         r"Meteor Support",
     ],
+    "identifier_record": [
+        r"^\s*[a-f0-9]{32,64}\s*$",
+    ],
     "social_security_card": [
         r"Social Security",
         r"name shown on card",
@@ -747,6 +750,7 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "enrollment_verification": 2,
     "filing_confirmation": 2,
     "final_evaluation": 2,
+    "identifier_record": 1,
     "identity_document": 2,
     "immigration_reference": 2,
     "insurance_card": 2,
@@ -853,6 +857,7 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "admission_letter": "admission_letter",
     "enrollment_verification": "enrollment_verification",
     "filing_confirmation": "filing_confirmation",
+    "identifier_record": "identifier_record",
     "good_standing_certificate": "certificate_of_good_standing",
     "health_coverage_application": "health_coverage_application",
     "identity_document": "identity_document",
@@ -1072,6 +1077,16 @@ def classify_file(file_path: str, mime_type: str, *, allow_ocr: bool = True) -> 
         from compliance_os.web.services.pdf_reader import extract_first_page
 
         text = extract_first_page(file_path)
+        if text:
+            by_text = classify_text(text)
+            if by_text.doc_type:
+                return by_text
+
+    if mime_type in {"text/plain", "text/csv"}:
+        try:
+            text = Path(file_path).read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            text = ""
         if text:
             by_text = classify_text(text)
             if by_text.doc_type:

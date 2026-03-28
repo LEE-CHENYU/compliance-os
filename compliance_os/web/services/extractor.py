@@ -155,6 +155,11 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "confirmation_date": "Confirmation or submission date (YYYY-MM-DD) if visible",
         "reference_number": "Reference number, order number, or confirmation ID if visible",
     },
+    "identifier_record": {
+        "identifier_value": "Identifier, token, checksum, or opaque key value shown in the record",
+        "identifier_kind": "Short guess of the identifier kind such as checksum, token, or reference",
+        "source_context": "Source context suggesting what system or workflow the identifier belongs to",
+    },
     "final_evaluation": {
         "student_name": "Student full name if visible",
         "employer_name": "Employer name if visible",

@@ -1282,3 +1282,149 @@ batches:
     source_scope:
       - employment
     target_size: 10
+
+  - id: batch_46
+    number: 46
+    focus: Bitsync chat-export asset overflow part six from the second numbered archive copy
+    status: completed
+    record: docs/data-room-batch-46.md
+    validation_hooks:
+      - name: batch_46_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_46_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 46
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_47
+    number: 47
+    focus: Bitsync chat-export asset overflow part seven from the second numbered archive copy
+    status: completed
+    record: docs/data-room-batch-47.md
+    validation_hooks:
+      - name: batch_47_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_47_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 47
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_48
+    number: 48
+    focus: Bitsync chat-export asset overflow part eight across the second archive copy and primary archive
+    status: completed
+    record: docs/data-room-batch-48.md
+    validation_hooks:
+      - name: batch_48_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_48_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 48
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_49
+    number: 49
+    focus: Bitsync chat-export asset overflow part nine from the primary archive
+    status: completed
+    record: docs/data-room-batch-49.md
+    validation_hooks:
+      - name: batch_49_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_49_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 49
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_50
+    number: 50
+    focus: remaining primary chat-export assets plus the residual opaque identifier text artifact
+    status: completed
+    record: docs/data-room-batch-50.md
+    validation_hooks:
+      - name: batch_50_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_50_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 50
+    source_scope:
+      - employment
+      - 公司信息
+    target_size: 9
