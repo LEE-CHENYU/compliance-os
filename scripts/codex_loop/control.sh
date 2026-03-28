@@ -194,6 +194,7 @@ case "${1:-help}" in
     echo "  DURATION_HOURS=$(codex_loop_config_get "$CONFIG_PATH" duration_hours 8)"
     echo "  SUCCESS_SLEEP_SECONDS=$(codex_loop_config_get "$CONFIG_PATH" success_sleep_seconds 0)"
     echo "  FAILURE_SLEEP_SECONDS=$(codex_loop_config_get "$CONFIG_PATH" failure_sleep_seconds 60)"
+    echo "  STOP_WHEN_ALL_RESOLVED=$(codex_loop_config_get "$CONFIG_PATH" stop_when_all_resolved true)"
     echo "  ROUND_SIZE=$(codex_loop_config_get "$CONFIG_PATH" round_size 5)"
     echo "  MAX_PASSES=$(codex_loop_config_get "$CONFIG_PATH" max_passes 1)"
     echo "  BATCH_SELECTION='--batch-number 1'  Optional selection override"

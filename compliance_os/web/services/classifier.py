@@ -45,6 +45,9 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "i765": [r"(?:^|[^a-z0-9])i[_ -]?765(?:[^a-z0-9]|$)"],
     "h1b_registration": [r"h[_ -]?1b[_ -]?r", r"h[_ -]?1b[_ -]?registration", r"uscis[_ -]?h[_ -]?1b[_ -]?registration"],
     "h1b_status_summary": [r"h[_ -]?1b[_ -]?status[_ -]?overview", r"h[_ -]?1b[_ -]?status[_ -]?summary"],
+    "h1b_g28": [r"(?:^|[^a-z0-9])g[_ -]?28(?:[^a-z0-9]|$)"],
+    "h1b_filing_invoice": [r"invoice[_ -]?part[_ -]?i"],
+    "h1b_filing_fee_receipt": [r"transaction[_ -]?#?\d{5,}"],
 }
 
 
@@ -164,6 +167,24 @@ PATTERNS: dict[str, list[str]] = {
         r"Requirements for H[- ]?1B visa status",
         r"How to File for New H[- ]?1B visa status",
         r"Required Documents for Filing for H[- ]?1B visa status",
+        r"H-1B\s*\u7533\u8bf7\u624b\u518c",
+        r"\u5982\u4f55\u7533\u8bf7\u65b0\u7684\s*H-1B\s*\u7b7e\u8bc1",
+    ],
+    "h1b_g28": [
+        r"Notice of Entry of Appearance as Attorney or Accredited Representative",
+        r"DHS Form G-28",
+        r"Part 3:\s*Notice of Appearance",
+    ],
+    "h1b_filing_invoice": [
+        r"\bINVOICE\b",
+        r"H[- ]?1B Cap Petition",
+        r"H[- ]?1B Registration Filing Fee",
+    ],
+    "h1b_filing_fee_receipt": [
+        r"Transaction Information",
+        r"Response Message",
+        r"Approval Code",
+        r"H1B registration",
     ],
 }
 
@@ -193,6 +214,9 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "i765": 2,
     "h1b_registration": 2,
     "h1b_status_summary": 2,
+    "h1b_g28": 2,
+    "h1b_filing_invoice": 2,
+    "h1b_filing_fee_receipt": 2,
 }
 
 OCR_TEXT_MIN_MATCH_OVERRIDES: dict[str, int] = {
@@ -251,6 +275,20 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "h_1b_status_summary": "h1b_status_summary",
     "h1b_status_overview": "h1b_status_summary",
     "h_1b_status_overview": "h1b_status_summary",
+    "h1b_g28": "h1b_g28",
+    "h_1b_g28": "h1b_g28",
+    "g28": "h1b_g28",
+    "g_28": "h1b_g28",
+    "h1b_filing_invoice": "h1b_filing_invoice",
+    "h_1b_filing_invoice": "h1b_filing_invoice",
+    "h1b_invoice": "h1b_filing_invoice",
+    "h_1b_invoice": "h1b_filing_invoice",
+    "h1b_filing_fee_receipt": "h1b_filing_fee_receipt",
+    "h_1b_filing_fee_receipt": "h1b_filing_fee_receipt",
+    "h1b_fee_receipt": "h1b_filing_fee_receipt",
+    "h_1b_fee_receipt": "h1b_filing_fee_receipt",
+    "h1b_receipt": "h1b_filing_fee_receipt",
+    "h_1b_receipt": "h1b_filing_fee_receipt",
     "1099": "1099",
     "w2": "w2",
     "w_2": "w2",

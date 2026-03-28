@@ -96,6 +96,46 @@ def test_batch_03_filename_classification():
     )
 
 
+def test_batch_04_h1b_petition_classification():
+    assert (
+        classify_text(
+            "H-1B Status How to File for New H-1B visa status "
+            "Required Documents for Filing for H-1B visa status"
+        ).doc_type
+        == "h1b_status_summary"
+    )
+    assert (
+        classify_text(
+            "H-1B \u7533\u8bf7\u624b\u518c \u5982\u4f55\u7533\u8bf7\u65b0\u7684 H-1B \u7b7e\u8bc1"
+        ).doc_type
+        == "h1b_status_summary"
+    )
+    assert classify_text("Notice of Entry of Appearance as Attorney or Accredited Representative DHS Form G-28").doc_type == "h1b_g28"
+    assert classify_text("INVOICE H-1B Cap Petition H-1B Registration Filing Fee").doc_type == "h1b_filing_invoice"
+    assert classify_text("Transaction Information Response Message Approval Code H1B registration").doc_type == "h1b_filing_fee_receipt"
+
+    assert classify_filename("/tmp/G-28 (1).pdf").doc_type == "h1b_g28"
+    assert classify_filename("/tmp/Invoice_Part I_LI, Chenyu_paid.pdf").doc_type == "h1b_filing_invoice"
+    assert classify_filename("/tmp/Transaction #45217993.pdf").doc_type == "h1b_filing_fee_receipt"
+
+
+def test_batch_05_identity_travel_archive_classification():
+    assert classify_filename("/tmp/I-20_Li_Chenyu_ FA 2025.pdf").doc_type == "i20"
+    assert classify_filename("/tmp/I94 - 1019 print.pdf").doc_type == "i94"
+    assert classify_filename("/tmp/passport.jpeg").doc_type == "passport"
+    assert classify_filename("/tmp/EAD_expired.pdf").doc_type == "ead"
+    assert classify_filename("/tmp/Form_W-2_Tax_Year_2024.pdf").doc_type == "w2"
+    assert classify_filename("/tmp/2024_TaxReturn.pdf").doc_type == "tax_return"
+    assert classify_filename("/tmp/1042S - 2025_2026-03-10_619.PDF").doc_type == "1042s"
+    assert (
+        classify_text(
+            "Certificate of Eligibility for Nonimmigrant Student Status Form I-20 "
+            "Most recent DSO travel signature date"
+        ).doc_type
+        == "i20"
+    )
+
+
 def test_single_reference_does_not_force_i94_or_ead_classification():
     assert classify_text("Enter your I-94 visa number.") .doc_type is None
     assert classify_text("Recipient's date of birth and federal tax withheld.") .doc_type is None

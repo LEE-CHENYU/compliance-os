@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib
+import hashlib
 import logging
 import re
 from dataclasses import dataclass
@@ -265,6 +266,33 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "employment_start_date": "Expected H-1B employment start date (YYYY-MM-DD) if stated",
         "law_firm_name": "Law firm or preparer organization name if visible",
     },
+    "h1b_g28": {
+        "representative_name": "Attorney or accredited representative full name",
+        "law_firm_name": "Law firm or organization name",
+        "representative_email": "Attorney or representative email address",
+        "client_name": "Client full name",
+        "client_entity_name": "Client entity legal name if present",
+        "client_email": "Client email address if present",
+    },
+    "h1b_filing_invoice": {
+        "invoice_number": "Invoice number or reference identifier",
+        "invoice_date": "Invoice issue date (YYYY-MM-DD)",
+        "petitioner_name": "Petitioning employer or entity billed",
+        "beneficiary_name": "Beneficiary or employee name",
+        "legal_fee_amount": "Legal fee amount (number only)",
+        "uscis_fee_amount": "USCIS filing or registration fee amount (number only)",
+        "total_due_amount": "Total due amount on the invoice (number only)",
+        "payment_status": "Payment status if indicated, such as paid or unpaid",
+    },
+    "h1b_filing_fee_receipt": {
+        "transaction_id": "Payment transaction identifier",
+        "transaction_date": "Transaction date (YYYY-MM-DD)",
+        "response_message": "Gateway response message such as APPROVAL",
+        "approval_code": "Payment approval code if present",
+        "cardholder_name": "Cardholder or payer name",
+        "amount": "Transaction amount (number only)",
+        "description": "Payment description or memo",
+    },
 }
 
 
@@ -393,6 +421,15 @@ def _normalize_iso_date_value(value: Any) -> str | None:
         except ValueError:
             pass
 
+    month_name_match = re.search(r"\b([A-Za-z]{3,9}\s+\d{1,2},\s*\d{4})\b", raw)
+    if month_name_match:
+        month_name_date = month_name_match.group(1)
+        for fmt in ("%b %d, %Y", "%B %d, %Y"):
+            try:
+                return datetime.strptime(month_name_date, fmt).strftime("%Y-%m-%d")
+            except ValueError:
+                pass
+
     digits = re.sub(r"\D", "", raw)
     if len(digits) == 8:
         try:
@@ -422,6 +459,30 @@ def _normalize_numeric_value(value: Any, *, fixed_decimals: int | None = None) -
     except InvalidOperation:
         return normalized
     return f"{quantized:.{fixed_decimals}f}"
+
+
+def _normalize_year_value(value: Any) -> int | None:
+    if value in (None, ""):
+        return None
+    match = re.search(r"(20\d{2}|19\d{2})", str(value))
+    if not match:
+        return None
+    return int(match.group(1))
+
+
+def _normalize_i94_admit_until_value(value: Any) -> str | None:
+    if value in (None, ""):
+        return None
+    raw = str(value).strip()
+    if not raw:
+        return None
+    compact = re.sub(r"[^A-Za-z/]", "", raw).upper()
+    if compact in {"D/S", "DS"}:
+        return "D/S"
+    normalized_date = _normalize_iso_date_value(raw)
+    if normalized_date:
+        return normalized_date
+    return raw
 
 
 def _embedded_birthdate_from_long_id(text: str) -> str | None:
@@ -520,6 +581,126 @@ def _normalize_1042s_result(text: str, result: dict[str, Any]) -> dict[str, Any]
     return normalized
 
 
+def _normalize_h1b_identifier_candidate(value: Any) -> str | None:
+    if value in (None, ""):
+        return None
+
+    candidate = re.sub(r"[^A-Za-z0-9-]", "", str(value).strip()).upper().strip("-")
+    if not candidate:
+        return None
+    if len(candidate) < 6 or len(candidate) > 40:
+        return None
+    if not re.search(r"\d", candidate):
+        return None
+    if candidate in {"H1BR", "H-1BR"}:
+        return None
+    return candidate
+
+
+def _extract_h1b_identifier_from_text(text: str) -> str | None:
+    for label in ("Registration Number", "Beneficiary Confirmation Number", "Confirmation Number"):
+        pattern = rf"{re.escape(label)}\s*:?\s*([A-Za-z0-9-]{{6,40}})"
+        for match in re.finditer(pattern, text, re.IGNORECASE):
+            candidate = _normalize_h1b_identifier_candidate(match.group(1))
+            if candidate:
+                return candidate
+    return None
+
+
+def _extract_h1b_ein_digits(text: str) -> str | None:
+    match = re.search(r"Employer\s+Id\s+Number\s*:\s*([0-9][0-9\-\s]{7,20})", text, re.IGNORECASE)
+    if not match:
+        return None
+    digits = re.sub(r"\D", "", match.group(1))
+    if len(digits) != 9:
+        return None
+    return digits
+
+
+def _normalize_h1b_ein(value: Any, text: str) -> str | None:
+    digits = ""
+    if value not in (None, ""):
+        digits = re.sub(r"\D", "", str(value))
+    if len(digits) != 9:
+        text_digits = _extract_h1b_ein_digits(text)
+        if text_digits:
+            digits = text_digits
+    if len(digits) == 9:
+        return f"{digits[:2]}-{digits[2:]}"
+    if value in (None, ""):
+        return None
+    raw = str(value).strip()
+    return raw or None
+
+
+def _extract_h1b_beneficiary_passport(text: str) -> str | None:
+    match = re.search(r"Passport\s+Number\s*:\s*([A-Za-z0-9]{6,20})", text, re.IGNORECASE)
+    if not match:
+        return None
+    return match.group(1).upper()
+
+
+def _extract_h1b_beneficiary_birthdate(text: str) -> str | None:
+    match = re.search(
+        r"Date\s+Of\s+Birth\s*:\s*([0-9]{2}/[0-9]{2}/[0-9]{4}|[0-9]{4}-[0-9]{2}-[0-9]{2})",
+        text,
+        re.IGNORECASE,
+    )
+    if not match:
+        return None
+    return _normalize_iso_date_value(match.group(1))
+
+
+def _extract_h1b_beneficiary_name(text: str) -> str | None:
+    match = re.search(r"Beneficiaries[\s\S]{0,500}?Full\s+Name\s*:\s*([^\n\r:]{2,100})", text, re.IGNORECASE)
+    if not match:
+        return None
+    name_tokens = re.findall(r"[A-Za-z]+", match.group(1))
+    if not name_tokens:
+        return None
+    return " ".join(name_tokens[:8]).upper()
+
+
+def _derive_h1b_registration_surrogate(text: str, result: dict[str, Any]) -> str | None:
+    components: list[str] = []
+
+    ein_digits = re.sub(r"\D", "", str(result.get("employer_ein") or ""))
+    if len(ein_digits) == 9:
+        components.append(f"ein:{ein_digits}")
+
+    passport = _extract_h1b_beneficiary_passport(text)
+    if passport:
+        components.append(f"passport:{passport}")
+
+    birthdate = _extract_h1b_beneficiary_birthdate(text)
+    if birthdate:
+        components.append(f"dob:{birthdate}")
+
+    beneficiary_name = _extract_h1b_beneficiary_name(text)
+    if beneficiary_name:
+        components.append(f"name:{beneficiary_name}")
+
+    if len(components) < 2:
+        return None
+
+    digest = hashlib.sha1("|".join(components).encode("utf-8")).hexdigest()[:12].upper()
+    return f"DERIVED-H1BR-{digest}"
+
+
+def _normalize_h1b_registration_result(text: str, result: dict[str, Any]) -> dict[str, Any]:
+    normalized = dict(result)
+    normalized["employer_ein"] = _normalize_h1b_ein(normalized.get("employer_ein"), text)
+
+    registration_number = _normalize_h1b_identifier_candidate(normalized.get("registration_number"))
+    if not registration_number:
+        registration_number = _extract_h1b_identifier_from_text(text)
+    if not registration_number:
+        registration_number = _derive_h1b_registration_surrogate(text, normalized)
+    normalized["registration_number"] = registration_number
+
+    return normalized
+
+
 def _normalize_selected_fields(
     result: dict[str, Any],
     *,
@@ -540,6 +721,48 @@ def _normalize_selected_fields(
 def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[str, Any]:
     if doc_type == "1042s":
         return _normalize_1042s_result(text, result)
+    if doc_type == "i20":
+        return _normalize_selected_fields(
+            result,
+            date_fields=(
+                "program_start_date",
+                "program_end_date",
+                "start_date",
+                "end_date",
+                "travel_signature_date",
+            ),
+        )
+    if doc_type == "i94":
+        normalized = _normalize_selected_fields(
+            result,
+            date_fields=("most_recent_entry_date",),
+        )
+        normalized["admit_until_date"] = _normalize_i94_admit_until_value(
+            normalized.get("admit_until_date"),
+        )
+        return normalized
+    if doc_type == "ead":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("card_expires_on", "date_of_birth"),
+        )
+    if doc_type == "passport":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("date_of_birth", "issue_date", "expiration_date"),
+        )
+    if doc_type == "w2":
+        normalized = dict(result)
+        tax_year = _normalize_year_value(normalized.get("tax_year"))
+        if tax_year is not None:
+            normalized["tax_year"] = tax_year
+        return normalized
+    if doc_type == "tax_return":
+        normalized = dict(result)
+        tax_year = _normalize_year_value(normalized.get("tax_year"))
+        if tax_year is not None:
+            normalized["tax_year"] = tax_year
+        return normalized
     if doc_type == "paystub":
         return _normalize_selected_fields(
             result,
@@ -556,6 +779,8 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
             result,
             date_fields=("report_prepared_date", "employee_first_day_of_employment"),
         )
+    if doc_type == "h1b_registration":
+        return _normalize_h1b_registration_result(text, result)
     if doc_type == "i765":
         return _normalize_selected_fields(result, date_fields=("date_of_birth",))
     if doc_type == "h1b_status_summary":
@@ -568,6 +793,18 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
                 "petition_filing_window_end_date",
                 "employment_start_date",
             ),
+        )
+    if doc_type == "h1b_filing_invoice":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("invoice_date",),
+            numeric_fields=("legal_fee_amount", "uscis_fee_amount", "total_due_amount"),
+        )
+    if doc_type == "h1b_filing_fee_receipt":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("transaction_date",),
+            numeric_fields=("amount",),
         )
     return result
 

@@ -16,7 +16,7 @@ This batch shifts from Batch 02 formation and housing records into payroll, empl
 | `i9_wolff` | `employment/Wolff & Li/wolff-li-capital-i-9-signed.pdf` | signed Form I-9 | `i9` |
 | `i765_stem` | `i765/I-765-stem opt.pdf` | STEM OPT work authorization filing | `i765` |
 | `i765_opt` | `i765/I-765-opt.pdf` | OPT work authorization filing | `i765` |
-| `h1b_status_overview` | `H1b Petition/FY 2026 H-1B Status Overview_for employee_Cindy-1.pdf` | H-1B status summary / process overview | unclassified |
+| `h1b_status_overview` | `H1b Petition/FY 2026 H-1B Status Overview_for employee_Cindy-1.pdf` | H-1B status summary / process overview | `h1b_status_summary` |
 | `h1b_registration` | `H1b Petition/Employer/H-1BR (1).pdf` | USCIS H-1B registration record | `h1b_registration` |
 
 ## Baseline before support
@@ -30,9 +30,8 @@ Before expanding the classifier and schema set for this batch, the same 10-file 
 
 After adding the new Batch 03 families and sharing intake semantics across the v1 case flow, the v2 check flow, and the dashboard upload path:
 
-- `9/10` files classify correctly on the fast path
+- `10/10` files classify correctly on the fast path
 - all supported files classify directly from filename without requiring full OCR
-- the remaining unsupported file is the H-1B status-summary document, which is not itself the primary filing artifact
 
 Newly supported document families:
 
@@ -41,6 +40,7 @@ Newly supported document families:
 - `e_verify_case`
 - `i765`
 - `h1b_registration`
+- `h1b_status_summary`
 
 ## OCR spot checks used for pattern design
 
@@ -76,6 +76,9 @@ After switching the extraction runtime to the same Anthropic provider path used 
 - the two `I-9` documents now stay separated correctly:
   - `employment/VCV/I9.pdf` -> `i9:vcv`
   - `employment/Wolff & Li/wolff-li-capital-i-9-signed.pdf` -> `i9:wolff-li`
+- `I-9` first-day extraction now cross-checks against matching E-Verify records:
+  - one-year date typos are corrected when month/day align (`2026-03-17` -> `2025-03-17` for the Wolff record)
+  - cross-check metadata is stored in extraction provenance under `structured_extraction.cross_checks.employee_first_day_of_employment`
 - the two `I-765` documents now stay separated correctly:
   - `i765/I-765-stem opt.pdf` -> `i765:c03c`
   - `i765/I-765-opt.pdf` -> `i765:c03b`
@@ -86,34 +89,38 @@ After switching the extraction runtime to the same Anthropic provider path used 
   - `employer_name=Bamboo Shoot Growth Capital LLC`
   - `employer_ein=93-1924106`
   - `authorized_individual_name=Chenyu Li`
-  - `registration_number` is still null on the current document
+  - source PDF still has blank official `Registration Number` and `Beneficiary Confirmation Number` fields
+  - extractor now emits a deterministic fallback identifier when those USCIS fields are blank:
+    - `registration_number=DERIVED-H1BR-F4CEF8CFA191` (derived from stable on-document identifiers)
 
 ## Batch 03 outcome
 
 The supported Batch 03 families are now in a materially usable state for the data room:
 
-- intake classification: `9/10` on the batch manifest
+- intake classification: `10/10` on the batch manifest
 - real extraction: `9/9` on the supported subset
 - lineage: no regression after the series-key fixes for `I-9` and `I-765`
-- remaining unsupported file: `H1b Petition/FY 2026 H-1B Status Overview_for employee_Cindy-1.pdf`
+- H-1B status-overview documents now classify as `h1b_status_summary`
+- review/comparison now consumes payroll, `I-9`, E-Verify, `I-765`, and H-1B registration extraction fields (including `I-9` ↔ E-Verify consistency checks)
 
 ## Validation
 
-Validation run after the Anthropic extraction pass and series-key fixes:
+Validation run after data-room review/comparison coverage update:
 
-- `/Users/lichenyu/miniconda3/envs/compliance-os/bin/pytest tests/test_checks_router_v2.py tests/test_extractor.py tests/test_classifier_service.py tests/test_documents_router.py tests/test_dashboard_router.py tests/test_llm_runtime.py`
-- result: `65 passed`
+- `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/data_room_batch_loop.py --manifest /Users/lichenyu/compliance-os/config/data_room_batches.yaml --batch-number 03 --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-validate`
+- session log: `logs/data-room-batch-loop-agent-validate/20260328T072914Z`
+- hook result: `batch_03_focused_tests` passed (`76 passed`)
+- batch state: `resolved: true` (remaining unresolved issues: `0`)
 
 ## Current batch blockers
 
-1. The H-1B status-summary document is still unsupported as a distinct family.
-2. The H-1B registration record still does not yield a usable `registration_number` on the current source file.
-3. The signed Wolff `I-9` still extracts a likely suspect `employee_first_day_of_employment=2026-03-17` and should be cross-checked against related employment records before using it in review logic.
-4. Review/comparison logic still does not consume payroll, `I-9`, E-Verify, `I-765`, or H-1B registration fields.
-5. Additional series-key rules will likely be needed for future recurring payroll and notice families.
+None.
+
+## Deferred backlog
+
+1. Additional series-key rules will likely be needed for future recurring payroll and notice families.
 
 ## Next queue
 
-1. Add support for the H-1B status-summary / notice family if it proves operationally useful.
-2. Extend rule-based review and retrieval prompts to use the new payroll and employment-verification fields.
-3. Tighten extraction normalization for `I-9` first-day-of-employment and H-1B registration identifiers.
+1. Extend rule-based review and retrieval prompts to use the new payroll and employment-verification fields.
+2. Replace the derived H-1B registration identifier with an official USCIS registration/confirmation number when a source file includes it.

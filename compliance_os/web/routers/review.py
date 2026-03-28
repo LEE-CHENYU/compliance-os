@@ -60,6 +60,87 @@ ENTITY_FIELD_MAP = {
     "form_type": ("owner_residency", "form_type", "logic"),
 }
 
+# Data-room observation mapping: comparison_field → (doc_type, extraction_field, detail)
+DATA_ROOM_OBSERVED_FIELDS = {
+    "paystub_employer_name": ("paystub", "employer_name", "Extracted from latest paystub"),
+    "paystub_pay_period_end": ("paystub", "pay_period_end", "Extracted from latest paystub"),
+    "paystub_net_pay": ("paystub", "net_pay", "Extracted from latest paystub"),
+    "i9_employee_name": ("i9", "employee_name", "Extracted from latest Form I-9"),
+    "i9_employee_first_day_of_employment": ("i9", "employee_first_day_of_employment", "Extracted from latest Form I-9"),
+    "i9_citizenship_status": ("i9", "citizenship_status", "Extracted from latest Form I-9"),
+    "everify_case_number": ("e_verify_case", "case_number", "Extracted from latest E-Verify case record"),
+    "everify_case_status": ("e_verify_case", "case_status", "Extracted from latest E-Verify case record"),
+    "everify_employee_first_day_of_employment": ("e_verify_case", "employee_first_day_of_employment", "Extracted from latest E-Verify case record"),
+    "i765_applicant_name": ("i765", "applicant_name", "Extracted from latest Form I-765"),
+    "i765_eligibility_category": ("i765", "eligibility_category", "Extracted from latest Form I-765"),
+    "i765_application_reason": ("i765", "application_reason", "Extracted from latest Form I-765"),
+    "h1b_registration_number": ("h1b_registration", "registration_number", "Extracted from latest H-1B registration record"),
+    "h1b_employer_name": ("h1b_registration", "employer_name", "Extracted from latest H-1B registration record"),
+    "h1b_employer_ein": ("h1b_registration", "employer_ein", "Extracted from latest H-1B registration record"),
+    "h1b_status_title": ("h1b_status_summary", "status_title", "Extracted from latest H-1B status summary"),
+    "h1b_registration_window_end_date": (
+        "h1b_status_summary",
+        "registration_window_end_date",
+        "Extracted from latest H-1B status summary",
+    ),
+    "h1b_petition_filing_window_end_date": (
+        "h1b_status_summary",
+        "petition_filing_window_end_date",
+        "Extracted from latest H-1B status summary",
+    ),
+    "h1b_g28_representative_name": ("h1b_g28", "representative_name", "Extracted from latest DHS Form G-28"),
+    "h1b_g28_client_entity_name": ("h1b_g28", "client_entity_name", "Extracted from latest DHS Form G-28"),
+    "h1b_invoice_number": ("h1b_filing_invoice", "invoice_number", "Extracted from latest H-1B filing invoice"),
+    "h1b_invoice_total_due_amount": (
+        "h1b_filing_invoice",
+        "total_due_amount",
+        "Extracted from latest H-1B filing invoice",
+    ),
+    "h1b_invoice_beneficiary_name": (
+        "h1b_filing_invoice",
+        "beneficiary_name",
+        "Extracted from latest H-1B filing invoice",
+    ),
+    "h1b_receipt_transaction_id": (
+        "h1b_filing_fee_receipt",
+        "transaction_id",
+        "Extracted from latest H-1B filing fee receipt",
+    ),
+    "h1b_receipt_response_message": (
+        "h1b_filing_fee_receipt",
+        "response_message",
+        "Extracted from latest H-1B filing fee receipt",
+    ),
+    "h1b_receipt_amount": ("h1b_filing_fee_receipt", "amount", "Extracted from latest H-1B filing fee receipt"),
+    "h1b_receipt_cardholder_name": (
+        "h1b_filing_fee_receipt",
+        "cardholder_name",
+        "Extracted from latest H-1B filing fee receipt",
+    ),
+    "i20_student_name": ("i20", "student_name", "Extracted from latest Form I-20"),
+    "i20_program_end_date": ("i20", "program_end_date", "Extracted from latest Form I-20"),
+    "i20_travel_signature_date": ("i20", "travel_signature_date", "Extracted from latest Form I-20"),
+    "i94_class_of_admission": ("i94", "class_of_admission", "Extracted from latest Form I-94 record"),
+    "i94_most_recent_entry_date": ("i94", "most_recent_entry_date", "Extracted from latest Form I-94 record"),
+    "i94_admit_until_date": ("i94", "admit_until_date", "Extracted from latest Form I-94 record"),
+    "passport_full_name": ("passport", "full_name", "Extracted from latest passport identity page"),
+    "passport_date_of_birth": ("passport", "date_of_birth", "Extracted from latest passport identity page"),
+    "passport_expiration_date": (
+        "passport",
+        "expiration_date",
+        "Extracted from latest passport identity page",
+    ),
+    "ead_full_name": ("ead", "full_name", "Extracted from latest EAD card"),
+    "ead_date_of_birth": ("ead", "date_of_birth", "Extracted from latest EAD card"),
+    "ead_card_expires_on": ("ead", "card_expires_on", "Extracted from latest EAD card"),
+    "w2_employee_name": ("w2", "employee_name", "Extracted from latest Form W-2"),
+    "w2_tax_year": ("w2", "tax_year", "Extracted from latest Form W-2"),
+    "tax_return_form_type": ("tax_return", "form_type", "Extracted from latest tax return"),
+    "tax_return_tax_year": ("tax_return", "tax_year", "Extracted from latest tax return"),
+    "form_1042s_recipient_name": ("1042s", "recipient_name", "Extracted from latest Form 1042-S"),
+    "form_1042s_tax_year": ("1042s", "tax_year", "Extracted from latest Form 1042-S"),
+}
+
 
 def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
     uploaded_at = doc.uploaded_at
@@ -89,6 +170,33 @@ def _select_document(check: CheckRow, doc_type: str) -> DocumentRow | None:
         return has_values, _normalized_uploaded_at(doc), doc.id
 
     return max(candidates, key=_sort_key)
+
+
+def _add_extracted_observation(
+    *,
+    check_id: str,
+    field_name: str,
+    value: str | None,
+    detail: str,
+    db: Session,
+    results: list[ComparisonRow],
+) -> None:
+    value_str = (value or "").strip()
+    if not value_str:
+        return
+
+    row = ComparisonRow(
+        check_id=check_id,
+        field_name=field_name,
+        value_a=None,
+        value_b=value_str,
+        match_type="extracted",
+        status="match",
+        confidence=1.0,
+        detail=detail,
+    )
+    db.add(row)
+    results.append(row)
 
 
 def _entity_type_comparison(
@@ -227,6 +335,168 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
                     row = ComparisonRow(check_id=check_id, field_name=cr.field_name, value_a=cr.value_a, value_b=cr.value_b, match_type=cr.match_type, status=cr.status, confidence=cr.confidence, detail=cr.detail)
                 db.add(row)
                 results.append(row)
+
+    elif check.track == "data_room":
+        extracted_by_doc_type = {
+            "paystub": _get_extracted_dict(check, "paystub"),
+            "i9": _get_extracted_dict(check, "i9"),
+            "e_verify_case": _get_extracted_dict(check, "e_verify_case"),
+            "i765": _get_extracted_dict(check, "i765"),
+            "h1b_registration": _get_extracted_dict(check, "h1b_registration"),
+            "h1b_status_summary": _get_extracted_dict(check, "h1b_status_summary"),
+            "h1b_g28": _get_extracted_dict(check, "h1b_g28"),
+            "h1b_filing_invoice": _get_extracted_dict(check, "h1b_filing_invoice"),
+            "h1b_filing_fee_receipt": _get_extracted_dict(check, "h1b_filing_fee_receipt"),
+            "i20": _get_extracted_dict(check, "i20"),
+            "i94": _get_extracted_dict(check, "i94"),
+            "passport": _get_extracted_dict(check, "passport"),
+            "ead": _get_extracted_dict(check, "ead"),
+            "w2": _get_extracted_dict(check, "w2"),
+            "tax_return": _get_extracted_dict(check, "tax_return"),
+            "1042s": _get_extracted_dict(check, "1042s"),
+        }
+
+        for comp_field, (doc_type, extraction_field, detail) in DATA_ROOM_OBSERVED_FIELDS.items():
+            _add_extracted_observation(
+                check_id=check_id,
+                field_name=comp_field,
+                value=extracted_by_doc_type[doc_type].get(extraction_field),
+                detail=detail,
+                db=db,
+                results=results,
+            )
+
+        i9 = extracted_by_doc_type["i9"]
+        everify = extracted_by_doc_type["e_verify_case"]
+        h1b_registration = extracted_by_doc_type["h1b_registration"]
+        h1b_g28 = extracted_by_doc_type["h1b_g28"]
+        h1b_invoice = extracted_by_doc_type["h1b_filing_invoice"]
+        h1b_receipt = extracted_by_doc_type["h1b_filing_fee_receipt"]
+        i20 = extracted_by_doc_type["i20"]
+        i94 = extracted_by_doc_type["i94"]
+        passport = extracted_by_doc_type["passport"]
+        ead = extracted_by_doc_type["ead"]
+        w2 = extracted_by_doc_type["w2"]
+        tax_return = extracted_by_doc_type["tax_return"]
+        form_1042s = extracted_by_doc_type["1042s"]
+
+        cross_document_checks = [
+            (
+                "i9_everify_employee_name",
+                i9.get("employee_name"),
+                everify.get("employee_name"),
+                "fuzzy",
+                "Cross-document consistency check between Form I-9 and E-Verify",
+            ),
+            (
+                "i9_everify_first_day_of_employment",
+                i9.get("employee_first_day_of_employment"),
+                everify.get("employee_first_day_of_employment"),
+                "exact",
+                "Cross-document consistency check between Form I-9 and E-Verify",
+            ),
+            (
+                "h1b_registration_g28_entity_name",
+                h1b_registration.get("employer_name"),
+                h1b_g28.get("client_entity_name"),
+                "fuzzy",
+                "Cross-document consistency check between H-1B registration and G-28 client entity",
+            ),
+            (
+                "h1b_registration_invoice_petitioner_name",
+                h1b_registration.get("employer_name"),
+                h1b_invoice.get("petitioner_name"),
+                "fuzzy",
+                "Cross-document consistency check between H-1B registration and filing invoice petitioner",
+            ),
+            (
+                "h1b_registration_receipt_signatory_name",
+                h1b_registration.get("authorized_individual_name"),
+                h1b_receipt.get("cardholder_name"),
+                "fuzzy",
+                "Cross-document consistency check between H-1B registration signatory and payment receipt cardholder",
+            ),
+            (
+                "h1b_invoice_receipt_beneficiary_name",
+                h1b_invoice.get("beneficiary_name"),
+                h1b_receipt.get("cardholder_name"),
+                "fuzzy",
+                "Cross-document consistency check between filing invoice beneficiary and payment receipt cardholder",
+            ),
+            (
+                "i20_passport_student_name",
+                i20.get("student_name"),
+                passport.get("full_name"),
+                "fuzzy",
+                "Cross-document identity check between Form I-20 and passport",
+            ),
+            (
+                "i20_ead_student_name",
+                i20.get("student_name"),
+                ead.get("full_name"),
+                "fuzzy",
+                "Cross-document identity check between Form I-20 and EAD",
+            ),
+            (
+                "passport_ead_date_of_birth",
+                passport.get("date_of_birth"),
+                ead.get("date_of_birth"),
+                "exact",
+                "Cross-document identity check between passport and EAD date of birth",
+            ),
+            (
+                "passport_w2_employee_name",
+                passport.get("full_name"),
+                w2.get("employee_name"),
+                "fuzzy",
+                "Cross-document identity check between passport and Form W-2 employee name",
+            ),
+            (
+                "passport_1042s_recipient_name",
+                passport.get("full_name"),
+                form_1042s.get("recipient_name"),
+                "fuzzy",
+                "Cross-document identity check between passport and Form 1042-S recipient",
+            ),
+            (
+                "w2_tax_return_tax_year",
+                w2.get("tax_year"),
+                tax_return.get("tax_year"),
+                "exact",
+                "Cross-document tax-year consistency check between Form W-2 and tax return",
+            ),
+            (
+                "1042s_tax_return_tax_year",
+                form_1042s.get("tax_year"),
+                tax_return.get("tax_year"),
+                "exact",
+                "Cross-document tax-year consistency check between Form 1042-S and tax return",
+            ),
+            (
+                "i94_i20_class_of_admission",
+                i94.get("class_of_admission"),
+                "F-1" if i20 else None,
+                "exact",
+                "Travel-status consistency check: I-94 class of admission should be F-1 when an I-20 is present",
+            ),
+        ]
+
+        for comp_field, value_a, value_b, match_type, default_detail in cross_document_checks:
+            if value_a is None and value_b is None:
+                continue
+            cr = compare_fields(comp_field, value_a, value_b, match_type)
+            row = ComparisonRow(
+                check_id=check_id,
+                field_name=cr.field_name,
+                value_a=cr.value_a,
+                value_b=cr.value_b,
+                match_type=cr.match_type,
+                status=cr.status,
+                confidence=cr.confidence,
+                detail=cr.detail or default_detail,
+            )
+            db.add(row)
+            results.append(row)
 
     else:
         # Track A: compare I-983 vs employment letter

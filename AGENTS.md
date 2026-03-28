@@ -34,6 +34,8 @@ When any document is provided as input, save a copy into the relevant project fo
 
 When asked to `commit and push`, break changes into logical feature-based commits and push without asking for confirmation.
 
+For commits produced from the Ralph/Codex remediation loop, make the loop outcome explicit in the commit message for later review. Include the batches materially affected, whether validation passed, and whether the loop stopped because all selected batches resolved.
+
 ## Global Skills
 
 Available across projects via `~/.claude/skills/`:

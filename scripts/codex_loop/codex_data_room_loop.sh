@@ -28,6 +28,7 @@ MAX_PASSES="${MAX_PASSES:-$(codex_loop_config_get "$CONFIG_PATH" max_passes "1")
 LEGACY_SLEEP_SECONDS="${SLEEP_SECONDS:-$(codex_loop_config_get "$CONFIG_PATH" sleep_seconds "300")}"
 SUCCESS_SLEEP_SECONDS="${SUCCESS_SLEEP_SECONDS:-$(codex_loop_config_get "$CONFIG_PATH" success_sleep_seconds "0")}"
 FAILURE_SLEEP_SECONDS="${FAILURE_SLEEP_SECONDS:-$(codex_loop_config_get "$CONFIG_PATH" failure_sleep_seconds "$LEGACY_SLEEP_SECONDS")}"
+STOP_WHEN_ALL_RESOLVED="${STOP_WHEN_ALL_RESOLVED:-$(codex_loop_config_get "$CONFIG_PATH" stop_when_all_resolved "true")}"
 DURATION_HOURS="${DURATION_HOURS:-$(codex_loop_config_get "$CONFIG_PATH" duration_hours "8")}"
 DURATION_SECONDS=$((DURATION_HOURS * 3600))
 BATCH_SELECTION="${BATCH_SELECTION:-}"
@@ -51,6 +52,53 @@ Priority:
 
 log() {
   printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
+}
+
+latest_session_dir() {
+  ls -1dt "$SESSION_ROOT"/* 2>/dev/null | head -n 1 || true
+}
+
+session_unresolved_count() {
+  local session_dir="$1"
+  local session_json="$session_dir/session.json"
+  if [ ! -f "$session_json" ]; then
+    return 1
+  fi
+  "$PYTHON" - "$session_json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+session_path = Path(sys.argv[1])
+payload = json.loads(session_path.read_text())
+print(len(payload.get("unresolved_batches") or []))
+PY
+}
+
+should_stop_after_iteration() {
+  local session_dir
+  local unresolved_count
+  local stop_when_all_resolved_normalized
+
+  stop_when_all_resolved_normalized="$(printf '%s' "$STOP_WHEN_ALL_RESOLVED" | tr '[:upper:]' '[:lower:]')"
+  [ "$stop_when_all_resolved_normalized" = "true" ] || return 1
+
+  session_dir="$(latest_session_dir)"
+  if [ -z "$session_dir" ]; then
+    return 1
+  fi
+
+  unresolved_count="$(session_unresolved_count "$session_dir" 2>/dev/null || true)"
+  if [ -z "$unresolved_count" ]; then
+    return 1
+  fi
+
+  if [ "$unresolved_count" = "0" ]; then
+    log "All selected batches resolved in session $(basename "$session_dir"); exiting loop"
+    return 0
+  fi
+
+  return 1
 }
 
 ensure_files() {
@@ -134,7 +182,11 @@ run_single_iteration() {
   fi
 
   log "Git status after iteration $iter:"
-  git -C "$ROOT" status -sb || true
+  if git -C "$ROOT" rev-parse --git-dir >/dev/null 2>&1; then
+    git -C "$ROOT" status -sb
+  else
+    log "(git status unavailable: $ROOT is not a git repository)"
+  fi
   log "=== Iteration $iter completed ==="
   return "$status"
 }
@@ -156,6 +208,7 @@ log "Manifest: $MANIFEST_PATH"
 log "Duration: ${DURATION_HOURS}h (${DURATION_SECONDS}s)"
 log "Success sleep: ${SUCCESS_SLEEP_SECONDS}s"
 log "Failure sleep: ${FAILURE_SLEEP_SECONDS}s"
+log "Stop when all resolved: ${STOP_WHEN_ALL_RESOLVED}"
 log "Provider: $PROVIDER"
 log "Model: $MODEL"
 log "Reasoning effort: $REASONING_EFFORT"
@@ -171,12 +224,19 @@ while [ "$(date +%s)" -lt "$end_ts" ]; do
     break
   fi
 
-  run_single_iteration "$iter"
-  iteration_status=$?
+  if run_single_iteration "$iter"; then
+    iteration_status=0
+  else
+    iteration_status=$?
+  fi
 
   if [ -f "$STOPFILE" ]; then
     log "Stop file detected after iteration, exiting gracefully"
     rm -f "$STOPFILE"
+    break
+  fi
+
+  if should_stop_after_iteration; then
     break
   fi
 

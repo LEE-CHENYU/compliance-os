@@ -127,6 +127,351 @@ def test_comparisons_endpoint(client, db_session):
     assert comp["status"] == "match"
 
 
+def test_data_room_comparisons_consume_batch_03_fields(client, db_session):
+    check = CheckRow(track="data_room", status="extracted", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    docs = {
+        "paystub": DocumentRow(
+            check_id=check.id,
+            doc_type="paystub",
+            filename="paystub.pdf",
+            file_path="/tmp/paystub.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "i9": DocumentRow(
+            check_id=check.id,
+            doc_type="i9",
+            filename="i9.pdf",
+            file_path="/tmp/i9.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "e_verify_case": DocumentRow(
+            check_id=check.id,
+            doc_type="e_verify_case",
+            filename="everify.pdf",
+            file_path="/tmp/everify.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "i765": DocumentRow(
+            check_id=check.id,
+            doc_type="i765",
+            filename="i765.pdf",
+            file_path="/tmp/i765.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "h1b_registration": DocumentRow(
+            check_id=check.id,
+            doc_type="h1b_registration",
+            filename="h1b-registration.pdf",
+            file_path="/tmp/h1b-registration.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+    }
+    db_session.add_all(docs.values())
+    db_session.flush()
+
+    extracted = {
+        "paystub": {
+            "employer_name": "Justworks Employment Group LLC",
+            "pay_period_end": "2024-11-30",
+            "net_pay": "2500.00",
+        },
+        "i9": {
+            "employee_name": "Chenyu Li",
+            "employee_first_day_of_employment": "2025-03-17",
+            "citizenship_status": "A noncitizen authorized to work",
+        },
+        "e_verify_case": {
+            "case_number": "2025079225618BC",
+            "case_status": "Employment Authorized",
+            "employee_name": "Chenyu Li",
+            "employee_first_day_of_employment": "2025-03-17",
+        },
+        "i765": {
+            "applicant_name": "Chenyu Li",
+            "eligibility_category": "C03C",
+            "application_reason": "Renewal of permission to accept employment",
+        },
+        "h1b_registration": {
+            "registration_number": "DERIVED-H1BR-F4CEF8CFA191",
+            "employer_name": "Bamboo Shoot Growth Capital LLC",
+            "employer_ein": "93-1924106",
+        },
+    }
+
+    for doc_type, field_map in extracted.items():
+        for field_name, field_value in field_map.items():
+            db_session.add(
+                ExtractedFieldRow(
+                    document_id=docs[doc_type].id,
+                    field_name=field_name,
+                    field_value=field_value,
+                    confidence=0.9,
+                )
+            )
+    db_session.commit()
+
+    resp = client.post(f"/api/checks/{check.id}/compare")
+    assert resp.status_code == 200
+    comparisons = {entry["field_name"]: entry for entry in resp.json()}
+
+    assert comparisons["paystub_pay_period_end"]["value_b"] == "2024-11-30"
+    assert comparisons["i9_employee_first_day_of_employment"]["value_b"] == "2025-03-17"
+    assert comparisons["everify_case_number"]["value_b"] == "2025079225618BC"
+    assert comparisons["i765_eligibility_category"]["value_b"] == "C03C"
+    assert comparisons["h1b_registration_number"]["value_b"] == "DERIVED-H1BR-F4CEF8CFA191"
+    assert comparisons["i9_everify_employee_name"]["status"] == "match"
+    assert comparisons["i9_everify_first_day_of_employment"]["status"] == "match"
+
+
+def test_data_room_comparisons_consume_batch_04_fields(client, db_session):
+    check = CheckRow(track="data_room", status="extracted", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    docs = {
+        "h1b_registration": DocumentRow(
+            check_id=check.id,
+            doc_type="h1b_registration",
+            filename="h1b-registration.pdf",
+            file_path="/tmp/h1b-registration.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "h1b_status_summary": DocumentRow(
+            check_id=check.id,
+            doc_type="h1b_status_summary",
+            filename="h1b-status-overview.pdf",
+            file_path="/tmp/h1b-status-overview.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "h1b_g28": DocumentRow(
+            check_id=check.id,
+            doc_type="h1b_g28",
+            filename="g-28.pdf",
+            file_path="/tmp/g-28.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "h1b_filing_invoice": DocumentRow(
+            check_id=check.id,
+            doc_type="h1b_filing_invoice",
+            filename="invoice.pdf",
+            file_path="/tmp/invoice.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "h1b_filing_fee_receipt": DocumentRow(
+            check_id=check.id,
+            doc_type="h1b_filing_fee_receipt",
+            filename="receipt.pdf",
+            file_path="/tmp/receipt.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+    }
+    db_session.add_all(docs.values())
+    db_session.flush()
+
+    extracted = {
+        "h1b_registration": {
+            "registration_number": "DERIVED-H1BR-F4CEF8CFA191",
+            "employer_name": "Bamboo Shoot Growth Capital LLC",
+            "authorized_individual_name": "Chenyu Li",
+        },
+        "h1b_status_summary": {
+            "status_title": "H-1B Status",
+            "registration_window_end_date": "2025-03-20",
+            "petition_filing_window_end_date": "2025-06-30",
+        },
+        "h1b_g28": {
+            "representative_name": "Xinzi Chen",
+            "client_entity_name": "Bamboo Shoot Growth Capital LLC",
+        },
+        "h1b_filing_invoice": {
+            "invoice_number": "H-1B#",
+            "total_due_amount": "515.00",
+            "beneficiary_name": "Chenyu Li",
+            "petitioner_name": "Bamboo Shoot Growth Capital LLC",
+        },
+        "h1b_filing_fee_receipt": {
+            "transaction_id": "45217993",
+            "response_message": "APPROVAL",
+            "amount": "850.00",
+            "cardholder_name": "Chenyu Li",
+        },
+    }
+
+    for doc_type, field_map in extracted.items():
+        for field_name, field_value in field_map.items():
+            db_session.add(
+                ExtractedFieldRow(
+                    document_id=docs[doc_type].id,
+                    field_name=field_name,
+                    field_value=field_value,
+                    confidence=0.9,
+                )
+            )
+    db_session.commit()
+
+    resp = client.post(f"/api/checks/{check.id}/compare")
+    assert resp.status_code == 200
+    comparisons = {entry["field_name"]: entry for entry in resp.json()}
+
+    assert comparisons["h1b_status_title"]["value_b"] == "H-1B Status"
+    assert comparisons["h1b_registration_window_end_date"]["value_b"] == "2025-03-20"
+    assert comparisons["h1b_g28_representative_name"]["value_b"] == "Xinzi Chen"
+    assert comparisons["h1b_invoice_total_due_amount"]["value_b"] == "515.00"
+    assert comparisons["h1b_receipt_transaction_id"]["value_b"] == "45217993"
+    assert comparisons["h1b_registration_g28_entity_name"]["status"] == "match"
+    assert comparisons["h1b_registration_invoice_petitioner_name"]["status"] == "match"
+    assert comparisons["h1b_registration_receipt_signatory_name"]["status"] == "match"
+    assert comparisons["h1b_invoice_receipt_beneficiary_name"]["status"] == "match"
+
+
+def test_data_room_comparisons_consume_batch_05_fields(client, db_session):
+    check = CheckRow(track="data_room", status="extracted", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    docs = {
+        "i20": DocumentRow(
+            check_id=check.id,
+            doc_type="i20",
+            filename="i20.pdf",
+            file_path="/tmp/i20.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "i94": DocumentRow(
+            check_id=check.id,
+            doc_type="i94",
+            filename="i94.pdf",
+            file_path="/tmp/i94.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "passport": DocumentRow(
+            check_id=check.id,
+            doc_type="passport",
+            filename="passport.jpeg",
+            file_path="/tmp/passport.jpeg",
+            file_size=100,
+            mime_type="image/jpeg",
+        ),
+        "ead": DocumentRow(
+            check_id=check.id,
+            doc_type="ead",
+            filename="ead.pdf",
+            file_path="/tmp/ead.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "w2": DocumentRow(
+            check_id=check.id,
+            doc_type="w2",
+            filename="w2.pdf",
+            file_path="/tmp/w2.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "tax_return": DocumentRow(
+            check_id=check.id,
+            doc_type="tax_return",
+            filename="tax_return.pdf",
+            file_path="/tmp/tax_return.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "1042s": DocumentRow(
+            check_id=check.id,
+            doc_type="1042s",
+            filename="1042s.pdf",
+            file_path="/tmp/1042s.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+    }
+    db_session.add_all(docs.values())
+    db_session.flush()
+
+    extracted = {
+        "i20": {
+            "student_name": "Chenyu Li",
+            "program_end_date": "2025-12-16",
+            "travel_signature_date": "2025-02-20",
+        },
+        "i94": {
+            "class_of_admission": "F-1",
+            "most_recent_entry_date": "2025-03-04",
+            "admit_until_date": "D/S",
+        },
+        "passport": {
+            "full_name": "Chenyu Li",
+            "date_of_birth": "1998-09-18",
+            "expiration_date": "2032-11-15",
+        },
+        "ead": {
+            "full_name": "Chenyu Li",
+            "date_of_birth": "1998-09-18",
+            "card_expires_on": "2026-10-01",
+        },
+        "w2": {
+            "employee_name": "Chenyu Li",
+            "tax_year": "2024",
+        },
+        "tax_return": {
+            "form_type": "1040",
+            "tax_year": "2024",
+        },
+        "1042s": {
+            "recipient_name": "Chenyu Li",
+            "tax_year": "2024",
+        },
+    }
+
+    for doc_type, field_map in extracted.items():
+        for field_name, field_value in field_map.items():
+            db_session.add(
+                ExtractedFieldRow(
+                    document_id=docs[doc_type].id,
+                    field_name=field_name,
+                    field_value=field_value,
+                    confidence=0.9,
+                )
+            )
+    db_session.commit()
+
+    resp = client.post(f"/api/checks/{check.id}/compare")
+    assert resp.status_code == 200
+    comparisons = {entry["field_name"]: entry for entry in resp.json()}
+
+    assert comparisons["i20_student_name"]["value_b"] == "Chenyu Li"
+    assert comparisons["i94_class_of_admission"]["value_b"] == "F-1"
+    assert comparisons["passport_full_name"]["value_b"] == "Chenyu Li"
+    assert comparisons["ead_card_expires_on"]["value_b"] == "2026-10-01"
+    assert comparisons["w2_tax_year"]["value_b"] == "2024"
+    assert comparisons["tax_return_form_type"]["value_b"] == "1040"
+    assert comparisons["form_1042s_tax_year"]["value_b"] == "2024"
+
+    assert comparisons["i20_passport_student_name"]["status"] == "match"
+    assert comparisons["i20_ead_student_name"]["status"] == "match"
+    assert comparisons["passport_ead_date_of_birth"]["status"] == "match"
+    assert comparisons["passport_w2_employee_name"]["status"] == "match"
+    assert comparisons["passport_1042s_recipient_name"]["status"] == "match"
+    assert comparisons["w2_tax_return_tax_year"]["status"] == "match"
+    assert comparisons["1042s_tax_return_tax_year"]["status"] == "match"
+    assert comparisons["i94_i20_class_of_admission"]["status"] == "match"
+
+
 def test_evaluate_endpoint(client, db_session):
     # Create check with comparisons already done
     check = CheckRow(track="stem_opt", status="extracted", answers={"stage": "stem_opt", "years_in_us": 3})
@@ -607,6 +952,90 @@ def test_extraction_refines_i765_series_key_by_eligibility_category(client, db_s
     assert refreshed[1].document_series_key == "i765:c03b"
     assert all(doc.document_version == 1 for doc in refreshed)
     assert all(doc.is_active is True for doc in refreshed)
+
+
+def test_extraction_cross_checks_i9_first_day_with_everify(client, db_session, monkeypatch):
+    import compliance_os.web.services.document_store as document_store
+
+    check = CheckRow(track="data_room", status="uploaded", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    i9_doc = DocumentRow(
+        check_id=check.id,
+        doc_type="i9",
+        filename="wolff-li-capital-i-9-signed.pdf",
+        source_path="employment/Wolff & Li/wolff-li-capital-i-9-signed.pdf",
+        file_path="/tmp/wolff-li-capital-i-9-signed.pdf",
+        file_size=100,
+        mime_type="application/pdf",
+        content_hash="i9-wolff",
+        document_family="i9",
+        document_series_key="i9:wolff-li",
+    )
+    everify_doc = DocumentRow(
+        check_id=check.id,
+        doc_type="e_verify_case",
+        filename="everify.pdf",
+        source_path="employment/Wolff & Li/E-Verify Case Processing_ View_Print Details.pdf",
+        file_path="/tmp/everify.pdf",
+        file_size=100,
+        mime_type="application/pdf",
+        content_hash="everify-wolff",
+        document_family="e_verify_case",
+        document_series_key="e_verify_case",
+    )
+    db_session.add_all([i9_doc, everify_doc])
+    db_session.commit()
+
+    monkeypatch.setattr(
+        document_store,
+        "extract_pdf_text_with_provenance",
+        lambda path: TextExtractionResult(
+            text=f"Mock OCR for {path}",
+            engine="test_ocr",
+            metadata={"page_count": 1},
+        ),
+    )
+
+    def fake_extract_dispatch(doc_type, text):
+        if doc_type == "i9":
+            return {
+                "employee_name": {"value": "Alex Zhang", "confidence": 0.9},
+                "employee_first_day_of_employment": {"value": "2026-03-17", "confidence": 0.9},
+            }
+        if doc_type == "e_verify_case":
+            return {
+                "employee_name": {"value": "Alex Zhang", "confidence": 0.9},
+                "employee_first_day_of_employment": {"value": "2025-03-17", "confidence": 0.9},
+                "case_number": {"value": "2025079225618BC", "confidence": 0.9},
+            }
+        return {}
+
+    monkeypatch.setattr(document_store, "extract_document", fake_extract_dispatch)
+
+    document_store.extract_into_document(i9_doc, db_session)
+    document_store.extract_into_document(everify_doc, db_session)
+    db_session.commit()
+    db_session.expire_all()
+
+    corrected_field = (
+        db_session.query(ExtractedFieldRow)
+        .filter(
+            ExtractedFieldRow.document_id == i9_doc.id,
+            ExtractedFieldRow.field_name == "employee_first_day_of_employment",
+        )
+        .one()
+    )
+    assert corrected_field.field_value == "2025-03-17"
+    assert corrected_field.confidence == 0.75
+    assert "Cross-checked against related E-Verify" in (corrected_field.raw_text or "")
+
+    refreshed_i9 = db_session.get(DocumentRow, i9_doc.id)
+    cross_check = refreshed_i9.provenance["structured_extraction"]["cross_checks"]["employee_first_day_of_employment"]
+    assert cross_check["status"] == "corrected_year_typo"
+    assert cross_check["original_value"] == "2026-03-17"
+    assert cross_check["resolved_value"] == "2025-03-17"
 
 
 def test_extraction_refines_1042s_series_key_by_tax_year(client, db_session, monkeypatch):

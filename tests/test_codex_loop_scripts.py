@@ -203,3 +203,73 @@ def test_control_script_start_status_stop_cycle(tmp_path):
         pytest.fail("loop did not stop within deadline")
 
     assert not pidfile.exists()
+
+
+def test_loop_stops_when_all_selected_batches_resolve(tmp_path):
+    loop_script = ROOT / "scripts" / "codex_loop" / "codex_data_room_loop.sh"
+    temp_root = tmp_path / "root"
+    scripts_dir = temp_root / "scripts"
+    config_dir = temp_root / "config"
+    logs_dir = temp_root / "logs" / "codex_loop"
+    session_root = temp_root / "logs" / "batch-loop"
+    scripts_dir.mkdir(parents=True)
+    config_dir.mkdir(parents=True)
+    logs_dir.mkdir(parents=True)
+    session_root.mkdir(parents=True)
+
+    fake_batch_loop = scripts_dir / "data_room_batch_loop.py"
+    fake_batch_loop.write_text(
+        "#!/usr/bin/env python3\n"
+        "import argparse\n"
+        "import json\n"
+        "from pathlib import Path\n"
+        "\n"
+        "parser = argparse.ArgumentParser()\n"
+        "parser.add_argument('--log-root', required=True)\n"
+        "parser.add_argument('--manifest')\n"
+        "parser.add_argument('--round-size')\n"
+        "parser.add_argument('--max-passes')\n"
+        "parser.add_argument('--run-command')\n"
+        "parser.add_argument('--run-validation-hooks', action='store_true')\n"
+        "args, _ = parser.parse_known_args()\n"
+        "session_dir = Path(args.log_root) / 'fake-session'\n"
+        "session_dir.mkdir(parents=True, exist_ok=True)\n"
+        "(session_dir / 'session.json').write_text(json.dumps({\n"
+        "    'unresolved_batches': [],\n"
+        "    'resolved_batches': ['batch_01'],\n"
+        "}) + '\\n')\n"
+        "print('Still unresolved: 0')\n"
+    )
+    fake_batch_loop.chmod(0o755)
+
+    (config_dir / "codex_loop.yaml").write_text(
+        "provider: echo\n"
+        "model: gpt-5.3-codex\n"
+        "reasoning_effort: xhigh\n"
+        "duration_hours: 1\n"
+        "success_sleep_seconds: 0\n"
+        "failure_sleep_seconds: 60\n"
+        "stop_when_all_resolved: true\n"
+        f"session_root: {session_root}\n"
+        "manifest_path: /tmp/fake-manifest.yaml\n"
+    )
+
+    result = subprocess.run(
+        ["bash", str(loop_script)],
+        check=False,
+        capture_output=True,
+        text=True,
+        env={
+            **os.environ,
+            "ROOT": str(temp_root),
+            "CODEX_LOOP_CONFIG": str(config_dir / "codex_loop.yaml"),
+            "PYTHON_BIN": os.environ.get("PYTHON", "python3"),
+            "PROVIDER": "echo",
+        },
+        timeout=20,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "=== Iteration 1 started ===" in result.stdout
+    assert "All selected batches resolved in session fake-session; exiting loop" in result.stdout
+    assert "=== Iteration 2 started ===" not in result.stdout

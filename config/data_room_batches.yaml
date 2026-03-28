@@ -74,8 +74,19 @@ batches:
   - id: batch_04
     number: 4
     focus: H-1B petition notices, status summaries, receipt or approval evidence, and supporting filings
-    status: planned
+    status: completed
     record: docs/data-room-batch-04.md
+    validation_hooks:
+      - name: batch_04_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_checks_router_v2.py
+          -q
     source_scope:
       - H1b Petition
     target_size: 10
@@ -83,8 +94,19 @@ batches:
   - id: batch_05
     number: 5
     focus: identity, travel, I-20 history, and overflow tax or personal archive records
-    status: planned
+    status: completed
     record: docs/data-room-batch-05.md
+    validation_hooks:
+      - name: batch_05_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_checks_router_v2.py
+          -q
     source_scope:
       - i20
       - Personal Info Archive

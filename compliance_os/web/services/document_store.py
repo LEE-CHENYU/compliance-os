@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -260,6 +260,192 @@ def _reindex_documents_for_type(check: CheckRow, doc_type: str) -> None:
             )
 
 
+def _normalize_person_name(value: str | None) -> str | None:
+    if not value:
+        return None
+    tokens = re.findall(r"[a-z0-9]+", value.lower())
+    if not tokens:
+        return None
+    return " ".join(tokens)
+
+
+def _parse_iso_date(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        return datetime.strptime(value, "%Y-%m-%d")
+    except ValueError:
+        return None
+
+
+def _field_values_for_document(db: Session, doc: DocumentRow) -> dict[str, str]:
+    out: dict[str, str] = {}
+    rows = (
+        db.query(ExtractedFieldRow)
+        .filter(ExtractedFieldRow.document_id == doc.id)
+        .all()
+    )
+    for row in rows:
+        if row.field_value not in (None, ""):
+            out[row.field_name] = row.field_value
+    return out
+
+
+def _upsert_extracted_field(
+    db: Session,
+    *,
+    doc: DocumentRow,
+    field_name: str,
+    value: str | None,
+    confidence: float | None,
+    raw_text: str | None,
+) -> None:
+    row = (
+        db.query(ExtractedFieldRow)
+        .filter(
+            ExtractedFieldRow.document_id == doc.id,
+            ExtractedFieldRow.field_name == field_name,
+        )
+        .one_or_none()
+    )
+    if row is None:
+        db.add(
+            ExtractedFieldRow(
+                document_id=doc.id,
+                field_name=field_name,
+                field_value=value,
+                confidence=confidence,
+                raw_text=raw_text,
+            )
+        )
+        return
+
+    row.field_value = value
+    row.confidence = confidence
+    row.raw_text = raw_text
+
+
+def _record_i9_cross_check(
+    doc: DocumentRow,
+    *,
+    status: str,
+    original_value: str,
+    resolved_value: str,
+    source_document_id: str,
+) -> None:
+    provenance = dict(doc.provenance or {})
+    structured = dict(provenance.get("structured_extraction") or {})
+    cross_checks = dict(structured.get("cross_checks") or {})
+    cross_checks["employee_first_day_of_employment"] = {
+        "status": status,
+        "original_value": original_value,
+        "resolved_value": resolved_value,
+        "source_document_id": source_document_id,
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+    }
+    structured["cross_checks"] = cross_checks
+    provenance["structured_extraction"] = structured
+    doc.provenance = provenance
+
+
+def _cross_check_i9_first_day_with_everify(check: CheckRow, db: Session) -> None:
+    everify_records: list[tuple[DocumentRow, datetime, str | None]] = []
+    for doc in check.documents:
+        if doc.doc_type != "e_verify_case":
+            continue
+        values = _field_values_for_document(db, doc)
+        first_day = _parse_iso_date(values.get("employee_first_day_of_employment"))
+        if first_day is None:
+            continue
+        everify_records.append(
+            (
+                doc,
+                first_day,
+                _normalize_person_name(values.get("employee_name")),
+            )
+        )
+
+    if not everify_records:
+        return
+
+    for i9_doc in check.documents:
+        if i9_doc.doc_type != "i9":
+            continue
+
+        values = _field_values_for_document(db, i9_doc)
+        i9_raw = values.get("employee_first_day_of_employment")
+        i9_first_day = _parse_iso_date(i9_raw)
+        if i9_first_day is None:
+            continue
+
+        i9_name = _normalize_person_name(values.get("employee_name"))
+        matching_records = [
+            record
+            for record in everify_records
+            if i9_name and record[2] and record[2] == i9_name
+        ]
+        if not matching_records and not i9_name and len(everify_records) == 1:
+            matching_records = everify_records
+        if not matching_records:
+            continue
+
+        exact_match = next(
+            (record for record in matching_records if record[1].date() == i9_first_day.date()),
+            None,
+        )
+        if exact_match and i9_raw is not None:
+            _record_i9_cross_check(
+                i9_doc,
+                status="confirmed",
+                original_value=i9_raw,
+                resolved_value=i9_raw,
+                source_document_id=exact_match[0].id,
+            )
+            continue
+
+        corrected_match = next(
+            (
+                record
+                for record in matching_records
+                if record[1].month == i9_first_day.month
+                and record[1].day == i9_first_day.day
+                and abs(record[1].year - i9_first_day.year) == 1
+            ),
+            None,
+        )
+        if corrected_match and i9_raw is not None:
+            corrected_value = corrected_match[1].strftime("%Y-%m-%d")
+            _upsert_extracted_field(
+                db,
+                doc=i9_doc,
+                field_name="employee_first_day_of_employment",
+                value=corrected_value,
+                confidence=0.75,
+                raw_text=(
+                    "Cross-checked against related E-Verify first-day-of-employment "
+                    f"value: {corrected_value}"
+                ),
+            )
+            _record_i9_cross_check(
+                i9_doc,
+                status="corrected_year_typo",
+                original_value=i9_raw,
+                resolved_value=corrected_value,
+                source_document_id=corrected_match[0].id,
+            )
+            continue
+
+        latest_related = max(record[1] for record in matching_records)
+        if i9_first_day > latest_related + timedelta(days=365) and i9_raw is not None:
+            _record_i9_cross_check(
+                i9_doc,
+                status="unconfirmed_outlier",
+                original_value=i9_raw,
+                resolved_value=i9_raw,
+                source_document_id=matching_records[0][0].id,
+            )
+
+
 def reindex_documents_for_doc_types(check: CheckRow, doc_types: Iterable[str | None]) -> None:
     """Recompute lineage metadata for one or more doc types on a check."""
     seen: set[str] = set()
@@ -348,9 +534,12 @@ def extract_into_document(doc: DocumentRow, db: Session) -> dict[str, Any]:
         extracted_values=extracted_values,
         ocr_text=text_result.text,
     )
+    db.flush()
     check = doc.check or db.get(CheckRow, doc.check_id)
     if check is not None:
         _reindex_documents_for_type(check, doc.doc_type)
+        if doc.doc_type in {"i9", "e_verify_case"}:
+            _cross_check_i9_first_day_with_everify(check, db)
 
     return {
         "document_id": doc.id,

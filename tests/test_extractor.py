@@ -29,6 +29,9 @@ def test_schemas_defined():
     assert "i765" in SCHEMAS
     assert "h1b_registration" in SCHEMAS
     assert "h1b_status_summary" in SCHEMAS
+    assert "h1b_g28" in SCHEMAS
+    assert "h1b_filing_invoice" in SCHEMAS
+    assert "h1b_filing_fee_receipt" in SCHEMAS
     assert "entity_name" in SCHEMAS["articles_of_organization"]
     assert "standing_status" in SCHEMAS["certificate_of_good_standing"]
     assert "job_title" in SCHEMAS["i983"]
@@ -176,6 +179,48 @@ def test_extract_h1b_registration():
         assert fields["employer_ein"]["value"] == "93-1924106"
 
 
+def test_extract_h1b_registration_recovers_identifier_from_text():
+    mock_result = {
+        "registration_number": None,
+        "employer_name": "Bamboo Shoot Growth Capital LLC",
+        "employer_ein": "931924106",
+    }
+    text = """
+    USCIS H-1B Registration
+    Registration Number: N9A2B3C4D5E6
+    Employer Id Number: 931924106
+    """
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=mock_result):
+        fields = extract_document("h1b_registration", text)
+        assert fields["registration_number"]["value"] == "N9A2B3C4D5E6"
+        assert fields["employer_ein"]["value"] == "93-1924106"
+
+
+def test_extract_h1b_registration_derives_surrogate_when_official_number_missing():
+    mock_result = {
+        "registration_number": None,
+        "employer_name": "Bamboo Shoot Growth Capital LLC",
+        "employer_ein": None,
+    }
+    text = """
+    USCIS H-1B Registration
+    Registration Number:
+    Employer Id Number: 931924106
+    Beneficiaries
+    Beneficiary Confirmation Number:
+    Full Name: Chenyu Li
+    Date Of Birth: 09/18/1998
+    Passport Number: E71722932
+    """
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=mock_result):
+        fields = extract_document("h1b_registration", text)
+        registration_number = fields["registration_number"]["value"]
+        assert registration_number is not None
+        assert registration_number.startswith("DERIVED-H1BR-")
+        assert len(registration_number) == len("DERIVED-H1BR-") + 12
+        assert fields["employer_ein"]["value"] == "93-1924106"
+
+
 def test_extract_h1b_status_summary_normalizes_dates():
     mock_result = {
         "status_title": "H-1B Status",
@@ -195,6 +240,118 @@ def test_extract_h1b_status_summary_normalizes_dates():
         assert fields["petition_filing_window_end_date"]["value"] == "2025-06-30"
         assert fields["employment_start_date"]["value"] == "2025-10-01"
         assert fields["law_firm_name"]["value"] == "MT Law"
+
+
+def test_extract_batch_04_h1b_support_documents():
+    g28_result = {
+        "representative_name": "Xinzi Chen",
+        "law_firm_name": "MT Law LLC",
+        "representative_email": "cindy@mtlawllc.com",
+        "client_name": "Chenyu Li",
+        "client_entity_name": "Bamboo Shoot Growth Capital LLC",
+        "client_email": "contact.bsgc@gmail.com",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=g28_result):
+        fields = extract_document("h1b_g28", "Notice of Entry of Appearance as Attorney or Accredited Representative")
+        assert fields["representative_name"]["value"] == "Xinzi Chen"
+        assert fields["client_entity_name"]["value"] == "Bamboo Shoot Growth Capital LLC"
+
+    invoice_result = {
+        "invoice_number": "H-1B#",
+        "invoice_date": "3/11/2025",
+        "petitioner_name": "Bamboo Shoot Growth Capital LLC",
+        "beneficiary_name": "Chenyu Li",
+        "legal_fee_amount": "$300.00",
+        "uscis_fee_amount": "215",
+        "total_due_amount": "515",
+        "payment_status": "paid",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=invoice_result):
+        fields = extract_document("h1b_filing_invoice", "INVOICE H-1B Registration Filing Fee")
+        assert fields["invoice_date"]["value"] == "2025-03-11"
+        assert fields["legal_fee_amount"]["value"] == "300.00"
+        assert fields["uscis_fee_amount"]["value"] == "215.00"
+        assert fields["total_due_amount"]["value"] == "515.00"
+
+    receipt_result = {
+        "transaction_id": "45217993",
+        "transaction_date": "Mar 3, 2026 - 2:53pm",
+        "response_message": "APPROVAL",
+        "approval_code": "552336",
+        "cardholder_name": "Chenyu Li",
+        "amount": "$ 850.00",
+        "description": "H1B registration",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=receipt_result):
+        fields = extract_document("h1b_filing_fee_receipt", "Transaction Information H1B registration")
+        assert fields["transaction_date"]["value"] == "2026-03-03"
+        assert fields["amount"]["value"] == "850.00"
+        assert fields["cardholder_name"]["value"] == "Chenyu Li"
+
+
+def test_extract_batch_05_identity_travel_archive_documents():
+    i20_result = {
+        "student_name": "Chenyu Li",
+        "program_end_date": "12/16/2025",
+        "travel_signature_date": "02/20/2025",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=i20_result):
+        fields = extract_document("i20", "Certificate of Eligibility Form I-20")
+        assert fields["student_name"]["value"] == "Chenyu Li"
+        assert fields["program_end_date"]["value"] == "2025-12-16"
+        assert fields["travel_signature_date"]["value"] == "2025-02-20"
+
+    i94_result = {
+        "class_of_admission": "F-1",
+        "most_recent_entry_date": "03/04/2025",
+        "admit_until_date": "DS",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=i94_result):
+        fields = extract_document("i94", "Arrival/Departure Record Form I-94")
+        assert fields["class_of_admission"]["value"] == "F-1"
+        assert fields["most_recent_entry_date"]["value"] == "2025-03-04"
+        assert fields["admit_until_date"]["value"] == "D/S"
+
+    passport_result = {
+        "full_name": "Chenyu Li",
+        "date_of_birth": "09/18/1998",
+        "issue_date": "11/16/2022",
+        "expiration_date": "11/15/2032",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=passport_result):
+        fields = extract_document("passport", "Passport identity page")
+        assert fields["date_of_birth"]["value"] == "1998-09-18"
+        assert fields["issue_date"]["value"] == "2022-11-16"
+        assert fields["expiration_date"]["value"] == "2032-11-15"
+
+    ead_result = {
+        "full_name": "Chenyu Li",
+        "date_of_birth": "09/18/1998",
+        "card_expires_on": "10/01/2026",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=ead_result):
+        fields = extract_document("ead", "Employment Authorization Document")
+        assert fields["full_name"]["value"] == "Chenyu Li"
+        assert fields["date_of_birth"]["value"] == "1998-09-18"
+        assert fields["card_expires_on"]["value"] == "2026-10-01"
+
+    w2_result = {
+        "tax_year": "Tax Year 2024",
+        "employee_name": "Chenyu Li",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=w2_result):
+        fields = extract_document("w2", "Wage and Tax Statement Form W-2")
+        assert fields["tax_year"]["value"] == 2024
+        assert fields["employee_name"]["value"] == "Chenyu Li"
+
+    tax_return_result = {
+        "form_type": "1040",
+        "tax_year": "Tax Return 2024",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=tax_return_result):
+        fields = extract_document("tax_return", "Tax Return")
+        assert fields["form_type"]["value"] == "1040"
+        assert fields["tax_year"]["value"] == 2024
 
 
 def test_build_mistral_client_prefers_client_module(monkeypatch):
