@@ -214,6 +214,62 @@ def test_batch_16_to_20_filename_classification_regressions():
     assert classify_filename("/tmp/i20/ciam_transfer_pending.pdf").doc_type == "transfer_pending_letter"
 
 
+def test_batch_26_to_30_filename_and_text_classification_regressions():
+    assert (
+        classify_filename("/tmp/CV & Cover Letters/CV230217/李宸宇18652053798_230718.pdf").doc_type
+        == "resume"
+    )
+    assert classify_filename("/tmp/Lease/Fang, Yuchen_293947.pdf").doc_type == "lease"
+    assert (
+        classify_filename("/tmp/ICDATAx2725 Confirmation of paper modification 7.pdf").doc_type
+        == "filing_confirmation"
+    )
+    assert (
+        classify_filename("/tmp/employment/Yangtze Capital/CIAM_CPT_App_Li_Chenyu.pdf").doc_type
+        == "cpt_application"
+    )
+    assert (
+        classify_filename("/tmp/employment/Bitsync/Gmail - Urgent_ Compliance with STEM OPT Requirements.pdf").doc_type
+        == "support_request"
+    )
+    assert (
+        classify_text(
+            "Dear DSO, I am writing to address an urgent matter regarding my employment and the "
+            "documentation requirements under the STEM OPT program."
+        ).doc_type
+        == "support_request"
+    )
+    assert (
+        classify_filename("/tmp/employment/CliniPulse/Attorney Letter to Chenyu Li-03212025.pdf").doc_type
+        == "employment_correspondence"
+    )
+    assert (
+        classify_text(
+            "Please be advised that we represent CliniPulse LLC. This letter constitutes our "
+            "response to your demand for unpaid wages and withdraws the offer letter."
+        ).doc_type
+        == "employment_correspondence"
+    )
+    assert (
+        classify_filename("/tmp/employment/JZ/Contract & Signed Letter - JZ Capital LLC.pdf").doc_type
+        == "employment_contract"
+    )
+    assert (
+        classify_text(
+            "We are delighted to share the following employment documents with you. "
+            "Review and e-sign your employment documents ahead of your start date."
+        ).doc_type
+        == "employment_contract"
+    )
+    assert (
+        classify_text(
+            "Tiger Cloud, LLC OPT Employer letter. This is to certify that Chenyu Li is employed "
+            "and this letter is issued in conjunction with employment authorization."
+        ).doc_type
+        == "employment_letter"
+    )
+
+
 def test_single_reference_does_not_force_i94_or_ead_classification():
     assert classify_text("Enter your I-94 visa number.") .doc_type is None
     assert classify_text("Recipient's date of birth and federal tax withheld.") .doc_type is None

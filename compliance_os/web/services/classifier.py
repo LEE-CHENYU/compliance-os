@@ -31,6 +31,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "debt_clearance_letter": [r"debt[_ -]?clear(?:a|e)nce"],
     "degree_certificate": [r"diploma", r"degree[_ -]?certificate", r"学历认证", r"学位认证"],
     "drivers_license": [r"driver[’']?s[_ -]?license", r"drivers[_ -]?license"],
+    "cpt_application": [r"(?:^|[^a-z0-9])cpt[_ -]?(?:app|application)(?:[^a-z0-9]|$)"],
     "ein_application_instructions": [
         r"ein.*instructions",
         r"individual[_ -]?request.*instructions",
@@ -46,7 +47,12 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "insurance_card": [r"medi[_ -]?card", r"insurance[_ -]?card"],
     "insurance_record": [r"insurance[_ -]?record"],
     "language_test_certificate": [r"jlpt", r"ielts", r"雅思", r"toefl"],
-    "filing_confirmation": [r"retain[_ -]?the[_ -]?proof", r"proof[_ -]?of[_ -]?(?:filing|submission)", r"filing[_ -]?confirmation"],
+    "filing_confirmation": [
+        r"retain[_ -]?the[_ -]?proof",
+        r"proof[_ -]?of[_ -]?(?:filing|submission)",
+        r"filing[_ -]?confirmation",
+        r"confirmation[_ -]?of[_ -]?paper[_ -]?modification",
+    ],
     "name_change_notice": [r"name[_ -]?change", r"name[_ -]?change[_ -]?notice"],
     "order_confirmation": [r"order[_ -]?confirmation"],
     "payment_receipt": [r"payment[_ -]?receipt"],
@@ -63,13 +69,24 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "final_evaluation": [r"final[_ -]?evaluation"],
     "operating_agreement": [r"operating[_ -]?agreement"],
     "i983": [r"(?:^|[^a-z0-9])i-?983(?:[^a-z0-9]|$)", r"training[_ -]?plan"],
-    "employment_contract": [r"employment[_ -]?contract"],
+    "employment_contract": [
+        r"employment[_ -]?contract",
+        r"contract.*signed[_ -]?letter",
+        r"signed[_ -]?letter.*contract",
+    ],
+    "employment_correspondence": [
+        r"attorney[_ -]?letter",
+        r"resignation[_ -]?notice",
+        r"finalized.*employment",
+        r"reminder.*action[_ -]?needed.*employment",
+    ],
     "employment_letter": [
         r"employment[_ -]?letter",
         r"offer[_ -]?letter",
         r"employment[_ -]?offer",
         r"employer[_ -]?letter",
         r"stemopt[_ -]?employer[_ -]?letter",
+        r"opt[_ -]?employer[_ -]?letter",
         r"vcv[_ -]?full[_ -]?time",
         r"vcv[_ -]?internship",
     ],
@@ -80,7 +97,12 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "ein_application": [r"\bein[_ -]?(?:individual[_ -]?request|application)\b", r"online[_ -]?application"],
     "social_security_card": [r"(?:^|[^a-z0-9])ssn(?:[^a-z0-9]|$)", r"social[_ -]?security"],
     "student_id": [r"student[_ -]?id", r"student[_ -]?identification"],
-    "support_request": [r"requests?[_ -]?for[_ -]?employment[_ -]?and[_ -]?immigration[_ -]?support", r"support[_ -]?request"],
+    "support_request": [
+        r"requests?[_ -]?for[_ -]?employment[_ -]?and[_ -]?immigration[_ -]?support",
+        r"support[_ -]?request",
+        r"compliance[_ -]?with[_ -]?stem[_ -]?opt[_ -]?requirements",
+        r"guidance[_ -]?on[_ -]?stem[_ -]?opt[_ -]?compliance",
+    ],
     "tax_interview": [r"tax[_ -]?interview"],
     "transcript": [r"transcript", r"ecertification", r"etran(?:script|scription)", r"\u6210\u7ee9\u5355"],
     "visa_stamp": [r"(?:^|[^a-z0-9])visa(?:[^a-z0-9]|$)", r"visa[_ -]?stamp"],
@@ -115,6 +137,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
 
 PATH_PATTERNS: dict[str, list[str]] = {
     "bank_statement": [r"/(?:tax|w2)/\d{0,4}/?bank_document_", r"/w2/bank_document_"],
+    "resume": [r"/cv & cover letters/cv\d{6}/(?:chenyu|cheney|李宸宇)[^/]*\.pdf$"],
     "final_evaluation": [
         r"/employment/claudius/12 month \(page-5\) \.pdf$",
         r"/stem opt/i983/.*/final evaluation opt\.pdf$",
@@ -130,6 +153,7 @@ PATH_PATTERNS: dict[str, list[str]] = {
     "admission_letter": [r"/i20/i20/admission[_ -]?letter\.pdf$"],
     "enrollment_verification": [r"/i20/(?:ciam|westcliff).*continued[_ -]?attend(?:ance|ence)\.pdf$"],
     "transfer_pending_letter": [r"/i20/(?:ciam|westcliff).*transfer[_ -]?pending\.pdf$"],
+    "lease": [r"/lease/[^/]+_\d+\.pdf$"],
 }
 
 
@@ -188,6 +212,11 @@ PATTERNS: dict[str, list[str]] = {
         r"Debt Clearence",
         r"Clearance",
     ],
+    "cpt_application": [
+        r"Experiential Internship Courses",
+        r"CPT authorization",
+        r"International students will receive CPT authorization",
+    ],
     "degree_certificate": [
         r"Diploma",
         r"degree of",
@@ -223,6 +252,7 @@ PATTERNS: dict[str, list[str]] = {
         r"retain the proof",
         r"proof of (?:filing|submission)",
         r"(?:filing|submission) confirmation",
+        r"Confirmation of paper modification",
     ],
     "identity_document": [
         r"Identification",
@@ -312,6 +342,9 @@ PATTERNS: dict[str, list[str]] = {
         r"Employment and Immigration Support",
         r"support request",
         r"request for guidance",
+        r"urgent matter regarding my employment",
+        r"documentation requirements under the STEM OPT program",
+        r"Guidance on STEM OPT Compliance and Unpaid Salary",
     ],
     "tax_interview": [
         r"Tax Interview",
@@ -425,12 +458,18 @@ PATTERNS: dict[str, list[str]] = {
         r"pleased to offer you",
         r"pleased to offer you the position of",
         r"employment at will",
+        r"OPT Employer letter",
+        r"This is to certify that .* is employed",
+        r"employment authorization in accordance with the OPT regulations",
     ],
     "lease": [
         r"Sublease Agreement",
         r"\bThis lease\b",
         r"Tenant and Owner",
         r"Premises:",
+        r"Rental Agreement",
+        r"Monthly Rent",
+        r"Security Deposit",
     ],
     "insurance_policy": [
         r"Nomad Insurance",
@@ -498,6 +537,17 @@ PATTERNS: dict[str, list[str]] = {
         r"at will employment",
         r"confidentiality",
         r"non-solicitation",
+        r"employment documents",
+        r"review and e-sign your employment documents",
+        r"Ahead of your start date",
+    ],
+    "employment_correspondence": [
+        r"response to your demand for unpaid wages",
+        r"withdraws the offer letter",
+        r"decided to resign from my position",
+        r"return of company property",
+        r"all parties have finalized the document",
+        r"sent you .* to review and complete",
     ],
 }
 
@@ -513,6 +563,7 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "collection_notice": 2,
     "company_filing": 2,
     "debt_clearance_letter": 2,
+    "cpt_application": 2,
     "degree_certificate": 2,
     "drivers_license": 2,
     "ein_application_instructions": 2,
@@ -532,6 +583,7 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "operating_agreement": 2,
     "i983": 2,
     "employment_contract": 2,
+    "employment_correspondence": 2,
     "employment_letter": 2,
     "i20": 2,
     "i94": 2,
@@ -599,6 +651,7 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "business_license": "business_license",
     "certificate_of_good_standing": "certificate_of_good_standing",
     "company_filing": "company_filing",
+    "cpt_application": "cpt_application",
     "cp_575": "ein_letter",
     "degree_certificate": "degree_certificate",
     "diploma": "degree_certificate",
@@ -610,6 +663,7 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "ein_letter": "ein_letter",
     "employment_agreement": "employment_contract",
     "employment_contract": "employment_contract",
+    "employment_correspondence": "employment_correspondence",
     "employment_letter": "employment_letter",
     "employment_offer": "employment_letter",
     "employment_offer_letter": "employment_letter",

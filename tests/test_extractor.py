@@ -21,6 +21,7 @@ def test_schemas_defined():
     assert "bank_statement" in SCHEMAS
     assert "collection_notice" in SCHEMAS
     assert "debt_clearance_letter" in SCHEMAS
+    assert "cpt_application" in SCHEMAS
     assert "enrollment_verification" in SCHEMAS
     assert "filing_confirmation" in SCHEMAS
     assert "final_evaluation" in SCHEMAS
@@ -34,6 +35,7 @@ def test_schemas_defined():
     assert "order_confirmation" in SCHEMAS
     assert "i983" in SCHEMAS
     assert "employment_contract" in SCHEMAS
+    assert "employment_correspondence" in SCHEMAS
     assert "employment_letter" in SCHEMAS
     assert "tax_return" in SCHEMAS
     assert "i94" in SCHEMAS
@@ -129,6 +131,36 @@ def test_extract_employment_letter():
         fields = extract_document("employment_letter", "Dear candidate, we are pleased to offer...")
         assert fields["job_title"]["value"] == "Business Operations Associate"
         assert fields["work_location"]["value"] == "New York, NY"
+
+
+def test_extract_cpt_application():
+    mock_result = {
+        "student_name": "Chenyu Li",
+        "institution_name": "CIAM",
+        "course_name": "Experiential Internship Courses",
+        "approval_date": "03/10/2025",
+        "employer_name": "Yangtze Capital",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=mock_result):
+        fields = extract_document("cpt_application", "Experiential Internship Courses CPT authorization")
+        assert fields["student_name"]["value"] == "Chenyu Li"
+        assert fields["approval_date"]["value"] == "2025-03-10"
+        assert fields["employer_name"]["value"] == "Yangtze Capital"
+
+
+def test_extract_employment_correspondence():
+    mock_result = {
+        "sender_name": "Demidchik Law Firm",
+        "recipient_name": "Chenyu Li",
+        "organization_name": "CliniPulse LLC",
+        "correspondence_date": "March 21, 2025",
+        "subject_summary": "Response to unpaid wages demand and offer withdrawal",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=mock_result):
+        fields = extract_document("employment_correspondence", "Response to your demand for unpaid wages")
+        assert fields["sender_name"]["value"] == "Demidchik Law Firm"
+        assert fields["correspondence_date"]["value"] == "2025-03-21"
+        assert fields["subject_summary"]["value"] == "Response to unpaid wages demand and offer withdrawal"
 
 
 def test_extract_tax_return():

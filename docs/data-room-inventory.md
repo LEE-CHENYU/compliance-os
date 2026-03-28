@@ -135,9 +135,29 @@ Extension counts:
   - focus: STEM OPT I-983 overflow versions and templates
   - status: completed
   - record: `docs/data-room-batch-25.md`
+- Batch 26:
+  - focus: resume archive overflow plus education credential anchors
+  - status: completed
+  - record: `docs/data-room-batch-26.md`
+- Batch 27:
+  - focus: employment payroll, offer-letter, E-Verify, bank, and filing-fee continuity
+  - status: completed
+  - record: `docs/data-room-batch-27.md`
+- Batch 28:
+  - focus: remaining I-983 overflow and employment-side STEM OPT request records
+  - status: completed
+  - record: `docs/data-room-batch-28.md`
+- Batch 29:
+  - focus: identity, tax, residence, CPT, and filing-confirmation support artifacts
+  - status: completed
+  - record: `docs/data-room-batch-29.md`
+- Batch 30:
+  - focus: employment agreements, reminders, legal responses, and HR correspondence
+  - status: completed
+  - record: `docs/data-room-batch-30.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `25` stable under focused tests plus real-source validation.
+1. Keep Batches `01` through `30` stable under focused tests plus real-source validation.
 2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
 3. Start the next round from still-unbatched source slices instead of reopening resolved batches.

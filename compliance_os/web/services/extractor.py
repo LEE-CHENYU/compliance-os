@@ -112,6 +112,13 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "clearance_date": "Debt clearance or confirmation date (YYYY-MM-DD) if visible",
         "account_reference": "Account or case reference number if visible",
     },
+    "cpt_application": {
+        "student_name": "Student full name",
+        "institution_name": "Institution or school running the CPT or internship course",
+        "course_name": "Course or CPT program name if visible",
+        "approval_date": "Application or approval date (YYYY-MM-DD) if visible",
+        "employer_name": "Employer or internship host if visible",
+    },
     "enrollment_verification": {
         "student_name": "Student full name",
         "institution_name": "School or university name",
@@ -496,6 +503,13 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "job_title": "Job title or role",
         "effective_date": "Effective or start date (YYYY-MM-DD) if visible",
         "compensation": "Compensation amount (number only) if visible",
+    },
+    "employment_correspondence": {
+        "sender_name": "Sender or author name if visible",
+        "recipient_name": "Primary recipient name if visible",
+        "organization_name": "Employer, law firm, or organization referenced in the correspondence",
+        "correspondence_date": "Message or letter date (YYYY-MM-DD) if visible",
+        "subject_summary": "Short summary of the issue or request discussed",
     },
     "social_security_card": {
         "full_name": "Full name on the card",
@@ -994,6 +1008,8 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
         )
     if doc_type == "debt_clearance_letter":
         return _normalize_selected_fields(result, date_fields=("clearance_date",))
+    if doc_type == "cpt_application":
+        return _normalize_selected_fields(result, date_fields=("approval_date",))
     if doc_type == "filing_confirmation":
         return _normalize_selected_fields(result, date_fields=("confirmation_date",))
     if doc_type == "final_evaluation":
@@ -1052,6 +1068,14 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
             date_fields=("order_date",),
             numeric_fields=("total_amount",),
         )
+    if doc_type == "employment_contract":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("effective_date",),
+            numeric_fields=("compensation",),
+        )
+    if doc_type == "employment_correspondence":
+        return _normalize_selected_fields(result, date_fields=("correspondence_date",))
     if doc_type == "paystub":
         return _normalize_selected_fields(
             result,
