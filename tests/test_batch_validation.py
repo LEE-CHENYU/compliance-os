@@ -73,6 +73,26 @@ def test_parse_manifest_entries_accepts_legacy_data_room_result_header(tmp_path)
     assert entries[0].expected_doc_type == "ead"
 
 
+def test_parse_manifest_entries_preserves_leading_spaces_inside_backticks(tmp_path):
+    record = tmp_path / "batch.md"
+    record.write_text(
+        "\n".join(
+            [
+                "# Batch",
+                "",
+                "| Label | File | Intended use | Intended doc type |",
+                "| --- | --- | --- | --- |",
+                "| `spaced_transcript` | ` Transcript(WES).pdf` | transcript with leading-space filename | `transcript` |",
+            ]
+        )
+    )
+
+    entries = parse_manifest_entries(record)
+
+    assert len(entries) == 1
+    assert entries[0].file_path == " Transcript(WES).pdf"
+
+
 def test_validate_batch_source_slice_checks_real_source_files(tmp_path, monkeypatch):
     source_root = tmp_path / "Important Docs "
     source_root.mkdir()

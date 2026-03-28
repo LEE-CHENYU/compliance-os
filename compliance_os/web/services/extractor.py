@@ -52,6 +52,18 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "submission_date": "Submission or application date (YYYY-MM-DD) if visible",
         "account_type": "Requested account type if visible",
     },
+    "bank_account_record": {
+        "institution_name": "Bank or financial institution name if visible",
+        "account_holder_name": "Account holder name or entity name if visible",
+        "account_number_last4": "Last four digits of the account number if visible",
+        "record_date": "Date shown on the record or screenshot (YYYY-MM-DD) if visible",
+    },
+    "business_license": {
+        "entity_name": "Registered company or business name",
+        "registration_number": "Registration number or unified social credit code",
+        "issuing_authority": "Issuing or registration authority if visible",
+        "issue_date": "Issue or establishment date (YYYY-MM-DD) if visible",
+    },
     "certificate_of_good_standing": {
         "entity_name": "Legal name of the entity",
         "jurisdiction": "Jurisdiction or state issuing the certificate",
@@ -61,6 +73,12 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "standing_status": "Current standing status stated in the certificate",
         "duration": "Entity duration if stated, such as Perpetual",
     },
+    "company_filing": {
+        "entity_name": "Legal entity name referenced in the filing",
+        "filing_type": "Filing type or event name",
+        "jurisdiction": "Filing jurisdiction if visible",
+        "filing_date": "Filing date (YYYY-MM-DD) if visible",
+    },
     "registered_agent_consent": {
         "entity_name": "Name of the business entity",
         "registered_agent_name": "Name of the registered agent",
@@ -68,6 +86,41 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "consent_date": "Date the consent was signed (YYYY-MM-DD)",
         "signer_name": "Printed name of the signer if present",
         "signer_title": "Title of the signer if present",
+    },
+    "admission_letter": {
+        "student_name": "Student or applicant full name",
+        "institution_name": "Institution issuing the admission letter",
+        "program_name": "Program, degree, or major if visible",
+        "admission_date": "Admission or offer date (YYYY-MM-DD) if visible",
+    },
+    "enrollment_verification": {
+        "student_name": "Student full name",
+        "institution_name": "School or university name",
+        "enrollment_status": "Enrollment status such as currently enrolled or continued attendance",
+        "effective_date": "Effective or issue date (YYYY-MM-DD) if visible",
+    },
+    "identity_document": {
+        "full_name": "Full name on the identity document if visible",
+        "document_type": "Document type, such as national ID card or identification page",
+        "document_number": "Document number if visible",
+        "date_of_birth": "Date of birth (YYYY-MM-DD) if visible",
+    },
+    "insurance_card": {
+        "carrier_name": "Insurance carrier or network name",
+        "member_name": "Member or cardholder name",
+        "member_id": "Member or policy ID",
+        "group_number": "Group number if visible",
+    },
+    "insurance_record": {
+        "carrier_name": "Insurance carrier or provider name if visible",
+        "member_name": "Member or applicant name if visible",
+        "record_type": "Record type such as eligibility notice or insurance document",
+        "effective_date": "Coverage or issue date (YYYY-MM-DD) if visible",
+    },
+    "membership_welcome_packet": {
+        "organization_name": "Club, association, or organization name",
+        "recipient_name": "Recipient or member name if visible",
+        "welcome_date": "Welcome or issue date (YYYY-MM-DD) if visible",
     },
     "i983": {
         "student_name": "Full name of the student",
@@ -235,6 +288,46 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "zip_code": "ZIP code",
         "county": "County if visible",
         "subsidy_requested": "Whether the applicant requested free or low cost coverage / subsidy (true/false)",
+    },
+    "payment_service_agreement": {
+        "platform_name": "Payment platform or service provider name",
+        "merchant_name": "Merchant or account holder name",
+        "effective_date": "Agreement effective date (YYYY-MM-DD) if visible",
+        "agreement_type": "Agreement or service type if visible",
+    },
+    "payment_account_record": {
+        "platform_name": "Platform or payment service name",
+        "account_name": "Displayed account or merchant name",
+        "account_identifier": "Account identifier or merchant ID if visible",
+        "record_date": "Screenshot or statement date (YYYY-MM-DD) if visible",
+    },
+    "public_key": {
+        "key_owner": "Owner or system associated with the key if visible",
+        "algorithm": "Key algorithm or format, such as RSA2",
+        "key_prefix": "Beginning of the key material or identifier if visible",
+    },
+    "recovery_codes": {
+        "provider_name": "Provider or system issuing the recovery codes",
+        "account_identifier": "Account email, username, or identifier if visible",
+        "code_count": "Number of recovery codes shown if visible",
+    },
+    "residence_certificate": {
+        "resident_name": "Resident name if visible",
+        "address": "Address shown on the certificate",
+        "issue_date": "Issue date (YYYY-MM-DD) if visible",
+        "issuing_authority": "Issuing authority if visible",
+    },
+    "resume": {
+        "candidate_name": "Candidate full name",
+        "primary_title": "Headline, target role, or primary title if visible",
+        "email": "Primary email address if visible",
+        "phone_number": "Primary phone number if visible",
+    },
+    "work_sample": {
+        "document_title": "Document title",
+        "subject_area": "Subject area or topic",
+        "author_name": "Author or presenter name if visible",
+        "created_date": "Document or presentation date (YYYY-MM-DD) if visible",
     },
     "ein_application": {
         "legal_name": "Legal entity name shown in the EIN application",

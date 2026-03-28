@@ -9,11 +9,20 @@ from compliance_os.web.services.extractor import SCHEMAS, extract_document
 def test_schemas_defined():
     assert "annual_account_summary" in SCHEMAS
     assert "bank_account_application" in SCHEMAS
+    assert "bank_account_record" in SCHEMAS
+    assert "business_license" in SCHEMAS
     assert "articles_of_organization" in SCHEMAS
     assert "certificate_of_good_standing" in SCHEMAS
+    assert "company_filing" in SCHEMAS
     assert "degree_certificate" in SCHEMAS
     assert "drivers_license" in SCHEMAS
     assert "registered_agent_consent" in SCHEMAS
+    assert "admission_letter" in SCHEMAS
+    assert "enrollment_verification" in SCHEMAS
+    assert "identity_document" in SCHEMAS
+    assert "insurance_card" in SCHEMAS
+    assert "insurance_record" in SCHEMAS
+    assert "membership_welcome_packet" in SCHEMAS
     assert "i983" in SCHEMAS
     assert "employment_contract" in SCHEMAS
     assert "employment_letter" in SCHEMAS
@@ -35,6 +44,13 @@ def test_schemas_defined():
     assert "lease" in SCHEMAS
     assert "insurance_policy" in SCHEMAS
     assert "health_coverage_application" in SCHEMAS
+    assert "payment_service_agreement" in SCHEMAS
+    assert "payment_account_record" in SCHEMAS
+    assert "public_key" in SCHEMAS
+    assert "recovery_codes" in SCHEMAS
+    assert "residence_certificate" in SCHEMAS
+    assert "resume" in SCHEMAS
+    assert "work_sample" in SCHEMAS
     assert "ein_application" in SCHEMAS
     assert "operating_agreement" in SCHEMAS
     assert "paystub" in SCHEMAS
@@ -51,6 +67,19 @@ def test_schemas_defined():
     assert "job_title" in SCHEMAS["i983"]
     assert "employer_name" in SCHEMAS["employment_letter"]
     assert "form_type" in SCHEMAS["tax_return"]
+
+
+def test_extract_resume_fields():
+    mock_result = {
+        "candidate_name": "Chenyu Li",
+        "primary_title": "Data Analyst",
+        "email": "foo@example.com",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=mock_result):
+        fields = extract_document("resume", "Chenyu Li Resume Data Analyst foo@example.com")
+        assert fields["candidate_name"]["value"] == "Chenyu Li"
+        assert fields["primary_title"]["value"] == "Data Analyst"
+        assert fields["email"]["value"] == "foo@example.com"
 
 
 def test_extract_returns_fields():

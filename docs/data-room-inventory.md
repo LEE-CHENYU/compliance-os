@@ -75,9 +75,29 @@ Extension counts:
   - focus: tax overflow plus H-1B employee passport, visa, EAD, and transcript evidence
   - status: completed
   - record: `docs/data-room-batch-10.md`
+- Batch 11:
+  - focus: academic credential and business license anchor records
+  - status: completed
+  - record: `docs/data-room-batch-11.md`
+- Batch 12:
+  - focus: company access, payment account, public-key, recovery-code, and filing artifacts
+  - status: completed
+  - record: `docs/data-room-batch-12.md`
+- Batch 13:
+  - focus: `I-20` history, admission, and enrollment continuity records
+  - status: completed
+  - record: `docs/data-room-batch-13.md`
+- Batch 14:
+  - focus: medical, residence, membership, and family identity support records
+  - status: completed
+  - record: `docs/data-room-batch-14.md`
+- Batch 15:
+  - focus: resume and work-sample career materials
+  - status: completed
+  - record: `docs/data-room-batch-15.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `10` stable under focused tests plus real-source validation.
+1. Keep Batches `01` through `15` stable under focused tests plus real-source validation.
 2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
-3. Start the next round from unbatched source slices instead of reopening resolved batches.
+3. Start the next round from still-unbatched source slices instead of reopening resolved batches.

@@ -82,7 +82,10 @@ class BatchValidationSummary:
 
 
 def _strip_cell(value: str) -> str:
-    return value.strip().strip("`").strip()
+    stripped = value.strip()
+    if stripped.startswith("`") and stripped.endswith("`") and len(stripped) >= 2:
+        return stripped[1:-1]
+    return stripped.strip("`").strip()
 
 
 def _parse_markdown_row(line: str) -> list[str]:

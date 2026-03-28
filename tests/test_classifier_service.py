@@ -182,6 +182,25 @@ def test_batch_07_to_10_filename_classification_regressions():
     assert classify_filename("/tmp/H1b Petition/Employee/Transcript/40697019_eTranscript.pdf").doc_type == "transcript"
 
 
+def test_batch_11_to_15_filename_classification_regressions():
+    assert classify_filename("/tmp/学历认证.pdf").doc_type == "degree_certificate"
+    assert classify_filename("/tmp/公司信息/营业执照(老).jpg").doc_type == "business_license"
+    assert classify_filename("/tmp/公司信息/支付宝支付服务合同.pdf").doc_type == "payment_service_agreement"
+    assert classify_filename("/tmp/公司信息/银行账户.JPG").doc_type == "bank_account_record"
+    assert classify_filename("/tmp/公司信息/alipayPublicKey_RSA2-new.txt").doc_type == "public_key"
+    assert classify_filename("/tmp/BSGC/shopify_recovery_codes.txt").doc_type == "recovery_codes"
+    assert classify_filename("/tmp/Yangtze Capital/3-5-26 - null - Initial Filing - Yangtze Capital.pdf").doc_type == "company_filing"
+    assert classify_filename("/tmp/i20/I20/Admission Letter.pdf").doc_type == "admission_letter"
+    assert classify_filename("/tmp/i20/ciam_continued_attendence.pdf").doc_type == "enrollment_verification"
+    assert classify_filename("/tmp/Medical/Medicard02.png").doc_type == "insurance_card"
+    assert classify_filename("/tmp/Medical/N250714184955_Template012_235756780_03_12_2025_03_05_11_EN.pdf").doc_type == "insurance_record"
+    assert classify_filename("/tmp/Personal Info Archive/New Member Packet - Welcome.pdf").doc_type == "membership_welcome_packet"
+    assert classify_filename("/tmp/Personal Info Archive/南京居住证明.pdf").doc_type == "residence_certificate"
+    assert classify_filename("/tmp/Mom ID/Weixin Image_20260209173713_337_168.jpg").doc_type == "identity_document"
+    assert classify_filename("/tmp/CV & Cover Letters/CV260306/Chenyu Li Resume_H1b.pdf").doc_type == "resume"
+    assert classify_filename("/tmp/CV & Cover Letters/CV241028/OXY Stock Pitch.pdf").doc_type == "work_sample"
+
+
 def test_single_reference_does_not_force_i94_or_ead_classification():
     assert classify_text("Enter your I-94 visa number.") .doc_type is None
     assert classify_text("Recipient's date of birth and federal tax withheld.") .doc_type is None

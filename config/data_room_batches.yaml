@@ -271,3 +271,150 @@ batches:
       - H1b Petition
       - "[root]"
     target_size: 10
+
+  - id: batch_11
+    number: 11
+    focus: academic credential and business license anchor records
+    status: completed
+    record: docs/data-room-batch-11.md
+    validation_hooks:
+      - name: batch_11_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_11_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 11
+    source_scope:
+      - "[root]"
+      - transcript
+      - 公司信息
+    target_size: 10
+
+  - id: batch_12
+    number: 12
+    focus: company access, payment account, public-key, recovery-code, and filing artifacts
+    status: completed
+    record: docs/data-room-batch-12.md
+    validation_hooks:
+      - name: batch_12_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_12_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 12
+    source_scope:
+      - 公司信息
+      - BSGC
+      - Yangtze Capital
+    target_size: 10
+
+  - id: batch_13
+    number: 13
+    focus: I-20 history, admission, and enrollment continuity records
+    status: completed
+    record: docs/data-room-batch-13.md
+    validation_hooks:
+      - name: batch_13_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_13_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 13
+    source_scope:
+      - i20
+      - H1b Petition
+    target_size: 10
+
+  - id: batch_14
+    number: 14
+    focus: medical, residence, membership, and family identity support records
+    status: completed
+    record: docs/data-room-batch-14.md
+    validation_hooks:
+      - name: batch_14_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_14_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 14
+    source_scope:
+      - Medical
+      - Personal Info Archive
+      - Mom ID
+    target_size: 10
+
+  - id: batch_15
+    number: 15
+    focus: resume and work-sample career materials
+    status: completed
+    record: docs/data-room-batch-15.md
+    validation_hooks:
+      - name: batch_15_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_15_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 15
+    source_scope:
+      - CV & Cover Letters
+    target_size: 10
