@@ -22,9 +22,18 @@ export interface DocumentOut {
   id: string;
   check_id: string;
   doc_type: string;
+  document_family: string | null;
+  document_series_key: string | null;
+  document_version: number;
+  supersedes_document_id: string | null;
+  is_active: boolean;
   filename: string;
+  source_path: string | null;
   file_size: number;
   mime_type: string;
+  content_hash: string | null;
+  ocr_engine: string | null;
+  provenance: Record<string, unknown> | null;
   uploaded_at: string;
 }
 
@@ -34,6 +43,22 @@ export interface ExtractedField {
   field_name: string;
   field_value: string | null;
   confidence: number | null;
+  raw_text: string | null;
+}
+
+export interface DocumentExtraction {
+  document_id: string;
+  doc_type: string;
+  document_family: string | null;
+  document_series_key: string | null;
+  document_version: number;
+  is_active: boolean;
+  filename: string;
+  source_path: string | null;
+  uploaded_at: string | null;
+  ocr_engine: string | null;
+  provenance: Record<string, unknown> | null;
+  extracted_fields: ExtractedField[];
 }
 
 export interface Comparison {
@@ -73,6 +98,7 @@ export interface Finding {
 export interface Snapshot {
   check: Check;
   extractions: Record<string, ExtractedField[]>;
+  document_extractions?: DocumentExtraction[];
   comparisons: Comparison[];
   findings: Finding[];
   followups: Followup[];
@@ -132,14 +158,27 @@ export async function getDocuments(checkId: string): Promise<DocumentOut[]> {
 
 export async function triggerExtraction(
   checkId: string
-): Promise<{ status: string; results: Record<string, Record<string, unknown>> }> {
+): Promise<{
+  status: string;
+  documents: Array<{
+    document_id: string;
+    doc_type: string;
+    filename: string;
+    document_family: string;
+    document_series_key: string;
+    document_version: number;
+    is_active: boolean;
+    fields: Record<string, unknown>;
+    ocr_engine: string | null;
+  }>;
+}> {
   const resp = await fetch(`${API}/checks/${checkId}/extract`, { method: "POST" });
   return resp.json();
 }
 
 export async function getExtractions(
   checkId: string
-): Promise<Record<string, ExtractedField[]>> {
+): Promise<DocumentExtraction[]> {
   const resp = await fetch(`${API}/checks/${checkId}/extractions`);
   return resp.json();
 }

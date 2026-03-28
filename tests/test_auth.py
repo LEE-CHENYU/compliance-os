@@ -1,4 +1,7 @@
 """Tests for auth endpoints."""
+from types import SimpleNamespace
+from urllib.parse import parse_qs, urlparse
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -87,3 +90,84 @@ def test_link_check(client):
     # Verify
     resp = client.get(f"/api/checks/{check_id}")
     assert resp.json()["answers"] is not None  # check still accessible
+
+
+def test_google_auth_url_uses_request_origin_when_redirect_uri_not_configured(client, monkeypatch):
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client-id")
+    monkeypatch.delenv("GOOGLE_REDIRECT_URI", raising=False)
+
+    resp = client.get(
+        "/api/auth/google/url",
+        headers={
+            "host": "guardiancompliance.app",
+            "x-forwarded-proto": "https",
+        },
+    )
+
+    assert resp.status_code == 200
+    data = resp.json()
+    query = parse_qs(urlparse(data["url"]).query)
+    assert query["client_id"] == ["test-client-id"]
+    assert query["redirect_uri"] == ["https://guardiancompliance.app/api/auth/google/callback"]
+
+
+def test_google_callback_redirects_to_request_origin_when_frontend_url_not_configured(client, monkeypatch):
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client-id")
+    monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "test-client-secret")
+    monkeypatch.delenv("GOOGLE_REDIRECT_URI", raising=False)
+    monkeypatch.delenv("FRONTEND_URL", raising=False)
+
+    import httpx
+    import jwt
+
+    def fake_post(url, data):
+        assert url == "https://oauth2.googleapis.com/token"
+        assert data["redirect_uri"] == "https://guardiancompliance.app/api/auth/google/callback"
+        return SimpleNamespace(status_code=200, json=lambda: {"id_token": "fake-id-token"})
+
+    def fake_decode(token, options):
+        assert token == "fake-id-token"
+        return {"email": "oauth@example.com"}
+
+    monkeypatch.setattr(httpx, "post", fake_post)
+    monkeypatch.setattr(jwt, "decode", fake_decode)
+
+    resp = client.get(
+        "/api/auth/google/callback?code=test-code",
+        headers={
+            "host": "guardiancompliance.app",
+            "x-forwarded-proto": "https",
+        },
+        follow_redirects=False,
+    )
+
+    assert resp.status_code in (302, 307)
+    location = resp.headers["location"]
+    assert location.startswith("https://guardiancompliance.app/login?token=")
+    assert "email=oauth@example.com" in location
+
+
+def test_google_callback_redirects_to_local_frontend_when_running_locally(client, monkeypatch):
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client-id")
+    monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "test-client-secret")
+    monkeypatch.delenv("GOOGLE_REDIRECT_URI", raising=False)
+    monkeypatch.delenv("FRONTEND_URL", raising=False)
+
+    import httpx
+    import jwt
+
+    monkeypatch.setattr(
+        httpx,
+        "post",
+        lambda url, data: SimpleNamespace(status_code=200, json=lambda: {"id_token": "fake-id-token"}),
+    )
+    monkeypatch.setattr(jwt, "decode", lambda token, options: {"email": "local-oauth@example.com"})
+
+    resp = client.get(
+        "/api/auth/google/callback?code=test-code",
+        headers={"host": "localhost:8000"},
+        follow_redirects=False,
+    )
+
+    assert resp.status_code in (302, 307)
+    assert resp.headers["location"].startswith("http://localhost:3000/login?token=")

@@ -44,6 +44,31 @@ def test_parse_remaining_gaps_reads_numbered_and_bulleted_items(tmp_path):
     ]
 
 
+def test_parse_remaining_gaps_reads_current_batch_blockers_and_ignores_deferred_backlog(tmp_path):
+    record = tmp_path / "batch.md"
+    record.write_text(
+        "\n".join(
+            [
+                "# Batch",
+                "",
+                "## Current batch blockers",
+                "",
+                "1. First blocker",
+                "- Second blocker",
+                "",
+                "## Deferred backlog",
+                "1. Platform item",
+                "2. Later batch item",
+            ]
+        )
+    )
+
+    assert parse_remaining_gaps(record) == [
+        "First blocker",
+        "Second blocker",
+    ]
+
+
 def test_assess_batch_requires_completed_status_and_no_remaining_gaps(tmp_path):
     record = tmp_path / "batch.md"
     record.write_text(

@@ -12,7 +12,12 @@ from compliance_os.web.models.auth import UserRow
 from compliance_os.web.models.database import get_session
 from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, ExtractedFieldRow
 from compliance_os.web.services.auth_service import decode_token
-from compliance_os.web.services.extractor import extract_document, extract_pdf_text
+from compliance_os.web.services.document_intake import (
+    UploadValidationError,
+    resolve_document_type,
+    validate_upload,
+)
+from compliance_os.web.services.document_store import extract_into_document, register_uploaded_document
 from compliance_os.web.services.timeline_builder import build_stats, build_timeline
 
 UPLOAD_DIR = Path(__file__).resolve().parents[3] / "uploads"
@@ -96,7 +101,8 @@ def view_document(
 
 @router.post("/upload")
 def upload_to_dataroom(
-    doc_type: str = Form(...),
+    doc_type: str | None = Form(None),
+    source_path: str | None = Form(None),
     file: UploadFile = File(...),
     authorization: str = Header(None),
     db: Session = Depends(get_session),
@@ -121,33 +127,50 @@ def upload_to_dataroom(
     filename = f"{uuid.uuid4()}_{file.filename}"
     file_path = upload_dir / filename
     content = file.file.read()
+    try:
+        validate_upload(file.content_type, len(content))
+    except UploadValidationError as exc:
+        status = 413 if "20MB" in str(exc) else 400
+        raise HTTPException(status, str(exc))
     file_path.write_bytes(content)
+    try:
+        resolved_doc_type = resolve_document_type(
+            str(file_path),
+            file.content_type or "application/octet-stream",
+            provided_doc_type=doc_type,
+            allow_ocr=False,
+        )
+    except UploadValidationError as exc:
+        raise HTTPException(400, str(exc))
+    if not resolved_doc_type.doc_type:
+        raise HTTPException(400, "Could not determine document type; provide doc_type")
 
     # Create document record
     doc = DocumentRow(
         check_id=check.id,
-        doc_type=doc_type,
+        doc_type=resolved_doc_type.doc_type,
         filename=file.filename,
         file_path=str(file_path),
         file_size=len(content),
         mime_type=file.content_type or "application/octet-stream",
+        provenance={
+            "classification": {
+                "doc_type": resolved_doc_type.doc_type,
+                "source": resolved_doc_type.source,
+                "confidence": resolved_doc_type.confidence,
+                "provided_doc_type": resolved_doc_type.provided_doc_type,
+            }
+        },
     )
     db.add(doc)
+    db.flush()
+    register_uploaded_document(check, doc, content, source_path=source_path)
     db.commit()
     db.refresh(doc)
 
     # Auto-extract
     try:
-        text = extract_pdf_text(str(file_path))
-        fields = extract_document(doc_type, text)
-        for field_name, data in fields.items():
-            row = ExtractedFieldRow(
-                document_id=doc.id,
-                field_name=field_name,
-                field_value=str(data["value"]) if data["value"] is not None else None,
-                confidence=data.get("confidence"),
-            )
-            db.add(row)
+        extract_into_document(doc, db)
         db.commit()
     except Exception:
         pass  # Extraction failure is non-fatal for data room uploads

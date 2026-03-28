@@ -102,6 +102,8 @@ MANDATORY WORKFLOW:
 
 RULES:
 - Treat scripts/data_room_batch_loop.py as the source of truth for whether the batch is resolved.
+- Only put true current-batch blockers under \`## Current batch blockers\` or \`## Remaining gaps\`.
+- Move cross-batch work, future-family expansion, and platform backlog into a non-blocking section such as \`## Deferred backlog\` or \`## Next queue\`.
 - Do not weaken or delete validation hooks just to make the batch look green.
 - Preserve earlier passing behavior while fixing the current batch.
 - If blocked, make the blocker explicit in the resume and batch record.

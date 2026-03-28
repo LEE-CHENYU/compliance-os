@@ -14,7 +14,7 @@ This batch is reserved for the H-1B petition lifecycle beyond the registration r
 
 The exact 10-file working set has not been materialized yet. The initial source scope is the `H1b Petition` tree.
 
-## Remaining gaps
+## Current batch blockers
 
 1. Batch 04 manifest is not yet materialized from the source folder into a concrete 10-file test set.
 2. Unsupported or only partially modeled families still include H-1B status summaries, receipt or approval notices, LCAs, and petition support letters.

@@ -34,9 +34,18 @@ class DocumentOut(BaseModel):
     id: str
     check_id: str
     doc_type: str
+    document_family: str | None = None
+    document_series_key: str | None = None
+    document_version: int = 1
+    supersedes_document_id: str | None = None
+    is_active: bool = True
     filename: str
+    source_path: str | None = None
     file_size: int
     mime_type: str
+    content_hash: str | None = None
+    ocr_engine: str | None = None
+    provenance: dict[str, Any] | None = None
     uploaded_at: datetime
 
     class Config:
@@ -49,9 +58,25 @@ class ExtractedField(BaseModel):
     field_name: str
     field_value: str | None
     confidence: float | None
+    raw_text: str | None = None
 
     class Config:
         from_attributes = True
+
+
+class DocumentExtraction(BaseModel):
+    document_id: str
+    doc_type: str
+    document_family: str | None = None
+    document_series_key: str | None = None
+    document_version: int = 1
+    is_active: bool = True
+    filename: str
+    source_path: str | None = None
+    uploaded_at: datetime | None = None
+    ocr_engine: str | None = None
+    provenance: dict[str, Any] | None = None
+    extracted_fields: list[ExtractedField]
 
 
 class Comparison(BaseModel):
@@ -104,6 +129,7 @@ class Finding(BaseModel):
 class Snapshot(BaseModel):
     check: Check
     extractions: dict[str, list[ExtractedField]]
+    document_extractions: list[DocumentExtraction] = []
     comparisons: list[Comparison]
     findings: list[Finding]
     followups: list[Followup]

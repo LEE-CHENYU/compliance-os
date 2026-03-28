@@ -159,6 +159,38 @@ rules:
       consequence: "Unauthorized employment"
       immigration_impact: true
 
+  # === Government benefit / public charge rules ===
+
+  - id: student_subsidized_health_plan
+    track: student
+    type: logic
+    conditions:
+      - field: has_govt_health_plan
+        operator: eq
+        value: "yes"
+        source: answers
+    severity: critical
+    finding:
+      title: "Government-subsidized health plan on F-1 — possible eligibility error"
+      action: "F-1 students generally do not qualify for state health benefit programs like Essential Plan, Medicaid, or Medi-Cal. If you were enrolled, it may have been an eligibility error. This won't necessarily affect your current status, but if discovered during a future H-1B petition or status change, USCIS may question it. Contact your DSO and consider consulting an immigration attorney."
+      consequence: "Benefit eligibility issue"
+      immigration_impact: true
+
+  - id: student_multistate_health
+    track: student
+    type: logic
+    conditions:
+      - field: has_multistate_health
+        operator: eq
+        value: "yes"
+        source: answers
+    severity: warning
+    finding:
+      title: "Health plan enrollment in multiple states"
+      action: "Enrolling in health plans in different states raises address and residency consistency questions. Make sure your address is consistent across your I-20, health insurance, tax filings, and AR-11. Report any address change to your DSO within 10 days."
+      consequence: "Residency inconsistency"
+      immigration_impact: true
+
   # === Advisory rules ===
 
   - id: advisory_maintain_fulltime

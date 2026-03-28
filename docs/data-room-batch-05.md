@@ -14,7 +14,7 @@ This batch is reserved for remaining identity, travel, and archive-heavy records
 
 The exact 10-file working set has not been materialized yet. The initial source scope is `i20`, `Personal Info Archive`, `Tax`, and selected root-level files.
 
-## Remaining gaps
+## Current batch blockers
 
 1. Batch 05 manifest is not yet materialized from the source folder into a concrete 10-file test set.
 2. Remaining archive-heavy families need a tighter priority order so the first pass targets the documents that materially improve review and retrieval.

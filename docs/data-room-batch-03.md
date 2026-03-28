@@ -104,7 +104,7 @@ Validation run after the Anthropic extraction pass and series-key fixes:
 - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/pytest tests/test_checks_router_v2.py tests/test_extractor.py tests/test_classifier_service.py tests/test_documents_router.py tests/test_dashboard_router.py tests/test_llm_runtime.py`
 - result: `65 passed`
 
-## Remaining gaps
+## Current batch blockers
 
 1. The H-1B status-summary document is still unsupported as a distinct family.
 2. The H-1B registration record still does not yield a usable `registration_number` on the current source file.

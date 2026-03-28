@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import os
 import uuid
+from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -21,9 +22,44 @@ from compliance_os.web.services.auth_service import (
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
-GOOGLE_REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback")
+
+def _google_client_id() -> str:
+    return os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+
+
+def _google_client_secret() -> str:
+    return os.environ.get("GOOGLE_CLIENT_SECRET", "").strip()
+
+
+def _request_origin(request: Request) -> str:
+    forwarded_proto = request.headers.get("x-forwarded-proto", "").split(",", 1)[0].strip()
+    forwarded_host = request.headers.get("x-forwarded-host", "").split(",", 1)[0].strip()
+    proto = forwarded_proto or request.url.scheme
+    host = forwarded_host or request.headers.get("host") or request.url.netloc
+    return f"{proto}://{host}".rstrip("/")
+
+
+def _is_local_host(host: str) -> bool:
+    hostname = host.split(":", 1)[0].lower()
+    return hostname in {"localhost", "127.0.0.1"}
+
+
+def _google_redirect_uri(request: Request) -> str:
+    configured = os.environ.get("GOOGLE_REDIRECT_URI", "").strip()
+    if configured:
+        return configured
+    return f"{_request_origin(request)}/api/auth/google/callback"
+
+
+def _frontend_url(request: Request) -> str:
+    configured = os.environ.get("FRONTEND_URL", "").strip()
+    if configured:
+        return configured.rstrip("/")
+
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host") or request.url.netloc
+    if _is_local_host(host):
+        return "http://localhost:3000"
+    return _request_origin(request)
 
 
 @router.post("/register", response_model=AuthResponse)
@@ -88,33 +124,39 @@ class GoogleTokenRequest(BaseModel):
 
 
 @router.get("/google/url")
-def google_auth_url():
+def google_auth_url(request: Request):
     """Return the Google OAuth authorization URL."""
-    if not GOOGLE_CLIENT_ID:
+    client_id = _google_client_id()
+    if not client_id:
         raise HTTPException(500, "Google OAuth not configured. Set GOOGLE_CLIENT_ID env var.")
     params = {
-        "client_id": GOOGLE_CLIENT_ID,
-        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "client_id": client_id,
+        "redirect_uri": _google_redirect_uri(request),
         "response_type": "code",
         "scope": "openid email profile",
         "access_type": "offline",
         "prompt": "consent",
     }
-    query = "&".join(f"{k}={v}" for k, v in params.items())
-    return {"url": f"https://accounts.google.com/o/oauth2/v2/auth?{query}"}
+    return {"url": f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"}
 
 
 @router.get("/google/callback")
-def google_callback(code: str, db: Session = Depends(get_session)):
+def google_callback(code: str, request: Request, db: Session = Depends(get_session)):
     """Handle Google OAuth callback — exchange code for token, create/login user."""
     import httpx
+
+    client_id = _google_client_id()
+    client_secret = _google_client_secret()
+    redirect_uri = _google_redirect_uri(request)
+    if not client_id or not client_secret:
+        raise HTTPException(500, "Google OAuth not configured.")
 
     # Exchange code for tokens
     token_resp = httpx.post("https://oauth2.googleapis.com/token", data={
         "code": code,
-        "client_id": GOOGLE_CLIENT_ID,
-        "client_secret": GOOGLE_CLIENT_SECRET,
-        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "redirect_uri": redirect_uri,
         "grant_type": "authorization_code",
     })
     if token_resp.status_code != 200:
@@ -148,9 +190,8 @@ def google_callback(code: str, db: Session = Depends(get_session)):
     token = create_token(user.id, user.email)
 
     # Redirect to frontend with token in URL fragment
-    frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
     return RedirectResponse(
-        url=f"{frontend_url}/login?token={token}&email={email}&user_id={user.id}",
+        url=f"{_frontend_url(request)}/login?token={token}&email={email}&user_id={user.id}",
     )
 
 

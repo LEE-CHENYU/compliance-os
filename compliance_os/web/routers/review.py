@@ -20,11 +20,13 @@ from compliance_os.web.models.schemas_v2 import (
 from compliance_os.web.models.tables_v2 import (
     CheckRow,
     ComparisonRow,
+    DocumentRow,
     ExtractedFieldRow,
     FindingRow,
     FollowupRow,
 )
 from compliance_os.web.services.comparator import compare_fields
+from compliance_os.web.services.document_store import document_series_key_for_document
 from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine
 
 router = APIRouter(prefix="/api/checks/{check_id}", tags=["review"])
@@ -59,12 +61,81 @@ ENTITY_FIELD_MAP = {
 }
 
 
+def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
+    uploaded_at = doc.uploaded_at
+    if uploaded_at is None:
+        return datetime.min.replace(tzinfo=timezone.utc)
+    if uploaded_at.tzinfo is None:
+        return uploaded_at.replace(tzinfo=timezone.utc)
+    return uploaded_at
+
+
 def _get_extracted_dict(check: CheckRow, doc_type: str) -> dict[str, str | None]:
-    """Get extracted fields as a flat dict for a given doc type."""
-    for doc in check.documents:
-        if doc.doc_type == doc_type:
-            return {f.field_name: f.field_value for f in doc.extracted_fields}
+    """Get extracted fields from the most relevant document for a doc type."""
+    doc = _select_document(check, doc_type)
+    if doc:
+        return {f.field_name: f.field_value for f in doc.extracted_fields}
     return {}
+
+
+def _select_document(check: CheckRow, doc_type: str) -> DocumentRow | None:
+    """Prefer the newest document with extracted values for a document type."""
+    candidates = [doc for doc in check.documents if doc.doc_type == doc_type]
+    if not candidates:
+        return None
+
+    def _sort_key(doc: DocumentRow):
+        has_values = any(field.field_value not in (None, "") for field in doc.extracted_fields)
+        return has_values, _normalized_uploaded_at(doc), doc.id
+
+    return max(candidates, key=_sort_key)
+
+
+def _entity_type_comparison(
+    entity_type: str,
+    owner_residency: str,
+    form_type: str,
+) -> tuple[str, float, str | None]:
+    """Compare claimed entity type to the filing form with basic tax-election awareness."""
+    if not entity_type or not form_type:
+        return "needs_review", 0.0, "Missing entity type or filing form"
+
+    if entity_type == "not_sure":
+        return "needs_review", 0.0, "Entity type was not provided with certainty"
+
+    if entity_type == "s_corp":
+        return (
+            ("match", 1.0, None)
+            if form_type == "1120-S"
+            else ("mismatch", 0.0, "S-corporations should generally file Form 1120-S")
+        )
+
+    if entity_type == "c_corp":
+        return (
+            ("match", 1.0, None)
+            if form_type == "1120"
+            else ("mismatch", 0.0, "C-corporations should generally file Form 1120")
+        )
+
+    if entity_type == "multi_llc":
+        if form_type == "1065":
+            return "match", 1.0, None
+        return "needs_review", 0.5, "Multi-member LLCs may elect corporate treatment; verify the intended tax election"
+
+    if entity_type == "smllc":
+        if owner_residency != "us_citizen_or_pr" and form_type in {"1040", "1040-NR"}:
+            return (
+                "needs_review",
+                0.5,
+                "A personal return alone does not validate foreign-owned single-member LLC compliance; confirm Form 5472 + pro forma 1120 treatment",
+            )
+        if form_type == "1120-S":
+            return "mismatch", 0.0, "Single-member LLCs cannot file Form 1120-S without an S-corp election"
+        if form_type in {"1040", "1040-NR", "1120"}:
+            return "match", 1.0, None
+        return "needs_review", 0.5, "Confirm how the LLC elected to be taxed"
+
+    return "needs_review", 0.0, "Unsupported entity type"
 
 
 @router.post("/compare", response_model=list[Comparison])
@@ -89,13 +160,23 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
 
         # Entity type vs filing type
         entity_type = answers.get("entity_type", "")
+        owner_residency = answers.get("owner_residency", "")
         form_type = tax.get("form_type", "")
-        entity_match = "match"
-        if entity_type == "smllc" and form_type and "1120-S" in str(form_type):
-            entity_match = "mismatch"
-        elif entity_type and form_type:
-            entity_match = "match"
-        row = ComparisonRow(check_id=check_id, field_name="entity_type", value_a=ENTITY_LABELS.get(entity_type, entity_type), value_b=form_type, match_type="logic", status=entity_match, confidence=1.0 if entity_match == "match" else 0.0)
+        entity_status, entity_confidence, entity_detail = _entity_type_comparison(
+            entity_type,
+            owner_residency,
+            str(form_type),
+        )
+        row = ComparisonRow(
+            check_id=check_id,
+            field_name="entity_type",
+            value_a=ENTITY_LABELS.get(entity_type, entity_type),
+            value_b=form_type,
+            match_type="logic",
+            status=entity_status,
+            confidence=entity_confidence,
+            detail=entity_detail,
+        )
         db.add(row)
         results.append(row)
 
@@ -388,15 +469,36 @@ def answer_followup(
     return row
 
 
-@router.get("/snapshot")
+@router.get("/snapshot", response_model=Snapshot)
 def get_snapshot(check_id: str, db: Session = Depends(get_session)):
     check = db.get(CheckRow, check_id)
     if not check:
         raise HTTPException(404, "Check not found")
 
     extractions = {}
-    for doc in check.documents:
-        extractions[doc.doc_type] = doc.extracted_fields
+    for doc_type in {doc.doc_type for doc in check.documents}:
+        doc = _select_document(check, doc_type)
+        if doc:
+            extractions[doc_type] = doc.extracted_fields
+
+    document_extractions = []
+    for doc in sorted(check.documents, key=lambda d: (_normalized_uploaded_at(d), d.id)):
+        document_extractions.append(
+            {
+                "document_id": doc.id,
+                "doc_type": doc.doc_type,
+                "document_family": doc.document_family,
+                "document_series_key": doc.document_series_key or document_series_key_for_document(doc),
+                "document_version": doc.document_version or 1,
+                "is_active": doc.is_active is not False,
+                "filename": doc.filename,
+                "source_path": doc.source_path,
+                "uploaded_at": doc.uploaded_at,
+                "ocr_engine": doc.ocr_engine,
+                "provenance": doc.provenance or {},
+                "extracted_fields": doc.extracted_fields,
+            }
+        )
 
     findings = [f for f in check.findings if f.category != "advisory"]
     advisories = [f for f in check.findings if f.category == "advisory"]
@@ -404,6 +506,7 @@ def get_snapshot(check_id: str, db: Session = Depends(get_session)):
     return {
         "check": check,
         "extractions": extractions,
+        "document_extractions": document_extractions,
         "comparisons": check.comparisons,
         "findings": findings,
         "followups": check.followups,

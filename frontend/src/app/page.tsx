@@ -1,8 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, getUser, logout } from "@/lib/auth";
+
+function useScrollReveal(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setRevealed(true); obs.disconnect(); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, revealed };
+}
 
 const FORMS = ["I-20","I-94","I-983","I-797","EAD (I-766)","I-765","I-129","I-485","I-131","AR-11","DS-160","1040-NR","Form 8843","Form 3520","Form 8938","Schedule C","Schedule NEC","W-8BEN","Form 5472","Pro forma 1120","1120-S","EIN Letter","Articles of Org"];
 const DEADLINES = ["FBAR (FinCEN 114)","DE Annual Report","60-day Grace Period","90-day Unemployment","10-day Address Report","Advance Parole Validity"];
@@ -15,6 +31,13 @@ export default function Home() {
   const [userEmail, setUserEmail] = useState("");
   const [partyIndex, setPartyIndex] = useState(0);
   const PARTIES = ["USCIS", "the IRS", "your state", "DHS", "FinCEN"];
+
+  // Scroll-triggered reveal for each section
+  const formCloud = useScrollReveal(0.1);
+  const trackSelect = useScrollReveal(0.1);
+  const vault = useScrollReveal(0.15);
+  const penaltySection = useScrollReveal(0.1);
+  const openclawSection = useScrollReveal(0.1);
 
   useEffect(() => {
     setLoggedIn(isLoggedIn());
@@ -180,35 +203,46 @@ export default function Home() {
           60% { opacity: 1; transform: scale(1.05); }
           100% { opacity: 1; transform: scale(1); }
         }
+        /* Scroll-triggered: hidden until .revealed */
+        .scroll-section {
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .scroll-section.revealed {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
         .penalty-card {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        .revealed .penalty-card {
           animation: fadeUp 0.5s ease-out both;
         }
-        .penalty-card:nth-child(1) { animation-delay: 0.1s; }
-        .penalty-card:nth-child(2) { animation-delay: 0.2s; }
-        .penalty-card:nth-child(3) { animation-delay: 0.3s; }
-        .penalty-card:nth-child(4) { animation-delay: 0.4s; }
-        .penalty-card:nth-child(5) { animation-delay: 0.5s; }
-        .penalty-hero { animation: countUp 0.8s ease-out both; }
-        .case-card { animation: fadeUp 0.6s ease-out both; }
-        .case-card:nth-child(1) { animation-delay: 0.6s; }
-        .case-card:nth-child(2) { animation-delay: 0.7s; }
-        .case-card:nth-child(3) { animation-delay: 0.8s; }
+        .revealed .penalty-card:nth-child(1) { animation-delay: 0.1s; }
+        .revealed .penalty-card:nth-child(2) { animation-delay: 0.2s; }
+        .revealed .penalty-card:nth-child(3) { animation-delay: 0.3s; }
+        .revealed .penalty-card:nth-child(4) { animation-delay: 0.4s; }
+        .revealed .penalty-card:nth-child(5) { animation-delay: 0.5s; }
 
-        /* === Mobile responsive === */
-        @media (max-width: 768px) {
-          .hero-grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 100px 20px 40px !important; min-height: auto !important; }
-          .hero-grid h1 { font-size: 32px !important; }
-          .hero-visual-wrap { display: none !important; }
-          .section-panel { padding: 28px 16px; margin: 0 8px 16px; border-radius: 18px; }
-          .track-grid { grid-template-columns: 1fr !important; }
-          .vault-grid { grid-template-columns: 1fr !important; }
-          .penalty-section-grid { grid-template-columns: 1fr !important; }
-          .cases-grid { grid-template-columns: 1fr !important; }
-          .nav-links-desktop { display: none !important; }
-          nav { padding: 12px 16px !important; }
-          .penalty-hero-box { padding: 24px 20px !important; }
-          .penalty-hero-box > div:first-child { font-size: 40px !important; }
+        .penalty-hero {
+          opacity: 0;
+          transform: scale(0.8);
         }
+        .revealed .penalty-hero { animation: countUp 0.8s ease-out both; }
+
+        .case-card {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        .revealed .case-card { animation: fadeUp 0.6s ease-out both; }
+        .revealed .case-card:nth-child(1) { animation-delay: 0.15s; }
+        .revealed .case-card:nth-child(2) { animation-delay: 0.3s; }
+        .revealed .case-card:nth-child(3) { animation-delay: 0.45s; }
+
+        /* Mobile responsive rules moved to globals.css for reliable media query support */
       `}</style>
 
       {/* Nav */}
@@ -300,7 +334,7 @@ export default function Home() {
       </section>
 
       {/* Form Cloud */}
-      <div id="cloud" className="section-panel">
+      <div id="cloud" ref={formCloud.ref} className={`section-panel scroll-section${formCloud.revealed ? ' revealed' : ''}`}>
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',marginBottom:12,color:'#0d1424',textAlign:'center'}}>
           This is what you&apos;re supposed to track
         </h2>
@@ -315,7 +349,7 @@ export default function Home() {
       </div>
 
       {/* Two Tracks */}
-      <div className="section-panel">
+      <div ref={trackSelect.ref} className={`section-panel scroll-section${trackSelect.revealed ? ' revealed' : ''}`}>
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>Pick your check</h2>
         <p style={{fontSize:16,color:'#556480',textAlign:'center',marginBottom:40}}>Three focused tracks. Upload documents, get answers.</p>
         <div className="track-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
@@ -361,7 +395,7 @@ export default function Home() {
       </section>
 
       {/* Data Room */}
-      <section className="section-panel" style={{maxWidth:900,margin:'0 auto 40px'}}>
+      <section ref={vault.ref} className={`section-panel scroll-section${vault.revealed ? ' revealed' : ''}`} style={{maxWidth:900,margin:'0 auto 40px'}}>
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>
           Your personal compliance vault
         </h2>
@@ -384,7 +418,7 @@ export default function Home() {
       </section>
 
       {/* Why Guardian */}
-      <section className="section-panel" style={{maxWidth:900,margin:'0 auto 40px'}}>
+      <section ref={penaltySection.ref} className={`section-panel scroll-section${penaltySection.revealed ? ' revealed' : ''}`} style={{maxWidth:900,margin:'0 auto 40px'}}>
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>
           The most popular tax software is defaulting you into mistakes
         </h2>
@@ -459,6 +493,55 @@ export default function Home() {
           <button onClick={() => router.push("/check")} style={{padding:'14px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3)'}}>
             Find my risks
           </button>
+        </div>
+      </section>
+
+      {/* OpenClaw Integration Section */}
+      <section ref={openclawSection.ref} className={`scroll-section${openclawSection.revealed ? ' revealed' : ''}`} style={{position:'relative',zIndex:1,padding:'64px 24px',maxWidth:720,margin:'0 auto'}}>
+        <div style={{textAlign:'center',marginBottom:40}}>
+          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 14px',borderRadius:20,background:'rgba(91,141,238,0.08)',border:'1px solid rgba(91,141,238,0.12)',marginBottom:16}}>
+            <span style={{fontSize:11,fontWeight:600,color:'#5b8dee',letterSpacing:'0.04em'}}>OPENCLAW INTEGRATION</span>
+          </div>
+          <h2 style={{fontSize:28,fontWeight:800,color:'#0d1424',letterSpacing:'-0.03em',marginBottom:8}}>
+            Compliance alerts in your chat
+          </h2>
+          <p style={{fontSize:15,color:'#556480',maxWidth:480,margin:'0 auto',lineHeight:1.6}}>
+            Get Guardian updates wherever you use OpenClaw — WhatsApp, Telegram, Discord, Slack, or any platform you already have.
+          </p>
+        </div>
+
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:32}} className="openclaw-grid">
+          {[
+            { cmd: '"Check my compliance status"', desc: 'See active findings, deadlines, and key facts from your data room' },
+            { cmd: '"When are my deadlines?"', desc: 'Upcoming deadlines sorted by urgency with days remaining' },
+            { cmd: '"Do I need to file FBAR?"', desc: 'Ask Guardian AI questions about your specific situation' },
+            { cmd: '"What documents have I uploaded?"', desc: 'View your data room contents from any device' },
+          ].map((item) => (
+            <div key={item.cmd} style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:14,padding:'16px 20px',border:'1px solid rgba(255,255,255,0.6)',boxShadow:'0 2px 12px rgba(0,0,0,0.03)'}}>
+              <div style={{fontSize:13,fontWeight:600,color:'#0d1424',marginBottom:6}}>{item.cmd}</div>
+              <div style={{fontSize:12,color:'#556480',lineHeight:1.5}}>{item.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{background:'rgba(255,255,255,0.4)',backdropFilter:'blur(20px)',borderRadius:16,padding:'24px 28px',border:'1px solid rgba(255,255,255,0.5)',boxShadow:'0 4px 20px rgba(0,0,0,0.04)'}}>
+          <div style={{fontSize:13,fontWeight:700,color:'#0d1424',marginBottom:12}}>Set up in 30 seconds</div>
+          <div style={{display:'flex',flexDirection:'column',gap:10}}>
+            <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
+              <div style={{width:22,height:22,borderRadius:11,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>1</div>
+              <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>
+                Install the skill: <code style={{background:'rgba(91,141,238,0.08)',padding:'2px 6px',borderRadius:4,fontSize:11,color:'#3a5a8c',fontWeight:500}}>openclaw skills install guardian-compliance</code>
+              </div>
+            </div>
+            <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
+              <div style={{width:22,height:22,borderRadius:11,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>2</div>
+              <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>Copy your API token from the dashboard (click &quot;Connect to OpenClaw&quot; in the nav bar)</div>
+            </div>
+            <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
+              <div style={{width:22,height:22,borderRadius:11,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>3</div>
+              <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>Set <code style={{background:'rgba(91,141,238,0.08)',padding:'2px 6px',borderRadius:4,fontSize:11,color:'#3a5a8c',fontWeight:500}}>GUARDIAN_TOKEN</code> in your OpenClaw skill settings</div>
+            </div>
+          </div>
         </div>
       </section>
 

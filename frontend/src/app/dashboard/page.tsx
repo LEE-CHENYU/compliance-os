@@ -66,6 +66,8 @@ export default function DashboardPage() {
   const [chatAnswered, setChatAnswered] = useState<Set<string>>(new Set());
   const [chatLoading, setChatLoading] = useState(false);
   const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string }[]>([]);
+  const [showToken, setShowToken] = useState(false);
+  const [tokenCopied, setTokenCopied] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -187,6 +189,24 @@ export default function DashboardPage() {
       });
     }
 
+    // Government health plan
+    if (!chatAnswered.has("govt_health_plan") && facts.has("Immigration stage")) {
+      questions.push({
+        id: "govt_health_plan",
+        text: "Are you enrolled in a free or government-subsidized health plan? This includes Essential Plan (NY), Medi-Cal, Medicaid, or marketplace plans with $0 premium.",
+        chips: ["Yes, free/subsidized plan", "Yes, but I pay full price", "No", "Not sure"],
+      });
+    }
+
+    // Multi-state health enrollment
+    if (!chatAnswered.has("multistate_health") && chatAnswered.has("govt_health_plan")) {
+      questions.push({
+        id: "multistate_health",
+        text: "Have you been enrolled in health plans in more than one state? For example, a NY plan while also applying in California.",
+        chips: ["Yes", "No"],
+      });
+    }
+
     // Filter out already answered
     const unanswered = questions.filter((q) => !chatAnswered.has(q.id));
     if (unanswered.length > 0 && chatMessages.length === 0) {
@@ -297,6 +317,43 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <span className="text-sm text-[#556480] hidden md:inline">{user?.email}</span>
+          <div className="relative">
+            <button onClick={() => setShowToken(!showToken)} className="px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-[#556480] hover:bg-white/60 transition-all border border-transparent hover:border-blue-100/30">
+              Connect to OpenClaw
+            </button>
+            {showToken && (
+              <>
+                {/* Backdrop on mobile */}
+                <div className="fixed inset-0 bg-black/20 z-40 md:hidden" onClick={() => setShowToken(false)} />
+                {/* Popover: centered fixed on mobile, absolute dropdown on desktop */}
+                <div className="fixed inset-x-4 top-20 z-50 md:absolute md:inset-auto md:right-0 md:top-full md:mt-2 md:w-80 bg-white/95 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-blue-100/30 p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="text-xs font-semibold text-[#0d1424]">Connect Guardian to OpenClaw</div>
+                    <button onClick={() => setShowToken(false)} className="text-[#8e9ab5] text-sm md:hidden">&times;</button>
+                  </div>
+                  <div className="text-[11px] text-[#7b8ba5] mb-3">Copy your Guardian API token below to connect OpenClaw to your compliance data.</div>
+                  <div className="relative">
+                    <code className="block text-[10px] bg-[#f0f3f8] rounded-lg p-3 pr-16 text-[#3a5a8c] break-all max-h-20 overflow-auto font-mono">{user?.token}</code>
+                    <button
+                      onClick={() => {
+                        if (user?.token) {
+                          navigator.clipboard.writeText(user.token);
+                          setTokenCopied(true);
+                          setTimeout(() => setTokenCopied(false), 2000);
+                        }
+                      }}
+                      className="absolute top-2 right-2 px-2.5 py-1 rounded-md text-[10px] font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white"
+                    >
+                      {tokenCopied ? "Copied" : "Copy"}
+                    </button>
+                  </div>
+                  <div className="text-[10px] text-[#7b8ba5] mt-2.5">
+                    In OpenClaw: <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c]">openclaw skills install guardian-compliance</code> then set this as your <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c]">GUARDIAN_TOKEN</code>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
           <button onClick={() => setShowUploadPanel(true)} className="px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs md:text-sm font-semibold">
             + Upload document
           </button>

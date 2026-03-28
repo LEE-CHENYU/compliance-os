@@ -43,6 +43,7 @@ gmail = [
 
 [project.scripts]
 cos = "compliance_os.cli:main"
+data-room-batch-loop = "compliance_os.batch_loop:main"
 
 [tool.setuptools.packages.find]
 include = ["compliance_os*"]

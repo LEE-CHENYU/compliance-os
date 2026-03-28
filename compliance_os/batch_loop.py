@@ -188,7 +188,7 @@ def parse_remaining_gaps(record_path: str | Path) -> list[str]:
     items: list[str] = []
     for line in lines:
         stripped = line.strip()
-        if stripped.lower() == "## remaining gaps":
+        if stripped.lower() in {"## current batch blockers", "## remaining gaps"}:
             in_section = True
             continue
         if in_section and stripped.startswith("## "):

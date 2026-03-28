@@ -25,14 +25,16 @@ MANIFEST_PATH="${MANIFEST_PATH:-$(codex_loop_config_get "$CONFIG_PATH" manifest_
 
 ROUND_SIZE="${ROUND_SIZE:-$(codex_loop_config_get "$CONFIG_PATH" round_size "5")}"
 MAX_PASSES="${MAX_PASSES:-$(codex_loop_config_get "$CONFIG_PATH" max_passes "1")}"
-SLEEP_SECONDS="${SLEEP_SECONDS:-$(codex_loop_config_get "$CONFIG_PATH" sleep_seconds "300")}"
+LEGACY_SLEEP_SECONDS="${SLEEP_SECONDS:-$(codex_loop_config_get "$CONFIG_PATH" sleep_seconds "300")}"
+SUCCESS_SLEEP_SECONDS="${SUCCESS_SLEEP_SECONDS:-$(codex_loop_config_get "$CONFIG_PATH" success_sleep_seconds "0")}"
+FAILURE_SLEEP_SECONDS="${FAILURE_SLEEP_SECONDS:-$(codex_loop_config_get "$CONFIG_PATH" failure_sleep_seconds "$LEGACY_SLEEP_SECONDS")}"
 DURATION_HOURS="${DURATION_HOURS:-$(codex_loop_config_get "$CONFIG_PATH" duration_hours "8")}"
 DURATION_SECONDS=$((DURATION_HOURS * 3600))
 BATCH_SELECTION="${BATCH_SELECTION:-}"
 
 PROVIDER="${PROVIDER:-$(codex_loop_config_get "$CONFIG_PATH" provider codex)}"
 SANDBOX_MODE="${SANDBOX_MODE:-$(codex_loop_config_get "$CONFIG_PATH" sandbox_mode danger-full-access)}"
-MODEL="${MODEL:-$(codex_loop_config_get "$CONFIG_PATH" model gpt-5.4-codex)}"
+MODEL="${MODEL:-$(codex_loop_config_get "$CONFIG_PATH" model gpt-5.3-codex)}"
 REASONING_EFFORT="${REASONING_EFFORT:-$(codex_loop_config_get "$CONFIG_PATH" reasoning_effort xhigh)}"
 
 OBJECTIVE_DEFAULT="Compliance OS data-room batch loop:
@@ -95,6 +97,7 @@ EOF
 run_single_iteration() {
   local iter="$1"
   local run_command
+  local status=0
   local -a cmd
 
   export ROOT PROVIDER SANDBOX_MODE MODEL REASONING_EFFORT PYTHON OBJECTIVE_FILE RESUME_FILE MANIFEST_PATH
@@ -124,11 +127,16 @@ run_single_iteration() {
   (
     cd "$ROOT"
     "${cmd[@]}"
-  ) || log "Batch loop returned non-zero exit during iteration $iter"
+  )
+  status=$?
+  if [ "$status" -ne 0 ]; then
+    log "Batch loop returned non-zero exit during iteration $iter"
+  fi
 
   log "Git status after iteration $iter:"
   git -C "$ROOT" status -sb || true
   log "=== Iteration $iter completed ==="
+  return "$status"
 }
 
 if [ "${1:-}" = "--once" ]; then
@@ -146,13 +154,15 @@ log "=== Compliance OS Codex batch loop started ==="
 log "Root: $ROOT"
 log "Manifest: $MANIFEST_PATH"
 log "Duration: ${DURATION_HOURS}h (${DURATION_SECONDS}s)"
-log "Sleep: ${SLEEP_SECONDS}s"
+log "Success sleep: ${SUCCESS_SLEEP_SECONDS}s"
+log "Failure sleep: ${FAILURE_SLEEP_SECONDS}s"
 log "Provider: $PROVIDER"
 log "Model: $MODEL"
 log "Reasoning effort: $REASONING_EFFORT"
 
 iter=0
 while [ "$(date +%s)" -lt "$end_ts" ]; do
+  iteration_status=0
   iter=$((iter + 1))
 
   if [ -f "$STOPFILE" ]; then
@@ -162,6 +172,7 @@ while [ "$(date +%s)" -lt "$end_ts" ]; do
   fi
 
   run_single_iteration "$iter"
+  iteration_status=$?
 
   if [ -f "$STOPFILE" ]; then
     log "Stop file detected after iteration, exiting gracefully"
@@ -170,8 +181,21 @@ while [ "$(date +%s)" -lt "$end_ts" ]; do
   fi
 
   if [ "$(date +%s)" -lt "$end_ts" ]; then
-    log "Sleeping ${SLEEP_SECONDS}s before next iteration..."
-    sleep "$SLEEP_SECONDS"
+    if [ "$iteration_status" -eq 0 ]; then
+      if [ "$SUCCESS_SLEEP_SECONDS" -gt 0 ]; then
+        log "Sleeping ${SUCCESS_SLEEP_SECONDS}s before next iteration after success..."
+        sleep "$SUCCESS_SLEEP_SECONDS"
+      else
+        log "No sleep before next iteration after success; continuing immediately"
+      fi
+    else
+      if [ "$FAILURE_SLEEP_SECONDS" -gt 0 ]; then
+        log "Sleeping ${FAILURE_SLEEP_SECONDS}s before next iteration after failure..."
+        sleep "$FAILURE_SLEEP_SECONDS"
+      else
+        log "No sleep before next iteration after failure; continuing immediately"
+      fi
+    fi
   fi
 done
 

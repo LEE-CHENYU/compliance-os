@@ -4,7 +4,8 @@ model: gpt-5.3-codex
 fallback_model: gpt-5.3-codex
 reasoning_effort: xhigh
 duration_hours: 8
-sleep_seconds: 300
+success_sleep_seconds: 0
+failure_sleep_seconds: 60
 round_size: 5
 max_passes: 1
 manifest_path: /Users/lichenyu/compliance-os/config/data_room_batches.yaml

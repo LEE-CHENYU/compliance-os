@@ -356,6 +356,61 @@ rules:
       consequence: "Required filing"
       immigration_impact: false
 
+  # === Government benefit / public charge rules ===
+
+  - id: subsidized_health_plan_visa
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: has_govt_health_plan
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: stage
+        operator: in
+        value: ["opt", "stem_opt", "h1b"]
+        source: answers
+    severity: warning
+    finding:
+      title: "Government-subsidized health plan while on visa"
+      action: "Free or subsidized government health plans (Essential Plan, Medicaid, Medi-Cal) may be inconsistent with the financial self-sufficiency requirement of your visa status. While most health benefits are excluded from public charge determinations, enrollment as a non-citizen on F-1/H-1B can raise eligibility questions during status change or H-1B adjudication. Consult an immigration attorney."
+      consequence: "Status change risk"
+      immigration_impact: true
+
+  - id: govt_benefit_h1b_adjudication
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: has_govt_health_plan
+        operator: eq
+        value: "yes"
+        source: answers
+      - field: stage
+        operator: in
+        value: ["h1b", "i140"]
+        source: answers
+    severity: warning
+    finding:
+      title: "Prior government benefit may complicate H-1B/I-140 adjudication"
+      action: "If you received a government-subsidized health plan (e.g., Essential Plan at $0 premium, Medicaid) while on a student or work visa, USCIS may question this during H-1B or green card adjudication. Gather documentation showing your eligibility basis and consult an immigration attorney before filing."
+      consequence: "RFE or denial risk"
+      immigration_impact: true
+
+  - id: multistate_health_enrollment
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: has_multistate_health
+        operator: eq
+        value: "yes"
+        source: answers
+    severity: warning
+    finding:
+      title: "Health plan enrollment in multiple states"
+      action: "Enrolling in health plans in different states (e.g., NY Essential Plan + Covered California) raises address consistency issues. Your health insurance state should match your actual state of residence. Mismatched states can trigger questions about tax residency, AR-11 compliance, and benefit eligibility."
+      consequence: "Residency inconsistency"
+      immigration_impact: true
+
   # === Advisory rules (gated on user situation) ===
 
   - id: advisory_fbar

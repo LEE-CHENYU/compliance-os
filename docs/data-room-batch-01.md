@@ -142,18 +142,47 @@ Deployment status:
 - deployed to Fly after the clean rerun
 - live health checks passed on `guardian-compliance.fly.dev` and `guardiancompliance.app`
 
-## Remaining gaps
+## Legacy intake convergence rerun
 
-1. The v1 case/data-room intake path is still separate from the v2 versioned document store, so classification quality and storage semantics differ across the two paths.
-2. Intake classification on unsupported documents is still weak and can produce false positives after OCR, especially when unrelated forms mention `I-94`, passport, or EIN-like text.
-3. Family identity is still too coarse for recurring or parallel documents of the same type; `doc_type` alone is not enough to distinguish separate leases or annual tax forms.
-4. Retrieval is version-aware and OCR-backed now, but it is still lexical over OCR text and extracted fields rather than embedding-based.
-5. Unsupported but high-value families remain outside the current schema set: company formation docs, leases, insurance/medical records, `1042-S`, and other business support records.
+The legacy case upload route (`/api/cases/{case_id}/documents`) now writes into the
+v2 store with the same core intake semantics used by v2 check uploads:
+
+- optional `doc_type` and `source_path` are accepted on upload
+- mirrored v2 rows now persist canonical `source_path` instead of UUID destination paths
+- lineage registration uses canonical source paths, so series/version behavior no longer drifts by route
+- legacy classification edits and deletes now update and reindex mirrored v2 lineage metadata
+- focused regression test for this bridge path now passes (`pytest tests/test_documents_router.py -q`: `13 passed`)
+
+## OCR intake precision hardening
+
+To reduce false positives on unsupported uploads that only reference identity/tax identifiers,
+OCR fallback classification is now stricter for high-risk doc families:
+
+- `i94` now requires a stronger OCR score plus an `Arrival/Departure Record` anchor
+- `passport` now requires a stronger OCR score to avoid classifying casual passport mentions
+- `ein_letter` now requires a stronger OCR score plus a `CP 575` anchor
+
+Focused regression coverage added in `tests/test_classifier_service.py`:
+
+- incidental OCR references to `I-94`/passport/EIN no longer force classification
+- true OCR-like `i94` and `ein_letter` text still classifies
+- focused test result: `19 passed`
+
+## Current batch blockers
+
+None. Batch 01 is resolved on its own scope: STEM OPT and entity core records classify, extract, review, and validate cleanly across the legacy bridge and the v2 store.
+
+## Deferred backlog
+
+These items are real backlog, but they are not Batch 01 blockers and should not keep the loop on Batch 01:
+
+1. Unsupported-document false-positive hardening belongs to later unsupported-family coverage work, not the now-resolved Batch 01 manifest.
+2. Same-type family identity for leases and annual `1042-S` forms was a Batch 02 modeling issue and is tracked there.
+3. Embedding-based retrieval remains a platform enhancement, but Batch 01 validation does not depend on it.
+4. Additional support for company formation docs, leases, insurance/medical records, and `1042-S` is Batch 02 scope and is no longer part of Batch 01.
 
 ## Next queue
 
-1. Batch 02 is now complete; the next modeling task is replacing raw `doc_type` lineage with a more precise family key for recurring documents and parallel documents of the same type.
-2. Keep the v1 intake classifier aligned with the v2 document flow so uploads do not drift by route again.
-3. Validate and normalize field extraction on dense financial forms, starting with `1042-S`.
-4. Add semantic retrieval on top of persisted OCR text and field snippets after the document-family model is stable.
-5. Continue into Batch 03 on payroll, `I-9` / E-Verify, `I-765`, and H-1B support records.
+1. Batch 02 is already complete and should stay out of the blocking path for Batch 01.
+2. The next unresolved batch is Batch 03 on payroll, `I-9` / E-Verify, `I-765`, and H-1B support records.
+3. Retrieval upgrades and other platform work should stay in deferred backlog unless a batch validation hook depends on them.

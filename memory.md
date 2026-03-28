@@ -65,6 +65,18 @@ This file is implementation-specific working memory for the repo. It should stay
 - Use OpenCLO, if adopted, as orchestration/runtime memory rather than as the source of legal logic.
 - Keep negative-compliance monitoring in scope, but express outputs as risk alerts, not legal conclusions.
 - Enforce legal/tax boundaries in workflow and architecture, not only in disclaimer text.
+- Founder execution sequence is:
+  - bring the product online,
+  - get initial real users,
+  - then do investor outreach.
+- Before the H-1B full petition stage, the company should have:
+  - a live product surface,
+  - two employees onboarded,
+  - and a coherent operational story.
+- By the October H-1B activation/start-date milestone, the company should have one of:
+  - external funding,
+  - initial cash flow,
+  - or founder payroll in place.
 - Narrow the product wedge hard:
   - not "AI lawyer/CPA for immigrants"
   - yes to "continuous compliance OS for immigrants"
@@ -87,6 +99,7 @@ This file is implementation-specific working memory for the repo. It should stay
   - draft/send follow-up workflows
 - OpenClaw should be used for orchestration and co-work memory, not as the truth layer.
 - Standard cloud first; do not make Blaxel or any specialized sandbox platform a hard v1 dependency.
+- Founder timing constraints are tracked in `docs/founder_execution_timeline.md`.
 
 ## What Is Missing In Code
 
