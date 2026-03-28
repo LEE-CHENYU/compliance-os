@@ -14,8 +14,6 @@ ROOT="$(codex_loop_root "${BASH_SOURCE[0]}")"
 PYTHON="$(codex_loop_python)"
 CONFIG_PATH="$(codex_loop_config_path "$ROOT")"
 LOG_DIR="$ROOT/logs/codex_loop"
-LOG="$LOG_DIR/codex_data_room_loop.log"
-PIDFILE="$LOG_DIR/codex_data_room_loop.pid"
 STOPFILE="$LOG_DIR/codex_data_room_loop.stop"
 SESSION_ROOT="${SESSION_ROOT:-$(codex_loop_config_get "$CONFIG_PATH" session_root "$ROOT/logs/data-room-batch-loop-codex")}"
 
@@ -50,13 +48,8 @@ Priority:
 - Only move to the next batch when the current batch validates as resolved."
 
 log() {
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG"
+  printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
 }
-
-cleanup() {
-  rm -f "$PIDFILE"
-}
-trap cleanup EXIT
 
 ensure_files() {
   mkdir -p "$LOG_DIR" "$SESSION_ROOT"
@@ -131,10 +124,10 @@ run_single_iteration() {
   (
     cd "$ROOT"
     "${cmd[@]}"
-  ) >> "$LOG" 2>&1 || log "Batch loop returned non-zero exit during iteration $iter"
+  ) || log "Batch loop returned non-zero exit during iteration $iter"
 
   log "Git status after iteration $iter:"
-  git -C "$ROOT" status -sb >> "$LOG" 2>&1 || true
+  git -C "$ROOT" status -sb || true
   log "=== Iteration $iter completed ==="
 }
 
@@ -145,7 +138,6 @@ if [ "${1:-}" = "--once" ]; then
 fi
 
 ensure_files
-echo "$$" > "$PIDFILE"
 
 start_ts=$(date +%s)
 end_ts=$((start_ts + DURATION_SECONDS))
@@ -158,7 +150,6 @@ log "Sleep: ${SLEEP_SECONDS}s"
 log "Provider: $PROVIDER"
 log "Model: $MODEL"
 log "Reasoning effort: $REASONING_EFFORT"
-log "PID: $$"
 
 iter=0
 while [ "$(date +%s)" -lt "$end_ts" ]; do
@@ -171,6 +162,12 @@ while [ "$(date +%s)" -lt "$end_ts" ]; do
   fi
 
   run_single_iteration "$iter"
+
+  if [ -f "$STOPFILE" ]; then
+    log "Stop file detected after iteration, exiting gracefully"
+    rm -f "$STOPFILE"
+    break
+  fi
 
   if [ "$(date +%s)" -lt "$end_ts" ]; then
     log "Sleeping ${SLEEP_SECONDS}s before next iteration..."
