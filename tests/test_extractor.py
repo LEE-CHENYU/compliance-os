@@ -18,11 +18,20 @@ def test_schemas_defined():
     assert "drivers_license" in SCHEMAS
     assert "registered_agent_consent" in SCHEMAS
     assert "admission_letter" in SCHEMAS
+    assert "bank_statement" in SCHEMAS
+    assert "collection_notice" in SCHEMAS
+    assert "debt_clearance_letter" in SCHEMAS
     assert "enrollment_verification" in SCHEMAS
+    assert "filing_confirmation" in SCHEMAS
+    assert "final_evaluation" in SCHEMAS
     assert "identity_document" in SCHEMAS
+    assert "immigration_reference" in SCHEMAS
     assert "insurance_card" in SCHEMAS
     assert "insurance_record" in SCHEMAS
+    assert "language_test_certificate" in SCHEMAS
     assert "membership_welcome_packet" in SCHEMAS
+    assert "name_change_notice" in SCHEMAS
+    assert "order_confirmation" in SCHEMAS
     assert "i983" in SCHEMAS
     assert "employment_contract" in SCHEMAS
     assert "employment_letter" in SCHEMAS
@@ -46,10 +55,12 @@ def test_schemas_defined():
     assert "health_coverage_application" in SCHEMAS
     assert "payment_service_agreement" in SCHEMAS
     assert "payment_account_record" in SCHEMAS
+    assert "payment_receipt" in SCHEMAS
     assert "public_key" in SCHEMAS
     assert "recovery_codes" in SCHEMAS
     assert "residence_certificate" in SCHEMAS
     assert "resume" in SCHEMAS
+    assert "transfer_pending_letter" in SCHEMAS
     assert "work_sample" in SCHEMAS
     assert "ein_application" in SCHEMAS
     assert "operating_agreement" in SCHEMAS
@@ -62,6 +73,7 @@ def test_schemas_defined():
     assert "h1b_g28" in SCHEMAS
     assert "h1b_filing_invoice" in SCHEMAS
     assert "h1b_filing_fee_receipt" in SCHEMAS
+    assert "wage_notice" in SCHEMAS
     assert "entity_name" in SCHEMAS["articles_of_organization"]
     assert "standing_status" in SCHEMAS["certificate_of_good_standing"]
     assert "job_title" in SCHEMAS["i983"]
@@ -395,6 +407,69 @@ def test_extract_batch_05_identity_travel_archive_documents():
         fields = extract_document("tax_return", "Tax Return")
         assert fields["form_type"]["value"] == "1040"
         assert fields["tax_year"]["value"] == 2024
+
+
+def test_extract_batch_16_to_20_document_families():
+    bank_statement_result = {
+        "institution_name": "Chase",
+        "statement_period_start": "01/01/2025",
+        "statement_period_end": "01/31/2025",
+        "ending_balance": "$1,234.5",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=bank_statement_result):
+        fields = extract_document("bank_statement", "Statement Beginning Balance Ending Balance")
+        assert fields["institution_name"]["value"] == "Chase"
+        assert fields["statement_period_start"]["value"] == "2025-01-01"
+        assert fields["statement_period_end"]["value"] == "2025-01-31"
+        assert fields["ending_balance"]["value"] == "1234.50"
+
+    confirmation_result = {
+        "platform_name": "USCIS",
+        "confirmation_type": "submission proof",
+        "confirmation_date": "03/01/2025",
+        "reference_number": "ABC123",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=confirmation_result):
+        fields = extract_document("filing_confirmation", "retain the proof")
+        assert fields["platform_name"]["value"] == "USCIS"
+        assert fields["confirmation_date"]["value"] == "2025-03-01"
+        assert fields["reference_number"]["value"] == "ABC123"
+
+    language_test_result = {
+        "candidate_name": "Chenyu Li",
+        "test_name": "IELTS",
+        "test_date": "01/03/2021",
+        "score_summary": "7.5",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=language_test_result):
+        fields = extract_document("language_test_certificate", "IELTS score report")
+        assert fields["candidate_name"]["value"] == "Chenyu Li"
+        assert fields["test_date"]["value"] == "2021-01-03"
+        assert fields["score_summary"]["value"] == "7.5"
+
+    order_confirmation_result = {
+        "merchant_name": "USPS",
+        "order_number": "XYZ789",
+        "order_date": "2025/03/02",
+        "total_amount": "$12.34",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=order_confirmation_result):
+        fields = extract_document("order_confirmation", "Order Confirmation")
+        assert fields["merchant_name"]["value"] == "USPS"
+        assert fields["order_date"]["value"] == "2025-03-02"
+        assert fields["total_amount"]["value"] == "12.34"
+
+    transfer_pending_result = {
+        "student_name": "Chenyu Li",
+        "institution_name": "Westcliff University",
+        "effective_date": "08/15/2024",
+        "status_summary": "Transfer pending",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=transfer_pending_result):
+        fields = extract_document("transfer_pending_letter", "transfer pending")
+        assert fields["student_name"]["value"] == "Chenyu Li"
+        assert fields["effective_date"]["value"] == "2024-08-15"
+        assert fields["status_summary"]["value"] == "Transfer pending"
 
 
 def test_build_mistral_client_prefers_client_module(monkeypatch):

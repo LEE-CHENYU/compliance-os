@@ -1,77 +1,66 @@
 # Compliance OS Codex Loop Resume
 
 **Last Updated:** 2026-03-28 (America/Los_Angeles)
-**Status:** Batch 05 resolved in loop source-of-truth validation
+**Status:** Batches 16-20 resolved with direct and loop validation
 
 ## Current Focus
 
-- Current batch: **Batch 05** (`batch_05`)
-- Focus: identity, travel, I-20 history, and overflow tax or personal archive records
-- Goal in this pass: materialize Batch 05, add focused validation hooks, and close review/parsing gaps for identity and travel consistency
+- Current batch: **Batch 20** (`batch_20`) was the last resolved batch in this pass
+- Round focus: remaining employment-admin, STEM admin, financial-support, education-overflow, and I-20 continuity records in Batches `16` through `20`
+- Goal achieved in this pass: resolve Batches `16` through `20` end to end without overwriting prior validation logs
 
 ## Changes Made (This Iteration)
 
-- Updated `config/data_room_batches.yaml`:
-  - set Batch 05 status to `completed`
-  - added `batch_05_focused_tests` validation hook running:
-    - `tests/test_classifier_service.py`
-    - `tests/test_extractor.py`
-    - `tests/test_checks_router_v2.py`
-- Updated `compliance_os/web/routers/review.py`:
-  - extended `data_room` observed extraction fields for Batch 05 families:
-    - `i20`, `i94`, `passport`, `ead`, `w2`, `tax_return`, `1042s`
-  - added cross-document identity/travel and tax-year checks:
-    - `i20` student name ↔ passport full name
-    - `i20` student name ↔ `ead` full name
-    - passport DOB ↔ `ead` DOB
-    - passport full name ↔ `w2` employee name
-    - passport full name ↔ `1042s` recipient name
-    - `w2` tax year ↔ tax return tax year
-    - `1042s` tax year ↔ tax return tax year
-    - `i94` class of admission ↔ expected `F-1` when `i20` evidence exists
+- Updated `compliance_os/web/services/classifier.py`:
+  - added explicit intake families for:
+    - `filing_confirmation`
+    - `bank_statement`
+    - `collection_notice`
+    - `debt_clearance_letter`
+    - `final_evaluation`
+    - `immigration_reference`
+    - `language_test_certificate`
+    - `name_change_notice`
+    - `order_confirmation`
+    - `payment_receipt`
+    - `transfer_pending_letter`
+    - `wage_notice`
+  - extended aliases so explicit uploads normalize to the same canonical families
 - Updated `compliance_os/web/services/extractor.py`:
-  - added normalization for Batch 05 identity/travel/tax fields:
-    - date normalization for `i20`, `i94`, `passport`, `ead`
-    - `i94.admit_until_date` canonicalization (`D/S` and date normalization)
-    - tax-year normalization for `w2` and `tax_return`
+  - added schemas plus light date/amount normalization for the new Batch `16-20` families
 - Added focused regressions:
-  - `tests/test_classifier_service.py::test_batch_05_identity_travel_archive_classification`
-  - `tests/test_extractor.py::test_extract_batch_05_identity_travel_archive_documents`
-  - `tests/test_checks_router_v2.py::test_data_room_comparisons_consume_batch_05_fields`
-- Updated `docs/data-room-batch-05.md`:
-  - materialized a concrete 10-file Batch 05 manifest from `i20`, `Personal Info Archive`, `Tax`, and root-level records
-  - documented Batch 05 family priority order
-  - documented Batch 05 review/comparison coverage
-  - cleared `## Current batch blockers` (`None.`)
-  - moved non-blocking follow-ups to `## Deferred backlog`
+  - `tests/test_classifier_service.py::test_batch_16_to_20_filename_classification_regressions`
+  - `tests/test_extractor.py::test_extract_batch_16_to_20_document_families`
+  - schema coverage assertions in `tests/test_extractor.py`
+- Updated `config/data_room_batches.yaml`:
+  - set Batches `16` through `20` to `completed`
+- Updated `docs/data-room-batch-16.md` through `docs/data-room-batch-20.md`:
+  - recorded baseline failure shape
+  - recorded post-fix `10/10` results
+  - recorded passing loop-validation session paths
+- Updated `docs/data-room-inventory.md`:
+  - added Batches `16` through `20` to the ledger
 
 ## Validation Snapshot
 
-- Required assessment command at iteration start:
-  - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/data_room_batch_loop.py --manifest /Users/lichenyu/compliance-os/config/data_room_batches.yaml --batch-number 05 --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-assess`
-  - Session log: `logs/data-room-batch-loop-agent-assess/20260328T074243Z`
-  - Batch state: `resolved: false`
-  - Unresolved issues: `4`
-- Focused Batch 05 regression suite:
-  - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python -m pytest tests/test_classifier_service.py tests/test_extractor.py tests/test_checks_router_v2.py -q`
-  - Result: `64 passed`
-- Required validation command after code/doc updates:
-  - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/data_room_batch_loop.py --manifest /Users/lichenyu/compliance-os/config/data_room_batches.yaml --batch-number 05 --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-validate`
-  - Session log: `logs/data-room-batch-loop-agent-validate/20260328T075014Z`
-  - Hook result: `batch_05_focused_tests` passed (`64 passed`)
-  - Batch state: `resolved: true`
-  - Unresolved issues: `0`
-- Post-update assessment confirmation:
-  - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/data_room_batch_loop.py --manifest /Users/lichenyu/compliance-os/config/data_room_batches.yaml --batch-number 05 --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-assess`
-  - Session log: `logs/data-room-batch-loop-agent-assess/20260328T075021Z`
-  - Hook result: `batch_05_focused_tests` passed (`64 passed`)
-  - Batch state: `resolved: true`
-  - Unresolved issues: `0`
+- Focused regression suite:
+  - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python -m pytest tests/test_classifier_service.py tests/test_extractor.py tests/test_batch_validation.py -q`
+  - Result: `51 passed`
+- Passing loop-compatible assessments:
+  - Batch `16`: `logs/data-room-batch-loop-round-16-20/20260328T183154Z-02`
+  - Batch `17`: `logs/data-room-batch-loop-round-16-20/20260328T183154Z`
+  - Batch `18`: `logs/data-room-batch-loop-round-16-20/20260328T183154Z-03`
+  - Batch `19`: `logs/data-room-batch-loop-round-16-20/20260328T183154Z-04`
+  - Batch `20`: `logs/data-room-batch-loop-round-16-20/20260328T183154Z-01`
+- For each batch:
+  - focused tests passed
+  - real-source checks passed for `10/10`
+  - batch state: `resolved: true`
 
-## Remaining Blockers (Batch 05)
+## Remaining Blockers
 
-None.
+None for Batches `16` through `20`.
 
 ## Next Step
 
-- Keep Batches 01-05 stable and only introduce additional parsing/retrieval/refinement work when a concrete loop validation regression appears.
+- Start the next round from remaining unbatched source slices and keep Batches `01` through `20` stable unless a concrete validation regression appears.

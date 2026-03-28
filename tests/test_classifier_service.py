@@ -201,9 +201,27 @@ def test_batch_11_to_15_filename_classification_regressions():
     assert classify_filename("/tmp/CV & Cover Letters/CV241028/OXY Stock Pitch.pdf").doc_type == "work_sample"
 
 
+def test_batch_16_to_20_filename_classification_regressions():
+    assert classify_filename("/tmp/employment/Claudius/12 month (page-5) .pdf").doc_type == "final_evaluation"
+    assert classify_filename("/tmp/employment/Claudius/Wage Theft Prevention Act Notice_Signed.pdf").doc_type == "wage_notice"
+    assert classify_filename("/tmp/stem opt/Order Confirmation.pdf").doc_type == "order_confirmation"
+    assert classify_filename("/tmp/stem opt/i983/Instructions/I-983samplefilled.pdf").doc_type == "immigration_reference"
+    assert classify_filename("/tmp/stem opt/retain the proof.png").doc_type == "filing_confirmation"
+    assert classify_filename("/tmp/Lease/Collection/Debt Clearence.pdf").doc_type == "debt_clearance_letter"
+    assert classify_filename("/tmp/Invoice/Payment Receipt-2.pdf").doc_type == "payment_receipt"
+    assert classify_filename("/tmp/Tax/2024/bank_document_-2819197501764181827.pdf").doc_type == "bank_statement"
+    assert classify_filename("/tmp/CV & Cover Letters/transcript&diploma/JLPT_N1.pdf").doc_type == "language_test_certificate"
+    assert classify_filename("/tmp/i20/ciam_transfer_pending.pdf").doc_type == "transfer_pending_letter"
+
+
 def test_single_reference_does_not_force_i94_or_ead_classification():
     assert classify_text("Enter your I-94 visa number.") .doc_type is None
     assert classify_text("Recipient's date of birth and federal tax withheld.") .doc_type is None
+
+
+def test_new_batch_16_to_20_patterns_do_not_overclassify_generic_documents():
+    assert classify_filename("/tmp/statement_of_purpose.pdf").doc_type is None
+    assert classify_text("Please retain this for your records after submission.").doc_type is None
 
 
 def test_classify_file_uses_ocr_fallback(monkeypatch, tmp_path):

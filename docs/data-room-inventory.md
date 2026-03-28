@@ -95,9 +95,29 @@ Extension counts:
   - focus: resume and work-sample career materials
   - status: completed
   - record: `docs/data-room-batch-15.md`
+- Batch 16:
+  - focus: employment supplemental agreements, notices, and payroll continuity
+  - status: completed
+  - record: `docs/data-room-batch-16.md`
+- Batch 17:
+  - focus: STEM OPT admin, guidance, and filing-support artifacts
+  - status: completed
+  - record: `docs/data-room-batch-17.md`
+- Batch 18:
+  - focus: collection, receipts, and bank-support financial records
+  - status: completed
+  - record: `docs/data-room-batch-18.md`
+- Batch 19:
+  - focus: education credential overflow and language-test records
+  - status: completed
+  - record: `docs/data-room-batch-19.md`
+- Batch 20:
+  - focus: I-20 overflow, transfer-pending continuity, and USCIS account support
+  - status: completed
+  - record: `docs/data-room-batch-20.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `15` stable under focused tests plus real-source validation.
+1. Keep Batches `01` through `20` stable under focused tests plus real-source validation.
 2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
 3. Start the next round from still-unbatched source slices instead of reopening resolved batches.
