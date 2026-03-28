@@ -6,6 +6,7 @@ import json
 import shlex
 import subprocess
 import sys
+import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,6 +23,9 @@ DEFAULT_LOG_ROOT = PROJECT_ROOT / "logs" / "data-room-batch-loop"
 class BatchHookSpec:
     name: str
     command: str
+    timeout_sec: int | None = None
+    retries: int = 0
+    retry_delay_sec: float = 0.0
 
 
 @dataclass(slots=True)
@@ -37,6 +41,28 @@ class BatchSpec:
 
 
 @dataclass(slots=True)
+class HookAttemptResult:
+    attempt_number: int
+    passed: bool
+    exit_code: int
+    output: str | None = None
+    started_at: str | None = None
+    finished_at: str | None = None
+    timed_out: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "attempt_number": self.attempt_number,
+            "passed": self.passed,
+            "exit_code": self.exit_code,
+            "output": self.output,
+            "started_at": self.started_at,
+            "finished_at": self.finished_at,
+            "timed_out": self.timed_out,
+        }
+
+
+@dataclass(slots=True)
 class HookResult:
     name: str
     command: str
@@ -45,7 +71,9 @@ class HookResult:
     output: str | None = None
     started_at: str | None = None
     finished_at: str | None = None
+    attempt_count: int = 1
     timed_out: bool = False
+    attempts: list[HookAttemptResult] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -56,7 +84,9 @@ class HookResult:
             "output": self.output,
             "started_at": self.started_at,
             "finished_at": self.finished_at,
+            "attempt_count": self.attempt_count,
             "timed_out": self.timed_out,
+            "attempts": [attempt.to_dict() for attempt in self.attempts],
         }
 
 
@@ -102,6 +132,13 @@ def load_manifest(manifest_path: str | Path = DEFAULT_MANIFEST_PATH) -> tuple[st
                 BatchHookSpec(
                     name=str(hook.get("name") or f"hook_{index + 1}"),
                     command=str(hook["command"]),
+                    timeout_sec=(
+                        int(hook["timeout_sec"])
+                        if hook.get("timeout_sec") is not None
+                        else None
+                    ),
+                    retries=max(int(hook.get("retries", 0)), 0),
+                    retry_delay_sec=max(float(hook.get("retry_delay_sec", 0.0)), 0.0),
                 )
             )
         batches.append(
@@ -222,23 +259,14 @@ def _run_shell_command(
     )
 
 
-def _execute_command_result(
-    name: str,
-    command_template: str,
+def _execute_command_attempt(
+    expanded_command: str,
     *,
     project_root: Path,
-    source_root: str | None,
-    spec: BatchSpec,
     timeout_sec: int | None = None,
-) -> HookResult:
+    attempt_number: int = 1,
+) -> HookAttemptResult:
     started_at = _utc_now_iso()
-    expanded_command = command_template.format(
-        **_command_template_context(
-            project_root=project_root,
-            source_root=source_root,
-            spec=spec,
-        )
-    )
     try:
         completed = subprocess.run(
             expanded_command,
@@ -255,9 +283,8 @@ def _execute_command_result(
             if part and part.strip()
         ]
         output = "\n".join(output_parts) or None
-        return HookResult(
-            name=name,
-            command=expanded_command,
+        return HookAttemptResult(
+            attempt_number=attempt_number,
             passed=completed.returncode == 0,
             exit_code=completed.returncode,
             output=output,
@@ -266,9 +293,8 @@ def _execute_command_result(
             timed_out=False,
         )
     except subprocess.TimeoutExpired:
-        return HookResult(
-            name=name,
-            command=expanded_command,
+        return HookAttemptResult(
+            attempt_number=attempt_number,
             passed=False,
             exit_code=124,
             output=f"Timed out after {timeout_sec}s",
@@ -276,6 +302,55 @@ def _execute_command_result(
             finished_at=_utc_now_iso(),
             timed_out=True,
         )
+
+
+def _execute_command_result(
+    name: str,
+    command_template: str,
+    *,
+    project_root: Path,
+    source_root: str | None,
+    spec: BatchSpec,
+    timeout_sec: int | None = None,
+    retries: int = 0,
+    retry_delay_sec: float = 0.0,
+) -> HookResult:
+    expanded_command = command_template.format(
+        **_command_template_context(
+            project_root=project_root,
+            source_root=source_root,
+            spec=spec,
+        )
+    )
+    attempts: list[HookAttemptResult] = []
+    total_attempts = max(retries, 0) + 1
+
+    for attempt_number in range(1, total_attempts + 1):
+        attempt = _execute_command_attempt(
+            expanded_command,
+            project_root=project_root,
+            timeout_sec=timeout_sec,
+            attempt_number=attempt_number,
+        )
+        attempts.append(attempt)
+        if attempt.passed:
+            break
+        if attempt_number < total_attempts and retry_delay_sec > 0:
+            time.sleep(retry_delay_sec)
+
+    final_attempt = attempts[-1]
+    return HookResult(
+        name=name,
+        command=expanded_command,
+        passed=final_attempt.passed,
+        exit_code=final_attempt.exit_code,
+        output=final_attempt.output,
+        started_at=attempts[0].started_at,
+        finished_at=final_attempt.finished_at,
+        attempt_count=len(attempts),
+        timed_out=final_attempt.timed_out,
+        attempts=attempts,
+    )
 
 
 def run_validation_hooks(
@@ -300,7 +375,9 @@ def run_validation_hooks(
                 project_root=root,
                 source_root=source_root,
                 spec=spec,
-                timeout_sec=timeout_sec,
+                timeout_sec=hook.timeout_sec if hook.timeout_sec is not None else timeout_sec,
+                retries=hook.retries,
+                retry_delay_sec=hook.retry_delay_sec,
             )
         )
     return results
@@ -389,13 +466,14 @@ def _create_session_log_dir(log_root: str | Path) -> Path:
     root = Path(log_root)
     root.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    session_dir = root / stamp
-    suffix = 1
-    while session_dir.exists():
-        session_dir = root / f"{stamp}-{suffix:02d}"
-        suffix += 1
-    session_dir.mkdir(parents=True, exist_ok=False)
-    return session_dir
+    suffix = 0
+    while True:
+        session_dir = root / stamp if suffix == 0 else root / f"{stamp}-{suffix:02d}"
+        try:
+            session_dir.mkdir(parents=True, exist_ok=False)
+            return session_dir
+        except FileExistsError:
+            suffix += 1
 
 
 def _blocked_batch_state(state: BatchState, *, blocking_batch_id: str) -> BatchState:

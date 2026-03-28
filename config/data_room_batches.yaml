@@ -8,6 +8,9 @@ batches:
     record: docs/data-room-batch-01.md
     validation_hooks:
       - name: batch_01_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
         command: >
           {python_quoted} -m pytest
           tests/test_checks_router_v2.py
@@ -27,6 +30,9 @@ batches:
     record: docs/data-room-batch-02.md
     validation_hooks:
       - name: batch_02_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
         command: >
           {python_quoted} -m pytest
           tests/test_classifier_service.py
@@ -48,6 +54,9 @@ batches:
     record: docs/data-room-batch-03.md
     validation_hooks:
       - name: batch_03_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
         command: >
           {python_quoted} -m pytest
           tests/test_classifier_service.py

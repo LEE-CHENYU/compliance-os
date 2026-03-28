@@ -1,10 +1,14 @@
 import json
+from datetime import datetime as real_datetime
+from datetime import timezone
 
 import pytest
 
+import compliance_os.batch_loop as batch_loop
 from compliance_os.batch_loop import (
     BatchHookSpec,
     BatchSpec,
+    _create_session_log_dir,
     assess_batch,
     execute_loop,
     load_manifest,
@@ -116,6 +120,45 @@ def test_assess_batch_marks_failed_validation_hook_unresolved(tmp_path):
     assert state.unresolved_issues == ["Validation hook failed: failing_hook"]
 
 
+def test_assess_batch_retries_hook_and_recovers_from_transient_failure(tmp_path):
+    record = tmp_path / "batch.md"
+    record.write_text("# Batch\n\n## Remaining gaps\n")
+    spec = BatchSpec(
+        batch_id="batch_02",
+        batch_number=2,
+        focus="Validated",
+        status="completed",
+        record=str(record.relative_to(tmp_path)),
+        validation_hooks=[
+            BatchHookSpec(
+                name="transient_hook",
+                command=(
+                    "count_file={project_root_quoted}/counter.txt; "
+                    "count=$(cat \"$count_file\" 2>/dev/null || echo 0); "
+                    "count=$((count+1)); "
+                    "printf '%s' \"$count\" > \"$count_file\"; "
+                    "test \"$count\" -ge 2"
+                ),
+                retries=1,
+            )
+        ],
+    )
+
+    state = assess_batch(
+        tmp_path,
+        spec,
+        run_validation_hooks_flag=True,
+        validation_timeout_sec=10,
+    )
+
+    assert state.resolved is True
+    assert state.validation_results[0].passed is True
+    assert state.validation_results[0].attempt_count == 2
+    assert len(state.validation_results[0].attempts) == 2
+    assert state.validation_results[0].attempts[0].passed is False
+    assert state.validation_results[0].attempts[1].passed is True
+
+
 def test_load_manifest_parses_validation_hooks():
     _source_root, batches = load_manifest()
 
@@ -124,6 +167,22 @@ def test_load_manifest_parses_validation_hooks():
     assert batch_01.validation_hooks
     assert batch_01.validation_hooks[0].name == "batch_01_focused_tests"
     assert "{python_quoted}" in batch_01.validation_hooks[0].command
+    assert batch_01.validation_hooks[0].retries == 1
+
+
+def test_create_session_log_dir_handles_timestamp_collision(tmp_path, monkeypatch):
+    class FixedDateTime:
+        @classmethod
+        def now(cls, tz=None):
+            return real_datetime(2026, 1, 1, tzinfo=timezone.utc)
+
+    monkeypatch.setattr(batch_loop, "datetime", FixedDateTime)
+
+    first = _create_session_log_dir(tmp_path / "logs")
+    second = _create_session_log_dir(tmp_path / "logs")
+
+    assert first.name == "20260101T000000Z"
+    assert second.name == "20260101T000000Z-01"
 
 
 def test_select_round_limits_to_requested_batch_count():
