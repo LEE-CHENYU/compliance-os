@@ -562,3 +562,143 @@ batches:
     source_scope:
       - i20
     target_size: 10
+
+  - id: batch_21
+    number: 21
+    focus: early multilingual resume archive continuity
+    status: completed
+    record: docs/data-room-batch-21.md
+    validation_hooks:
+      - name: batch_21_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_21_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 21
+    source_scope:
+      - CV & Cover Letters
+    target_size: 10
+
+  - id: batch_22
+    number: 22
+    focus: later resume archive and targeted role variants
+    status: completed
+    record: docs/data-room-batch-22.md
+    validation_hooks:
+      - name: batch_22_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_22_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 22
+    source_scope:
+      - CV & Cover Letters
+    target_size: 10
+
+  - id: batch_23
+    number: 23
+    focus: VCV payroll continuity from late 2023 through mid 2024
+    status: completed
+    record: docs/data-room-batch-23.md
+    validation_hooks:
+      - name: batch_23_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_23_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 23
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_24
+    number: 24
+    focus: VCV payroll continuity from mid 2024 through late 2024
+    status: completed
+    record: docs/data-room-batch-24.md
+    validation_hooks:
+      - name: batch_24_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_24_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 24
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_25
+    number: 25
+    focus: STEM OPT I-983 overflow versions and templates
+    status: completed
+    record: docs/data-room-batch-25.md
+    validation_hooks:
+      - name: batch_25_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_25_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 25
+    source_scope:
+      - stem opt
+    target_size: 10

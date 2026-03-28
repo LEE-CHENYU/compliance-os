@@ -115,9 +115,29 @@ Extension counts:
   - focus: I-20 overflow, transfer-pending continuity, and USCIS account support
   - status: completed
   - record: `docs/data-room-batch-20.md`
+- Batch 21:
+  - focus: early multilingual resume archive continuity
+  - status: completed
+  - record: `docs/data-room-batch-21.md`
+- Batch 22:
+  - focus: later resume archive and targeted role variants
+  - status: completed
+  - record: `docs/data-room-batch-22.md`
+- Batch 23:
+  - focus: VCV payroll continuity from late 2023 through mid 2024
+  - status: completed
+  - record: `docs/data-room-batch-23.md`
+- Batch 24:
+  - focus: VCV payroll continuity from mid 2024 through late 2024
+  - status: completed
+  - record: `docs/data-room-batch-24.md`
+- Batch 25:
+  - focus: STEM OPT I-983 overflow versions and templates
+  - status: completed
+  - record: `docs/data-room-batch-25.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `20` stable under focused tests plus real-source validation.
+1. Keep Batches `01` through `25` stable under focused tests plus real-source validation.
 2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
 3. Start the next round from still-unbatched source slices instead of reopening resolved batches.
