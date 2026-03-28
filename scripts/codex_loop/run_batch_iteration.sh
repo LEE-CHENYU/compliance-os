@@ -23,7 +23,8 @@ RESUME_FILE="${RESUME_FILE:-$SCRIPT_DIR/codex_resume.md}"
 MANIFEST_PATH="${MANIFEST_PATH:-$(codex_loop_config_get "$CONFIG_PATH" manifest_path "$ROOT/config/data_room_batches.yaml")}"
 PROVIDER="${PROVIDER:-$(codex_loop_config_get "$CONFIG_PATH" provider codex)}"
 SANDBOX_MODE="${SANDBOX_MODE:-$(codex_loop_config_get "$CONFIG_PATH" sandbox_mode danger-full-access)}"
-MODEL="${MODEL:-$(codex_loop_config_get "$CONFIG_PATH" model gpt-5.4-codex)}"
+MODEL="${MODEL:-$(codex_loop_config_get "$CONFIG_PATH" model gpt-5.3-codex)}"
+FALLBACK_MODEL="${FALLBACK_MODEL:-$(codex_loop_config_get "$CONFIG_PATH" fallback_model gpt-5.3-codex)}"
 REASONING_EFFORT="${REASONING_EFFORT:-$(codex_loop_config_get "$CONFIG_PATH" reasoning_effort xhigh)}"
 
 objective="$(cat "$OBJECTIVE_FILE" 2>/dev/null || true)"
@@ -109,11 +110,34 @@ RULES:
 cd "$ROOT"
 case "$PROVIDER" in
   codex)
-    codex exec \
-      -c "model_reasoning_effort=\"$REASONING_EFFORT\"" \
-      -s "$SANDBOX_MODE" \
-      -m "$MODEL" \
-      "$PROMPT_TEXT"
+    output_file="$(mktemp)"
+    cleanup_output_file() {
+      rm -f "$output_file"
+    }
+    trap cleanup_output_file EXIT
+
+    run_codex_exec() {
+      local model_name="$1"
+      codex exec \
+        -c "model_reasoning_effort=\"$REASONING_EFFORT\"" \
+        -s "$SANDBOX_MODE" \
+        -m "$model_name" \
+        "$PROMPT_TEXT"
+    }
+
+    if run_codex_exec "$MODEL" >"$output_file" 2>&1; then
+      cat "$output_file"
+      exit 0
+    fi
+
+    status=$?
+    cat "$output_file"
+    if [ "$MODEL" != "$FALLBACK_MODEL" ] && rg -q "model is not supported" "$output_file"; then
+      printf 'Retrying with fallback model: %s\n' "$FALLBACK_MODEL" >&2
+      run_codex_exec "$FALLBACK_MODEL"
+      exit 0
+    fi
+    exit "$status"
     ;;
   claude)
     claude -p "$PROMPT_TEXT" \

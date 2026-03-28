@@ -57,6 +57,59 @@ def test_run_batch_iteration_echo_provider_renders_prompt():
     assert "scripts/data_room_batch_loop.py" in result.stdout
 
 
+def test_run_batch_iteration_falls_back_to_supported_model(tmp_path):
+    script = ROOT / "scripts" / "codex_loop" / "run_batch_iteration.sh"
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    fake_codex = fake_bin / "codex"
+    fake_codex.write_text(
+        "#!/usr/bin/env bash\n"
+        "set -euo pipefail\n"
+        "model=''\n"
+        "while [ \"$#\" -gt 0 ]; do\n"
+        "  if [ \"$1\" = '-m' ]; then\n"
+        "    model=\"$2\"\n"
+        "    shift 2\n"
+        "    continue\n"
+        "  fi\n"
+        "  shift\n"
+        "done\n"
+        "if [ \"$model\" = 'gpt-5.4-codex' ]; then\n"
+        "  echo \"ERROR: model is not supported\" >&2\n"
+        "  exit 1\n"
+        "fi\n"
+        "echo \"FAKE CODEX SUCCESS $model\"\n"
+    )
+    fake_codex.chmod(0o755)
+
+    result = subprocess.run(
+        [
+            "bash",
+            str(script),
+            "01",
+            "batch_01",
+            "STEM OPT and entity core records",
+            "docs/data-room-batch-01.md",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        env={
+            **os.environ,
+            "ROOT": str(ROOT),
+            "PROVIDER": "codex",
+            "MODEL": "gpt-5.4-codex",
+            "FALLBACK_MODEL": "gpt-5.3-codex",
+            "PATH": f"{fake_bin}:{os.environ['PATH']}",
+        },
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "ERROR: model is not supported" in result.stdout
+    assert "Retrying with fallback model: gpt-5.3-codex" in result.stderr
+    assert "FAKE CODEX SUCCESS gpt-5.3-codex" in result.stdout
+
+
 def test_control_script_start_status_stop_cycle(tmp_path):
     control_script = ROOT / "scripts" / "codex_loop" / "control.sh"
     temp_root = tmp_path / "root"

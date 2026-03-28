@@ -1,6 +1,7 @@
 provider: codex
 sandbox_mode: danger-full-access
-model: gpt-5.4-codex
+model: gpt-5.3-codex
+fallback_model: gpt-5.3-codex
 reasoning_effort: xhigh
 duration_hours: 8
 sleep_seconds: 300
