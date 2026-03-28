@@ -28,6 +28,12 @@ from compliance_os.web.services.document_intake import (
     resolve_document_type,
     validate_upload,
 )
+from compliance_os.web.services.ingestion_detector import (
+    DetectedIssue,
+    detect_upload_issues,
+    record_check_issue,
+    sync_document_issues,
+)
 from compliance_os.web.services.document_store import register_uploaded_document
 from compliance_os.web.services.document_store import reindex_documents_for_doc_types
 
@@ -119,7 +125,7 @@ def _mirror_document_to_v2(
     classification_confidence: str | None,
     classification_provided_doc_type: str | None,
     session: Session,
-) -> None:
+) -> V2DocumentRow:
     bridge_check = _get_or_create_v2_bridge_check(case, session)
     mirrored_doc_type = classification_doc_type or LEGACY_UNCLASSIFIED_DOC_TYPE
     row = V2DocumentRow(
@@ -150,6 +156,7 @@ def _mirror_document_to_v2(
     session.add(row)
     session.flush()
     register_uploaded_document(bridge_check, row, content, source_path=source_path)
+    return row
 
 
 def _doc_response(d: CaseDocumentRow) -> DocumentResponse:
@@ -183,11 +190,30 @@ async def upload_document(
     session: Session = Depends(get_session),
 ):
     case = _get_case(case_id, session)
+    bridge_check = _get_or_create_v2_bridge_check(case, session)
 
     content = await file.read()
     try:
         validate_upload(file.content_type, len(content))
     except UploadValidationError as exc:
+        record_check_issue(
+            session,
+            check=bridge_check,
+            document=None,
+            stage="upload_validation",
+            issue=DetectedIssue(
+                issue_code="upload_validation_failed",
+                severity="error",
+                message=str(exc),
+                details={
+                    "filename": file.filename,
+                    "mime_type": file.content_type,
+                    "content_size": len(content),
+                    "legacy_case_id": case.id,
+                },
+            ),
+        )
+        session.commit()
         status = 413 if "20MB" in str(exc) else 400
         raise HTTPException(status_code=status, detail=str(exc))
 
@@ -202,15 +228,35 @@ async def upload_document(
     # Classify
     # Keep upload latency predictable: classify conservatively from filename and
     # first-page PDF text only. Full OCR is reserved for the deeper v2 pipeline.
-    classification_result = resolve_document_type(
-        str(dest),
-        file.content_type or "",
-        provided_doc_type=doc_type,
-        allow_ocr=False,
-    )
+    try:
+        classification_result = resolve_document_type(
+            str(dest),
+            file.content_type or "",
+            provided_doc_type=doc_type,
+            allow_ocr=False,
+        )
+    except UploadValidationError as exc:
+        record_check_issue(
+            session,
+            check=bridge_check,
+            document=None,
+            stage="upload_detection",
+            issue=DetectedIssue(
+                issue_code="doc_type_validation_failed",
+                severity="error",
+                message=str(exc),
+                details={
+                    "filename": file.filename,
+                    "provided_doc_type": doc_type,
+                    "legacy_case_id": case.id,
+                },
+            ),
+        )
+        session.commit()
+        raise HTTPException(status_code=400, detail=str(exc))
     normalized_source_path = (source_path or "").strip() or safe_name
 
-    _mirror_document_to_v2(
+    mirrored = _mirror_document_to_v2(
         case=case,
         safe_name=safe_name,
         source_path=normalized_source_path,
@@ -222,6 +268,21 @@ async def upload_document(
         classification_confidence=classification_result.confidence,
         classification_provided_doc_type=classification_result.provided_doc_type,
         session=session,
+    )
+    sync_document_issues(
+        session,
+        check=bridge_check,
+        document=mirrored,
+        stage="upload",
+        issues=detect_upload_issues(
+            doc_type=classification_result.doc_type,
+            filename=mirrored.filename,
+            source_path=mirrored.source_path,
+            mime_type=mirrored.mime_type,
+            classification_source=classification_result.source,
+            provided_doc_type=classification_result.provided_doc_type,
+            provenance=mirrored.provenance,
+        ),
     )
 
     # Create record

@@ -15,6 +15,10 @@ from compliance_os.web.services.extractor import (
     extract_pdf_text_with_provenance,
     extract_supporting_excerpt,
 )
+from compliance_os.web.services.ingestion_detector import (
+    detect_extraction_issues,
+    sync_document_issues,
+)
 
 
 def document_family_for_type(doc_type: str) -> str:
@@ -540,6 +544,17 @@ def extract_into_document(doc: DocumentRow, db: Session) -> dict[str, Any]:
         _reindex_documents_for_type(check, doc.doc_type)
         if doc.doc_type in {"i9", "e_verify_case"}:
             _cross_check_i9_first_day_with_everify(check, db)
+        sync_document_issues(
+            db,
+            check=check,
+            document=doc,
+            stage="extraction",
+            issues=detect_extraction_issues(
+                doc_type=doc.doc_type,
+                text=text_result.text,
+                fields=fields,
+            ),
+        )
 
     return {
         "document_id": doc.id,

@@ -18,6 +18,13 @@ from compliance_os.web.services.document_intake import (
     validate_upload,
 )
 from compliance_os.web.services.document_store import extract_into_document, register_uploaded_document
+from compliance_os.web.services.ingestion_detector import (
+    DetectedIssue,
+    detect_upload_issues,
+    extraction_failure_issue,
+    record_check_issue,
+    sync_document_issues,
+)
 from compliance_os.web.services.timeline_builder import build_stats, build_timeline
 
 UPLOAD_DIR = Path(__file__).resolve().parents[3] / "uploads"
@@ -130,6 +137,23 @@ def upload_to_dataroom(
     try:
         validate_upload(file.content_type, len(content))
     except UploadValidationError as exc:
+        record_check_issue(
+            db,
+            check=check,
+            document=None,
+            stage="upload_validation",
+            issue=DetectedIssue(
+                issue_code="upload_validation_failed",
+                severity="error",
+                message=str(exc),
+                details={
+                    "filename": file.filename,
+                    "mime_type": file.content_type,
+                    "content_size": len(content),
+                },
+            ),
+        )
+        db.commit()
         status = 413 if "20MB" in str(exc) else 400
         raise HTTPException(status, str(exc))
     file_path.write_bytes(content)
@@ -141,8 +165,41 @@ def upload_to_dataroom(
             allow_ocr=False,
         )
     except UploadValidationError as exc:
+        record_check_issue(
+            db,
+            check=check,
+            document=None,
+            stage="upload_detection",
+            issue=DetectedIssue(
+                issue_code="doc_type_validation_failed",
+                severity="error",
+                message=str(exc),
+                details={
+                    "filename": file.filename,
+                    "provided_doc_type": doc_type,
+                },
+            ),
+        )
+        db.commit()
         raise HTTPException(400, str(exc))
     if not resolved_doc_type.doc_type:
+        record_check_issue(
+            db,
+            check=check,
+            document=None,
+            stage="upload_detection",
+            issue=DetectedIssue(
+                issue_code="doc_type_unresolved",
+                severity="error",
+                message="Could not determine document type on the fast path; manual review is required.",
+                details={
+                    "filename": file.filename,
+                    "source_path": source_path,
+                    "mime_type": file.content_type,
+                },
+            ),
+        )
+        db.commit()
         raise HTTPException(400, "Could not determine document type; provide doc_type")
 
     # Create document record
@@ -165,6 +222,21 @@ def upload_to_dataroom(
     db.add(doc)
     db.flush()
     register_uploaded_document(check, doc, content, source_path=source_path)
+    sync_document_issues(
+        db,
+        check=check,
+        document=doc,
+        stage="upload",
+        issues=detect_upload_issues(
+            doc_type=doc.doc_type,
+            filename=doc.filename,
+            source_path=doc.source_path,
+            mime_type=doc.mime_type,
+            classification_source=resolved_doc_type.source,
+            provided_doc_type=resolved_doc_type.provided_doc_type,
+            provenance=doc.provenance,
+        ),
+    )
     db.commit()
     db.refresh(doc)
 
@@ -172,8 +244,15 @@ def upload_to_dataroom(
     try:
         extract_into_document(doc, db)
         db.commit()
-    except Exception:
-        pass  # Extraction failure is non-fatal for data room uploads
+    except Exception as exc:
+        sync_document_issues(
+            db,
+            check=check,
+            document=doc,
+            stage="extraction",
+            issues=[extraction_failure_issue(exc)],
+        )
+        db.commit()
 
     # Re-evaluate all checks for this user
     from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine

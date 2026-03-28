@@ -37,6 +37,7 @@ class CheckRow(Base):
     comparisons = relationship("ComparisonRow", back_populates="check", cascade="all, delete-orphan")
     followups = relationship("FollowupRow", back_populates="check", cascade="all, delete-orphan")
     findings = relationship("FindingRow", back_populates="check", cascade="all, delete-orphan")
+    ingestion_issues = relationship("IngestionIssueRow", back_populates="check", cascade="all, delete-orphan")
 
 
 class DocumentRow(Base):
@@ -65,6 +66,9 @@ class DocumentRow(Base):
     extracted_fields = relationship(
         "ExtractedFieldRow", back_populates="document", cascade="all, delete-orphan"
     )
+    ingestion_issues = relationship(
+        "IngestionIssueRow", back_populates="document", cascade="all, delete-orphan"
+    )
 
 
 class ExtractedFieldRow(Base):
@@ -78,6 +82,23 @@ class ExtractedFieldRow(Base):
     raw_text = Column(Text, nullable=True)
 
     document = relationship("DocumentRow", back_populates="extracted_fields")
+
+
+class IngestionIssueRow(Base):
+    __tablename__ = "ingestion_issues"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    check_id = Column(String, ForeignKey("checks.id"), nullable=False)
+    document_id = Column(String, ForeignKey("documents_v2.id"), nullable=True)
+    stage = Column(String, nullable=False)
+    issue_code = Column(String, nullable=False)
+    severity = Column(String, nullable=False)
+    message = Column(Text, nullable=False)
+    details = Column(JSON, nullable=True)
+    detected_at = Column(DateTime, default=_now)
+
+    check = relationship("CheckRow", back_populates="ingestion_issues")
+    document = relationship("DocumentRow", back_populates="ingestion_issues")
 
 
 class ComparisonRow(Base):

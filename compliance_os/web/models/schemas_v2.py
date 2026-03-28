@@ -64,6 +64,21 @@ class ExtractedField(BaseModel):
         from_attributes = True
 
 
+class IngestionIssue(BaseModel):
+    id: str
+    check_id: str
+    document_id: str | None = None
+    stage: str
+    issue_code: str
+    severity: str
+    message: str
+    details: dict[str, Any] | None = None
+    detected_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
 class DocumentExtraction(BaseModel):
     document_id: str
     doc_type: str

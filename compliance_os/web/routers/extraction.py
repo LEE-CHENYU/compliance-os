@@ -9,8 +9,8 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.database import get_session
-from compliance_os.web.models.schemas_v2 import DocumentExtraction, DocumentOut
-from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow
+from compliance_os.web.models.schemas_v2 import DocumentExtraction, DocumentOut, IngestionIssue
+from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, IngestionIssueRow
 from compliance_os.web.services.document_intake import (
     UploadValidationError,
     resolve_document_type,
@@ -20,6 +20,13 @@ from compliance_os.web.services.document_store import (
     document_series_key_for_document,
     extract_into_document,
     register_uploaded_document,
+)
+from compliance_os.web.services.ingestion_detector import (
+    DetectedIssue,
+    detect_upload_issues,
+    extraction_failure_issue,
+    record_check_issue,
+    sync_document_issues,
 )
 
 UPLOAD_DIR = Path(__file__).parents[3] / "uploads"
@@ -57,6 +64,23 @@ def upload_document(
     try:
         validate_upload(file.content_type, len(content))
     except UploadValidationError as exc:
+        record_check_issue(
+            db,
+            check=check,
+            document=None,
+            stage="upload_validation",
+            issue=DetectedIssue(
+                issue_code="upload_validation_failed",
+                severity="error",
+                message=str(exc),
+                details={
+                    "filename": file.filename,
+                    "mime_type": file.content_type,
+                    "content_size": len(content),
+                },
+            ),
+        )
+        db.commit()
         status = 413 if "20MB" in str(exc) else 400
         raise HTTPException(status, str(exc))
     file_path.write_bytes(content)
@@ -69,8 +93,41 @@ def upload_document(
             allow_ocr=False,
         )
     except UploadValidationError as exc:
+        record_check_issue(
+            db,
+            check=check,
+            document=None,
+            stage="upload_detection",
+            issue=DetectedIssue(
+                issue_code="doc_type_validation_failed",
+                severity="error",
+                message=str(exc),
+                details={
+                    "filename": file.filename,
+                    "provided_doc_type": doc_type,
+                },
+            ),
+        )
+        db.commit()
         raise HTTPException(400, str(exc))
     if not resolved_doc_type.doc_type:
+        record_check_issue(
+            db,
+            check=check,
+            document=None,
+            stage="upload_detection",
+            issue=DetectedIssue(
+                issue_code="doc_type_unresolved",
+                severity="error",
+                message="Could not determine document type on the fast path; manual review is required.",
+                details={
+                    "filename": file.filename,
+                    "source_path": source_path,
+                    "mime_type": file.content_type,
+                },
+            ),
+        )
+        db.commit()
         raise HTTPException(400, "Could not determine document type; provide doc_type")
 
     row = DocumentRow(
@@ -92,6 +149,21 @@ def upload_document(
     db.add(row)
     db.flush()
     register_uploaded_document(check, row, content, source_path=source_path)
+    sync_document_issues(
+        db,
+        check=check,
+        document=row,
+        stage="upload",
+        issues=detect_upload_issues(
+            doc_type=row.doc_type,
+            filename=row.filename,
+            source_path=row.source_path,
+            mime_type=row.mime_type,
+            classification_source=resolved_doc_type.source,
+            provided_doc_type=resolved_doc_type.provided_doc_type,
+            provenance=row.provenance,
+        ),
+    )
     check.status = "uploaded"
     db.commit()
     db.refresh(row)
@@ -114,11 +186,35 @@ def run_extraction(check_id: str, db: Session = Depends(get_session)):
 
     results = []
     for doc in check.documents:
-        results.append(extract_into_document(doc, db))
+        try:
+            results.append(extract_into_document(doc, db))
+        except Exception as exc:
+            sync_document_issues(
+                db,
+                check=check,
+                document=doc,
+                stage="extraction",
+                issues=[extraction_failure_issue(exc)],
+            )
+            db.commit()
+            raise
 
     check.status = "extracted"
     db.commit()
     return {"status": "extracted", "documents": results}
+
+
+@router.get("/ingestion-issues", response_model=list[IngestionIssue])
+def list_ingestion_issues(check_id: str, db: Session = Depends(get_session)):
+    check = db.get(CheckRow, check_id)
+    if not check:
+        raise HTTPException(404, "Check not found")
+    return (
+        db.query(IngestionIssueRow)
+        .filter(IngestionIssueRow.check_id == check_id)
+        .order_by(IngestionIssueRow.detected_at.asc(), IngestionIssueRow.id.asc())
+        .all()
+    )
 
 
 @router.get("/extractions", response_model=list[DocumentExtraction])

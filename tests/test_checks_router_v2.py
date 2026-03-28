@@ -734,6 +734,72 @@ def test_v2_upload_normalizes_user_doc_type_and_persists_classification_provenan
     }
 
 
+def test_v2_upload_flags_low_signal_image_ingestion_issues(client, db_session, monkeypatch):
+    check_id = client.post("/api/checks", json={"track": "data_room", "answers": {"stage": "data_room"}}).json()["id"]
+
+    monkeypatch.setattr(
+        extraction_mod,
+        "resolve_document_type",
+        lambda file_path, mime_type, *, provided_doc_type=None, allow_ocr=False: ResolvedDocumentType(
+            doc_type="passport",
+            confidence="high",
+            source="filename",
+            provided_doc_type=provided_doc_type,
+        ),
+    )
+
+    resp = client.post(
+        f"/api/checks/{check_id}/documents",
+        files={"file": ("IMG_1234.jpeg", b"image-data", "image/jpeg")},
+    )
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["provenance"]["ingestion_detection"]["issue_count"] == 2
+    assert set(body["provenance"]["ingestion_detection"]["issue_codes"]) == {
+        "generic_source_name",
+        "image_context_low_signal",
+    }
+
+    issues = client.get(f"/api/checks/{check_id}/ingestion-issues")
+    assert issues.status_code == 200
+    assert {row["issue_code"] for row in issues.json()} == {
+        "generic_source_name",
+        "image_context_low_signal",
+    }
+
+
+def test_v2_upload_records_unresolved_doc_type_issue(client, monkeypatch):
+    check_id = client.post("/api/checks", json={"track": "data_room", "answers": {"stage": "data_room"}}).json()["id"]
+
+    monkeypatch.setattr(
+        extraction_mod,
+        "resolve_document_type",
+        lambda file_path, mime_type, *, provided_doc_type=None, allow_ocr=False: ResolvedDocumentType(
+            doc_type=None,
+            confidence=None,
+            source=None,
+            provided_doc_type=provided_doc_type,
+        ),
+    )
+
+    resp = client.post(
+        f"/api/checks/{check_id}/documents",
+        files={"file": ("document.pdf", b"mystery", "application/pdf")},
+    )
+
+    assert resp.status_code == 400
+    assert "Could not determine document type" in resp.json()["detail"]
+
+    issues = client.get(f"/api/checks/{check_id}/ingestion-issues")
+    assert issues.status_code == 200
+    body = issues.json()
+    assert len(body) == 1
+    assert body[0]["issue_code"] == "doc_type_unresolved"
+    assert body[0]["document_id"] is None
+    assert body[0]["stage"] == "upload_detection"
+
+
 def test_extract_persists_ocr_text_and_provenance(client, db_session, monkeypatch):
     import compliance_os.web.services.document_store as document_store
 
@@ -784,6 +850,31 @@ def test_extract_persists_ocr_text_and_provenance(client, db_session, monkeypatc
         .one()
     )
     assert "Admission Number" in extracted.raw_text
+
+
+def test_extract_records_ingestion_issue_when_extraction_fails(client, db_session, monkeypatch):
+    check_id = client.post("/api/checks", json={"track": "stem_opt", "answers": {"stage": "stem_opt"}}).json()["id"]
+    upload = client.post(
+        f"/api/checks/{check_id}/documents",
+        data={"doc_type": "i94", "source_path": "/tmp/i94.pdf"},
+        files={"file": ("i94.pdf", b"fake-pdf", "application/pdf")},
+    )
+    assert upload.status_code == 200
+    document_id = upload.json()["id"]
+
+    def boom(doc, db):
+        raise RuntimeError("ocr exploded")
+
+    monkeypatch.setattr(extraction_mod, "extract_into_document", boom)
+
+    with pytest.raises(RuntimeError, match="ocr exploded"):
+        client.post(f"/api/checks/{check_id}/extract")
+
+    issues = client.get(f"/api/checks/{check_id}/ingestion-issues")
+    assert issues.status_code == 200
+    extraction_issue = next(row for row in issues.json() if row["issue_code"] == "extraction_failed")
+    assert extraction_issue["document_id"] == document_id
+    assert extraction_issue["stage"] == "extraction"
 
 
 def test_different_doc_types_keep_independent_lineage(client, db_session):

@@ -81,3 +81,42 @@ def test_dashboard_upload_can_infer_doc_type_when_omitted(client, monkeypatch):
         assert stored.provenance["classification"]["source"] == "filename"
     finally:
         session.close()
+
+
+def test_dashboard_upload_persists_ingestion_issue_summary_for_generic_image(client, monkeypatch):
+    monkeypatch.setattr(
+        dashboard_mod,
+        "extract_into_document",
+        lambda doc, db: {"document_id": doc.id, "doc_type": doc.doc_type},
+    )
+    monkeypatch.setattr(
+        dashboard_mod,
+        "resolve_document_type",
+        lambda file_path, mime_type, *, provided_doc_type=None, allow_ocr=False: ResolvedDocumentType(
+            doc_type="passport",
+            confidence="high",
+            source="filename",
+            provided_doc_type=provided_doc_type,
+        ),
+    )
+
+    register = client.post("/api/auth/register", json={"email": "dashboard-issues@example.com", "password": "secure123"})
+    token = register.json()["token"]
+
+    resp = client.post(
+        "/api/dashboard/upload",
+        headers={"Authorization": f"Bearer {token}"},
+        files={"file": ("IMG_0007.jpeg", b"image-bytes", "image/jpeg")},
+    )
+
+    assert resp.status_code == 200
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        stored = session.get(DocumentRow, resp.json()["document_id"])
+        assert stored.provenance["ingestion_detection"]["issue_count"] == 2
+        assert set(stored.provenance["ingestion_detection"]["issue_codes"]) == {
+            "generic_source_name",
+            "image_context_low_signal",
+        }
+    finally:
+        session.close()

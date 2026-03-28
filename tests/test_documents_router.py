@@ -67,6 +67,43 @@ def test_upload_document_uses_fast_classification(client, case_id, monkeypatch):
     assert calls and calls[0][2] is False
 
 
+def test_v1_upload_mirror_records_unresolved_ingestion_issue(client, case_id, monkeypatch):
+    monkeypatch.setattr(
+        doc_mod,
+        "resolve_document_type",
+        lambda file_path, mime_type, *, provided_doc_type=None, allow_ocr=False: ResolvedDocumentType(
+            doc_type=None,
+            confidence=None,
+            source=None,
+            provided_doc_type=provided_doc_type,
+        ),
+    )
+
+    resp = client.post(
+        f"/api/cases/{case_id}/documents",
+        files={"file": ("document.txt", b"mystery", "text/plain")},
+    )
+
+    assert resp.status_code == 200
+    assert resp.json()["classification"] is None
+    assert resp.json()["status"] == "uploaded"
+
+    from compliance_os.web.models import database
+    from compliance_os.web.models.tables_v2 import CheckRow as V2CheckRow
+    from compliance_os.web.models.tables_v2 import DocumentRow as V2DocumentRow
+
+    session = database._SessionLocal()
+    try:
+        bridge = session.query(V2CheckRow).filter_by(stage=f"{doc_mod.LEGACY_CASE_STAGE_PREFIX}{case_id}").first()
+        assert bridge is not None
+        mirrored = session.query(V2DocumentRow).filter_by(check_id=bridge.id).one()
+        assert mirrored.doc_type == doc_mod.LEGACY_UNCLASSIFIED_DOC_TYPE
+        assert mirrored.provenance["ingestion_detection"]["issue_count"] == 1
+        assert mirrored.provenance["ingestion_detection"]["issue_codes"] == ["doc_type_unresolved"]
+    finally:
+        session.close()
+
+
 def test_upload_document_mirror_uses_canonical_source_path_and_doc_type(client, case_id):
     resp = client.post(
         f"/api/cases/{case_id}/documents",
