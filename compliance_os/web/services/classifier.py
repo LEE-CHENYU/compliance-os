@@ -16,6 +16,7 @@ AUTO_DOC_TYPE_VALUES = {"", "auto", "autodetect", "detect", "unknown"}
 
 
 FILENAME_PATTERNS: dict[str, list[str]] = {
+    "account_security_setup": [r"treasury[_ -]?pass", r"security[_ -]?questions?"],
     "articles_of_organization": [r"articles?[_ -]?of[_ -]?organization"],
     "annual_account_summary": [r"year[_ -]?end[_ -]?summary", r"account[_ -]?summaries?"],
     "bank_account_application": [r"\btda\d{3,}\b", r"treasurydirect"],
@@ -31,6 +32,12 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "debt_clearance_letter": [r"debt[_ -]?clear(?:a|e)nce"],
     "degree_certificate": [r"diploma", r"degree[_ -]?certificate", r"学历认证", r"学位认证"],
     "drivers_license": [r"driver[’']?s[_ -]?license", r"drivers[_ -]?license"],
+    "chat_export_asset": [
+        r"back@?2x?",
+        r"media_(?:call|contact|file|game|location|music|photo|shop|video|voice)",
+        r"section_(?:calls|chats|contacts|frequent|other|photos|sessions|stories|web)",
+    ],
+    "check_image": [r"blank[_ -]?stock[_ -]?check", r"check[_ -]?payment"],
     "cpt_application": [r"(?:^|[^a-z0-9])cpt[_ -]?(?:app|application)(?:[^a-z0-9]|$)"],
     "ein_application_instructions": [
         r"ein.*instructions",
@@ -56,6 +63,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "name_change_notice": [r"name[_ -]?change", r"name[_ -]?change[_ -]?notice"],
     "order_confirmation": [r"order[_ -]?confirmation"],
     "payment_receipt": [r"payment[_ -]?receipt"],
+    "signature_page": [r"signature[_ -]?pages?"],
     "registered_agent_consent": [
         r"consent[_ -]?to[_ -]?appointment[_ -]?by[_ -]?registered[_ -]?agent",
         r"registered[_ -]?agent[_ -]?consent",
@@ -69,6 +77,12 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "final_evaluation": [r"final[_ -]?evaluation"],
     "operating_agreement": [r"operating[_ -]?agreement"],
     "i983": [r"(?:^|[^a-z0-9])i-?983(?:[^a-z0-9]|$)", r"training[_ -]?plan"],
+    "non_disclosure_agreement": [
+        r"(?:^|[^a-z0-9])nda(?:[^a-z0-9]|$)",
+        r"non[_ -]?disclosure",
+        r"confidentiality[_ -]?agreement",
+    ],
+    "news_article": [r"morningstar", r"strategic[_ -]?investments?", r"announces"],
     "employment_contract": [
         r"employment[_ -]?contract",
         r"contract.*signed[_ -]?letter",
@@ -79,6 +93,8 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
         r"resignation[_ -]?notice",
         r"finalized.*employment",
         r"reminder.*action[_ -]?needed.*employment",
+        r"floating[_ -]?holiday[_ -]?utilization",
+        r"request[_ -]?for[_ -]?pto",
     ],
     "employment_letter": [
         r"employment[_ -]?letter",
@@ -133,11 +149,32 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "h1b_g28": [r"(?:^|[^a-z0-9])g[_ -]?28(?:[^a-z0-9]|$)"],
     "h1b_filing_invoice": [r"invoice[_ -]?part[_ -]?i"],
     "h1b_filing_fee_receipt": [r"transaction[_ -]?#?\d{5,}"],
+    "employment_screenshot": [
+        r"screenshot[_ -]?from[_ -]?justwork",
+        r"whatsapp[_ -]?image",
+        r"img[_ -]?94(?:55|56|57|58|59|60|61)",
+    ],
 }
 
 PATH_PATTERNS: dict[str, list[str]] = {
+    "account_security_setup": [r"/treasury pass\.png$"],
     "bank_statement": [r"/(?:tax|w2)/\d{0,4}/?bank_document_", r"/w2/bank_document_"],
+    "bank_account_record": [r"/新春竹_对公账户\.pic\.jpg$"],
     "resume": [r"/cv & cover letters/cv\d{6}/(?:chenyu|cheney|李宸宇)[^/]*\.pdf$"],
+    "chat_export_asset": [
+        r"/employment/bitsync/chatexport_2024-12-14(?: \(\d+\))?/(?:images|photos)/[^/]+\.(?:png|jpe?g)$",
+    ],
+    "company_filing": [r"/veeup\.cc/网站备案\.png$", r"/授权书/\d+_\.pic\.jpg$"],
+    "degree_certificate": [
+        r"/cv & cover letters/transcript&diploma/20210713112836-0001\.pdf$",
+        r"/cv & cover letters/transcript&diploma/img_0514\.jpe?g$",
+    ],
+    "employment_screenshot": [
+        r"/employment/rai/screenshot from justwork\.png$",
+        r"/employment/wolff & li/whatsapp image \d{4}-\d{2}-\d{2} at [0-9.]+\.jpe?g$",
+        r"/employment/bitsync/will communications/img_94(?:55|56|57|58|59|60|61)\.png$",
+    ],
+    "ein_application": [r"/yangtze capital/yangtze capital\.pdf$"],
     "final_evaluation": [
         r"/employment/claudius/12 month \(page-5\) \.pdf$",
         r"/stem opt/i983/.*/final evaluation opt\.pdf$",
@@ -149,15 +186,31 @@ PATH_PATTERNS: dict[str, list[str]] = {
     ],
     "insurance_record": [r"/medical/n\d+_template"],
     "identity_document": [r"/mom id/"],
-    "i20": [r"/i20/cu[_ -]?(?:original|opt|stemopt[_ -]?23(?:_signed)?|travel[_ -]?22|travel[_ -]?23)\.pdf$"],
+    "i20": [
+        r"/i20/cu[_ -]?(?:original|opt|stemopt[_ -]?23(?:_signed)?|travel[_ -]?22|travel[_ -]?23)\.pdf$",
+        r"/i20/i20/\d+[^/]*\.pic\.png$",
+        r"/i20/i20/i-20 travel\.rtfd/[^/]+\.(?:png|jpe?g)$",
+    ],
     "admission_letter": [r"/i20/i20/admission[_ -]?letter\.pdf$"],
     "enrollment_verification": [r"/i20/(?:ciam|westcliff).*continued[_ -]?attend(?:ance|ence)\.pdf$"],
     "transfer_pending_letter": [r"/i20/(?:ciam|westcliff).*transfer[_ -]?pending\.pdf$"],
     "lease": [r"/lease/[^/]+_\d+\.pdf$"],
+    "1099": [r"/tax/\d{4}/document\.pdf$"],
+    "non_disclosure_agreement": [
+        r"/employment/rai/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$",
+    ],
+    "news_article": [r"/employment/rai/.*morningstar\.pdf$"],
+    "signature_page": [r"/employment/vcv/signature pages\.pdf$"],
+    "check_image": [r"/employment/wolff & li/blank_stock_check_payment\.pdf$"],
 }
 
 
 PATTERNS: dict[str, list[str]] = {
+    "account_security_setup": [
+        r"TreasuryDirect",
+        r"Answer Three Security Questions",
+        r"Security Questions",
+    ],
     "articles_of_organization": [
         r"Articles of Organization",
         r"Limited Liability Company Articles of Organization",
@@ -224,6 +277,16 @@ PATTERNS: dict[str, list[str]] = {
         r"awarded the degree",
         r"学历认证",
         r"学位认证",
+    ],
+    "chat_export_asset": [
+        r"media_call",
+        r"media_contact",
+        r"section_chats",
+    ],
+    "check_image": [
+        r"Pay to the Order of",
+        r"Memo",
+        r"Check Number",
     ],
     "drivers_license": [
         r"DRIVER'?S LICENSE",
@@ -304,6 +367,17 @@ PATTERNS: dict[str, list[str]] = {
         r"TRAINING PLAN FOR STEM OPT STUDENTS",
         r"Form I-983",
         r"STEM Optional Practical Training",
+    ],
+    "non_disclosure_agreement": [
+        r"Non[- ]Disclosure",
+        r"Confidential(?:ity| Information)",
+        r"Receiving Party",
+        r"Disclosing Party",
+    ],
+    "news_article": [
+        r"Morningstar",
+        r"Strategic Investments",
+        r"XR and AI Innovation",
     ],
     "i20": [
         r"Certificate of Eligibility for Nonimmigrant Student Status",
@@ -532,6 +606,11 @@ PATTERNS: dict[str, list[str]] = {
         r"Approval Code",
         r"H1B registration",
     ],
+    "signature_page": [
+        r"Signature Page",
+        r"Sign Here",
+        r"DocuSign",
+    ],
     "employment_contract": [
         r"Employment Contract",
         r"at will employment",
@@ -548,11 +627,18 @@ PATTERNS: dict[str, list[str]] = {
         r"return of company property",
         r"all parties have finalized the document",
         r"sent you .* to review and complete",
+        r"Floating Holiday Utilization",
+    ],
+    "employment_screenshot": [
+        r"Justworks",
+        r"WhatsApp",
+        r"Will Communications",
     ],
 }
 
 
 TEXT_MIN_MATCHES: dict[str, int] = {
+    "account_security_setup": 2,
     "articles_of_organization": 2,
     "annual_account_summary": 2,
     "bank_account_application": 2,
@@ -566,6 +652,8 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "cpt_application": 2,
     "degree_certificate": 2,
     "drivers_license": 2,
+    "chat_export_asset": 1,
+    "check_image": 2,
     "ein_application_instructions": 2,
     "admission_letter": 2,
     "enrollment_verification": 2,
@@ -582,6 +670,8 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "membership_welcome_packet": 2,
     "operating_agreement": 2,
     "i983": 2,
+    "non_disclosure_agreement": 2,
+    "news_article": 2,
     "employment_contract": 2,
     "employment_correspondence": 2,
     "employment_letter": 2,
@@ -597,6 +687,7 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "payment_account_record": 2,
     "payment_service_agreement": 2,
     "payment_receipt": 2,
+    "signature_page": 2,
     "public_key": 2,
     "recovery_codes": 2,
     "residence_certificate": 2,
@@ -624,6 +715,7 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "h1b_g28": 2,
     "h1b_filing_invoice": 2,
     "h1b_filing_fee_receipt": 2,
+    "employment_screenshot": 1,
 }
 
 OCR_TEXT_MIN_MATCH_OVERRIDES: dict[str, int] = {
@@ -644,11 +736,14 @@ OCR_REQUIRED_ANY_PATTERNS: dict[str, list[str]] = {
 DOC_TYPE_ALIASES: dict[str, str] = {
     "1042_s": "1042s",
     "1042s": "1042s",
+    "account_security_setup": "account_security_setup",
     "articles_of_organization": "articles_of_organization",
     "annual_account_summary": "annual_account_summary",
     "bank_account_application": "bank_account_application",
     "bank_account_record": "bank_account_record",
     "business_license": "business_license",
+    "chat_export_asset": "chat_export_asset",
+    "check_image": "check_image",
     "certificate_of_good_standing": "certificate_of_good_standing",
     "company_filing": "company_filing",
     "cpt_application": "cpt_application",
@@ -707,8 +802,11 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "transcript": "transcript",
     "membership_welcome_packet": "membership_welcome_packet",
     "name_change_notice": "name_change_notice",
+    "news_article": "news_article",
+    "non_disclosure_agreement": "non_disclosure_agreement",
     "order_confirmation": "order_confirmation",
     "registered_agent_consent": "registered_agent_consent",
+    "signature_page": "signature_page",
     "operating_agreement": "operating_agreement",
     "bank_statement": "bank_statement",
     "collection_notice": "collection_notice",
@@ -745,13 +843,14 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "h_1b_fee_receipt": "h1b_filing_fee_receipt",
     "h1b_receipt": "h1b_filing_fee_receipt",
     "h_1b_receipt": "h1b_filing_fee_receipt",
+    "employment_screenshot": "employment_screenshot",
     "1099": "1099",
     "w2": "w2",
     "w4": "w4",
     "w_2": "w2",
 }
 
-SUPPORTED_DOC_TYPES = set(FILENAME_PATTERNS) | set(PATTERNS)
+SUPPORTED_DOC_TYPES = set(FILENAME_PATTERNS) | set(PATTERNS) | set(PATH_PATTERNS)
 
 
 def is_auto_doc_type(value: str | None) -> bool:

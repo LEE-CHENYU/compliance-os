@@ -851,3 +851,149 @@ batches:
     source_scope:
       - employment
     target_size: 10
+
+  - id: batch_31
+    number: 31
+    focus: employment legal and admin overflow including NDAs, signature packets, check images, tax forms, and EIN paperwork
+    status: completed
+    record: docs/data-room-batch-31.md
+    validation_hooks:
+      - name: batch_31_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_31_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 31
+    source_scope:
+      - employment
+      - Tax
+      - Yangtze Capital
+    target_size: 10
+
+  - id: batch_32
+    number: 32
+    focus: employment screenshot overflow across Justworks, WhatsApp, and recruiter chat captures
+    status: completed
+    record: docs/data-room-batch-32.md
+    validation_hooks:
+      - name: batch_32_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_32_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 32
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_33
+    number: 33
+    focus: Bitsync chat-export asset archive part one
+    status: completed
+    record: docs/data-room-batch-33.md
+    validation_hooks:
+      - name: batch_33_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_33_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 33
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_34
+    number: 34
+    focus: Bitsync chat-export asset archive part two
+    status: completed
+    record: docs/data-room-batch-34.md
+    validation_hooks:
+      - name: batch_34_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_34_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 34
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_35
+    number: 35
+    focus: education scans, student-admin screenshots, website filing artifacts, and account setup overflow
+    status: completed
+    record: docs/data-room-batch-35.md
+    validation_hooks:
+      - name: batch_35_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_35_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 35
+    source_scope:
+      - CV & Cover Letters
+      - i20
+      - Veeup.cc
+      - 授权书
+      - "[root]"
+    target_size: 10

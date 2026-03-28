@@ -28,6 +28,12 @@ class TextExtractionResult:
 
 
 SCHEMAS: dict[str, dict[str, str]] = {
+    "account_security_setup": {
+        "platform_name": "Platform or account system shown in the setup screen",
+        "setup_step": "Current setup step or screen title",
+        "account_identifier": "Visible account email, username, or masked identifier if shown",
+        "setup_date": "Date shown on the setup screen (YYYY-MM-DD) if visible",
+    },
     "articles_of_organization": {
         "entity_name": "Legal name of the company or LLC",
         "filing_state": "State where the articles were filed",
@@ -79,6 +85,11 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "jurisdiction": "Filing jurisdiction if visible",
         "filing_date": "Filing date (YYYY-MM-DD) if visible",
     },
+    "chat_export_asset": {
+        "archive_name": "Chat export archive folder name or bundle name if visible",
+        "asset_name": "Asset filename or UI asset name",
+        "asset_category": "Asset category such as image, icon, photo, or thumbnail",
+    },
     "registered_agent_consent": {
         "entity_name": "Name of the business entity",
         "registered_agent_name": "Name of the registered agent",
@@ -105,6 +116,13 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "account_reference": "Account or correspondence reference number if visible",
         "issue_date": "Issue date or notice date (YYYY-MM-DD) if visible",
         "balance_due": "Balance due amount (number only) if visible",
+    },
+    "check_image": {
+        "payor_name": "Name of the account holder or payer if visible",
+        "payee_name": "Payee line or named recipient if visible",
+        "check_date": "Check date (YYYY-MM-DD) if visible",
+        "amount": "Check amount (number only) if visible",
+        "memo": "Memo line or note if visible",
     },
     "debt_clearance_letter": {
         "issuer_name": "Issuer or collector name if visible",
@@ -221,6 +239,24 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "full_time": "Full-time or part-time (true for full-time)",
         "work_location": "Work location / office address",
     },
+    "employment_screenshot": {
+        "platform_name": "Platform or app shown in the screenshot",
+        "participants": "Visible participants, contacts, or user names if shown",
+        "screenshot_topic": "Short summary of the visible employment-related context",
+        "captured_date": "Visible screenshot or message date (YYYY-MM-DD) if shown",
+    },
+    "non_disclosure_agreement": {
+        "agreement_title": "Title of the NDA or confidentiality agreement",
+        "disclosing_party": "Disclosing party name if visible",
+        "receiving_party": "Receiving party name if visible",
+        "effective_date": "Agreement effective date (YYYY-MM-DD) if visible",
+    },
+    "news_article": {
+        "headline": "Article headline",
+        "publisher_name": "Publisher or outlet name",
+        "publication_date": "Publication date (YYYY-MM-DD) if visible",
+        "subject_entity": "Primary company or organization covered by the article",
+    },
     "tax_return": {
         "form_type": "Tax form type (1040, 1040-NR, 1120, 1120-S, 1065)",
         "tax_year": "Tax year (number)",
@@ -233,6 +269,13 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "form_3520_present": "Whether Form 3520 is attached (true/false)",
         "form_8938_present": "Whether Form 8938 is attached (true/false)",
         "state_returns_filed": "List of state abbreviations for state returns filed",
+    },
+    "1099": {
+        "form_variant": "1099 variant such as 1099-INT or 1099-NEC if visible",
+        "tax_year": "Tax year referenced by the form if visible (number)",
+        "recipient_name": "Recipient or payee name if visible",
+        "payer_name": "Payer or institution name if visible",
+        "amount": "Primary amount reported on the form (number only) if visible",
     },
     "degree_certificate": {
         "student_name": "Full name of the degree holder",
@@ -369,6 +412,12 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "receipt_number": "Receipt or transaction number if visible",
         "payment_date": "Payment date (YYYY-MM-DD) if visible",
         "amount_paid": "Payment amount (number only) if visible",
+    },
+    "signature_page": {
+        "document_title": "Title or agreement name associated with the signature page",
+        "signer_name": "Signer name if visible",
+        "signature_date": "Signature date (YYYY-MM-DD) if visible",
+        "signature_platform": "Signature platform or method if visible, such as DocuSign",
     },
     "public_key": {
         "key_owner": "Owner or system associated with the key if visible",
@@ -994,12 +1043,23 @@ def _normalize_selected_fields(
 def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[str, Any]:
     if doc_type == "1042s":
         return _normalize_1042s_result(text, result)
+    if doc_type == "1099":
+        normalized = _normalize_selected_fields(
+            result,
+            numeric_fields=("amount",),
+        )
+        tax_year = _normalize_year_value(normalized.get("tax_year"))
+        if tax_year is not None:
+            normalized["tax_year"] = tax_year
+        return normalized
     if doc_type == "bank_statement":
         return _normalize_selected_fields(
             result,
             date_fields=("statement_period_start", "statement_period_end"),
             numeric_fields=("ending_balance",),
         )
+    if doc_type == "account_security_setup":
+        return _normalize_selected_fields(result, date_fields=("setup_date",))
     if doc_type == "collection_notice":
         return _normalize_selected_fields(
             result,
@@ -1008,6 +1068,12 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
         )
     if doc_type == "debt_clearance_letter":
         return _normalize_selected_fields(result, date_fields=("clearance_date",))
+    if doc_type == "check_image":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("check_date",),
+            numeric_fields=("amount",),
+        )
     if doc_type == "cpt_application":
         return _normalize_selected_fields(result, date_fields=("approval_date",))
     if doc_type == "filing_confirmation":
@@ -1076,18 +1142,26 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
         )
     if doc_type == "employment_correspondence":
         return _normalize_selected_fields(result, date_fields=("correspondence_date",))
+    if doc_type == "employment_screenshot":
+        return _normalize_selected_fields(result, date_fields=("captured_date",))
     if doc_type == "paystub":
         return _normalize_selected_fields(
             result,
             date_fields=("pay_period_start", "pay_period_end", "pay_date"),
             numeric_fields=("gross_pay", "net_pay", "ytd_gross_pay"),
         )
+    if doc_type == "non_disclosure_agreement":
+        return _normalize_selected_fields(result, date_fields=("effective_date",))
+    if doc_type == "news_article":
+        return _normalize_selected_fields(result, date_fields=("publication_date",))
     if doc_type == "payment_receipt":
         return _normalize_selected_fields(
             result,
             date_fields=("payment_date",),
             numeric_fields=("amount_paid",),
         )
+    if doc_type == "signature_page":
+        return _normalize_selected_fields(result, date_fields=("signature_date",))
     if doc_type == "i9":
         return _normalize_selected_fields(
             result,

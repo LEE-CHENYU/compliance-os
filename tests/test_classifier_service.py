@@ -270,6 +270,51 @@ def test_batch_26_to_30_filename_and_text_classification_regressions():
     )
 
 
+def test_batch_31_to_35_filename_classification_regressions():
+    assert (
+        classify_filename("/tmp/employment/Rai/6ee18925-9e2b-40e2-b442-a956c4100c28.pdf").doc_type
+        == "non_disclosure_agreement"
+    )
+    assert (
+        classify_filename("/tmp/employment/Rai/Request for PTO and Floating Holiday Utilization 924  1011.pdf").doc_type
+        == "employment_correspondence"
+    )
+    assert classify_filename("/tmp/employment/VCV/Signature Pages.pdf").doc_type == "signature_page"
+    assert classify_filename("/tmp/employment/Wolff & Li/blank_stock_check_payment.pdf").doc_type == "check_image"
+    assert (
+        classify_filename(
+            "/tmp/employment/Rai/Glyde Digital Announces RAI Inc. Secures $45 Million in Strategic Investments to Advance XR and AI Innovation _ Morningstar.pdf"
+        ).doc_type
+        == "news_article"
+    )
+    assert classify_filename("/tmp/Tax/2024/document.pdf").doc_type == "1099"
+    assert classify_filename("/tmp/Yangtze Capital/Yangtze Capital.pdf").doc_type == "ein_application"
+    assert classify_filename("/tmp/employment/Rai/Screenshot from Justwork.png").doc_type == "employment_screenshot"
+    assert (
+        classify_filename("/tmp/employment/Bitsync/Will Communications/IMG_9455.PNG").doc_type
+        == "employment_screenshot"
+    )
+    assert (
+        classify_filename("/tmp/employment/Bitsync/ChatExport_2024-12-14/images/media_call.png").doc_type
+        == "chat_export_asset"
+    )
+    assert (
+        classify_filename("/tmp/employment/Bitsync/ChatExport_2024-12-14 (1)/images/media_game@2x.png").doc_type
+        == "chat_export_asset"
+    )
+    assert (
+        classify_filename("/tmp/CV & Cover Letters/transcript&diploma/20210713112836-0001.pdf").doc_type
+        == "degree_certificate"
+    )
+    assert classify_filename("/tmp/CV & Cover Letters/transcript&diploma/IMG_0514.JPG").doc_type == "degree_certificate"
+    assert classify_filename("/tmp/i20/I20/38911625468472_.pic.png").doc_type == "i20"
+    assert classify_filename("/tmp/i20/I20/I-20 Travel.rtfd/EmailTracker.cfm.jpg").doc_type == "i20"
+    assert classify_filename("/tmp/Veeup.cc/网站备案.png").doc_type == "company_filing"
+    assert classify_filename("/tmp/授权书/29431747363841_.pic.jpg").doc_type == "company_filing"
+    assert classify_filename("/tmp/treasury pass.png").doc_type == "account_security_setup"
+    assert classify_filename("/tmp/新春竹_对公账户.pic.jpg").doc_type == "bank_account_record"
+
+
 def test_single_reference_does_not_force_i94_or_ead_classification():
     assert classify_text("Enter your I-94 visa number.") .doc_type is None
     assert classify_text("Recipient's date of birth and federal tax withheld.") .doc_type is None

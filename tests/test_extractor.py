@@ -7,6 +7,7 @@ from compliance_os.web.services.extractor import SCHEMAS, extract_document
 
 
 def test_schemas_defined():
+    assert "account_security_setup" in SCHEMAS
     assert "annual_account_summary" in SCHEMAS
     assert "bank_account_application" in SCHEMAS
     assert "bank_account_record" in SCHEMAS
@@ -14,6 +15,8 @@ def test_schemas_defined():
     assert "articles_of_organization" in SCHEMAS
     assert "certificate_of_good_standing" in SCHEMAS
     assert "company_filing" in SCHEMAS
+    assert "chat_export_asset" in SCHEMAS
+    assert "check_image" in SCHEMAS
     assert "degree_certificate" in SCHEMAS
     assert "drivers_license" in SCHEMAS
     assert "registered_agent_consent" in SCHEMAS
@@ -37,7 +40,12 @@ def test_schemas_defined():
     assert "employment_contract" in SCHEMAS
     assert "employment_correspondence" in SCHEMAS
     assert "employment_letter" in SCHEMAS
+    assert "employment_screenshot" in SCHEMAS
+    assert "non_disclosure_agreement" in SCHEMAS
+    assert "news_article" in SCHEMAS
+    assert "signature_page" in SCHEMAS
     assert "tax_return" in SCHEMAS
+    assert "1099" in SCHEMAS
     assert "i94" in SCHEMAS
     assert "ead" in SCHEMAS
     assert "ein_application_instructions" in SCHEMAS
@@ -161,6 +169,52 @@ def test_extract_employment_correspondence():
         assert fields["sender_name"]["value"] == "Demidchik Law Firm"
         assert fields["correspondence_date"]["value"] == "2025-03-21"
         assert fields["subject_summary"]["value"] == "Response to unpaid wages demand and offer withdrawal"
+
+
+def test_extract_batch_31_to_35_new_document_families():
+    nda_result = {
+        "agreement_title": "Non-Disclosure Agreement",
+        "disclosing_party": "RAI Inc.",
+        "receiving_party": "Chenyu Li",
+        "effective_date": "March 1, 2025",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=nda_result):
+        fields = extract_document("non_disclosure_agreement", "Non-Disclosure Agreement")
+        assert fields["agreement_title"]["value"] == "Non-Disclosure Agreement"
+        assert fields["effective_date"]["value"] == "2025-03-01"
+
+    screenshot_result = {
+        "platform_name": "Justworks",
+        "participants": "Chenyu Li",
+        "screenshot_topic": "Employment portal screenshot",
+        "captured_date": "03/20/2025",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=screenshot_result):
+        fields = extract_document("employment_screenshot", "Justworks screenshot")
+        assert fields["platform_name"]["value"] == "Justworks"
+        assert fields["captured_date"]["value"] == "2025-03-20"
+
+    article_result = {
+        "headline": "Glyde Digital Announces RAI Inc. Secures $45 Million",
+        "publisher_name": "Morningstar",
+        "publication_date": "2025-02-14",
+        "subject_entity": "RAI Inc.",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=article_result):
+        fields = extract_document("news_article", "Morningstar article")
+        assert fields["publisher_name"]["value"] == "Morningstar"
+        assert fields["publication_date"]["value"] == "2025-02-14"
+
+    account_setup_result = {
+        "platform_name": "TreasuryDirect",
+        "setup_step": "Answer Three Security Questions",
+        "account_identifier": "chenyu@example.com",
+        "setup_date": "03/01/2026",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=account_setup_result):
+        fields = extract_document("account_security_setup", "TreasuryDirect Answer Three Security Questions")
+        assert fields["platform_name"]["value"] == "TreasuryDirect"
+        assert fields["setup_date"]["value"] == "2026-03-01"
 
 
 def test_extract_tax_return():

@@ -155,9 +155,29 @@ Extension counts:
   - focus: employment agreements, reminders, legal responses, and HR correspondence
   - status: completed
   - record: `docs/data-room-batch-30.md`
+- Batch 31:
+  - focus: employment legal and admin overflow including NDAs, signature packets, check images, tax forms, and EIN paperwork
+  - status: completed
+  - record: `docs/data-room-batch-31.md`
+- Batch 32:
+  - focus: employment screenshot overflow across Justworks, WhatsApp, and recruiter chat captures
+  - status: completed
+  - record: `docs/data-room-batch-32.md`
+- Batch 33:
+  - focus: Bitsync chat-export asset archive part one
+  - status: completed
+  - record: `docs/data-room-batch-33.md`
+- Batch 34:
+  - focus: Bitsync chat-export asset archive part two
+  - status: completed
+  - record: `docs/data-room-batch-34.md`
+- Batch 35:
+  - focus: education scans, student-admin screenshots, website filing artifacts, and account setup overflow
+  - status: completed
+  - record: `docs/data-room-batch-35.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `30` stable under focused tests plus real-source validation.
+1. Keep Batches `01` through `35` stable under focused tests plus real-source validation.
 2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
 3. Start the next round from still-unbatched source slices instead of reopening resolved batches.
