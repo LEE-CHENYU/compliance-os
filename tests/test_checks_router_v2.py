@@ -494,6 +494,57 @@ def test_evaluate_endpoint(client, db_session):
     assert isinstance(findings, list)
 
 
+def test_data_room_evaluate_endpoint_uses_data_room_rules(client, db_session):
+    check = CheckRow(track="data_room", status="extracted", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    passport = DocumentRow(
+        check_id=check.id,
+        doc_type="passport",
+        filename="passport.jpeg",
+        file_path="/tmp/passport.jpeg",
+        file_size=100,
+        mime_type="image/jpeg",
+    )
+    ead = DocumentRow(
+        check_id=check.id,
+        doc_type="ead",
+        filename="ead.pdf",
+        file_path="/tmp/ead.pdf",
+        file_size=100,
+        mime_type="application/pdf",
+    )
+    db_session.add_all([passport, ead])
+    db_session.flush()
+    db_session.add_all(
+        [
+            ExtractedFieldRow(
+                document_id=passport.id,
+                field_name="date_of_birth",
+                field_value="1998-09-18",
+                confidence=0.9,
+            ),
+            ExtractedFieldRow(
+                document_id=ead.id,
+                field_name="date_of_birth",
+                field_value="1998-09-01",
+                confidence=0.9,
+            ),
+        ]
+    )
+    db_session.commit()
+
+    compare_resp = client.post(f"/api/checks/{check.id}/compare")
+    assert compare_resp.status_code == 200
+
+    evaluate_resp = client.post(f"/api/checks/{check.id}/evaluate")
+    assert evaluate_resp.status_code == 200
+    findings = evaluate_resp.json()
+
+    assert any(finding["rule_id"] == "passport_ead_birthdate_mismatch" for finding in findings)
+
+
 def test_followups_generated_from_mismatches(client, db_session):
     check = CheckRow(track="stem_opt", status="extracted", answers={"stage": "stem_opt"})
     db_session.add(check)

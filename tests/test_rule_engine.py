@@ -144,3 +144,19 @@ def test_needs_review_triggers_mismatch_rule(engine):
     findings = engine.evaluate(ctx)
     rule_ids = [f.rule_id for f in findings]
     assert "location_mismatch" in rule_ids
+
+
+def test_data_room_rules_load_and_fire():
+    engine = RuleEngine.from_yaml("config/rules/data_room.yaml")
+
+    ctx = EvaluationContext(
+        answers={"stage": "data_room"},
+        extraction_a={},
+        extraction_b={},
+        comparisons={"passport_ead_date_of_birth": {"status": "mismatch", "confidence": 0.0}},
+    )
+
+    findings = engine.evaluate(ctx)
+    rule_ids = [f.rule_id for f in findings]
+
+    assert "passport_ead_birthdate_mismatch" in rule_ids

@@ -2,7 +2,7 @@
 
 Source folder: `/Users/lichenyu/Desktop/Important Docs `
 
-Snapshot date: `2026-03-27`
+Snapshot date: `2026-03-28`
 
 ## Current inventory
 
@@ -49,15 +49,35 @@ Extension counts:
   - record: `docs/data-room-batch-03.md`
 - Batch 04:
   - focus: H-1B petition notices, status summaries, receipt/approval evidence, and supporting filings
-  - status: planned
+  - status: completed
   - record: `docs/data-room-batch-04.md`
 - Batch 05:
   - focus: identity, travel, `I-20` history, and overflow tax/personal archive records
-  - status: planned
+  - status: completed
   - record: `docs/data-room-batch-05.md`
+- Batch 06:
+  - focus: root-level identity, visa, EAD, diploma, and transcript anchors
+  - status: completed
+  - record: `docs/data-room-batch-06.md`
+- Batch 07:
+  - focus: employment continuity across additional `I-9`, offer-letter, and paystub records
+  - status: completed
+  - record: `docs/data-room-batch-07.md`
+- Batch 08:
+  - focus: STEM OPT archive continuity across additional `I-983` versions and support records
+  - status: completed
+  - record: `docs/data-room-batch-08.md`
+- Batch 09:
+  - focus: BSGC archive governance, EIN, operating-agreement, and contract records
+  - status: completed
+  - record: `docs/data-room-batch-09.md`
+- Batch 10:
+  - focus: tax overflow plus H-1B employee passport, visa, EAD, and transcript evidence
+  - status: completed
+  - record: `docs/data-room-batch-10.md`
 
 ## Current priorities
 
-1. Run the first-round batch loop across Batches `01` through `05` and keep unresolved batches in queue until their recorded gaps are cleared.
-2. Add support for the H-1B status-summary / notice family if it proves operationally useful.
-3. Extend rule-based review and retrieval prompts to use the new payroll, `I-9`, E-Verify, `I-765`, and H-1B registration fields.
+1. Keep Batches `01` through `10` stable under focused tests plus real-source validation.
+2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
+3. Start the next round from unbatched source slices instead of reopening resolved batches.

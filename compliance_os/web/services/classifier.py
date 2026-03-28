@@ -17,22 +17,48 @@ AUTO_DOC_TYPE_VALUES = {"", "auto", "autodetect", "detect", "unknown"}
 
 FILENAME_PATTERNS: dict[str, list[str]] = {
     "articles_of_organization": [r"articles?[_ -]?of[_ -]?organization"],
+    "annual_account_summary": [r"year[_ -]?end[_ -]?summary", r"account[_ -]?summaries?"],
+    "bank_account_application": [r"\btda\d{3,}\b", r"treasurydirect"],
     "certificate_of_good_standing": [
         r"cert(?:ificate)?[_ -]?of[_ -]?good[_ -]?standing",
         r"good[_ -]?standing",
     ],
+    "degree_certificate": [r"diploma", r"degree[_ -]?certificate"],
+    "drivers_license": [r"driver[’']?s[_ -]?license", r"drivers[_ -]?license"],
+    "ein_application_instructions": [
+        r"ein.*instructions",
+        r"individual[_ -]?request.*instructions",
+    ],
     "registered_agent_consent": [
         r"consent[_ -]?to[_ -]?appointment[_ -]?by[_ -]?registered[_ -]?agent",
         r"registered[_ -]?agent[_ -]?consent",
+        r"filing[/_ -]?consent",
     ],
+    "operating_agreement": [r"operating[_ -]?agreement"],
     "i983": [r"(?:^|[^a-z0-9])i-?983(?:[^a-z0-9]|$)", r"training[_ -]?plan"],
-    "employment_letter": [r"employment[_ -]?letter", r"offer[_ -]?letter", r"employment[_ -]?offer"],
+    "employment_contract": [r"employment[_ -]?contract"],
+    "employment_letter": [
+        r"employment[_ -]?letter",
+        r"offer[_ -]?letter",
+        r"employment[_ -]?offer",
+        r"employer[_ -]?letter",
+        r"stemopt[_ -]?employer[_ -]?letter",
+        r"vcv[_ -]?full[_ -]?time",
+        r"vcv[_ -]?internship",
+    ],
     "i20": [r"(?:^|[^a-z0-9])i-?20(?:[^a-z0-9]|$)"],
     "i94": [r"(?:^|[^a-z0-9])i-?94(?:[^a-z0-9]|$)"],
     "ead": [r"(?:^|[^a-z0-9])ead(?:[^a-z0-9]|$)", r"employment[_ -]?authorization"],
-    "ein_letter": [r"\bcp[_ -]?575\b", r"\bein\b"],
-    "ein_application": [r"\bein[_ -]?(?:individual[_ -]?request|application)\b"],
+    "ein_letter": [r"cp[_ -]?575"],
+    "ein_application": [r"\bein[_ -]?(?:individual[_ -]?request|application)\b", r"online[_ -]?application"],
+    "social_security_card": [r"(?:^|[^a-z0-9])ssn(?:[^a-z0-9]|$)", r"social[_ -]?security"],
+    "student_id": [r"student[_ -]?id", r"student[_ -]?identification"],
+    "support_request": [r"requests?[_ -]?for[_ -]?employment[_ -]?and[_ -]?immigration[_ -]?support", r"support[_ -]?request"],
+    "tax_interview": [r"tax[_ -]?interview"],
+    "transcript": [r"transcript", r"ecertification", r"etran(?:script|scription)", r"\u6210\u7ee9\u5355"],
+    "visa_stamp": [r"(?:^|[^a-z0-9])visa(?:[^a-z0-9]|$)", r"visa[_ -]?stamp"],
     "w2": [r"(?:^|[^a-z0-9])w-?2(?:[^a-z0-9]|$)"],
+    "w4": [r"(?:^|[^a-z0-9])w-?4(?:[^a-z0-9]|$)"],
     "passport": [r"(?:^|[^a-z0-9])passport(?:[^a-z0-9]|$)"],
     "1042s": [r"(?:^|[^a-z0-9])1042-?s(?:[^a-z0-9]|$)"],
     "tax_return": [r"tax[_ -]?return", r"(?:^|[^a-z0-9])1040(?:-nr)?(?:[^a-z0-9]|$)", r"(?:^|[^a-z0-9])1120(?:-s)?(?:[^a-z0-9]|$)", r"(?:^|[^a-z0-9])1065(?:[^a-z0-9]|$)"],
@@ -57,15 +83,49 @@ PATTERNS: dict[str, list[str]] = {
         r"Limited Liability Company Articles of Organization",
         r"The name of the limited liability company is",
     ],
+    "annual_account_summary": [
+        r"Year[- ]?End Summary",
+        r"Account Summaries",
+        r"Account Summary",
+    ],
+    "bank_account_application": [
+        r"TDA\s*\d{3,}",
+        r"TreasuryDirect",
+        r"entity account",
+    ],
     "certificate_of_good_standing": [
         r"good standing",
         r"Secretary of State",
         r"entity identification number",
     ],
+    "degree_certificate": [
+        r"Diploma",
+        r"degree of",
+        r"has conferred upon",
+        r"awarded the degree",
+    ],
+    "drivers_license": [
+        r"DRIVER'?S LICENSE",
+        r"DLN",
+        r"CLASS",
+        r"\bISS\b",
+        r"\bEXP\b",
+    ],
+    "ein_application_instructions": [
+        r"EIN Individual Request",
+        r"Instructions",
+        r"Online EIN application",
+    ],
     "registered_agent_consent": [
         r"Consent to Appointment by Registered Agent",
         r"registered agent",
         r"voluntarily consent to serve",
+    ],
+    "operating_agreement": [
+        r"Operating Agreement",
+        r"Limited Liability Company Agreement",
+        r"member[- ]managed",
+        r"manager[- ]managed",
     ],
     "i983": [
         r"TRAINING PLAN FOR STEM OPT STUDENTS",
@@ -95,7 +155,41 @@ PATTERNS: dict[str, list[str]] = {
         r"Summary of your information",
         r"Organization Type:\s*LLC",
     ],
+    "social_security_card": [
+        r"Social Security",
+        r"name shown on card",
+        r"This number has been established",
+    ],
+    "student_id": [
+        r"Student ID",
+        r"Student Identification",
+        r"University ID",
+    ],
+    "support_request": [
+        r"Employment and Immigration Support",
+        r"support request",
+        r"request for guidance",
+    ],
+    "tax_interview": [
+        r"Tax Interview",
+        r"tax residency",
+        r"substantial presence",
+    ],
+    "transcript": [
+        r"Official Transcript",
+        r"Academic Transcript",
+        r"eTranscript",
+        r"eCertification",
+        r"\u6210\u7ee9\u5355",
+    ],
+    "visa_stamp": [
+        r"Visa",
+        r"Issuing Post",
+        r"Entries",
+        r"Visa Type",
+    ],
     "w2": [r"Wage and Tax Statement", r"Form W-2"],
+    "w4": [r"Employee'?s Withholding Certificate", r"Form W-4"],
     "1042s": [
         r"Form 1042-S",
         r"withholding agent",
@@ -186,22 +280,42 @@ PATTERNS: dict[str, list[str]] = {
         r"Approval Code",
         r"H1B registration",
     ],
+    "employment_contract": [
+        r"Employment Contract",
+        r"at will employment",
+        r"confidentiality",
+        r"non-solicitation",
+    ],
 }
 
 
 TEXT_MIN_MATCHES: dict[str, int] = {
     "articles_of_organization": 2,
+    "annual_account_summary": 2,
+    "bank_account_application": 2,
     "certificate_of_good_standing": 2,
+    "degree_certificate": 2,
+    "drivers_license": 2,
+    "ein_application_instructions": 2,
     "registered_agent_consent": 2,
+    "operating_agreement": 2,
     "i983": 2,
+    "employment_contract": 2,
     "employment_letter": 2,
     "i20": 2,
     "i94": 2,
     "ead": 2,
+    "social_security_card": 2,
+    "student_id": 2,
+    "support_request": 2,
+    "tax_interview": 2,
+    "transcript": 2,
+    "visa_stamp": 2,
     "passport": 2,
     "ein_letter": 2,
     "ein_application": 2,
     "w2": 2,
+    "w4": 2,
     "1042s": 2,
     "tax_return": 2,
     "1099": 2,
@@ -238,11 +352,19 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "1042_s": "1042s",
     "1042s": "1042s",
     "articles_of_organization": "articles_of_organization",
+    "annual_account_summary": "annual_account_summary",
+    "bank_account_application": "bank_account_application",
     "certificate_of_good_standing": "certificate_of_good_standing",
     "cp_575": "ein_letter",
+    "degree_certificate": "degree_certificate",
+    "diploma": "degree_certificate",
+    "drivers_license": "drivers_license",
+    "driver_s_license": "drivers_license",
     "ead": "ead",
     "ein_application": "ein_application",
+    "ein_application_instructions": "ein_application_instructions",
     "ein_letter": "ein_letter",
+    "employment_contract": "employment_contract",
     "employment_letter": "employment_letter",
     "employment_offer": "employment_letter",
     "employment_offer_letter": "employment_letter",
@@ -264,11 +386,20 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "passport": "passport",
     "paystub": "paystub",
     "pay_stub": "paystub",
+    "social_security_card": "social_security_card",
+    "ssn": "social_security_card",
+    "student_id": "student_id",
+    "support_request": "support_request",
+    "tax_interview": "tax_interview",
+    "transcript": "transcript",
     "registered_agent_consent": "registered_agent_consent",
+    "operating_agreement": "operating_agreement",
     "tax_return": "tax_return",
     "e_verify": "e_verify_case",
     "e_verify_case": "e_verify_case",
     "everify": "e_verify_case",
+    "visa": "visa_stamp",
+    "visa_stamp": "visa_stamp",
     "h1b_registration": "h1b_registration",
     "h_1b_registration": "h1b_registration",
     "h1b_status_summary": "h1b_status_summary",
@@ -291,6 +422,7 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "h_1b_receipt": "h1b_filing_fee_receipt",
     "1099": "1099",
     "w2": "w2",
+    "w4": "w4",
     "w_2": "w2",
 }
 
@@ -378,8 +510,22 @@ def classify_text(
 
 def classify_filename(file_path: str) -> Classification:
     """Classify a document using only its filename."""
-    filename = Path(file_path).name.lower()
-    return _best_scored_match(filename, FILENAME_PATTERNS, source="filename")
+    path = Path(file_path)
+    filename = path.name.lower()
+    by_name = _best_scored_match(filename, FILENAME_PATTERNS, source="filename")
+    if by_name.doc_type:
+        return by_name
+
+    stem = path.stem.lower()
+    generic_prefixes = ("img", "image", "photo", "scan", "document", "wechatimg")
+    generic_stem = stem.startswith(generic_prefixes) or stem.isdigit() or stem in {"consent"}
+    if generic_stem and path.parent.name:
+        contextual_name = f"{path.parent.name.lower()}/{filename}"
+        by_parent = _best_scored_match(contextual_name, FILENAME_PATTERNS, source="filename")
+        if by_parent.doc_type:
+            return by_parent
+
+    return Classification(doc_type=None, confidence=None)
 
 
 def classify_file(file_path: str, mime_type: str, *, allow_ocr: bool = True) -> Classification:

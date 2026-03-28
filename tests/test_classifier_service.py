@@ -136,6 +136,52 @@ def test_batch_05_identity_travel_archive_classification():
     )
 
 
+def test_batch_06_root_identity_and_education_classification():
+    assert classify_filename("/tmp/visa.jpeg").doc_type == "visa_stamp"
+    assert classify_filename("/tmp/SSN.jpg").doc_type == "social_security_card"
+    assert classify_filename("/tmp/Student ID.jpg").doc_type == "student_id"
+    assert classify_filename("/tmp/Driver’s license （中）.jpeg").doc_type == "drivers_license"
+    assert classify_filename("/tmp/diploma.pdf").doc_type == "degree_certificate"
+    assert classify_filename("/tmp/Transcript for Waseda University.pdf").doc_type == "transcript"
+    assert classify_filename("/tmp/李宸宇_本科生英文成绩单.pdf").doc_type == "transcript"
+
+
+def test_batch_07_to_10_filename_classification_regressions():
+    assert classify_filename("/tmp/employment/VCV/vcv_full_time.pdf").doc_type == "employment_letter"
+    assert classify_filename("/tmp/employment/VCV/vcv_internship.pdf").doc_type == "employment_letter"
+    assert classify_filename("/tmp/stem opt/letter/stemoptemployerletter.pdf").doc_type == "employment_letter"
+    assert (
+        classify_filename("/tmp/stem opt/request/Requests for Employment and Immigration Support& Support.pdf").doc_type
+        == "support_request"
+    )
+    assert (
+        classify_filename("/tmp/BSGC/Filing/Archive/EIN Individual Request - Instructions.pdf").doc_type
+        == "ein_application_instructions"
+    )
+    assert classify_filename("/tmp/BSGC/Filing/Archive/CP575Notice_1684523211250.pdf").doc_type == "ein_letter"
+    assert (
+        classify_filename("/tmp/BSGC/Filing/Archive/EIN Individual Request - Online Application 2.pdf").doc_type
+        == "ein_application"
+    )
+    assert (
+        classify_filename("/tmp/BSGC/Filing/EIN Individual Request - Online Application.pdf").doc_type
+        == "ein_application"
+    )
+    assert (
+        classify_filename("/tmp/BSGC/Filing/Archive/Wyoming-Single-Member-LLC-Operating-Agreement.pdf").doc_type
+        == "operating_agreement"
+    )
+    assert classify_filename("/tmp/BSGC/Filing/Consent.pdf").doc_type == "registered_agent_consent"
+    assert classify_filename("/tmp/BSGC/Filing/Tax-interview.pdf").doc_type == "tax_interview"
+    assert classify_filename("/tmp/BSGC/TDA1186.pdf").doc_type == "bank_account_application"
+    assert classify_filename("/tmp/BSGC/lawdepot.com-EMPLOYMENT CONTRACT.pdf").doc_type == "employment_contract"
+    assert classify_filename("/tmp/Tax/2024/Year-End Summary - 2024_2025-03-07_619.PDF").doc_type == "annual_account_summary"
+    assert classify_filename("/tmp/Tax/2025/US_W-4_2024.pdf").doc_type == "w4"
+    assert classify_filename("/tmp/H1b Petition/Employee/Passport/IMG_0991大.jpeg").doc_type == "passport"
+    assert classify_filename("/tmp/H1b Petition/Employee/EAD/IMG_0996.jpeg").doc_type == "ead"
+    assert classify_filename("/tmp/H1b Petition/Employee/Transcript/40697019_eTranscript.pdf").doc_type == "transcript"
+
+
 def test_single_reference_does_not_force_i94_or_ead_classification():
     assert classify_text("Enter your I-94 visa number.") .doc_type is None
     assert classify_text("Recipient's date of birth and federal tax withheld.") .doc_type is None

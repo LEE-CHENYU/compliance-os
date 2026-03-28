@@ -566,6 +566,13 @@ def run_evaluation(check_id: str, db: Session = Depends(get_session)):
             extraction_b=emp or {},
             comparisons=comp_dict,
         )
+    elif check.track == "data_room":
+        ctx = EvaluationContext(
+            answers=check.answers or {},
+            extraction_a={},
+            extraction_b={},
+            comparisons=comp_dict,
+        )
     else:
         ctx = EvaluationContext(
             answers=check.answers or {},

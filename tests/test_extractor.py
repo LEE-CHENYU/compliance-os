@@ -7,22 +7,36 @@ from compliance_os.web.services.extractor import SCHEMAS, extract_document
 
 
 def test_schemas_defined():
+    assert "annual_account_summary" in SCHEMAS
+    assert "bank_account_application" in SCHEMAS
     assert "articles_of_organization" in SCHEMAS
     assert "certificate_of_good_standing" in SCHEMAS
+    assert "degree_certificate" in SCHEMAS
+    assert "drivers_license" in SCHEMAS
     assert "registered_agent_consent" in SCHEMAS
     assert "i983" in SCHEMAS
+    assert "employment_contract" in SCHEMAS
     assert "employment_letter" in SCHEMAS
     assert "tax_return" in SCHEMAS
     assert "i94" in SCHEMAS
     assert "ead" in SCHEMAS
+    assert "ein_application_instructions" in SCHEMAS
     assert "w2" in SCHEMAS
+    assert "w4" in SCHEMAS
     assert "ein_letter" in SCHEMAS
+    assert "social_security_card" in SCHEMAS
+    assert "student_id" in SCHEMAS
+    assert "support_request" in SCHEMAS
+    assert "tax_interview" in SCHEMAS
+    assert "transcript" in SCHEMAS
+    assert "visa_stamp" in SCHEMAS
     assert "passport" in SCHEMAS
     assert "1042s" in SCHEMAS
     assert "lease" in SCHEMAS
     assert "insurance_policy" in SCHEMAS
     assert "health_coverage_application" in SCHEMAS
     assert "ein_application" in SCHEMAS
+    assert "operating_agreement" in SCHEMAS
     assert "paystub" in SCHEMAS
     assert "i9" in SCHEMAS
     assert "e_verify_case" in SCHEMAS

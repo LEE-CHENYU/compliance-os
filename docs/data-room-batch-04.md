@@ -58,19 +58,24 @@ Focused Batch 04 regression suite:
 
 - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python -m pytest tests/test_classifier_service.py tests/test_extractor.py tests/test_checks_router_v2.py -q`
 - result: `61 passed`
+- `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/validate_data_room_batch.py --manifest config/data_room_batches.yaml --batch-number 04`
+- result: real-source checks passed for `10/10` manifest files against `/Users/lichenyu/Desktop/Important Docs `
 
 Required loop validation command:
 
 - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/data_room_batch_loop.py --manifest /Users/lichenyu/compliance-os/config/data_room_batches.yaml --batch-number 04 --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-validate`
 - session log: `logs/data-room-batch-loop-agent-validate/20260328T074000Z`
 - hook result: `batch_04_focused_tests` passed (`61 passed`)
+- hook result: `batch_04_real_source_validation` passed
 - batch state: `resolved: true` (remaining unresolved issues: `0`)
+- residual-fix confirmation log: `logs/data-room-batch-loop-residual-fix/20260328T082648Z-01`
 
 Post-update assessment confirmation:
 
 - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/data_room_batch_loop.py --manifest /Users/lichenyu/compliance-os/config/data_room_batches.yaml --batch-number 04 --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-assess`
 - session log: `logs/data-room-batch-loop-agent-assess/20260328T074012Z`
 - hook result: `batch_04_focused_tests` passed (`61 passed`)
+- hook result: `batch_04_real_source_validation` passed
 - batch state: `resolved: true` (remaining unresolved issues: `0`)
 
 ## Current batch blockers

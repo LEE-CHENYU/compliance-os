@@ -54,10 +54,17 @@ Cross-document checks now include:
 Focused Batch 05 regression suite:
 
 - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python -m pytest tests/test_classifier_service.py tests/test_extractor.py tests/test_checks_router_v2.py -q`
+- result: `65 passed`
+- `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/validate_data_room_batch.py --manifest config/data_room_batches.yaml --batch-number 05`
+- result: real-source checks passed for `10/10` manifest files against `/Users/lichenyu/Desktop/Important Docs `
 
 Required loop validation command:
 
 - `/Users/lichenyu/miniconda3/envs/compliance-os/bin/python scripts/data_room_batch_loop.py --manifest /Users/lichenyu/compliance-os/config/data_room_batches.yaml --batch-number 05 --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-validate`
+- session log: `logs/data-room-batch-loop-residual-fix/20260328T082648Z`
+- hook result: `batch_05_focused_tests` passed (`65 passed`)
+- hook result: `batch_05_real_source_validation` passed
+- batch state: `resolved: true` (remaining unresolved issues: `0`)
 
 ## Current batch blockers
 

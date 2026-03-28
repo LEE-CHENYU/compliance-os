@@ -1,4 +1,4 @@
-source_root: /Users/lichenyu/Desktop/Important Docs
+source_root: "/Users/lichenyu/Desktop/Important Docs "
 
 batches:
   - id: batch_01
@@ -87,6 +87,14 @@ batches:
           tests/test_extractor.py
           tests/test_checks_router_v2.py
           -q
+      - name: batch_04_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 04
     source_scope:
       - H1b Petition
     target_size: 10
@@ -107,9 +115,159 @@ batches:
           tests/test_extractor.py
           tests/test_checks_router_v2.py
           -q
+      - name: batch_05_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 05
     source_scope:
       - i20
       - Personal Info Archive
       - Tax
+      - "[root]"
+    target_size: 10
+
+  - id: batch_06
+    number: 6
+    focus: root-level identity, visa, EAD, diploma, and transcript anchors
+    status: completed
+    record: docs/data-room-batch-06.md
+    validation_hooks:
+      - name: batch_06_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_06_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 06
+    source_scope:
+      - "[root]"
+    target_size: 10
+
+  - id: batch_07
+    number: 7
+    focus: employment continuity across additional I-9, offer-letter, and paystub records
+    status: completed
+    record: docs/data-room-batch-07.md
+    validation_hooks:
+      - name: batch_07_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_07_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 07
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_08
+    number: 8
+    focus: STEM OPT archive continuity across additional I-983 versions and support records
+    status: completed
+    record: docs/data-room-batch-08.md
+    validation_hooks:
+      - name: batch_08_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_08_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 08
+    source_scope:
+      - stem opt
+    target_size: 10
+
+  - id: batch_09
+    number: 9
+    focus: BSGC archive governance, EIN, operating-agreement, and contract records
+    status: completed
+    record: docs/data-room-batch-09.md
+    validation_hooks:
+      - name: batch_09_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_09_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 09
+    source_scope:
+      - BSGC
+    target_size: 10
+
+  - id: batch_10
+    number: 10
+    focus: tax overflow plus H-1B employee passport, visa, EAD, and transcript evidence
+    status: completed
+    record: docs/data-room-batch-10.md
+    validation_hooks:
+      - name: batch_10_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_10_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 10
+    source_scope:
+      - Tax
+      - H1b Petition
       - "[root]"
     target_size: 10
