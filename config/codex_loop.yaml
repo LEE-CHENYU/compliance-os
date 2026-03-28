@@ -1,0 +1,10 @@
+provider: codex
+sandbox_mode: danger-full-access
+model: gpt-5.4-codex
+reasoning_effort: xhigh
+duration_hours: 8
+sleep_seconds: 300
+round_size: 5
+max_passes: 1
+manifest_path: /Users/lichenyu/compliance-os/config/data_room_batches.yaml
+session_root: /Users/lichenyu/compliance-os/logs/data-room-batch-loop-codex

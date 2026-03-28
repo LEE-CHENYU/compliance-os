@@ -13,7 +13,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="${ROOT:-$(cd -- "$SCRIPT_DIR/../.." && pwd)}"
+source "$SCRIPT_DIR/common.sh"
+ROOT="$(codex_loop_root "${BASH_SOURCE[0]}")"
+CONFIG_PATH="$(codex_loop_config_path "$ROOT")"
 LOOP_SCRIPT="$ROOT/scripts/codex_loop/codex_data_room_loop.sh"
 LOG_DIR="$ROOT/logs/codex_loop"
 PIDFILE="$LOG_DIR/codex_data_room_loop.pid"
@@ -101,13 +103,15 @@ case "${1:-help}" in
     echo ""
     echo "Usage: $0 {start|stop|restart|status|once|tail|log}"
     echo ""
+    echo "Config file: $CONFIG_PATH"
     echo "Environment:"
-    echo "  PROVIDER=codex|claude|echo  Provider for batch iterations"
-    echo "  MODEL=gpt-5.3-codex         Model used with Codex CLI"
-    echo "  DURATION_HOURS=8            Loop duration"
-    echo "  SLEEP_SECONDS=300           Sleep between iterations"
-    echo "  ROUND_SIZE=5                First-round batch cap"
-    echo "  MAX_PASSES=1                Batch-loop passes per outer iteration"
+    echo "  PROVIDER=$(codex_loop_config_get "$CONFIG_PATH" provider codex)"
+    echo "  MODEL=$(codex_loop_config_get "$CONFIG_PATH" model gpt-5.4-codex)"
+    echo "  REASONING_EFFORT=$(codex_loop_config_get "$CONFIG_PATH" reasoning_effort xhigh)"
+    echo "  DURATION_HOURS=$(codex_loop_config_get "$CONFIG_PATH" duration_hours 8)"
+    echo "  SLEEP_SECONDS=$(codex_loop_config_get "$CONFIG_PATH" sleep_seconds 300)"
+    echo "  ROUND_SIZE=$(codex_loop_config_get "$CONFIG_PATH" round_size 5)"
+    echo "  MAX_PASSES=$(codex_loop_config_get "$CONFIG_PATH" max_passes 1)"
     echo "  BATCH_SELECTION='--batch-number 1'  Optional selection override"
     ;;
 esac

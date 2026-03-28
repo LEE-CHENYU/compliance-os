@@ -9,36 +9,33 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="${ROOT:-$(cd -- "$SCRIPT_DIR/../.." && pwd)}"
+source "$SCRIPT_DIR/common.sh"
+ROOT="$(codex_loop_root "${BASH_SOURCE[0]}")"
+PYTHON="$(codex_loop_python)"
+CONFIG_PATH="$(codex_loop_config_path "$ROOT")"
 LOG_DIR="$ROOT/logs/codex_loop"
 LOG="$LOG_DIR/codex_data_room_loop.log"
 PIDFILE="$LOG_DIR/codex_data_room_loop.pid"
 STOPFILE="$LOG_DIR/codex_data_room_loop.stop"
-SESSION_ROOT="${SESSION_ROOT:-$ROOT/logs/data-room-batch-loop-codex}"
+SESSION_ROOT="${SESSION_ROOT:-$(codex_loop_config_get "$CONFIG_PATH" session_root "$ROOT/logs/data-room-batch-loop-codex")}"
 
 OBJECTIVE_FILE="$SCRIPT_DIR/codex_objective.txt"
 RESUME_FILE="$SCRIPT_DIR/codex_resume.md"
 RUN_BATCH_SCRIPT="$SCRIPT_DIR/run_batch_iteration.sh"
 BATCH_LOOP_SCRIPT="$ROOT/scripts/data_room_batch_loop.py"
-MANIFEST_PATH="${MANIFEST_PATH:-$ROOT/config/data_room_batches.yaml}"
+MANIFEST_PATH="${MANIFEST_PATH:-$(codex_loop_config_get "$CONFIG_PATH" manifest_path "$ROOT/config/data_room_batches.yaml")}"
 
-ROUND_SIZE="${ROUND_SIZE:-5}"
-MAX_PASSES="${MAX_PASSES:-1}"
-SLEEP_SECONDS="${SLEEP_SECONDS:-300}"
-DURATION_HOURS="${DURATION_HOURS:-8}"
+ROUND_SIZE="${ROUND_SIZE:-$(codex_loop_config_get "$CONFIG_PATH" round_size "5")}"
+MAX_PASSES="${MAX_PASSES:-$(codex_loop_config_get "$CONFIG_PATH" max_passes "1")}"
+SLEEP_SECONDS="${SLEEP_SECONDS:-$(codex_loop_config_get "$CONFIG_PATH" sleep_seconds "300")}"
+DURATION_HOURS="${DURATION_HOURS:-$(codex_loop_config_get "$CONFIG_PATH" duration_hours "8")}"
 DURATION_SECONDS=$((DURATION_HOURS * 3600))
 BATCH_SELECTION="${BATCH_SELECTION:-}"
 
-PROVIDER="${PROVIDER:-codex}"
-SANDBOX_MODE="${SANDBOX_MODE:-danger-full-access}"
-MODEL="${MODEL:-gpt-5.3-codex}"
-if [ -n "${PYTHON_BIN:-}" ]; then
-  PYTHON="$PYTHON_BIN"
-elif [ -x "/Users/lichenyu/miniconda3/envs/compliance-os/bin/python" ]; then
-  PYTHON="/Users/lichenyu/miniconda3/envs/compliance-os/bin/python"
-else
-  PYTHON="$(command -v python3 || command -v python)"
-fi
+PROVIDER="${PROVIDER:-$(codex_loop_config_get "$CONFIG_PATH" provider codex)}"
+SANDBOX_MODE="${SANDBOX_MODE:-$(codex_loop_config_get "$CONFIG_PATH" sandbox_mode danger-full-access)}"
+MODEL="${MODEL:-$(codex_loop_config_get "$CONFIG_PATH" model gpt-5.4-codex)}"
+REASONING_EFFORT="${REASONING_EFFORT:-$(codex_loop_config_get "$CONFIG_PATH" reasoning_effort xhigh)}"
 
 OBJECTIVE_DEFAULT="Compliance OS data-room batch loop:
 1. Keep the loop on the current unresolved batch until validation says it is resolved.
@@ -107,7 +104,7 @@ run_single_iteration() {
   local run_command
   local -a cmd
 
-  export ROOT PROVIDER SANDBOX_MODE MODEL PYTHON OBJECTIVE_FILE RESUME_FILE MANIFEST_PATH
+  export ROOT PROVIDER SANDBOX_MODE MODEL REASONING_EFFORT PYTHON OBJECTIVE_FILE RESUME_FILE MANIFEST_PATH
 
   run_command="bash $RUN_BATCH_SCRIPT {batch_number_quoted} {batch_id_quoted} {focus_quoted} {record_quoted}"
 
@@ -129,7 +126,7 @@ run_single_iteration() {
   fi
 
   log "=== Iteration $iter started ==="
-  log "Provider=$PROVIDER Model=$MODEL RoundSize=$ROUND_SIZE MaxPasses=$MAX_PASSES"
+  log "Provider=$PROVIDER Model=$MODEL Reasoning=$REASONING_EFFORT RoundSize=$ROUND_SIZE MaxPasses=$MAX_PASSES"
   log "Running batch loop with validation-gated Codex batch processor"
   (
     cd "$ROOT"
@@ -160,6 +157,7 @@ log "Duration: ${DURATION_HOURS}h (${DURATION_SECONDS}s)"
 log "Sleep: ${SLEEP_SECONDS}s"
 log "Provider: $PROVIDER"
 log "Model: $MODEL"
+log "Reasoning effort: $REASONING_EFFORT"
 log "PID: $$"
 
 iter=0

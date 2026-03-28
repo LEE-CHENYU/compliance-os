@@ -14,22 +14,17 @@ BATCH_FOCUS="$3"
 BATCH_RECORD="$4"
 
 SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="${ROOT:-$(cd -- "$SCRIPT_DIR/../.." && pwd)}"
+source "$SCRIPT_DIR/common.sh"
+ROOT="$(codex_loop_root "${BASH_SOURCE[0]}")"
+PYTHON="$(codex_loop_python)"
+CONFIG_PATH="$(codex_loop_config_path "$ROOT")"
 OBJECTIVE_FILE="${OBJECTIVE_FILE:-$SCRIPT_DIR/codex_objective.txt}"
 RESUME_FILE="${RESUME_FILE:-$SCRIPT_DIR/codex_resume.md}"
-MANIFEST_PATH="${MANIFEST_PATH:-$ROOT/config/data_room_batches.yaml}"
-PROVIDER="${PROVIDER:-codex}"
-SANDBOX_MODE="${SANDBOX_MODE:-danger-full-access}"
-MODEL="${MODEL:-gpt-5.3-codex}"
-if [ -n "${PYTHON_BIN:-}" ]; then
-  PYTHON="$PYTHON_BIN"
-elif [ -n "${PYTHON:-}" ]; then
-  PYTHON="$PYTHON"
-elif [ -x "/Users/lichenyu/miniconda3/envs/compliance-os/bin/python" ]; then
-  PYTHON="/Users/lichenyu/miniconda3/envs/compliance-os/bin/python"
-else
-  PYTHON="$(command -v python3 || command -v python)"
-fi
+MANIFEST_PATH="${MANIFEST_PATH:-$(codex_loop_config_get "$CONFIG_PATH" manifest_path "$ROOT/config/data_room_batches.yaml")}"
+PROVIDER="${PROVIDER:-$(codex_loop_config_get "$CONFIG_PATH" provider codex)}"
+SANDBOX_MODE="${SANDBOX_MODE:-$(codex_loop_config_get "$CONFIG_PATH" sandbox_mode danger-full-access)}"
+MODEL="${MODEL:-$(codex_loop_config_get "$CONFIG_PATH" model gpt-5.4-codex)}"
+REASONING_EFFORT="${REASONING_EFFORT:-$(codex_loop_config_get "$CONFIG_PATH" reasoning_effort xhigh)}"
 
 objective="$(cat "$OBJECTIVE_FILE" 2>/dev/null || true)"
 resume_context="$(cat "$RESUME_FILE" 2>/dev/null || echo 'No previous resume context.')"
@@ -114,7 +109,11 @@ RULES:
 cd "$ROOT"
 case "$PROVIDER" in
   codex)
-    codex exec -s "$SANDBOX_MODE" -m "$MODEL" "$PROMPT_TEXT"
+    codex exec \
+      -c "model_reasoning_effort=\"$REASONING_EFFORT\"" \
+      -s "$SANDBOX_MODE" \
+      -m "$MODEL" \
+      "$PROMPT_TEXT"
     ;;
   claude)
     claude -p "$PROMPT_TEXT" \
