@@ -43,6 +43,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
         r"ein.*instructions",
         r"individual[_ -]?request.*instructions",
     ],
+    "event_invitation": [r"invitation[_ -]?to[_ -]?the[_ -]?project", r"world[_ -]?congress"],
     "admission_letter": [r"admission[_ -]?letter", r"offer[_ -]?of[_ -]?admission"],
     "enrollment_verification": [
         r"continued[_ -]?attend(?:ance|ence)",
@@ -63,6 +64,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "name_change_notice": [r"name[_ -]?change", r"name[_ -]?change[_ -]?notice"],
     "order_confirmation": [r"order[_ -]?confirmation"],
     "payment_receipt": [r"payment[_ -]?receipt"],
+    "profile_photo": [r"profile[_ -]?photo", r"head[_ -]?shot"],
     "signature_page": [r"signature[_ -]?pages?"],
     "registered_agent_consent": [
         r"consent[_ -]?to[_ -]?appointment[_ -]?by[_ -]?registered[_ -]?agent",
@@ -119,6 +121,17 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
         r"compliance[_ -]?with[_ -]?stem[_ -]?opt[_ -]?requirements",
         r"guidance[_ -]?on[_ -]?stem[_ -]?opt[_ -]?compliance",
     ],
+    "social_security_record": [
+        r"ssnap",
+        r"replacement[_ -]?social[_ -]?security[_ -]?number[_ -]?card",
+    ],
+    "system_configuration_screenshot": [
+        r"network[_ -]?config",
+        r"ipv4",
+        r"ipv6",
+        r"netbios",
+        r"realtek",
+    ],
     "tax_interview": [r"tax[_ -]?interview"],
     "transcript": [r"transcript", r"ecertification", r"etran(?:script|scription)", r"\u6210\u7ee9\u5355"],
     "visa_stamp": [r"(?:^|[^a-z0-9])visa(?:[^a-z0-9]|$)", r"visa[_ -]?stamp"],
@@ -157,24 +170,40 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
 }
 
 PATH_PATTERNS: dict[str, list[str]] = {
-    "account_security_setup": [r"/treasury pass\.png$"],
+    "account_security_setup": [
+        r"/treasury pass\.png$",
+        r"/スクリーンショット 2025-04-17 午前11\.49\.19\.png$",
+    ],
     "bank_statement": [r"/(?:tax|w2)/\d{0,4}/?bank_document_", r"/w2/bank_document_"],
     "bank_account_record": [r"/新春竹_对公账户\.pic\.jpg$"],
     "resume": [r"/cv & cover letters/cv\d{6}/(?:chenyu|cheney|李宸宇)[^/]*\.pdf$"],
     "chat_export_asset": [
         r"/employment/bitsync/chatexport_2024-12-14(?: \(\d+\))?/(?:images|photos)/[^/]+\.(?:png|jpe?g)$",
     ],
-    "company_filing": [r"/veeup\.cc/网站备案\.png$", r"/授权书/\d+_\.pic\.jpg$"],
+    "company_filing": [
+        r"/veeup\.cc/网站备案\.png$",
+        r"/授权书/\d+_\.pic\.jpg$",
+        r"/veeup\.cc/wechatimg14\.jpg$",
+        r"/veeup\.cc/wechatimg371\.jpg$",
+    ],
     "degree_certificate": [
         r"/cv & cover letters/transcript&diploma/20210713112836-0001\.pdf$",
         r"/cv & cover letters/transcript&diploma/img_0514\.jpe?g$",
     ],
+    "drivers_license": [r"/personal info archive/img_1725\.pdf$"],
     "employment_screenshot": [
         r"/employment/rai/screenshot from justwork\.png$",
         r"/employment/wolff & li/whatsapp image \d{4}-\d{2}-\d{2} at [0-9.]+\.jpe?g$",
         r"/employment/bitsync/will communications/img_94(?:55|56|57|58|59|60|61)\.png$",
+        r"/happyhunting screenshot/\d+_\.pic\.jpg$",
+        r"/employment/bitsync/img_93(?:47|52|53|55)\.png$",
+        r"/employment/bitsync/will communications/img_94(?:6[2-9]|7[01])\.png$",
     ],
     "ein_application": [r"/yangtze capital/yangtze capital\.pdf$"],
+    "employment_letter": [r"/stem opt/tiger cloud, llc - new york\. ny\.pdf$"],
+    "event_invitation": [
+        r"/invitation to the projectworld congress in computer science computer engineering and applied computing\.pdf$",
+    ],
     "final_evaluation": [
         r"/employment/claudius/12 month \(page-5\) \.pdf$",
         r"/stem opt/i983/.*/final evaluation opt\.pdf$",
@@ -185,7 +214,13 @@ PATH_PATTERNS: dict[str, list[str]] = {
         r"/stem opt/stem opt申请完整攻略",
     ],
     "insurance_record": [r"/medical/n\d+_template"],
-    "identity_document": [r"/mom id/"],
+    "identity_document": [
+        r"/bsgc/docs/img_(1708|2070|2227)\.jpe?g$",
+        r"/personal info archive/wechatimg(?:219|220)\.jpe?g$",
+        r"/img_372[12] medium\.jpe?g$",
+        r"/wechatimg(?:219|220)\.jpe?g$",
+        r"/mom id/",
+    ],
     "i20": [
         r"/i20/cu[_ -]?(?:original|opt|stemopt[_ -]?23(?:_signed)?|travel[_ -]?22|travel[_ -]?23)\.pdf$",
         r"/i20/i20/\d+[^/]*\.pic\.png$",
@@ -200,7 +235,23 @@ PATH_PATTERNS: dict[str, list[str]] = {
         r"/employment/rai/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$",
     ],
     "news_article": [r"/employment/rai/.*morningstar\.pdf$"],
-    "signature_page": [r"/employment/vcv/signature pages\.pdf$"],
+    "passport": [r"/bsgc/docs/img_(0991|1709)\.jpe?g$"],
+    "profile_photo": [
+        r"/092e233d-f2e5-\.jpg$",
+        r"/photo\.jpg$",
+        r"/cv & cover letters/cv230217/img_10910411\.jpe?g$",
+        r"/cv & cover letters/cv230217/r0015961(?: \(1\))?\.jpe?g$",
+    ],
+    "signature_page": [
+        r"/employment/vcv/signature pages\.pdf$",
+        r"/stem opt/i983/.*/signature pages\.pdf$",
+    ],
+    "social_security_card": [r"/bsgc/docs/img_1792\.jpg$"],
+    "social_security_record": [r"/personal info archive/img_1675\.pdf$"],
+    "system_configuration_screenshot": [
+        r"/weixin image_2025-07-02_213642_922\.png$",
+        r"/veeup\.cc/wechatimg13\.jpg$",
+    ],
     "check_image": [r"/employment/wolff & li/blank_stock_check_payment\.pdf$"],
 }
 
@@ -402,6 +453,11 @@ PATTERNS: dict[str, list[str]] = {
         r"Summary of your information",
         r"Organization Type:\s*LLC",
     ],
+    "event_invitation": [
+        r"Invitation to the project",
+        r"World Congress in Computer Science",
+        r"Meteor Support",
+    ],
     "social_security_card": [
         r"Social Security",
         r"name shown on card",
@@ -453,6 +509,17 @@ PATTERNS: dict[str, list[str]] = {
         r"Receipt Number",
         r"Amount Paid",
         r"Payment Date",
+    ],
+    "social_security_record": [
+        r"SSNAP Printout",
+        r"Replacement Social Security Number Card",
+        r"Number Holder Name",
+    ],
+    "system_configuration_screenshot": [
+        r"IPv4",
+        r"IPv6",
+        r"NetBIOS",
+        r"Realtek",
     ],
     "public_key": [
         r"BEGIN PUBLIC KEY",

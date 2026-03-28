@@ -26,6 +26,7 @@ def test_schemas_defined():
     assert "debt_clearance_letter" in SCHEMAS
     assert "cpt_application" in SCHEMAS
     assert "enrollment_verification" in SCHEMAS
+    assert "event_invitation" in SCHEMAS
     assert "filing_confirmation" in SCHEMAS
     assert "final_evaluation" in SCHEMAS
     assert "identity_document" in SCHEMAS
@@ -36,6 +37,7 @@ def test_schemas_defined():
     assert "membership_welcome_packet" in SCHEMAS
     assert "name_change_notice" in SCHEMAS
     assert "order_confirmation" in SCHEMAS
+    assert "profile_photo" in SCHEMAS
     assert "i983" in SCHEMAS
     assert "employment_contract" in SCHEMAS
     assert "employment_correspondence" in SCHEMAS
@@ -53,8 +55,10 @@ def test_schemas_defined():
     assert "w4" in SCHEMAS
     assert "ein_letter" in SCHEMAS
     assert "social_security_card" in SCHEMAS
+    assert "social_security_record" in SCHEMAS
     assert "student_id" in SCHEMAS
     assert "support_request" in SCHEMAS
+    assert "system_configuration_screenshot" in SCHEMAS
     assert "tax_interview" in SCHEMAS
     assert "transcript" in SCHEMAS
     assert "visa_stamp" in SCHEMAS
@@ -556,6 +560,53 @@ def test_extract_batch_16_to_20_document_families():
         assert fields["student_name"]["value"] == "Chenyu Li"
         assert fields["effective_date"]["value"] == "2024-08-15"
         assert fields["status_summary"]["value"] == "Transfer pending"
+
+
+def test_extract_batch_36_to_40_document_families():
+    social_security_record_result = {
+        "holder_name": "Chenyu Li",
+        "birth_date": "09/18/1998",
+        "record_type": "SSNAP printout",
+        "citizenship_status": "Lawful Alien Allowed to Work",
+        "mailing_address": "601 W 110TH ST APT 6K4 NEW YORK NY 10025-2186",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=social_security_record_result):
+        fields = extract_document("social_security_record", "SSNAP Printout for Replacement Social Security Number Card")
+        assert fields["holder_name"]["value"] == "Chenyu Li"
+        assert fields["birth_date"]["value"] == "1998-09-18"
+
+    profile_photo_result = {
+        "subject_name": "Chenyu Li",
+        "asset_kind": "profile photo",
+        "source_context": "resume package",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=profile_photo_result):
+        fields = extract_document("profile_photo", "resume profile photo")
+        assert fields["subject_name"]["value"] == "Chenyu Li"
+        assert fields["asset_kind"]["value"] == "profile photo"
+
+    system_config_result = {
+        "platform_name": "Windows Network Settings",
+        "screen_title": "Adapter Properties",
+        "adapter_name": "Realtek PCIe GbE Family Controller",
+        "ipv4_address": "36.152.15.206",
+        "ipv6_address": "2409:8720:500:2e6:cfb0:a56:e030:e66d",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=system_config_result):
+        fields = extract_document("system_configuration_screenshot", "IPv4 DNS NetBIOS Realtek")
+        assert fields["platform_name"]["value"] == "Windows Network Settings"
+        assert fields["ipv4_address"]["value"] == "36.152.15.206"
+
+    invitation_result = {
+        "event_name": "World Congress in Computer Science, Computer Engineering and Applied Computing",
+        "sender_name": "Meteor Support",
+        "recipient_name": "cl4183@columbia.edu",
+        "sent_date": "November 6, 2025",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=invitation_result):
+        fields = extract_document("event_invitation", "Invitation to the project World Congress in Computer Science")
+        assert fields["event_name"]["value"].startswith("World Congress")
+        assert fields["sent_date"]["value"] == "2025-11-06"
 
 
 def test_build_mistral_client_prefers_client_module(monkeypatch):

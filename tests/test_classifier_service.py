@@ -408,3 +408,45 @@ def test_ocr_ein_letter_requires_cp575_anchor(monkeypatch, tmp_path):
 
     assert result.doc_type == "ein_letter"
     assert result.source == "ocr"
+
+
+def test_batch_36_to_40_filename_and_text_classification_regressions():
+    assert classify_filename("/tmp/BSGC/Docs/IMG_0991.jpeg").doc_type == "passport"
+    assert classify_filename("/tmp/BSGC/Docs/IMG_1708.jpeg").doc_type == "identity_document"
+    assert classify_filename("/tmp/BSGC/Docs/IMG_1792.jpg").doc_type == "social_security_card"
+    assert classify_filename("/tmp/Personal Info Archive/IMG_1675.pdf").doc_type == "social_security_record"
+    assert classify_filename("/tmp/Personal Info Archive/IMG_1725.pdf").doc_type == "drivers_license"
+    assert classify_filename("/tmp/IMG_3721 Medium.jpeg").doc_type == "identity_document"
+    assert classify_filename("/tmp/WechatIMG219.jpeg").doc_type == "identity_document"
+    assert classify_filename("/tmp/Photo.jpg").doc_type == "profile_photo"
+    assert classify_filename("/tmp/CV & Cover Letters/CV230217/R0015961 (1).jpeg").doc_type == "profile_photo"
+    assert classify_filename("/tmp/Happyhunting Screenshot/51745372824_.pic.jpg").doc_type == "employment_screenshot"
+    assert classify_filename("/tmp/Weixin Image_2025-07-02_213642_922.png").doc_type == "system_configuration_screenshot"
+    assert classify_filename("/tmp/スクリーンショット 2025-04-17 午前11.49.19.png").doc_type == "account_security_setup"
+    assert classify_filename("/tmp/Veeup.cc/WechatIMG13.jpg").doc_type == "system_configuration_screenshot"
+    assert classify_filename("/tmp/Veeup.cc/WechatIMG14.jpg").doc_type == "company_filing"
+    assert (
+        classify_filename(
+            "/tmp/Invitation to the projectWorld Congress in Computer Science Computer Engineering and Applied Computing.pdf"
+        ).doc_type
+        == "event_invitation"
+    )
+    assert classify_filename("/tmp/employment/Bitsync/IMG_9347.PNG").doc_type == "employment_screenshot"
+    assert (
+        classify_filename("/tmp/employment/Bitsync/Will Communications/IMG_9471.PNG").doc_type
+        == "employment_screenshot"
+    )
+    assert classify_filename("/tmp/stem opt/Tiger Cloud, LLC - New York. NY.pdf").doc_type == "employment_letter"
+    assert (
+        classify_filename("/tmp/stem opt/i983/vcv/Signature Pages.pdf").doc_type
+        == "signature_page"
+    )
+    assert (
+        classify_text("SSNAP Printout for Replacement Social Security Number Card Number Holder Name").doc_type
+        == "social_security_record"
+    )
+    assert classify_text("IPv4 DNS NetBIOS Realtek").doc_type == "system_configuration_screenshot"
+    assert (
+        classify_text("Meteor Support Invitation to the project World Congress in Computer Science").doc_type
+        == "event_invitation"
+    )

@@ -175,9 +175,29 @@ Extension counts:
   - focus: education scans, student-admin screenshots, website filing artifacts, and account setup overflow
   - status: completed
   - record: `docs/data-room-batch-35.md`
+- Batch 36:
+  - focus: personal and company identity archive scans across BSGC and personal records
+  - status: completed
+  - record: `docs/data-room-batch-36.md`
+- Batch 37:
+  - focus: root identity images and profile-photo archive overflow
+  - status: completed
+  - record: `docs/data-room-batch-37.md`
+- Batch 38:
+  - focus: hiring portal, website-admin, and account-security screenshot overflow
+  - status: completed
+  - record: `docs/data-room-batch-38.md`
+- Batch 39:
+  - focus: Bitsync employment chat and legal-guidance screenshots part one
+  - status: completed
+  - record: `docs/data-room-batch-39.md`
+- Batch 40:
+  - focus: remaining employment screenshot residue plus STEM and chat-export admin overflow
+  - status: completed
+  - record: `docs/data-room-batch-40.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `35` stable under focused tests plus real-source validation.
+1. Keep Batches `01` through `40` stable under focused tests plus real-source validation.
 2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
 3. Start the next round from still-unbatched source slices instead of reopening resolved batches.

@@ -137,6 +137,12 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "approval_date": "Application or approval date (YYYY-MM-DD) if visible",
         "employer_name": "Employer or internship host if visible",
     },
+    "event_invitation": {
+        "event_name": "Event or conference name",
+        "sender_name": "Sender or organizer name if visible",
+        "recipient_name": "Recipient name or email if visible",
+        "sent_date": "Invitation or email date (YYYY-MM-DD) if visible",
+    },
     "enrollment_verification": {
         "student_name": "Student full name",
         "institution_name": "School or university name",
@@ -202,6 +208,11 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "order_number": "Order or confirmation number if visible",
         "order_date": "Order or confirmation date (YYYY-MM-DD) if visible",
         "total_amount": "Total charged or paid amount (number only) if visible",
+    },
+    "profile_photo": {
+        "subject_name": "Person associated with the photo if known from surrounding context",
+        "asset_kind": "Photo type such as headshot, profile photo, or portrait",
+        "source_context": "Folder or workflow context suggesting how the image is used",
     },
     "i983": {
         "student_name": "Full name of the student",
@@ -565,6 +576,13 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "ssn_number": "Social Security number",
         "card_type": "Card legend or restriction if visible",
     },
+    "social_security_record": {
+        "holder_name": "Name of the number holder if visible",
+        "birth_date": "Birth date of the holder (YYYY-MM-DD) if visible",
+        "record_type": "Record type such as SSNAP printout or replacement-card request",
+        "citizenship_status": "Citizenship or work-authorization status if visible",
+        "mailing_address": "Mailing address shown on the record if visible",
+    },
     "student_id": {
         "student_name": "Student full name",
         "institution_name": "Institution name",
@@ -576,6 +594,13 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "request_date": "Request date (YYYY-MM-DD) if visible",
         "requester_name": "Requester name if visible",
         "organization_name": "Organization referenced in the request if visible",
+    },
+    "system_configuration_screenshot": {
+        "platform_name": "System or settings application shown in the screenshot",
+        "screen_title": "Visible screen title or settings pane name",
+        "adapter_name": "Visible network adapter or interface name if shown",
+        "ipv4_address": "IPv4 address if shown",
+        "ipv6_address": "IPv6 address if shown",
     },
     "tax_interview": {
         "respondent_name": "Name of the person or entity completing the interview",
@@ -1076,6 +1101,8 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
         )
     if doc_type == "cpt_application":
         return _normalize_selected_fields(result, date_fields=("approval_date",))
+    if doc_type == "event_invitation":
+        return _normalize_selected_fields(result, date_fields=("sent_date",))
     if doc_type == "filing_confirmation":
         return _normalize_selected_fields(result, date_fields=("confirmation_date",))
     if doc_type == "final_evaluation":
@@ -1134,6 +1161,8 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
             date_fields=("order_date",),
             numeric_fields=("total_amount",),
         )
+    if doc_type == "social_security_record":
+        return _normalize_selected_fields(result, date_fields=("birth_date",))
     if doc_type == "employment_contract":
         return _normalize_selected_fields(
             result,
