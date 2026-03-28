@@ -55,6 +55,7 @@ def test_run_batch_iteration_echo_provider_renders_prompt():
     assert "batch_number: 01" in result.stdout
     assert "MANDATORY WORKFLOW:" in result.stdout
     assert "scripts/data_room_batch_loop.py" in result.stdout
+    assert "Maintain or improve classifier generality" in result.stdout
 
 
 def test_run_batch_iteration_falls_back_to_supported_model(tmp_path):

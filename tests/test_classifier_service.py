@@ -2,7 +2,13 @@
 
 import compliance_os.web.services.extractor as extractor
 import compliance_os.web.services.pdf_reader as pdf_reader
-from compliance_os.web.services.classifier import classify_file, classify_filename, classify_text
+from compliance_os.web.services.classifier import (
+    PATH_EXCEPTION_PATTERNS,
+    classify_file,
+    classify_filename,
+    classify_text,
+    classifier_generality_report,
+)
 
 
 def test_w2_classification():
@@ -449,4 +455,56 @@ def test_batch_36_to_40_filename_and_text_classification_regressions():
     assert (
         classify_text("Meteor Support Invitation to the project World Congress in Computer Science").doc_type
         == "event_invitation"
+    )
+
+
+def test_general_path_patterns_cover_unseen_archive_variants():
+    assert (
+        classify_filename("/tmp/employment/Bitsync/ChatExport_2024-12-14 (99)/images/section_web@2x.png").doc_type
+        == "chat_export_asset"
+    )
+    assert classify_filename("/tmp/employment/Bitsync/IMG_9999.PNG").doc_type == "employment_screenshot"
+    assert (
+        classify_filename("/tmp/employment/Bitsync/Will Communications/IMG_12345.PNG").doc_type
+        == "employment_screenshot"
+    )
+    assert (
+        classify_filename("/tmp/employment/Example Co/WhatsApp Image 2026-04-01 at 3.21.00 PM.jpeg").doc_type
+        == "employment_screenshot"
+    )
+    assert (
+        classify_filename("/tmp/CV & Cover Letters/CV250101/R0019999 (12).jpeg").doc_type
+        == "profile_photo"
+    )
+    assert (
+        classify_filename("/tmp/Invitation to the Example World Congress on Applied Computing.pdf").doc_type
+        == "event_invitation"
+    )
+
+
+def test_classifier_generality_report_keeps_path_exceptions_scoped():
+    report = classifier_generality_report()
+
+    assert report["path_exception_pattern_count"] < report["path_context_pattern_count"]
+    assert "chat_export_asset" not in PATH_EXCEPTION_PATTERNS
+    assert "employment_screenshot" not in PATH_EXCEPTION_PATTERNS
+    assert "event_invitation" not in PATH_EXCEPTION_PATTERNS
+    assert set(PATH_EXCEPTION_PATTERNS).issubset(
+        {
+            "account_security_setup",
+            "bank_account_record",
+            "check_image",
+            "company_filing",
+            "degree_certificate",
+            "drivers_license",
+            "ein_application",
+            "employment_letter",
+            "final_evaluation",
+            "identity_document",
+            "passport",
+            "profile_photo",
+            "social_security_card",
+            "social_security_record",
+            "system_configuration_screenshot",
+        }
     )

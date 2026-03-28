@@ -5,19 +5,20 @@ Source folder: `/Users/lichenyu/Desktop/Important Docs `
 ## Batch 01 manifest
 
 First pass used 10 representative files across immigration, employment, tax, and entity records.
+The manifest below reflects the current intended doc types for retro validation; the original baseline intake results are recorded separately in the baseline sections that follow.
 
-| Label | File | Intended use | Data room classification result |
+| Label | File | Intended use | Intended doc type |
 | --- | --- | --- | --- |
-| `i983_current` | `stem opt/i983/vcv/Chenyu_i983 Form_100124_ink_signed.pdf` | STEM OPT training plan | unclassified |
-| `offer_clinipulse` | `employment/CliniPulse/chenyu_offer_signed.pdf` | employment letter | unclassified |
-| `offer_bitsync` | `employment/Bitsync/signed offer letter bitsync.pdf` | prior employment letter | unclassified |
-| `i20_stemopt` | `i20/cu_stemopt_23_signed.pdf` | I-20 | unclassified |
+| `i983_current` | `stem opt/i983/vcv/Chenyu_i983 Form_100124_ink_signed.pdf` | STEM OPT training plan | `i983` |
+| `offer_clinipulse` | `employment/CliniPulse/chenyu_offer_signed.pdf` | employment letter | `employment_letter` |
+| `offer_bitsync` | `employment/Bitsync/signed offer letter bitsync.pdf` | prior employment letter | `employment_letter` |
+| `i20_stemopt` | `i20/cu_stemopt_23_signed.pdf` | I-20 | `i20` |
 | `i94_recent` | `H1b Petition/Employee/I-94/I-94 Official Website - Get Most Recent I-94 Response.pdf` | I-94 | `i94` |
-| `tax_2024` | `Tax/2024/2024_TaxReturn.pdf` | tax return | `1040` |
-| `tax_2023` | `Tax/2023/2023_TaxReturn.pdf` | tax return | `1040` |
+| `tax_2024` | `Tax/2024/2024_TaxReturn.pdf` | tax return | `tax_return` |
+| `tax_2023` | `Tax/2023/2023_TaxReturn.pdf` | tax return | `tax_return` |
 | `ein_cp575` | `BSGC/Filing/CP575Notice_1686945041312.pdf` | EIN letter | `ein_letter` |
 | `w2_2024` | `Tax/2024/Form_W-2_Tax_Year_2024.pdf` | W-2 | `w2` |
-| `ead_opt` | `Personal Info Archive/EAD (OPT).jpeg` | EAD card | unclassified |
+| `ead_opt` | `Personal Info Archive/EAD (OPT).jpeg` | EAD card | `ead` |
 
 ## Batch 01 extraction results
 

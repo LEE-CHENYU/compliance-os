@@ -2,6 +2,7 @@ Compliance OS data-room batch resolution loop
 
 PRIMARY GOAL:
 - Drive the first five data-room batches to a genuinely validated state.
+- Maintain or improve ingestion generality while resolving batches.
 
 LOOP CONTRACT:
 1. Stay on the current unresolved batch until `scripts/data_room_batch_loop.py` reports it resolved.
@@ -10,12 +11,15 @@ LOOP CONTRACT:
 
 PRIORITIES:
 1. Clear the first unresolved issue on the current batch.
-2. Preserve previously passing batches and validations.
+2. Preserve previously passing batches and validations, and retro-validate completed batches after classifier or intake changes.
 3. Materialize missing batch manifests and validation hooks when a planned batch becomes current.
-4. Improve parsing, storage, schema, retrieval, and review logic only when it directly helps the current batch validate.
+4. Prefer family-level filename, path-context, or text rules over corpus-specific filenames.
+5. Improve parsing, storage, schema, retrieval, and review logic only when it directly helps the current batch validate.
 
 CONSTRAINTS:
 - Do not weaken hooks or remove real gaps just to get a passing status.
 - Do not skip ahead to a later batch manually.
 - Keep changes minimal, concrete, and well-documented.
+- Treat exact path exceptions as a last resort for legacy archive files and isolate them clearly from general rules.
+- If classifier or intake logic changes, rerun retro validation before declaring the batch done.
 - Do not push from inside the loop unless explicitly instructed.

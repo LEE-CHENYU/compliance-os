@@ -81,6 +81,25 @@ class BatchValidationSummary:
         }
 
 
+@dataclass(slots=True)
+class BatchCollectionValidationSummary:
+    source_root: str
+    selected_batches: list[BatchValidationSummary]
+
+    @property
+    def ok(self) -> bool:
+        return all(summary.ok for summary in self.selected_batches)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "source_root": self.source_root,
+            "selected_batches": [summary.to_dict() for summary in self.selected_batches],
+            "ok": self.ok,
+            "total_batches": len(self.selected_batches),
+            "passed_batches": sum(1 for summary in self.selected_batches if summary.ok),
+        }
+
+
 def _strip_cell(value: str) -> str:
     stripped = value.strip()
     if stripped.startswith("`") and stripped.endswith("`") and len(stripped) >= 2:
@@ -265,4 +284,42 @@ def validate_batch_source_slice(
         target_size=spec.target_size,
         manifest_rows=len(entries),
         checks=checks,
+    )
+
+
+def validate_batch_collection(
+    *,
+    project_root: str | Path,
+    manifest_path: str | Path,
+    statuses: set[str] | None = None,
+    min_batch_number: int | None = None,
+    max_batch_number: int | None = None,
+    batch_numbers: set[int] | None = None,
+    source_root_override: str | Path | None = None,
+) -> BatchCollectionValidationSummary:
+    source_root, batches = load_manifest(manifest_path)
+    selected: list[BatchSpec] = []
+    for spec in batches:
+        if statuses is not None and spec.status not in statuses:
+            continue
+        if min_batch_number is not None and spec.batch_number < min_batch_number:
+            continue
+        if max_batch_number is not None and spec.batch_number > max_batch_number:
+            continue
+        if batch_numbers is not None and spec.batch_number not in batch_numbers:
+            continue
+        selected.append(spec)
+
+    results = [
+        validate_batch_source_slice(
+            project_root=project_root,
+            manifest_path=manifest_path,
+            batch_number=spec.batch_number,
+            source_root_override=source_root_override,
+        )
+        for spec in selected
+    ]
+    return BatchCollectionValidationSummary(
+        source_root=str(source_root_override or source_root or ""),
+        selected_batches=results,
     )

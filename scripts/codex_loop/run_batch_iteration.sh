@@ -92,13 +92,15 @@ MANDATORY WORKFLOW:
 3. Make the smallest coherent code and documentation changes needed to reduce or clear the unresolved issues recorded for this batch.
 4. Re-run validation with this exact command:
    $VALIDATE_COMMAND
-5. Update $RESUME_FILE with:
+5. If you changed classifier or intake logic, retro-validate completed batches with:
+   $PYTHON scripts/validate_completed_batches.py --manifest $MANIFEST_PATH --max-batch-number $BATCH_NUMBER
+6. Update $RESUME_FILE with:
    - current batch
    - changes made
    - validation results
    - remaining blockers
    - next step
-6. Update $BATCH_RECORD if the real remaining gaps changed.
+7. Update $BATCH_RECORD if the real remaining gaps changed.
 
 RULES:
 - Treat scripts/data_room_batch_loop.py as the source of truth for whether the batch is resolved.
@@ -106,6 +108,8 @@ RULES:
 - Move cross-batch work, future-family expansion, and platform backlog into a non-blocking section such as \`## Deferred backlog\` or \`## Next queue\`.
 - Do not weaken or delete validation hooks just to make the batch look green.
 - Preserve earlier passing behavior while fixing the current batch.
+- Maintain or improve classifier generality. Prefer family-level filename, path-context, or text rules over exact corpus filenames.
+- If an exact path exception is unavoidable for a legacy archive file, isolate it clearly as an exception and keep it out of the general path-context rules.
 - If blocked, make the blocker explicit in the resume and batch record.
 - Do not push changes from inside this iteration unless explicitly instructed."
 

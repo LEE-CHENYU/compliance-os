@@ -1,4 +1,8 @@
-from compliance_os.batch_validation import parse_manifest_entries, validate_batch_source_slice
+from compliance_os.batch_validation import (
+    parse_manifest_entries,
+    validate_batch_collection,
+    validate_batch_source_slice,
+)
 from compliance_os.web.services.document_intake import ResolvedDocumentType
 
 
@@ -204,3 +208,76 @@ def test_validate_batch_source_slice_reports_missing_file(tmp_path, monkeypatch)
     missing = next(check for check in summary.checks if check.file_path == "I94.pdf")
     assert missing.exists is False
     assert missing.error == "File missing from source_root"
+
+
+def test_validate_batch_collection_filters_completed_batches(tmp_path, monkeypatch):
+    source_root = tmp_path / "Important Docs "
+    source_root.mkdir()
+    (source_root / "passport.jpeg").write_bytes(b"passport-bytes")
+    (source_root / "I94.pdf").write_bytes(b"%PDF-1.4 fake")
+
+    docs_dir = tmp_path / "docs"
+    docs_dir.mkdir()
+    (docs_dir / "batch-01.md").write_text(
+        "\n".join(
+            [
+                "# Batch 01",
+                "",
+                "| Label | File | Intended use | Intended doc type |",
+                "| --- | --- | --- | --- |",
+                "| `passport_identity` | `passport.jpeg` | identity page | `passport` |",
+            ]
+        )
+    )
+    (docs_dir / "batch-02.md").write_text(
+        "\n".join(
+            [
+                "# Batch 02",
+                "",
+                "| Label | File | Intended use | Intended doc type |",
+                "| --- | --- | --- | --- |",
+                "| `i94_recent` | `I94.pdf` | travel record | `i94` |",
+            ]
+        )
+    )
+
+    manifest = tmp_path / "manifest.yaml"
+    manifest.write_text(
+        "\n".join(
+            [
+                f'source_root: "{source_root}"',
+                "batches:",
+                "  - id: batch_01",
+                "    number: 1",
+                "    focus: identity",
+                "    status: completed",
+                "    record: docs/batch-01.md",
+                "    target_size: 1",
+                "  - id: batch_02",
+                "    number: 2",
+                "    focus: travel",
+                "    status: planned",
+                "    record: docs/batch-02.md",
+                "    target_size: 1",
+            ]
+        )
+    )
+
+    def fake_resolve_document_type(file_path: str, mime_type: str, *, provided_doc_type=None, allow_ocr=False):
+        if file_path.endswith("passport.jpeg"):
+            return ResolvedDocumentType(doc_type="passport", confidence="high", source="filename")
+        if file_path.endswith("I94.pdf"):
+            return ResolvedDocumentType(doc_type="i94", confidence="high", source="filename")
+        raise AssertionError(file_path)
+
+    monkeypatch.setattr("compliance_os.batch_validation.resolve_document_type", fake_resolve_document_type)
+
+    summary = validate_batch_collection(
+        project_root=tmp_path,
+        manifest_path=manifest,
+        statuses={"completed"},
+    )
+
+    assert summary.ok is True
+    assert len(summary.selected_batches) == 1
+    assert summary.selected_batches[0].batch_number == 1
