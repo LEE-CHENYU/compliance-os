@@ -42,3 +42,4 @@ data/
 uploads/
 .superpowers/
 config/google_oauth.json
+logs/

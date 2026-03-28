@@ -1,0 +1,84 @@
+source_root: /Users/lichenyu/Desktop/Important Docs
+
+batches:
+  - id: batch_01
+    number: 1
+    focus: STEM OPT and entity core records
+    status: completed
+    record: docs/data-room-batch-01.md
+    validation_hooks:
+      - name: batch_01_focused_tests
+        command: >
+          {python_quoted} -m pytest
+          tests/test_checks_router_v2.py
+          tests/test_extractor.py
+          tests/test_auth.py
+          -q
+    source_scope:
+      - stem opt
+      - employment
+      - Tax
+    target_size: 10
+
+  - id: batch_02
+    number: 2
+    focus: company formation, leases, insurance or medical, 1042-S, and passport control
+    status: completed
+    record: docs/data-room-batch-02.md
+    validation_hooks:
+      - name: batch_02_focused_tests
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_documents_router.py
+          tests/test_extractor.py
+          tests/test_checks_router_v2.py
+          -q
+    source_scope:
+      - BSGC
+      - 公司信息
+      - Personal Info Archive
+      - Tax
+    target_size: 10
+
+  - id: batch_03
+    number: 3
+    focus: payroll, I-9, E-Verify, I-765, and H-1B registration support
+    status: completed
+    record: docs/data-room-batch-03.md
+    validation_hooks:
+      - name: batch_03_focused_tests
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_documents_router.py
+          tests/test_dashboard_router.py
+          tests/test_checks_router_v2.py
+          tests/test_extractor.py
+          tests/test_llm_runtime.py
+          -q
+    source_scope:
+      - employment
+      - H1b Petition
+    target_size: 10
+
+  - id: batch_04
+    number: 4
+    focus: H-1B petition notices, status summaries, receipt or approval evidence, and supporting filings
+    status: planned
+    record: docs/data-room-batch-04.md
+    source_scope:
+      - H1b Petition
+    target_size: 10
+
+  - id: batch_05
+    number: 5
+    focus: identity, travel, I-20 history, and overflow tax or personal archive records
+    status: planned
+    record: docs/data-room-batch-05.md
+    source_scope:
+      - i20
+      - Personal Info Archive
+      - Tax
+      - "[root]"
+    target_size: 10
