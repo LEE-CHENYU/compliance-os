@@ -1,9 +1,41 @@
 """Tests for LLM extraction service (mocked OpenAI)."""
+from io import BytesIO
 from types import SimpleNamespace
 from unittest.mock import patch
+from zipfile import ZipFile
 
 import compliance_os.web.services.extractor as extractor
-from compliance_os.web.services.extractor import SCHEMAS, extract_document
+from compliance_os.web.services.extractor import SCHEMAS, extract_document, extract_pdf_text_with_provenance
+
+
+def _build_docx_bytes(paragraphs: list[str]) -> bytes:
+    content_types = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>
+"""
+    rels = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>
+"""
+    body = "".join(
+        f"<w:p><w:r><w:t>{paragraph}</w:t></w:r></w:p>"
+        for paragraph in paragraphs
+    )
+    document = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>{body}</w:body>
+</w:document>
+"""
+    buf = BytesIO()
+    with ZipFile(buf, "w") as archive:
+        archive.writestr("[Content_Types].xml", content_types)
+        archive.writestr("_rels/.rels", rels)
+        archive.writestr("word/document.xml", document)
+    return buf.getvalue()
 
 
 def test_schemas_defined():
@@ -108,6 +140,17 @@ def test_extract_resume_fields():
         assert fields["candidate_name"]["value"] == "Chenyu Li"
         assert fields["primary_title"]["value"] == "Data Analyst"
         assert fields["email"]["value"] == "foo@example.com"
+
+
+def test_extract_pdf_text_with_provenance_reads_docx(tmp_path):
+    path = tmp_path / "resume.docx"
+    path.write_bytes(_build_docx_bytes(["Chenyu Li Resume", "Experience", "Education"]))
+
+    result = extract_pdf_text_with_provenance(path)
+
+    assert result.engine == "docx_xml"
+    assert "Chenyu Li Resume" in result.text
+    assert result.metadata["source"] == "docx_xml"
 
 
 def test_extract_returns_fields():

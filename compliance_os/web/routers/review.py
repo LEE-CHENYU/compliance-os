@@ -65,6 +65,10 @@ DATA_ROOM_OBSERVED_FIELDS = {
     "paystub_employer_name": ("paystub", "employer_name", "Extracted from latest paystub"),
     "paystub_pay_period_end": ("paystub", "pay_period_end", "Extracted from latest paystub"),
     "paystub_net_pay": ("paystub", "net_pay", "Extracted from latest paystub"),
+    "employment_letter_employee_name": ("employment_letter", "employee_name", "Extracted from latest employment letter"),
+    "employment_letter_employer_name": ("employment_letter", "employer_name", "Extracted from latest employment letter"),
+    "employment_letter_job_title": ("employment_letter", "job_title", "Extracted from latest employment letter"),
+    "employment_letter_start_date": ("employment_letter", "start_date", "Extracted from latest employment letter"),
     "i9_employee_name": ("i9", "employee_name", "Extracted from latest Form I-9"),
     "i9_employee_first_day_of_employment": ("i9", "employee_first_day_of_employment", "Extracted from latest Form I-9"),
     "i9_citizenship_status": ("i9", "citizenship_status", "Extracted from latest Form I-9"),
@@ -117,6 +121,9 @@ DATA_ROOM_OBSERVED_FIELDS = {
         "cardholder_name",
         "Extracted from latest H-1B filing fee receipt",
     ),
+    "cpt_application_student_name": ("cpt_application", "student_name", "Extracted from latest CPT application"),
+    "cpt_application_employer_name": ("cpt_application", "employer_name", "Extracted from latest CPT application"),
+    "cpt_application_approval_date": ("cpt_application", "approval_date", "Extracted from latest CPT application"),
     "i20_student_name": ("i20", "student_name", "Extracted from latest Form I-20"),
     "i20_program_end_date": ("i20", "program_end_date", "Extracted from latest Form I-20"),
     "i20_travel_signature_date": ("i20", "travel_signature_date", "Extracted from latest Form I-20"),
@@ -133,6 +140,9 @@ DATA_ROOM_OBSERVED_FIELDS = {
     "ead_full_name": ("ead", "full_name", "Extracted from latest EAD card"),
     "ead_date_of_birth": ("ead", "date_of_birth", "Extracted from latest EAD card"),
     "ead_card_expires_on": ("ead", "card_expires_on", "Extracted from latest EAD card"),
+    "resume_candidate_name": ("resume", "candidate_name", "Extracted from latest resume"),
+    "resume_primary_title": ("resume", "primary_title", "Extracted from latest resume"),
+    "resume_email": ("resume", "email", "Extracted from latest resume"),
     "w2_employee_name": ("w2", "employee_name", "Extracted from latest Form W-2"),
     "w2_tax_year": ("w2", "tax_year", "Extracted from latest Form W-2"),
     "tax_return_form_type": ("tax_return", "form_type", "Extracted from latest tax return"),
@@ -339,6 +349,7 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
     elif check.track == "data_room":
         extracted_by_doc_type = {
             "paystub": _get_extracted_dict(check, "paystub"),
+            "employment_letter": _get_extracted_dict(check, "employment_letter"),
             "i9": _get_extracted_dict(check, "i9"),
             "e_verify_case": _get_extracted_dict(check, "e_verify_case"),
             "i765": _get_extracted_dict(check, "i765"),
@@ -347,10 +358,12 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
             "h1b_g28": _get_extracted_dict(check, "h1b_g28"),
             "h1b_filing_invoice": _get_extracted_dict(check, "h1b_filing_invoice"),
             "h1b_filing_fee_receipt": _get_extracted_dict(check, "h1b_filing_fee_receipt"),
+            "cpt_application": _get_extracted_dict(check, "cpt_application"),
             "i20": _get_extracted_dict(check, "i20"),
             "i94": _get_extracted_dict(check, "i94"),
             "passport": _get_extracted_dict(check, "passport"),
             "ead": _get_extracted_dict(check, "ead"),
+            "resume": _get_extracted_dict(check, "resume"),
             "w2": _get_extracted_dict(check, "w2"),
             "tax_return": _get_extracted_dict(check, "tax_return"),
             "1042s": _get_extracted_dict(check, "1042s"),
@@ -366,21 +379,38 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
                 results=results,
             )
 
+        employment_letter = extracted_by_doc_type["employment_letter"]
         i9 = extracted_by_doc_type["i9"]
         everify = extracted_by_doc_type["e_verify_case"]
         h1b_registration = extracted_by_doc_type["h1b_registration"]
         h1b_g28 = extracted_by_doc_type["h1b_g28"]
         h1b_invoice = extracted_by_doc_type["h1b_filing_invoice"]
         h1b_receipt = extracted_by_doc_type["h1b_filing_fee_receipt"]
+        cpt_application = extracted_by_doc_type["cpt_application"]
         i20 = extracted_by_doc_type["i20"]
         i94 = extracted_by_doc_type["i94"]
         passport = extracted_by_doc_type["passport"]
         ead = extracted_by_doc_type["ead"]
+        resume = extracted_by_doc_type["resume"]
         w2 = extracted_by_doc_type["w2"]
         tax_return = extracted_by_doc_type["tax_return"]
         form_1042s = extracted_by_doc_type["1042s"]
 
         cross_document_checks = [
+            (
+                "employment_letter_i9_employee_name",
+                employment_letter.get("employee_name"),
+                i9.get("employee_name"),
+                "fuzzy",
+                "Cross-document identity check between employment letter and Form I-9",
+            ),
+            (
+                "employment_letter_paystub_employer_name",
+                employment_letter.get("employer_name"),
+                extracted_by_doc_type["paystub"].get("employer_name"),
+                "fuzzy",
+                "Cross-document employer consistency check between employment letter and paystub",
+            ),
             (
                 "i9_everify_employee_name",
                 i9.get("employee_name"),
@@ -424,6 +454,20 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
                 "Cross-document consistency check between filing invoice beneficiary and payment receipt cardholder",
             ),
             (
+                "cpt_application_i20_student_name",
+                cpt_application.get("student_name"),
+                i20.get("student_name"),
+                "fuzzy",
+                "Cross-document student identity check between CPT application and Form I-20",
+            ),
+            (
+                "cpt_application_employment_letter_employer_name",
+                cpt_application.get("employer_name"),
+                employment_letter.get("employer_name"),
+                "fuzzy",
+                "Cross-document employer consistency check between CPT application and employment letter",
+            ),
+            (
                 "i20_passport_student_name",
                 i20.get("student_name"),
                 passport.get("full_name"),
@@ -436,6 +480,13 @@ def run_comparison(check_id: str, db: Session = Depends(get_session)):
                 ead.get("full_name"),
                 "fuzzy",
                 "Cross-document identity check between Form I-20 and EAD",
+            ),
+            (
+                "resume_passport_candidate_name",
+                resume.get("candidate_name"),
+                passport.get("full_name"),
+                "fuzzy",
+                "Cross-document identity check between resume and passport",
             ),
             (
                 "passport_ead_date_of_birth",

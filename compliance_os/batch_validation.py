@@ -164,6 +164,8 @@ def _guess_mime_type(path: Path) -> str | None:
     suffix = path.suffix.lower()
     if suffix == ".pdf":
         return "application/pdf"
+    if suffix == ".docx":
+        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     if suffix == ".png":
         return "image/png"
     if suffix in {".jpg", ".jpeg"}:

@@ -11,10 +11,12 @@ from compliance_os.web.services.classifier import (
 )
 
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
+DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 ALLOWED_TYPES = {
     "application/pdf",
     "image/png",
     "image/jpeg",
+    DOCX_MIME_TYPE,
     "text/csv",
     "text/plain",
 }
@@ -31,12 +33,19 @@ class ResolvedDocumentType:
 class UploadValidationError(ValueError):
     """Raised when an upload violates the shared intake policy."""
 
+    def __init__(self, message: str, *, code: str = "upload_validation_failed"):
+        super().__init__(message)
+        self.code = code
+
 
 def validate_upload(mime_type: str | None, content_size: int) -> None:
     if mime_type not in ALLOWED_TYPES:
-        raise UploadValidationError(f"File type {mime_type} not allowed")
+        raise UploadValidationError(
+            f"File type {mime_type} not allowed",
+            code="unsupported_mime_type",
+        )
     if content_size > MAX_FILE_SIZE:
-        raise UploadValidationError("File exceeds 20MB limit")
+        raise UploadValidationError("File exceeds 20MB limit", code="file_too_large")
 
 
 def resolve_document_type(

@@ -70,7 +70,7 @@ def upload_document(
             document=None,
             stage="upload_validation",
             issue=DetectedIssue(
-                issue_code="upload_validation_failed",
+                issue_code=getattr(exc, "code", "upload_validation_failed"),
                 severity="error",
                 message=str(exc),
                 details={
@@ -99,7 +99,7 @@ def upload_document(
             document=None,
             stage="upload_detection",
             issue=DetectedIssue(
-                issue_code="doc_type_validation_failed",
+                issue_code=getattr(exc, "code", "doc_type_validation_failed"),
                 severity="error",
                 message=str(exc),
                 details={

@@ -15,6 +15,34 @@ rules:
       consequence: "Employment verification record inconsistency"
       immigration_impact: true
 
+  - id: employment_letter_i9_name_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: employment_letter_i9_employee_name
+        operator: mismatch
+        source: comparison
+    severity: critical
+    finding:
+      title: "Employment letter employee name does not match Form I-9"
+      action: "Confirm the employee identity across the offer or employment letter and the onboarding record before relying on the work-authorization trail."
+      consequence: "Employment identity inconsistency"
+      immigration_impact: true
+
+  - id: employment_letter_paystub_employer_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: employment_letter_paystub_employer_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Employment letter employer does not match paystub employer"
+      action: "Verify whether the worker is paid through a PEO, payroll processor, or a different legal employer name before using the payroll trail for review."
+      consequence: "Employer-of-record inconsistency"
+      immigration_impact: true
+
   - id: i9_everify_first_day_mismatch
     track: data_room
     type: comparison
@@ -57,6 +85,20 @@ rules:
       consequence: "H-1B payment-support inconsistency"
       immigration_impact: true
 
+  - id: cpt_application_i20_student_name_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: cpt_application_i20_student_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "CPT application student name does not match Form I-20"
+      action: "Confirm the student identity across school-issued CPT paperwork and the active Form I-20 before relying on the employment authorization history."
+      consequence: "Student identity inconsistency"
+      immigration_impact: true
+
   - id: i94_class_of_admission_mismatch
     track: data_room
     type: comparison
@@ -84,6 +126,20 @@ rules:
       action: "Confirm the identity documents before using them for review or downstream filings."
       consequence: "Identity record inconsistency"
       immigration_impact: true
+
+  - id: resume_passport_name_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: resume_passport_candidate_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Resume candidate name does not match passport"
+      action: "Confirm the preferred resume name versus the legal passport name so later filings and evidence packages use the right identity format."
+      consequence: "Resume-to-identity naming inconsistency"
+      immigration_impact: false
 
   - id: w2_tax_return_year_mismatch
     track: data_room

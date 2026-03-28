@@ -28,7 +28,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "articles_of_organization": [r"articles?[_ -]?of[_ -]?organization"],
     "annual_account_summary": [r"year[_ -]?end[_ -]?summary", r"account[_ -]?summaries?"],
     "bank_account_application": [r"\btda\d{3,}\b", r"treasurydirect"],
-    "bank_account_record": [r"银行账户", r"bank[_ -]?account"],
+    "bank_account_record": [r"银行账户", r"对公账户", r"bank[_ -]?account"],
     "bank_statement": [r"bank[_ -]?document", r"bank[_ -]?statement", r"current[_ -]?view"],
     "business_license": [r"营业执照", r"business[_ -]?license"],
     "certificate_of_good_standing": [
@@ -187,6 +187,9 @@ PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
         r"/treasury pass\.png$",
     ],
     "bank_statement": [r"/(?:tax|w2)/\d{0,4}/?bank_document_", r"/w2/bank_document_"],
+    "degree_certificate": [
+        r"/cv & cover letters/transcript&diploma/(?:\d{8,}(?:-\d+)?|img_\d+)\.(?:pdf|jpe?g)$",
+    ],
     "resume": [r"/cv & cover letters/cv\d{6}/(?:chenyu|cheney|李宸宇)[^/]*\.pdf$"],
     "chat_export_asset": [
         r"/employment/bitsync/chatexport_2024-12-14(?: \(\d+\))?/(?:images|photos)/[^/]+\.(?:png|jpe?g)$",
@@ -240,15 +243,9 @@ PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
 # Keep unavoidable corpus-specific legacy archive scans isolated from reusable path-context rules.
 PATH_EXCEPTION_PATTERNS: dict[str, list[str]] = {
     "account_security_setup": [r"/スクリーンショット 2025-04-17 午前11\.49\.19\.png$"],
-    "bank_account_record": [r"/新春竹_对公账户\.pic\.jpg$"],
-    "check_image": [r"/employment/wolff & li/blank_stock_check_payment\.pdf$"],
     "company_filing": [
         r"/veeup\.cc/wechatimg14\.jpg$",
         r"/veeup\.cc/wechatimg371\.jpg$",
-    ],
-    "degree_certificate": [
-        r"/cv & cover letters/transcript&diploma/20210713112836-0001\.pdf$",
-        r"/cv & cover letters/transcript&diploma/img_0514\.jpe?g$",
     ],
     "drivers_license": [r"/personal info archive/img_1725\.pdf$"],
     "ein_application": [r"/yangtze capital/yangtze capital\.pdf$"],
@@ -946,6 +943,29 @@ DOC_TYPE_ALIASES: dict[str, str] = {
 SUPPORTED_DOC_TYPES = set(FILENAME_PATTERNS) | set(PATTERNS) | set(PATH_PATTERNS)
 
 
+def _normalized_path_text(file_path: str) -> str:
+    path = Path(file_path)
+    return "/" + "/".join(part.lower() for part in path.parts)
+
+
+def classify_path_scope(file_path: str, doc_type: str | None = None) -> str | None:
+    """Report whether a path matched reusable context rules or corpus-specific exceptions."""
+    path_text = _normalized_path_text(file_path)
+
+    if doc_type:
+        if any(re.search(pattern, path_text, re.IGNORECASE) for pattern in PATH_EXCEPTION_PATTERNS.get(doc_type, [])):
+            return "exception"
+        if any(re.search(pattern, path_text, re.IGNORECASE) for pattern in PATH_CONTEXT_PATTERNS.get(doc_type, [])):
+            return "context"
+        return None
+
+    for scope, pattern_map in (("exception", PATH_EXCEPTION_PATTERNS), ("context", PATH_CONTEXT_PATTERNS)):
+        for candidate_doc_type, patterns in pattern_map.items():
+            if any(re.search(pattern, path_text, re.IGNORECASE) for pattern in patterns):
+                return scope
+    return None
+
+
 def classifier_generality_report() -> dict[str, object]:
     exception_doc_types = sorted(PATH_EXCEPTION_PATTERNS)
     context_doc_types = sorted(PATH_CONTEXT_PATTERNS)
@@ -1050,7 +1070,7 @@ def classify_filename(file_path: str) -> Classification:
     if by_name.doc_type:
         return by_name
 
-    path_text = "/" + "/".join(part.lower() for part in path.parts)
+    path_text = _normalized_path_text(file_path)
     by_path = _best_scored_match(path_text, PATH_PATTERNS, source="filename")
     if by_path.doc_type:
         return by_path
@@ -1077,6 +1097,15 @@ def classify_file(file_path: str, mime_type: str, *, allow_ocr: bool = True) -> 
         from compliance_os.web.services.pdf_reader import extract_first_page
 
         text = extract_first_page(file_path)
+        if text:
+            by_text = classify_text(text)
+            if by_text.doc_type:
+                return by_text
+
+    if mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        from compliance_os.web.services.docx_reader import extract_docx_text
+
+        text, _ = extract_docx_text(file_path)
         if text:
             by_text = classify_text(text)
             if by_text.doc_type:

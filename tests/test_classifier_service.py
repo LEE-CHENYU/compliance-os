@@ -1,5 +1,8 @@
 """Test lightweight document classification."""
 
+from io import BytesIO
+from zipfile import ZipFile
+
 import compliance_os.web.services.extractor as extractor
 import compliance_os.web.services.pdf_reader as pdf_reader
 from compliance_os.web.services.classifier import (
@@ -9,6 +12,36 @@ from compliance_os.web.services.classifier import (
     classify_text,
     classifier_generality_report,
 )
+
+
+def _build_docx_bytes(paragraphs: list[str]) -> bytes:
+    content_types = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>
+"""
+    rels = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>
+"""
+    body = "".join(
+        f"<w:p><w:r><w:t>{paragraph}</w:t></w:r></w:p>"
+        for paragraph in paragraphs
+    )
+    document = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>{body}</w:body>
+</w:document>
+"""
+    buf = BytesIO()
+    with ZipFile(buf, "w") as archive:
+        archive.writestr("[Content_Types].xml", content_types)
+        archive.writestr("_rels/.rels", rels)
+        archive.writestr("word/document.xml", document)
+    return buf.getvalue()
 
 
 def test_w2_classification():
@@ -492,6 +525,29 @@ def test_text_file_content_can_classify_identifier_record(tmp_path):
     assert result.source == "text"
 
 
+def test_docx_content_can_classify_resume(tmp_path):
+    path = tmp_path / "candidate_profile.docx"
+    path.write_bytes(
+        _build_docx_bytes(
+            [
+                "Chenyu Li Resume",
+                "Experience",
+                "Education",
+                "Skills",
+            ]
+        )
+    )
+
+    result = classify_file(
+        str(path),
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        allow_ocr=False,
+    )
+
+    assert result.doc_type == "resume"
+    assert result.source == "text"
+
+
 def test_classifier_generality_report_keeps_path_exceptions_scoped():
     report = classifier_generality_report()
 
@@ -502,10 +558,7 @@ def test_classifier_generality_report_keeps_path_exceptions_scoped():
     assert set(PATH_EXCEPTION_PATTERNS).issubset(
         {
             "account_security_setup",
-            "bank_account_record",
-            "check_image",
             "company_filing",
-            "degree_certificate",
             "drivers_license",
             "ein_application",
             "employment_letter",

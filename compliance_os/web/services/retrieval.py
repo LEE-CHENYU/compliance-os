@@ -30,6 +30,19 @@ def _field_map(doc: DocumentRow) -> dict[str, str]:
     return out
 
 
+def _field_text_fragments(doc: DocumentRow) -> list[str]:
+    fragments: list[str] = []
+    for field in doc.extracted_fields:
+        label = field.field_name.replace("_", " ")
+        if field.field_value not in (None, ""):
+            fragments.append(f"{label}: {field.field_value}")
+        else:
+            fragments.append(label)
+        if field.raw_text:
+            fragments.append(field.raw_text)
+    return fragments
+
+
 def _doc_text(doc: DocumentRow) -> str:
     return doc.ocr_text or ""
 
@@ -55,6 +68,25 @@ def _best_excerpt(text: str, query: str, width: int = 240) -> str | None:
     return text[:width].strip() or None
 
 
+def _best_field_excerpt(doc: DocumentRow, query: str) -> str | None:
+    tokens = list(_tokenize(query))
+    if not tokens:
+        return None
+
+    for field in doc.extracted_fields:
+        label = field.field_name.replace("_", " ")
+        haystacks = [
+            label,
+            field.field_value or "",
+            field.raw_text or "",
+            f"{label}: {field.field_value}" if field.field_value not in (None, "") else label,
+        ]
+        joined = " ".join(part for part in haystacks if part).lower()
+        if any(token in joined for token in tokens):
+            return field.raw_text or (f"{label}: {field.field_value}" if field.field_value not in (None, "") else label)
+    return None
+
+
 def _document_sort_key(doc: DocumentRow):
     has_values = any(field.field_value not in (None, "") for field in doc.extracted_fields)
     return has_values, doc.document_version or 1, _normalized_uploaded_at(doc), doc.id
@@ -71,6 +103,9 @@ def select_active_document(documents: list[DocumentRow]) -> DocumentRow | None:
 
 def serialize_document(doc: DocumentRow, query: str | None = None) -> dict:
     fields = _field_map(doc)
+    excerpt = _best_field_excerpt(doc, query or "")
+    if excerpt is None:
+        excerpt = _best_excerpt(_doc_text(doc), query or "", width=320)
     return {
         "document_id": doc.id,
         "doc_type": doc.doc_type,
@@ -85,7 +120,7 @@ def serialize_document(doc: DocumentRow, query: str | None = None) -> dict:
         "ocr_engine": doc.ocr_engine,
         "provenance": doc.provenance or {},
         "extracted_fields": fields,
-        "ocr_text_excerpt": _best_excerpt(_doc_text(doc), query or "", width=320),
+        "ocr_text_excerpt": excerpt,
     }
 
 
@@ -138,6 +173,7 @@ def _score_document(doc: DocumentRow, query: str) -> float:
         doc.filename or "",
         doc.source_path or "",
         " ".join(_field_map(doc).values()),
+        " ".join(_field_text_fragments(doc)),
         _doc_text(doc),
     ]
     score = 0.0

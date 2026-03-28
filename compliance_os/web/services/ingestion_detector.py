@@ -10,6 +10,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, IngestionIssueRow
+from compliance_os.web.services.classifier import classify_path_scope
 from compliance_os.web.services.extractor import SCHEMAS
 
 
@@ -100,8 +101,11 @@ def detect_upload_issues(
                 severity="warning",
                 message="Upload used a generic filename without descriptive source context.",
                 details={
+                    "doc_type": doc_type,
                     "filename": filename,
                     "source_path": source_path,
+                    "mime_type": mime_type,
+                    "classification_source": classification_source,
                 },
             )
         )
@@ -113,9 +117,11 @@ def detect_upload_issues(
                 severity="warning",
                 message="Image upload lacks descriptive source context and may need manual intake review.",
                 details={
+                    "doc_type": doc_type,
                     "filename": filename,
                     "source_path": source_path,
                     "classification_source": classification_source,
+                    "mime_type": mime_type,
                 },
             )
         )
@@ -129,6 +135,9 @@ def detect_upload_issues(
                 details={
                     "doc_type": doc_type,
                     "provided_doc_type": provided_doc_type,
+                    "filename": filename,
+                    "source_path": source_path,
+                    "mime_type": mime_type,
                 },
             )
         )
@@ -140,7 +149,34 @@ def detect_upload_issues(
                 issue_code="duplicate_upload",
                 severity="info",
                 message="Upload duplicates an earlier document version.",
-                details={"duplicate_of_document_id": duplicate_of},
+                details={
+                    "doc_type": doc_type,
+                    "filename": filename,
+                    "source_path": source_path,
+                    "mime_type": mime_type,
+                    "duplicate_of_document_id": duplicate_of,
+                },
+            )
+        )
+
+    matched_scope = None
+    if classification_source == "filename":
+        match_target = source_path or filename
+        if match_target:
+            matched_scope = classify_path_scope(match_target, doc_type)
+    if matched_scope == "exception":
+        issues.append(
+            DetectedIssue(
+                issue_code="path_exception_classification",
+                severity="info",
+                message="Document was classified through a corpus-specific path exception and should be reviewed for classifier generality.",
+                details={
+                    "doc_type": doc_type,
+                    "filename": filename,
+                    "source_path": source_path,
+                    "mime_type": mime_type,
+                    "classification_source": classification_source,
+                },
             )
         )
 

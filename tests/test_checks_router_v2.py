@@ -1,5 +1,7 @@
 """Tests for Guardian check flow API routes."""
 from datetime import datetime, timedelta, timezone
+from io import BytesIO
+from zipfile import ZipFile
 
 import compliance_os.web.routers.extraction as extraction_mod
 import pytest
@@ -12,6 +14,36 @@ from compliance_os.web.models.database import get_session
 from compliance_os.web.models.tables_v2 import Base as BaseV2, CheckRow, DocumentRow, ExtractedFieldRow
 from compliance_os.web.services.document_intake import ResolvedDocumentType
 from compliance_os.web.services.extractor import TextExtractionResult
+
+
+def _build_docx_bytes(paragraphs: list[str]) -> bytes:
+    content_types = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>
+"""
+    rels = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>
+"""
+    body = "".join(
+        f"<w:p><w:r><w:t>{paragraph}</w:t></w:r></w:p>"
+        for paragraph in paragraphs
+    )
+    document = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>{body}</w:body>
+</w:document>
+"""
+    buf = BytesIO()
+    with ZipFile(buf, "w") as archive:
+        archive.writestr("[Content_Types].xml", content_types)
+        archive.writestr("_rels/.rels", rels)
+        archive.writestr("word/document.xml", document)
+    return buf.getvalue()
 
 
 @pytest.fixture
@@ -472,6 +504,129 @@ def test_data_room_comparisons_consume_batch_05_fields(client, db_session):
     assert comparisons["i94_i20_class_of_admission"]["status"] == "match"
 
 
+def test_data_room_comparisons_consume_extended_review_fields(client, db_session):
+    check = CheckRow(track="data_room", status="extracted", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    docs = {
+        "employment_letter": DocumentRow(
+            check_id=check.id,
+            doc_type="employment_letter",
+            filename="offer.pdf",
+            file_path="/tmp/offer.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "paystub": DocumentRow(
+            check_id=check.id,
+            doc_type="paystub",
+            filename="paystub.pdf",
+            file_path="/tmp/paystub.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "i9": DocumentRow(
+            check_id=check.id,
+            doc_type="i9",
+            filename="i9.pdf",
+            file_path="/tmp/i9.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "resume": DocumentRow(
+            check_id=check.id,
+            doc_type="resume",
+            filename="resume.pdf",
+            file_path="/tmp/resume.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "passport": DocumentRow(
+            check_id=check.id,
+            doc_type="passport",
+            filename="passport.jpeg",
+            file_path="/tmp/passport.jpeg",
+            file_size=100,
+            mime_type="image/jpeg",
+        ),
+        "cpt_application": DocumentRow(
+            check_id=check.id,
+            doc_type="cpt_application",
+            filename="cpt.pdf",
+            file_path="/tmp/cpt.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+        "i20": DocumentRow(
+            check_id=check.id,
+            doc_type="i20",
+            filename="i20.pdf",
+            file_path="/tmp/i20.pdf",
+            file_size=100,
+            mime_type="application/pdf",
+        ),
+    }
+    db_session.add_all(docs.values())
+    db_session.flush()
+
+    extracted = {
+        "employment_letter": {
+            "employee_name": "Chenyu Li",
+            "employer_name": "CliniPulse LLC",
+            "job_title": "Data Analyst",
+            "start_date": "2025-02-20",
+        },
+        "paystub": {
+            "employer_name": "Different Payroll Entity LLC",
+        },
+        "i9": {
+            "employee_name": "Chenyu Li",
+        },
+        "resume": {
+            "candidate_name": "Chenyu Li",
+            "primary_title": "Data Analyst",
+            "email": "chenyu@example.com",
+        },
+        "passport": {
+            "full_name": "Chenyu Li",
+        },
+        "cpt_application": {
+            "student_name": "Chenyu Li",
+            "employer_name": "CliniPulse LLC",
+            "approval_date": "2025-02-10",
+        },
+        "i20": {
+            "student_name": "Chenyu Li",
+        },
+    }
+
+    for doc_type, field_map in extracted.items():
+        for field_name, field_value in field_map.items():
+            db_session.add(
+                ExtractedFieldRow(
+                    document_id=docs[doc_type].id,
+                    field_name=field_name,
+                    field_value=field_value,
+                    confidence=0.9,
+                )
+            )
+    db_session.commit()
+
+    resp = client.post(f"/api/checks/{check.id}/compare")
+    assert resp.status_code == 200
+    comparisons = {entry["field_name"]: entry for entry in resp.json()}
+
+    assert comparisons["employment_letter_job_title"]["value_b"] == "Data Analyst"
+    assert comparisons["resume_candidate_name"]["value_b"] == "Chenyu Li"
+    assert comparisons["cpt_application_approval_date"]["value_b"] == "2025-02-10"
+    assert comparisons["employment_letter_i9_employee_name"]["status"] == "match"
+    assert comparisons["employment_letter_paystub_employer_name"]["status"] == "mismatch"
+    assert comparisons["resume_passport_candidate_name"]["status"] == "match"
+    assert comparisons["cpt_application_i20_student_name"]["status"] == "match"
+    assert comparisons["cpt_application_employment_letter_employer_name"]["status"] == "match"
+
+
 def test_evaluate_endpoint(client, db_session):
     # Create check with comparisons already done
     check = CheckRow(track="stem_opt", status="extracted", answers={"stage": "stem_opt", "years_in_us": 3})
@@ -543,6 +698,57 @@ def test_data_room_evaluate_endpoint_uses_data_room_rules(client, db_session):
     findings = evaluate_resp.json()
 
     assert any(finding["rule_id"] == "passport_ead_birthdate_mismatch" for finding in findings)
+
+
+def test_data_room_evaluate_endpoint_uses_extended_data_room_rules(client, db_session):
+    check = CheckRow(track="data_room", status="extracted", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    employment_letter = DocumentRow(
+        check_id=check.id,
+        doc_type="employment_letter",
+        filename="offer.pdf",
+        file_path="/tmp/offer.pdf",
+        file_size=100,
+        mime_type="application/pdf",
+    )
+    paystub = DocumentRow(
+        check_id=check.id,
+        doc_type="paystub",
+        filename="paystub.pdf",
+        file_path="/tmp/paystub.pdf",
+        file_size=100,
+        mime_type="application/pdf",
+    )
+    db_session.add_all([employment_letter, paystub])
+    db_session.flush()
+    db_session.add_all(
+        [
+            ExtractedFieldRow(
+                document_id=employment_letter.id,
+                field_name="employer_name",
+                field_value="CliniPulse LLC",
+                confidence=0.9,
+            ),
+            ExtractedFieldRow(
+                document_id=paystub.id,
+                field_name="employer_name",
+                field_value="Different Payroll Entity LLC",
+                confidence=0.9,
+            ),
+        ]
+    )
+    db_session.commit()
+
+    compare_resp = client.post(f"/api/checks/{check.id}/compare")
+    assert compare_resp.status_code == 200
+
+    evaluate_resp = client.post(f"/api/checks/{check.id}/evaluate")
+    assert evaluate_resp.status_code == 200
+    findings = evaluate_resp.json()
+
+    assert any(finding["rule_id"] == "employment_letter_paystub_employer_mismatch" for finding in findings)
 
 
 def test_followups_generated_from_mismatches(client, db_session):
@@ -769,6 +975,56 @@ def test_v2_upload_flags_low_signal_image_ingestion_issues(client, db_session, m
     }
 
 
+def test_v2_upload_accepts_docx_with_provided_type(client, db_session):
+    check_id = client.post("/api/checks", json={"track": "data_room", "answers": {"stage": "data_room"}}).json()["id"]
+
+    resp = client.post(
+        f"/api/checks/{check_id}/documents",
+        data={"doc_type": "resume", "source_path": "CV & Cover Letters/CV240712/Chenyu Li Resume_0712_Tech.docx"},
+        files={
+            "file": (
+                "resume.docx",
+                _build_docx_bytes(["Chenyu Li Resume", "Experience", "Education"]),
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+        },
+    )
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["doc_type"] == "resume"
+    assert body["mime_type"] == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+
+def test_v2_upload_flags_path_exception_classification_issue(client, monkeypatch):
+    check_id = client.post("/api/checks", json={"track": "data_room", "answers": {"stage": "data_room"}}).json()["id"]
+
+    monkeypatch.setattr(
+        extraction_mod,
+        "resolve_document_type",
+        lambda file_path, mime_type, *, provided_doc_type=None, allow_ocr=False: ResolvedDocumentType(
+            doc_type="passport",
+            confidence="high",
+            source="filename",
+            provided_doc_type=provided_doc_type,
+        ),
+    )
+
+    resp = client.post(
+        f"/api/checks/{check_id}/documents",
+        data={"source_path": "BSGC/Docs/IMG_0991.jpeg"},
+        files={"file": ("IMG_0991.jpeg", b"image-data", "image/jpeg")},
+    )
+
+    assert resp.status_code == 200
+    issue_codes = set(resp.json()["provenance"]["ingestion_detection"]["issue_codes"])
+    assert "path_exception_classification" in issue_codes
+
+    issues = client.get(f"/api/checks/{check_id}/ingestion-issues")
+    assert issues.status_code == 200
+    assert "path_exception_classification" in {row["issue_code"] for row in issues.json()}
+
+
 def test_v2_upload_records_unresolved_doc_type_issue(client, monkeypatch):
     check_id = client.post("/api/checks", json={"track": "data_room", "answers": {"stage": "data_room"}}).json()["id"]
 
@@ -798,6 +1054,24 @@ def test_v2_upload_records_unresolved_doc_type_issue(client, monkeypatch):
     assert body[0]["issue_code"] == "doc_type_unresolved"
     assert body[0]["document_id"] is None
     assert body[0]["stage"] == "upload_detection"
+
+
+def test_v2_upload_records_unsupported_mime_issue(client):
+    check_id = client.post("/api/checks", json={"track": "data_room", "answers": {"stage": "data_room"}}).json()["id"]
+
+    resp = client.post(
+        f"/api/checks/{check_id}/documents",
+        files={"file": ("resume.docx", b"bad-docx", "application/msword")},
+    )
+
+    assert resp.status_code == 400
+
+    issues = client.get(f"/api/checks/{check_id}/ingestion-issues")
+    assert issues.status_code == 200
+    body = issues.json()
+    assert len(body) == 1
+    assert body[0]["issue_code"] == "unsupported_mime_type"
+    assert body[0]["stage"] == "upload_validation"
 
 
 def test_extract_persists_ocr_text_and_provenance(client, db_session, monkeypatch):
@@ -1302,6 +1576,45 @@ def test_retrieval_context_endpoint_returns_active_and_prior_versions(client, db
     assert family["active_document"]["document_version"] == 2
     assert len(family["prior_versions"]) == 1
     assert body["retrieved_documents"][0]["filename"] == "offer_new.pdf"
+
+
+def test_retrieval_context_can_match_extracted_field_names(client, db_session):
+    check = CheckRow(track="data_room", status="reviewed", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    doc = DocumentRow(
+        check_id=check.id,
+        doc_type="i9",
+        document_family="i9",
+        document_version=1,
+        is_active=True,
+        filename="i9.pdf",
+        source_path="/tmp/i9.pdf",
+        file_path="/tmp/i9.pdf",
+        file_size=100,
+        mime_type="application/pdf",
+        ocr_text="Employment Eligibility Verification",
+        ocr_engine="test_ocr",
+    )
+    db_session.add(doc)
+    db_session.flush()
+    db_session.add(
+        ExtractedFieldRow(
+            document_id=doc.id,
+            field_name="employee_first_day_of_employment",
+            field_value="2025-03-17",
+            confidence=0.9,
+            raw_text="Employee first day of employment: 2025-03-17",
+        )
+    )
+    db_session.commit()
+
+    resp = client.get(f"/api/checks/{check.id}/retrieval-context", params={"query": "first day of employment"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["retrieved_documents"][0]["filename"] == "i9.pdf"
+    assert "Employee first day of employment" in body["retrieved_documents"][0]["ocr_text_excerpt"]
 
 
 def test_extractions_endpoint_returns_versioned_documents(client, db_session):

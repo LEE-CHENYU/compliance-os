@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter
+from pathlib import Path
 
 from sqlalchemy.orm import sessionmaker
 
@@ -38,12 +39,28 @@ def main(argv: list[str] | None = None) -> int:
         by_code = Counter(row.issue_code for row in all_rows)
         by_stage = Counter(row.stage for row in all_rows)
         by_severity = Counter(row.severity for row in all_rows)
+        by_doc_type = Counter()
+        by_mime_type = Counter()
+        by_extension = Counter()
+
+        for row in all_rows:
+            details = row.details or {}
+            if details.get("doc_type"):
+                by_doc_type[details["doc_type"]] += 1
+            if details.get("mime_type"):
+                by_mime_type[details["mime_type"]] += 1
+            filename = details.get("filename") or details.get("source_path")
+            if filename:
+                by_extension[Path(filename).suffix.lower() or "[no_ext]"] += 1
 
         payload = {
             "total_issues": len(all_rows),
             "by_code": dict(by_code),
             "by_stage": dict(by_stage),
             "by_severity": dict(by_severity),
+            "by_doc_type": dict(by_doc_type),
+            "by_mime_type": dict(by_mime_type),
+            "by_extension": dict(by_extension),
             "recent_issues": [
                 {
                     "id": row.id,
@@ -67,6 +84,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"By severity: {payload['by_severity']}")
             print(f"By stage: {payload['by_stage']}")
             print(f"By code: {payload['by_code']}")
+            print(f"By doc type: {payload['by_doc_type']}")
+            print(f"By mime type: {payload['by_mime_type']}")
+            print(f"By extension: {payload['by_extension']}")
             print("Recent issues:")
             for row in payload["recent_issues"]:
                 print(

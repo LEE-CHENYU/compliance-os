@@ -654,10 +654,31 @@ def extract_pdf_text(file_path: str | Path) -> str:
 
 
 def extract_pdf_text_with_provenance(file_path: str | Path) -> TextExtractionResult:
-    """Extract text from a PDF file.
-    Uses Mistral OCR if API key is available (best quality),
-    falls back to PyMuPDF (free, local).
+    """Extract text from a supported file type.
+
+    Historically this function only handled PDFs, but the document-store path
+    now uses it as the shared text extraction entry point for PDFs, images,
+    DOCX, and plain text files.
     """
+    file_path = Path(file_path)
+    suffix = file_path.suffix.lower()
+
+    if suffix == ".docx":
+        from compliance_os.web.services.docx_reader import extract_docx_text
+
+        text, metadata = extract_docx_text(file_path)
+        return TextExtractionResult(text=text, engine="docx_xml", metadata=metadata)
+
+    if suffix in {".txt", ".csv"}:
+        text = file_path.read_text(encoding="utf-8", errors="ignore")
+        return TextExtractionResult(
+            text=text,
+            engine="plain_text",
+            metadata={"source": "plain_text", "suffix": suffix},
+        )
+
+    # Extract text from a PDF or image file. Uses Mistral OCR if available,
+    # then falls back to local PyMuPDF parsing.
     mistral_key = os.environ.get("MISTRAL_API_KEY")
 
     if mistral_key:
