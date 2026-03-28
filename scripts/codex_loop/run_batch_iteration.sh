@@ -33,7 +33,41 @@ fi
 
 objective="$(cat "$OBJECTIVE_FILE" 2>/dev/null || true)"
 resume_context="$(cat "$RESUME_FILE" 2>/dev/null || echo 'No previous resume context.')"
-record_context="$(sed -n '1,220p' "$ROOT/$BATCH_RECORD" 2>/dev/null || echo 'Batch record file missing.')"
+remaining_gaps="$(
+  python - "$ROOT/$BATCH_RECORD" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+if not path.exists():
+    print("Batch record file missing.")
+    raise SystemExit(0)
+
+lines = path.read_text().splitlines()
+in_section = False
+items: list[str] = []
+for line in lines:
+    stripped = line.strip()
+    if stripped.lower() == "## remaining gaps":
+        in_section = True
+        continue
+    if in_section and stripped.startswith("## "):
+        break
+    if not in_section:
+        continue
+    if stripped.startswith(("- ", "* ")):
+        items.append(stripped[2:].strip())
+        continue
+    if stripped and stripped[0].isdigit() and ". " in stripped:
+        items.append(stripped.split(". ", 1)[1].strip())
+
+if not items:
+    print("- No remaining gaps recorded.")
+else:
+    for item in items:
+        print(f"- {item}")
+PY
+)"
 
 ASSESS_COMMAND="$PYTHON scripts/data_room_batch_loop.py --manifest $MANIFEST_PATH --batch-number $BATCH_NUMBER --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-assess"
 VALIDATE_COMMAND="$PYTHON scripts/data_room_batch_loop.py --manifest $MANIFEST_PATH --batch-number $BATCH_NUMBER --run-validation-hooks --json --log-root logs/data-room-batch-loop-agent-validate"
@@ -52,8 +86,8 @@ $objective
 RESUME CONTEXT:
 $resume_context
 
-BATCH RECORD SNAPSHOT:
-$record_context
+RECORDED REMAINING GAPS:
+$remaining_gaps
 
 MANDATORY WORKFLOW:
 1. Start by running this exact assessment command:
