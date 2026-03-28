@@ -195,9 +195,29 @@ Extension counts:
   - focus: remaining employment screenshot residue plus STEM and chat-export admin overflow
   - status: completed
   - record: `docs/data-room-batch-40.md`
+- Batch 41:
+  - focus: Bitsync chat-export asset overflow part one from the numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-41.md`
+- Batch 42:
+  - focus: Bitsync chat-export asset overflow part two from the numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-42.md`
+- Batch 43:
+  - focus: Bitsync chat-export asset overflow part three from the numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-43.md`
+- Batch 44:
+  - focus: Bitsync chat-export asset overflow part four from the second numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-44.md`
+- Batch 45:
+  - focus: Bitsync chat-export asset overflow part five from the second numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-45.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `40` stable under focused tests plus real-source validation.
+1. Keep Batches `01` through `45` stable under focused tests plus real-source validation.
 2. Pull new families into comparison or retrieval only when a concrete check flow needs them.
 3. Start the next round from still-unbatched source slices instead of reopening resolved batches.
