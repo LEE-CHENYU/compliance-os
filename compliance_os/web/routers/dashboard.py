@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.auth import UserRow
-from compliance_os.web.models.database import get_session
+from compliance_os.web.models.database import DATA_DIR, get_session
 from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, ExtractedFieldRow
 from compliance_os.web.services.auth_service import decode_token
 from compliance_os.web.services.document_intake import (
@@ -27,7 +27,7 @@ from compliance_os.web.services.ingestion_detector import (
 )
 from compliance_os.web.services.timeline_builder import build_stats, build_timeline
 
-UPLOAD_DIR = Path(__file__).resolve().parents[3] / "uploads"
+UPLOAD_DIR = DATA_DIR / "uploads"
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 

@@ -7,7 +7,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
-from compliance_os.web.models.database import get_session
+from compliance_os.web.models.database import DATA_DIR, get_session
 from compliance_os.web.models.schemas import (
     DocumentChecklistResponse,
     DocumentListResponse,
@@ -37,7 +37,7 @@ from compliance_os.web.services.ingestion_detector import (
 from compliance_os.web.services.document_store import register_uploaded_document
 from compliance_os.web.services.document_store import reindex_documents_for_doc_types
 
-UPLOADS_DIR = Path(__file__).parents[3] / "uploads"
+UPLOADS_DIR = DATA_DIR / "uploads"
 LEGACY_CASE_STAGE_PREFIX = "legacy_case:"
 LEGACY_UNCLASSIFIED_DOC_TYPE = "unclassified"
 

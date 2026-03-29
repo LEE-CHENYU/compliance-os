@@ -8,7 +8,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
-from compliance_os.web.models.database import get_session
+from compliance_os.web.models.database import DATA_DIR, get_session
 from compliance_os.web.models.schemas_v2 import (
     DocumentExtraction,
     DocumentOut,
@@ -39,7 +39,7 @@ from compliance_os.web.services.ingestion_detector import (
     sync_document_issues,
 )
 
-UPLOAD_DIR = Path(__file__).parents[3] / "uploads"
+UPLOAD_DIR = DATA_DIR / "uploads"
 
 router = APIRouter(prefix="/api/checks/{check_id}", tags=["extraction"])
 
