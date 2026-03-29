@@ -1,6 +1,8 @@
 """Tests for dashboard data-room upload behavior."""
 
 from datetime import datetime, timedelta, timezone
+import hashlib
+import json
 
 import pytest
 from fastapi.testclient import TestClient
@@ -326,3 +328,134 @@ def test_dashboard_views_dedupe_duplicate_documents_events_and_risks(client, tmp
     assert stats_resp.json()["documents"] == 2
     assert stats_resp.json()["risks"] == 1
     assert stats_resp.json()["verified"] == 1
+
+
+def test_dashboard_upload_prepare_flags_hash_duplicates(client, monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        dashboard_mod,
+        "resolve_document_type",
+        lambda file_path, mime_type, *, provided_doc_type=None, allow_ocr=False: ResolvedDocumentType(
+            doc_type="tax_return",
+            confidence="high",
+            source="filename",
+            provided_doc_type=provided_doc_type,
+        ),
+    )
+
+    register = client.post("/api/auth/register", json={"email": "dashboard-prepare@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    existing_bytes = b"same-pdf-content"
+    existing_hash = hashlib.sha256(existing_bytes).hexdigest()
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        check = CheckRow(track="entity", status="reviewed", user_id=user_id, answers={})
+        session.add(check)
+        session.flush()
+        session.add(
+            DocumentRow(
+                check_id=check.id,
+                doc_type="tax_return",
+                filename="2024_TaxReturn.pdf",
+                file_path=str(tmp_path / "existing.pdf"),
+                file_size=len(existing_bytes),
+                mime_type="application/pdf",
+                content_hash=existing_hash,
+                source_path="Tax/2024_TaxReturn.pdf",
+                uploaded_at=datetime.now(timezone.utc),
+            )
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    resp = client.post(
+        "/api/dashboard/upload/prepare",
+        headers={"Authorization": f"Bearer {token}"},
+        data={"source_paths_json": json.dumps(["Tax/2024_TaxReturn.pdf", "Tax/2023_TaxReturn.pdf"])},
+        files=[
+            ("files", ("2024_TaxReturn.pdf", existing_bytes, "application/pdf")),
+            ("files", ("2023_TaxReturn.pdf", b"brand-new-content", "application/pdf")),
+        ],
+    )
+
+    assert resp.status_code == 200
+    body = resp.json()["files"]
+    assert body[0]["status"] == "duplicate"
+    assert body[0]["resolved_doc_type"] == "tax_return"
+    assert body[0]["duplicates"][0]["filename"] == "2024_TaxReturn.pdf"
+    assert body[1]["status"] == "ready"
+    assert body[1]["duplicates"] == []
+
+
+def test_dashboard_upload_duplicate_action_asks_then_keeps(client, monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        dashboard_mod,
+        "extract_into_document",
+        lambda doc, db: {"document_id": doc.id, "doc_type": doc.doc_type},
+    )
+    monkeypatch.setattr(
+        dashboard_mod,
+        "resolve_document_type",
+        lambda file_path, mime_type, *, provided_doc_type=None, allow_ocr=False: ResolvedDocumentType(
+            doc_type="tax_return",
+            confidence="high",
+            source="filename",
+            provided_doc_type=provided_doc_type,
+        ),
+    )
+
+    register = client.post("/api/auth/register", json={"email": "dashboard-duplicate@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    duplicate_bytes = b"same-upload"
+    duplicate_hash = hashlib.sha256(duplicate_bytes).hexdigest()
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        check = CheckRow(track="entity", status="reviewed", user_id=user_id, answers={})
+        session.add(check)
+        session.flush()
+        session.add(
+            DocumentRow(
+                check_id=check.id,
+                doc_type="tax_return",
+                filename="existing.pdf",
+                file_path=str(tmp_path / "existing.pdf"),
+                file_size=len(duplicate_bytes),
+                mime_type="application/pdf",
+                content_hash=duplicate_hash,
+                source_path="Tax/existing.pdf",
+                uploaded_at=datetime.now(timezone.utc),
+            )
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    ask_resp = client.post(
+        "/api/dashboard/upload",
+        headers={"Authorization": f"Bearer {token}"},
+        files={"file": ("existing.pdf", duplicate_bytes, "application/pdf")},
+    )
+    assert ask_resp.status_code == 409
+    assert ask_resp.json()["detail"]["error"] == "duplicate_upload_detected"
+
+    keep_resp = client.post(
+        "/api/dashboard/upload",
+        headers={"Authorization": f"Bearer {token}"},
+        data={"duplicate_action": "keep"},
+        files={"file": ("existing.pdf", duplicate_bytes, "application/pdf")},
+    )
+    assert keep_resp.status_code == 200
+    assert keep_resp.json()["status"] == "uploaded"
+    assert keep_resp.json()["duplicates"][0]["filename"] == "existing.pdf"
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        checks = session.query(CheckRow).filter(CheckRow.user_id == user_id).all()
+        stored = [doc for check in checks for doc in check.documents if doc.content_hash == duplicate_hash]
+        assert len(stored) == 2
+    finally:
+        session.close()

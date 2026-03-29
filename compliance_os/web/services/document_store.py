@@ -201,6 +201,58 @@ def content_hash_for_bytes(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
+def find_user_duplicate_documents(
+    db: Session,
+    *,
+    user_id: str,
+    content_hash: str,
+    limit: int = 5,
+) -> list[DocumentRow]:
+    rows = (
+        db.query(DocumentRow)
+        .join(CheckRow, CheckRow.id == DocumentRow.check_id)
+        .filter(
+            CheckRow.user_id == user_id,
+            DocumentRow.content_hash == content_hash,
+        )
+        .order_by(
+            DocumentRow.is_active.desc(),
+            DocumentRow.uploaded_at.desc(),
+            DocumentRow.id.desc(),
+        )
+        .all()
+    )
+
+    unique: list[DocumentRow] = []
+    seen: set[tuple[str, str, str]] = set()
+    for row in rows:
+        key = (
+            row.doc_type or "",
+            row.source_path or "",
+            row.filename or "",
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(row)
+        if len(unique) >= limit:
+            break
+    return unique
+
+
+def serialize_duplicate_document(doc: DocumentRow) -> dict[str, Any]:
+    return {
+        "id": doc.id,
+        "check_id": doc.check_id,
+        "filename": doc.filename,
+        "doc_type": doc.doc_type,
+        "source_path": doc.source_path,
+        "uploaded_at": doc.uploaded_at.isoformat() if doc.uploaded_at else None,
+        "is_active": doc.is_active is not False,
+        "content_hash": doc.content_hash,
+    }
+
+
 def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
     uploaded_at = doc.uploaded_at
     if uploaded_at is None:

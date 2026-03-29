@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, type ComponentPropsWithoutRef } from "react";
+import { useCallback, useEffect, useState, useRef, type ChangeEvent, type ComponentPropsWithoutRef, type DragEvent as ReactDragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, authHeaders, getUser, logout } from "@/lib/auth";
 import ReactMarkdown from "react-markdown";
@@ -37,9 +37,43 @@ interface TimelineData {
   deadlines: { title: string; date: string; days: number; category: string; severity: string; action: string }[];
 }
 
+interface UploadDuplicateCandidate {
+  id: string;
+  check_id: string;
+  filename: string;
+  doc_type: string;
+  source_path: string | null;
+  uploaded_at: string | null;
+  is_active: boolean;
+  content_hash: string | null;
+}
+
+interface SelectedUploadFile {
+  file: File;
+  sourcePath: string | null;
+}
+
+interface PreparedUploadItem {
+  file: File;
+  sourcePath: string | null;
+  fileName: string;
+  mimeType: string;
+  fileSize: number;
+  resolvedDocType: string | null;
+  classificationSource: string | null;
+  confidence: string | null;
+  status: "ready" | "duplicate" | "invalid" | "unresolved";
+  message: string | null;
+  contentHash: string | null;
+  duplicates: UploadDuplicateCandidate[];
+  action: "upload" | "skip";
+}
+
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://localhost:8000/api/dashboard"
   : "/api/dashboard";
+
+const DASHBOARD_ACCEPT = ".pdf,.png,.jpg,.jpeg,.csv,.txt,.docx";
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
   student_status: { bg: "rgba(6,182,212,0.1)", text: "#0891b2", border: "rgba(6,182,212,0.12)", label: "Student Status" },
@@ -51,15 +85,103 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   business: { bg: "rgba(124,58,237,0.1)", text: "#7c3aed", border: "rgba(124,58,237,0.12)", label: "Business" },
 };
 
+function normalizeSelectedSourcePath(file: File): string | null {
+  const relativePath = "webkitRelativePath" in file
+    ? (file as File & { webkitRelativePath: string }).webkitRelativePath
+    : "";
+  if (relativePath && relativePath.length > 0) {
+    return relativePath;
+  }
+  return file.name || null;
+}
+
+function dedupeSelectedUploads(items: SelectedUploadFile[]): SelectedUploadFile[] {
+  const seen = new Set<string>();
+  const unique: SelectedUploadFile[] = [];
+  for (const item of items) {
+    const key = [
+      item.sourcePath || item.file.name,
+      item.file.size,
+      item.file.lastModified,
+      item.file.type,
+    ].join(":");
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    unique.push(item);
+  }
+  return unique;
+}
+
+function fileFromEntry(entry: FileSystemFileEntry): Promise<File> {
+  return new Promise((resolve, reject) => {
+    entry.file(resolve, reject);
+  });
+}
+
+function readAllDirectoryEntries(reader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
+  return new Promise((resolve, reject) => {
+    const entries: FileSystemEntry[] = [];
+    const readNext = () => {
+      reader.readEntries(
+        (batch) => {
+          if (!batch.length) {
+            resolve(entries);
+            return;
+          }
+          entries.push(...batch);
+          readNext();
+        },
+        reject,
+      );
+    };
+    readNext();
+  });
+}
+
+async function collectEntryFiles(entry: FileSystemEntry): Promise<SelectedUploadFile[]> {
+  if (entry.isFile) {
+    const file = await fileFromEntry(entry as FileSystemFileEntry);
+    const sourcePath = entry.fullPath ? entry.fullPath.replace(/^\/+/, "") : normalizeSelectedSourcePath(file);
+    return [{ file, sourcePath }];
+  }
+  const children = await readAllDirectoryEntries((entry as FileSystemDirectoryEntry).createReader());
+  const nested = await Promise.all(children.map((child) => collectEntryFiles(child)));
+  return nested.flat();
+}
+
+async function collectDroppedFiles(dataTransfer: DataTransfer): Promise<SelectedUploadFile[]> {
+  const items = Array.from(dataTransfer.items || []);
+  const withEntries = items
+    .map((item) => item.webkitGetAsEntry?.())
+    .filter((entry): entry is FileSystemEntry => Boolean(entry));
+  if (withEntries.length > 0) {
+    const nested = await Promise.all(withEntries.map((entry) => collectEntryFiles(entry)));
+    return dedupeSelectedUploads(nested.flat());
+  }
+  return dedupeSelectedUploads(
+    Array.from(dataTransfer.files || []).map((file) => ({
+      file,
+      sourcePath: normalizeSelectedSourcePath(file),
+    })),
+  );
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [timeline, setTimeline] = useState<TimelineData | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const folderRef = useRef<HTMLInputElement | null>(null);
   const [uploadDocType, setUploadDocType] = useState("");
   const [showUploadPanel, setShowUploadPanel] = useState(false);
+  const [showUploadReview, setShowUploadReview] = useState(false);
+  const [preparedUploads, setPreparedUploads] = useState<PreparedUploadItem[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
   const [view, setView] = useState<"timeline" | "documents" | "profile" | "deadlines">("timeline");
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<{ role: "assistant" | "user"; text: string; chips?: string[] }[]>([]);
@@ -69,46 +191,176 @@ export default function DashboardPage() {
   const [showToken, setShowToken] = useState(false);
   const [tokenCopied, setTokenCopied] = useState(false);
 
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      router.push("/login");
-      return;
-    }
-    Promise.all([
-      fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
-      fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
-      fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
-    ]).then(([tl, st, docs]) => {
-      // If new user with no documents, redirect to check flow
-      if (docs.length === 0 && (!tl.events || tl.events.length <= 1)) {
-        router.push("/check");
-        return;
-      }
-      setTimeline(tl);
-      setStats(st);
-      setDocuments(docs);
-      setLoading(false);
-    });
-  }, [router]);
-
-  async function handleUpload(file: File, docType: string) {
-    const form = new FormData();
-    form.append("file", file);
-    form.append("doc_type", docType);
-    await fetch(`${API}/upload`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: form,
-    });
-    // Refresh
+  const refreshDashboard = useCallback(async () => {
     const [tl, st, docs] = await Promise.all([
       fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
     ]);
+    if (docs.length === 0 && (!tl.events || tl.events.length <= 1)) {
+      router.push("/check");
+      return;
+    }
     setTimeline(tl);
     setStats(st);
     setDocuments(docs);
+    setLoading(false);
+  }, [router]);
+
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      router.push("/login");
+      return;
+    }
+    refreshDashboard();
+  }, [refreshDashboard, router]);
+
+  useEffect(() => {
+    if (!folderRef.current) {
+      return;
+    }
+    folderRef.current.setAttribute("webkitdirectory", "");
+    folderRef.current.setAttribute("directory", "");
+  }, []);
+
+  function resetUploadState() {
+    setPreparedUploads([]);
+    setShowUploadReview(false);
+    setUploadError(null);
+    setDragActive(false);
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+    if (folderRef.current) {
+      folderRef.current.value = "";
+    }
+  }
+
+  async function executeUploadBatch(items: PreparedUploadItem[], preserveLoading = false) {
+    if (!preserveLoading) {
+      setUploading(true);
+    }
+    setUploadError(null);
+    try {
+      const toUpload = items.filter(
+        (item) => item.action === "upload" && (item.status === "ready" || item.status === "duplicate"),
+      );
+      for (const item of toUpload) {
+        const form = new FormData();
+        form.append("file", item.file, item.file.name);
+        form.append("doc_type", uploadDocType || item.resolvedDocType || "other");
+        form.append("duplicate_action", "keep");
+        if (item.sourcePath) {
+          form.append("source_path", item.sourcePath);
+        }
+        const resp = await fetch(`${API}/upload`, {
+          method: "POST",
+          headers: authHeaders(),
+          body: form,
+        });
+        const body = await resp.json().catch(() => null);
+        if (!resp.ok) {
+          throw new Error(body?.detail?.message || body?.detail || `Upload failed for ${item.fileName}`);
+        }
+      }
+      await refreshDashboard();
+      setShowUploadPanel(false);
+      setUploadDocType("");
+      resetUploadState();
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : "Upload failed");
+      setShowUploadReview(true);
+    } finally {
+      if (!preserveLoading) {
+        setUploading(false);
+      }
+    }
+  }
+
+  async function prepareUploadBatch(selectedFiles: SelectedUploadFile[]) {
+    const uniqueFiles = dedupeSelectedUploads(selectedFiles);
+    if (uniqueFiles.length === 0) {
+      return;
+    }
+    setUploading(true);
+    setUploadError(null);
+    setShowUploadPanel(false);
+    try {
+      const form = new FormData();
+      for (const item of uniqueFiles) {
+        form.append("files", item.file, item.file.name);
+      }
+      form.append("source_paths_json", JSON.stringify(uniqueFiles.map((item) => item.sourcePath)));
+      if (uploadDocType) {
+        form.append("doc_type", uploadDocType);
+      }
+      const resp = await fetch(`${API}/upload/prepare`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: form,
+      });
+      const body = await resp.json();
+      if (!resp.ok) {
+        throw new Error(body?.detail || body?.message || "Could not prepare uploads");
+      }
+      const prepared: PreparedUploadItem[] = body.files.map((item: {
+        file_name: string;
+        mime_type: string;
+        file_size: number;
+        resolved_doc_type: string | null;
+        classification_source: string | null;
+        confidence: string | null;
+        status: "ready" | "duplicate" | "invalid" | "unresolved";
+        message: string | null;
+        content_hash: string | null;
+        duplicates: UploadDuplicateCandidate[];
+      }, index: number) => ({
+        file: uniqueFiles[index].file,
+        sourcePath: uniqueFiles[index].sourcePath,
+        fileName: item.file_name,
+        mimeType: item.mime_type,
+        fileSize: item.file_size,
+        resolvedDocType: item.resolved_doc_type,
+        classificationSource: item.classification_source,
+        confidence: item.confidence,
+        status: item.status,
+        message: item.message,
+        contentHash: item.content_hash,
+        duplicates: item.duplicates || [],
+        action: item.status === "duplicate" ? "skip" : item.status === "ready" ? "upload" : "skip",
+      }));
+      const needsReview = prepared.some((item) => item.status !== "ready");
+      setPreparedUploads(prepared);
+      if (needsReview) {
+        setShowUploadReview(true);
+        return;
+      }
+      await executeUploadBatch(prepared, true);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : "Could not prepare uploads");
+      setShowUploadPanel(true);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleNativeInputSelection(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files || []).map((file) => ({
+      file,
+      sourcePath: normalizeSelectedSourcePath(file),
+    }));
+    await prepareUploadBatch(files);
+    event.target.value = "";
+  }
+
+  async function handleDropOnUploadPanel(event: ReactDragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setDragActive(false);
+    if (uploading) {
+      return;
+    }
+    const files = await collectDroppedFiles(event.dataTransfer);
+    await prepareUploadBatch(files);
   }
 
   // Generate proactive questions based on what we know and what's missing
@@ -268,15 +520,7 @@ export default function DashboardPage() {
           headers: { "Content-Type": "application/json", ...authHeaders() },
           body: JSON.stringify({ question_id: qId, answer }),
         });
-        // Refresh dashboard data after re-evaluation
-        const [tl, st, docs] = await Promise.all([
-          fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
-          fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
-          fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
-        ]);
-        setTimeline(tl);
-        setStats(st);
-        setDocuments(docs);
+        await refreshDashboard();
       } catch {
         // Non-fatal — answer still goes to LLM
       }
@@ -713,52 +957,82 @@ export default function DashboardPage() {
           )}
           </>)}
 
-          {/* Hidden file input for timeline upload prompts */}
+          {/* Hidden upload inputs */}
           <input
             ref={fileRef}
             type="file"
-            accept=".pdf,.jpg,.jpeg,.png"
+            accept={DASHBOARD_ACCEPT}
+            multiple
             className="hidden"
-            onChange={async (e) => {
-              const f = e.target.files?.[0];
-              if (f) {
-                setUploading(true);
-                setShowUploadPanel(false);
-                await handleUpload(f, uploadDocType || "other");
-                setUploading(false);
-                setUploadDocType("");
-              }
-            }}
+            onChange={handleNativeInputSelection}
+          />
+          <input
+            ref={folderRef}
+            type="file"
+            multiple
+            className="hidden"
+            onChange={handleNativeInputSelection}
           />
 
           {/* Upload Panel Modal */}
           {showUploadPanel && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0d1424]/20 backdrop-blur-sm p-4">
-              <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 p-6 shadow-[0_16px_64px_rgba(91,141,238,0.15)]">
+              <div className="w-full max-w-xl bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 p-6 shadow-[0_16px_64px_rgba(91,141,238,0.15)]">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-[#0d1424]">Upload a document</h2>
-                  <button onClick={() => setShowUploadPanel(false)} className="text-[#7b8ba5] hover:text-[#0d1424] text-xl">&times;</button>
+                  <div>
+                    <h2 className="text-lg font-bold text-[#0d1424]">Upload documents</h2>
+                    <div className="text-[12px] text-[#7b8ba5] mt-1">Drag files or a folder here, or browse and review duplicates before upload.</div>
+                  </div>
+                  <button onClick={() => { setShowUploadPanel(false); setUploadError(null); }} className="text-[#7b8ba5] hover:text-[#0d1424] text-xl">&times;</button>
                 </div>
 
-                {/* Drop zone — upload first, classify optional */}
+                {uploadError && (
+                  <div className="mb-4 rounded-xl border border-red-200 bg-red-50/80 px-4 py-3 text-[12px] text-red-700">
+                    {uploadError}
+                  </div>
+                )}
+
                 <div
                   onClick={() => { if (!uploading) fileRef.current?.click(); }}
-                  className={`flex flex-col items-center px-6 py-10 rounded-xl border-2 border-dashed transition-all cursor-pointer mb-5 ${
-                    uploading ? "border-blue-300 bg-blue-50/30" : "border-blue-200/40 bg-white/50 hover:border-blue-300/60 hover:bg-white/70"
+                  onDragOver={(event) => { event.preventDefault(); setDragActive(true); }}
+                  onDragLeave={() => setDragActive(false)}
+                  onDrop={handleDropOnUploadPanel}
+                  className={`flex flex-col items-center px-6 py-10 rounded-xl border-2 border-dashed transition-all cursor-pointer mb-4 ${
+                    uploading
+                      ? "border-blue-300 bg-blue-50/30"
+                      : dragActive
+                      ? "border-blue-400 bg-blue-50/60"
+                      : "border-blue-200/40 bg-white/50 hover:border-blue-300/60 hover:bg-white/70"
                   }`}
                 >
                   {uploading ? (
-                    <div className="text-sm text-[#5b8dee] font-medium">Uploading and analyzing...</div>
+                    <div className="text-sm text-[#5b8dee] font-medium">Preparing uploads...</div>
                   ) : (
                     <>
-                      <div className="text-[15px] font-semibold text-[#0d1424] mb-1">Drop any document here</div>
-                      <div className="text-xs text-[#8e9ab5]">PDF, JPG, or PNG — we&apos;ll figure out what it is</div>
+                      <div className="text-[15px] font-semibold text-[#0d1424] mb-1">Drop files or folders here</div>
+                      <div className="text-xs text-[#8e9ab5]">PDF, JPG, PNG, CSV, TXT, DOCX. We hash every file and warn before keeping duplicates.</div>
                     </>
                   )}
                 </div>
 
-                {/* Optional: help us classify */}
-                <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">Optional — helps improve accuracy</div>
+                <div className="flex flex-wrap gap-2 mb-5">
+                  <button
+                    onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    className="px-3.5 py-2 rounded-xl text-[12px] font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white disabled:opacity-50"
+                  >
+                    Choose files
+                  </button>
+                  <button
+                    onClick={() => folderRef.current?.click()}
+                    disabled={uploading}
+                    className="px-3.5 py-2 rounded-xl text-[12px] font-semibold bg-white/70 border border-blue-100/30 text-[#3a5a8c] disabled:opacity-50"
+                  >
+                    Choose folder
+                  </button>
+                </div>
+
+                <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">Optional — apply one type to this batch</div>
                 <div className="flex flex-wrap gap-1.5 mb-5">
                   {[
                     { type: "employment_letter", label: "Employment Letter" },
@@ -787,8 +1061,120 @@ export default function DashboardPage() {
                 </div>
 
                 <p className="text-[11px] text-[#8e9ab5] text-center">
-                  Your documents are stored securely and used only for compliance checking.
+                  Folder paths are preserved as source context. Exact duplicate files are detected by SHA-256 hash before upload.
                 </p>
+              </div>
+            </div>
+          )}
+
+          {/* Upload Review Modal */}
+          {showUploadReview && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d1424]/25 backdrop-blur-sm p-4">
+              <div className="w-full max-w-3xl bg-white/90 backdrop-blur-xl rounded-2xl border border-white/60 p-6 shadow-[0_16px_64px_rgba(91,141,238,0.18)] max-h-[85vh] flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-lg font-bold text-[#0d1424]">Review upload batch</h2>
+                    <div className="text-[12px] text-[#7b8ba5] mt-1">Duplicates default to skip. Keep only the files you want to store.</div>
+                  </div>
+                  <button
+                    onClick={() => { resetUploadState(); setUploading(false); }}
+                    className="text-[#7b8ba5] hover:text-[#0d1424] text-xl"
+                  >
+                    &times;
+                  </button>
+                </div>
+
+                {uploadError && (
+                  <div className="mb-4 rounded-xl border border-red-200 bg-red-50/80 px-4 py-3 text-[12px] text-red-700">
+                    {uploadError}
+                  </div>
+                )}
+
+                <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                  {preparedUploads.map((item, index) => {
+                    const canToggle = item.status === "ready" || item.status === "duplicate";
+                    const actionLabel = item.action === "upload" ? (item.status === "duplicate" ? "Keep duplicate" : "Upload") : "Skip";
+                    return (
+                      <div key={`${item.fileName}-${index}`} className="rounded-2xl border border-white/60 bg-white/55 px-4 py-4">
+                        <div className="flex items-start gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[13px] font-semibold text-[#0d1424] truncate">{item.fileName}</div>
+                            <div className="text-[11px] text-[#7b8ba5] mt-1">
+                              {item.resolvedDocType || "Unknown type"} · {Math.max(1, Math.round(item.fileSize / 1024))}KB
+                              {item.sourcePath ? ` · ${item.sourcePath}` : ""}
+                            </div>
+                            {item.message && (
+                              <div className={`text-[12px] mt-2 ${item.status === "duplicate" ? "text-amber-700" : "text-red-700"}`}>
+                                {item.message}
+                              </div>
+                            )}
+                            {item.duplicates.length > 0 && (
+                              <div className="mt-3 space-y-2">
+                                {item.duplicates.map((duplicate) => (
+                                  <div key={duplicate.id} className="rounded-xl border border-amber-200 bg-amber-50/70 px-3 py-2 text-[11px] text-amber-900">
+                                    <div className="font-semibold">{duplicate.filename}</div>
+                                    <div className="text-amber-800/80">
+                                      {duplicate.doc_type}
+                                      {duplicate.source_path ? ` · ${duplicate.source_path}` : ""}
+                                      {duplicate.uploaded_at ? ` · ${new Date(duplicate.uploaded_at).toLocaleDateString()}` : ""}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                            <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${
+                              item.status === "ready"
+                                ? "bg-emerald-50 text-emerald-700"
+                                : item.status === "duplicate"
+                                ? "bg-amber-50 text-amber-700"
+                                : "bg-red-50 text-red-700"
+                            }`}>
+                              {item.status}
+                            </span>
+                            <button
+                              disabled={!canToggle || uploading}
+                              onClick={() => setPreparedUploads((current) => current.map((currentItem, currentIndex) => (
+                                currentIndex === index
+                                  ? { ...currentItem, action: currentItem.action === "upload" ? "skip" : "upload" }
+                                  : currentItem
+                              )))}
+                              className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold ${
+                                item.action === "upload"
+                                  ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white"
+                                  : "bg-white/70 border border-blue-100/30 text-[#3a5a8c]"
+                              } disabled:opacity-50`}
+                            >
+                              {actionLabel}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-blue-100/30">
+                  <div className="text-[12px] text-[#556480]">
+                    {preparedUploads.filter((item) => item.action === "upload").length} of {preparedUploads.length} selected for upload
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => { resetUploadState(); setUploading(false); }}
+                      className="px-3.5 py-2 rounded-xl text-[12px] font-semibold bg-white/70 border border-blue-100/30 text-[#3a5a8c]"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      disabled={uploading || !preparedUploads.some((item) => item.action === "upload")}
+                      onClick={() => executeUploadBatch(preparedUploads)}
+                      className="px-3.5 py-2 rounded-xl text-[12px] font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white disabled:opacity-50"
+                    >
+                      {uploading ? "Uploading..." : "Upload selected"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
