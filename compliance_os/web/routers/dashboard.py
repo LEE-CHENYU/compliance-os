@@ -119,11 +119,21 @@ def _resolve_doc_type_for_upload_file(
     temp_path = upload_dir / f".preflight_{uuid.uuid4()}_{file_name}"
     temp_path.write_bytes(content)
     try:
-        return resolve_document_type(
+        # Try filename-based classification first (fast path), then fall back
+        # to OCR-based classification using Mistral OCR for generic filenames.
+        result = resolve_document_type(
             str(temp_path),
             mime_type,
             provided_doc_type=provided_doc_type,
             allow_ocr=False,
+        )
+        if result.doc_type:
+            return result
+        return resolve_document_type(
+            str(temp_path),
+            mime_type,
+            provided_doc_type=provided_doc_type,
+            allow_ocr=True,
         )
     finally:
         temp_path.unlink(missing_ok=True)
