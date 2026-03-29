@@ -779,7 +779,7 @@ export default function DashboardPage() {
         body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
       });
       const data = await resp.json();
-      setChatMessages((prev) => [...prev, { id: nextChatMessageId(), role: "assistant", text: data.reply }]);
+      setChatMessages((prev) => [...prev, { id: nextChatMessageId(), role: "assistant", text: data.reply, references: data.references || [] }]);
     } catch {
       setChatMessages((prev) => [...prev, { id: nextChatMessageId(), role: "assistant", text: "Sorry, I couldn\u2019t process that. Please try again." }]);
     } finally {
@@ -1610,6 +1610,24 @@ export default function DashboardPage() {
                         code: (props: ComponentPropsWithoutRef<"code">) => <code className="text-[12px] px-1.5 py-0.5 rounded-md bg-[#5b8dee]/8 text-[#3d6bc5] font-mono" {...props} />,
                         a: (props: ComponentPropsWithoutRef<"a">) => <a className="text-[#5b8dee] underline" {...props} />,
                       }}>{msg.text}</ReactMarkdown>
+                      {msg.references && msg.references.length > 0 && (
+                        <details className="mt-2 group">
+                          <summary className="text-[11px] text-[#7b8ba5] cursor-pointer hover:text-[#3d6bc5] transition-colors select-none">
+                            Referenced {msg.references.length} document{msg.references.length > 1 ? "s" : ""}
+                          </summary>
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {msg.references.map((ref: { id: string; filename: string; doc_type: string }) => (
+                              <span
+                                key={ref.id}
+                                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] bg-[#5b8dee]/6 text-[#3a5a8c] border border-[#5b8dee]/10"
+                              >
+                                <span className="opacity-50">&#128196;</span>
+                                {ref.filename.length > 30 ? ref.filename.slice(0, 28) + "..." : ref.filename}
+                              </span>
+                            ))}
+                          </div>
+                        </details>
+                      )}
                       {msg.chips && (
                         <div className="flex flex-wrap gap-1.5 mt-3">
                           {msg.chips.map((chip) => (

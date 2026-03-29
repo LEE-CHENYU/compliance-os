@@ -44,8 +44,16 @@ class ChatRequest(BaseModel):
     history: list[dict[str, str]] = []  # [{"role": "user"|"assistant", "text": "..."}]
 
 
+class ChatReferenceDoc(BaseModel):
+    id: str
+    filename: str
+    doc_type: str
+    score: float = 0.0
+
+
 class ChatResponse(BaseModel):
     reply: str
+    references: list[ChatReferenceDoc] = []
 
 
 def _get_user(authorization: str = Header(None), db: Session = Depends(get_session)) -> UserRow:
@@ -56,8 +64,12 @@ def _get_user(authorization: str = Header(None), db: Session = Depends(get_sessi
     return user
 
 
-def _build_context(user_id: str, db: Session, query: str | None = None) -> str:
-    """Build a context summary of the user's situation for the LLM."""
+def _build_context(user_id: str, db: Session, query: str | None = None) -> tuple[str, list[dict]]:
+    """Build a context summary of the user's situation for the LLM.
+
+    Returns (context_text, retrieved_docs) where retrieved_docs is a list of
+    dicts with id, filename, doc_type, score for the query-relevant documents.
+    """
     timeline = build_timeline(user_id, db)
     checks = db.query(CheckRow).filter(CheckRow.user_id == user_id).all()
     canonical_docs = canonical_documents_for_checks(checks)
@@ -154,8 +166,9 @@ def _build_context(user_id: str, db: Session, query: str | None = None) -> str:
                 )
         parts.append("")
 
+    retrieved_refs: list[dict] = []
     if query and checks:
-        retrieved = retrieve_documents_for_query(checks, query=query, top_k=4)
+        retrieved = retrieve_documents_for_query(checks, query=query, top_k=10)
         if retrieved:
             parts.append("## Retrieved Documents For Current Question")
             for doc in retrieved:
@@ -164,13 +177,19 @@ def _build_context(user_id: str, db: Session, query: str | None = None) -> str:
                     f"[family={doc['document_family']}, version={doc['document_version']}, score={doc['score']:.1f}]"
                 )
                 fields = doc.get("extracted_fields") or {}
-                for key, value in list(fields.items())[:5]:
+                for key, value in list(fields.items())[:10]:
                     parts.append(f"  {key}: {value}")
                 if doc.get("ocr_text_excerpt"):
                     parts.append(f"  Excerpt: {doc['ocr_text_excerpt']}")
+                retrieved_refs.append({
+                    "id": doc.get("document_id", ""),
+                    "filename": doc["filename"],
+                    "doc_type": doc.get("doc_type", doc.get("document_family", "")),
+                    "score": doc.get("score", 0.0),
+                })
             parts.append("")
 
-    return "\n".join(parts)
+    return "\n".join(parts), retrieved_refs
 
 
 SYSTEM_PROMPT = """You are Guardian, a compliance assistant for immigrants in the US. You help users understand their immigration, tax, and business compliance obligations.
@@ -197,10 +216,10 @@ def chat(
     db: Session = Depends(get_session),
 ):
     user = _get_user(authorization, db)
-    context = _build_context(user.id, db, query=body.message)
+    context_text, retrieved_refs = _build_context(user.id, db, query=body.message)
 
     # Build messages for the LLM
-    system = SYSTEM_PROMPT.format(context=context)
+    system = SYSTEM_PROMPT.format(context=context_text)
     messages = []
     for msg in body.history:
         messages.append({"role": msg["role"], "content": msg["text"]})
@@ -228,7 +247,11 @@ def chat(
 
     db.commit()
 
-    return ChatResponse(reply=reply)
+    references = [
+        ChatReferenceDoc(id=r["id"], filename=r["filename"], doc_type=r["doc_type"], score=r["score"])
+        for r in retrieved_refs
+    ]
+    return ChatResponse(reply=reply, references=references)
 
 
 class AnswerStore(BaseModel):
