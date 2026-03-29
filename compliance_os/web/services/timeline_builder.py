@@ -1499,13 +1499,41 @@ def build_stats(user_id: str, db: Session) -> dict:
 def _doc_category(doc_type: str) -> str:
     if doc_type in ("i20", "i94"):
         return "student_status"
-    if doc_type in ("i797", "i485", "i765", "i131"):
+    if doc_type in ("i797", "i485", "i765", "i131", "visa_stamp", "passport"):
         return "immigration"
-    if doc_type in ("i983", "employment_letter", "ead"):
+    if doc_type in (
+        "i983", "employment_letter", "employment_contract", "employment_correspondence",
+        "employment_offer", "employment_offer_letter", "employment_agreement",
+        "employment_screenshot", "ead", "e_verify_case", "e_verify", "i9",
+        "paystub", "cpt_application", "final_evaluation", "wage_notice",
+        "h1b_registration", "h1b_registration_worksheet", "h1b_registration_checklist",
+        "h1b_status_summary", "h1b_g28", "h1b_filing_invoice", "h1b_filing_fee_receipt",
+        "g_28", "g28", "transfer_pending_letter",
+    ):
         return "employment"
-    if doc_type in ("tax_return", "w2"):
+    if doc_type in ("tax_return", "w2", "w4", "1042s", "1099", "tax_interview", "tax_notice"):
         return "tax"
-    return "business"
+    if doc_type in (
+        "ein_letter", "ein_application", "ein_application_instructions",
+        "articles_of_organization", "operating_agreement", "certificate_of_good_standing",
+        "registered_agent_consent", "business_license", "company_filing", "entity_notice",
+        "legal_services_agreement", "annual_account_summary",
+    ):
+        return "business"
+    if doc_type in (
+        "admission_letter", "enrollment_verification", "transcript",
+        "degree_certificate", "diploma", "student_id", "language_test_certificate",
+    ):
+        return "student_status"
+    if doc_type in (
+        "lease", "insurance_policy", "insurance_card", "insurance_record",
+        "health_coverage_application", "bank_statement", "bank_account_record",
+        "bank_account_application", "drivers_license", "social_security_card",
+        "social_security_record", "identity_document", "residence_certificate",
+    ):
+        return "personal"
+    # Catch-all for resumes, cover letters, NDAs, misc
+    return "other"
 
 
 def _build_deadlines(

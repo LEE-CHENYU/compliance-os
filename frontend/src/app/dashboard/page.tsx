@@ -178,6 +178,8 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   tax: { bg: "rgba(16,185,129,0.1)", text: "#059669", border: "rgba(16,185,129,0.12)", label: "Tax" },
   entity: { bg: "rgba(124,58,237,0.1)", text: "#7c3aed", border: "rgba(124,58,237,0.12)", label: "Business" },
   business: { bg: "rgba(124,58,237,0.1)", text: "#7c3aed", border: "rgba(124,58,237,0.12)", label: "Business" },
+  personal: { bg: "rgba(236,72,153,0.1)", text: "#db2777", border: "rgba(236,72,153,0.12)", label: "Personal" },
+  other: { bg: "rgba(107,114,128,0.1)", text: "#6b7280", border: "rgba(107,114,128,0.12)", label: "Other" },
 };
 
 function normalizeSelectedSourcePath(file: File): string | null {
@@ -674,6 +676,19 @@ export default function DashboardPage() {
       });
     }
 
+    // Open-ended employment chains — ask if still employed
+    const openChains = (timeline.deadlines || []).filter(
+      (d: { title: string; days: number }) =>
+        d.title === "I-983 12-month evaluation due" && d.days < -30,
+    );
+    if (openChains.length > 0 && !chatAnswered.has("employment_status_check")) {
+      questions.push({
+        id: "employment_status_check",
+        text: "We noticed some of your employment records don't have an end date, which is generating overdue evaluation alerts. Are you still employed at all of your listed employers, or have any of those positions ended?",
+        chips: ["Still employed at all", "Some have ended", "I'll update my records"],
+      });
+    }
+
     // Form 8843
     if (!chatAnswered.has("form_8843") && facts.has("Immigration stage")) {
       questions.push({
@@ -1002,15 +1017,10 @@ export default function DashboardPage() {
 
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Categories</div>
-            {["student_status", "immigration", "employment", "tax", "business"].map((cat) => {
-              const DOC_CATS: Record<string, string> = {
-                i20: "student_status", i94: "student_status",
-                i797: "immigration", i485: "immigration", i765: "immigration", i131: "immigration",
-                i983: "employment", employment_letter: "employment", ead: "employment",
-                tax_return: "tax", w2: "tax",
-              };
-              const count = documents.filter((d) => (DOC_CATS[d.doc_type] || "business") === cat).length;
-              const colors = CATEGORY_COLORS[cat] || CATEGORY_COLORS.business;
+            {["student_status", "immigration", "employment", "tax", "business", "personal", "other"].map((cat) => {
+              const count = documents.filter((d) => (d.category || "other") === cat).length;
+              if (count === 0) return null;
+              const colors = CATEGORY_COLORS[cat] || CATEGORY_COLORS.other;
               return (
                 <div key={cat} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480]">
                   <span className="w-2 h-2 rounded-full" style={{ background: colors.text }} />

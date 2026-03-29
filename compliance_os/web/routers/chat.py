@@ -296,6 +296,15 @@ ANSWER_MAPPINGS: dict[str, dict] = {
         "field": "has_multistate_health",
         "value_map": {"Yes": "yes", "No": "no"},
     },
+    "employment_status_check": {
+        "track": "stem_opt",
+        "field": "employment_status_check",
+        "value_map": {
+            "Still employed at all": "all_active",
+            "Some have ended": "some_ended",
+            "I'll update my records": "will_update",
+        },
+    },
 }
 
 
