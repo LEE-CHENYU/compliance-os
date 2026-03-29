@@ -69,7 +69,7 @@ def configured_llm_model(provider: str, *, task: str = "chat") -> str:
                 "ANTHROPIC_EXTRACTION_MODEL",
                 os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
             )
-        return os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6-20250527")
+        return os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
     if provider == "openai":
         return os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     raise LLMConfigError(f"Unsupported provider {provider}")
