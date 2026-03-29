@@ -10,7 +10,11 @@ from compliance_os.web.models.tables_v2 import (
     DocumentRow,
     ExtractedFieldRow,
 )
-from compliance_os.web.services.subject_chains import list_user_subject_chains, sync_user_subject_chains
+from compliance_os.web.services.subject_chains import (
+    list_user_subject_chains,
+    serialize_subject_chain,
+    sync_user_subject_chains,
+)
 
 
 def _session():
@@ -123,5 +127,180 @@ def test_sync_user_subject_chains_persists_employment_and_entity_chains(tmp_path
                 "document_ids": [entity_tax.id],
             }
         ]
+    finally:
+        session.close()
+
+
+def test_sync_user_subject_chains_absorbs_context_only_support_docs_into_named_employment_chain(tmp_path):
+    session = _session()
+    now = datetime.now(timezone.utc)
+    user_id = "user-2"
+    try:
+        check = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        session.add(check)
+        session.flush()
+
+        i983 = DocumentRow(
+            check_id=check.id,
+            doc_type="i983",
+            filename="Chenyu_i983 Form_100124_ink_signed.pdf",
+            file_path=str(tmp_path / "vcv-i983.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="employment/vcv/Chenyu_i983 Form_100124_ink_signed.pdf",
+            uploaded_at=now - timedelta(days=2),
+        )
+        i9 = DocumentRow(
+            check_id=check.id,
+            doc_type="i9",
+            filename="I9.pdf",
+            file_path=str(tmp_path / "vcv-i9.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="employment/vcv/I9.pdf",
+            uploaded_at=now - timedelta(days=1),
+        )
+        session.add_all([i983, i9])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=i983.id, field_name="employer_name", field_value="Tiger Cloud LLC"),
+                ExtractedFieldRow(document_id=i983.id, field_name="start_date", field_value="2024-10-01"),
+                ExtractedFieldRow(document_id=i9.id, field_name="company_name", field_value="VCV"),
+                ExtractedFieldRow(document_id=i9.id, field_name="employee_first_day_of_employment", field_value="2026-03-17"),
+            ]
+        )
+        session.commit()
+
+        sync_user_subject_chains(user_id, session)
+        session.commit()
+
+        chains = [chain for chain in list_user_subject_chains(user_id, session) if chain.chain_type == "employment"]
+        assert [chain.chain_key for chain in chains] == ["employment:tiger-cloud-llc:2024-10-01"]
+        tiger = chains[0]
+        assert tiger.display_name == "Tiger Cloud LLC (vcv)"
+        linked_filenames = {link.document.filename for link in tiger.document_links if link.document is not None}
+        assert linked_filenames == {
+            "Chenyu_i983 Form_100124_ink_signed.pdf",
+            "I9.pdf",
+        }
+        assert set(tiger.snapshot["start_document_ids"]) == {i983.id}
+    finally:
+        session.close()
+
+
+def test_sync_user_subject_chains_merges_identifier_only_tax_return_into_entity_chain(tmp_path):
+    session = _session()
+    now = datetime.now(timezone.utc)
+    user_id = "user-3"
+    try:
+        check = CheckRow(track="entity", status="reviewed", user_id=user_id, answers={"entity_type": "smllc"})
+        session.add(check)
+        session.flush()
+
+        ein_letter = DocumentRow(
+            check_id=check.id,
+            doc_type="ein_letter",
+            filename="CP575Notice.pdf",
+            file_path=str(tmp_path / "cp575.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="business/bamboo/CP575Notice.pdf",
+            uploaded_at=now - timedelta(days=3),
+        )
+        tax_return = DocumentRow(
+            check_id=check.id,
+            doc_type="tax_return",
+            filename="2024_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-return.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="business/bamboo/2024_TaxReturn.pdf",
+            uploaded_at=now - timedelta(days=1),
+        )
+        session.add_all([ein_letter, tax_return])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=ein_letter.id, field_name="entity_name", field_value="Bamboo Shoot Growth Capital LLC"),
+                ExtractedFieldRow(document_id=ein_letter.id, field_name="ein", field_value="10-9974443"),
+                ExtractedFieldRow(document_id=tax_return.id, field_name="entity_name", field_value="2024"),
+                ExtractedFieldRow(document_id=tax_return.id, field_name="ein", field_value="10-9974443"),
+                ExtractedFieldRow(document_id=tax_return.id, field_name="tax_year", field_value="2024"),
+            ]
+        )
+        session.commit()
+
+        sync_user_subject_chains(user_id, session)
+        session.commit()
+
+        entity_chains = [chain for chain in list_user_subject_chains(user_id, session) if chain.chain_type == "entity"]
+        assert [chain.chain_key for chain in entity_chains] == ["entity:bamboo-shoot-growth-capital-llc"]
+        bamboo = entity_chains[0]
+        assert bamboo.display_name == "Bamboo Shoot Growth Capital LLC"
+        assert bamboo.snapshot["tax_events"] == [
+            {
+                "date": "2024-04-15",
+                "title": "2024 Tax Return filed",
+                "document_ids": [tax_return.id],
+            }
+        ]
+    finally:
+        session.close()
+
+
+def test_serialize_subject_chain_dedupes_equivalent_documents(tmp_path):
+    session = _session()
+    now = datetime.now(timezone.utc)
+    user_id = "user-4"
+    try:
+        check_one = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        check_two = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        session.add_all([check_one, check_two])
+        session.flush()
+
+        offer_one = DocumentRow(
+            check_id=check_one.id,
+            doc_type="employment_letter",
+            filename="Wolff_&_Li_Capital_Offer_Letter.pdf",
+            file_path=str(tmp_path / "offer-1.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="employment/Wolff & Li/Wolff_&_Li_Capital_Offer_Letter.pdf",
+            content_hash="abcd" * 16,
+            uploaded_at=now - timedelta(days=1),
+        )
+        offer_two = DocumentRow(
+            check_id=check_two.id,
+            doc_type="employment_letter",
+            filename="Wolff_&_Li_Capital_Offer_Letter.pdf",
+            file_path=str(tmp_path / "offer-2.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="employment/Wolff & Li/Wolff_&_Li_Capital_Offer_Letter.pdf",
+            content_hash="abcd" * 16,
+            uploaded_at=now,
+        )
+        session.add_all([offer_one, offer_two])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=offer_one.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=offer_one.id, field_name="start_date", field_value="2025-03-17"),
+                ExtractedFieldRow(document_id=offer_two.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=offer_two.id, field_name="start_date", field_value="2025-03-17"),
+            ]
+        )
+        session.commit()
+
+        sync_user_subject_chains(user_id, session)
+        session.commit()
+
+        chain = next(chain for chain in list_user_subject_chains(user_id, session) if chain.chain_type == "employment")
+        serialized = serialize_subject_chain(chain)
+        assert [item["filename"] for item in serialized["documents"]] == ["Wolff_&_Li_Capital_Offer_Letter.pdf"]
     finally:
         session.close()

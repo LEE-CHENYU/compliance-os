@@ -56,6 +56,8 @@ GENERIC_CONTEXT_SLUGS = {
     "tax",
     "article",
     "articles",
+    "filing",
+    "filings",
     "stem",
     "opt",
     "i983",
@@ -64,6 +66,14 @@ GENERIC_CONTEXT_SLUGS = {
 }
 
 CORPORATE_STOP_WORDS = {"inc", "llc", "ltd", "co", "corp", "capital", "the", "and"}
+EMPLOYMENT_SUPPORTING_DOC_TYPES = {"paystub", "i9", "e_verify_case", "employment_correspondence"}
+EMPLOYMENT_START_EVIDENCE_DOC_TYPES = {
+    "i983",
+    "employment_contract",
+    "employment_letter",
+    "cpt_application",
+    "h1b_registration",
+}
 
 
 def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
@@ -88,6 +98,17 @@ def _slug(value: str | None) -> str | None:
     return "-".join(tokens[:12])
 
 
+def _source_name(value: str | None) -> str:
+    if not value:
+        return ""
+    return Path(value).name or value
+
+
+def _has_rich_source_path(doc: DocumentRow) -> bool:
+    source_path = doc.source_path or ""
+    return "/" in source_path or "\\" in source_path
+
+
 def _meaningful_tokens(value: str | None) -> set[str]:
     if not value:
         return set()
@@ -96,6 +117,17 @@ def _meaningful_tokens(value: str | None) -> set[str]:
         for token in re.findall(r"[a-z0-9]+", value.lower())
         if token not in CORPORATE_STOP_WORDS
     }
+
+
+def _is_low_signal_subject_name(value: str | None) -> bool:
+    if not value:
+        return True
+    normalized = _normalized_text(value)
+    if not normalized:
+        return True
+    if re.fullmatch(r"(19|20)\d{2}", normalized):
+        return True
+    return normalized in GENERIC_CONTEXT_SLUGS
 
 
 def _field_map(doc: DocumentRow) -> dict[str, str]:
@@ -174,6 +206,25 @@ def _display_name(subject_name: str | None, context_label: str | None, fallback:
     return fallback
 
 
+def _documents_equivalent(doc: DocumentRow, other: DocumentRow) -> bool:
+    if doc.content_hash and other.content_hash and doc.content_hash == other.content_hash:
+        return True
+    if doc.source_path and other.source_path and doc.source_path == other.source_path:
+        return True
+    if (doc.filename or "") != (other.filename or ""):
+        return False
+    if (doc.file_size or 0) != (other.file_size or 0):
+        return False
+    if _source_name(doc.source_path or doc.filename) != _source_name(other.source_path or other.filename):
+        return False
+    return bool(
+        doc.content_hash
+        or other.content_hash
+        or not _has_rich_source_path(doc)
+        or not _has_rich_source_path(other)
+    )
+
+
 def _document_appears_final(doc: DocumentRow) -> bool:
     reference = _normalized_text(f"{doc.source_path or ''} {doc.filename or ''}")
     if any(token in reference for token in ("draft", "unsigned", "outdated", "edited")):
@@ -190,6 +241,8 @@ def _employment_seed(doc: DocumentRow) -> dict[str, Any] | None:
         return None
     fields = _field_map(doc)
     employer_name = _first_present(fields, ["employer_name", "company_name"])
+    if _is_low_signal_subject_name(employer_name):
+        employer_name = None
     employer_ein = _normalize_ein(_first_present(fields, ["employer_ein"]))
     context_label = _context_label(doc)
     subject_token = (
@@ -221,6 +274,8 @@ def _entity_seed(doc: DocumentRow) -> dict[str, Any] | None:
         return None
     fields = _field_map(doc)
     entity_name = _first_present(fields, ["entity_name", "legal_name", "client_entity_name", "business_name"])
+    if _is_low_signal_subject_name(entity_name):
+        entity_name = None
     ein = _normalize_ein(_first_present(fields, ["ein", "employer_ein"]))
     if doc.doc_type == "tax_return" and not entity_name and not ein:
         return None
@@ -260,18 +315,135 @@ def _pick_common(values: list[str | None]) -> str | None:
     return Counter(filtered).most_common(1)[0][0]
 
 
+def _seed_score(seed: dict[str, Any]) -> tuple[int, int, int, int, int, datetime, str]:
+    doc = seed["doc"]
+    return (
+        1 if seed.get("subject_name") else 0,
+        1 if seed.get("subject_identifier") else 0,
+        1 if seed.get("start_date") else 0,
+        1 if _document_appears_final(doc) else 0,
+        1 if seed.get("context_label") else 0,
+        _normalized_uploaded_at(doc),
+        doc.id,
+    )
+
+
+def _propagate_seed_identity(seed: dict[str, Any], source: dict[str, Any]) -> None:
+    for key in ("subject_name", "subject_identifier", "context_label", "tax_year"):
+        if not seed.get(key) and source.get(key):
+            seed[key] = source[key]
+    if not seed.get("subject_token") or str(seed.get("subject_token", "")).startswith("hash-"):
+        if source.get("subject_token"):
+            seed["subject_token"] = source["subject_token"]
+    if seed["doc"].doc_type not in EMPLOYMENT_START_EVIDENCE_DOC_TYPES:
+        if not seed.get("start_date") and source.get("start_date"):
+            seed["start_date"] = source["start_date"]
+        if not seed.get("end_date") and source.get("end_date"):
+            seed["end_date"] = source["end_date"]
+
+
+def _enrich_equivalent_seeds(seeds: list[dict[str, Any]]) -> None:
+    groups: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    for seed in seeds:
+        doc = seed["doc"]
+        if doc.content_hash:
+            groups[("hash", doc.content_hash)].append(seed)
+        if doc.source_path:
+            groups[("path", doc.source_path)].append(seed)
+
+    seen_group_ids: set[int] = set()
+    for group in groups.values():
+        group_id = id(group)
+        if group_id in seen_group_ids or len(group) < 2:
+            continue
+        seen_group_ids.add(group_id)
+        richest = max(group, key=_seed_score)
+        for seed in group:
+            if seed is richest:
+                continue
+            _propagate_seed_identity(seed, richest)
+
+
+def _unique_seed_target(items: list[dict[str, Any]]) -> dict[str, Any] | None:
+    if not items:
+        return None
+    tokens = {item.get("subject_token") for item in items if item.get("subject_token")}
+    if len(tokens) != 1:
+        return None
+    return max(items, key=_seed_score)
+
+
+def _names_compatible(left: str | None, right: str | None) -> bool:
+    left_tokens = _meaningful_tokens(left)
+    right_tokens = _meaningful_tokens(right)
+    if not left_tokens or not right_tokens:
+        return False
+    return (
+        left_tokens == right_tokens
+        or left_tokens <= right_tokens
+        or right_tokens <= left_tokens
+    )
+
+
+def _canonicalize_seed_subject_tokens(seeds: list[dict[str, Any]]) -> None:
+    if not seeds:
+        return
+
+    strong_named = [
+        seed
+        for seed in seeds
+        if seed.get("subject_name")
+        and (
+            seed.get("subject_identifier")
+            or seed["doc"].doc_type not in EMPLOYMENT_SUPPORTING_DOC_TYPES
+            or (
+                seed["doc"].doc_type in EMPLOYMENT_START_EVIDENCE_DOC_TYPES
+                and seed.get("start_date")
+            )
+        )
+    ]
+    by_identifier: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    by_context: dict[str, list[dict[str, Any]]] = defaultdict(list)
+
+    for seed in strong_named:
+        identifier = seed.get("subject_identifier")
+        if identifier:
+            by_identifier[identifier].append(seed)
+        context_key = _normalized_text(seed.get("context_label"))
+        if context_key:
+            by_context[context_key].append(seed)
+
+    for seed in seeds:
+        target = None
+        identifier = seed.get("subject_identifier")
+        if identifier:
+            target = _unique_seed_target(by_identifier.get(identifier, []))
+        if target is None:
+            context_key = _normalized_text(seed.get("context_label"))
+            if context_key and (not seed.get("subject_name") or seed.get("subject_token") == _slug(seed.get("context_label"))):
+                target = _unique_seed_target(by_context.get(context_key, []))
+        if target is None and seed.get("subject_name"):
+            compatible = [
+                other
+                for other in strong_named
+                if other is not seed and _names_compatible(seed.get("subject_name"), other.get("subject_name"))
+            ]
+            target = _unique_seed_target(compatible)
+        if target is None or target is seed:
+            continue
+        _propagate_seed_identity(seed, target)
+        seed["subject_token"] = target["subject_token"]
+        if seed["doc"].doc_type in EMPLOYMENT_SUPPORTING_DOC_TYPES:
+            seed["start_date"] = None
+            seed["end_date"] = None
+
+
 def _employment_link_role(doc: DocumentRow, chain_start_date: str | None, chain_end_date: str | None, seed: dict[str, Any]) -> tuple[str, bool]:
     if chain_end_date and seed.get("end_date") == chain_end_date:
         return ("end_evidence", doc.doc_type == "i983")
-    if chain_start_date and seed.get("start_date") == chain_start_date and doc.doc_type in {
-        "i983",
-        "employment_contract",
-        "employment_letter",
-        "cpt_application",
-        "h1b_registration",
-    }:
+    if chain_start_date and seed.get("start_date") == chain_start_date and doc.doc_type in EMPLOYMENT_START_EVIDENCE_DOC_TYPES:
         return ("start_evidence", doc.doc_type in {"i983", "employment_letter", "employment_contract"})
-    if doc.doc_type in {"paystub", "i9", "e_verify_case", "employment_correspondence"}:
+    if doc.doc_type in EMPLOYMENT_SUPPORTING_DOC_TYPES:
         return ("supporting", False)
     return ("context", False)
 
@@ -325,6 +497,8 @@ def _build_employment_chains(user_id: str, seeds: list[dict[str, Any]]) -> list[
                     ]
                     if len(matching_starts) == 1:
                         assigned_start = matching_starts[0]
+                    elif len(matching_starts) > 1 and seed["doc"].doc_type in EMPLOYMENT_SUPPORTING_DOC_TYPES:
+                        assigned_start = max(matching_starts)
                 if assigned_start is None and len(dated_groups) == 1:
                     assigned_start = next(iter(dated_groups))
                 dated_groups[assigned_start or "unknown"].append(seed)
@@ -392,6 +566,7 @@ def _build_employment_chains(user_id: str, seeds: list[dict[str, Any]]) -> list[
                         "timeline_visible": True,
                     },
                     "links": links,
+                    "_docs": docs,
                 }
             )
 
@@ -496,9 +671,304 @@ def _build_entity_chains(user_id: str, seeds: list[dict[str, Any]]) -> list[dict
                     "timeline_visible": True,
                 },
                 "links": links,
+                "_docs": docs,
             }
         )
     return chains
+
+
+def _dedupe_doc_ids(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        ordered.append(value)
+    return ordered
+
+
+def _chain_strength(chain: dict[str, Any]) -> tuple[int, int, int, int, int, int, str]:
+    snapshot = dict(chain.get("snapshot") or {})
+    return (
+        1 if not str(chain.get("chain_key") or "").endswith(":unknown") else 0,
+        1 if chain.get("subject_name") else 0,
+        1 if chain.get("subject_identifier") else 0,
+        1 if chain.get("start_date") else 0,
+        1 if snapshot.get("has_final_document") else 0,
+        1 if snapshot.get("has_external_support") else 0,
+        len(chain.get("_docs") or []),
+        chain["chain_key"],
+    )
+
+
+def _chain_context_key(chain: dict[str, Any]) -> str:
+    return _normalized_text(chain.get("source_context"))
+
+
+def _chain_docs_overlap(source: dict[str, Any], target: dict[str, Any]) -> bool:
+    for source_doc in source.get("_docs") or []:
+        for target_doc in target.get("_docs") or []:
+            if _documents_equivalent(source_doc, target_doc):
+                return True
+    return False
+
+
+def _is_support_only_employment_chain(chain: dict[str, Any]) -> bool:
+    linked_doc_types = set((chain.get("snapshot") or {}).get("linked_doc_types") or [])
+    return bool(linked_doc_types) and linked_doc_types <= EMPLOYMENT_SUPPORTING_DOC_TYPES
+
+
+def _is_low_signal_employment_chain(chain: dict[str, Any]) -> bool:
+    snapshot = dict(chain.get("snapshot") or {})
+    return (
+        _is_support_only_employment_chain(chain)
+        or (
+            str(chain.get("chain_key") or "").endswith(":unknown")
+            and not list(snapshot.get("start_document_ids") or [])
+            and chain.get("start_date") is None
+        )
+        or (
+            chain.get("start_date") is None
+            and not snapshot.get("has_external_support")
+            and not snapshot.get("has_final_document")
+        )
+    )
+
+
+def _is_low_signal_entity_chain(chain: dict[str, Any]) -> bool:
+    chain_key = str(chain.get("chain_key") or "")
+    return (
+        chain_key.startswith("entity:hash-")
+        or chain_key.startswith("entity:ein-")
+        or _is_low_signal_subject_name(chain.get("subject_name"))
+    )
+
+
+def _merge_chain_models(target: dict[str, Any], source: dict[str, Any]) -> None:
+    if not target.get("subject_name") and source.get("subject_name"):
+        target["subject_name"] = source["subject_name"]
+    if not target.get("subject_identifier") and source.get("subject_identifier"):
+        target["subject_identifier"] = source["subject_identifier"]
+    if not target.get("source_context") and source.get("source_context"):
+        target["source_context"] = source["source_context"]
+    target["display_name"] = _display_name(
+        target.get("subject_name"),
+        target.get("source_context"),
+        "Employment chain" if target["chain_type"] == "employment" else "Entity chain",
+    )
+
+    target_docs = list(target.get("_docs") or [])
+    for doc in source.get("_docs") or []:
+        if any(_documents_equivalent(doc, existing) for existing in target_docs):
+            continue
+        target_docs.append(doc)
+    target["_docs"] = sorted(target_docs, key=_doc_sort_key)
+
+    target_links = list(target.get("links") or [])
+    seen_link_docs = {link["document_id"] for link in target_links}
+    for link in source.get("links") or []:
+        if link["document_id"] in seen_link_docs:
+            continue
+        target_links.append(link)
+        seen_link_docs.add(link["document_id"])
+    target["links"] = target_links
+
+    target_snapshot = dict(target.get("snapshot") or {})
+    source_snapshot = dict(source.get("snapshot") or {})
+    target_snapshot["document_ids"] = _dedupe_doc_ids(
+        list(target_snapshot.get("document_ids") or []) + list(source_snapshot.get("document_ids") or [])
+    )
+    target_snapshot["linked_doc_types"] = sorted(
+        set(target_snapshot.get("linked_doc_types") or []) | set(source_snapshot.get("linked_doc_types") or [])
+    )
+
+    if target["chain_type"] == "employment":
+        target_snapshot["start_document_ids"] = _dedupe_doc_ids(
+            list(target_snapshot.get("start_document_ids") or []) + list(source_snapshot.get("start_document_ids") or [])
+        )
+        target_snapshot["end_document_ids"] = _dedupe_doc_ids(
+            list(target_snapshot.get("end_document_ids") or []) + list(source_snapshot.get("end_document_ids") or [])
+        )
+        target_snapshot["has_final_document"] = bool(
+            target_snapshot.get("has_final_document") or source_snapshot.get("has_final_document")
+        )
+        target_snapshot["has_external_support"] = bool(
+            target_snapshot.get("has_external_support") or source_snapshot.get("has_external_support")
+        )
+        if source_snapshot.get("stage") == "stem_opt":
+            target_snapshot["stage"] = "stem_opt"
+        elif "stage" not in target_snapshot:
+            target_snapshot["stage"] = source_snapshot.get("stage")
+        target_snapshot["timeline_visible"] = bool(
+            target_snapshot.get("timeline_visible", True) or source_snapshot.get("timeline_visible", True)
+        )
+        if target.get("start_date") is None:
+            target["start_date"] = source.get("start_date")
+        if (
+            source.get("end_date")
+            and source.get("status") != "superseded"
+            and (not target.get("end_date") or source["end_date"] > target["end_date"])
+        ):
+            target["end_date"] = source["end_date"]
+    else:
+        combined_tax_events = list(target_snapshot.get("tax_events") or []) + list(source_snapshot.get("tax_events") or [])
+        deduped_tax_events: dict[tuple[str, str], dict[str, Any]] = {}
+        for event in combined_tax_events:
+            key = (event["date"], event["title"])
+            current = deduped_tax_events.get(key)
+            if current is None:
+                deduped_tax_events[key] = {
+                    "date": event["date"],
+                    "title": event["title"],
+                    "document_ids": list(event.get("document_ids") or []),
+                }
+                continue
+            current["document_ids"] = _dedupe_doc_ids(
+                list(current.get("document_ids") or []) + list(event.get("document_ids") or [])
+            )
+        target_snapshot["tax_events"] = sorted(
+            deduped_tax_events.values(),
+            key=lambda item: (item["date"], item["title"]),
+        )
+        if target.get("start_date") is None:
+            target["start_date"] = source.get("start_date")
+
+    target["snapshot"] = target_snapshot
+
+
+def _rekey_chain_model(chain: dict[str, Any]) -> None:
+    if chain["chain_type"] == "employment":
+        start_key = chain.get("start_date") or "unknown"
+        chain["chain_key"] = f"employment:{chain['subject_token']}:{start_key}"
+    else:
+        chain["chain_key"] = f"entity:{chain['subject_token']}"
+
+
+def _consolidate_employment_chains(chains: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    remaining = list(chains)
+    changed = True
+    while changed:
+        changed = False
+        for source in list(remaining):
+            candidates = [target for target in remaining if target is not source]
+            overlap_matches = [
+                target
+                for target in candidates
+                if _chain_docs_overlap(source, target)
+                and (_is_low_signal_employment_chain(source) or _is_low_signal_employment_chain(target))
+            ]
+            if overlap_matches:
+                target = max(overlap_matches, key=_chain_strength)
+                _merge_chain_models(target, source)
+                _rekey_chain_model(target)
+                remaining.remove(source)
+                changed = True
+                break
+
+            if not _is_low_signal_employment_chain(source):
+                continue
+
+            compatible = [
+                target
+                for target in candidates
+                if not _is_low_signal_employment_chain(target)
+                and (
+                    (
+                        _chain_context_key(source)
+                        and _chain_context_key(source) == _chain_context_key(target)
+                    )
+                    or _names_compatible(source.get("subject_name"), target.get("subject_name"))
+                )
+            ]
+            if not compatible:
+                continue
+
+            preferred = [target for target in compatible if target.get("status") != "superseded"]
+            if preferred:
+                compatible = preferred
+            stem_opt = [target for target in compatible if (target.get("snapshot") or {}).get("stage") == "stem_opt"]
+            if len(stem_opt) == 1:
+                target = stem_opt[0]
+            elif len(compatible) == 1:
+                target = compatible[0]
+            else:
+                target = max(
+                    compatible,
+                    key=lambda chain: (
+                        1 if chain.get("start_date") else 0,
+                        chain.get("start_date") or "",
+                        _chain_strength(chain),
+                    ),
+                )
+            _merge_chain_models(target, source)
+            _rekey_chain_model(target)
+            remaining.remove(source)
+            changed = True
+            break
+
+    for chain in remaining:
+        _rekey_chain_model(chain)
+    remaining.sort(key=lambda chain: (chain["start_date"] or "", chain["display_name"], chain["chain_key"]))
+    return remaining
+
+
+def _consolidate_entity_chains(chains: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    remaining = list(chains)
+    changed = True
+    while changed:
+        changed = False
+        named_targets = [chain for chain in remaining if chain.get("subject_name")]
+        for source in list(remaining):
+            candidates = [target for target in remaining if target is not source]
+            overlap_matches = [
+                target
+                for target in candidates
+                if _chain_docs_overlap(source, target)
+                and (_is_low_signal_entity_chain(source) or _is_low_signal_entity_chain(target))
+            ]
+            if overlap_matches:
+                target = max(overlap_matches, key=_chain_strength)
+                _merge_chain_models(target, source)
+                _rekey_chain_model(target)
+                remaining.remove(source)
+                changed = True
+                break
+
+            identifier = source.get("subject_identifier")
+            if identifier:
+                identifier_matches = [
+                    target for target in candidates if target.get("subject_identifier") == identifier
+                ]
+                if len(identifier_matches) == 1:
+                    _merge_chain_models(identifier_matches[0], source)
+                    _rekey_chain_model(identifier_matches[0])
+                    remaining.remove(source)
+                    changed = True
+                    break
+
+            compatible_names = [
+                target for target in candidates
+                if _names_compatible(source.get("subject_name"), target.get("subject_name"))
+            ]
+            if len(compatible_names) == 1:
+                _merge_chain_models(compatible_names[0], source)
+                _rekey_chain_model(compatible_names[0])
+                remaining.remove(source)
+                changed = True
+                break
+
+            if _is_low_signal_entity_chain(source) and len(named_targets) == 1:
+                _merge_chain_models(named_targets[0], source)
+                _rekey_chain_model(named_targets[0])
+                remaining.remove(source)
+                changed = True
+                break
+
+    for chain in remaining:
+        _rekey_chain_model(chain)
+    remaining.sort(key=lambda chain: (chain["start_date"] or "", chain["display_name"], chain["chain_key"]))
+    return remaining
 
 
 def _build_user_chain_models(user_id: str, docs: list[DocumentRow]) -> list[dict[str, Any]]:
@@ -512,8 +982,15 @@ def _build_user_chain_models(user_id: str, docs: list[DocumentRow]) -> list[dict
             employment_seeds.append(seed)
         elif seed["chain_type"] == "entity":
             entity_seeds.append(seed)
+    _enrich_equivalent_seeds(employment_seeds)
+    _enrich_equivalent_seeds(entity_seeds)
+    _canonicalize_seed_subject_tokens(employment_seeds)
+    _canonicalize_seed_subject_tokens(entity_seeds)
     chains = _build_employment_chains(user_id, employment_seeds)
-    chains.extend(_build_entity_chains(user_id, entity_seeds))
+    chains = _consolidate_employment_chains(chains)
+    entity_chains = _build_entity_chains(user_id, entity_seeds)
+    entity_chains = _consolidate_entity_chains(entity_chains)
+    chains.extend(entity_chains)
     chains.sort(key=lambda chain: (chain["chain_type"], chain["start_date"] or "", chain["display_name"], chain["chain_key"]))
     return chains
 
@@ -618,6 +1095,31 @@ def list_user_subject_chains(
 
 
 def serialize_subject_chain(chain: SubjectChainRow) -> dict[str, Any]:
+    canonical_links: list[SubjectDocumentLinkRow] = []
+    for link in sorted(
+        chain.document_links,
+        key=lambda item: (
+            item.is_primary,
+            item.link_confidence or 0.0,
+            bool(item.document and item.document.content_hash),
+            bool(item.document and _has_rich_source_path(item.document)),
+            _document_appears_final(item.document) if item.document else False,
+            _normalized_uploaded_at(item.document) if item.document else datetime.min,
+            item.document_id,
+        ),
+        reverse=True,
+    ):
+        doc = link.document
+        if doc is not None and any(existing.document and _documents_equivalent(doc, existing.document) for existing in canonical_links):
+            continue
+        canonical_links.append(link)
+
+    canonical_links.sort(
+        key=lambda item: (
+            _normalized_uploaded_at(item.document) if item.document else datetime.min,
+            item.document_id,
+        )
+    )
     return {
         "id": chain.id,
         "chain_type": chain.chain_type,
@@ -641,12 +1143,6 @@ def serialize_subject_chain(chain: SubjectChainRow) -> dict[str, Any]:
                 "filename": link.document.filename if link.document else None,
                 "doc_type": link.document.doc_type if link.document else None,
             }
-            for link in sorted(
-                chain.document_links,
-                key=lambda link: (
-                    _normalized_uploaded_at(link.document) if link.document else datetime.min,
-                    link.document_id,
-                ),
-            )
+            for link in canonical_links
         ],
     }
