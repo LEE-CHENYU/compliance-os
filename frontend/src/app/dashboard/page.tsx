@@ -285,7 +285,7 @@ export default function DashboardPage() {
   const [chatAnswered, setChatAnswered] = useState<Set<string>>(new Set());
   const [resolvedAssistantPromptIds, setResolvedAssistantPromptIds] = useState<Set<string>>(new Set());
   const [chatLoading, setChatLoading] = useState(false);
-  const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string }[]>([]);
+  const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string; category: string }[]>([]);
   const [showToken, setShowToken] = useState(false);
   const [tokenCopied, setTokenCopied] = useState(false);
   const [openClawConnection, setOpenClawConnection] = useState<OpenClawConnectionStatus | null>(null);
