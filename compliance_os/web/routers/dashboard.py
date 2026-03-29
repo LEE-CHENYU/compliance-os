@@ -71,6 +71,33 @@ def _get_user(authorization: str = Header(None), db: Session = Depends(get_sessi
     return user
 
 
+def _newest_extracted_fields(check: CheckRow, doc_types: tuple[str, ...]) -> dict[str, str]:
+    """Return extracted fields from the most recent active document of the given types.
+
+    This avoids the cross-employer comparison bug where iterating all documents
+    would let the last I-983 (possibly from a different employer) overwrite the
+    extraction context.
+    """
+    from datetime import datetime, timezone
+
+    best: DocumentRow | None = None
+    best_score: tuple = (False, datetime.min.replace(tzinfo=timezone.utc), "")
+    for doc in check.documents:
+        if doc.doc_type not in doc_types:
+            continue
+        has_fields = any(f.field_value not in (None, "") for f in doc.extracted_fields)
+        uploaded = doc.uploaded_at or datetime.min.replace(tzinfo=timezone.utc)
+        if uploaded.tzinfo is None:
+            uploaded = uploaded.replace(tzinfo=timezone.utc)
+        score = (has_fields, uploaded, doc.id)
+        if score > best_score:
+            best_score = score
+            best = doc
+    if best is None:
+        return {}
+    return {f.field_name: f.field_value for f in best.extracted_fields}
+
+
 def _ensure_dashboard_check(user: UserRow, db: Session) -> CheckRow:
     check = db.query(CheckRow).filter(
         CheckRow.user_id == user.id,
@@ -451,14 +478,10 @@ def upload_to_dataroom(
                 continue
             engine = RuleEngine.from_yaml(str(rule_file))
 
-            # Build context
-            ext_a, ext_b = {}, {}
-            for d in user_check.documents:
-                fields = {f.field_name: f.field_value for f in d.extracted_fields}
-                if d.doc_type in ("i983",):
-                    ext_a = fields
-                else:
-                    ext_b = fields
+            # Build context — use only the most recent active document per type
+            # to avoid cross-employer comparisons when multiple I-983s exist.
+            ext_a = _newest_extracted_fields(user_check, ("i983",))
+            ext_b = _newest_extracted_fields(user_check, ("employment_letter",))
 
             comp_dict = {c.field_name: {"status": c.status, "confidence": c.confidence} for c in user_check.comparisons}
 

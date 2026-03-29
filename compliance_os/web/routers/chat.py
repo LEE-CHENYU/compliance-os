@@ -17,6 +17,28 @@ from compliance_os.web.services.timeline_builder import build_timeline, canonica
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 
+def _newest_extracted_fields(check, doc_types: tuple[str, ...]) -> dict[str, str]:
+    """Return extracted fields from the most recent active document of the given types."""
+    from datetime import datetime, timezone
+
+    best = None
+    best_score = (False, datetime.min.replace(tzinfo=timezone.utc), "")
+    for doc in check.documents:
+        if doc.doc_type not in doc_types:
+            continue
+        has_fields = any(f.field_value not in (None, "") for f in doc.extracted_fields)
+        uploaded = doc.uploaded_at or datetime.min.replace(tzinfo=timezone.utc)
+        if uploaded.tzinfo is None:
+            uploaded = uploaded.replace(tzinfo=timezone.utc)
+        score = (has_fields, uploaded, doc.id)
+        if score > best_score:
+            best_score = score
+            best = doc
+    if best is None:
+        return {}
+    return {f.field_name: f.field_value for f in best.extracted_fields}
+
+
 class ChatRequest(BaseModel):
     message: str
     history: list[dict[str, str]] = []  # [{"role": "user"|"assistant", "text": "..."}]
@@ -335,13 +357,8 @@ def store_answer(
 
             engine = RuleEngine.from_yaml(str(rule_file))
 
-            ext_a, ext_b = {}, {}
-            for d in user_check.documents:
-                fields = {f.field_name: f.field_value for f in d.extracted_fields}
-                if d.doc_type in ("i983",):
-                    ext_a = fields
-                else:
-                    ext_b = fields
+            ext_a = _newest_extracted_fields(user_check, ("i983",))
+            ext_b = _newest_extracted_fields(user_check, ("employment_letter",))
 
             comp_dict = {c.field_name: {"status": c.status, "confidence": c.confidence} for c in user_check.comparisons}
 
