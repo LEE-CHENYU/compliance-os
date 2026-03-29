@@ -8,10 +8,11 @@ from sqlalchemy.orm import Session
 from compliance_os.web.models.auth import UserRow
 from compliance_os.web.models.database import get_session
 from compliance_os.web.models.tables_v2 import CheckRow
-from compliance_os.web.services.auth_service import decode_token
+from compliance_os.web.services.auth_service import get_bearer_payload
 from compliance_os.web.services.llm_runtime import chat_completion
 from compliance_os.web.services.retrieval import build_check_retrieval_context, retrieve_documents_for_query
-from compliance_os.web.services.timeline_builder import build_timeline
+from compliance_os.web.services.subject_chains import list_user_subject_chains, serialize_subject_chain
+from compliance_os.web.services.timeline_builder import build_timeline, canonical_documents_for_checks
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
@@ -26,9 +27,7 @@ class ChatResponse(BaseModel):
 
 
 def _get_user(authorization: str = Header(None), db: Session = Depends(get_session)) -> UserRow:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(401, "Missing authorization")
-    payload = decode_token(authorization.split(" ", 1)[1])
+    payload = get_bearer_payload(authorization, db)
     user = db.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
     if not user:
         raise HTTPException(401, "User not found")
@@ -39,6 +38,11 @@ def _build_context(user_id: str, db: Session, query: str | None = None) -> str:
     """Build a context summary of the user's situation for the LLM."""
     timeline = build_timeline(user_id, db)
     checks = db.query(CheckRow).filter(CheckRow.user_id == user_id).all()
+    canonical_docs = canonical_documents_for_checks(checks)
+    subject_chains = [
+        serialize_subject_chain(chain, canonical_docs)
+        for chain in list_user_subject_chains(user_id, db)
+    ]
 
     parts = ["# User's Compliance Profile\n"]
 
@@ -56,11 +60,43 @@ def _build_context(user_id: str, db: Session, query: str | None = None) -> str:
             parts.append(f"- {doc['filename']} ({doc['doc_type']})")
         parts.append("")
 
+    if subject_chains:
+        parts.append("## Subject Chains")
+        for chain in subject_chains:
+            dates = []
+            if chain.get("start_date"):
+                dates.append(f"start={chain['start_date']}")
+            if chain.get("end_date"):
+                dates.append(f"end={chain['end_date']}")
+            date_suffix = f" ({', '.join(dates)})" if dates else ""
+            parts.append(f"- [{chain['chain_type']}] {chain['display_name']}{date_suffix}")
+            for doc in chain.get("documents", [])[:6]:
+                role = doc.get("role") or "supporting"
+                parts.append(f"  - {doc.get('filename') or 'Unknown document'} [{doc.get('doc_type')}] role={role}")
+        parts.append("")
+
     # Current findings
     if timeline.get("findings"):
         parts.append("## Current Issues Found")
         for f in timeline["findings"]:
             parts.append(f"- [{f['severity'].upper()}] {f['title']}: {f['action']}")
+        parts.append("")
+
+    if timeline.get("all_integrity_issues"):
+        parts.append("## Data Integrity And Mapping Issues")
+        for issue in timeline["all_integrity_issues"]:
+            issue_parts = [f"- [{issue['severity'].upper()}] {issue['title']}: {issue['message']}"]
+            docs = issue.get("documents") or []
+            if docs:
+                issue_parts.append(
+                    "  Documents: " + ", ".join(doc.get("filename", "Unknown document") for doc in docs[:5])
+                )
+            chains = issue.get("chains") or []
+            if chains:
+                issue_parts.append(
+                    "  Chains: " + ", ".join(chain.get("label") or chain.get("key") or "Unknown chain" for chain in chains[:4])
+                )
+            parts.extend(issue_parts)
         parts.append("")
 
     # Advisories

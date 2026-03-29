@@ -210,6 +210,63 @@ def test_validate_batch_source_slice_reports_missing_file(tmp_path, monkeypatch)
     assert missing.error == "File missing from source_root"
 
 
+def test_validate_batch_source_slice_prefers_batch_specific_source_root(tmp_path, monkeypatch):
+    global_root = tmp_path / "Important Docs "
+    global_root.mkdir()
+
+    batch_root = tmp_path / "Accounting Slice"
+    batch_root.mkdir()
+    (batch_root / "statement.csv").write_bytes(b"date,amount\n2026-01-01,100\n")
+
+    docs_dir = tmp_path / "docs"
+    docs_dir.mkdir()
+    record = docs_dir / "batch-56.md"
+    record.write_text(
+        "\n".join(
+            [
+                "# Batch 56",
+                "",
+                "| Label | File | Intended use | Intended doc type |",
+                "| --- | --- | --- | --- |",
+                "| `bank_csv` | `statement.csv` | exported account ledger | `bank_statement` |",
+            ]
+        )
+    )
+
+    manifest = tmp_path / "manifest.yaml"
+    manifest.write_text(
+        "\n".join(
+            [
+                f'source_root: "{global_root}"',
+                "batches:",
+                "  - id: batch_56",
+                "    number: 56",
+                "    focus: bank statements",
+                "    status: planned",
+                "    record: docs/batch-56.md",
+                f'    source_root: "{batch_root}"',
+                "    target_size: 1",
+            ]
+        )
+    )
+
+    def fake_resolve_document_type(file_path: str, mime_type: str, *, provided_doc_type=None, allow_ocr=False):
+        assert file_path.endswith("statement.csv")
+        return ResolvedDocumentType(doc_type="bank_statement", confidence="high", source="filename")
+
+    monkeypatch.setattr("compliance_os.batch_validation.resolve_document_type", fake_resolve_document_type)
+
+    summary = validate_batch_source_slice(
+        project_root=tmp_path,
+        manifest_path=manifest,
+        batch_number=56,
+    )
+
+    assert summary.ok is True
+    assert summary.source_root == str(batch_root)
+    assert summary.checks[0].absolute_path == str(batch_root / "statement.csv")
+
+
 def test_validate_batch_collection_filters_completed_batches(tmp_path, monkeypatch):
     source_root = tmp_path / "Important Docs "
     source_root.mkdir()

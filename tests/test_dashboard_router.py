@@ -330,6 +330,77 @@ def test_dashboard_views_dedupe_duplicate_documents_events_and_risks(client, tmp
     assert stats_resp.json()["verified"] == 1
 
 
+def test_dashboard_today_risks_include_evidence_documents_from_rule_backfill(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-risk-docs@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        check = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        session.add(check)
+        session.flush()
+
+        i983 = DocumentRow(
+            check_id=check.id,
+            doc_type="i983",
+            filename="i983.pdf",
+            file_path=str(tmp_path / "i983.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="i983-hash",
+            source_path="employment/VCV/i983.pdf",
+        )
+        letter = DocumentRow(
+            check_id=check.id,
+            doc_type="employment_letter",
+            filename="letter.pdf",
+            file_path=str(tmp_path / "letter.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="letter-hash",
+            source_path="employment/VCV/letter.pdf",
+        )
+        session.add_all([i983, letter])
+        session.flush()
+
+        mismatch = ComparisonRow(
+            check_id=check.id,
+            field_name="start_date",
+            value_a="2024-10-01",
+            value_b="2024-10-15",
+            match_type="exact",
+            status="mismatch",
+            confidence=0.0,
+            detail="Different dates",
+        )
+        session.add(mismatch)
+        session.flush()
+
+        session.add(
+            FindingRow(
+                check_id=check.id,
+                rule_id="start_date_mismatch",
+                severity="warning",
+                category="comparison",
+                title="Employment start date doesn't match I-983",
+                action="Verify correct date with DSO and file correction if needed",
+                consequence="Unauthorized employment gap",
+                immigration_impact=True,
+            )
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    today_event = next(event for event in timeline_resp.json()["events"] if event["type"] == "now")
+    risk = next(risk for risk in today_event["risks"] if risk["rule_id"] == "start_date_mismatch")
+
+    assert {doc["filename"] for doc in risk["documents"]} == {"i983.pdf", "letter.pdf"}
+
+
 def test_dashboard_upload_prepare_flags_hash_duplicates(client, monkeypatch, tmp_path):
     monkeypatch.setattr(
         dashboard_mod,
@@ -1001,3 +1072,317 @@ def test_dashboard_timeline_includes_payroll_and_entity_milestones(client, tmp_p
     tax_events = [event for event in timeline["events"] if event["title"] == "2024 Tax Return filed"]
     assert len(tax_events) == 1
     assert {doc["filename"] for doc in tax_events[0]["documents"]} == {"2024_TaxReturn.pdf"}
+
+
+def test_dashboard_timeline_surfaces_integrity_issues_for_mapping_gaps(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-integrity@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        check_one = CheckRow(track="data_room", status="reviewed", user_id=user_id, answers={})
+        check_two = CheckRow(track="data_room", status="reviewed", user_id=user_id, answers={})
+        session.add_all([check_one, check_two])
+        session.flush()
+
+        tax_old = DocumentRow(
+            check_id=check_one.id,
+            doc_type="tax_return",
+            filename="2024_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-1.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="tax-shared-hash",
+            source_path="Tax/2024_TaxReturn.pdf",
+        )
+        tax_new = DocumentRow(
+            check_id=check_two.id,
+            doc_type="tax_return",
+            filename="2024_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-2.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="tax-shared-hash",
+            source_path="Tax/2024_TaxReturn.pdf",
+        )
+        passport = DocumentRow(
+            check_id=check_one.id,
+            doc_type="passport",
+            filename="passport.pdf",
+            file_path=str(tmp_path / "passport.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="passport-hash",
+            source_path="Identity/passport.pdf",
+        )
+        paystub = DocumentRow(
+            check_id=check_one.id,
+            doc_type="paystub",
+            filename="paystub.pdf",
+            file_path=str(tmp_path / "paystub.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="paystub-hash",
+            source_path="employment/Claudius/paystub.pdf",
+        )
+        session.add_all([tax_old, tax_new, passport, paystub])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=tax_old.id, field_name="tax_year", field_value="2024"),
+                ExtractedFieldRow(document_id=tax_new.id, field_name="tax_year", field_value="2024"),
+                ExtractedFieldRow(document_id=paystub.id, field_name="employer_name", field_value="Claudius Inc"),
+            ]
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    integrity = timeline_resp.json()["integrity_issues"]
+
+    duplicate_issue = next(issue for issue in integrity if issue["issue_code"] == "duplicate_across_checks")
+    assert [doc["filename"] for doc in duplicate_issue["documents"]] == ["2024_TaxReturn.pdf"]
+
+    unchained_issue = next(
+        issue
+        for issue in integrity
+        if issue["issue_code"] == "unchained_document" and issue["documents"][0]["filename"] == "2024_TaxReturn.pdf"
+    )
+    assert unchained_issue["documents"][0]["doc_type"] == "tax_return"
+
+    unmapped_issue = next(
+        issue
+        for issue in integrity
+        if issue["issue_code"] == "unmapped_document" and issue["documents"][0]["filename"] == "passport.pdf"
+    )
+    assert unmapped_issue["documents"][0]["doc_type"] == "passport"
+
+    untimed_issue = next(
+        issue
+        for issue in integrity
+        if issue["issue_code"] == "untimed_document" and issue["documents"][0]["filename"] == "paystub.pdf"
+    )
+    assert untimed_issue["chains"][0]["label"] == "Claudius Inc"
+
+
+def test_dashboard_timeline_surfaces_ambiguous_chain_links_for_shared_documents(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-ambiguous-chain@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        check_one = CheckRow(track="data_room", status="reviewed", user_id=user_id, answers={})
+        check_two = CheckRow(track="data_room", status="reviewed", user_id=user_id, answers={})
+        session.add_all([check_one, check_two])
+        session.flush()
+
+        alpha = DocumentRow(
+            check_id=check_one.id,
+            doc_type="employment_letter",
+            filename="offer.pdf",
+            file_path=str(tmp_path / "offer-alpha.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="offer-shared-hash",
+            source_path="employment/Alpha/offer.pdf",
+        )
+        beta = DocumentRow(
+            check_id=check_two.id,
+            doc_type="employment_letter",
+            filename="offer.pdf",
+            file_path=str(tmp_path / "offer-beta.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="offer-shared-hash",
+            source_path="employment/Beta/offer.pdf",
+        )
+        session.add_all([alpha, beta])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=alpha.id, field_name="employer_name", field_value="Alpha Labs"),
+                ExtractedFieldRow(document_id=alpha.id, field_name="start_date", field_value="2024-06-01"),
+                ExtractedFieldRow(document_id=beta.id, field_name="employer_name", field_value="Beta Works"),
+                ExtractedFieldRow(document_id=beta.id, field_name="start_date", field_value="2025-01-15"),
+            ]
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    timeline = timeline_resp.json()
+    assert not any(issue["issue_code"] == "ambiguous_chain_link" for issue in timeline["integrity_issues"])
+    prompt = next(prompt for prompt in timeline["assistant_prompts"] if prompt["issue_code"] == "ambiguous_chain_link")
+    assert prompt["documents"][0]["filename"] == "offer.pdf"
+    assert {chain["label"] for chain in prompt["chains"]} == {"Alpha Labs", "Beta Works"}
+
+    integrity_resp = client.get("/api/dashboard/integrity", headers={"Authorization": f"Bearer {token}"})
+    assert integrity_resp.status_code == 200
+    ambiguous_issue = next(issue for issue in integrity_resp.json() if issue["issue_code"] == "ambiguous_chain_link")
+
+    assert [doc["filename"] for doc in ambiguous_issue["documents"]] == ["offer.pdf"]
+    assert {chain["label"] for chain in ambiguous_issue["chains"]} == {"Alpha Labs", "Beta Works"}
+
+    respond_resp = client.post(
+        "/api/dashboard/integrity/respond",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "prompt_id": prompt["id"],
+            "document_id": prompt["documents"][0]["id"],
+            "action": "attach_chain",
+            "chain_key": next(chain["key"] for chain in prompt["chains"] if chain["label"] == "Alpha Labs"),
+        },
+    )
+    assert respond_resp.status_code == 200
+
+    refreshed_timeline = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"}).json()
+    assert not any(item["issue_code"] == "ambiguous_chain_link" for item in refreshed_timeline["integrity_issues"])
+    assert not any(item["issue_code"] == "ambiguous_chain_link" for item in refreshed_timeline["assistant_prompts"])
+
+
+def test_dashboard_timeline_surfaces_conflicting_chain_evidence(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-conflicting-chain@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        check = CheckRow(track="entity", status="reviewed", user_id=user_id, answers={})
+        session.add(check)
+        session.flush()
+
+        articles = DocumentRow(
+            check_id=check.id,
+            doc_type="articles_of_organization",
+            filename="articles.pdf",
+            file_path=str(tmp_path / "articles.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="articles-hash",
+            source_path="business/Bamboo/articles.pdf",
+        )
+        ein_letter = DocumentRow(
+            check_id=check.id,
+            doc_type="ein_letter",
+            filename="cp575.pdf",
+            file_path=str(tmp_path / "cp575.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="ein-letter-hash",
+            source_path="business/Bamboo/cp575.pdf",
+        )
+        tax_return = DocumentRow(
+            check_id=check.id,
+            doc_type="tax_return",
+            filename="2024_return.pdf",
+            file_path=str(tmp_path / "2024_return.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="tax-bamboo-hash",
+            source_path="business/Bamboo/2024_return.pdf",
+        )
+        session.add_all([articles, ein_letter, tax_return])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=articles.id, field_name="entity_name", field_value="Bamboo AI LLC"),
+                ExtractedFieldRow(document_id=ein_letter.id, field_name="entity_name", field_value="Bamboo AI LLC"),
+                ExtractedFieldRow(document_id=ein_letter.id, field_name="ein", field_value="12-3456789"),
+                ExtractedFieldRow(document_id=tax_return.id, field_name="entity_name", field_value="Bamboo AI LLC"),
+                ExtractedFieldRow(document_id=tax_return.id, field_name="ein", field_value="98-7654321"),
+                ExtractedFieldRow(document_id=tax_return.id, field_name="tax_year", field_value="2024"),
+            ]
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    integrity_resp = client.get("/api/dashboard/integrity", headers={"Authorization": f"Bearer {token}"})
+    assert integrity_resp.status_code == 200
+    conflict_issue = next(issue for issue in integrity_resp.json() if issue["issue_code"] == "conflicting_chain_evidence")
+
+    assert conflict_issue["chains"][0]["label"] == "Bamboo AI LLC"
+    assert {doc["filename"] for doc in conflict_issue["documents"]} == {"cp575.pdf", "2024_return.pdf"}
+    assert any(field["field_name"] == "ein" for field in conflict_issue["details"]["fields"])
+
+
+def test_dashboard_timeline_i983_evaluation_prompts_follow_active_stem_chains_only(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-stem-eval@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    now = datetime.now(timezone.utc)
+    try:
+        check = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        session.add(check)
+        session.flush()
+
+        old_i983 = DocumentRow(
+            check_id=check.id,
+            doc_type="i983",
+            filename="i983-wolff-old.pdf",
+            file_path=str(tmp_path / "old.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="employment/Wolff/i983-wolff-old.pdf",
+            uploaded_at=now - timedelta(days=2),
+        )
+        signed_i983 = DocumentRow(
+            check_id=check.id,
+            doc_type="i983",
+            filename="i983-wolff-signed.pdf",
+            file_path=str(tmp_path / "signed.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="employment/Wolff/i983-wolff-signed.pdf",
+            uploaded_at=now - timedelta(days=1),
+        )
+        offer = DocumentRow(
+            check_id=check.id,
+            doc_type="employment_letter",
+            filename="WolffOffer.pdf",
+            file_path=str(tmp_path / "offer.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            source_path="employment/Wolff/WolffOffer.pdf",
+            uploaded_at=now,
+        )
+        session.add_all([old_i983, signed_i983, offer])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=old_i983.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=old_i983.id, field_name="start_date", field_value="2024-01-23"),
+                ExtractedFieldRow(document_id=old_i983.id, field_name="end_date", field_value="2026-01-22"),
+                ExtractedFieldRow(document_id=signed_i983.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=signed_i983.id, field_name="start_date", field_value="2025-03-17"),
+                ExtractedFieldRow(document_id=offer.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=offer.id, field_name="start_date", field_value="2025-03-17"),
+            ]
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    payload = timeline_resp.json()
+
+    eval_dates = {prompt["event_date"] for prompt in payload["upload_prompts"] if prompt["doc_type"] == "i983_evaluation"}
+    assert "2026-03-17" in eval_dates
+    assert "2025-01-23" not in eval_dates
+
+    deadline_dates = {item["date"] for item in payload["deadlines"] if item["title"] == "I-983 12-month evaluation due"}
+    assert "2026-03-17" in deadline_dates
+    assert "2025-01-23" not in deadline_dates

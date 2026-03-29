@@ -35,6 +35,7 @@ class BatchSpec:
     focus: str
     status: str
     record: str | None = None
+    source_root: str | None = None
     source_scope: list[str] = field(default_factory=list)
     target_size: int | None = None
     validation_hooks: list[BatchHookSpec] = field(default_factory=list)
@@ -106,6 +107,7 @@ class BatchState:
             "focus": self.spec.focus,
             "status": self.spec.status,
             "record": self.spec.record,
+            "source_root": self.spec.source_root,
             "source_scope": self.spec.source_scope,
             "target_size": self.spec.target_size,
             "resolved": self.resolved,
@@ -148,6 +150,7 @@ def load_manifest(manifest_path: str | Path = DEFAULT_MANIFEST_PATH) -> tuple[st
                 focus=str(item["focus"]),
                 status=str(item.get("status", "planned")),
                 record=item.get("record"),
+                source_root=str(item["source_root"]) if item.get("source_root") else None,
                 source_scope=list(item.get("source_scope") or []),
                 target_size=item.get("target_size"),
                 validation_hooks=validation_hooks,
@@ -217,7 +220,7 @@ def _command_template_context(
     spec: BatchSpec,
 ) -> dict[str, str]:
     record = spec.record or ""
-    source_root_str = source_root or ""
+    source_root_str = spec.source_root or source_root or ""
     context = {
         "batch_id": spec.batch_id,
         "batch_number": f"{spec.batch_number:02d}",

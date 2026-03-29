@@ -200,7 +200,7 @@ def validate_batch_source_slice(
     batch_id: str | None = None,
     source_root_override: str | Path | None = None,
 ) -> BatchValidationSummary:
-    source_root, batches = load_manifest(manifest_path)
+    manifest_source_root, batches = load_manifest(manifest_path)
     spec = _select_batch(batches, batch_number=batch_number, batch_id=batch_id)
     if not spec.record:
         raise ValueError(f"Batch {spec.batch_id} has no record")
@@ -209,7 +209,7 @@ def validate_batch_source_slice(
     record_path = project_root_path / spec.record
     entries = parse_manifest_entries(record_path)
 
-    source_root_path = Path(source_root_override or source_root or "")
+    source_root_path = Path(source_root_override or spec.source_root or manifest_source_root or "")
     if not source_root_path:
         raise ValueError("No source_root configured for batch manifest")
 
@@ -299,7 +299,7 @@ def validate_batch_collection(
     batch_numbers: set[int] | None = None,
     source_root_override: str | Path | None = None,
 ) -> BatchCollectionValidationSummary:
-    source_root, batches = load_manifest(manifest_path)
+    manifest_source_root, batches = load_manifest(manifest_path)
     selected: list[BatchSpec] = []
     for spec in batches:
         if statuses is not None and spec.status not in statuses:
@@ -322,6 +322,6 @@ def validate_batch_collection(
         for spec in selected
     ]
     return BatchCollectionValidationSummary(
-        source_root=str(source_root_override or source_root or ""),
+        source_root=str(source_root_override or manifest_source_root or ""),
         selected_batches=results,
     )

@@ -2,7 +2,7 @@
 # Fetch upcoming compliance deadlines from Guardian API
 set -euo pipefail
 
-API_URL="${GUARDIAN_API_URL:-https://guardian-compliance.fly.dev}"
+API_URL="${GUARDIAN_API_URL:-https://guardiancompliance.app}"
 TOKEN="${GUARDIAN_TOKEN:-}"
 
 if [ -z "$TOKEN" ]; then

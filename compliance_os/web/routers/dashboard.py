@@ -8,13 +8,14 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, UploadFile
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.auth import UserRow
 from compliance_os.web.models.database import DATA_DIR, get_session
 from compliance_os.web.models.schemas_v2 import SubjectChain
 from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, ExtractedFieldRow
-from compliance_os.web.services.auth_service import decode_token
+from compliance_os.web.services.auth_service import get_bearer_payload
 from compliance_os.web.services.document_intake import (
     UploadValidationError,
     resolve_document_type,
@@ -36,6 +37,7 @@ from compliance_os.web.services.ingestion_detector import (
 )
 from compliance_os.web.services.subject_chains import (
     list_user_subject_chains,
+    persist_document_mapping_resolution,
     serialize_subject_chain,
     sync_user_subject_chains,
 )
@@ -51,12 +53,18 @@ UPLOAD_DIR = DATA_DIR / "uploads"
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
 ALLOWED_DUPLICATE_ACTIONS = {"ask", "keep", "skip"}
+ALLOWED_MAPPING_ACTIONS = {"attach_chain", "keep_shared", "keep_standalone"}
+
+
+class IntegrityResolutionRequest(BaseModel):
+    prompt_id: str
+    document_id: str
+    action: str
+    chain_key: str | None = None
 
 
 def _get_user(authorization: str = Header(None), db: Session = Depends(get_session)) -> UserRow:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(401, "Missing authorization")
-    payload = decode_token(authorization.split(" ", 1)[1])
+    payload = get_bearer_payload(authorization, db)
     user = db.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
     if not user:
         raise HTTPException(401, "User not found")
@@ -133,12 +141,76 @@ def get_timeline(
     return payload
 
 
+@router.get("/integrity")
+def get_integrity_issues(
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+):
+    user = _get_user(authorization, db)
+    sync_user_subject_chains(user.id, db)
+    payload = build_timeline(user.id, db)
+    db.commit()
+    return payload.get("all_integrity_issues", payload.get("integrity_issues", []))
+
+
+@router.post("/integrity/respond")
+def respond_to_integrity_prompt(
+    body: IntegrityResolutionRequest,
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+):
+    user = _get_user(authorization, db)
+    if body.action not in ALLOWED_MAPPING_ACTIONS:
+        raise HTTPException(400, "Unsupported integrity prompt action")
+    if body.action == "attach_chain":
+        sync_user_subject_chains(user.id, db)
+        available_chain_keys = {chain.chain_key for chain in list_user_subject_chains(user.id, db)}
+        if body.chain_key not in available_chain_keys:
+            raise HTTPException(400, "Unknown chain_key for this user")
+
+    try:
+        if body.action == "attach_chain":
+            persist_document_mapping_resolution(
+                user_id=user.id,
+                document_id=body.document_id,
+                mode="single_chain",
+                chain_key=body.chain_key,
+                db=db,
+            )
+        elif body.action == "keep_shared":
+            persist_document_mapping_resolution(
+                user_id=user.id,
+                document_id=body.document_id,
+                mode="keep_shared",
+                db=db,
+            )
+        else:
+            persist_document_mapping_resolution(
+                user_id=user.id,
+                document_id=body.document_id,
+                mode="standalone",
+                db=db,
+            )
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+    sync_user_subject_chains(user.id, db)
+    payload = build_timeline(user.id, db)
+    db.commit()
+    return {
+        "ok": True,
+        "prompt_id": body.prompt_id,
+        "remaining_assistant_prompts": len(payload.get("assistant_prompts", [])),
+    }
+
+
 @router.get("/stats")
 def get_stats(
     authorization: str = Header(None),
     db: Session = Depends(get_session),
 ):
     user = _get_user(authorization, db)
+    sync_user_subject_chains(user.id, db)
     return build_stats(user.id, db)
 
 

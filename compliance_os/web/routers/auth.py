@@ -10,13 +10,24 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from compliance_os.web.models.auth import AuthResponse, LoginRequest, RegisterRequest, UserOut, UserRow
+from compliance_os.web.models.auth import (
+    AuthResponse,
+    LoginRequest,
+    OpenClawConnectionStatus,
+    OpenClawTokenInfo,
+    OpenClawTokenIssueResponse,
+    RegisterRequest,
+    UserOut,
+    UserRow,
+)
 from compliance_os.web.models.database import get_session
 from compliance_os.web.models.tables_v2 import CheckRow
 from compliance_os.web.services.auth_service import (
     create_token,
-    decode_token,
+    get_active_openclaw_token,
+    get_bearer_payload,
     hash_password,
+    issue_openclaw_token,
     verify_password,
 )
 
@@ -34,8 +45,10 @@ def _google_client_secret() -> str:
 def _request_origin(request: Request) -> str:
     forwarded_proto = request.headers.get("x-forwarded-proto", "").split(",", 1)[0].strip()
     forwarded_host = request.headers.get("x-forwarded-host", "").split(",", 1)[0].strip()
-    proto = forwarded_proto or request.url.scheme
     host = forwarded_host or request.headers.get("host") or request.url.netloc
+    proto = forwarded_proto or request.url.scheme
+    if not forwarded_proto and host and not _is_local_host(host):
+        proto = "https"
     return f"{proto}://{host}".rstrip("/")
 
 
@@ -62,6 +75,56 @@ def _frontend_url(request: Request) -> str:
     return _request_origin(request)
 
 
+def _guardian_api_url(request: Request) -> str:
+    configured = (
+        os.environ.get("GUARDIAN_API_URL", "").strip()
+        or os.environ.get("FRONTEND_URL", "").strip()
+    )
+    if configured:
+        return configured.rstrip("/")
+    return _request_origin(request)
+
+
+def _serialize_openclaw_token_info(row) -> OpenClawTokenInfo | None:
+    if row is None:
+        return None
+    return OpenClawTokenInfo(
+        label=row.label,
+        token_type=row.token_type,
+        scope=row.scope,
+        token_prefix=row.token_prefix,
+        created_at=row.created_at,
+        last_used_at=row.last_used_at,
+    )
+
+
+def _openclaw_connection_status(user: UserRow, db: Session, request: Request) -> OpenClawConnectionStatus:
+    active_token = get_active_openclaw_token(user.id, db)
+    return OpenClawConnectionStatus(
+        api_url=_guardian_api_url(request),
+        install_command="openclaw skills install guardian-compliance",
+        env_var="GUARDIAN_TOKEN",
+        token_type="openclaw",
+        scope="openclaw",
+        active_token=_serialize_openclaw_token_info(active_token),
+    )
+
+
+def _require_auth_user(
+    authorization: str,
+    db: Session,
+    *,
+    allow_api_token: bool,
+) -> tuple[dict, UserRow]:
+    payload = get_bearer_payload(authorization, db)
+    if not allow_api_token and payload.get("auth_type") != "jwt":
+        raise HTTPException(403, "This endpoint requires a web session token")
+    user = db.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
+    if not user:
+        raise HTTPException(401, "User not found")
+    return payload, user
+
+
 @router.post("/register", response_model=AuthResponse)
 def register(body: RegisterRequest, db: Session = Depends(get_session)):
     existing = db.query(UserRow).filter(UserRow.email == body.email).first()
@@ -86,13 +149,7 @@ def login(body: LoginRequest, db: Session = Depends(get_session)):
 
 @router.get("/me", response_model=UserOut)
 def me(authorization: str = Header(None), db: Session = Depends(get_session)):
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(401, "Missing authorization header")
-    token = authorization.split(" ", 1)[1]
-    payload = decode_token(token)
-    user = db.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
-    if not user:
-        raise HTTPException(401, "User not found")
+    _, user = _require_auth_user(authorization, db, allow_api_token=True)
     return user
 
 
@@ -103,10 +160,7 @@ def link_check_to_user(
     db: Session = Depends(get_session),
 ):
     """Link an existing check to the authenticated user."""
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(401, "Missing authorization header")
-    token = authorization.split(" ", 1)[1]
-    payload = decode_token(token)
+    payload, _ = _require_auth_user(authorization, db, allow_api_token=False)
     user_id = payload["user_id"]
 
     check = db.get(CheckRow, check_id)
@@ -115,6 +169,37 @@ def link_check_to_user(
     check.user_id = user_id
     db.commit()
     return {"ok": True}
+
+
+@router.get("/openclaw/connection", response_model=OpenClawConnectionStatus)
+def get_openclaw_connection(
+    request: Request,
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+):
+    _, user = _require_auth_user(authorization, db, allow_api_token=False)
+    return _openclaw_connection_status(user, db, request)
+
+
+@router.post("/openclaw/token", response_model=OpenClawTokenIssueResponse)
+def issue_openclaw_connection_token(
+    request: Request,
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+):
+    _, user = _require_auth_user(authorization, db, allow_api_token=False)
+    row, token = issue_openclaw_token(user, db)
+    db.commit()
+    status = _openclaw_connection_status(user, db, request)
+    return OpenClawTokenIssueResponse(
+        api_url=status.api_url,
+        install_command=status.install_command,
+        env_var=status.env_var,
+        token_type=status.token_type,
+        scope=status.scope,
+        active_token=_serialize_openclaw_token_info(row),
+        token=token,
+    )
 
 
 # === Google OAuth ===

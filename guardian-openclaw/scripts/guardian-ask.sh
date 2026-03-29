@@ -2,7 +2,7 @@
 # Ask Guardian AI assistant a compliance question
 set -euo pipefail
 
-API_URL="${GUARDIAN_API_URL:-https://guardian-compliance.fly.dev}"
+API_URL="${GUARDIAN_API_URL:-https://guardiancompliance.app}"
 TOKEN="${GUARDIAN_TOKEN:-}"
 QUESTION="${1:-}"
 

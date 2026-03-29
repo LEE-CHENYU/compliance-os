@@ -2,7 +2,7 @@
 # Fetch compliance findings grouped by severity from Guardian API
 set -euo pipefail
 
-API_URL="${GUARDIAN_API_URL:-https://guardian-compliance.fly.dev}"
+API_URL="${GUARDIAN_API_URL:-https://guardiancompliance.app}"
 TOKEN="${GUARDIAN_TOKEN:-}"
 
 if [ -z "$TOKEN" ]; then
@@ -14,11 +14,13 @@ timeline=$(curl -sf -H "Authorization: Bearer $TOKEN" "$API_URL/api/dashboard/ti
   echo "Error: Could not reach Guardian API. Check your token and network connection."
   exit 1
 }
+integrity=$(curl -sf -H "Authorization: Bearer $TOKEN" "$API_URL/api/dashboard/integrity" 2>/dev/null) || integrity='[]'
 
 findings=$(echo "$timeline" | jq -r '.findings[]?')
 advisories=$(echo "$timeline" | jq -r '.advisories[]?')
+integrity_count=$(echo "$integrity" | jq 'length')
 
-if [ -z "$findings" ] && [ -z "$advisories" ]; then
+if [ -z "$findings" ] && [ -z "$advisories" ] && [ "$integrity_count" = "0" ]; then
   echo "No compliance risks detected. Your documents look consistent."
   exit 0
 fi
@@ -47,4 +49,11 @@ if [ -n "$advisories" ]; then
   echo "## Worth Looking Into"
   echo ""
   echo "$timeline" | jq -r '.advisories[] | "- **\(.title)** — \(.action // "")"'
+fi
+
+if [ "$integrity_count" -gt 0 ]; then
+  echo ""
+  echo "## Data Integrity / Mapping Issues"
+  echo ""
+  echo "$integrity" | jq -r '.[] | "- [\(.severity | ascii_upcase)] **\(.title)** — \(.message)"'
 fi

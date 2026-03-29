@@ -641,7 +641,19 @@ def run_evaluation(check_id: str, db: Session = Depends(get_session)):
         db.delete(old)
 
     findings_out = []
+    rule_by_id = {rule.id: rule for rule in engine.rules}
+    comparison_by_field = {comparison.field_name: comparison for comparison in check.comparisons}
     for fr in engine.evaluate(ctx):
+        source_comparison_id = None
+        rule = rule_by_id.get(fr.rule_id)
+        if rule is not None:
+            matched_comparisons = [
+                comparison_by_field[condition.field]
+                for condition in rule.conditions
+                if condition.source == "comparison" and condition.field in comparison_by_field
+            ]
+            if len(matched_comparisons) == 1:
+                source_comparison_id = matched_comparisons[0].id
         row = FindingRow(
             check_id=check_id,
             rule_id=fr.rule_id,
@@ -652,6 +664,7 @@ def run_evaluation(check_id: str, db: Session = Depends(get_session)):
             action=fr.action,
             consequence=fr.consequence,
             immigration_impact=fr.immigration_impact,
+            source_comparison_id=source_comparison_id,
         )
         db.add(row)
         findings_out.append(row)

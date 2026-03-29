@@ -61,11 +61,11 @@ def _first_date_candidate(*values: str | None) -> str | None:
             continue
         raw = str(value)
         for pattern, fmt in (
-            (r"\b(20\d{2}-\d{2}-\d{2})\b", "%Y-%m-%d"),
-            (r"\b(20\d{2}/\d{2}/\d{2})\b", "%Y/%m/%d"),
-            (r"\b(\d{2}/\d{2}/20\d{2})\b", "%m/%d/%Y"),
-            (r"\b(\d{2}-\d{2}-20\d{2})\b", "%m-%d-%Y"),
-            (r"\b(20\d{2}\d{2}\d{2})\b", "%Y%m%d"),
+            (r"(?<!\d)(20\d{2}-\d{2}-\d{2})(?!\d)", "%Y-%m-%d"),
+            (r"(?<!\d)(20\d{2}/\d{2}/\d{2})(?!\d)", "%Y/%m/%d"),
+            (r"(?<!\d)(\d{2}/\d{2}/20\d{2})(?!\d)", "%m/%d/%Y"),
+            (r"(?<!\d)(\d{2}-\d{2}-20\d{2})(?!\d)", "%m-%d-%Y"),
+            (r"(?<!\d)(20\d{2}\d{2}\d{2})(?!\d)", "%Y%m%d"),
         ):
             match = re.search(pattern, raw)
             if not match:
@@ -75,6 +75,27 @@ def _first_date_candidate(*values: str | None) -> str | None:
             except ValueError:
                 continue
     return None
+
+
+def _last_date_candidate(*values: str | None) -> str | None:
+    found: str | None = None
+    for value in values:
+        if not value:
+            continue
+        raw = str(value)
+        for pattern, fmt in (
+            (r"(?<!\d)(20\d{2}-\d{2}-\d{2})(?!\d)", "%Y-%m-%d"),
+            (r"(?<!\d)(20\d{2}/\d{2}/\d{2})(?!\d)", "%Y/%m/%d"),
+            (r"(?<!\d)(\d{2}/\d{2}/20\d{2})(?!\d)", "%m/%d/%Y"),
+            (r"(?<!\d)(\d{2}-\d{2}-20\d{2})(?!\d)", "%m-%d-%Y"),
+            (r"(?<!\d)(20\d{2}\d{2}\d{2})(?!\d)", "%Y%m%d"),
+        ):
+            for match in re.finditer(pattern, raw):
+                try:
+                    found = datetime.strptime(match.group(1), fmt).strftime("%Y-%m-%d")
+                except ValueError:
+                    continue
+    return found
 
 
 def _reference_context_slug(reference: str | None, reference_stem: str) -> str | None:
@@ -158,6 +179,127 @@ def infer_document_series_key(
         fallback = _series_slug(reference_stem) or "default"
         return f"{family}:{fallback}"
 
+    if doc_type == "bank_statement":
+        lower_reference = reference.lower()
+        institution = _series_slug(str(extracted_values.get("institution_name") or ""))
+        if not institution:
+            if "schwab" in lower_reference:
+                institution = "schwab"
+            elif "citibank" in lower_reference or "/citi" in lower_reference:
+                institution = "citibank"
+            elif "wells_fargo" in lower_reference or "wells fargo" in lower_reference or lower_reference.startswith("wf_"):
+                institution = "wells-fargo"
+            elif "boa" in lower_reference or "bank_of_america" in lower_reference:
+                institution = "bank-of-america"
+        account = None
+        account_match = re.search(r"(?:chk|xxx|acct|account)[_-]?(\d{3,4})", lower_reference)
+        if account_match:
+            account = account_match.group(1)
+        period_end = _last_date_candidate(
+            str(extracted_values.get("statement_period_end") or ""),
+            reference,
+            ocr_text,
+        )
+        parts = [family]
+        if institution:
+            parts.append(institution)
+        if account:
+            parts.append(account)
+        if period_end:
+            parts.append(period_end)
+        if len(parts) > 1:
+            return ":".join(parts)
+        fallback = _series_slug(reference_stem) or "default"
+        return f"{family}:{fallback}"
+
+    if doc_type == "payment_options_notice":
+        issuer = _series_slug(str(extracted_values.get("issuer_name") or ""))
+        notice_date = _first_date_candidate(
+            str(extracted_values.get("notice_date") or ""),
+            reference,
+            ocr_text,
+        )
+        if issuer and notice_date:
+            return f"{family}:{issuer}:{notice_date}"
+        if issuer:
+            return f"{family}:{issuer}"
+        fallback = _series_slug(reference_stem) or "default"
+        return f"{family}:{fallback}"
+
+    if doc_type == "wire_transfer_record":
+        transfer_date = _first_date_candidate(
+            str(extracted_values.get("transfer_date") or ""),
+            reference,
+            ocr_text,
+        )
+        if not transfer_date:
+            match = re.search(r"(?<!\d)(\d{6})(?!\d)", reference)
+            if match:
+                try:
+                    transfer_date = datetime.strptime(match.group(1), "%m%d%y").strftime("%Y-%m-%d")
+                except ValueError:
+                    transfer_date = None
+        sender = _series_slug(str(extracted_values.get("sender_name") or ""))
+        recipient = _series_slug(str(extracted_values.get("recipient_name") or ""))
+        parts = [family]
+        if transfer_date:
+            parts.append(transfer_date)
+        if sender:
+            parts.append(sender)
+        if recipient:
+            parts.append(recipient)
+        if len(parts) > 1:
+            return ":".join(parts)
+        fallback = _series_slug(reference_stem) or "default"
+        return f"{family}:{fallback}"
+
+    if doc_type == "legal_services_agreement":
+        provider = _series_slug(str(extracted_values.get("provider_name") or ""))
+        matter = _series_slug(str(extracted_values.get("matter_type") or ""))
+        parts = [family]
+        if provider:
+            parts.append(provider)
+        if matter:
+            parts.append(matter)
+        if len(parts) > 1:
+            return ":".join(parts)
+        fallback = _series_slug(reference_stem) or "default"
+        return f"{family}:{fallback}"
+
+    if doc_type == "entity_notice":
+        notice_type = _series_slug(str(extracted_values.get("notice_type") or ""))
+        notice_date = _first_date_candidate(
+            str(extracted_values.get("notice_date") or ""),
+            reference,
+            ocr_text,
+        )
+        parts = [family]
+        if notice_type:
+            parts.append(notice_type)
+        if notice_date:
+            parts.append(notice_date)
+        if len(parts) > 1:
+            return ":".join(parts)
+        fallback = _series_slug(reference_stem) or "default"
+        return f"{family}:{fallback}"
+
+    if doc_type == "tax_notice":
+        agency = _series_slug(str(extracted_values.get("agency_name") or ""))
+        notice_date = _first_date_candidate(
+            str(extracted_values.get("notice_date") or ""),
+            reference,
+            ocr_text,
+        )
+        parts = [family]
+        if agency:
+            parts.append(agency)
+        if notice_date:
+            parts.append(notice_date)
+        if len(parts) > 1:
+            return ":".join(parts)
+        fallback = _series_slug(reference_stem) or "default"
+        return f"{family}:{fallback}"
+
     if doc_type == "i9":
         reference_parent = _series_slug(Path(reference).parent.name if reference else "")
         employer = _series_slug(str(extracted_values.get("employer_name") or "")) or reference_parent
@@ -232,6 +374,23 @@ def infer_document_series_key(
         if title:
             return f"{family}:{title}"
         return family
+
+    if doc_type == "h1b_registration_roster":
+        company = _series_slug(str(extracted_values.get("company_name") or ""))
+        export_date = _first_date_candidate(
+            str(extracted_values.get("export_date") or ""),
+            reference,
+            ocr_text,
+        )
+        parts = [family]
+        if company:
+            parts.append(company)
+        if export_date:
+            parts.append(export_date)
+        if len(parts) > 1:
+            return ":".join(parts)
+        fallback = _series_slug(reference_stem) or "default"
+        return f"{family}:{fallback}"
 
     if doc_type == "h1b_registration_worksheet":
         scope = _series_slug(str(extracted_values.get("worksheet_scope") or ""))

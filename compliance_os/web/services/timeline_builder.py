@@ -2,14 +2,22 @@
 from __future__ import annotations
 
 import re
+from collections import defaultdict
 from datetime import date, datetime
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, FindingRow, SubjectChainRow
-from compliance_os.web.services.subject_chains import list_user_subject_chains
+from compliance_os.web.services.rule_engine import Rule, RuleEngine
+from compliance_os.web.services.subject_chains import (
+    EMPLOYMENT_CHAIN_DOC_TYPES,
+    ENTITY_CHAIN_DOC_TYPES,
+    list_user_subject_chains,
+    mapping_resolution_for_document,
+)
 
 
 def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
@@ -33,6 +41,100 @@ def _field_map(doc: DocumentRow) -> dict[str, str]:
         if field.field_value not in (None, ""):
             out[field.field_name] = field.field_value
     return out
+
+
+def _normalize_iso_date(value: Any) -> str | None:
+    if value in (None, ""):
+        return None
+    raw = str(value)
+    for pattern, fmt in (
+        (r"\b(20\d{2}-\d{2}-\d{2})\b", "%Y-%m-%d"),
+        (r"\b(20\d{2}/\d{2}/\d{2})\b", "%Y/%m/%d"),
+        (r"\b(\d{2}/\d{2}/20\d{2})\b", "%m/%d/%Y"),
+        (r"\b(\d{2}-\d{2}-20\d{2})\b", "%m-%d-%Y"),
+        (r"\b(20\d{2}\d{2}\d{2})\b", "%Y%m%d"),
+    ):
+        match = re.search(pattern, raw)
+        if not match:
+            continue
+        try:
+            return datetime.strptime(match.group(1), fmt).strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    return None
+
+
+def _normalize_ein(value: Any) -> str | None:
+    if value in (None, ""):
+        return None
+    digits = re.sub(r"\D", "", str(value))
+    if len(digits) != 9:
+        return None
+    return f"{digits[:2]}-{digits[2:]}"
+
+
+TRACK_COMPARISON_EVIDENCE_DOC_TYPES: dict[str, dict[str, tuple[str, ...]]] = {
+    "stem_opt": {
+        "job_title": ("i983", "employment_letter"),
+        "employer_name": ("i983", "employment_letter"),
+        "work_location": ("i983", "employment_letter"),
+        "start_date": ("i983", "employment_letter"),
+        "compensation": ("i983", "employment_letter"),
+        "duties": ("i983", "employment_letter"),
+        "supervisor": ("i983", "employment_letter"),
+        "full_time": ("i983", "employment_letter"),
+    },
+    "student": {
+        "employer_name": ("i20", "employment_letter"),
+        "work_location": ("i20", "employment_letter"),
+        "start_date": ("i20", "employment_letter"),
+        "full_time": ("i20", "employment_letter"),
+    },
+    "entity": {
+        "entity_type": ("tax_return",),
+        "form_5472": ("tax_return",),
+        "form_type": ("tax_return",),
+        "ein": ("tax_return",),
+        "entity_name": ("tax_return",),
+    },
+    "data_room": {
+        "employment_letter_i9_employee_name": ("employment_letter", "i9"),
+        "employment_letter_paystub_employer_name": ("employment_letter", "paystub"),
+        "i9_everify_employee_name": ("i9", "e_verify_case"),
+        "i9_everify_first_day_of_employment": ("i9", "e_verify_case"),
+        "h1b_registration_g28_entity_name": ("h1b_registration", "h1b_g28"),
+        "h1b_registration_invoice_petitioner_name": ("h1b_registration", "h1b_filing_invoice"),
+        "h1b_registration_receipt_signatory_name": ("h1b_registration", "h1b_filing_fee_receipt"),
+        "h1b_invoice_receipt_beneficiary_name": ("h1b_filing_invoice", "h1b_filing_fee_receipt"),
+        "cpt_application_i20_student_name": ("cpt_application", "i20"),
+        "cpt_application_employment_letter_employer_name": ("cpt_application", "employment_letter"),
+        "i20_passport_student_name": ("i20", "passport"),
+        "i20_ead_student_name": ("i20", "ead"),
+        "resume_passport_candidate_name": ("resume", "passport"),
+        "passport_ead_date_of_birth": ("passport", "ead"),
+        "passport_w2_employee_name": ("passport", "w2"),
+        "passport_1042s_recipient_name": ("passport", "1042s"),
+        "w2_tax_return_tax_year": ("w2", "tax_return"),
+        "1042s_tax_return_tax_year": ("1042s", "tax_return"),
+        "i94_i20_class_of_admission": ("i94", "i20"),
+    },
+}
+
+TRACK_EXTRACTION_EVIDENCE_DOC_TYPES: dict[str, dict[str, tuple[str, ...]]] = {
+    "stem_opt": {
+        "extraction_a": ("i983",),
+        "extraction_b": ("employment_letter",),
+    },
+    "student": {
+        "extraction_a": ("i20",),
+        "extraction_b": ("employment_letter",),
+    },
+    "entity": {
+        "extraction_b": ("tax_return",),
+    },
+}
+
+RULES_DIR = Path(__file__).resolve().parents[3] / "config" / "rules"
 
 
 def _normalized_text(value: str | None) -> str:
@@ -249,6 +351,61 @@ def _document_sort_key(doc: DocumentRow) -> tuple[bool, bool, bool, bool, dateti
     )
 
 
+@lru_cache(maxsize=8)
+def _rules_for_track(track: str) -> dict[str, Rule]:
+    rule_file = RULES_DIR / f"{track}.yaml"
+    if not rule_file.exists():
+        return {}
+    engine = RuleEngine.from_yaml(rule_file)
+    return {rule.id: rule for rule in engine.rules}
+
+
+def _selected_document_for_type(check: CheckRow, doc_type: str) -> DocumentRow | None:
+    candidates = [doc for doc in check.documents if doc.doc_type == doc_type]
+    if not candidates:
+        return None
+    return max(candidates, key=_document_sort_key)
+
+
+def _finding_evidence_rows(
+    finding: FindingRow,
+    check: CheckRow,
+    canonical_docs: list[DocumentRow],
+) -> list[DocumentRow]:
+    rule = _rules_for_track(check.track).get(finding.rule_id)
+    comparison_by_id = {comp.id: comp for comp in check.comparisons}
+    comparison_fields: list[str] = []
+    evidence_doc_types: list[str] = []
+
+    if finding.source_comparison_id:
+        source_comparison = comparison_by_id.get(finding.source_comparison_id)
+        if source_comparison is not None:
+            comparison_fields.append(source_comparison.field_name)
+
+    if rule is not None:
+        for condition in rule.conditions:
+            if condition.source == "comparison":
+                comparison_fields.append(condition.field)
+            for doc_type in TRACK_EXTRACTION_EVIDENCE_DOC_TYPES.get(check.track, {}).get(condition.source, ()):
+                evidence_doc_types.append(doc_type)
+
+    for field_name in comparison_fields:
+        for doc_type in TRACK_COMPARISON_EVIDENCE_DOC_TYPES.get(check.track, {}).get(field_name, ()):
+            evidence_doc_types.append(doc_type)
+
+    selected_rows: list[DocumentRow] = []
+    seen_doc_types: set[str] = set()
+    for doc_type in evidence_doc_types:
+        if doc_type in seen_doc_types:
+            continue
+        seen_doc_types.add(doc_type)
+        doc = _selected_document_for_type(check, doc_type)
+        if doc is not None:
+            selected_rows.append(doc)
+
+    return _user_canonical_document_rows(selected_rows, canonical_docs) if selected_rows else []
+
+
 def canonical_documents_for_checks(checks: list[CheckRow]) -> list[DocumentRow]:
     all_docs = [doc for check in checks for doc in check.documents]
     canonical: list[DocumentRow] = []
@@ -301,6 +458,413 @@ def _serialize_timeline_chain(chain: SubjectChainRow) -> dict[str, Any]:
         "start_date": chain.start_date,
         "source_context": chain.source_context,
     }
+
+
+def _raw_documents_by_canonical_id(
+    checks: list[CheckRow],
+    canonical_docs: list[DocumentRow],
+) -> dict[str, list[DocumentRow]]:
+    mapping: dict[str, list[DocumentRow]] = {doc.id: [] for doc in canonical_docs}
+    all_docs = [doc for check in checks for doc in check.documents]
+    for raw_doc in all_docs:
+        canonical_doc = _canonical_dashboard_document(raw_doc, canonical_docs)
+        mapping.setdefault(canonical_doc.id, []).append(raw_doc)
+    return mapping
+
+
+def _chain_refs_by_canonical_id(
+    subject_chains: list[SubjectChainRow],
+    canonical_docs: list[DocumentRow],
+) -> dict[str, list[dict[str, Any]]]:
+    refs_by_doc_id: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for chain in subject_chains:
+        serialized_chain = _serialize_timeline_chain(chain)
+        for link in chain.document_links:
+            doc = link.document
+            if doc is None:
+                continue
+            canonical_doc = _canonical_dashboard_document(doc, canonical_docs)
+            existing = refs_by_doc_id[canonical_doc.id]
+            if any(item["chain"]["key"] == serialized_chain["key"] for item in existing):
+                continue
+            existing.append(
+                {
+                    "chain": serialized_chain,
+                    "role": link.role,
+                    "link_confidence": link.link_confidence,
+                    "link_reason": link.link_reason,
+                    "details": link.details or {},
+                }
+            )
+    return refs_by_doc_id
+
+
+def _timeline_document_ids(events: list[dict[str, Any]]) -> set[str]:
+    doc_ids: set[str] = set()
+    for event in events:
+        for doc in event.get("documents", []):
+            if doc.get("id"):
+                doc_ids.add(doc["id"])
+        for risk in event.get("risks", []):
+            for doc in risk.get("documents", []):
+                if doc.get("id"):
+                    doc_ids.add(doc["id"])
+    return doc_ids
+
+
+def _integrity_issue_sort_key(issue: dict[str, Any]) -> tuple[int, str, str]:
+    severity_rank = {"error": 0, "warning": 1, "info": 2}
+    return (
+        severity_rank.get(issue.get("severity", "info"), 3),
+        issue.get("issue_code", ""),
+        issue.get("title", ""),
+    )
+
+
+def _document_chain_type(doc: DocumentRow) -> str | None:
+    if doc.doc_type in EMPLOYMENT_CHAIN_DOC_TYPES:
+        return "employment"
+    if doc.doc_type in ENTITY_CHAIN_DOC_TYPES:
+        return "entity"
+    return None
+
+
+def _document_candidate_chain_refs(
+    doc: DocumentRow,
+    subject_chains: list[SubjectChainRow],
+    excluded_chain_keys: set[str] | None = None,
+) -> list[dict[str, Any]]:
+    chain_type = _document_chain_type(doc)
+    if chain_type is None:
+        return []
+
+    fields = _field_map(doc)
+    if chain_type == "employment":
+        subject_name = _normalized_text(fields.get("employer_name") or fields.get("company_name"))
+        identifier = _normalize_ein(fields.get("employer_ein"))
+        start_date = _normalize_iso_date(
+            fields.get("start_date")
+            or fields.get("employment_start_date")
+            or fields.get("employee_first_day_of_employment")
+        )
+    else:
+        subject_name = _normalized_text(
+            fields.get("entity_name")
+            or fields.get("legal_name")
+            or fields.get("client_entity_name")
+            or fields.get("business_name")
+        )
+        identifier = _normalize_ein(fields.get("ein") or fields.get("employer_ein"))
+        start_date = _normalize_iso_date(
+            fields.get("formation_date") or fields.get("start_date") or fields.get("filing_date")
+        )
+
+    context_label = _normalized_text(_document_reference_parent_label(doc) or _document_reference_parent(doc))
+    subject_tokens = _meaningful_tokens(subject_name)
+    excluded = excluded_chain_keys or set()
+    scored: list[tuple[int, dict[str, Any]]] = []
+
+    for chain in subject_chains:
+        if chain.chain_type != chain_type or chain.chain_key in excluded:
+            continue
+        score = 0
+        if identifier and _normalize_ein(chain.subject_identifier) == identifier:
+            score += 5
+        chain_subject = _normalized_text(chain.subject_name or chain.display_name)
+        chain_tokens = _meaningful_tokens(chain_subject)
+        if subject_name and chain_subject and subject_name == chain_subject:
+            score += 4
+        elif subject_tokens and chain_tokens and (subject_tokens & chain_tokens):
+            score += 2
+        chain_context = _normalized_text(chain.source_context)
+        if context_label and (
+            (chain_context and context_label == chain_context)
+            or context_label in _normalized_text(chain.display_name)
+        ):
+            score += 2
+        if start_date and chain.start_date and start_date == chain.start_date:
+            score += 3
+        if score <= 0:
+            continue
+        scored.append((score, _serialize_timeline_chain(chain)))
+
+    scored.sort(key=lambda item: (-item[0], item[1]["label"], item[1]["key"]))
+    return [chain for _, chain in scored[:4]]
+
+
+def _assistant_prompt_for_integrity_issue(issue: dict[str, Any]) -> dict[str, Any] | None:
+    documents = issue.get("documents") or []
+    if not documents:
+        return None
+    primary_doc = documents[0]
+    chains = issue.get("chains") or []
+    issue_code = issue.get("issue_code")
+    if issue_code == "ambiguous_chain_link" and chains:
+        choices = [
+            {"label": chain["label"], "action": "attach_chain", "chain_key": chain["key"]}
+            for chain in chains
+        ]
+        choices.append({"label": "Keep shared", "action": "keep_shared", "chain_key": None})
+        return {
+            "id": f"{issue_code}:{primary_doc['id']}",
+            "kind": "integrity_resolution",
+            "issue_code": issue_code,
+            "text": f"Should `{primary_doc['filename']}` stay shared across multiple histories, or should I attach it to one chain?",
+            "documents": documents,
+            "chains": chains,
+            "choices": choices,
+            "cadence_seconds": 45,
+        }
+    if issue_code in {"unmapped_document", "unchained_document"} and chains:
+        choices = [
+            {"label": chain["label"], "action": "attach_chain", "chain_key": chain["key"]}
+            for chain in chains
+        ]
+        choices.append({"label": "Keep standalone", "action": "keep_standalone", "chain_key": None})
+        return {
+            "id": f"{issue_code}:{primary_doc['id']}",
+            "kind": "integrity_resolution",
+            "issue_code": issue_code,
+            "text": f"Should `{primary_doc['filename']}` be attached to one of these chains, or kept standalone for now?",
+            "documents": documents,
+            "chains": chains,
+            "choices": choices,
+            "cadence_seconds": 45,
+        }
+    return None
+
+
+def _split_integrity_issues_for_timeline(
+    issues: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    visible: list[dict[str, Any]] = []
+    prompts: list[dict[str, Any]] = []
+    for issue in issues:
+        prompt = _assistant_prompt_for_integrity_issue(issue)
+        if prompt is not None:
+            prompts.append(prompt)
+            continue
+        visible.append(issue)
+    return visible, prompts
+
+
+def _field_values_for_chain_conflict(
+    chain: SubjectChainRow,
+    docs: list[DocumentRow],
+) -> list[dict[str, Any]]:
+    if chain.chain_type == "employment":
+        field_specs = [
+            (
+                "employer_name",
+                "Employer name",
+                lambda fields: fields.get("employer_name") or fields.get("company_name"),
+            ),
+            (
+                "employer_ein",
+                "Employer EIN",
+                lambda fields: fields.get("employer_ein"),
+            ),
+            (
+                "start_date",
+                "Start date",
+                lambda fields: fields.get("start_date")
+                or fields.get("employment_start_date")
+                or fields.get("employee_first_day_of_employment"),
+            ),
+            (
+                "end_date",
+                "End date",
+                lambda fields: fields.get("end_date"),
+            ),
+        ]
+    elif chain.chain_type == "entity":
+        field_specs = [
+            (
+                "entity_name",
+                "Entity name",
+                lambda fields: fields.get("entity_name")
+                or fields.get("legal_name")
+                or fields.get("client_entity_name")
+                or fields.get("business_name"),
+            ),
+            (
+                "ein",
+                "EIN",
+                lambda fields: fields.get("ein") or fields.get("employer_ein"),
+            ),
+        ]
+    else:
+        return []
+
+    conflicts: list[dict[str, Any]] = []
+    for field_name, label, extractor in field_specs:
+        values: dict[str, list[DocumentRow]] = defaultdict(list)
+        for doc in docs:
+            extracted_value = extractor(_field_map(doc))
+            if extracted_value in (None, ""):
+                continue
+            normalized_value = (
+                _normalize_iso_date(extracted_value)
+                if field_name in {"start_date", "end_date"}
+                else extracted_value
+            ) or str(extracted_value)
+            if field_name in {"employer_ein", "ein"}:
+                normalized_value = _normalize_ein(normalized_value) or str(extracted_value)
+            values[str(normalized_value)].append(doc)
+        if len(values) <= 1:
+            continue
+        conflicts.append(
+            {
+                "field_name": field_name,
+                "label": label,
+                "values": [
+                    {
+                        "value": value,
+                        "document_ids": [doc.id for doc in _user_canonical_document_rows(rows, docs)],
+                    }
+                    for value, rows in sorted(values.items(), key=lambda item: item[0])
+                ],
+            }
+        )
+    return conflicts
+
+
+def _build_integrity_issues(
+    checks: list[CheckRow],
+    subject_chains: list[SubjectChainRow],
+    canonical_docs: list[DocumentRow],
+    events: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    raw_docs_by_canonical = _raw_documents_by_canonical_id(checks, canonical_docs)
+    chain_refs_by_canonical = _chain_refs_by_canonical_id(subject_chains, canonical_docs)
+    timeline_doc_ids = _timeline_document_ids(events)
+    issues: list[dict[str, Any]] = []
+
+    for doc in canonical_docs:
+        raw_docs = raw_docs_by_canonical.get(doc.id, [doc])
+        resolution = mapping_resolution_for_document(doc, raw_docs)
+        resolution_mode = resolution.get("mode") if isinstance(resolution, dict) else None
+        distinct_check_ids = sorted({row.check_id for row in raw_docs if row.check_id})
+        chain_refs = chain_refs_by_canonical.get(doc.id, [])
+        unique_chains = {ref["chain"]["key"]: ref["chain"] for ref in chain_refs}
+        candidate_chains = _document_candidate_chain_refs(
+            doc,
+            subject_chains,
+            excluded_chain_keys=set(unique_chains),
+        )
+        has_chain = bool(unique_chains)
+        has_timeline = doc.id in timeline_doc_ids
+
+        if len(distinct_check_ids) > 1:
+            issues.append(
+                {
+                    "issue_code": "duplicate_across_checks",
+                    "severity": "warning",
+                    "title": "Document reused across multiple checks",
+                    "message": f"{doc.filename} is currently represented in {len(distinct_check_ids)} checks. Keep that reuse explicit instead of relying on display dedupe.",
+                    "documents": [serialize_dashboard_document(doc)],
+                    "chains": list(unique_chains.values()),
+                    "details": {
+                        "check_ids": distinct_check_ids,
+                        "raw_document_ids": [row.id for row in raw_docs],
+                    },
+                }
+            )
+
+        if len(unique_chains) > 1 and resolution_mode != "keep_shared":
+            issues.append(
+                {
+                    "issue_code": "ambiguous_chain_link",
+                    "severity": "warning",
+                    "title": "Document maps to multiple subject chains",
+                    "message": f"{doc.filename} is linked to multiple histories. Review whether the document should stay shared, be relinked, or be duplicated explicitly.",
+                    "documents": [serialize_dashboard_document(doc)],
+                    "chains": list(unique_chains.values()),
+                    "details": {
+                        "chain_keys": sorted(unique_chains),
+                    },
+                }
+            )
+
+        if not has_chain and not has_timeline:
+            if resolution_mode == "standalone":
+                continue
+            issues.append(
+                {
+                    "issue_code": "unmapped_document",
+                    "severity": "warning",
+                    "title": "Visible document is not mapped yet",
+                    "message": f"{doc.filename} is visible in the data room but is not linked to a subject chain and does not appear on the timeline.",
+                    "documents": [serialize_dashboard_document(doc)],
+                    "chains": candidate_chains,
+                    "details": {
+                        "doc_type": doc.doc_type,
+                    },
+                }
+            )
+            continue
+
+        if not has_chain:
+            if resolution_mode == "standalone":
+                continue
+            issues.append(
+                {
+                    "issue_code": "unchained_document",
+                    "severity": "warning",
+                    "title": "Timeline document is not linked to a subject chain",
+                    "message": f"{doc.filename} appears on the timeline, but it is not attached to any employment or entity chain yet.",
+                    "documents": [serialize_dashboard_document(doc)],
+                    "chains": candidate_chains,
+                    "details": {
+                        "doc_type": doc.doc_type,
+                    },
+                }
+            )
+        elif not has_timeline:
+            issues.append(
+                {
+                    "issue_code": "untimed_document",
+                    "severity": "info",
+                    "title": "Chained document is not represented on the timeline",
+                    "message": f"{doc.filename} is linked to a subject chain, but the current timeline does not surface it yet.",
+                    "documents": [serialize_dashboard_document(doc)],
+                    "chains": list(unique_chains.values()),
+                    "details": {
+                        "doc_type": doc.doc_type,
+                    },
+                }
+            )
+
+    for chain in subject_chains:
+        chain_docs = _user_canonical_document_rows(_chain_event_document_rows(chain), canonical_docs)
+        conflicts = _field_values_for_chain_conflict(chain, chain_docs)
+        if not conflicts:
+            continue
+        conflicting_doc_ids = sorted(
+            {
+                doc_id
+                for field in conflicts
+                for value in field["values"]
+                for doc_id in value["document_ids"]
+            }
+        )
+        issue_docs = [doc for doc in canonical_docs if doc.id in conflicting_doc_ids]
+        issues.append(
+            {
+                "issue_code": "conflicting_chain_evidence",
+                "severity": "error",
+                "title": f"Conflicting evidence inside {chain.display_name}",
+                "message": "Documents inside this subject chain disagree on key identity or timing fields. Review the linked records before relying on the derived history.",
+                "documents": [serialize_dashboard_document(doc) for doc in issue_docs],
+                "chains": [_serialize_timeline_chain(chain)],
+                "details": {
+                    "fields": conflicts,
+                },
+            }
+        )
+
+    issues.sort(key=_integrity_issue_sort_key)
+    return issues
 
 
 def _chain_event_documents(
@@ -415,7 +979,27 @@ def _finding_identity_key(finding: FindingRow | dict[str, Any]) -> tuple[Any, ..
 def _dedupe_finding_dicts(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     unique: dict[tuple[Any, ...], dict[str, Any]] = {}
     for item in items:
-        unique.setdefault(_finding_identity_key(item), item)
+        key = _finding_identity_key(item)
+        existing = unique.get(key)
+        if existing is None:
+            unique[key] = {
+                **item,
+                "documents": list(item.get("documents", [])),
+                "source_comparison_ids": list(item.get("source_comparison_ids", [])),
+            }
+            continue
+
+        seen_doc_ids = {doc["id"] for doc in existing.get("documents", [])}
+        for doc in item.get("documents", []):
+            if doc["id"] not in seen_doc_ids:
+                existing.setdefault("documents", []).append(doc)
+                seen_doc_ids.add(doc["id"])
+
+        seen_comparison_ids = set(existing.get("source_comparison_ids", []))
+        for comparison_id in item.get("source_comparison_ids", []):
+            if comparison_id and comparison_id not in seen_comparison_ids:
+                existing.setdefault("source_comparison_ids", []).append(comparison_id)
+                seen_comparison_ids.add(comparison_id)
     return list(unique.values())
 
 
@@ -490,6 +1074,20 @@ def _merge_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     result = list(merged.values())
     result.sort(key=lambda e: e["date"])
     return result
+
+
+def _active_stem_opt_chains(subject_chains: list[SubjectChainRow]) -> list[SubjectChainRow]:
+    active: list[SubjectChainRow] = []
+    for chain in subject_chains:
+        snapshot = dict(chain.snapshot or {})
+        if chain.chain_type != "employment":
+            continue
+        if chain.status == "superseded" or not snapshot.get("timeline_visible", True):
+            continue
+        if snapshot.get("stage") != "stem_opt":
+            continue
+        active.append(chain)
+    return active
 
 
 def build_timeline(user_id: str, db: Session) -> dict:
@@ -633,6 +1231,10 @@ def build_timeline(user_id: str, db: Session) -> dict:
 
     for check in checks:
         for finding in check.findings:
+            evidence_docs = [
+                serialize_dashboard_document(doc)
+                for doc in _finding_evidence_rows(finding, check, canonical_docs)
+            ]
             f_data = {
                 "id": finding.id,
                 "rule_id": finding.rule_id,
@@ -642,6 +1244,8 @@ def build_timeline(user_id: str, db: Session) -> dict:
                 "action": finding.action,
                 "consequence": finding.consequence,
                 "immigration_impact": finding.immigration_impact,
+                "documents": evidence_docs,
+                "source_comparison_ids": [finding.source_comparison_id] if finding.source_comparison_id else [],
             }
             if finding.category == "advisory":
                 all_advisories.append(f_data)
@@ -679,26 +1283,23 @@ def build_timeline(user_id: str, db: Session) -> dict:
                 "why": "Cross-checks job title, salary, and location against your I-983.",
             })
 
-        # Check for 12-month eval
-        for check in checks:
-            for doc in check.documents:
-                if doc.doc_type == "i983":
-                    fields = {f.field_name: f.field_value for f in doc.extracted_fields}
-                    start = fields.get("start_date")
-                    if start:
-                        try:
-                            start_date = datetime.strptime(start, "%Y-%m-%d").date()
-                            from dateutil.relativedelta import relativedelta
-                            eval_due = start_date + relativedelta(months=12)
-                            if date.today() > eval_due:
-                                upload_prompts.append({
-                                    "doc_type": "i983_evaluation",
-                                    "prompt": "Upload your completed 12-month evaluation",
-                                    "why": f"Due by {eval_due.isoformat()}. Must be signed by employer within 10 days of anniversary.",
-                                    "event_date": eval_due.isoformat(),
-                                })
-                        except ValueError:
-                            pass
+        # Check for 12-month evaluations from active STEM chains only.
+        for chain in _active_stem_opt_chains(subject_chains):
+            if not chain.start_date:
+                continue
+            try:
+                start_date = datetime.strptime(chain.start_date, "%Y-%m-%d").date()
+                from dateutil.relativedelta import relativedelta
+                eval_due = start_date + relativedelta(months=12)
+                if date.today() > eval_due:
+                    upload_prompts.append({
+                        "doc_type": "i983_evaluation",
+                        "prompt": "Upload your completed 12-month evaluation",
+                        "why": f"Due by {eval_due.isoformat()}. Must be signed by employer within 10 days of anniversary.",
+                        "event_date": eval_due.isoformat(),
+                    })
+            except ValueError:
+                pass
 
     # Sort and merge duplicate events by identity
     events = _merge_events(events)
@@ -717,6 +1318,9 @@ def build_timeline(user_id: str, db: Session) -> dict:
                 if event["type"] == "now":
                     event.setdefault("risks", []).append(finding)
                     break
+
+    all_integrity_issues = _build_integrity_issues(checks, subject_chains, canonical_docs, events)
+    integrity_issues, assistant_prompts = _split_integrity_issues_for_timeline(all_integrity_issues)
 
     # Build key facts from check answers
     STAGE_LABELS = {
@@ -819,13 +1423,16 @@ def build_timeline(user_id: str, db: Session) -> dict:
             unique_facts.append(f)
 
     # Build deadlines
-    deadlines = _build_deadlines(checks)
+    deadlines = _build_deadlines(checks, subject_chains)
 
     return {
         "events": events,
         "documents": all_docs,
         "findings": all_findings,
         "advisories": all_advisories,
+        "all_integrity_issues": all_integrity_issues,
+        "integrity_issues": integrity_issues,
+        "assistant_prompts": assistant_prompts,
         "upload_prompts": upload_prompts,
         "key_facts": unique_facts,
         "deadlines": deadlines,
@@ -859,7 +1466,8 @@ def build_stats(user_id: str, db: Session) -> dict:
     next_deadline_days = None
 
     # Use the full deadline builder for next_deadline_days
-    deadlines = _build_deadlines(checks)
+    subject_chains = list_user_subject_chains(user_id, db)
+    deadlines = _build_deadlines(checks, subject_chains)
     for d in deadlines:
         if d["days"] > 0 and (next_deadline_days is None or d["days"] < next_deadline_days):
             next_deadline_days = d["days"]
@@ -884,12 +1492,59 @@ def _doc_category(doc_type: str) -> str:
     return "business"
 
 
-def _build_deadlines(checks: list) -> list[dict]:
+def _build_deadlines(
+    checks: list,
+    subject_chains: list[SubjectChainRow] | None = None,
+) -> list[dict]:
     """Build upcoming deadlines from check answers and extracted dates."""
     from dateutil.relativedelta import relativedelta
 
     today = date.today()
     deadlines: list[dict] = []
+
+    active_stem_chains = _active_stem_opt_chains(subject_chains or [])
+
+    for chain in active_stem_chains:
+        if chain.start_date:
+            try:
+                start_dt = datetime.strptime(chain.start_date, "%Y-%m-%d").date()
+                eval_due = start_dt + relativedelta(months=12)
+                days = (eval_due - today).days
+                deadlines.append({
+                    "title": "I-983 12-month evaluation due",
+                    "date": eval_due.isoformat(),
+                    "days": days,
+                    "category": "immigration",
+                    "severity": "critical" if days < 0 else "warning" if days < 30 else "info",
+                    "action": "Complete self-evaluation with employer signature within 10 days of anniversary",
+                })
+            except ValueError:
+                pass
+
+        if chain.end_date:
+            try:
+                end_dt = datetime.strptime(chain.end_date, "%Y-%m-%d").date()
+                days = (end_dt - today).days
+                deadlines.append({
+                    "title": "OPT/STEM authorization ends",
+                    "date": end_dt.isoformat(),
+                    "days": days,
+                    "category": "immigration",
+                    "severity": "critical" if days < 0 else "warning" if days < 60 else "info",
+                    "action": "Ensure you have a plan: STEM extension, H-1B, or departure within 60-day grace period",
+                })
+
+                grace_end = end_dt + relativedelta(days=60)
+                deadlines.append({
+                    "title": "60-day grace period ends",
+                    "date": grace_end.isoformat(),
+                    "days": (grace_end - today).days,
+                    "category": "immigration",
+                    "severity": "critical" if (grace_end - today).days < 0 else "warning" if (grace_end - today).days < 14 else "info",
+                    "action": "Must depart the US, change status, or have a new petition filed by this date",
+                })
+            except ValueError:
+                pass
 
     for check in checks:
         a = check.answers or {}
@@ -898,53 +1553,6 @@ def _build_deadlines(checks: list) -> list[dict]:
         # --- Deadlines from extracted document dates ---
         for doc in check.documents:
             fields = {f.field_name: f.field_value for f in doc.extracted_fields}
-
-            if doc.doc_type == "i983":
-                # I-983 12-month evaluation
-                start = fields.get("start_date")
-                if start:
-                    try:
-                        start_dt = datetime.strptime(start, "%Y-%m-%d").date()
-                        eval_due = start_dt + relativedelta(months=12)
-                        days = (eval_due - today).days
-                        deadlines.append({
-                            "title": "I-983 12-month evaluation due",
-                            "date": eval_due.isoformat(),
-                            "days": days,
-                            "category": "immigration",
-                            "severity": "critical" if days < 0 else "warning" if days < 30 else "info",
-                            "action": "Complete self-evaluation with employer signature within 10 days of anniversary",
-                        })
-                    except ValueError:
-                        pass
-
-                # STEM OPT / OPT end date
-                end = fields.get("end_date")
-                if end:
-                    try:
-                        end_dt = datetime.strptime(end, "%Y-%m-%d").date()
-                        days = (end_dt - today).days
-                        deadlines.append({
-                            "title": "OPT/STEM authorization ends",
-                            "date": end_dt.isoformat(),
-                            "days": days,
-                            "category": "immigration",
-                            "severity": "critical" if days < 0 else "warning" if days < 60 else "info",
-                            "action": "Ensure you have a plan: STEM extension, H-1B, or departure within 60-day grace period",
-                        })
-
-                        # Grace period
-                        grace_end = end_dt + relativedelta(days=60)
-                        deadlines.append({
-                            "title": "60-day grace period ends",
-                            "date": grace_end.isoformat(),
-                            "days": (grace_end - today).days,
-                            "category": "immigration",
-                            "severity": "critical" if (grace_end - today).days < 0 else "warning" if (grace_end - today).days < 14 else "info",
-                            "action": "Must depart the US, change status, or have a new petition filed by this date",
-                        })
-                    except ValueError:
-                        pass
 
         # --- Static annual deadlines ---
         current_year = today.year

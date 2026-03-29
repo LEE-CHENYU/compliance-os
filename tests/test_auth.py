@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 from compliance_os.web.app import app
 from compliance_os.web.models.database import get_session
-from compliance_os.web.models.tables_v2 import Base as BaseV2
+from compliance_os.web.models.tables_v2 import Base as BaseV2, CheckRow
 
 
 @pytest.fixture
@@ -171,3 +171,96 @@ def test_google_callback_redirects_to_local_frontend_when_running_locally(client
 
     assert resp.status_code in (302, 307)
     assert resp.headers["location"].startswith("http://localhost:3000/login?token=")
+
+
+def test_openclaw_connection_issues_scoped_token(client):
+    resp = client.post("/api/auth/register", json={"email": "openclaw@example.com", "password": "pass123"})
+    jwt_token = resp.json()["token"]
+
+    connection = client.get(
+        "/api/auth/openclaw/connection",
+        headers={"Authorization": f"Bearer {jwt_token}"},
+    )
+    assert connection.status_code == 200
+    assert connection.json()["active_token"] is None
+
+    issued = client.post(
+        "/api/auth/openclaw/token",
+        headers={"Authorization": f"Bearer {jwt_token}"},
+    )
+    assert issued.status_code == 200
+    data = issued.json()
+    assert data["token"].startswith("gdn_oc_")
+    assert data["scope"] == "openclaw"
+    assert data["active_token"]["token_prefix"]
+
+
+def test_openclaw_connection_defaults_to_https_for_non_local_hosts(client):
+    resp = client.post("/api/auth/register", json={"email": "openclaw-https@example.com", "password": "pass123"})
+    jwt_token = resp.json()["token"]
+
+    connection = client.get(
+        "/api/auth/openclaw/connection",
+        headers={
+            "Authorization": f"Bearer {jwt_token}",
+            "host": "guardiancompliance.app",
+        },
+    )
+
+    assert connection.status_code == 200
+    assert connection.json()["api_url"] == "https://guardiancompliance.app"
+
+
+def test_openclaw_token_can_access_dashboard_but_not_jwt_only_auth_routes(client):
+    resp = client.post("/api/auth/register", json={"email": "openclaw-dashboard@example.com", "password": "pass123"})
+    jwt_token = resp.json()["token"]
+    user_id = resp.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        session.add(CheckRow(track="stem_opt", status="saved", user_id=user_id, answers={"stage": "stem_opt"}))
+        session.commit()
+    finally:
+        session.close()
+
+    issued = client.post(
+        "/api/auth/openclaw/token",
+        headers={"Authorization": f"Bearer {jwt_token}"},
+    )
+    api_token = issued.json()["token"]
+
+    stats = client.get(
+        "/api/dashboard/stats",
+        headers={"Authorization": f"Bearer {api_token}"},
+    )
+    assert stats.status_code == 200
+    assert stats.json()["documents"] == 0
+
+    forbidden = client.post(
+        "/api/auth/link-check/nonexistent",
+        headers={"Authorization": f"Bearer {api_token}"},
+    )
+    assert forbidden.status_code == 403
+
+
+def test_openclaw_token_can_call_chat(client, monkeypatch):
+    import compliance_os.web.routers.chat as chat_mod
+
+    resp = client.post("/api/auth/register", json={"email": "openclaw-chat@example.com", "password": "pass123"})
+    jwt_token = resp.json()["token"]
+
+    issued = client.post(
+        "/api/auth/openclaw/token",
+        headers={"Authorization": f"Bearer {jwt_token}"},
+    )
+    api_token = issued.json()["token"]
+
+    monkeypatch.setattr(chat_mod, "chat_completion", lambda **kwargs: "Scoped token chat ok")
+
+    resp = client.post(
+        "/api/chat",
+        headers={"Authorization": f"Bearer {api_token}"},
+        json={"message": "status?", "history": []},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["reply"] == "Scoped token chat ok"

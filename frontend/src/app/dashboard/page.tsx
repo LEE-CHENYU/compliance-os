@@ -10,16 +10,26 @@ interface TimelineEvent {
   title: string;
   type: string;
   category: string | null;
-  chain?: {
-    type: string;
-    key: string;
-    label: string;
-    employer_name?: string | null;
-    start_date?: string | null;
-    source_context?: string | null;
-  } | null;
+  chain?: TimelineChainRef | null;
   documents: { id: string; filename: string; doc_type: string; category: string }[];
-  risks: { id: string; title: string; action: string; consequence: string; immigration_impact: boolean; severity: string }[];
+  risks: {
+    id: string;
+    title: string;
+    action: string;
+    consequence: string;
+    immigration_impact: boolean;
+    severity: string;
+    documents?: { id: string; filename: string; doc_type: string; category: string }[];
+  }[];
+}
+
+interface TimelineChainRef {
+  type: string;
+  key: string;
+  label: string;
+  employer_name?: string | null;
+  start_date?: string | null;
+  source_context?: string | null;
 }
 
 interface UploadPrompt {
@@ -29,6 +39,49 @@ interface UploadPrompt {
   event_date?: string;
 }
 
+interface IntegrityIssue {
+  issue_code: string;
+  severity: string;
+  title: string;
+  message: string;
+  documents: { id: string; filename: string; doc_type: string; category: string }[];
+  chains: TimelineChainRef[];
+  details?: Record<string, unknown>;
+}
+
+interface AssistantPromptChoice {
+  label: string;
+  value: string;
+  action_type: "chat_answer" | "integrity_resolution";
+  question_id?: string;
+  prompt_id?: string;
+  action?: string;
+  chain_key?: string | null;
+  document_id?: string;
+}
+
+interface AssistantPrompt {
+  id: string;
+  kind: string;
+  issue_code: string;
+  text: string;
+  documents: DashboardDocumentLink[];
+  chains: TimelineChainRef[];
+  choices: {
+    label: string;
+    action: string;
+    chain_key: string | null;
+  }[];
+  cadence_seconds?: number;
+}
+
+interface ChatMessage {
+  id: string;
+  role: "assistant" | "user";
+  text: string;
+  chips?: AssistantPromptChoice[];
+}
+
 interface Stats {
   documents: number;
   risks: number;
@@ -36,10 +89,34 @@ interface Stats {
   next_deadline_days: number | null;
 }
 
+interface OpenClawTokenInfo {
+  label: string;
+  token_type: string;
+  scope: string;
+  token_prefix: string;
+  created_at: string;
+  last_used_at: string | null;
+}
+
+interface OpenClawConnectionStatus {
+  api_url: string;
+  install_command: string;
+  env_var: string;
+  token_type: string;
+  scope: string;
+  active_token: OpenClawTokenInfo | null;
+}
+
+interface OpenClawTokenIssueResponse extends OpenClawConnectionStatus {
+  token: string;
+}
+
 interface TimelineData {
   events: TimelineEvent[];
   findings: unknown[];
   advisories: { id: string; title: string; action: string; consequence: string }[];
+  integrity_issues: IntegrityIssue[];
+  assistant_prompts: AssistantPrompt[];
   upload_prompts: UploadPrompt[];
   key_facts: { label: string; value: string }[];
   deadlines: { title: string; date: string; days: number; category: string; severity: string; action: string }[];
@@ -77,9 +154,19 @@ interface PreparedUploadItem {
   action: "upload" | "skip";
 }
 
+interface DashboardDocumentLink {
+  id: string;
+  filename: string;
+  doc_type: string;
+  category: string;
+}
+
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://localhost:8000/api/dashboard"
   : "/api/dashboard";
+const AUTH_API = typeof window !== "undefined" && window.location.hostname === "localhost"
+  ? "http://localhost:8000/api/auth"
+  : "/api/auth";
 
 const DASHBOARD_ACCEPT = ".pdf,.png,.jpg,.jpeg,.csv,.txt,.docx";
 
@@ -192,12 +279,23 @@ export default function DashboardPage() {
   const [dragActive, setDragActive] = useState(false);
   const [view, setView] = useState<"timeline" | "documents" | "profile" | "deadlines">("timeline");
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState<{ role: "assistant" | "user"; text: string; chips?: string[] }[]>([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatAnswered, setChatAnswered] = useState<Set<string>>(new Set());
+  const [resolvedAssistantPromptIds, setResolvedAssistantPromptIds] = useState<Set<string>>(new Set());
   const [chatLoading, setChatLoading] = useState(false);
   const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string }[]>([]);
   const [showToken, setShowToken] = useState(false);
   const [tokenCopied, setTokenCopied] = useState(false);
+  const [openClawConnection, setOpenClawConnection] = useState<OpenClawConnectionStatus | null>(null);
+  const [openClawToken, setOpenClawToken] = useState<string | null>(null);
+  const [openClawLoading, setOpenClawLoading] = useState(false);
+  const [openClawError, setOpenClawError] = useState<string | null>(null);
+  const chatMessageCounterRef = useRef(0);
+
+  const nextChatMessageId = useCallback(() => {
+    chatMessageCounterRef.current += 1;
+    return `chat-${chatMessageCounterRef.current}`;
+  }, []);
 
   const refreshDashboard = useCallback(async () => {
     const [tl, st, docs] = await Promise.all([
@@ -215,6 +313,120 @@ export default function DashboardPage() {
     setLoading(false);
   }, [router]);
 
+  const openDashboardDocument = useCallback(async (docId: string) => {
+    const resp = await fetch(`${API}/documents/${docId}/view`, { headers: authHeaders() });
+    if (!resp.ok) {
+      throw new Error("Could not open document");
+    }
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank", "noopener,noreferrer");
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  }, []);
+
+  const renderDocumentChip = useCallback((
+    doc: DashboardDocumentLink,
+    options?: {
+      compact?: boolean;
+    },
+  ) => {
+    const colors = CATEGORY_COLORS[doc.category] || CATEGORY_COLORS.immigration;
+    const compact = options?.compact ?? false;
+    return (
+      <button
+        key={doc.id}
+        type="button"
+        onClick={() => {
+          openDashboardDocument(doc.id).catch((error) => {
+            console.error(error);
+          });
+        }}
+        className={`flex items-center gap-2 rounded-xl border text-left font-medium text-[#3d6bc5] shadow-sm transition-all hover:bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#5b8dee]/35 ${
+          compact
+            ? "px-2.5 py-1.5 text-[11px] bg-white/70 border-white/70"
+            : "px-3 py-2 text-[12px] bg-white/55 backdrop-blur border-white/60"
+        }`}
+      >
+        <span>📄</span>
+        {doc.filename}
+        <span
+          className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md capitalize"
+          style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}
+        >
+          {doc.category}
+        </span>
+      </button>
+    );
+  }, [openDashboardDocument]);
+
+  const dashboardPromptApi = `${API}/integrity/respond`;
+  const chatApi = typeof window !== "undefined" && window.location.hostname === "localhost"
+    ? "http://localhost:8000/api/chat"
+    : "/api/chat";
+
+  const loadOpenClawConnection = useCallback(async () => {
+    setOpenClawLoading(true);
+    setOpenClawError(null);
+    try {
+      const resp = await fetch(`${AUTH_API}/openclaw/connection`, { headers: authHeaders() });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        throw new Error(data.detail || "Could not load OpenClaw connection");
+      }
+      setOpenClawConnection(data);
+    } catch (error) {
+      setOpenClawError(error instanceof Error ? error.message : "Could not load OpenClaw connection");
+    } finally {
+      setOpenClawLoading(false);
+    }
+  }, []);
+
+  const issueOpenClawToken = useCallback(async () => {
+    setOpenClawLoading(true);
+    setOpenClawError(null);
+    try {
+      const resp = await fetch(`${AUTH_API}/openclaw/token`, {
+        method: "POST",
+        headers: authHeaders(),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        throw new Error(data.detail || "Could not issue OpenClaw token");
+      }
+      const issued = data as OpenClawTokenIssueResponse;
+      setOpenClawConnection(issued);
+      setOpenClawToken(issued.token);
+    } catch (error) {
+      setOpenClawError(error instanceof Error ? error.message : "Could not issue OpenClaw token");
+    } finally {
+      setOpenClawLoading(false);
+    }
+  }, []);
+
+  const makeQuestionChips = useCallback((questionId: string, options: string[]) => (
+    options.map((option) => ({
+      label: option,
+      value: option,
+      action_type: "chat_answer" as const,
+      question_id: questionId,
+    }))
+  ), []);
+
+  const makeAssistantPromptMessage = useCallback((prompt: AssistantPrompt): ChatMessage => ({
+    id: `assistant-prompt:${prompt.id}`,
+    role: "assistant",
+    text: prompt.text,
+    chips: prompt.choices.map((choice) => ({
+      label: choice.label,
+      value: choice.label,
+      action_type: "integrity_resolution" as const,
+      prompt_id: prompt.id,
+      action: choice.action,
+      chain_key: choice.chain_key,
+      document_id: prompt.documents[0]?.id,
+    })),
+  }), []);
+
   useEffect(() => {
     if (!isLoggedIn()) {
       router.push("/login");
@@ -230,6 +442,14 @@ export default function DashboardPage() {
     folderRef.current.setAttribute("webkitdirectory", "");
     folderRef.current.setAttribute("directory", "");
   }, []);
+
+  useEffect(() => {
+    if (!showToken) {
+      return;
+    }
+    setOpenClawToken(null);
+    loadOpenClawConnection();
+  }, [loadOpenClawConnection, showToken]);
 
   function resetUploadState() {
     setPreparedUploads([]);
@@ -371,9 +591,23 @@ export default function DashboardPage() {
     await prepareUploadBatch(files);
   }
 
-  // Generate proactive questions based on what we know and what's missing
+  const hasActiveChatPrompt = chatMessages.some((message) => message.role === "assistant" && Boolean(message.chips?.length));
+
+  // Generate proactive questions based on what we know and what's missing.
   useEffect(() => {
     if (!timeline?.key_facts) return;
+    if (hasActiveChatPrompt) return;
+
+    const pendingIntegrityPrompt = timeline.assistant_prompts.find(
+      (prompt) =>
+        !resolvedAssistantPromptIds.has(prompt.id)
+        && !chatMessages.some((message) => message.id === `assistant-prompt:${prompt.id}`),
+    );
+    if (pendingIntegrityPrompt) {
+      setChatMessages((prev) => [...prev, makeAssistantPromptMessage(pendingIntegrityPrompt)]);
+      return;
+    }
+
     const facts = new Set((timeline.key_facts as { label: string }[]).map((f) => f.label));
     const questions: { id: string; text: string; chips: string[] }[] = [];
 
@@ -469,21 +703,56 @@ export default function DashboardPage() {
 
     // Filter out already answered
     const unanswered = questions.filter((q) => !chatAnswered.has(q.id));
-    if (unanswered.length > 0 && chatMessages.length === 0) {
-      setChatMessages([{
-        role: "assistant",
-        text: unanswered[0].text,
-        chips: unanswered[0].chips,
-      }]);
+    if (unanswered.length > 0) {
+      const nextQuestion = unanswered[0];
+      const nextMessageId = `assistant-question:${nextQuestion.id}`;
+      if (!chatMessages.some((message) => message.id === nextMessageId)) {
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: nextMessageId,
+            role: "assistant",
+            text: nextQuestion.text,
+            chips: makeQuestionChips(nextQuestion.id, nextQuestion.chips),
+          },
+        ]);
+      }
     }
-  }, [timeline, chatAnswered, chatMessages.length]);
+  }, [
+    timeline,
+    chatAnswered,
+    chatMessages,
+    hasActiveChatPrompt,
+    makeAssistantPromptMessage,
+    makeQuestionChips,
+    resolvedAssistantPromptIds,
+  ]);
 
-  const chatApi = typeof window !== "undefined" && window.location.hostname === "localhost"
-    ? "http://localhost:8000/api/chat"
-    : "/api/chat";
+  useEffect(() => {
+    if (!timeline?.assistant_prompts?.length) {
+      return;
+    }
+    const interval = window.setInterval(() => {
+      setChatMessages((prev) => {
+        if (prev.some((message) => message.role === "assistant" && Boolean(message.chips?.length))) {
+          return prev;
+        }
+        const nextPrompt = timeline.assistant_prompts.find(
+          (prompt) =>
+            !resolvedAssistantPromptIds.has(prompt.id)
+            && !prev.some((message) => message.id === `assistant-prompt:${prompt.id}`),
+        );
+        if (!nextPrompt) {
+          return prev;
+        }
+        return [...prev, makeAssistantPromptMessage(nextPrompt)];
+      });
+    }, 30000);
+    return () => window.clearInterval(interval);
+  }, [timeline?.assistant_prompts, resolvedAssistantPromptIds, makeAssistantPromptMessage]);
 
   async function sendChatMessage(text: string) {
-    const newMessages = [...chatMessages, { role: "user" as const, text }];
+    const newMessages = [...chatMessages, { id: nextChatMessageId(), role: "user" as const, text }];
     setChatMessages(newMessages);
     setChatLoading(true);
 
@@ -495,9 +764,9 @@ export default function DashboardPage() {
         body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
       });
       const data = await resp.json();
-      setChatMessages((prev) => [...prev, { role: "assistant", text: data.reply }]);
+      setChatMessages((prev) => [...prev, { id: nextChatMessageId(), role: "assistant", text: data.reply }]);
     } catch {
-      setChatMessages((prev) => [...prev, { role: "assistant", text: "Sorry, I couldn\u2019t process that. Please try again." }]);
+      setChatMessages((prev) => [...prev, { id: nextChatMessageId(), role: "assistant", text: "Sorry, I couldn\u2019t process that. Please try again." }]);
     } finally {
       setChatLoading(false);
       setTimeout(() => {
@@ -506,36 +775,86 @@ export default function DashboardPage() {
     }
   }
 
-  async function handleChatAnswer(answer: string) {
-    // Identify which question was answered
-    const currentQ = chatMessages.find((m) => m.role === "assistant" && m.chips);
-    const qId = currentQ
-      ? currentQ.text.includes("immigration visa") ? "immigration_stage"
-        : currentQ.text.includes("business entity") ? "has_entity"
-        : currentQ.text.includes("employer") ? "employer_info"
-        : currentQ.text.includes("tax return") ? "tax_filing"
-        : currentQ.text.includes("bank accounts") ? "foreign_accounts"
-        : "unknown"
-      : "unknown";
+  async function handleChatChip(chip: AssistantPromptChoice) {
+    const activePromptId = chip.prompt_id;
+    setChatMessages((prev) => prev.map((msg) => (
+      ((activePromptId && msg.id === `assistant-prompt:${activePromptId}`)
+        || (chip.question_id && msg.id === `assistant-question:${chip.question_id}`))
+        ? { ...msg, chips: undefined }
+        : msg
+    )));
 
-    setChatAnswered((prev) => { const n = new Set(prev); n.add(qId); return n; });
-
-    // Store answer to backend and re-evaluate rules
-    if (qId !== "unknown") {
+    if (chip.action_type === "chat_answer" && chip.question_id) {
+      setChatAnswered((prev) => {
+        const next = new Set(prev);
+        next.add(chip.question_id as string);
+        return next;
+      });
       try {
         await fetch(`${chatApi}/answer`, {
           method: "POST",
           headers: { "Content-Type": "application/json", ...authHeaders() },
-          body: JSON.stringify({ question_id: qId, answer }),
+          body: JSON.stringify({ question_id: chip.question_id, answer: chip.value }),
         });
         await refreshDashboard();
       } catch {
-        // Non-fatal — answer still goes to LLM
+        // Non-fatal. Keep the chat flow moving.
       }
+      await sendChatMessage(chip.value);
+      return;
     }
 
-    // Send to LLM for a contextual follow-up
-    sendChatMessage(answer);
+    if (chip.action_type === "integrity_resolution" && chip.prompt_id && chip.document_id && chip.action) {
+      setResolvedAssistantPromptIds((prev) => {
+        const next = new Set(prev);
+        next.add(chip.prompt_id as string);
+        return next;
+      });
+
+      setChatMessages((prev) => [
+        ...prev,
+        { id: nextChatMessageId(), role: "user", text: chip.label },
+      ]);
+      setChatLoading(true);
+      try {
+        const resp = await fetch(dashboardPromptApi, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({
+            prompt_id: chip.prompt_id,
+            document_id: chip.document_id,
+            action: chip.action,
+            chain_key: chip.chain_key ?? null,
+          }),
+        });
+        if (!resp.ok) {
+          throw new Error("Could not apply mapping resolution");
+        }
+        await refreshDashboard();
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: nextChatMessageId(),
+            role: "assistant",
+            text: "I applied that document-mapping choice and refreshed your timeline.",
+          },
+        ]);
+      } catch {
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: nextChatMessageId(),
+            role: "assistant",
+            text: "I couldn't apply that mapping change. Please try again.",
+          },
+        ]);
+      } finally {
+        setChatLoading(false);
+        setTimeout(() => {
+          document.getElementById("chat-scroll")?.scrollTo({ top: 99999, behavior: "smooth" });
+        }, 100);
+      }
+    }
   }
 
   const user = getUser();
@@ -570,7 +889,14 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2 md:gap-4">
           <span className="text-sm text-[#556480] hidden md:inline">{user?.email}</span>
           <div className="relative">
-            <button onClick={() => setShowToken(!showToken)} className="px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-[#556480] hover:bg-white/60 transition-all border border-transparent hover:border-blue-100/30">
+            <button
+              onClick={() => {
+                setShowToken((current) => !current);
+                setTokenCopied(false);
+                setOpenClawError(null);
+              }}
+              className="px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-[#556480] hover:bg-white/60 transition-all border border-transparent hover:border-blue-100/30"
+            >
               Connect to OpenClaw
             </button>
             {showToken && (
@@ -583,24 +909,66 @@ export default function DashboardPage() {
                     <div className="text-xs font-semibold text-[#0d1424]">Connect Guardian to OpenClaw</div>
                     <button onClick={() => setShowToken(false)} className="text-[#8e9ab5] text-sm md:hidden">&times;</button>
                   </div>
-                  <div className="text-[11px] text-[#7b8ba5] mb-3">Copy your Guardian API token below to connect OpenClaw to your compliance data.</div>
-                  <div className="relative">
-                    <code className="block text-[10px] bg-[#f0f3f8] rounded-lg p-3 pr-16 text-[#3a5a8c] break-all max-h-20 overflow-auto font-mono">{user?.token}</code>
-                    <button
-                      onClick={() => {
-                        if (user?.token) {
-                          navigator.clipboard.writeText(user.token);
-                          setTokenCopied(true);
-                          setTimeout(() => setTokenCopied(false), 2000);
-                        }
-                      }}
-                      className="absolute top-2 right-2 px-2.5 py-1 rounded-md text-[10px] font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white"
-                    >
-                      {tokenCopied ? "Copied" : "Copy"}
-                    </button>
+                  <div className="text-[11px] text-[#7b8ba5] mb-3">
+                    OpenClaw uses a scoped Guardian token, not your web session. Generate or rotate that token here.
                   </div>
-                  <div className="text-[10px] text-[#7b8ba5] mt-2.5">
-                    In OpenClaw: <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c]">openclaw skills install guardian-compliance</code> then set this as your <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c]">GUARDIAN_TOKEN</code>
+                  {openClawLoading && (
+                    <div className="text-[11px] text-[#7b8ba5] py-2">Loading connection status...</div>
+                  )}
+                  {openClawError && (
+                    <div className="text-[11px] text-[#dc2626] mb-3">{openClawError}</div>
+                  )}
+                  {openClawConnection && (
+                    <div className="space-y-3">
+                      <div className="rounded-lg border border-blue-100/40 bg-[#f7f9fd] px-3 py-2">
+                        <div className="text-[10px] uppercase tracking-[0.14em] text-[#8b97ad] mb-1">Connection</div>
+                        <div className="text-[11px] text-[#556480] break-all">
+                          API: <code className="bg-white/80 px-1 rounded text-[#3a5a8c]">{openClawConnection.api_url}</code>
+                        </div>
+                        <div className="text-[11px] text-[#556480] mt-1">
+                          Scope: <code className="bg-white/80 px-1 rounded text-[#3a5a8c]">{openClawConnection.scope}</code>
+                        </div>
+                        {openClawConnection.active_token && (
+                          <div className="text-[11px] text-[#556480] mt-1">
+                            Active token prefix: <code className="bg-white/80 px-1 rounded text-[#3a5a8c]">{openClawConnection.active_token.token_prefix}</code>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            issueOpenClawToken().catch((error) => {
+                              console.error(error);
+                            });
+                          }}
+                          className="px-3 py-2 rounded-lg text-[11px] font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white"
+                        >
+                          {openClawConnection.active_token ? "Rotate token" : "Generate token"}
+                        </button>
+                        {openClawToken && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(openClawToken);
+                              setTokenCopied(true);
+                              setTimeout(() => setTokenCopied(false), 2000);
+                            }}
+                            className="px-3 py-2 rounded-lg text-[11px] font-semibold border border-blue-100/50 text-[#3a5a8c] bg-white/70"
+                          >
+                            {tokenCopied ? "Copied" : "Copy token"}
+                          </button>
+                        )}
+                      </div>
+                      {openClawToken && (
+                        <div className="relative">
+                          <code className="block text-[10px] bg-[#f0f3f8] rounded-lg p-3 text-[#3a5a8c] break-all max-h-24 overflow-auto font-mono">{openClawToken}</code>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div className="text-[10px] text-[#7b8ba5] mt-3">
+                    In OpenClaw: <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c]">{openClawConnection?.install_command || "openclaw skills install guardian-compliance"}</code> then set the generated value as <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c]">{openClawConnection?.env_var || "GUARDIAN_TOKEN"}</code>.
                   </div>
                 </div>
               </>
@@ -734,14 +1102,10 @@ export default function DashboardPage() {
                             </div>
                           </div>
                           <button
-                            onClick={async () => {
-                              const dashApi = typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8000/api/dashboard" : "/api/dashboard";
-                              const resp = await fetch(`${dashApi}/documents/${doc.id}/view`, { headers: authHeaders() });
-                              if (resp.ok) {
-                                const blob = await resp.blob();
-                                const url = URL.createObjectURL(blob);
-                                window.open(url, "_blank");
-                              }
+                            onClick={() => {
+                              openDashboardDocument(doc.id).catch((error) => {
+                                console.error(error);
+                              });
                             }}
                             className="text-[12px] font-medium text-[#5b8dee] hover:text-[#4a74d4] flex-shrink-0"
                           >
@@ -892,18 +1256,7 @@ export default function DashboardPage() {
                 {/* Documents */}
                 {event.documents.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {event.documents.map((doc) => {
-                      const colors = CATEGORY_COLORS[doc.category] || CATEGORY_COLORS.immigration;
-                      return (
-                        <div key={doc.id} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/55 backdrop-blur border border-white/60 text-[12px] font-medium text-[#3d6bc5] shadow-sm cursor-pointer hover:bg-white/80 transition-all">
-                          <span>📄</span>
-                          {doc.filename}
-                          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md capitalize" style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}>
-                            {doc.category}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    {event.documents.map((doc) => renderDocumentChip(doc))}
                   </div>
                 )}
 
@@ -912,6 +1265,16 @@ export default function DashboardPage() {
                   <div key={risk.id} className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 px-5 py-4 mb-2 shadow-sm">
                     <div className="font-semibold text-[13px] text-[#0d1424] mb-1">{risk.title}</div>
                     <div className="text-[12px] text-[#556480] mb-2">{risk.action}</div>
+                    {risk.documents && risk.documents.length > 0 && (
+                      <div className="mb-2.5">
+                        <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8e9ab5] mb-1.5">
+                          Detected from
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {risk.documents.map((doc) => renderDocumentChip(doc, { compact: true }))}
+                        </div>
+                      </div>
+                    )}
                     <div className="flex gap-2">
                       <span className="text-[10px] px-2.5 py-0.5 rounded-full font-semibold" style={{ background: "rgba(245,158,11,0.12)", color: "#b45309", border: "1px solid rgba(245,158,11,0.15)" }}>
                         {risk.consequence}
@@ -1241,11 +1604,11 @@ export default function DashboardPage() {
                         <div className="flex flex-wrap gap-1.5 mt-3">
                           {msg.chips.map((chip) => (
                             <button
-                              key={chip}
-                              onClick={() => handleChatAnswer(chip)}
+                              key={`${msg.id}-${chip.label}`}
+                              onClick={() => handleChatChip(chip)}
                               className="px-3.5 py-2 rounded-xl text-[12px] font-medium bg-white/70 border border-blue-100/30 text-[#3a5a8c] hover:bg-white/90 hover:border-blue-200/40 transition-all"
                             >
-                              {chip}
+                              {chip.label}
                             </button>
                           ))}
                         </div>

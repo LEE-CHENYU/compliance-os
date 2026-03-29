@@ -9,7 +9,7 @@ metadata:
       bins: [curl, jq]
     primaryEnv: GUARDIAN_TOKEN
     emoji: "🛡️"
-    homepage: https://guardian-compliance.fly.dev
+    homepage: https://guardiancompliance.app
     os: [macos, linux]
 ---
 
@@ -19,7 +19,7 @@ You are a compliance advisor powered by Guardian. You help users understand thei
 
 ## Setup
 
-The user must have a Guardian account and a valid JWT token set as `GUARDIAN_TOKEN`. The API URL defaults to `https://guardian-compliance.fly.dev` but can be overridden with `GUARDIAN_API_URL`.
+The user must have a Guardian account and a valid OpenClaw-scoped Guardian token set as `GUARDIAN_TOKEN`. The API URL defaults to `https://guardiancompliance.app` but can be overridden with `GUARDIAN_API_URL`.
 
 ## Available Commands
 
@@ -80,9 +80,9 @@ This sends the question to Guardian's AI assistant which has full context of the
 
 If the scripts return auth errors, tell the user:
 
-1. Create an account at guardian-compliance.fly.dev
+1. Create an account at guardiancompliance.app
 2. Run a compliance check (Young Professional, Entrepreneur, or Student track)
-3. In the dashboard, click "API Token" in the nav bar and copy it
+3. In the dashboard, click "Connect to OpenClaw", generate a token, and copy it
 4. Set your token: in OpenClaw settings, add `GUARDIAN_TOKEN` under the guardian-compliance skill's environment variables
 
 ## Compliance Knowledge

@@ -1578,3 +1578,165 @@ batches:
       - CV & Cover Letters
       - H1b Petition
     target_size: 12
+
+  - id: batch_56
+    number: 56
+    focus: accounting-derived bank statements, brokerage statements, and transfer evidence not present in Important Docs
+    status: completed
+    record: docs/data-room-batch-56.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_56_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_56_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 56
+    source_scope:
+      - bank_statements
+    target_size: 16
+
+  - id: batch_57
+    number: 57
+    focus: accounting-derived entity legal packets, H-1B representation forms, and registration drafts
+    status: completed
+    record: docs/data-room-batch-57.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_57_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_57_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 57
+    source_scope:
+      - legal
+    target_size: 15
+
+  - id: batch_58
+    number: 58
+    focus: accounting-derived CIAM, school, and immigration support packets outside the original corpus
+    status: completed
+    record: docs/data-room-batch-58.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_58_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_58_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 58
+    source_scope:
+      - legal
+      - outgoing
+      - tax
+      - tmp
+    target_size: 14
+
+  - id: batch_59
+    number: 59
+    focus: accounting-derived H-1B intake worksheets, counsel packets, and filing invoices
+    status: in_progress
+    record: docs/data-room-batch-59.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_59_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_59_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 59
+    source_scope:
+      - outgoing
+      - tmp
+    target_size: 15
+
+  - id: batch_60
+    number: 60
+    focus: accounting-derived payroll, tax-support, and standalone form residue
+    status: planned
+    record: docs/data-room-batch-60.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_60_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_60_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 60
+    source_scope:
+      - tax
+      - legal
+      - outgoing
+      - tmp
+    target_size: 17

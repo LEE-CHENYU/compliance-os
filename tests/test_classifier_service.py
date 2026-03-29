@@ -135,6 +135,10 @@ def test_batch_03_filename_classification():
     )
 
 
+def test_h1b_registration_filename_pattern_does_not_match_retainer_documents():
+    assert classify_filename("/tmp/legal/immigration/h1b_retainer_hibee.pdf").doc_type != "h1b_registration"
+
+
 def test_batch_04_h1b_petition_classification():
     assert (
         classify_text(
@@ -251,6 +255,85 @@ def test_batch_16_to_20_filename_classification_regressions():
     assert classify_filename("/tmp/Tax/2024/bank_document_-2819197501764181827.pdf").doc_type == "bank_statement"
     assert classify_filename("/tmp/CV & Cover Letters/transcript&diploma/JLPT_N1.pdf").doc_type == "language_test_certificate"
     assert classify_filename("/tmp/i20/ciam_transfer_pending.pdf").doc_type == "transfer_pending_letter"
+
+
+def test_batch_56_accounting_bank_and_transfer_classification_regressions():
+    assert (
+        classify_filename(
+            "/tmp/bank_statements/citibank/citibank_llc_chk5039_20240409_20250929.csv"
+        ).doc_type
+        == "bank_statement"
+    )
+    assert (
+        classify_filename(
+            "/tmp/bank_statements/schwab/schwab_llc_xxx239_20250225_20251006.csv"
+        ).doc_type
+        == "bank_statement"
+    )
+    assert (
+        classify_filename(
+            "/tmp/bank_statements/schwab/statements/schwab_brokerage_stmt_xxx239_2025-07.pdf"
+        ).doc_type
+        == "bank_statement"
+    )
+    assert classify_filename("/tmp/bank_statements/citizens_payment_options_2958.pdf").doc_type == "payment_options_notice"
+    assert (
+        classify_filename(
+            "/tmp/bank_statements/wire_transfers_2026/EWB_ChenChunjiang_to_EastWestBank_030226.JPG"
+        ).doc_type
+        == "wire_transfer_record"
+    )
+
+
+def test_batch_57_accounting_legal_and_h1b_packet_classification_regressions():
+    assert classify_filename("/tmp/legal/corporate/Fee Agreement - Signed Electronically.pdf").doc_type == "legal_services_agreement"
+    assert classify_filename("/tmp/legal/corporate/Yangtze Capital 2nd EIN Cancellation Letter.pdf").doc_type == "entity_notice"
+    assert (
+        classify_filename("/tmp/legal/immigration/bsgc_h1b_registration_beneficiaries_031026.csv").doc_type
+        == "h1b_registration_roster"
+    )
+    assert (
+        classify_filename("/tmp/legal/immigration/h1b_2026_lottery_registration.docx").doc_type
+        == "h1b_registration"
+    )
+    assert classify_filename("/tmp/legal/immigration/h1b_cap_legal_services_agreement.pdf").doc_type == "legal_services_agreement"
+    assert classify_filename("/tmp/legal/immigration/h1b_retainer_hibee.pdf").doc_type == "legal_services_agreement"
+    assert classify_filename("/tmp/legal/immigration/yangtze_capital_ftb_withholding_notice_022526.pdf").doc_type == "tax_notice"
+    assert (
+        classify_text("Legal Services Agreement Attorney Client H-1B registration services").doc_type
+        == "legal_services_agreement"
+    )
+
+
+def test_batch_58_accounting_school_and_status_classification_regressions():
+    assert classify_filename("/tmp/legal/immigration/i20_affidavit_financial_support.pdf").doc_type == "financial_support_affidavit"
+    assert (
+        classify_filename("/tmp/outgoing/ciam/CIAM Fall II 2025 Introduction (10.22.2025).pdf").doc_type
+        == "school_policy_notice"
+    )
+    assert (
+        classify_filename("/tmp/outgoing/ciam/CIAM Internship Courses (INT501 & INT599) 10.22.2025.pdf").doc_type
+        == "school_policy_notice"
+    )
+    assert classify_filename("/tmp/outgoing/ciam/INT501 INT599 Application Non-CPT.pdf").doc_type == "school_policy_notice"
+    assert classify_filename("/tmp/tax/2025/1098T_CIAM_2025.pdf").doc_type == "tuition_statement"
+    assert classify_filename("/tmp/tmp/dl_cn.jpeg").doc_type == "drivers_license"
+    assert (
+        classify_text("Form 1098-T Tuition Statement Payments received for qualified tuition and related expenses").doc_type
+        == "tuition_statement"
+    )
+
+
+def test_brokerage_csv_text_does_not_false_positive_as_drivers_license():
+    text = (
+        '"Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount"\n'
+        '"09/22/2025","MoneyLink Transfer","","Tfr Citibank NA, CHENYU LI","","","","$30000.00"\n'
+    )
+
+    result = classify_text(text)
+
+    assert result.doc_type == "bank_statement"
+    assert result.doc_type != "drivers_license"
 
 
 def test_batch_26_to_30_filename_and_text_classification_regressions():

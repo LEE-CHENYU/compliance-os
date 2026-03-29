@@ -2,7 +2,7 @@
 
 Source folder: `/Users/lichenyu/Desktop/Important Docs `
 
-Snapshot date: `2026-03-28`
+Snapshot date: `2026-03-29`
 
 ## Current inventory
 
@@ -33,6 +33,13 @@ Extension counts:
 - `.heic`: `3`
 - `.zip`: `3`
 - `.rtf`: `3`
+
+## Follow-on accounting slice
+
+- comparison record: `docs/accounting-vs-important-docs-2026-03-29.md`
+- derived source folder: `/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files`
+- copied accounting-only files: `77`
+- selection rule: raw accounting documents not already present in `Important Docs`, excluding derived extraction/report folders unless no raw counterpart existed
 
 ## Batch ledger
 
@@ -256,9 +263,29 @@ Extension counts:
   - focus: Word work-sample archive plus H-1B registration worksheet support
   - status: completed
   - record: `docs/data-room-batch-55.md`
+- Batch 56:
+  - focus: accounting-derived bank statements, brokerage statements, and transfer evidence not present in Important Docs
+  - status: completed
+  - record: `docs/data-room-batch-56.md`
+- Batch 57:
+  - focus: accounting-derived entity legal packets, H-1B representation forms, and registration drafts
+  - status: completed
+  - record: `docs/data-room-batch-57.md`
+- Batch 58:
+  - focus: accounting-derived CIAM, school, and immigration support packets outside the original corpus
+  - status: completed
+  - record: `docs/data-room-batch-58.md`
+- Batch 59:
+  - focus: accounting-derived H-1B intake worksheets, counsel packets, and filing invoices
+  - status: in progress
+  - record: `docs/data-room-batch-59.md`
+- Batch 60:
+  - focus: accounting-derived payroll, tax-support, and standalone form residue
+  - status: planned
+  - record: `docs/data-room-batch-60.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `55` stable under focused tests plus real-source validation.
-2. The usable ingestible backlog is exhausted at `540/540`; the only leftover supported-extension artifact is one rejected Office lock file.
-3. The next platform step is retrieval and vector search over persisted OCR and DOCX text, then deeper comparison coverage for the newly added families.
+1. Keep Batches `01` through `58` stable under focused tests plus real-source validation.
+2. Resolve the accounting-derived follow-on queue in Batches `59` through `60` before opening another source slice.
+3. The next platform step after the accounting queue is still retrieval and vector search over persisted OCR and DOCX text, then deeper comparison coverage for the newly added families.

@@ -55,7 +55,10 @@ def test_schemas_defined():
     assert "registered_agent_consent" in SCHEMAS
     assert "admission_letter" in SCHEMAS
     assert "bank_statement" in SCHEMAS
+    assert "payment_options_notice" in SCHEMAS
     assert "collection_notice" in SCHEMAS
+    assert "entity_notice" in SCHEMAS
+    assert "financial_support_affidavit" in SCHEMAS
     assert "debt_clearance_letter" in SCHEMAS
     assert "cpt_application" in SCHEMAS
     assert "enrollment_verification" in SCHEMAS
@@ -68,6 +71,8 @@ def test_schemas_defined():
     assert "insurance_card" in SCHEMAS
     assert "insurance_record" in SCHEMAS
     assert "language_test_certificate" in SCHEMAS
+    assert "legal_services_agreement" in SCHEMAS
+    assert "school_policy_notice" in SCHEMAS
     assert "membership_welcome_packet" in SCHEMAS
     assert "name_change_notice" in SCHEMAS
     assert "order_confirmation" in SCHEMAS
@@ -94,6 +99,8 @@ def test_schemas_defined():
     assert "support_request" in SCHEMAS
     assert "system_configuration_screenshot" in SCHEMAS
     assert "tax_interview" in SCHEMAS
+    assert "tax_notice" in SCHEMAS
+    assert "tuition_statement" in SCHEMAS
     assert "transcript" in SCHEMAS
     assert "visa_stamp" in SCHEMAS
     assert "passport" in SCHEMAS
@@ -104,6 +111,7 @@ def test_schemas_defined():
     assert "payment_service_agreement" in SCHEMAS
     assert "payment_account_record" in SCHEMAS
     assert "payment_receipt" in SCHEMAS
+    assert "wire_transfer_record" in SCHEMAS
     assert "public_key" in SCHEMAS
     assert "recovery_codes" in SCHEMAS
     assert "residence_certificate" in SCHEMAS
@@ -117,6 +125,7 @@ def test_schemas_defined():
     assert "e_verify_case" in SCHEMAS
     assert "i765" in SCHEMAS
     assert "h1b_registration" in SCHEMAS
+    assert "h1b_registration_roster" in SCHEMAS
     assert "h1b_registration_worksheet" in SCHEMAS
     assert "h1b_status_summary" in SCHEMAS
     assert "h1b_g28" in SCHEMAS

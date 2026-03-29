@@ -111,11 +111,31 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "statement_period_end": "Statement period end date (YYYY-MM-DD) if visible",
         "ending_balance": "Ending or closing balance amount (number only) if visible",
     },
+    "payment_options_notice": {
+        "issuer_name": "Bank, lender, or issuer name shown on the notice",
+        "account_reference_last4": "Last four digits or short account reference if visible",
+        "notice_date": "Notice or statement date (YYYY-MM-DD) if visible",
+        "available_payment_methods": "Short list of payment methods or channels offered",
+    },
     "collection_notice": {
         "creditor_name": "Creditor, collector, or agency name if visible",
         "account_reference": "Account or correspondence reference number if visible",
         "issue_date": "Issue date or notice date (YYYY-MM-DD) if visible",
         "balance_due": "Balance due amount (number only) if visible",
+    },
+    "entity_notice": {
+        "entity_name": "Entity or company name referenced in the notice",
+        "issuer_name": "Issuing agency or sender name if visible",
+        "notice_type": "Short notice type such as EIN cancellation or account notice",
+        "notice_date": "Notice date (YYYY-MM-DD) if visible",
+        "reference_number": "Reference number or account number if visible",
+    },
+    "financial_support_affidavit": {
+        "student_name": "Student name if visible",
+        "sponsor_name": "Sponsor or affiant name if visible",
+        "support_amount": "Stated support amount (number only) if visible",
+        "document_date": "Signature or issue date (YYYY-MM-DD) if visible",
+        "institution_name": "School or program name if visible",
     },
     "cover_letter": {
         "candidate_name": "Candidate full name",
@@ -204,10 +224,23 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "test_date": "Test or score-report date (YYYY-MM-DD) if visible",
         "score_summary": "Overall level, band, or pass result if visible",
     },
+    "legal_services_agreement": {
+        "client_name": "Client or beneficiary name if visible",
+        "provider_name": "Law firm, attorney, or service provider name if visible",
+        "agreement_date": "Agreement or signature date (YYYY-MM-DD) if visible",
+        "matter_type": "Matter or service scope, such as H-1B registration or immigration services",
+        "signed_status": "Whether the agreement appears signed, executed, or pending signature",
+    },
     "membership_welcome_packet": {
         "organization_name": "Club, association, or organization name",
         "recipient_name": "Recipient or member name if visible",
         "welcome_date": "Welcome or issue date (YYYY-MM-DD) if visible",
+    },
+    "school_policy_notice": {
+        "institution_name": "School or program name if visible",
+        "document_title": "Title of the notice or packet",
+        "policy_topic": "Primary topic such as CPT, internship courses, or student introduction",
+        "document_date": "Issue or publication date (YYYY-MM-DD) if visible",
     },
     "name_change_notice": {
         "subject_name": "Employer, entity, or person whose name changed",
@@ -436,6 +469,15 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "payment_date": "Payment date (YYYY-MM-DD) if visible",
         "amount_paid": "Payment amount (number only) if visible",
     },
+    "wire_transfer_record": {
+        "sender_name": "Sender or remitter name if visible",
+        "recipient_name": "Recipient or beneficiary name if visible",
+        "origin_institution": "Originating bank or institution if visible",
+        "destination_institution": "Destination bank or institution if visible",
+        "transfer_date": "Transfer date (YYYY-MM-DD) if visible",
+        "amount": "Transfer amount (number only) if visible",
+        "reference_number": "Transfer reference, serial number, or transaction number if visible",
+    },
     "signature_page": {
         "document_title": "Title or agreement name associated with the signature page",
         "signer_name": "Signer name if visible",
@@ -525,6 +567,12 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "employer_address": "Primary U.S. office or mailing address",
         "authorized_individual_name": "Authorized individual current legal name",
         "authorized_individual_title": "Authorized individual position or title at the business",
+    },
+    "h1b_registration_roster": {
+        "company_name": "Company or petitioner name",
+        "beneficiary_name": "Beneficiary full name if visible",
+        "beneficiary_date_of_birth": "Beneficiary date of birth (YYYY-MM-DD) if visible",
+        "export_date": "Export or roster date (YYYY-MM-DD) if visible",
     },
     "h1b_registration_worksheet": {
         "worksheet_scope": "Whether the worksheet is for the beneficiary employee or petitioning employer",
@@ -632,6 +680,20 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "tax_residency_status": "Stated tax residency or withholding status",
         "interview_date": "Interview or submission date (YYYY-MM-DD) if visible",
         "platform_name": "Platform or vendor name if visible",
+    },
+    "tax_notice": {
+        "agency_name": "Tax agency or authority name if visible",
+        "entity_name": "Entity or taxpayer name if visible",
+        "notice_type": "Type of tax notice if visible",
+        "notice_date": "Notice date (YYYY-MM-DD) if visible",
+        "tax_year": "Tax year if visible",
+    },
+    "tuition_statement": {
+        "institution_name": "School or issuer name if visible",
+        "student_name": "Student name if visible",
+        "tax_year": "Tax year if visible",
+        "qualified_tuition_amount": "Qualified tuition or payments received amount (number only) if visible",
+        "statement_date": "Statement date (YYYY-MM-DD) if visible",
     },
     "transfer_pending_letter": {
         "student_name": "Student full name if visible",
@@ -1161,6 +1223,16 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
             date_fields=("issue_date",),
             numeric_fields=("balance_due",),
         )
+    if doc_type == "entity_notice":
+        return _normalize_selected_fields(result, date_fields=("notice_date",))
+    if doc_type == "financial_support_affidavit":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("document_date",),
+            numeric_fields=("support_amount",),
+        )
+    if doc_type == "payment_options_notice":
+        return _normalize_selected_fields(result, date_fields=("notice_date",))
     if doc_type == "debt_clearance_letter":
         return _normalize_selected_fields(result, date_fields=("clearance_date",))
     if doc_type == "cover_letter":
@@ -1223,8 +1295,28 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
         if tax_year is not None:
             normalized["tax_year"] = tax_year
         return normalized
+    if doc_type == "tax_notice":
+        normalized = _normalize_selected_fields(result, date_fields=("notice_date",))
+        tax_year = _normalize_year_value(normalized.get("tax_year"))
+        if tax_year is not None:
+            normalized["tax_year"] = tax_year
+        return normalized
+    if doc_type == "tuition_statement":
+        normalized = _normalize_selected_fields(
+            result,
+            date_fields=("statement_date",),
+            numeric_fields=("qualified_tuition_amount",),
+        )
+        tax_year = _normalize_year_value(normalized.get("tax_year"))
+        if tax_year is not None:
+            normalized["tax_year"] = tax_year
+        return normalized
     if doc_type == "language_test_certificate":
         return _normalize_selected_fields(result, date_fields=("test_date",))
+    if doc_type == "legal_services_agreement":
+        return _normalize_selected_fields(result, date_fields=("agreement_date",))
+    if doc_type == "school_policy_notice":
+        return _normalize_selected_fields(result, date_fields=("document_date",))
     if doc_type == "name_change_notice":
         return _normalize_selected_fields(result, date_fields=("effective_date",))
     if doc_type == "order_confirmation":
@@ -1261,6 +1353,12 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
             date_fields=("payment_date",),
             numeric_fields=("amount_paid",),
         )
+    if doc_type == "wire_transfer_record":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("transfer_date",),
+            numeric_fields=("amount",),
+        )
     if doc_type == "signature_page":
         return _normalize_selected_fields(result, date_fields=("signature_date",))
     if doc_type == "i9":
@@ -1275,6 +1373,11 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
         )
     if doc_type == "h1b_registration":
         return _normalize_h1b_registration_result(text, result)
+    if doc_type == "h1b_registration_roster":
+        return _normalize_selected_fields(
+            result,
+            date_fields=("beneficiary_date_of_birth", "export_date"),
+        )
     if doc_type == "h1b_registration_worksheet":
         return _normalize_h1b_registration_worksheet_result(text, result)
     if doc_type == "i765":

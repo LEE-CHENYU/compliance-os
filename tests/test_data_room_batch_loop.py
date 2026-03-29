@@ -195,6 +195,29 @@ def test_load_manifest_parses_validation_hooks():
     assert batch_01.validation_hooks[0].retries == 1
 
 
+def test_load_manifest_parses_per_batch_source_root(tmp_path):
+    manifest = tmp_path / "manifest.yaml"
+    manifest.write_text(
+        "\n".join(
+            [
+                'source_root: "/global/source"',
+                "batches:",
+                "  - id: batch_56",
+                "    number: 56",
+                "    focus: accounting",
+                "    status: planned",
+                '    source_root: "/batch/specific/source"',
+            ]
+        )
+    )
+
+    source_root, batches = load_manifest(manifest)
+
+    assert source_root == "/global/source"
+    assert len(batches) == 1
+    assert batches[0].source_root == "/batch/specific/source"
+
+
 def test_create_session_log_dir_handles_timestamp_collision(tmp_path, monkeypatch):
     class FixedDateTime:
         @classmethod

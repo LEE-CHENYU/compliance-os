@@ -18,6 +18,7 @@ from compliance_os.web.models.tables_v2 import (
     CheckRow,
     DocumentRow,
     ExtractedFieldRow,
+    FindingRow,
     LlmApiUsageRow,
 )
 from compliance_os.web.services.document_store import infer_document_series_key
@@ -656,6 +657,49 @@ def test_evaluate_endpoint(client, db_session):
     assert resp.status_code == 200
     findings = resp.json()
     assert isinstance(findings, list)
+
+
+def test_evaluate_persists_source_comparison_id_for_single_comparison_rule(client, db_session):
+    check = CheckRow(track="stem_opt", status="extracted", answers={"stage": "stem_opt"})
+    db_session.add(check)
+    db_session.flush()
+
+    doc_a = DocumentRow(
+        check_id=check.id,
+        doc_type="i983",
+        filename="i983.pdf",
+        file_path="/tmp/i983.pdf",
+        file_size=100,
+        mime_type="application/pdf",
+    )
+    doc_b = DocumentRow(
+        check_id=check.id,
+        doc_type="employment_letter",
+        filename="letter.pdf",
+        file_path="/tmp/letter.pdf",
+        file_size=100,
+        mime_type="application/pdf",
+    )
+    db_session.add_all([doc_a, doc_b])
+    db_session.flush()
+    db_session.add_all(
+        [
+            ExtractedFieldRow(document_id=doc_a.id, field_name="start_date", field_value="2024-10-01", confidence=0.9),
+            ExtractedFieldRow(document_id=doc_b.id, field_name="start_date", field_value="2024-10-15", confidence=0.9),
+        ]
+    )
+    db_session.commit()
+
+    compare_resp = client.post(f"/api/checks/{check.id}/compare")
+    assert compare_resp.status_code == 200
+    comparison_id = next(row["id"] for row in compare_resp.json() if row["field_name"] == "start_date")
+
+    evaluate_resp = client.post(f"/api/checks/{check.id}/evaluate")
+    assert evaluate_resp.status_code == 200
+
+    findings = db_session.query(FindingRow).filter(FindingRow.check_id == check.id).all()
+    finding = next(row for row in findings if row.rule_id == "start_date_mismatch")
+    assert finding.source_comparison_id == comparison_id
 
 
 def test_data_room_evaluate_endpoint_uses_data_room_rules(client, db_session):
@@ -1676,6 +1720,40 @@ def test_infer_series_keys_for_resume_cover_letter_work_sample_and_h1b_worksheet
             source_path="H1b Petition/Employee/H-1B Part I_Registration Worksheet and Document Checklist_Employee.docx",
         )
         == "h1b_registration_worksheet:employee"
+    )
+
+
+def test_infer_series_keys_for_bank_statement_and_wire_transfer_record():
+    assert (
+        infer_document_series_key(
+            "bank_statement",
+            source_path="bank_statements/citibank/citibank_llc_chk5039_20240409_20250929.csv",
+        )
+        == "bank_statement:citibank:5039:2025-09-29"
+    )
+    assert (
+        infer_document_series_key(
+            "wire_transfer_record",
+            source_path="bank_statements/wire_transfers_2026/EWB_ChenChunjiang_to_EastWestBank_030226.JPG",
+        )
+        == "wire_transfer_record:2026-03-02"
+    )
+
+
+def test_infer_series_keys_for_legal_services_and_h1b_roster():
+    assert (
+        infer_document_series_key(
+            "legal_services_agreement",
+            source_path="legal/immigration/h1b_cap_legal_services_docusign.pdf",
+        )
+        == "legal_services_agreement:h1b-cap-legal-services-docusign"
+    )
+    assert (
+        infer_document_series_key(
+            "h1b_registration_roster",
+            source_path="legal/immigration/yangtze_h1b_registration_beneficiaries_031026.csv",
+        )
+        == "h1b_registration_roster:yangtze-h1b-registration-beneficiaries-031026"
     )
 
 

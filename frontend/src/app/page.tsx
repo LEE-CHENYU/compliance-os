@@ -535,7 +535,7 @@ export default function Home() {
             </div>
             <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
               <div style={{width:22,height:22,borderRadius:11,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>2</div>
-              <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>Copy your API token from the dashboard (click &quot;Connect to OpenClaw&quot; in the nav bar)</div>
+              <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>Generate a scoped OpenClaw token from the dashboard (click &quot;Connect to OpenClaw&quot; in the nav bar)</div>
             </div>
             <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
               <div style={{width:22,height:22,borderRadius:11,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>3</div>

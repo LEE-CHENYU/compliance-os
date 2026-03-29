@@ -225,6 +225,93 @@ def _documents_equivalent(doc: DocumentRow, other: DocumentRow) -> bool:
     )
 
 
+def equivalent_documents_for_user_document(
+    target_doc: DocumentRow,
+    docs: list[DocumentRow],
+) -> list[DocumentRow]:
+    return [doc for doc in docs if _documents_equivalent(doc, target_doc)]
+
+
+def mapping_resolution_for_document(
+    target_doc: DocumentRow,
+    docs: list[DocumentRow] | None = None,
+) -> dict[str, Any] | None:
+    candidates = docs or [target_doc]
+    resolved = sorted(
+        (
+            doc
+            for doc in candidates
+            if (
+                isinstance(doc.provenance, dict)
+                and isinstance(doc.provenance.get("manual_chain_resolution"), dict)
+            )
+        ),
+        key=_dashboard_document_sort_key,
+        reverse=True,
+    )
+    for doc in resolved:
+        resolution = doc.provenance.get("manual_chain_resolution")
+        if isinstance(resolution, dict) and resolution.get("mode"):
+            return resolution
+    return None
+
+
+def _parsed_chain_resolution_key(chain_key: str | None) -> tuple[str, str, str | None] | None:
+    if not chain_key:
+        return None
+    parts = str(chain_key).split(":")
+    if len(parts) < 2:
+        return None
+    chain_type = parts[0]
+    if chain_type == "employment" and len(parts) >= 3:
+        return ("employment", parts[1], parts[2] if parts[2] != "unknown" else None)
+    if chain_type == "entity":
+        return ("entity", parts[1], None)
+    return None
+
+
+def persist_document_mapping_resolution(
+    *,
+    user_id: str,
+    document_id: str,
+    mode: str,
+    db: Session,
+    chain_key: str | None = None,
+) -> list[DocumentRow]:
+    if mode not in {"single_chain", "keep_shared", "standalone"}:
+        raise ValueError("Unsupported mapping resolution mode")
+
+    docs = (
+        db.query(DocumentRow)
+        .join(CheckRow, CheckRow.id == DocumentRow.check_id)
+        .filter(CheckRow.user_id == user_id)
+        .options(selectinload(DocumentRow.extracted_fields))
+        .all()
+    )
+    target_doc = next((doc for doc in docs if doc.id == document_id), None)
+    if target_doc is None:
+        raise ValueError("Document not found for user")
+
+    if mode == "single_chain":
+        parsed = _parsed_chain_resolution_key(chain_key)
+        if parsed is None:
+            raise ValueError("A valid chain_key is required for single_chain resolution")
+
+    equivalent_docs = equivalent_documents_for_user_document(target_doc, docs)
+    resolution = {
+        "mode": mode,
+        "chain_key": chain_key,
+        "resolved_at": datetime.utcnow().isoformat() + "Z",
+        "source": "user_input",
+    }
+    for doc in equivalent_docs:
+        provenance = dict(doc.provenance or {})
+        provenance["manual_chain_resolution"] = resolution
+        doc.provenance = provenance
+    db.flush()
+    return equivalent_docs
+
+
 def _document_appears_final(doc: DocumentRow) -> bool:
     reference = _normalized_text(f"{doc.source_path or ''} {doc.filename or ''}")
     if any(token in reference for token in ("draft", "unsigned", "outdated", "edited")):
@@ -393,6 +480,33 @@ def _enrich_equivalent_seeds(seeds: list[dict[str, Any]]) -> None:
             if seed is richest:
                 continue
             _propagate_seed_identity(seed, richest)
+
+
+def _apply_manual_mapping_resolutions(
+    seeds: list[dict[str, Any]],
+    docs: list[DocumentRow],
+) -> list[dict[str, Any]]:
+    resolved_seeds: list[dict[str, Any]] = []
+    for seed in seeds:
+        resolution = mapping_resolution_for_document(
+            seed["doc"],
+            equivalent_documents_for_user_document(seed["doc"], docs),
+        )
+        if not resolution:
+            resolved_seeds.append(seed)
+            continue
+        mode = resolution.get("mode")
+        if mode == "standalone":
+            continue
+        if mode == "single_chain":
+            parsed = _parsed_chain_resolution_key(resolution.get("chain_key"))
+            if parsed and parsed[0] == seed["chain_type"]:
+                _, subject_token, start_date = parsed
+                seed["subject_token"] = subject_token
+                if seed["chain_type"] == "employment":
+                    seed["start_date"] = start_date
+        resolved_seeds.append(seed)
+    return resolved_seeds
 
 
 def _unique_seed_target(items: list[dict[str, Any]]) -> dict[str, Any] | None:
@@ -1015,6 +1129,8 @@ def _build_user_chain_models(user_id: str, docs: list[DocumentRow]) -> list[dict
             entity_seeds.append(seed)
     _enrich_equivalent_seeds(employment_seeds)
     _enrich_equivalent_seeds(entity_seeds)
+    employment_seeds = _apply_manual_mapping_resolutions(employment_seeds, docs)
+    entity_seeds = _apply_manual_mapping_resolutions(entity_seeds, docs)
     _canonicalize_seed_subject_tokens(employment_seeds)
     _canonicalize_seed_subject_tokens(entity_seeds)
     chains = _build_employment_chains(user_id, employment_seeds)
