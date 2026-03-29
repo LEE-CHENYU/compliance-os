@@ -37,6 +37,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     ],
     "company_filing": [r"initial[_ -]?filing", r"entity[_ -]?filing", r"formation[_ -]?filing"],
     "collection_notice": [r"collection", r"correspondence"],
+    "cover_letter": [r"cover[_ -]?letter"],
     "debt_clearance_letter": [r"debt[_ -]?clear(?:a|e)nce"],
     "degree_certificate": [r"diploma", r"degree[_ -]?certificate", r"学历认证", r"学位认证"],
     "drivers_license": [r"driver[’']?s[_ -]?license", r"drivers[_ -]?license"],
@@ -101,6 +102,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "news_article": [r"morningstar", r"strategic[_ -]?investments?", r"announces"],
     "employment_contract": [
         r"employment[_ -]?contract",
+        r"contract[_ -]?of[_ -]?employment",
         r"contract.*signed[_ -]?letter",
         r"signed[_ -]?letter.*contract",
     ],
@@ -130,6 +132,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "social_security_card": [r"(?:^|[^a-z0-9])ssn(?:[^a-z0-9]|$)", r"social[_ -]?security"],
     "student_id": [r"student[_ -]?id", r"student[_ -]?identification"],
     "support_request": [
+        r"issues?[_ -]?requiring[_ -]?employer[_ -]?assistance",
         r"requests?[_ -]?for[_ -]?employment[_ -]?and[_ -]?immigration[_ -]?support",
         r"support[_ -]?request",
         r"compliance[_ -]?with[_ -]?stem[_ -]?opt[_ -]?requirements",
@@ -172,6 +175,11 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "e_verify_case": [r"e[_ -]?verify", r"everify"],
     "i765": [r"(?:^|[^a-z0-9])i[_ -]?765(?:[^a-z0-9]|$)"],
     "h1b_registration": [r"h[_ -]?1b[_ -]?r", r"h[_ -]?1b[_ -]?registration", r"uscis[_ -]?h[_ -]?1b[_ -]?registration"],
+    "h1b_registration_worksheet": [
+        r"h[_ -]?1b.*registration[_ -]?worksheet",
+        r"registration[_ -]?worksheet",
+        r"document[_ -]?checklist",
+    ],
     "h1b_status_summary": [r"h[_ -]?1b[_ -]?status[_ -]?overview", r"h[_ -]?1b[_ -]?status[_ -]?summary"],
     "h1b_g28": [r"(?:^|[^a-z0-9])g[_ -]?28(?:[^a-z0-9]|$)"],
     "h1b_filing_invoice": [r"invoice[_ -]?part[_ -]?i"],
@@ -191,6 +199,10 @@ PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
         r"/cv & cover letters/transcript&diploma/(?:\d{8,}(?:-\d+)?|img_\d+)\.(?:pdf|jpe?g)$",
     ],
     "resume": [r"/cv & cover letters/cv\d{6}/(?:chenyu|cheney|李宸宇)[^/]*\.pdf$"],
+    "cover_letter": [
+        r"/cv & cover letters/(?:cv\d{6}/)?cl_sample/[^/]+\.docx$",
+        r"/cv & cover letters/(?:cv\d{6}/)?cover_letters?/[^/]+\.docx$",
+    ],
     "chat_export_asset": [
         r"/employment/bitsync/chatexport_2024-12-14(?: \(\d+\))?/(?:images|photos)/[^/]+\.(?:png|jpe?g)$",
     ],
@@ -236,6 +248,9 @@ PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
     "signature_page": [
         r"/employment/vcv/signature pages\.pdf$",
         r"/stem opt/i983/.*/signature pages\.pdf$",
+    ],
+    "work_sample": [
+        r"/cv & cover letters/cv\d{6}/samples/[^/]+\.(?:pdf|docx)$",
     ],
 }
 
@@ -328,6 +343,13 @@ PATTERNS: dict[str, list[str]] = {
         r"Collection",
         r"Correspondence",
         r"Balance Due",
+    ],
+    "cover_letter": [
+        r"Cover Letter",
+        r"Dear hiring manager",
+        r"Please consider my qualifications",
+        r"I am interested in .* position",
+        r"competitive candidate",
     ],
     "debt_clearance_letter": [
         r"Debt Clearance",
@@ -448,6 +470,16 @@ PATTERNS: dict[str, list[str]] = {
         r"Strategic Investments",
         r"XR and AI Innovation",
     ],
+    "employment_contract": [
+        r"Employment Agreement",
+        r"Employment Contract",
+        r"at will employment",
+        r"confidentiality",
+        r"non-solicitation",
+        r"employment documents",
+        r"review and e-sign your employment documents",
+        r"Ahead of your start date",
+    ],
     "i20": [
         r"Certificate of Eligibility for Nonimmigrant Student Status",
         r"Form I-20",
@@ -490,6 +522,8 @@ PATTERNS: dict[str, list[str]] = {
         r"University ID",
     ],
     "support_request": [
+        r"I ask the company to provide the following assistance",
+        r"Issues Requiring Employer Assistance",
         r"Employment and Immigration Support",
         r"support request",
         r"request for guidance",
@@ -670,6 +704,14 @@ PATTERNS: dict[str, list[str]] = {
         r"Registration Number",
         r"What is your business or organization name\?",
     ],
+    "h1b_registration_worksheet": [
+        r"H-1B Registration Worksheet and Document Checklist",
+        r"Required Company Information",
+        r"Required Company Documentation",
+        r"Beneficiary Employee",
+        r"Petitioning Employer",
+        r"Required Documents",
+    ],
     "h1b_status_summary": [
         r"H[- ]?1B Status",
         r"Requirements for H[- ]?1B visa status",
@@ -699,15 +741,6 @@ PATTERNS: dict[str, list[str]] = {
         r"Sign Here",
         r"DocuSign",
     ],
-    "employment_contract": [
-        r"Employment Contract",
-        r"at will employment",
-        r"confidentiality",
-        r"non-solicitation",
-        r"employment documents",
-        r"review and e-sign your employment documents",
-        r"Ahead of your start date",
-    ],
     "employment_correspondence": [
         r"response to your demand for unpaid wages",
         r"withdraws the offer letter",
@@ -736,6 +769,7 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "certificate_of_good_standing": 2,
     "collection_notice": 2,
     "company_filing": 2,
+    "cover_letter": 2,
     "debt_clearance_letter": 2,
     "cpt_application": 2,
     "degree_certificate": 2,
@@ -800,6 +834,7 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "e_verify_case": 2,
     "i765": 2,
     "h1b_registration": 2,
+    "h1b_registration_worksheet": 2,
     "h1b_status_summary": 2,
     "h1b_g28": 2,
     "h1b_filing_invoice": 2,
@@ -835,6 +870,7 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "check_image": "check_image",
     "certificate_of_good_standing": "certificate_of_good_standing",
     "company_filing": "company_filing",
+    "cover_letter": "cover_letter",
     "cpt_application": "cpt_application",
     "cp_575": "ein_letter",
     "degree_certificate": "degree_certificate",
@@ -915,6 +951,10 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "visa_stamp": "visa_stamp",
     "h1b_registration": "h1b_registration",
     "h_1b_registration": "h1b_registration",
+    "h1b_registration_checklist": "h1b_registration_worksheet",
+    "h_1b_registration_checklist": "h1b_registration_worksheet",
+    "h1b_registration_worksheet": "h1b_registration_worksheet",
+    "h_1b_registration_worksheet": "h1b_registration_worksheet",
     "h1b_status_summary": "h1b_status_summary",
     "h_1b_status_summary": "h1b_status_summary",
     "h1b_status_overview": "h1b_status_summary",

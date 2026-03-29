@@ -9,8 +9,18 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.database import get_session
-from compliance_os.web.models.schemas_v2 import DocumentExtraction, DocumentOut, IngestionIssue
-from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, IngestionIssueRow
+from compliance_os.web.models.schemas_v2 import (
+    DocumentExtraction,
+    DocumentOut,
+    IngestionIssue,
+    LlmApiUsage,
+)
+from compliance_os.web.models.tables_v2 import (
+    CheckRow,
+    DocumentRow,
+    IngestionIssueRow,
+    LlmApiUsageRow,
+)
 from compliance_os.web.services.document_intake import (
     UploadValidationError,
     resolve_document_type,
@@ -62,7 +72,7 @@ def upload_document(
     file_path = upload_dir / filename
     content = file.file.read()
     try:
-        validate_upload(file.content_type, len(content))
+        validate_upload(file.content_type, len(content), filename=file.filename)
     except UploadValidationError as exc:
         record_check_issue(
             db,
@@ -213,6 +223,19 @@ def list_ingestion_issues(check_id: str, db: Session = Depends(get_session)):
         db.query(IngestionIssueRow)
         .filter(IngestionIssueRow.check_id == check_id)
         .order_by(IngestionIssueRow.detected_at.asc(), IngestionIssueRow.id.asc())
+        .all()
+    )
+
+
+@router.get("/llm-usage", response_model=list[LlmApiUsage])
+def list_llm_usage(check_id: str, db: Session = Depends(get_session)):
+    check = db.get(CheckRow, check_id)
+    if not check:
+        raise HTTPException(404, "Check not found")
+    return (
+        db.query(LlmApiUsageRow)
+        .filter(LlmApiUsageRow.check_id == check_id)
+        .order_by(LlmApiUsageRow.started_at.desc(), LlmApiUsageRow.id.desc())
         .all()
     )
 

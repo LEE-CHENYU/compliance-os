@@ -7,7 +7,8 @@ Snapshot date: `2026-03-28`
 ## Current inventory
 
 - total files excluding `.DS_Store` and `Thumbs.db`: `586`
-- directly ingestible by the current v1 data-room path (`pdf/png/jpg/jpeg/csv/txt`): `484`
+- directly ingestible by the current v1 data-room path (`pdf/png/jpg/jpeg/csv/txt/docx`, excluding Office lock files like `~$*.docx`): `540`
+- rejected Office temp artifacts under the supported-extension set: `1`
 
 Top-level file counts:
 - `employment`: `240`
@@ -235,9 +236,29 @@ Extension counts:
   - focus: remaining primary chat-export assets plus the residual opaque identifier text artifact
   - status: completed
   - record: `docs/data-room-batch-50.md`
+- Batch 51:
+  - focus: early Word resume archive continuity across 2022 and early 2023 variants
+  - status: completed
+  - record: `docs/data-room-batch-51.md`
+- Batch 52:
+  - focus: mid-cycle Word resume archive and role-variant continuity across 2023 and 2024
+  - status: completed
+  - record: `docs/data-room-batch-52.md`
+- Batch 53:
+  - focus: late Word resume archive, Jobright overflow, and H-1B resume continuity
+  - status: completed
+  - record: `docs/data-room-batch-53.md`
+- Batch 54:
+  - focus: Word cover letters, employment-letter support, and employer-assistance request records
+  - status: completed
+  - record: `docs/data-room-batch-54.md`
+- Batch 55:
+  - focus: Word work-sample archive plus H-1B registration worksheet support
+  - status: completed
+  - record: `docs/data-room-batch-55.md`
 
 ## Current priorities
 
-1. Keep Batches `01` through `50` stable under focused tests plus real-source validation.
-2. Treat classifier generality and non-ingestible format support as the next contract-hardening target; there is no remaining ingestible backlog.
-3. Pull new families into comparison or retrieval only when a concrete check flow needs them.
+1. Keep Batches `01` through `55` stable under focused tests plus real-source validation.
+2. The usable ingestible backlog is exhausted at `540/540`; the only leftover supported-extension artifact is one rejected Office lock file.
+3. The next platform step is retrieval and vector search over persisted OCR and DOCX text, then deeper comparison coverage for the newly added families.

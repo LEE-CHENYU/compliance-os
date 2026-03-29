@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -150,6 +151,37 @@ def infer_document_series_key(
                 category = "c03b"
         if category:
             return f"{family}:{category}"
+        return family
+
+    if doc_type == "resume":
+        variant = _series_slug(reference_stem) or _series_slug(str(extracted_values.get("primary_title") or ""))
+        if variant:
+            return f"{family}:{variant}"
+        return family
+
+    if doc_type == "cover_letter":
+        target = _series_slug(str(extracted_values.get("target_company") or ""))
+        if not target:
+            target = _series_slug(reference_stem)
+        if target:
+            return f"{family}:{target}"
+        return family
+
+    if doc_type == "work_sample":
+        title = _series_slug(str(extracted_values.get("document_title") or ""))
+        if not title:
+            title = _series_slug(reference_stem)
+        if title:
+            return f"{family}:{title}"
+        return family
+
+    if doc_type == "h1b_registration_worksheet":
+        scope = _series_slug(str(extracted_values.get("worksheet_scope") or ""))
+        if scope:
+            return f"{family}:{scope}"
+        fallback = _series_slug(reference_stem)
+        if fallback:
+            return f"{family}:{fallback}"
         return family
 
     return family
@@ -498,7 +530,26 @@ def register_uploaded_document(
 def extract_into_document(doc: DocumentRow, db: Session) -> dict[str, Any]:
     """Run OCR and structured extraction, persisting doc-level provenance."""
     text_result = extract_pdf_text_with_provenance(doc.file_path)
-    fields = extract_document(doc.doc_type, text_result.text)
+    usage_context = {
+        "db_session": db,
+        "operation": "document_extraction",
+        "check_id": doc.check_id,
+        "document_id": doc.id,
+        "request_metadata": {
+            "doc_type": doc.doc_type,
+            "filename": doc.filename,
+            "source_path": doc.source_path,
+            "ocr_engine": text_result.engine,
+        },
+    }
+    if "usage_context" in inspect.signature(extract_document).parameters:
+        fields = extract_document(
+            doc.doc_type,
+            text_result.text,
+            usage_context=usage_context,
+        )
+    else:
+        fields = extract_document(doc.doc_type, text_result.text)
 
     for old in doc.extracted_fields:
         db.delete(old)

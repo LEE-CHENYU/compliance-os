@@ -491,6 +491,57 @@ def test_batch_36_to_40_filename_and_text_classification_regressions():
     )
 
 
+def test_batch_51_to_55_docx_filename_and_text_classification_regressions():
+    assert (
+        classify_filename("/tmp/CV & Cover Letters/Chenyu Li Cover Letter - World Bank.docx").doc_type
+        == "cover_letter"
+    )
+    assert (
+        classify_filename(
+            "/tmp/CV & Cover Letters/CV260325/cover_letters/Hebbia - Solutions Engineer - Cover Letter.docx"
+        ).doc_type
+        == "cover_letter"
+    )
+    assert (
+        classify_text(
+            "Cover Letter Dear hiring manager at BlackRock, please consider my qualifications. "
+            "I am interested in the Portfolio Analytics position."
+        ).doc_type
+        == "cover_letter"
+    )
+    assert (
+        classify_filename("/tmp/CV & Cover Letters/CV240712/Samples/GTM Action Items.docx").doc_type
+        == "work_sample"
+    )
+    assert (
+        classify_filename("/tmp/CV & Cover Letters/CV241028/Samples/Intel Guady.docx").doc_type
+        == "work_sample"
+    )
+    assert (
+        classify_filename(
+            "/tmp/H1b Petition/Employee/H-1B Part I_Registration Worksheet and Document Checklist_Employee.docx"
+        ).doc_type
+        == "h1b_registration_worksheet"
+    )
+    assert (
+        classify_text(
+            "H-1B Registration Worksheet and Document Checklist for Petitioning Employer "
+            "Required Company Information Required Company Documentation"
+        ).doc_type
+        == "h1b_registration_worksheet"
+    )
+    assert (
+        classify_filename("/tmp/BSGC/Contract of Employment - BD Manager.docx").doc_type
+        == "employment_contract"
+    )
+    assert (
+        classify_filename(
+            "/tmp/stem opt/request/Issues Requiring Employer Assistance & Support.docx"
+        ).doc_type
+        == "support_request"
+    )
+
+
 def test_general_path_patterns_cover_unseen_archive_variants():
     assert (
         classify_filename("/tmp/employment/Bitsync/ChatExport_2024-12-14 (99)/images/section_web@2x.png").doc_type
@@ -546,6 +597,29 @@ def test_docx_content_can_classify_resume(tmp_path):
 
     assert result.doc_type == "resume"
     assert result.source == "text"
+
+
+def test_docx_content_can_classify_cover_letter(tmp_path):
+    path = tmp_path / "cover_letter.docx"
+    path.write_bytes(
+        _build_docx_bytes(
+            [
+                "Cover Letter",
+                "Dear hiring manager at Hebbia,",
+                "Please consider my qualifications.",
+                "I am interested in the Solutions Engineer position.",
+            ]
+        )
+    )
+
+    result = classify_file(
+        str(path),
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        allow_ocr=False,
+    )
+
+    assert result.doc_type == "cover_letter"
+    assert result.source == "filename"
 
 
 def test_classifier_generality_report_keeps_path_exceptions_scoped():

@@ -79,6 +79,33 @@ class IngestionIssue(BaseModel):
         from_attributes = True
 
 
+class LlmApiUsage(BaseModel):
+    id: str
+    check_id: str | None = None
+    document_id: str | None = None
+    user_id: str | None = None
+    environment: str
+    provider: str
+    model: str
+    operation: str
+    status: str
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    total_tokens: int | None = None
+    cache_creation_input_tokens: int | None = None
+    cache_read_input_tokens: int | None = None
+    latency_ms: int | None = None
+    error_type: str | None = None
+    error_message: str | None = None
+    request_metadata: dict[str, Any] | None = None
+    usage_details: dict[str, Any] | None = None
+    started_at: datetime
+    completed_at: datetime | None = None
+
+    class Config:
+        from_attributes = True
+
+
 class DocumentExtraction(BaseModel):
     document_id: str
     doc_type: str

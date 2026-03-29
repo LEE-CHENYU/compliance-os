@@ -237,7 +237,7 @@ def validate_batch_source_slice(
 
         size_bytes = absolute_path.stat().st_size
         try:
-            validate_upload(mime_type, size_bytes)
+            validate_upload(mime_type, size_bytes, filename=absolute_path.name)
             resolved = resolve_document_type(
                 str(absolute_path),
                 mime_type,

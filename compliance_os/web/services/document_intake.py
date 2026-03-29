@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from compliance_os.web.services.classifier import (
     Classification,
@@ -38,11 +39,27 @@ class UploadValidationError(ValueError):
         self.code = code
 
 
-def validate_upload(mime_type: str | None, content_size: int) -> None:
+def _is_disallowed_upload_name(filename: str | None) -> bool:
+    if not filename:
+        return False
+    return Path(filename).name.startswith("~$")
+
+
+def validate_upload(
+    mime_type: str | None,
+    content_size: int,
+    *,
+    filename: str | None = None,
+) -> None:
     if mime_type not in ALLOWED_TYPES:
         raise UploadValidationError(
             f"File type {mime_type} not allowed",
             code="unsupported_mime_type",
+        )
+    if _is_disallowed_upload_name(filename):
+        raise UploadValidationError(
+            "Temporary Office lock files are not valid uploads",
+            code="office_temp_artifact",
         )
     if content_size > MAX_FILE_SIZE:
         raise UploadValidationError("File exceeds 20MB limit", code="file_too_large")

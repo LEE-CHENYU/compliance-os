@@ -194,7 +194,7 @@ async def upload_document(
 
     content = await file.read()
     try:
-        validate_upload(file.content_type, len(content))
+        validate_upload(file.content_type, len(content), filename=file.filename)
     except UploadValidationError as exc:
         record_check_issue(
             session,

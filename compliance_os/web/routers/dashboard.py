@@ -135,7 +135,7 @@ def upload_to_dataroom(
     file_path = upload_dir / filename
     content = file.file.read()
     try:
-        validate_upload(file.content_type, len(content))
+        validate_upload(file.content_type, len(content), filename=file.filename)
     except UploadValidationError as exc:
         record_check_issue(
             db,

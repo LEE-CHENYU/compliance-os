@@ -101,6 +101,32 @@ class IngestionIssueRow(Base):
     document = relationship("DocumentRow", back_populates="ingestion_issues")
 
 
+class LlmApiUsageRow(Base):
+    __tablename__ = "llm_api_usage"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    check_id = Column(String, ForeignKey("checks.id"), nullable=True)
+    document_id = Column(String, ForeignKey("documents_v2.id"), nullable=True)
+    user_id = Column(String, nullable=True)
+    environment = Column(String, nullable=False)
+    provider = Column(String, nullable=False)
+    model = Column(String, nullable=False)
+    operation = Column(String, nullable=False)
+    status = Column(String, nullable=False)
+    input_tokens = Column(Integer, nullable=True)
+    output_tokens = Column(Integer, nullable=True)
+    total_tokens = Column(Integer, nullable=True)
+    cache_creation_input_tokens = Column(Integer, nullable=True)
+    cache_read_input_tokens = Column(Integer, nullable=True)
+    latency_ms = Column(Integer, nullable=True)
+    error_type = Column(String, nullable=True)
+    error_message = Column(Text, nullable=True)
+    request_metadata = Column(JSON, nullable=True)
+    usage_details = Column(JSON, nullable=True)
+    started_at = Column(DateTime, default=_now)
+    completed_at = Column(DateTime, nullable=True)
+
+
 class ComparisonRow(Base):
     __tablename__ = "comparisons"
 

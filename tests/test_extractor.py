@@ -49,6 +49,7 @@ def test_schemas_defined():
     assert "company_filing" in SCHEMAS
     assert "chat_export_asset" in SCHEMAS
     assert "check_image" in SCHEMAS
+    assert "cover_letter" in SCHEMAS
     assert "degree_certificate" in SCHEMAS
     assert "drivers_license" in SCHEMAS
     assert "registered_agent_consent" in SCHEMAS
@@ -116,6 +117,7 @@ def test_schemas_defined():
     assert "e_verify_case" in SCHEMAS
     assert "i765" in SCHEMAS
     assert "h1b_registration" in SCHEMAS
+    assert "h1b_registration_worksheet" in SCHEMAS
     assert "h1b_status_summary" in SCHEMAS
     assert "h1b_g28" in SCHEMAS
     assert "h1b_filing_invoice" in SCHEMAS
@@ -188,6 +190,22 @@ def test_extract_employment_letter():
         fields = extract_document("employment_letter", "Dear candidate, we are pleased to offer...")
         assert fields["job_title"]["value"] == "Business Operations Associate"
         assert fields["work_location"]["value"] == "New York, NY"
+
+
+def test_extract_cover_letter():
+    mock_result = {
+        "candidate_name": "Chenyu Li",
+        "target_company": "Hebbia",
+        "target_role": "Solutions Engineer",
+        "letter_date": "03/25/2026",
+        "contact_email": "fretin13@gmail.com",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=mock_result):
+        fields = extract_document("cover_letter", "Cover Letter Dear hiring manager at Hebbia")
+        assert fields["candidate_name"]["value"] == "Chenyu Li"
+        assert fields["target_company"]["value"] == "Hebbia"
+        assert fields["target_role"]["value"] == "Solutions Engineer"
+        assert fields["letter_date"]["value"] == "2026-03-25"
 
 
 def test_extract_cpt_application():
@@ -367,6 +385,27 @@ def test_extract_h1b_registration():
         assert fields["registration_number"]["value"] == "ABC123456789"
         assert fields["employer_name"]["value"] == "Bamboo Shoot Growth Capital LLC"
         assert fields["employer_ein"]["value"] == "93-1924106"
+
+
+def test_extract_h1b_registration_worksheet():
+    mock_result = {
+        "worksheet_scope": "Petitioning Employer",
+        "employer_name": "Bamboo Shoot Growth Capital LLC",
+        "employer_ein": "931924106",
+        "authorized_signatory_name": "Chenyu Li",
+        "authorized_signatory_title": "Manager",
+        "status_expiration_date": "01/22/2026",
+    }
+    with patch("compliance_os.web.services.extractor._call_llm", return_value=mock_result):
+        fields = extract_document(
+            "h1b_registration_worksheet",
+            "H-1B Registration Worksheet and Document Checklist for Petitioning Employer",
+        )
+        assert fields["worksheet_scope"]["value"] == "petitioning employer"
+        assert fields["employer_name"]["value"] == "Bamboo Shoot Growth Capital LLC"
+        assert fields["employer_ein"]["value"] == "93-1924106"
+        assert fields["authorized_signatory_title"]["value"] == "Manager"
+        assert fields["status_expiration_date"]["value"] == "2026-01-22"
 
 
 def test_extract_h1b_registration_recovers_identifier_from_text():

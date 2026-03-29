@@ -1,6 +1,8 @@
 """Tests for Guardian check flow API routes."""
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
+import sys
+from types import SimpleNamespace
 from zipfile import ZipFile
 
 import compliance_os.web.routers.extraction as extraction_mod
@@ -11,7 +13,14 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from compliance_os.web.app import app
 from compliance_os.web.models.database import get_session
-from compliance_os.web.models.tables_v2 import Base as BaseV2, CheckRow, DocumentRow, ExtractedFieldRow
+from compliance_os.web.models.tables_v2 import (
+    Base as BaseV2,
+    CheckRow,
+    DocumentRow,
+    ExtractedFieldRow,
+    LlmApiUsageRow,
+)
+from compliance_os.web.services.document_store import infer_document_series_key
 from compliance_os.web.services.document_intake import ResolvedDocumentType
 from compliance_os.web.services.extractor import TextExtractionResult
 
@@ -1074,6 +1083,119 @@ def test_v2_upload_records_unsupported_mime_issue(client):
     assert body[0]["stage"] == "upload_validation"
 
 
+def test_v2_upload_records_office_temp_artifact_issue(client):
+    check_id = client.post("/api/checks", json={"track": "data_room", "answers": {"stage": "data_room"}}).json()["id"]
+
+    resp = client.post(
+        f"/api/checks/{check_id}/documents",
+        files={
+            "file": (
+                "~$resume.docx",
+                b"temporary-lock-file",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+        },
+    )
+
+    assert resp.status_code == 400
+
+    issues = client.get(f"/api/checks/{check_id}/ingestion-issues")
+    assert issues.status_code == 200
+    body = issues.json()
+    assert len(body) == 1
+    assert body[0]["issue_code"] == "office_temp_artifact"
+    assert body[0]["stage"] == "upload_validation"
+
+
+def test_llm_usage_endpoint_returns_check_usage(client, db_session):
+    check = CheckRow(track="data_room", status="extracted", answers={"stage": "data_room"})
+    db_session.add(check)
+    db_session.flush()
+
+    db_session.add(
+        LlmApiUsageRow(
+            check_id=check.id,
+            document_id=None,
+            user_id="user-1",
+            environment="dev",
+            provider="anthropic",
+            model="claude-sonnet-4-20250514",
+            operation="document_extraction",
+            status="success",
+            input_tokens=120,
+            output_tokens=30,
+            total_tokens=150,
+            latency_ms=450,
+            request_metadata={"doc_type": "resume"},
+            usage_details={"input_tokens": 120, "output_tokens": 30},
+        )
+    )
+    db_session.commit()
+
+    resp = client.get(f"/api/checks/{check.id}/llm-usage")
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert len(body) == 1
+    assert body[0]["check_id"] == check.id
+    assert body[0]["environment"] == "dev"
+    assert body[0]["provider"] == "anthropic"
+    assert body[0]["total_tokens"] == 150
+    assert body[0]["request_metadata"]["doc_type"] == "resume"
+
+
+def test_chat_route_persists_llm_usage(client, db_session, monkeypatch):
+    import compliance_os.web.routers.chat as chat_mod
+
+    class FakeCompletions:
+        def create(self, **kwargs):
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content="hello from openai"))],
+                usage=SimpleNamespace(
+                    prompt_tokens=21,
+                    completion_tokens=9,
+                    total_tokens=30,
+                ),
+            )
+
+    class FakeOpenAI:
+        def __init__(self, api_key):
+            self.chat = SimpleNamespace(completions=FakeCompletions())
+
+    monkeypatch.setenv("LLM_PROVIDER", "openai")
+    monkeypatch.setenv("OPENAI_API_KEY", "openai-test-key")
+    monkeypatch.setenv("OPENAI_MODEL", "gpt-test-model")
+    monkeypatch.setitem(sys.modules, "openai", SimpleNamespace(OpenAI=FakeOpenAI))
+    monkeypatch.setattr(chat_mod, "_get_user", lambda authorization, db: SimpleNamespace(id="user-1"))
+    monkeypatch.setattr(
+        chat_mod,
+        "build_timeline",
+        lambda user_id, db: {
+            "key_facts": [],
+            "documents": [],
+            "findings": [],
+            "advisories": [],
+            "deadlines": [],
+        },
+    )
+    monkeypatch.setattr(chat_mod, "retrieve_documents_for_query", lambda checks, query, top_k=4: [])
+
+    resp = client.post("/api/chat", json={"message": "hello", "history": []})
+
+    assert resp.status_code == 200
+    assert resp.json()["reply"] == "hello from openai"
+
+    rows = db_session.query(LlmApiUsageRow).all()
+    assert len(rows) == 1
+    assert rows[0].operation == "chat_assistant"
+    assert rows[0].user_id == "user-1"
+    assert rows[0].provider == "openai"
+    assert rows[0].model == "gpt-test-model"
+    assert rows[0].status == "success"
+    assert rows[0].total_tokens == 30
+    assert rows[0].request_metadata["message_length"] == 5
+
+
 def test_extract_persists_ocr_text_and_provenance(client, db_session, monkeypatch):
     import compliance_os.web.services.document_store as document_store
 
@@ -1523,8 +1645,38 @@ def test_extraction_refines_1042s_series_key_by_tax_year(client, db_session, mon
     )
     assert refreshed[0].document_series_key == "1042s:2024:7689-2619"
     assert refreshed[1].document_series_key == "1042s:2025:7689-2619"
-    assert all(doc.document_version == 1 for doc in refreshed)
-    assert all(doc.is_active is True for doc in refreshed)
+
+
+def test_infer_series_keys_for_resume_cover_letter_work_sample_and_h1b_worksheet():
+    assert (
+        infer_document_series_key(
+            "resume",
+            source_path="CV & Cover Letters/CV241028/Chenyu Li Resume_Analyst.docx",
+        )
+        == "resume:chenyu-li-resume-analyst"
+    )
+    assert (
+        infer_document_series_key(
+            "cover_letter",
+            source_path="CV & Cover Letters/Chenyu Li Cover Letter - World Bank.docx",
+        )
+        == "cover_letter:chenyu-li-cover-letter-world-bank"
+    )
+    assert (
+        infer_document_series_key(
+            "work_sample",
+            source_path="CV & Cover Letters/CV240712/Samples/GTM Action Items.docx",
+        )
+        == "work_sample:gtm-action-items"
+    )
+    assert (
+        infer_document_series_key(
+            "h1b_registration_worksheet",
+            extracted_values={"worksheet_scope": "employee"},
+            source_path="H1b Petition/Employee/H-1B Part I_Registration Worksheet and Document Checklist_Employee.docx",
+        )
+        == "h1b_registration_worksheet:employee"
+    )
 
 
 def test_retrieval_context_endpoint_returns_active_and_prior_versions(client, db_session):

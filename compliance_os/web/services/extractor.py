@@ -117,6 +117,13 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "issue_date": "Issue date or notice date (YYYY-MM-DD) if visible",
         "balance_due": "Balance due amount (number only) if visible",
     },
+    "cover_letter": {
+        "candidate_name": "Candidate full name",
+        "target_company": "Company or organization the letter is addressed to",
+        "target_role": "Role or position referenced in the cover letter if visible",
+        "letter_date": "Letter date (YYYY-MM-DD) if visible",
+        "contact_email": "Candidate email address if visible",
+    },
     "check_image": {
         "payor_name": "Name of the account holder or payer if visible",
         "payee_name": "Payee line or named recipient if visible",
@@ -518,6 +525,19 @@ SCHEMAS: dict[str, dict[str, str]] = {
         "employer_address": "Primary U.S. office or mailing address",
         "authorized_individual_name": "Authorized individual current legal name",
         "authorized_individual_title": "Authorized individual position or title at the business",
+    },
+    "h1b_registration_worksheet": {
+        "worksheet_scope": "Whether the worksheet is for the beneficiary employee or petitioning employer",
+        "beneficiary_name": "Beneficiary or employee full name if visible",
+        "date_of_birth": "Beneficiary date of birth (YYYY-MM-DD) if visible",
+        "passport_number": "Passport number if visible",
+        "current_immigration_status": "Current U.S. immigration status if visible",
+        "status_expiration_date": "Current immigration-status expiration date (YYYY-MM-DD) if visible",
+        "employer_name": "Petitioning employer legal name if visible",
+        "employer_ein": "Employer FEIN or EIN if visible",
+        "employer_address": "Primary U.S. office or mailing address if visible",
+        "authorized_signatory_name": "Authorized signatory or preparer name if visible",
+        "authorized_signatory_title": "Authorized signatory title if visible",
     },
     "h1b_status_summary": {
         "status_title": "Main title of the summary, such as H-1B Status",
@@ -1074,6 +1094,30 @@ def _normalize_h1b_registration_result(text: str, result: dict[str, Any]) -> dic
     return normalized
 
 
+def _normalize_h1b_registration_worksheet_result(text: str, result: dict[str, Any]) -> dict[str, Any]:
+    normalized = _normalize_selected_fields(
+        result,
+        date_fields=("date_of_birth", "status_expiration_date"),
+    )
+    normalized["employer_ein"] = _normalize_h1b_ein(normalized.get("employer_ein"), text)
+
+    scope = str(normalized.get("worksheet_scope") or "").strip().lower()
+    if not scope:
+        lowered_text = text.lower()
+        if "petitioning employer" in lowered_text:
+            scope = "employer"
+        elif "beneficiary employee" in lowered_text:
+            scope = "employee"
+    normalized["worksheet_scope"] = scope or None
+
+    passport = normalized.get("passport_number")
+    if passport not in (None, ""):
+        passport_text = re.sub(r"[^A-Za-z0-9]", "", str(passport)).upper()
+        normalized["passport_number"] = passport_text or None
+
+    return normalized
+
+
 def _normalize_selected_fields(
     result: dict[str, Any],
     *,
@@ -1119,6 +1163,8 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
         )
     if doc_type == "debt_clearance_letter":
         return _normalize_selected_fields(result, date_fields=("clearance_date",))
+    if doc_type == "cover_letter":
+        return _normalize_selected_fields(result, date_fields=("letter_date",))
     if doc_type == "check_image":
         return _normalize_selected_fields(
             result,
@@ -1229,6 +1275,8 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
         )
     if doc_type == "h1b_registration":
         return _normalize_h1b_registration_result(text, result)
+    if doc_type == "h1b_registration_worksheet":
+        return _normalize_h1b_registration_worksheet_result(text, result)
     if doc_type == "i765":
         return _normalize_selected_fields(result, date_fields=("date_of_birth",))
     if doc_type == "transfer_pending_letter":
@@ -1281,6 +1329,8 @@ def _normalize_result(doc_type: str, text: str, result: dict[str, Any]) -> dict[
 def extract_document(
     doc_type: str,
     text: str,
+    *,
+    usage_context: dict[str, Any] | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Extract structured fields from document text using LLM.
 
@@ -1290,7 +1340,7 @@ def extract_document(
     if not schema:
         return {}
 
-    result = _normalize_result(doc_type, text, _call_llm(text, doc_type, schema))
+    result = _normalize_result(doc_type, text, _call_llm(text, doc_type, schema, usage_context=usage_context))
 
     # Map to {field_name: {"value": ..., "confidence": ...}}
     fields: dict[str, dict[str, Any]] = {}
@@ -1306,6 +1356,8 @@ def _call_llm(
     text: str,
     doc_type: str,
     schema: dict[str, str],
+    *,
+    usage_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Call LLM to extract structured fields from document text.
     Provider selection is shared with chat via the LLM runtime configuration.
@@ -1327,4 +1379,5 @@ Return ONLY valid JSON, no explanation."""
         user_prompt=prompt,
         temperature=0,
         max_tokens=4096,
+        usage_context=usage_context,
     )

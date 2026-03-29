@@ -148,12 +148,27 @@ def chat(
         messages.append({"role": msg["role"], "content": msg["text"]})
     messages.append({"role": "user", "content": body.message})
 
-    reply = chat_completion(
-        system_prompt=system,
-        messages=messages,
-        temperature=0.3,
-        max_tokens=1024,
-    )
+    try:
+        reply = chat_completion(
+            system_prompt=system,
+            messages=messages,
+            temperature=0.3,
+            max_tokens=1024,
+            usage_context={
+                "db_session": db,
+                "operation": "chat_assistant",
+                "user_id": user.id,
+                "request_metadata": {
+                    "history_count": len(body.history),
+                    "message_length": len(body.message),
+                },
+            },
+        )
+    except Exception:
+        db.commit()
+        raise
+
+    db.commit()
 
     return ChatResponse(reply=reply)
 

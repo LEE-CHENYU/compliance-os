@@ -1428,3 +1428,153 @@ batches:
       - employment
       - 公司信息
     target_size: 9
+
+  - id: batch_51
+    number: 51
+    focus: early Word resume archive continuity across 2022 and early 2023 variants
+    status: completed
+    record: docs/data-room-batch-51.md
+    validation_hooks:
+      - name: batch_51_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_51_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 51
+    source_scope:
+      - CV & Cover Letters
+    target_size: 11
+
+  - id: batch_52
+    number: 52
+    focus: mid-cycle Word resume archive and role-variant continuity across 2023 and 2024
+    status: completed
+    record: docs/data-room-batch-52.md
+    validation_hooks:
+      - name: batch_52_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_52_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 52
+    source_scope:
+      - CV & Cover Letters
+    target_size: 11
+
+  - id: batch_53
+    number: 53
+    focus: late Word resume archive, Jobright overflow, and H-1B resume continuity
+    status: completed
+    record: docs/data-room-batch-53.md
+    validation_hooks:
+      - name: batch_53_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_53_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 53
+    source_scope:
+      - CV & Cover Letters
+      - H1b Petition
+    target_size: 10
+
+  - id: batch_54
+    number: 54
+    focus: Word cover letters, employment-letter support, and employer-assistance request records
+    status: completed
+    record: docs/data-room-batch-54.md
+    validation_hooks:
+      - name: batch_54_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_54_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 54
+    source_scope:
+      - CV & Cover Letters
+      - BSGC
+      - employment
+      - stem opt
+    target_size: 12
+
+  - id: batch_55
+    number: 55
+    focus: Word work-sample archive plus H-1B registration worksheet support
+    status: completed
+    record: docs/data-room-batch-55.md
+    validation_hooks:
+      - name: batch_55_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_55_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 55
+    source_scope:
+      - CV & Cover Letters
+      - H1b Petition
+    target_size: 12
