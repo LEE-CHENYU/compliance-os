@@ -9,6 +9,155 @@ from sqlalchemy.orm import Session
 from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, FindingRow
 
 
+def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
+    return doc.uploaded_at or datetime.min
+
+
+def _document_identity_key(doc: DocumentRow) -> tuple[str, str]:
+    if doc.content_hash:
+        return ("content_hash", f"{doc.doc_type}:{doc.content_hash}")
+    if doc.source_path:
+        return ("source_path", f"{doc.doc_type}:{doc.source_path}")
+    return ("filename", f"{doc.doc_type}:{doc.filename}:{doc.file_size or 0}")
+
+
+def _document_sort_key(doc: DocumentRow) -> tuple[bool, bool, datetime, str]:
+    has_values = any(field.field_value not in (None, "") for field in doc.extracted_fields)
+    return (
+        doc.is_active is not False,
+        has_values,
+        _normalized_uploaded_at(doc),
+        doc.id,
+    )
+
+
+def canonical_documents_for_checks(checks: list[CheckRow]) -> list[DocumentRow]:
+    canonical: dict[tuple[str, str], DocumentRow] = {}
+    for check in checks:
+        for doc in check.documents:
+            key = _document_identity_key(doc)
+            existing = canonical.get(key)
+            if existing is None or _document_sort_key(doc) > _document_sort_key(existing):
+                canonical[key] = doc
+    return sorted(
+        canonical.values(),
+        key=lambda doc: (_normalized_uploaded_at(doc), doc.filename or "", doc.id),
+        reverse=True,
+    )
+
+
+def serialize_dashboard_document(doc: DocumentRow) -> dict[str, Any]:
+    return {
+        "id": doc.id,
+        "filename": doc.filename,
+        "doc_type": doc.doc_type,
+        "file_size": doc.file_size,
+        "uploaded_at": doc.uploaded_at.isoformat() if doc.uploaded_at else None,
+        "category": _doc_category(doc.doc_type),
+    }
+
+
+def _finding_identity_key(finding: FindingRow | dict[str, Any]) -> tuple[Any, ...]:
+    if isinstance(finding, dict):
+        return (
+            finding.get("rule_id"),
+            finding.get("severity"),
+            finding.get("category"),
+            finding.get("title"),
+            finding.get("action"),
+            finding.get("consequence"),
+            bool(finding.get("immigration_impact")),
+        )
+    return (
+        finding.rule_id,
+        finding.severity,
+        finding.category,
+        finding.title,
+        finding.action,
+        finding.consequence,
+        bool(finding.immigration_impact),
+    )
+
+
+def _dedupe_finding_dicts(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    unique: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for item in items:
+        unique.setdefault(_finding_identity_key(item), item)
+    return list(unique.values())
+
+
+def _dedupe_comparison_keys(checks: list[CheckRow]) -> list[tuple[Any, ...]]:
+    seen: dict[tuple[Any, ...], tuple[Any, ...]] = {}
+    for check in checks:
+        for comp in check.comparisons:
+            key = (
+                comp.field_name,
+                comp.value_a,
+                comp.value_b,
+                comp.match_type,
+                comp.status,
+                comp.detail,
+            )
+            seen.setdefault(key, key)
+    return list(seen.values())
+
+
+def _dedupe_upload_prompts(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    unique: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for item in items:
+        key = (
+            item.get("doc_type"),
+            item.get("prompt"),
+            item.get("why"),
+            item.get("event_date"),
+        )
+        unique.setdefault(key, item)
+    return list(unique.values())
+
+
+def _dedupe_deadlines(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    unique: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for item in items:
+        key = (
+            item.get("title"),
+            item.get("date"),
+            item.get("category"),
+            item.get("action"),
+        )
+        existing = unique.get(key)
+        if existing is None or item.get("days", 0) < existing.get("days", 0):
+            unique[key] = item
+    result = list(unique.values())
+    result.sort(key=lambda item: (item["date"], item["title"]))
+    return result
+
+
+def _merge_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    merged: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for event in events:
+        key = (event["date"], event["title"], event["type"], event.get("category"))
+        current = merged.get(key)
+        if current is None:
+            merged[key] = {
+                **event,
+                "documents": list(event.get("documents", [])),
+                "risks": list(event.get("risks", [])),
+            }
+            continue
+
+        seen_docs = {doc["id"] for doc in current.get("documents", [])}
+        for doc in event.get("documents", []):
+            if doc["id"] not in seen_docs:
+                current.setdefault("documents", []).append(doc)
+                seen_docs.add(doc["id"])
+
+        current["risks"] = _dedupe_finding_dicts(current.get("risks", []) + event.get("risks", []))
+
+    result = list(merged.values())
+    result.sort(key=lambda e: e["date"])
+    return result
+
+
 def build_timeline(user_id: str, db: Session) -> dict:
     """Build a full timeline for a user from their checks and documents."""
     checks = db.query(CheckRow).filter(CheckRow.user_id == user_id).all()
@@ -20,19 +169,16 @@ def build_timeline(user_id: str, db: Session) -> dict:
     upload_prompts: list[dict] = []
 
     doc_types_uploaded: set[str] = set()
+    canonical_docs = canonical_documents_for_checks(checks)
+    docs_by_type: dict[str, list[dict[str, Any]]] = {}
+    for doc in canonical_docs:
+        serialized = serialize_dashboard_document(doc)
+        all_docs.append(serialized)
+        docs_by_type.setdefault(doc.doc_type, []).append(serialized)
 
     for check in checks:
-        # Collect documents
         for doc in check.documents:
             doc_types_uploaded.add(doc.doc_type)
-            doc_data = {
-                "id": doc.id,
-                "filename": doc.filename,
-                "doc_type": doc.doc_type,
-                "uploaded_at": doc.uploaded_at.isoformat() if doc.uploaded_at else None,
-                "category": _doc_category(doc.doc_type),
-            }
-            all_docs.append(doc_data)
 
         # Extract dates from extracted fields to create timeline events
         for doc in check.documents:
@@ -45,7 +191,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                         "title": "STEM OPT started",
                         "type": "milestone",
                         "category": "immigration",
-                        "documents": [d for d in all_docs if d["doc_type"] in ("i983", "employment_letter")],
+                        "documents": docs_by_type.get("i983", []) + docs_by_type.get("employment_letter", []),
                     })
                 if fields.get("end_date"):
                     events.append({
@@ -64,7 +210,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                         "title": f"{tax_year} Tax Return filed",
                         "type": "filing",
                         "category": "tax",
-                        "documents": [d for d in all_docs if d["doc_type"] == "tax_return"],
+                        "documents": docs_by_type.get("tax_return", []),
                     })
 
         # Collect findings and advisories
@@ -136,8 +282,11 @@ def build_timeline(user_id: str, db: Session) -> dict:
                         except ValueError:
                             pass
 
-    # Sort events by date
-    events.sort(key=lambda e: e["date"])
+    # Sort and merge duplicate events by identity
+    events = _merge_events(events)
+    all_findings = _dedupe_finding_dicts(all_findings)
+    all_advisories = _dedupe_finding_dicts(all_advisories)
+    upload_prompts = _dedupe_upload_prompts(upload_prompts)
 
     # Attach findings to relevant events
     for event in events:
@@ -269,19 +418,27 @@ def build_stats(user_id: str, db: Session) -> dict:
     """Build aggregate stats for the user's dashboard."""
     checks = db.query(CheckRow).filter(CheckRow.user_id == user_id).all()
 
-    doc_count = 0
-    risk_count = 0
-    verified_count = 0
+    doc_count = len(canonical_documents_for_checks(checks))
+    risk_count = len(
+        _dedupe_finding_dicts(
+            [
+                {
+                    "rule_id": f.rule_id,
+                    "severity": f.severity,
+                    "category": f.category,
+                    "title": f.title,
+                    "action": f.action,
+                    "consequence": f.consequence,
+                    "immigration_impact": f.immigration_impact,
+                }
+                for check in checks
+                for f in check.findings
+                if f.category != "advisory"
+            ]
+        )
+    )
+    verified_count = sum(1 for key in _dedupe_comparison_keys(checks) if key[4] == "match")
     next_deadline_days = None
-
-    for check in checks:
-        doc_count += len(check.documents)
-        for f in check.findings:
-            if f.category != "advisory":
-                risk_count += 1
-        for c in check.comparisons:
-            if c.status == "match":
-                verified_count += 1
 
     # Use the full deadline builder for next_deadline_days
     deadlines = _build_deadlines(checks)
@@ -442,12 +599,4 @@ def _build_deadlines(checks: list) -> list[dict]:
                     "action": "Required annually for foreign-owned single-member LLCs, even with $0 revenue",
                 })
 
-    # Deduplicate by title, keep the earliest
-    seen: dict[str, dict] = {}
-    for d in deadlines:
-        if d["title"] not in seen or d["date"] < seen[d["title"]]["date"]:
-            seen[d["title"]] = d
-
-    # Sort by date
-    result = sorted(seen.values(), key=lambda d: d["date"])
-    return result
+    return _dedupe_deadlines(deadlines)

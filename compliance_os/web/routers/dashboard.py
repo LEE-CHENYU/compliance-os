@@ -25,7 +25,12 @@ from compliance_os.web.services.ingestion_detector import (
     record_check_issue,
     sync_document_issues,
 )
-from compliance_os.web.services.timeline_builder import build_stats, build_timeline
+from compliance_os.web.services.timeline_builder import (
+    build_stats,
+    build_timeline,
+    canonical_documents_for_checks,
+    serialize_dashboard_document,
+)
 
 UPLOAD_DIR = DATA_DIR / "uploads"
 
@@ -67,17 +72,7 @@ def list_documents(
 ):
     user = _get_user(authorization, db)
     checks = db.query(CheckRow).filter(CheckRow.user_id == user.id).all()
-    docs = []
-    for check in checks:
-        for doc in check.documents:
-            docs.append({
-                "id": doc.id,
-                "filename": doc.filename,
-                "doc_type": doc.doc_type,
-                "file_size": doc.file_size,
-                "uploaded_at": doc.uploaded_at.isoformat() if doc.uploaded_at else None,
-            })
-    return docs
+    return [serialize_dashboard_document(doc) for doc in canonical_documents_for_checks(checks)]
 
 
 @router.get("/documents/{doc_id}/view")
