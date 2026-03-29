@@ -1,6 +1,7 @@
 """Build timeline events from user's checks, documents, and findings."""
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -39,6 +40,26 @@ def _normalized_text(value: str | None) -> str:
     return " ".join(str(value).strip().lower().split())
 
 
+def _slug(value: str | None) -> str:
+    if not value:
+        return ""
+    tokens = re.findall(r"[a-z0-9]+", value.lower())
+    if not tokens:
+        return ""
+    return "-".join(tokens[:12])
+
+
+def _meaningful_tokens(value: str | None) -> set[str]:
+    if not value:
+        return set()
+    tokens = {
+        token
+        for token in re.findall(r"[a-z0-9]+", value.lower())
+        if token not in {"inc", "llc", "ltd", "co", "corp", "capital", "the", "and"}
+    }
+    return tokens
+
+
 def _is_generic_parent_slug(value: str) -> bool:
     return value in {
         "",
@@ -65,6 +86,16 @@ def _document_reference_parent(doc: DocumentRow) -> str:
     if not reference:
         return ""
     return _normalized_text(Path(reference).parent.name)
+
+
+def _document_reference_parent_label(doc: DocumentRow) -> str:
+    reference = doc.source_path or doc.filename or ""
+    if not reference:
+        return ""
+    label = Path(reference).parent.name
+    if _is_generic_parent_slug(_normalized_text(label)):
+        return ""
+    return label
 
 
 def _document_appears_final(doc: DocumentRow) -> bool:
@@ -101,6 +132,87 @@ def _should_emit_i983_start_event(
     if len(related_docs) > 1 or _document_appears_final(doc):
         return True
     return not _has_stronger_i983_successor(doc, docs)
+
+
+def _matched_employment_document_rows(i983_doc: DocumentRow, docs: list[DocumentRow]) -> list[DocumentRow]:
+    i983_fields = _field_map(i983_doc)
+    employer_name = _normalized_text(i983_fields.get("employer_name"))
+    start_date = i983_fields.get("start_date")
+    i983_parent = _document_reference_parent(i983_doc)
+    matches: list[DocumentRow] = []
+    for doc in docs:
+        if doc.doc_type != "employment_letter":
+            continue
+        fields = _field_map(doc)
+        employment_employer = _normalized_text(fields.get("employer_name"))
+        employment_start_date = fields.get("start_date")
+        parent_slug = _document_reference_parent(doc)
+
+        employer_matches = bool(employer_name and employment_employer and employment_employer == employer_name)
+        start_matches = bool(start_date and employment_start_date and employment_start_date == start_date)
+        parent_matches = bool(
+            i983_parent
+            and parent_slug
+            and not _is_generic_parent_slug(i983_parent)
+            and i983_parent == parent_slug
+        )
+
+        if employer_matches and (not start_date or not employment_start_date or start_matches):
+            matches.append(doc)
+            continue
+        if start_matches and (not employer_name or not employment_employer):
+            matches.append(doc)
+            continue
+        if parent_matches and (start_matches or employer_matches or (not employer_name and not start_date)):
+            matches.append(doc)
+
+    deduped: list[DocumentRow] = []
+    seen_ids: set[str] = set()
+    for doc in matches:
+        if doc.id in seen_ids:
+            continue
+        seen_ids.add(doc.id)
+        deduped.append(doc)
+    return deduped
+
+
+def _employment_chain_for_i983(i983_doc: DocumentRow, employment_docs: list[DocumentRow]) -> dict[str, Any] | None:
+    docs = [i983_doc] + employment_docs
+    field_maps = [_field_map(doc) for doc in docs]
+
+    employer_name = next(
+        (fields.get("employer_name") for fields in field_maps if fields.get("employer_name")),
+        None,
+    )
+    start_date = next(
+        (fields.get("start_date") for fields in field_maps if fields.get("start_date")),
+        None,
+    )
+    context_label = next(
+        (label for label in (_document_reference_parent_label(doc) for doc in docs) if label),
+        None,
+    )
+
+    employer_slug = _slug(employer_name)
+    context_slug = _slug(context_label)
+    chain_subject = employer_slug or context_slug or _slug(i983_doc.filename or i983_doc.id) or i983_doc.id
+    chain_key = f"employment:{chain_subject}:{start_date or 'unknown'}"
+
+    label = employer_name or context_label or "Employment chain"
+    if employer_name and context_label:
+        employer_tokens = _meaningful_tokens(employer_name)
+        context_tokens = _meaningful_tokens(context_label)
+        if context_tokens and not (context_tokens & employer_tokens):
+            label = f"{employer_name} ({context_label})"
+
+    return {
+        "type": "employment",
+        "key": chain_key,
+        "label": label,
+        "employer_name": employer_name,
+        "start_date": start_date,
+        "source_context": context_label,
+    }
 
 
 def _documents_equivalent_for_dashboard(doc: DocumentRow, other: DocumentRow) -> bool:
@@ -162,44 +274,7 @@ def serialize_dashboard_document(doc: DocumentRow) -> dict[str, Any]:
 
 
 def _match_employment_documents(i983_doc: DocumentRow, docs: list[DocumentRow]) -> list[dict[str, Any]]:
-    i983_fields = _field_map(i983_doc)
-    employer_name = _normalized_text(i983_fields.get("employer_name"))
-    start_date = i983_fields.get("start_date")
-    i983_parent = _document_reference_parent(i983_doc)
-    matches: list[DocumentRow] = []
-    for doc in docs:
-        if doc.doc_type != "employment_letter":
-            continue
-        fields = _field_map(doc)
-        employment_employer = _normalized_text(fields.get("employer_name"))
-        employment_start_date = fields.get("start_date")
-        parent_slug = _document_reference_parent(doc)
-
-        employer_matches = bool(employer_name and employment_employer and employment_employer == employer_name)
-        start_matches = bool(start_date and employment_start_date and employment_start_date == start_date)
-        parent_matches = bool(
-            i983_parent
-            and parent_slug
-            and not _is_generic_parent_slug(i983_parent)
-            and i983_parent == parent_slug
-        )
-
-        if employer_matches and (not start_date or not employment_start_date or start_matches):
-            matches.append(doc)
-            continue
-        if start_matches and (not employer_name or not employment_employer):
-            matches.append(doc)
-            continue
-        if parent_matches and (start_matches or employer_matches or (not employer_name and not start_date)):
-            matches.append(doc)
-    deduped: list[dict[str, Any]] = []
-    seen_ids: set[str] = set()
-    for doc in matches:
-        if doc.id in seen_ids:
-            continue
-        seen_ids.add(doc.id)
-        deduped.append(serialize_dashboard_document(doc))
-    return deduped
+    return [serialize_dashboard_document(doc) for doc in _matched_employment_document_rows(i983_doc, docs)]
 
 
 def _finding_identity_key(finding: FindingRow | dict[str, Any]) -> tuple[Any, ...]:
@@ -280,7 +355,8 @@ def _dedupe_deadlines(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _merge_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     merged: dict[tuple[Any, ...], dict[str, Any]] = {}
     for event in events:
-        key = (event["date"], event["title"], event["type"], event.get("category"))
+        chain_key = (event.get("chain") or {}).get("key")
+        key = (event["date"], event["title"], event["type"], event.get("category"), chain_key)
         current = merged.get(key)
         if current is None:
             merged[key] = {
@@ -324,7 +400,11 @@ def build_timeline(user_id: str, db: Session) -> dict:
         fields = _field_map(doc)
 
         if doc.doc_type == "i983":
-            related_docs = [serialize_dashboard_document(doc)] + _match_employment_documents(doc, canonical_docs)
+            matched_employment_docs = _matched_employment_document_rows(doc, canonical_docs)
+            related_docs = [serialize_dashboard_document(doc)] + [
+                serialize_dashboard_document(related_doc) for related_doc in matched_employment_docs
+            ]
+            chain = _employment_chain_for_i983(doc, matched_employment_docs)
             if fields.get("start_date") and _should_emit_i983_start_event(doc, related_docs, canonical_docs):
                 events.append({
                     "date": fields["start_date"],
@@ -332,6 +412,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "type": "milestone",
                     "category": "immigration",
                     "documents": related_docs,
+                    "chain": chain,
                 })
             if fields.get("end_date"):
                 events.append({
@@ -340,6 +421,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "type": "deadline",
                     "category": "immigration",
                     "documents": [serialize_dashboard_document(doc)],
+                    "chain": chain,
                 })
 
         if doc.doc_type == "tax_return":

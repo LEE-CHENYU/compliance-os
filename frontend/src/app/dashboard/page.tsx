@@ -10,6 +10,14 @@ interface TimelineEvent {
   title: string;
   type: string;
   category: string | null;
+  chain?: {
+    type: string;
+    key: string;
+    label: string;
+    employer_name?: string | null;
+    start_date?: string | null;
+    source_context?: string | null;
+  } | null;
   documents: { id: string; filename: string; doc_type: string; category: string }[];
   risks: { id: string; title: string; action: string; consequence: string; immigration_impact: boolean; severity: string }[];
 }
@@ -869,6 +877,17 @@ export default function DashboardPage() {
                 <div className={`text-[15px] font-semibold mb-2 ${event.type === "now" ? "text-[#0d1424]" : "text-[#0d1424]"}`}>
                   {event.title}
                 </div>
+
+                {event.chain && event.chain.type === "employment" && (
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8e9ab5]">
+                      Employment chain
+                    </span>
+                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#5b8dee]/8 text-[#3d6bc5] border border-[#5b8dee]/12">
+                      {event.chain.label}
+                    </span>
+                  </div>
+                )}
 
                 {/* Documents */}
                 {event.documents.length > 0 && (

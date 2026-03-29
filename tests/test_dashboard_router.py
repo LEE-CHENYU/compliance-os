@@ -576,6 +576,8 @@ def test_dashboard_timeline_maps_documents_to_specific_events_and_collapses_lega
         event for event in timeline["events"]
         if event["title"] == "STEM OPT started" and event["date"] == "2024-01-23"
     )
+    assert wolff_event["chain"]["type"] == "employment"
+    assert wolff_event["chain"]["label"] == "Wolff & Li Capital"
     assert {doc["filename"] for doc in wolff_event["documents"]} == {
         "i983-wolff-and-li.pdf",
         "Wolff_&_Li_Capital_Offer_Letter.pdf",
@@ -585,6 +587,8 @@ def test_dashboard_timeline_maps_documents_to_specific_events_and_collapses_lega
         event for event in timeline["events"]
         if event["title"] == "STEM OPT started" and event["date"] == "2024-10-01"
     )
+    assert bitsync_event["chain"]["type"] == "employment"
+    assert bitsync_event["chain"]["label"] == "Bitsync"
     assert {doc["filename"] for doc in bitsync_event["documents"]} == {
         "Chenyu_i983 Form_100124_ink_signed.pdf",
         "signed offer letter bitsync.pdf",
@@ -677,12 +681,104 @@ def test_dashboard_timeline_prefers_signed_supported_stem_start_events(client, t
     assert [event["date"] for event in stem_events] == ["2024-10-01", "2025-03-17"]
 
     vcv_event = next(event for event in stem_events if event["date"] == "2024-10-01")
+    assert vcv_event["chain"]["label"] == "Tiger Cloud LLC (vcv)"
     assert {doc["filename"] for doc in vcv_event["documents"]} == {
         "Chenyu_i983 Form_100124_ink_signed.pdf",
     }
 
     wolff_event = next(event for event in stem_events if event["date"] == "2025-03-17")
+    assert wolff_event["chain"]["label"] == "Wolff & Li Capital Inc."
     assert {doc["filename"] for doc in wolff_event["documents"]} == {
         "i983-wolff-and-li-signed.pdf",
         "Wolff_&_Li_Capital_Offer_Letter.pdf",
+    }
+
+
+def test_dashboard_timeline_keeps_same_day_employment_chains_separate(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-same-day-chains@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    now = datetime.now(timezone.utc)
+    try:
+        check = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        session.add(check)
+        session.flush()
+
+        wolff_i983 = DocumentRow(
+            check_id=check.id,
+            doc_type="i983",
+            filename="i983-wolff-and-li-signed.pdf",
+            file_path=str(tmp_path / "i983-wolff-signed.pdf"),
+            file_size=120,
+            mime_type="application/pdf",
+            content_hash="i983-wolff-signed",
+            source_path="stem opt/i983/wolff-and-li/i983-wolff-and-li-signed.pdf",
+            uploaded_at=now,
+        )
+        wolff_offer = DocumentRow(
+            check_id=check.id,
+            doc_type="employment_letter",
+            filename="Wolff_&_Li_Capital_Offer_Letter.pdf",
+            file_path=str(tmp_path / "offer-wolff.pdf"),
+            file_size=140,
+            mime_type="application/pdf",
+            content_hash="offer-wolff",
+            source_path="employment/Wolff & Li/Wolff_&_Li_Capital_Offer_Letter.pdf",
+            uploaded_at=now,
+        )
+        tiger_i983 = DocumentRow(
+            check_id=check.id,
+            doc_type="i983",
+            filename="vcv-i983-signed.pdf",
+            file_path=str(tmp_path / "i983-vcv-signed.pdf"),
+            file_size=120,
+            mime_type="application/pdf",
+            content_hash="i983-vcv-signed",
+            source_path="stem opt/i983/vcv/vcv-i983-signed.pdf",
+            uploaded_at=now,
+        )
+        tiger_offer = DocumentRow(
+            check_id=check.id,
+            doc_type="employment_letter",
+            filename="Employer Letter_VCV_Full Time.docx",
+            file_path=str(tmp_path / "offer-vcv.docx"),
+            file_size=140,
+            mime_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            content_hash="offer-vcv",
+            source_path="stem opt/letter/Employer Letter_VCV_Full Time.docx",
+            uploaded_at=now,
+        )
+        session.add_all([wolff_i983, wolff_offer, tiger_i983, tiger_offer])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=wolff_i983.id, field_name="start_date", field_value="2025-03-17"),
+                ExtractedFieldRow(document_id=wolff_i983.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=wolff_offer.id, field_name="start_date", field_value="2025-03-17"),
+                ExtractedFieldRow(document_id=wolff_offer.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=tiger_i983.id, field_name="start_date", field_value="2025-03-17"),
+                ExtractedFieldRow(document_id=tiger_i983.id, field_name="employer_name", field_value="Tiger Cloud LLC"),
+                ExtractedFieldRow(document_id=tiger_offer.id, field_name="start_date", field_value="2025-03-17"),
+                ExtractedFieldRow(document_id=tiger_offer.id, field_name="employer_name", field_value="Tiger Cloud LLC"),
+            ]
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    timeline = timeline_resp.json()
+
+    stem_events = [
+        event for event in timeline["events"]
+        if event["title"] == "STEM OPT started" and event["date"] == "2025-03-17"
+    ]
+    assert len(stem_events) == 2
+    assert {event["chain"]["label"] for event in stem_events} == {
+        "Tiger Cloud LLC (vcv)",
+        "Wolff & Li Capital Inc.",
     }
