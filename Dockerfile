@@ -24,6 +24,7 @@ RUN curl -fsSL "https://caddyserver.com/api/download?os=linux&arch=amd64" -o /us
 # Install Python deps
 RUN pip install --no-cache-dir \
     fastapi uvicorn sqlalchemy python-multipart pymupdf openai \
+    "psycopg[binary]" \
     python-dotenv pydantic pydantic-settings pyyaml python-dateutil \
     rapidfuzz bcrypt pyjwt anthropic mistralai
 

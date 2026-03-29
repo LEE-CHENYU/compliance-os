@@ -16,6 +16,12 @@ class Base(DeclarativeBase):
 def configured_database_url(db_path: str | None = None) -> str:
     """Resolve the database URL, preferring DATABASE_URL over local SQLite."""
     if db_path is not None:
+        if "://" in db_path:
+            if db_path.startswith("postgres://"):
+                return "postgresql://" + db_path[len("postgres://"):]
+            if db_path.startswith("postgresql://"):
+                return "postgresql+psycopg://" + db_path[len("postgresql://"):]
+            return db_path
         return f"sqlite:///{db_path}"
 
     database_url = (os.environ.get("DATABASE_URL") or "").strip()
@@ -39,6 +45,7 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     else:
         engine_kwargs["pool_pre_ping"] = True
     engine = create_engine(database_url, **engine_kwargs)
+    from compliance_os.web.models.auth import UserRow  # noqa: F401
     from compliance_os.web.models.tables import CaseRow, DiscoveryAnswerRow, ChatMessageRow, DocumentRow  # noqa: F401
     Base.metadata.create_all(engine)
     # Guardian check flow tables (v2)

@@ -57,6 +57,14 @@ def test_configured_database_url_prefers_explicit_sqlite_path(monkeypatch):
     assert url == "sqlite:////tmp/test.db"
 
 
+def test_configured_database_url_accepts_explicit_postgres_url(monkeypatch):
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+
+    url = configured_database_url("postgresql://user:pass@db.example.com/guardian?sslmode=require")
+
+    assert url == "postgresql+psycopg://user:pass@db.example.com/guardian?sslmode=require"
+
+
 def test_create_engine_and_tables_uses_pool_pre_ping_for_postgres(monkeypatch):
     captured: dict[str, object] = {}
 
