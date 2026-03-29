@@ -1269,9 +1269,9 @@ def build_timeline(user_id: str, db: Session) -> dict:
                 all_findings.append(f_data)
 
     # Add "today" marker
-    today = date.today().isoformat()
+    today_iso = date.today().isoformat()
     events.append({
-        "date": today,
+        "date": today_iso,
         "title": "Today",
         "type": "now",
         "category": None,
@@ -1300,6 +1300,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
             })
 
         # Check for 12-month evaluations from current STEM chains only.
+        today_date = date.today()
         for chain in _active_stem_opt_chains(subject_chains, exclude_ended=True):
             if not chain.start_date:
                 continue
@@ -1307,7 +1308,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                 start_date = datetime.strptime(chain.start_date, "%Y-%m-%d").date()
                 from dateutil.relativedelta import relativedelta
                 eval_due = start_date + relativedelta(months=12)
-                if today > eval_due:
+                if today_date > eval_due:
                     upload_prompts.append({
                         "doc_type": "i983_evaluation",
                         "prompt": "Upload your completed 12-month evaluation",
