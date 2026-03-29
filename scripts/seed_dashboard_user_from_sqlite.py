@@ -175,6 +175,12 @@ def main(argv: list[str] | None = None) -> int:
         total_followups = 0
         total_issues = 0
         total_llm_usage = 0
+        total_deduped = 0
+
+        # --- Cross-check deduplication ---
+        # Track (content_hash, doc_type) pairs already seeded to prevent the
+        # same file from being inserted into multiple checks.
+        seen_content: set[tuple[str, str]] = set()
 
         for check in check_rows:
             new_check_id = _uuid()
@@ -204,6 +210,16 @@ def main(argv: list[str] | None = None) -> int:
             doc_id_map: dict[str, str] = {}
             supersede_map: dict[str, str | None] = {}
             for doc in docs:
+                # Skip cross-check duplicates: same content in a different check
+                content_hash = doc["content_hash"]
+                doc_type = doc["doc_type"]
+                if content_hash:
+                    dedup_key = (content_hash, doc_type)
+                    if dedup_key in seen_content:
+                        total_deduped += 1
+                        continue
+                    seen_content.add(dedup_key)
+
                 new_doc_id = _uuid()
                 doc_id_map[doc["id"]] = new_doc_id
                 supersede_map[new_doc_id] = doc["supersedes_document_id"]
@@ -541,6 +557,7 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "checks": len(check_rows),
                     "documents": total_docs,
+                    "cross_check_duplicates_skipped": total_deduped,
                     "extracted_fields": total_fields,
                     "comparisons": total_comparisons,
                     "findings": total_findings,
