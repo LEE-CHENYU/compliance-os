@@ -274,6 +274,24 @@ def serialize_dashboard_document(doc: DocumentRow) -> dict[str, Any]:
     }
 
 
+def _canonical_dashboard_document(doc: DocumentRow, canonical_docs: list[DocumentRow]) -> DocumentRow:
+    for candidate in canonical_docs:
+        if _documents_equivalent_for_dashboard(doc, candidate):
+            return candidate
+    return doc
+
+
+def _user_canonical_document_rows(rows: list[DocumentRow], canonical_docs: list[DocumentRow]) -> list[DocumentRow]:
+    resolved: list[DocumentRow] = []
+    for doc in rows:
+        canonical_doc = _canonical_dashboard_document(doc, canonical_docs)
+        if any(_documents_equivalent_for_dashboard(canonical_doc, existing) for existing in resolved):
+            continue
+        resolved.append(canonical_doc)
+    resolved.sort(key=lambda doc: (_normalized_uploaded_at(doc), doc.filename or "", doc.id))
+    return resolved
+
+
 def _serialize_timeline_chain(chain: SubjectChainRow) -> dict[str, Any]:
     return {
         "type": chain.chain_type,
@@ -285,12 +303,20 @@ def _serialize_timeline_chain(chain: SubjectChainRow) -> dict[str, Any]:
     }
 
 
-def _chain_event_documents(chain: SubjectChainRow, document_ids: list[str] | None = None) -> list[dict[str, Any]]:
-    return [serialize_dashboard_document(doc) for doc in _chain_event_document_rows(chain, document_ids)]
+def _chain_event_documents(
+    chain: SubjectChainRow,
+    document_ids: list[str] | None = None,
+    canonical_docs: list[DocumentRow] | None = None,
+) -> list[dict[str, Any]]:
+    rows = _chain_event_document_rows(chain, document_ids)
+    if canonical_docs is not None:
+        rows = _user_canonical_document_rows(rows, canonical_docs)
+    return [serialize_dashboard_document(doc) for doc in rows]
 
 
 def _chain_event_document_rows(chain: SubjectChainRow, document_ids: list[str] | None = None) -> list[DocumentRow]:
     requested_ids = set(document_ids or [])
+    all_docs: list[DocumentRow] = []
     selected_docs: list[DocumentRow] = []
     for link in sorted(
         chain.document_links,
@@ -299,9 +325,15 @@ def _chain_event_document_rows(chain: SubjectChainRow, document_ids: list[str] |
         doc = link.document
         if doc is None:
             continue
-        if requested_ids and link.document_id not in requested_ids:
-            continue
-        selected_docs.append(doc)
+        all_docs.append(doc)
+
+    if requested_ids:
+        seed_docs = [doc for doc in all_docs if doc.id in requested_ids]
+        for doc in all_docs:
+            if any(_documents_equivalent_for_dashboard(doc, seed) for seed in seed_docs):
+                selected_docs.append(doc)
+    else:
+        selected_docs = list(all_docs)
 
     canonical: list[DocumentRow] = []
     for doc in sorted(selected_docs, key=_document_sort_key, reverse=True):
@@ -496,6 +528,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "documents": _chain_event_documents(
                         chain,
                         snapshot.get("start_document_ids") or snapshot.get("document_ids"),
+                        canonical_docs,
                     ),
                     "chain": serialized_chain,
                 })
@@ -508,6 +541,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "documents": _chain_event_documents(
                         chain,
                         snapshot.get("end_document_ids") or snapshot.get("document_ids"),
+                        canonical_docs,
                     ),
                     "chain": serialized_chain,
                 })
@@ -519,7 +553,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "title": "Payroll observed",
                     "type": "record",
                     "category": "employment",
-                    "documents": _chain_event_documents(chain, document_ids),
+                    "documents": _chain_event_documents(chain, document_ids, canonical_docs),
                     "chain": serialized_chain,
                 })
             for report_date, document_ids in sorted(
@@ -530,7 +564,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "title": "E-Verify case recorded",
                     "type": "record",
                     "category": "employment",
-                    "documents": _chain_event_documents(chain, document_ids),
+                    "documents": _chain_event_documents(chain, document_ids, canonical_docs),
                     "chain": serialized_chain,
                 })
         elif chain.chain_type == "entity":
@@ -540,7 +574,11 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "title": "Entity formed",
                     "type": "milestone",
                     "category": "business",
-                    "documents": _chain_event_documents(chain, _formation_doc_ids_for_date(chain, chain.start_date)),
+                    "documents": _chain_event_documents(
+                        chain,
+                        _formation_doc_ids_for_date(chain, chain.start_date),
+                        canonical_docs,
+                    ),
                     "chain": serialized_chain,
                 })
             for assigned_date, document_ids in sorted(
@@ -551,7 +589,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "title": "EIN assigned",
                     "type": "milestone",
                     "category": "business",
-                    "documents": _chain_event_documents(chain, document_ids),
+                    "documents": _chain_event_documents(chain, document_ids, canonical_docs),
                     "chain": serialized_chain,
                 })
             for consent_date, document_ids in sorted(
@@ -562,18 +600,20 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     "title": "Registered agent consented",
                     "type": "record",
                     "category": "business",
-                    "documents": _chain_event_documents(chain, document_ids),
+                    "documents": _chain_event_documents(chain, document_ids, canonical_docs),
                     "chain": serialized_chain,
                 })
             for tax_event in snapshot.get("tax_events") or []:
                 document_ids = tax_event.get("document_ids") or []
-                entity_linked_tax_docs.extend(_chain_event_document_rows(chain, document_ids))
+                entity_linked_tax_docs.extend(
+                    _user_canonical_document_rows(_chain_event_document_rows(chain, document_ids), canonical_docs)
+                )
                 events.append({
                     "date": tax_event["date"],
                     "title": tax_event["title"],
                     "type": "filing",
                     "category": "tax",
-                    "documents": _chain_event_documents(chain, document_ids),
+                    "documents": _chain_event_documents(chain, document_ids, canonical_docs),
                     "chain": serialized_chain,
                 })
 

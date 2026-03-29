@@ -705,6 +705,115 @@ def test_dashboard_timeline_prefers_signed_supported_stem_start_events(client, t
     assert chains["employment:wolff-li-capital-inc:2025-03-17"]["status"] == "active"
 
 
+def test_dashboard_timeline_and_chains_use_canonical_document_ids_for_equivalent_duplicates(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-canonical-ids@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+    i983_new_id = None
+    tax_new_id = None
+
+    session = next(app.dependency_overrides[get_session]())
+    now = datetime.now(timezone.utc)
+    try:
+        stem_check = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        entity_check = CheckRow(track="entity", status="reviewed", user_id=user_id, answers={"entity_type": "smllc"})
+        session.add_all([stem_check, entity_check])
+        session.flush()
+
+        i983_old = DocumentRow(
+            check_id=stem_check.id,
+            doc_type="i983",
+            filename="i983-wolff-and-li-signed.pdf",
+            file_path=str(tmp_path / "i983-old.pdf"),
+            file_size=120,
+            mime_type="application/pdf",
+            content_hash="shared-i983-hash",
+            source_path="employment/Wolff/i983-wolff-and-li-signed.pdf",
+            is_active=False,
+            uploaded_at=now - timedelta(days=1),
+        )
+        i983_new = DocumentRow(
+            check_id=stem_check.id,
+            doc_type="i983",
+            filename="i983-wolff-and-li-signed.pdf",
+            file_path=str(tmp_path / "i983-new.pdf"),
+            file_size=120,
+            mime_type="application/pdf",
+            content_hash="shared-i983-hash",
+            source_path="employment/Wolff/i983-wolff-and-li-signed.pdf",
+            is_active=True,
+            uploaded_at=now,
+        )
+        tax_old = DocumentRow(
+            check_id=entity_check.id,
+            doc_type="tax_return",
+            filename="2024_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-old.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="shared-tax-hash",
+            source_path="Tax/2024/2024_TaxReturn.pdf",
+            is_active=False,
+            uploaded_at=now - timedelta(days=1),
+        )
+        tax_new = DocumentRow(
+            check_id=entity_check.id,
+            doc_type="tax_return",
+            filename="2024_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-new.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="shared-tax-hash",
+            source_path="Tax/2024/2024_TaxReturn.pdf",
+            is_active=True,
+            uploaded_at=now,
+        )
+        session.add_all([i983_old, i983_new, tax_old, tax_new])
+        session.flush()
+        i983_new_id = i983_new.id
+        tax_new_id = tax_new.id
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=i983_old.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=i983_old.id, field_name="start_date", field_value="2025-03-17"),
+                ExtractedFieldRow(document_id=i983_new.id, field_name="employer_name", field_value="Wolff & Li Capital Inc."),
+                ExtractedFieldRow(document_id=i983_new.id, field_name="start_date", field_value="2025-03-17"),
+                ExtractedFieldRow(document_id=tax_old.id, field_name="entity_name", field_value="Bamboo Shoot Growth Capital LLC"),
+                ExtractedFieldRow(document_id=tax_old.id, field_name="tax_year", field_value="2024"),
+                ExtractedFieldRow(document_id=tax_new.id, field_name="entity_name", field_value="Bamboo Shoot Growth Capital LLC"),
+                ExtractedFieldRow(document_id=tax_new.id, field_name="tax_year", field_value="2024"),
+            ]
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    docs_resp = client.get("/api/dashboard/documents", headers={"Authorization": f"Bearer {token}"})
+    assert docs_resp.status_code == 200
+    visible_doc_ids = {doc["id"] for doc in docs_resp.json()}
+    assert visible_doc_ids == {i983_new_id, tax_new_id}
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    timeline = timeline_resp.json()
+
+    stem_event = next(
+        event for event in timeline["events"]
+        if event["title"] == "STEM OPT started" and event["date"] == "2025-03-17"
+    )
+    assert {doc["id"] for doc in stem_event["documents"]} == {i983_new_id}
+
+    tax_event = next(event for event in timeline["events"] if event["title"] == "2024 Tax Return filed")
+    assert {doc["id"] for doc in tax_event["documents"]} == {tax_new_id}
+
+    chains_resp = client.get("/api/dashboard/chains", headers={"Authorization": f"Bearer {token}"})
+    assert chains_resp.status_code == 200
+    chains = {chain["chain_key"]: chain for chain in chains_resp.json()}
+    assert {doc["document_id"] for doc in chains["employment:wolff-li-capital-inc:2025-03-17"]["documents"]} == {i983_new_id}
+    assert {doc["document_id"] for doc in chains["entity:bamboo-shoot-growth-capital-llc"]["documents"]} == {tax_new_id}
+
+
 def test_dashboard_timeline_keeps_same_day_employment_chains_separate(client, tmp_path):
     register = client.post("/api/auth/register", json={"email": "dashboard-same-day-chains@example.com", "password": "secure123"})
     token = register.json()["token"]

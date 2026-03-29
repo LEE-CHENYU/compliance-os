@@ -149,7 +149,9 @@ def list_subject_chains(
 ):
     user = _get_user(authorization, db)
     sync_user_subject_chains(user.id, db)
-    chains = [serialize_subject_chain(chain) for chain in list_user_subject_chains(user.id, db)]
+    checks = db.query(CheckRow).filter(CheckRow.user_id == user.id).all()
+    canonical_docs = canonical_documents_for_checks(checks)
+    chains = [serialize_subject_chain(chain, canonical_docs) for chain in list_user_subject_chains(user.id, db)]
     db.commit()
     return chains
 

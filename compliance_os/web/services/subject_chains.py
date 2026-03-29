@@ -232,6 +232,37 @@ def _document_appears_final(doc: DocumentRow) -> bool:
     return any(token in reference for token in ("signed", "ink signed", "docusign", "final"))
 
 
+def _has_extracted_values(doc: DocumentRow | None) -> bool:
+    if doc is None:
+        return False
+    return any(field.field_value not in (None, "") for field in doc.extracted_fields)
+
+
+def _dashboard_document_sort_key(doc: DocumentRow | None) -> tuple[bool, bool, bool, bool, datetime, str]:
+    if doc is None:
+        return (False, False, False, False, datetime.min, "")
+    return (
+        doc.is_active is not False,
+        bool(doc.content_hash),
+        _has_rich_source_path(doc),
+        _has_extracted_values(doc),
+        _normalized_uploaded_at(doc),
+        doc.id,
+    )
+
+
+def _canonical_dashboard_document(
+    doc: DocumentRow | None,
+    canonical_documents: list[DocumentRow] | None,
+) -> DocumentRow | None:
+    if doc is None or not canonical_documents:
+        return doc
+    for candidate in canonical_documents:
+        if _documents_equivalent(doc, candidate):
+            return candidate
+    return doc
+
+
 def _doc_sort_key(doc: DocumentRow) -> tuple[datetime, str]:
     return (_normalized_uploaded_at(doc), doc.id)
 
@@ -1094,30 +1125,31 @@ def list_user_subject_chains(
     return query.all()
 
 
-def serialize_subject_chain(chain: SubjectChainRow) -> dict[str, Any]:
-    canonical_links: list[SubjectDocumentLinkRow] = []
+def serialize_subject_chain(
+    chain: SubjectChainRow,
+    canonical_documents: list[DocumentRow] | None = None,
+) -> dict[str, Any]:
+    canonical_links: list[tuple[SubjectDocumentLinkRow, DocumentRow | None]] = []
     for link in sorted(
         chain.document_links,
         key=lambda item: (
+            _dashboard_document_sort_key(item.document),
             item.is_primary,
             item.link_confidence or 0.0,
-            bool(item.document and item.document.content_hash),
-            bool(item.document and _has_rich_source_path(item.document)),
             _document_appears_final(item.document) if item.document else False,
-            _normalized_uploaded_at(item.document) if item.document else datetime.min,
             item.document_id,
         ),
         reverse=True,
     ):
-        doc = link.document
-        if doc is not None and any(existing.document and _documents_equivalent(doc, existing.document) for existing in canonical_links):
+        doc = _canonical_dashboard_document(link.document, canonical_documents)
+        if doc is not None and any(existing_doc and _documents_equivalent(doc, existing_doc) for _, existing_doc in canonical_links):
             continue
-        canonical_links.append(link)
+        canonical_links.append((link, doc))
 
     canonical_links.sort(
         key=lambda item: (
-            _normalized_uploaded_at(item.document) if item.document else datetime.min,
-            item.document_id,
+            _normalized_uploaded_at(item[1]) if item[1] else datetime.min,
+            item[0].document_id,
         )
     )
     return {
@@ -1134,15 +1166,15 @@ def serialize_subject_chain(chain: SubjectChainRow) -> dict[str, Any]:
         "snapshot": chain.snapshot or {},
         "documents": [
             {
-                "document_id": link.document_id,
+                "document_id": doc.id if doc is not None else link.document_id,
                 "role": link.role,
                 "is_primary": link.is_primary,
                 "link_confidence": link.link_confidence,
                 "link_reason": link.link_reason,
                 "details": link.details or {},
-                "filename": link.document.filename if link.document else None,
-                "doc_type": link.document.doc_type if link.document else None,
+                "filename": doc.filename if doc else None,
+                "doc_type": doc.doc_type if doc else None,
             }
-            for link in canonical_links
+            for link, doc in canonical_links
         ],
     }

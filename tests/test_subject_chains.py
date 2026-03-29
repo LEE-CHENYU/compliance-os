@@ -302,5 +302,6 @@ def test_serialize_subject_chain_dedupes_equivalent_documents(tmp_path):
         chain = next(chain for chain in list_user_subject_chains(user_id, session) if chain.chain_type == "employment")
         serialized = serialize_subject_chain(chain)
         assert [item["filename"] for item in serialized["documents"]] == ["Wolff_&_Li_Capital_Offer_Letter.pdf"]
+        assert [item["document_id"] for item in serialized["documents"]] == [offer_two.id]
     finally:
         session.close()
