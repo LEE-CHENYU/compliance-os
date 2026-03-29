@@ -39,6 +39,70 @@ def _normalized_text(value: str | None) -> str:
     return " ".join(str(value).strip().lower().split())
 
 
+def _is_generic_parent_slug(value: str) -> bool:
+    return value in {
+        "",
+        "tmp",
+        "temp",
+        "uploads",
+        "upload",
+        "app",
+        "documents",
+        "document",
+        "letter",
+        "letters",
+        "employment",
+        "stem",
+        "opt",
+        "i983",
+        "check",
+        "checks",
+    }
+
+
+def _document_reference_parent(doc: DocumentRow) -> str:
+    reference = doc.source_path or doc.filename or ""
+    if not reference:
+        return ""
+    return _normalized_text(Path(reference).parent.name)
+
+
+def _document_appears_final(doc: DocumentRow) -> bool:
+    reference = _normalized_text(f"{doc.source_path or ''} {doc.filename or ''}")
+    if any(token in reference for token in ("draft", "unsigned", "outdated", "edited")):
+        return False
+    return any(token in reference for token in ("signed", "ink signed", "docusign", "final"))
+
+
+def _has_stronger_i983_successor(doc: DocumentRow, docs: list[DocumentRow]) -> bool:
+    fields = _field_map(doc)
+    employer_name = _normalized_text(fields.get("employer_name"))
+    if not employer_name:
+        return False
+
+    for other in docs:
+        if other.id == doc.id or other.doc_type != "i983":
+            continue
+        other_fields = _field_map(other)
+        if _normalized_text(other_fields.get("employer_name")) != employer_name:
+            continue
+        if _normalized_uploaded_at(other) < _normalized_uploaded_at(doc):
+            continue
+        if _document_appears_final(other):
+            return True
+    return False
+
+
+def _should_emit_i983_start_event(
+    doc: DocumentRow,
+    related_docs: list[dict[str, Any]],
+    docs: list[DocumentRow],
+) -> bool:
+    if len(related_docs) > 1 or _document_appears_final(doc):
+        return True
+    return not _has_stronger_i983_successor(doc, docs)
+
+
 def _documents_equivalent_for_dashboard(doc: DocumentRow, other: DocumentRow) -> bool:
     if doc.doc_type != other.doc_type:
         return False
@@ -101,6 +165,7 @@ def _match_employment_documents(i983_doc: DocumentRow, docs: list[DocumentRow]) 
     i983_fields = _field_map(i983_doc)
     employer_name = _normalized_text(i983_fields.get("employer_name"))
     start_date = i983_fields.get("start_date")
+    i983_parent = _document_reference_parent(i983_doc)
     matches: list[DocumentRow] = []
     for doc in docs:
         if doc.doc_type != "employment_letter":
@@ -108,10 +173,24 @@ def _match_employment_documents(i983_doc: DocumentRow, docs: list[DocumentRow]) 
         fields = _field_map(doc)
         employment_employer = _normalized_text(fields.get("employer_name"))
         employment_start_date = fields.get("start_date")
-        if employer_name and employment_employer and employment_employer == employer_name:
+        parent_slug = _document_reference_parent(doc)
+
+        employer_matches = bool(employer_name and employment_employer and employment_employer == employer_name)
+        start_matches = bool(start_date and employment_start_date and employment_start_date == start_date)
+        parent_matches = bool(
+            i983_parent
+            and parent_slug
+            and not _is_generic_parent_slug(i983_parent)
+            and i983_parent == parent_slug
+        )
+
+        if employer_matches and (not start_date or not employment_start_date or start_matches):
             matches.append(doc)
             continue
-        if start_date and employment_start_date and employment_start_date == start_date:
+        if start_matches and (not employer_name or not employment_employer):
+            matches.append(doc)
+            continue
+        if parent_matches and (start_matches or employer_matches or (not employer_name and not start_date)):
             matches.append(doc)
     deduped: list[dict[str, Any]] = []
     seen_ids: set[str] = set()
@@ -246,7 +325,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
 
         if doc.doc_type == "i983":
             related_docs = [serialize_dashboard_document(doc)] + _match_employment_documents(doc, canonical_docs)
-            if fields.get("start_date"):
+            if fields.get("start_date") and _should_emit_i983_start_event(doc, related_docs, canonical_docs):
                 events.append({
                     "date": fields["start_date"],
                     "title": "STEM OPT started",

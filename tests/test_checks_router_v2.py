@@ -1679,6 +1679,45 @@ def test_infer_series_keys_for_resume_cover_letter_work_sample_and_h1b_worksheet
     )
 
 
+def test_infer_series_keys_for_i983_and_employment_letter():
+    assert (
+        infer_document_series_key(
+            "i983",
+            source_path="/Users/lichenyu/Desktop/Important Docs /stem opt/i983/vcv/Chenyu_i983 Form_100124_ink_signed.pdf",
+        )
+        == "i983:vcv"
+    )
+    assert (
+        infer_document_series_key(
+            "employment_letter",
+            source_path="/Users/lichenyu/Desktop/Important Docs /employment/VCV/vcv_full_time.pdf",
+        )
+        == "employment_letter:vcv"
+    )
+    assert (
+        infer_document_series_key(
+            "i983",
+            extracted_values={
+                "employer_name": "Wolff & Li Capital Inc.",
+                "start_date": "2025-03-17",
+            },
+            source_path="stem opt/i983/wolff-and-li/i983-wolff-and-li-signed.pdf",
+        )
+        == "i983:wolff-li-capital-inc:2025-03-17"
+    )
+    assert (
+        infer_document_series_key(
+            "employment_letter",
+            extracted_values={
+                "employer_name": "Wolff & Li Capital Inc.",
+                "start_date": "2025-03-17",
+            },
+            source_path="employment/Wolff & Li/Wolff_&_Li_Capital_Offer_Letter.pdf",
+        )
+        == "employment_letter:wolff-li-capital-inc:2025-03-17"
+    )
+
+
 def test_retrieval_context_endpoint_returns_active_and_prior_versions(client, db_session):
     check = CheckRow(track="stem_opt", status="reviewed", answers={"stage": "stem_opt"})
     db_session.add(check)
@@ -1688,6 +1727,7 @@ def test_retrieval_context_endpoint_returns_active_and_prior_versions(client, db
         check_id=check.id,
         doc_type="employment_letter",
         document_family="employment_letter",
+        document_series_key="employment_letter:clinipulse-llc:2025-02-20",
         document_version=1,
         is_active=False,
         filename="offer_old.pdf",
@@ -1703,6 +1743,7 @@ def test_retrieval_context_endpoint_returns_active_and_prior_versions(client, db
         check_id=check.id,
         doc_type="employment_letter",
         document_family="employment_letter",
+        document_series_key="employment_letter:clinipulse-llc:2025-02-20",
         document_version=2,
         is_active=True,
         filename="offer_new.pdf",
@@ -1724,7 +1765,7 @@ def test_retrieval_context_endpoint_returns_active_and_prior_versions(client, db
     body = resp.json()
     family = next(item for item in body["families"] if item["document_family"] == "employment_letter")
     assert family["active_document"]["filename"] == "offer_new.pdf"
-    assert family["document_series_key"] == "employment_letter"
+    assert family["document_series_key"] == "employment_letter:clinipulse-llc:2025-02-20"
     assert family["active_document"]["document_version"] == 2
     assert len(family["prior_versions"]) == 1
     assert body["retrieved_documents"][0]["filename"] == "offer_new.pdf"
@@ -1850,7 +1891,7 @@ def test_snapshot_includes_versioned_document_extractions(client, db_session):
     assert resp.status_code == 200
     body = resp.json()
     assert body["document_extractions"][0]["document_family"] == "employment_letter"
-    assert body["document_extractions"][0]["document_series_key"] == "employment_letter"
+    assert body["document_extractions"][0]["document_series_key"] == "employment_letter:clinipulse-llc"
     assert body["document_extractions"][0]["document_version"] == 3
     assert body["document_extractions"][0]["is_active"] is True
     assert body["document_extractions"][0]["provenance"]["ocr"]["engine"] == "test_ocr"

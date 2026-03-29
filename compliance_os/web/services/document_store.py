@@ -76,6 +76,31 @@ def _first_date_candidate(*values: str | None) -> str | None:
     return None
 
 
+def _reference_context_slug(reference: str | None, reference_stem: str) -> str | None:
+    generic_parents = {
+        "tmp",
+        "temp",
+        "uploads",
+        "upload",
+        "app",
+        "documents",
+        "document",
+        "letter",
+        "letters",
+        "employment",
+        "stem",
+        "opt",
+        "i983",
+        "check",
+        "checks",
+    }
+    if reference:
+        parent = _series_slug(Path(reference).parent.name if reference else "")
+        if parent and parent not in generic_parents:
+            return parent
+    return None
+
+
 def infer_document_series_key(
     doc_type: str,
     *,
@@ -151,6 +176,38 @@ def infer_document_series_key(
                 category = "c03b"
         if category:
             return f"{family}:{category}"
+        return family
+
+    if doc_type == "employment_letter":
+        employer = _series_slug(str(extracted_values.get("employer_name") or ""))
+        start_date = _first_date_candidate(
+            str(extracted_values.get("start_date") or ""),
+            reference,
+            ocr_text,
+        )
+        context = _reference_context_slug(reference, reference_stem)
+        if employer and start_date:
+            return f"{family}:{employer}:{start_date}"
+        if employer:
+            return f"{family}:{employer}"
+        if context:
+            return f"{family}:{context}"
+        return family
+
+    if doc_type == "i983":
+        employer = _series_slug(str(extracted_values.get("employer_name") or ""))
+        start_date = _first_date_candidate(
+            str(extracted_values.get("start_date") or ""),
+            reference,
+            ocr_text,
+        )
+        context = _reference_context_slug(reference, reference_stem)
+        if employer and start_date:
+            return f"{family}:{employer}:{start_date}"
+        if employer:
+            return f"{family}:{employer}"
+        if context:
+            return f"{family}:{context}"
         return family
 
     if doc_type == "resume":
