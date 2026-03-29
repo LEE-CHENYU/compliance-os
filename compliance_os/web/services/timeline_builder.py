@@ -1510,6 +1510,16 @@ def _build_deadlines(
     active_stem_chains = _active_stem_opt_chains(subject_chains or [])
 
     for chain in active_stem_chains:
+        # Skip chains that have already ended — they are historical employment
+        # records and should not generate active deadlines.
+        if chain.end_date:
+            try:
+                end_dt = datetime.strptime(chain.end_date, "%Y-%m-%d").date()
+                if end_dt < today:
+                    continue  # historical chain — no deadlines
+            except ValueError:
+                pass
+
         if chain.start_date:
             try:
                 start_dt = datetime.strptime(chain.start_date, "%Y-%m-%d").date()
