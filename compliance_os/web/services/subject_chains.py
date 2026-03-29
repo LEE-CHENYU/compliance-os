@@ -297,7 +297,7 @@ def _entity_seed(doc: DocumentRow) -> dict[str, Any] | None:
         "subject_name": entity_name,
         "subject_identifier": ein,
         "context_label": context_label,
-        "start_date": _normalize_iso_date(_first_present(fields, ["formation_date", "start_date"])),
+        "start_date": _normalize_iso_date(_first_present(fields, ["formation_date", "start_date", "filing_date"])),
         "end_date": None,
         "tax_year": int(tax_year_match.group(1)) if tax_year_match else None,
         "doc": doc,

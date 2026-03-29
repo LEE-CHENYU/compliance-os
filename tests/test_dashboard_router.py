@@ -570,6 +570,7 @@ def test_dashboard_timeline_maps_documents_to_specific_events_and_collapses_lega
     assert {doc["filename"] for doc in tax_2023_event["documents"]} == {"2023_TaxReturn.pdf"}
 
     tax_2024_event = next(event for event in timeline["events"] if event["title"] == "2024 Tax Return filed")
+    assert len([event for event in timeline["events"] if event["title"] == "2024 Tax Return filed"]) == 1
     assert {doc["filename"] for doc in tax_2024_event["documents"]} == {"2024_TaxReturn.pdf"}
 
     wolff_event = next(
@@ -792,3 +793,102 @@ def test_dashboard_timeline_keeps_same_day_employment_chains_separate(client, tm
         "Tiger Cloud LLC (vcv)",
         "Wolff & Li Capital Inc.",
     }
+
+
+def test_dashboard_timeline_includes_payroll_and_entity_milestones(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-chain-events@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    now = datetime.now(timezone.utc)
+    try:
+        employment_check = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "employment"})
+        entity_check = CheckRow(track="entity", status="reviewed", user_id=user_id, answers={"entity_type": "smllc"})
+        session.add_all([employment_check, entity_check])
+        session.flush()
+
+        claudius_paystub = DocumentRow(
+            check_id=employment_check.id,
+            doc_type="paystub",
+            filename="chenyu-li-paystub-2025-02-25.pdf",
+            file_path=str(tmp_path / "claudius-paystub.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="claudius-paystub",
+            source_path="employment/Claudius/chenyu-li-paystub-2025-02-25.pdf",
+            uploaded_at=now,
+        )
+        articles = DocumentRow(
+            check_id=entity_check.id,
+            doc_type="articles_of_organization",
+            filename="Articles of Organization.pdf",
+            file_path=str(tmp_path / "articles.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="articles-1",
+            source_path="business/Bamboo/Articles of Organization.pdf",
+            uploaded_at=now - timedelta(days=5),
+        )
+        ein_letter = DocumentRow(
+            check_id=entity_check.id,
+            doc_type="ein_letter",
+            filename="CP575Notice_1686945041312.pdf",
+            file_path=str(tmp_path / "cp575.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="ein-letter-1",
+            source_path="business/Bamboo/CP575Notice_1686945041312.pdf",
+            uploaded_at=now - timedelta(days=4),
+        )
+        tax_return = DocumentRow(
+            check_id=entity_check.id,
+            doc_type="tax_return",
+            filename="2024_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-return.pdf"),
+            file_size=100,
+            mime_type="application/pdf",
+            content_hash="tax-2024",
+            source_path="business/Bamboo/2024_TaxReturn.pdf",
+            uploaded_at=now - timedelta(days=2),
+        )
+        session.add_all([claudius_paystub, articles, ein_letter, tax_return])
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=claudius_paystub.id, field_name="employer_name", field_value="Claudius Legal Intelligence Inc"),
+                ExtractedFieldRow(document_id=claudius_paystub.id, field_name="pay_date", field_value="2025-02-25"),
+                ExtractedFieldRow(document_id=articles.id, field_name="entity_name", field_value="Bamboo Shoot Growth Capital LLC"),
+                ExtractedFieldRow(document_id=articles.id, field_name="filing_date", field_value="2023-06-16"),
+                ExtractedFieldRow(document_id=ein_letter.id, field_name="entity_name", field_value="Bamboo Shoot Growth Capital LLC"),
+                ExtractedFieldRow(document_id=ein_letter.id, field_name="assigned_date", field_value="2023-06-20"),
+                ExtractedFieldRow(document_id=tax_return.id, field_name="entity_name", field_value="Bamboo Shoot Growth Capital LLC"),
+                ExtractedFieldRow(document_id=tax_return.id, field_name="tax_year", field_value="2024"),
+            ]
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    timeline = timeline_resp.json()
+
+    payroll_event = next(event for event in timeline["events"] if event["title"] == "Payroll observed")
+    assert payroll_event["date"] == "2025-02-25"
+    assert payroll_event["chain"]["label"] == "Claudius Legal Intelligence Inc"
+    assert {doc["filename"] for doc in payroll_event["documents"]} == {"chenyu-li-paystub-2025-02-25.pdf"}
+
+    formation_event = next(event for event in timeline["events"] if event["title"] == "Entity formed")
+    assert formation_event["date"] == "2023-06-16"
+    assert formation_event["chain"]["label"] == "Bamboo Shoot Growth Capital LLC"
+    assert {doc["filename"] for doc in formation_event["documents"]} == {"Articles of Organization.pdf"}
+
+    ein_event = next(event for event in timeline["events"] if event["title"] == "EIN assigned")
+    assert ein_event["date"] == "2023-06-20"
+    assert {doc["filename"] for doc in ein_event["documents"]} == {"CP575Notice_1686945041312.pdf"}
+
+    tax_events = [event for event in timeline["events"] if event["title"] == "2024 Tax Return filed"]
+    assert len(tax_events) == 1
+    assert {doc["filename"] for doc in tax_events[0]["documents"]} == {"2024_TaxReturn.pdf"}

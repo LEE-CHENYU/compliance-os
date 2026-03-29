@@ -286,6 +286,10 @@ def _serialize_timeline_chain(chain: SubjectChainRow) -> dict[str, Any]:
 
 
 def _chain_event_documents(chain: SubjectChainRow, document_ids: list[str] | None = None) -> list[dict[str, Any]]:
+    return [serialize_dashboard_document(doc) for doc in _chain_event_document_rows(chain, document_ids)]
+
+
+def _chain_event_document_rows(chain: SubjectChainRow, document_ids: list[str] | None = None) -> list[DocumentRow]:
     requested_ids = set(document_ids or [])
     selected_docs: list[DocumentRow] = []
     for link in sorted(
@@ -306,7 +310,48 @@ def _chain_event_documents(chain: SubjectChainRow, document_ids: list[str] | Non
         canonical.append(doc)
 
     canonical.sort(key=lambda doc: (_normalized_uploaded_at(doc), doc.filename or "", doc.id))
-    return [serialize_dashboard_document(doc) for doc in canonical]
+    return canonical
+
+
+def _event_doc_ids_by_date(chain: SubjectChainRow, doc_type: str, field_names: tuple[str, ...]) -> dict[str, list[str]]:
+    grouped: dict[str, list[str]] = {}
+    for doc in _chain_event_document_rows(chain):
+        if doc.doc_type != doc_type:
+            continue
+        fields = _field_map(doc)
+        event_date = next((fields.get(name) for name in field_names if fields.get(name)), None)
+        if not event_date:
+            continue
+        grouped.setdefault(event_date, []).append(doc.id)
+    return grouped
+
+
+def _formation_doc_ids_for_date(chain: SubjectChainRow, event_date: str) -> list[str]:
+    matched: list[str] = []
+    fallback: list[str] = []
+    for doc in _chain_event_document_rows(chain):
+        if doc.doc_type not in {
+            "articles_of_organization",
+            "certificate_of_good_standing",
+            "ein_application",
+            "registered_agent_consent",
+        }:
+            continue
+        fallback.append(doc.id)
+        fields = _field_map(doc)
+        candidate_dates = (
+            fields.get("formation_date"),
+            fields.get("start_date"),
+            fields.get("filing_date"),
+            fields.get("consent_date"),
+        )
+        if event_date in candidate_dates:
+            matched.append(doc.id)
+    return matched or fallback
+
+
+def _documents_overlap_with_rows(doc: DocumentRow, others: list[DocumentRow]) -> bool:
+    return any(_documents_equivalent_for_dashboard(doc, other) for other in others)
 
 
 def _match_employment_documents(i983_doc: DocumentRow, docs: list[DocumentRow]) -> list[dict[str, Any]]:
@@ -433,7 +478,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
         all_docs.append(serialized)
         doc_types_uploaded.add(doc.doc_type)
 
-    entity_linked_tax_doc_ids: set[str] = set()
+    entity_linked_tax_docs: list[DocumentRow] = []
     for chain in subject_chains:
         snapshot = dict(chain.snapshot or {})
         serialized_chain = _serialize_timeline_chain(chain)
@@ -466,10 +511,63 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     ),
                     "chain": serialized_chain,
                 })
+            for pay_date, document_ids in sorted(
+                _event_doc_ids_by_date(chain, "paystub", ("pay_date", "pay_period_end", "pay_period_start")).items()
+            ):
+                events.append({
+                    "date": pay_date,
+                    "title": "Payroll observed",
+                    "type": "record",
+                    "category": "employment",
+                    "documents": _chain_event_documents(chain, document_ids),
+                    "chain": serialized_chain,
+                })
+            for report_date, document_ids in sorted(
+                _event_doc_ids_by_date(chain, "e_verify_case", ("report_prepared_date",)).items()
+            ):
+                events.append({
+                    "date": report_date,
+                    "title": "E-Verify case recorded",
+                    "type": "record",
+                    "category": "employment",
+                    "documents": _chain_event_documents(chain, document_ids),
+                    "chain": serialized_chain,
+                })
         elif chain.chain_type == "entity":
+            if chain.start_date:
+                events.append({
+                    "date": chain.start_date,
+                    "title": "Entity formed",
+                    "type": "milestone",
+                    "category": "business",
+                    "documents": _chain_event_documents(chain, _formation_doc_ids_for_date(chain, chain.start_date)),
+                    "chain": serialized_chain,
+                })
+            for assigned_date, document_ids in sorted(
+                _event_doc_ids_by_date(chain, "ein_letter", ("assigned_date",)).items()
+            ):
+                events.append({
+                    "date": assigned_date,
+                    "title": "EIN assigned",
+                    "type": "milestone",
+                    "category": "business",
+                    "documents": _chain_event_documents(chain, document_ids),
+                    "chain": serialized_chain,
+                })
+            for consent_date, document_ids in sorted(
+                _event_doc_ids_by_date(chain, "registered_agent_consent", ("consent_date",)).items()
+            ):
+                events.append({
+                    "date": consent_date,
+                    "title": "Registered agent consented",
+                    "type": "record",
+                    "category": "business",
+                    "documents": _chain_event_documents(chain, document_ids),
+                    "chain": serialized_chain,
+                })
             for tax_event in snapshot.get("tax_events") or []:
                 document_ids = tax_event.get("document_ids") or []
-                entity_linked_tax_doc_ids.update(document_ids)
+                entity_linked_tax_docs.extend(_chain_event_document_rows(chain, document_ids))
                 events.append({
                     "date": tax_event["date"],
                     "title": tax_event["title"],
@@ -482,7 +580,7 @@ def build_timeline(user_id: str, db: Session) -> dict:
     for doc in canonical_docs:
         fields = _field_map(doc)
 
-        if doc.doc_type == "tax_return" and doc.id not in entity_linked_tax_doc_ids:
+        if doc.doc_type == "tax_return" and not _documents_overlap_with_rows(doc, entity_linked_tax_docs):
             tax_year = fields.get("tax_year")
             if tax_year:
                 events.append({
