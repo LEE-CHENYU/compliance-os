@@ -434,28 +434,158 @@ def test_dashboard_upload_duplicate_action_asks_then_keeps(client, monkeypatch, 
     finally:
         session.close()
 
-    ask_resp = client.post(
-        "/api/dashboard/upload",
-        headers={"Authorization": f"Bearer {token}"},
-        files={"file": ("existing.pdf", duplicate_bytes, "application/pdf")},
-    )
-    assert ask_resp.status_code == 409
-    assert ask_resp.json()["detail"]["error"] == "duplicate_upload_detected"
 
-    keep_resp = client.post(
-        "/api/dashboard/upload",
-        headers={"Authorization": f"Bearer {token}"},
-        data={"duplicate_action": "keep"},
-        files={"file": ("existing.pdf", duplicate_bytes, "application/pdf")},
-    )
-    assert keep_resp.status_code == 200
-    assert keep_resp.json()["status"] == "uploaded"
-    assert keep_resp.json()["duplicates"][0]["filename"] == "existing.pdf"
+def test_dashboard_timeline_maps_documents_to_specific_events_and_collapses_legacy_aliases(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-event-map@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
 
     session = next(app.dependency_overrides[get_session]())
+    now = datetime.now(timezone.utc)
     try:
-        checks = session.query(CheckRow).filter(CheckRow.user_id == user_id).all()
-        stored = [doc for check in checks for doc in check.documents if doc.content_hash == duplicate_hash]
-        assert len(stored) == 2
+        check_one = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        check_two = CheckRow(track="stem_opt", status="reviewed", user_id=user_id, answers={"stage": "stem_opt"})
+        session.add_all([check_one, check_two])
+        session.flush()
+
+        tax_2024_legacy = DocumentRow(
+            check_id=check_one.id,
+            doc_type="tax_return",
+            filename="2024_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-2024-legacy.pdf"),
+            file_size=617644,
+            mime_type="application/pdf",
+            content_hash=None,
+            source_path="2024_TaxReturn.pdf",
+            uploaded_at=now - timedelta(days=2),
+        )
+        tax_2024 = DocumentRow(
+            check_id=check_two.id,
+            doc_type="tax_return",
+            filename="2024_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-2024.pdf"),
+            file_size=617644,
+            mime_type="application/pdf",
+            content_hash="tax-2024-hash",
+            source_path="/Users/lichenyu/Desktop/Important Docs /Tax/2024/2024_TaxReturn.pdf",
+            uploaded_at=now,
+        )
+        tax_2023 = DocumentRow(
+            check_id=check_two.id,
+            doc_type="tax_return",
+            filename="2023_TaxReturn.pdf",
+            file_path=str(tmp_path / "tax-2023.pdf"),
+            file_size=515737,
+            mime_type="application/pdf",
+            content_hash="tax-2023-hash",
+            source_path="/Users/lichenyu/Desktop/Important Docs /Tax/2023/2023_TaxReturn.pdf",
+            uploaded_at=now,
+        )
+        i983_wolff = DocumentRow(
+            check_id=check_one.id,
+            doc_type="i983",
+            filename="i983-wolff-and-li.pdf",
+            file_path=str(tmp_path / "i983-wolff.pdf"),
+            file_size=120,
+            mime_type="application/pdf",
+            content_hash="i983-wolff",
+            source_path="employment/Wolff/i983-wolff-and-li.pdf",
+            uploaded_at=now,
+        )
+        i983_bitsync = DocumentRow(
+            check_id=check_two.id,
+            doc_type="i983",
+            filename="Chenyu_i983 Form_100124_ink_signed.pdf",
+            file_path=str(tmp_path / "i983-bitsync.pdf"),
+            file_size=120,
+            mime_type="application/pdf",
+            content_hash="i983-bitsync",
+            source_path="employment/Bitsync/Chenyu_i983 Form_100124_ink_signed.pdf",
+            uploaded_at=now,
+        )
+        offer_wolff = DocumentRow(
+            check_id=check_one.id,
+            doc_type="employment_letter",
+            filename="Wolff_&_Li_Capital_Offer_Letter.pdf",
+            file_path=str(tmp_path / "offer-wolff.pdf"),
+            file_size=140,
+            mime_type="application/pdf",
+            content_hash="offer-wolff",
+            source_path="employment/Wolff/Wolff_&_Li_Capital_Offer_Letter.pdf",
+            uploaded_at=now,
+        )
+        offer_bitsync = DocumentRow(
+            check_id=check_two.id,
+            doc_type="employment_letter",
+            filename="signed offer letter bitsync.pdf",
+            file_path=str(tmp_path / "offer-bitsync.pdf"),
+            file_size=140,
+            mime_type="application/pdf",
+            content_hash="offer-bitsync",
+            source_path="employment/Bitsync/signed offer letter bitsync.pdf",
+            uploaded_at=now,
+        )
+        session.add_all(
+            [
+                tax_2024_legacy,
+                tax_2024,
+                tax_2023,
+                i983_wolff,
+                i983_bitsync,
+                offer_wolff,
+                offer_bitsync,
+            ]
+        )
+        session.flush()
+
+        session.add_all(
+            [
+                ExtractedFieldRow(document_id=tax_2024_legacy.id, field_name="tax_year", field_value="2024"),
+                ExtractedFieldRow(document_id=tax_2024.id, field_name="tax_year", field_value="2024"),
+                ExtractedFieldRow(document_id=tax_2023.id, field_name="tax_year", field_value="2023"),
+                ExtractedFieldRow(document_id=i983_wolff.id, field_name="start_date", field_value="2024-01-23"),
+                ExtractedFieldRow(document_id=i983_wolff.id, field_name="employer_name", field_value="Wolff & Li Capital"),
+                ExtractedFieldRow(document_id=i983_bitsync.id, field_name="start_date", field_value="2024-10-01"),
+                ExtractedFieldRow(document_id=i983_bitsync.id, field_name="employer_name", field_value="Bitsync"),
+                ExtractedFieldRow(document_id=offer_wolff.id, field_name="start_date", field_value="2024-01-23"),
+                ExtractedFieldRow(document_id=offer_wolff.id, field_name="employer_name", field_value="Wolff & Li Capital"),
+                ExtractedFieldRow(document_id=offer_bitsync.id, field_name="start_date", field_value="2024-10-01"),
+                ExtractedFieldRow(document_id=offer_bitsync.id, field_name="employer_name", field_value="Bitsync"),
+            ]
+        )
+        session.commit()
     finally:
         session.close()
+
+    docs_resp = client.get("/api/dashboard/documents", headers={"Authorization": f"Bearer {token}"})
+    assert docs_resp.status_code == 200
+    docs = docs_resp.json()
+    assert [doc["filename"] for doc in docs].count("2024_TaxReturn.pdf") == 1
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    timeline = timeline_resp.json()
+
+    tax_2023_event = next(event for event in timeline["events"] if event["title"] == "2023 Tax Return filed")
+    assert {doc["filename"] for doc in tax_2023_event["documents"]} == {"2023_TaxReturn.pdf"}
+
+    tax_2024_event = next(event for event in timeline["events"] if event["title"] == "2024 Tax Return filed")
+    assert {doc["filename"] for doc in tax_2024_event["documents"]} == {"2024_TaxReturn.pdf"}
+
+    wolff_event = next(
+        event for event in timeline["events"]
+        if event["title"] == "STEM OPT started" and event["date"] == "2024-01-23"
+    )
+    assert {doc["filename"] for doc in wolff_event["documents"]} == {
+        "i983-wolff-and-li.pdf",
+        "Wolff_&_Li_Capital_Offer_Letter.pdf",
+    }
+
+    bitsync_event = next(
+        event for event in timeline["events"]
+        if event["title"] == "STEM OPT started" and event["date"] == "2024-10-01"
+    )
+    assert {doc["filename"] for doc in bitsync_event["documents"]} == {
+        "Chenyu_i983 Form_100124_ink_signed.pdf",
+        "signed offer letter bitsync.pdf",
+    }

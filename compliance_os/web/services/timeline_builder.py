@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from pathlib import Path
 from typing import Any
 
 from sqlalchemy.orm import Session
@@ -13,18 +14,58 @@ def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
     return doc.uploaded_at or datetime.min
 
 
-def _document_identity_key(doc: DocumentRow) -> tuple[str, str]:
-    if doc.content_hash:
-        return ("content_hash", f"{doc.doc_type}:{doc.content_hash}")
-    if doc.source_path:
-        return ("source_path", f"{doc.doc_type}:{doc.source_path}")
-    return ("filename", f"{doc.doc_type}:{doc.filename}:{doc.file_size or 0}")
+def _source_name(value: str | None) -> str:
+    if not value:
+        return ""
+    return Path(value).name or value
 
 
-def _document_sort_key(doc: DocumentRow) -> tuple[bool, bool, datetime, str]:
+def _has_rich_source_path(doc: DocumentRow) -> bool:
+    source_path = doc.source_path or ""
+    return "/" in source_path or "\\" in source_path
+
+
+def _field_map(doc: DocumentRow) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for field in doc.extracted_fields:
+        if field.field_value not in (None, ""):
+            out[field.field_name] = field.field_value
+    return out
+
+
+def _normalized_text(value: str | None) -> str:
+    if not value:
+        return ""
+    return " ".join(str(value).strip().lower().split())
+
+
+def _documents_equivalent_for_dashboard(doc: DocumentRow, other: DocumentRow) -> bool:
+    if doc.doc_type != other.doc_type:
+        return False
+    if doc.content_hash and other.content_hash and doc.content_hash == other.content_hash:
+        return True
+    if doc.source_path and other.source_path and doc.source_path == other.source_path:
+        return True
+    if (doc.filename or "") != (other.filename or ""):
+        return False
+    if (doc.file_size or 0) != (other.file_size or 0):
+        return False
+    if _source_name(doc.source_path or doc.filename) != _source_name(other.source_path or other.filename):
+        return False
+    return bool(
+        doc.content_hash
+        or other.content_hash
+        or not _has_rich_source_path(doc)
+        or not _has_rich_source_path(other)
+    )
+
+
+def _document_sort_key(doc: DocumentRow) -> tuple[bool, bool, bool, bool, datetime, str]:
     has_values = any(field.field_value not in (None, "") for field in doc.extracted_fields)
     return (
         doc.is_active is not False,
+        bool(doc.content_hash),
+        _has_rich_source_path(doc),
         has_values,
         _normalized_uploaded_at(doc),
         doc.id,
@@ -32,15 +73,14 @@ def _document_sort_key(doc: DocumentRow) -> tuple[bool, bool, datetime, str]:
 
 
 def canonical_documents_for_checks(checks: list[CheckRow]) -> list[DocumentRow]:
-    canonical: dict[tuple[str, str], DocumentRow] = {}
-    for check in checks:
-        for doc in check.documents:
-            key = _document_identity_key(doc)
-            existing = canonical.get(key)
-            if existing is None or _document_sort_key(doc) > _document_sort_key(existing):
-                canonical[key] = doc
+    all_docs = [doc for check in checks for doc in check.documents]
+    canonical: list[DocumentRow] = []
+    for doc in sorted(all_docs, key=_document_sort_key, reverse=True):
+        if any(_documents_equivalent_for_dashboard(doc, existing) for existing in canonical):
+            continue
+        canonical.append(doc)
     return sorted(
-        canonical.values(),
+        canonical,
         key=lambda doc: (_normalized_uploaded_at(doc), doc.filename or "", doc.id),
         reverse=True,
     )
@@ -55,6 +95,32 @@ def serialize_dashboard_document(doc: DocumentRow) -> dict[str, Any]:
         "uploaded_at": doc.uploaded_at.isoformat() if doc.uploaded_at else None,
         "category": _doc_category(doc.doc_type),
     }
+
+
+def _match_employment_documents(i983_doc: DocumentRow, docs: list[DocumentRow]) -> list[dict[str, Any]]:
+    i983_fields = _field_map(i983_doc)
+    employer_name = _normalized_text(i983_fields.get("employer_name"))
+    start_date = i983_fields.get("start_date")
+    matches: list[DocumentRow] = []
+    for doc in docs:
+        if doc.doc_type != "employment_letter":
+            continue
+        fields = _field_map(doc)
+        employment_employer = _normalized_text(fields.get("employer_name"))
+        employment_start_date = fields.get("start_date")
+        if employer_name and employment_employer and employment_employer == employer_name:
+            matches.append(doc)
+            continue
+        if start_date and employment_start_date and employment_start_date == start_date:
+            matches.append(doc)
+    deduped: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for doc in matches:
+        if doc.id in seen_ids:
+            continue
+        seen_ids.add(doc.id)
+        deduped.append(serialize_dashboard_document(doc))
+    return deduped
 
 
 def _finding_identity_key(finding: FindingRow | dict[str, Any]) -> tuple[Any, ...]:
@@ -170,50 +236,45 @@ def build_timeline(user_id: str, db: Session) -> dict:
 
     doc_types_uploaded: set[str] = set()
     canonical_docs = canonical_documents_for_checks(checks)
-    docs_by_type: dict[str, list[dict[str, Any]]] = {}
     for doc in canonical_docs:
         serialized = serialize_dashboard_document(doc)
         all_docs.append(serialized)
-        docs_by_type.setdefault(doc.doc_type, []).append(serialized)
+        doc_types_uploaded.add(doc.doc_type)
+
+    for doc in canonical_docs:
+        fields = _field_map(doc)
+
+        if doc.doc_type == "i983":
+            related_docs = [serialize_dashboard_document(doc)] + _match_employment_documents(doc, canonical_docs)
+            if fields.get("start_date"):
+                events.append({
+                    "date": fields["start_date"],
+                    "title": "STEM OPT started",
+                    "type": "milestone",
+                    "category": "immigration",
+                    "documents": related_docs,
+                })
+            if fields.get("end_date"):
+                events.append({
+                    "date": fields["end_date"],
+                    "title": "STEM OPT ends",
+                    "type": "deadline",
+                    "category": "immigration",
+                    "documents": [serialize_dashboard_document(doc)],
+                })
+
+        if doc.doc_type == "tax_return":
+            tax_year = fields.get("tax_year")
+            if tax_year:
+                events.append({
+                    "date": f"{tax_year}-04-15",
+                    "title": f"{tax_year} Tax Return filed",
+                    "type": "filing",
+                    "category": "tax",
+                    "documents": [serialize_dashboard_document(doc)],
+                })
 
     for check in checks:
-        for doc in check.documents:
-            doc_types_uploaded.add(doc.doc_type)
-
-        # Extract dates from extracted fields to create timeline events
-        for doc in check.documents:
-            fields = {f.field_name: f.field_value for f in doc.extracted_fields}
-
-            if doc.doc_type == "i983":
-                if fields.get("start_date"):
-                    events.append({
-                        "date": fields["start_date"],
-                        "title": "STEM OPT started",
-                        "type": "milestone",
-                        "category": "immigration",
-                        "documents": docs_by_type.get("i983", []) + docs_by_type.get("employment_letter", []),
-                    })
-                if fields.get("end_date"):
-                    events.append({
-                        "date": fields["end_date"],
-                        "title": "STEM OPT ends",
-                        "type": "deadline",
-                        "category": "immigration",
-                        "documents": [],
-                    })
-
-            if doc.doc_type == "tax_return":
-                tax_year = fields.get("tax_year")
-                if tax_year:
-                    events.append({
-                        "date": f"{tax_year}-04-15",
-                        "title": f"{tax_year} Tax Return filed",
-                        "type": "filing",
-                        "category": "tax",
-                        "documents": docs_by_type.get("tax_return", []),
-                    })
-
-        # Collect findings and advisories
         for finding in check.findings:
             f_data = {
                 "id": finding.id,
