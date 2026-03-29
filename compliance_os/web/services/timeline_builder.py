@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -21,7 +21,12 @@ from compliance_os.web.services.subject_chains import (
 
 
 def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
-    return doc.uploaded_at or datetime.min
+    uploaded_at = doc.uploaded_at
+    if uploaded_at is None:
+        return datetime.min.replace(tzinfo=timezone.utc)
+    if uploaded_at.tzinfo is None:
+        return uploaded_at.replace(tzinfo=timezone.utc)
+    return uploaded_at
 
 
 def _source_name(value: str | None) -> str:

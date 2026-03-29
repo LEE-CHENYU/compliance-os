@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 from collections import Counter, defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -79,7 +79,9 @@ EMPLOYMENT_START_EVIDENCE_DOC_TYPES = {
 def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
     uploaded_at = doc.uploaded_at
     if uploaded_at is None:
-        return datetime.min
+        return datetime.min.replace(tzinfo=timezone.utc)
+    if uploaded_at.tzinfo is None:
+        return uploaded_at.replace(tzinfo=timezone.utc)
     return uploaded_at
 
 
