@@ -75,11 +75,19 @@ interface AssistantPrompt {
   cadence_seconds?: number;
 }
 
+interface ChatReferenceDoc {
+  id: string;
+  filename: string;
+  doc_type: string;
+  score?: number;
+}
+
 interface ChatMessage {
   id: string;
   role: "assistant" | "user";
   text: string;
   chips?: AssistantPromptChoice[];
+  references?: ChatReferenceDoc[];
 }
 
 interface Stats {
@@ -1616,7 +1624,7 @@ export default function DashboardPage() {
                             Referenced {msg.references.length} document{msg.references.length > 1 ? "s" : ""}
                           </summary>
                           <div className="flex flex-wrap gap-1.5 mt-2">
-                            {msg.references.map((ref: { id: string; filename: string; doc_type: string }) => (
+                            {msg.references.map((ref) => (
                               <span
                                 key={ref.id}
                                 className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] bg-[#5b8dee]/6 text-[#3a5a8c] border border-[#5b8dee]/10"
