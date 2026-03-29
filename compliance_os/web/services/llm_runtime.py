@@ -57,9 +57,19 @@ def configured_llm_provider() -> str:
     )
 
 
-def configured_llm_model(provider: str) -> str:
+def configured_llm_model(provider: str, *, task: str = "chat") -> str:
+    """Return the model ID for the given provider and task.
+
+    task="extraction" uses a cheaper/faster model (Haiku) for document extraction.
+    task="chat" uses the primary model (Sonnet) for interactive chat.
+    """
     if provider == "anthropic":
-        return os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+        if task == "extraction":
+            return os.environ.get(
+                "ANTHROPIC_EXTRACTION_MODEL",
+                os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
+            )
+        return os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6-20250527")
     if provider == "openai":
         return os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     raise LLMConfigError(f"Unsupported provider {provider}")
@@ -243,7 +253,7 @@ def extract_json(
     usage_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     provider = configured_llm_provider()
-    model = configured_llm_model(provider)
+    model = configured_llm_model(provider, task="extraction")
     started_at = datetime.now(timezone.utc)
     started_perf = perf_counter()
 
