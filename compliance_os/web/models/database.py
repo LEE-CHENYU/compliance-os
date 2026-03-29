@@ -1,11 +1,11 @@
 """SQLAlchemy database setup for compliance copilot."""
 
+import os
 from pathlib import Path
 
 from sqlalchemy import Engine, create_engine, inspect, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-import os
 DATA_DIR = Path(os.environ.get("DATA_DIR", str(Path(__file__).parents[3] / "data")))
 
 
@@ -13,12 +13,32 @@ class Base(DeclarativeBase):
     pass
 
 
+def configured_database_url(db_path: str | None = None) -> str:
+    """Resolve the database URL, preferring DATABASE_URL over local SQLite."""
+    if db_path is not None:
+        return f"sqlite:///{db_path}"
+
+    database_url = (os.environ.get("DATABASE_URL") or "").strip()
+    if database_url:
+        if database_url.startswith("postgres://"):
+            database_url = "postgresql://" + database_url[len("postgres://"):]
+        if database_url.startswith("postgresql://"):
+            database_url = "postgresql+psycopg://" + database_url[len("postgresql://"):]
+        return database_url
+
+    DATA_DIR.mkdir(exist_ok=True)
+    return f"sqlite:///{DATA_DIR / 'copilot.db'}"
+
+
 def create_engine_and_tables(db_path: str | None = None) -> Engine:
-    """Create SQLite engine and all tables."""
-    if db_path is None:
-        DATA_DIR.mkdir(exist_ok=True)
-        db_path = str(DATA_DIR / "copilot.db")
-    engine = create_engine(f"sqlite:///{db_path}", echo=False)
+    """Create database engine and all tables."""
+    database_url = configured_database_url(db_path)
+    engine_kwargs: dict[str, object] = {"echo": False}
+    if database_url.startswith("sqlite"):
+        engine_kwargs["connect_args"] = {"check_same_thread": False}
+    else:
+        engine_kwargs["pool_pre_ping"] = True
+    engine = create_engine(database_url, **engine_kwargs)
     from compliance_os.web.models.tables import CaseRow, DiscoveryAnswerRow, ChatMessageRow, DocumentRow  # noqa: F401
     Base.metadata.create_all(engine)
     # Guardian check flow tables (v2)
@@ -30,6 +50,9 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
 
 def _ensure_v2_columns(engine: Engine) -> None:
     """Add newly introduced SQLite columns for the v2 document store."""
+    if engine.dialect.name != "sqlite":
+        return
+
     inspector = inspect(engine)
     if "documents_v2" not in inspector.get_table_names():
         return

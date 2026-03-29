@@ -43,3 +43,4 @@ uploads/
 .superpowers/
 config/google_oauth.json
 logs/
+.neon
