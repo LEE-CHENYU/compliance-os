@@ -194,6 +194,8 @@ def _build_context(user_id: str, db: Session, query: str | None = None) -> tuple
 
 SYSTEM_PROMPT = """You are Guardian, a compliance assistant for immigrants in the US. You help users understand their immigration, tax, and business compliance obligations.
 
+Today's date: {today}
+
 IMPORTANT RULES:
 1. You are NOT a lawyer. Never provide legal advice. Always recommend consulting a qualified attorney for specific legal questions.
 2. Be calm, procedural, and evidence-based. Never be alarmist.
@@ -202,6 +204,7 @@ IMPORTANT RULES:
 5. Keep responses concise — 2-3 sentences for simple questions, more for complex ones.
 6. If you need more information to help, ask one specific follow-up question.
 7. Always frame findings as "potential risks" or "things worth looking into", never as definitive legal conclusions.
+8. Use today's date when computing deadlines, grace periods, days remaining, or overdue status. Be precise with dates.
 
 You have access to the user's compliance profile below. Use this context to give personalized, relevant answers.
 
@@ -219,7 +222,8 @@ def chat(
     context_text, retrieved_refs = _build_context(user.id, db, query=body.message)
 
     # Build messages for the LLM
-    system = SYSTEM_PROMPT.format(context=context_text)
+    from datetime import date
+    system = SYSTEM_PROMPT.format(context=context_text, today=date.today().isoformat())
     messages = []
     for msg in body.history:
         messages.append({"role": msg["role"], "content": msg["text"]})
