@@ -158,7 +158,7 @@ def upload_document(
     )
     db.add(row)
     db.flush()
-    register_uploaded_document(check, row, content, source_path=source_path)
+    register_uploaded_document(check, row, content, source_path=source_path, db=db)
     sync_document_issues(
         db,
         check=check,

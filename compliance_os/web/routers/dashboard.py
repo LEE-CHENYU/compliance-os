@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from compliance_os.web.models.auth import UserRow
 from compliance_os.web.models.database import DATA_DIR, get_session
+from compliance_os.web.models.schemas_v2 import SubjectChain
 from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, ExtractedFieldRow
 from compliance_os.web.services.auth_service import decode_token
 from compliance_os.web.services.document_intake import (
@@ -32,6 +33,11 @@ from compliance_os.web.services.ingestion_detector import (
     extraction_failure_issue,
     record_check_issue,
     sync_document_issues,
+)
+from compliance_os.web.services.subject_chains import (
+    list_user_subject_chains,
+    serialize_subject_chain,
+    sync_user_subject_chains,
 )
 from compliance_os.web.services.timeline_builder import (
     build_stats,
@@ -121,7 +127,10 @@ def get_timeline(
     db: Session = Depends(get_session),
 ):
     user = _get_user(authorization, db)
-    return build_timeline(user.id, db)
+    sync_user_subject_chains(user.id, db)
+    payload = build_timeline(user.id, db)
+    db.commit()
+    return payload
 
 
 @router.get("/stats")
@@ -131,6 +140,18 @@ def get_stats(
 ):
     user = _get_user(authorization, db)
     return build_stats(user.id, db)
+
+
+@router.get("/chains", response_model=list[SubjectChain])
+def list_subject_chains(
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+):
+    user = _get_user(authorization, db)
+    sync_user_subject_chains(user.id, db)
+    chains = [serialize_subject_chain(chain) for chain in list_user_subject_chains(user.id, db)]
+    db.commit()
+    return chains
 
 
 @router.get("/documents")
@@ -303,7 +324,7 @@ def upload_to_dataroom(
     )
     db.add(doc)
     db.flush()
-    register_uploaded_document(check, doc, content, source_path=source_path)
+    register_uploaded_document(check, doc, content, source_path=source_path, db=db)
     sync_document_issues(
         db,
         check=check,

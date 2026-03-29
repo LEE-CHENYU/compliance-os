@@ -106,6 +106,32 @@ class LlmApiUsage(BaseModel):
         from_attributes = True
 
 
+class SubjectDocumentLink(BaseModel):
+    document_id: str
+    role: str
+    is_primary: bool
+    link_confidence: float | None = None
+    link_reason: str | None = None
+    details: dict[str, Any] | None = None
+    filename: str | None = None
+    doc_type: str | None = None
+
+
+class SubjectChain(BaseModel):
+    id: str
+    chain_type: str
+    chain_key: str
+    display_name: str
+    subject_name: str | None = None
+    subject_identifier: str | None = None
+    source_context: str | None = None
+    status: str
+    start_date: str | None = None
+    end_date: str | None = None
+    snapshot: dict[str, Any] | None = None
+    documents: list[SubjectDocumentLink]
+
+
 class DocumentExtraction(BaseModel):
     document_id: str
     doc_type: str

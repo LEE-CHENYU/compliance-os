@@ -20,6 +20,7 @@ from compliance_os.web.services.ingestion_detector import (
     detect_extraction_issues,
     sync_document_issues,
 )
+from compliance_os.web.services.subject_chains import sync_check_subject_chains
 
 
 def document_family_for_type(doc_type: str) -> str:
@@ -591,7 +592,12 @@ def _cross_check_i9_first_day_with_everify(check: CheckRow, db: Session) -> None
             )
 
 
-def reindex_documents_for_doc_types(check: CheckRow, doc_types: Iterable[str | None]) -> None:
+def reindex_documents_for_doc_types(
+    check: CheckRow,
+    doc_types: Iterable[str | None],
+    *,
+    db: Session | None = None,
+) -> None:
     """Recompute lineage metadata for one or more doc types on a check."""
     seen: set[str] = set()
     for doc_type in doc_types:
@@ -599,6 +605,8 @@ def reindex_documents_for_doc_types(check: CheckRow, doc_types: Iterable[str | N
             continue
         seen.add(doc_type)
         _reindex_documents_for_type(check, doc_type)
+    if db is not None and check.user_id:
+        sync_check_subject_chains(check, db)
 
 
 def register_uploaded_document(
@@ -606,6 +614,8 @@ def register_uploaded_document(
     row: DocumentRow,
     content: bytes,
     source_path: str | None = None,
+    *,
+    db: Session | None = None,
 ) -> dict[str, Any]:
     """Assign versioning and provenance metadata to a newly uploaded document."""
     content_hash = content_hash_for_bytes(content)
@@ -623,6 +633,9 @@ def register_uploaded_document(
         supersedes_document_id=None,
     )
     _reindex_documents_for_type(check, row.doc_type)
+    if db is not None and check.user_id:
+        # Keep persisted subject chains aligned with newly uploaded documents.
+        sync_check_subject_chains(check, db)
 
     upload_meta = dict((row.provenance or {}).get("upload") or {})
 
@@ -701,7 +714,7 @@ def extract_into_document(doc: DocumentRow, db: Session) -> dict[str, Any]:
     db.flush()
     check = doc.check or db.get(CheckRow, doc.check_id)
     if check is not None:
-        _reindex_documents_for_type(check, doc.doc_type)
+        reindex_documents_for_doc_types(check, [doc.doc_type], db=db)
         if doc.doc_type in {"i9", "e_verify_case"}:
             _cross_check_i9_first_day_with_everify(check, db)
         sync_document_issues(

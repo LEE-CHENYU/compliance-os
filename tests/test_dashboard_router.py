@@ -692,6 +692,16 @@ def test_dashboard_timeline_prefers_signed_supported_stem_start_events(client, t
         "i983-wolff-and-li-signed.pdf",
         "Wolff_&_Li_Capital_Offer_Letter.pdf",
     }
+    assert not any(
+        event for event in timeline["events"]
+        if event["title"] == "STEM OPT ends" and event["date"] == "2026-01-22"
+    )
+
+    chains_resp = client.get("/api/dashboard/chains", headers={"Authorization": f"Bearer {token}"})
+    assert chains_resp.status_code == 200
+    chains = {chain["chain_key"]: chain for chain in chains_resp.json() if chain["chain_type"] == "employment"}
+    assert chains["employment:wolff-li-capital-inc:2024-01-23"]["status"] == "superseded"
+    assert chains["employment:wolff-li-capital-inc:2025-03-17"]["status"] == "active"
 
 
 def test_dashboard_timeline_keeps_same_day_employment_chains_separate(client, tmp_path):

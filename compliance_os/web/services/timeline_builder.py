@@ -8,7 +8,8 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, FindingRow
+from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, FindingRow, SubjectChainRow
+from compliance_os.web.services.subject_chains import list_user_subject_chains
 
 
 def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
@@ -273,6 +274,37 @@ def serialize_dashboard_document(doc: DocumentRow) -> dict[str, Any]:
     }
 
 
+def _serialize_timeline_chain(chain: SubjectChainRow) -> dict[str, Any]:
+    return {
+        "type": chain.chain_type,
+        "key": chain.chain_key,
+        "label": chain.display_name,
+        "employer_name": chain.subject_name if chain.chain_type == "employment" else None,
+        "start_date": chain.start_date,
+        "source_context": chain.source_context,
+    }
+
+
+def _chain_event_documents(chain: SubjectChainRow, document_ids: list[str] | None = None) -> list[dict[str, Any]]:
+    requested_ids = set(document_ids or [])
+    docs: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for link in sorted(
+        chain.document_links,
+        key=lambda item: (_normalized_uploaded_at(item.document), item.document_id),
+    ):
+        doc = link.document
+        if doc is None:
+            continue
+        if requested_ids and link.document_id not in requested_ids:
+            continue
+        if link.document_id in seen:
+            continue
+        docs.append(serialize_dashboard_document(doc))
+        seen.add(link.document_id)
+    return docs
+
+
 def _match_employment_documents(i983_doc: DocumentRow, docs: list[DocumentRow]) -> list[dict[str, Any]]:
     return [serialize_dashboard_document(doc) for doc in _matched_employment_document_rows(i983_doc, docs)]
 
@@ -382,6 +414,7 @@ def _merge_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def build_timeline(user_id: str, db: Session) -> dict:
     """Build a full timeline for a user from their checks and documents."""
     checks = db.query(CheckRow).filter(CheckRow.user_id == user_id).all()
+    subject_chains = list_user_subject_chains(user_id, db)
 
     events: list[dict[str, Any]] = []
     all_docs: list[dict] = []
@@ -396,35 +429,56 @@ def build_timeline(user_id: str, db: Session) -> dict:
         all_docs.append(serialized)
         doc_types_uploaded.add(doc.doc_type)
 
+    entity_linked_tax_doc_ids: set[str] = set()
+    for chain in subject_chains:
+        snapshot = dict(chain.snapshot or {})
+        serialized_chain = _serialize_timeline_chain(chain)
+        if chain.chain_type == "employment":
+            if chain.status == "superseded" or not snapshot.get("timeline_visible", True):
+                continue
+            stage = snapshot.get("stage")
+            category = "immigration" if stage == "stem_opt" else "employment"
+            if chain.start_date:
+                events.append({
+                    "date": chain.start_date,
+                    "title": "STEM OPT started" if stage == "stem_opt" else "Employment started",
+                    "type": "milestone",
+                    "category": category,
+                    "documents": _chain_event_documents(
+                        chain,
+                        snapshot.get("start_document_ids") or snapshot.get("document_ids"),
+                    ),
+                    "chain": serialized_chain,
+                })
+            if chain.end_date:
+                events.append({
+                    "date": chain.end_date,
+                    "title": "STEM OPT ends" if stage == "stem_opt" else "Employment ends",
+                    "type": "deadline",
+                    "category": category,
+                    "documents": _chain_event_documents(
+                        chain,
+                        snapshot.get("end_document_ids") or snapshot.get("document_ids"),
+                    ),
+                    "chain": serialized_chain,
+                })
+        elif chain.chain_type == "entity":
+            for tax_event in snapshot.get("tax_events") or []:
+                document_ids = tax_event.get("document_ids") or []
+                entity_linked_tax_doc_ids.update(document_ids)
+                events.append({
+                    "date": tax_event["date"],
+                    "title": tax_event["title"],
+                    "type": "filing",
+                    "category": "tax",
+                    "documents": _chain_event_documents(chain, document_ids),
+                    "chain": serialized_chain,
+                })
+
     for doc in canonical_docs:
         fields = _field_map(doc)
 
-        if doc.doc_type == "i983":
-            matched_employment_docs = _matched_employment_document_rows(doc, canonical_docs)
-            related_docs = [serialize_dashboard_document(doc)] + [
-                serialize_dashboard_document(related_doc) for related_doc in matched_employment_docs
-            ]
-            chain = _employment_chain_for_i983(doc, matched_employment_docs)
-            if fields.get("start_date") and _should_emit_i983_start_event(doc, related_docs, canonical_docs):
-                events.append({
-                    "date": fields["start_date"],
-                    "title": "STEM OPT started",
-                    "type": "milestone",
-                    "category": "immigration",
-                    "documents": related_docs,
-                    "chain": chain,
-                })
-            if fields.get("end_date"):
-                events.append({
-                    "date": fields["end_date"],
-                    "title": "STEM OPT ends",
-                    "type": "deadline",
-                    "category": "immigration",
-                    "documents": [serialize_dashboard_document(doc)],
-                    "chain": chain,
-                })
-
-        if doc.doc_type == "tax_return":
+        if doc.doc_type == "tax_return" and doc.id not in entity_linked_tax_doc_ids:
             tax_year = fields.get("tax_year")
             if tax_year:
                 events.append({

@@ -68,6 +68,50 @@ class DocumentRow(Base):
     ingestion_issues = relationship(
         "IngestionIssueRow", back_populates="document", cascade="all, delete-orphan"
     )
+    subject_links = relationship(
+        "SubjectDocumentLinkRow", back_populates="document", cascade="all, delete-orphan"
+    )
+
+
+class SubjectChainRow(Base):
+    __tablename__ = "subject_chains"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    user_id = Column(String, nullable=False)
+    chain_type = Column(String, nullable=False)
+    chain_key = Column(String, nullable=False)
+    display_name = Column(String, nullable=False)
+    subject_name = Column(String, nullable=True)
+    subject_identifier = Column(String, nullable=True)
+    source_context = Column(String, nullable=True)
+    status = Column(String, default="active")
+    start_date = Column(String, nullable=True)
+    end_date = Column(String, nullable=True)
+    snapshot = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=_now)
+    updated_at = Column(DateTime, default=_now, onupdate=_now)
+
+    document_links = relationship(
+        "SubjectDocumentLinkRow", back_populates="chain", cascade="all, delete-orphan"
+    )
+
+
+class SubjectDocumentLinkRow(Base):
+    __tablename__ = "subject_document_links"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    chain_id = Column(String, ForeignKey("subject_chains.id"), nullable=False)
+    document_id = Column(String, ForeignKey("documents_v2.id"), nullable=False)
+    role = Column(String, nullable=False)
+    is_primary = Column(Boolean, default=False)
+    link_confidence = Column(Float, nullable=True)
+    link_reason = Column(Text, nullable=True)
+    details = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=_now)
+    updated_at = Column(DateTime, default=_now, onupdate=_now)
+
+    chain = relationship("SubjectChainRow", back_populates="document_links")
+    document = relationship("DocumentRow", back_populates="subject_links")
 
 
 class ExtractedFieldRow(Base):

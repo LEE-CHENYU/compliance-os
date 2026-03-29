@@ -155,7 +155,7 @@ def _mirror_document_to_v2(
     )
     session.add(row)
     session.flush()
-    register_uploaded_document(bridge_check, row, content, source_path=source_path)
+    register_uploaded_document(bridge_check, row, content, source_path=source_path, db=session)
     return row
 
 
@@ -355,6 +355,7 @@ def update_document(case_id: str, doc_id: str, body: DocumentUpdateRequest, sess
                 reindex_documents_for_doc_types(
                     check,
                     [previous_doc_type, mirrored.doc_type],
+                    db=session,
                 )
     session.commit()
     session.refresh(doc)
@@ -384,7 +385,7 @@ def delete_document(case_id: str, doc_id: str, session: Session = Depends(get_se
         session.delete(mirrored)
         session.flush()
         if check is not None:
-            reindex_documents_for_doc_types(check, [mirrored_doc_type])
+            reindex_documents_for_doc_types(check, [mirrored_doc_type], db=session)
 
     session.delete(doc)
     session.commit()
