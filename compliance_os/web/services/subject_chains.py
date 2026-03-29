@@ -193,8 +193,8 @@ def _employment_seed(doc: DocumentRow) -> dict[str, Any] | None:
     employer_ein = _normalize_ein(_first_present(fields, ["employer_ein"]))
     context_label = _context_label(doc)
     subject_token = (
-        _ein_subject_token(employer_ein)
-        or _slug(employer_name)
+        _slug(employer_name)
+        or _ein_subject_token(employer_ein)
         or _slug(context_label)
         or (f"hash-{doc.content_hash[:12]}" if doc.content_hash else None)
         or _slug(Path(doc.filename or "").stem)
@@ -226,8 +226,8 @@ def _entity_seed(doc: DocumentRow) -> dict[str, Any] | None:
         return None
     context_label = _context_label(doc)
     subject_token = (
-        _ein_subject_token(ein)
-        or _slug(entity_name)
+        _slug(entity_name)
+        or _ein_subject_token(ein)
         or _slug(context_label)
         or (f"hash-{doc.content_hash[:12]}" if doc.content_hash else None)
         or _slug(Path(doc.filename or "").stem)

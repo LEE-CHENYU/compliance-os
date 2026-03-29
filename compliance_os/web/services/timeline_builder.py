@@ -287,8 +287,7 @@ def _serialize_timeline_chain(chain: SubjectChainRow) -> dict[str, Any]:
 
 def _chain_event_documents(chain: SubjectChainRow, document_ids: list[str] | None = None) -> list[dict[str, Any]]:
     requested_ids = set(document_ids or [])
-    docs: list[dict[str, Any]] = []
-    seen: set[str] = set()
+    selected_docs: list[DocumentRow] = []
     for link in sorted(
         chain.document_links,
         key=lambda item: (_normalized_uploaded_at(item.document), item.document_id),
@@ -298,11 +297,16 @@ def _chain_event_documents(chain: SubjectChainRow, document_ids: list[str] | Non
             continue
         if requested_ids and link.document_id not in requested_ids:
             continue
-        if link.document_id in seen:
+        selected_docs.append(doc)
+
+    canonical: list[DocumentRow] = []
+    for doc in sorted(selected_docs, key=_document_sort_key, reverse=True):
+        if any(_documents_equivalent_for_dashboard(doc, existing) for existing in canonical):
             continue
-        docs.append(serialize_dashboard_document(doc))
-        seen.add(link.document_id)
-    return docs
+        canonical.append(doc)
+
+    canonical.sort(key=lambda doc: (_normalized_uploaded_at(doc), doc.filename or "", doc.id))
+    return [serialize_dashboard_document(doc) for doc in canonical]
 
 
 def _match_employment_documents(i983_doc: DocumentRow, docs: list[DocumentRow]) -> list[dict[str, Any]]:
