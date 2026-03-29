@@ -1081,7 +1081,12 @@ def _merge_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return result
 
 
-def _active_stem_opt_chains(subject_chains: list[SubjectChainRow]) -> list[SubjectChainRow]:
+def _active_stem_opt_chains(
+    subject_chains: list[SubjectChainRow],
+    *,
+    exclude_ended: bool = False,
+) -> list[SubjectChainRow]:
+    today = date.today()
     active: list[SubjectChainRow] = []
     for chain in subject_chains:
         snapshot = dict(chain.snapshot or {})
@@ -1091,6 +1096,12 @@ def _active_stem_opt_chains(subject_chains: list[SubjectChainRow]) -> list[Subje
             continue
         if snapshot.get("stage") != "stem_opt":
             continue
+        if exclude_ended and chain.end_date:
+            try:
+                if datetime.strptime(chain.end_date, "%Y-%m-%d").date() < today:
+                    continue
+            except ValueError:
+                pass
         active.append(chain)
     return active
 
@@ -1288,18 +1299,10 @@ def build_timeline(user_id: str, db: Session) -> dict:
                 "why": "Cross-checks job title, salary, and location against your I-983.",
             })
 
-        # Check for 12-month evaluations from current STEM chains only
-        # (skip chains that have already ended — historical employment).
-        today = date.today()
-        for chain in _active_stem_opt_chains(subject_chains):
+        # Check for 12-month evaluations from current STEM chains only.
+        for chain in _active_stem_opt_chains(subject_chains, exclude_ended=True):
             if not chain.start_date:
                 continue
-            if chain.end_date:
-                try:
-                    if datetime.strptime(chain.end_date, "%Y-%m-%d").date() < today:
-                        continue
-                except ValueError:
-                    pass
             try:
                 start_date = datetime.strptime(chain.start_date, "%Y-%m-%d").date()
                 from dateutil.relativedelta import relativedelta
@@ -1515,19 +1518,9 @@ def _build_deadlines(
     today = date.today()
     deadlines: list[dict] = []
 
-    active_stem_chains = _active_stem_opt_chains(subject_chains or [])
+    active_stem_chains = _active_stem_opt_chains(subject_chains or [], exclude_ended=True)
 
     for chain in active_stem_chains:
-        # Skip chains that have already ended — they are historical employment
-        # records and should not generate active deadlines.
-        if chain.end_date:
-            try:
-                end_dt = datetime.strptime(chain.end_date, "%Y-%m-%d").date()
-                if end_dt < today:
-                    continue  # historical chain — no deadlines
-            except ValueError:
-                pass
-
         if chain.start_date:
             try:
                 start_dt = datetime.strptime(chain.start_date, "%Y-%m-%d").date()
