@@ -21,6 +21,43 @@ class FindingResult:
     immigration_impact: bool
 
 
+# Stages where the individual is exempt from the Substantial Presence Test
+# (F-1/J-1 exempt for first 5 calendar years).
+_F1_EXEMPT_STAGES = frozenset({"f1_student", "opt", "stem_opt"})
+
+
+def _derive_nra(answers: dict[str, Any]) -> str:
+    """Return ``"yes"`` if the user is likely a non-resident alien for tax purposes.
+
+    Priority order:
+    1. Explicit ``tax_residency_status`` (set during Tax track intake).
+    2. Immigration stage + years in the US (stem_opt / student tracks).
+    3. ``owner_residency`` (entity track).
+    4. Default to ``"no"`` (assume tax resident when unknown).
+    """
+    # 1. Explicit residency declaration
+    tax_res = answers.get("tax_residency_status")
+    if tax_res:
+        return "yes" if tax_res == "Nonresident alien" else "no"
+
+    # 2. Immigration stage heuristic
+    stage = answers.get("stage", "")
+    if stage in _F1_EXEMPT_STAGES:
+        years = answers.get("years_in_us")
+        # F-1 holders are exempt from SPT for first 5 calendar years
+        return "yes" if years is None or years < 6 else "no"
+
+    # H-1B / I-140 holders are almost always tax residents
+    if stage in ("h1b", "i140"):
+        return "no"
+
+    # 3. Entity track fallback
+    if answers.get("owner_residency") == "outside_us":
+        return "yes"
+
+    return "no"
+
+
 @dataclass
 class EvaluationContext:
     answers: dict[str, Any]
@@ -28,6 +65,12 @@ class EvaluationContext:
     extraction_b: dict[str, Any]
     comparisons: dict[str, dict[str, Any]]
     today: date = field(default_factory=date.today)
+
+    def __post_init__(self):
+        # Shallow-copy so derived fields don't mutate the caller's dict
+        self.answers = dict(self.answers)
+        if "is_nra" not in self.answers:
+            self.answers["is_nra"] = _derive_nra(self.answers)
 
 
 @dataclass

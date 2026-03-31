@@ -146,6 +146,97 @@ def test_needs_review_triggers_mismatch_rule(engine):
     assert "location_mismatch" in rule_ids
 
 
+def test_nra_exemption_blocks_fbar_3520_fatca(engine):
+    """NRAs (F-1/OPT/STEM OPT in first 5 years) should NOT get FBAR/3520/FATCA findings."""
+    ctx = EvaluationContext(
+        answers={
+            "stage": "stem_opt",
+            "years_in_us": 3,
+            "has_foreign_accounts": "yes",
+            "received_foreign_gifts": "yes",
+        },
+        extraction_a={},
+        extraction_b={},
+        comparisons={},
+    )
+    ids = [f.rule_id for f in engine.evaluate(ctx)]
+    assert "foreign_accounts_fbar_risk" not in ids
+    assert "foreign_gifts_3520_risk" not in ids
+    assert "advisory_fbar" not in ids
+    assert "advisory_fatca_8938" not in ids
+
+
+def test_tax_resident_gets_fbar_3520_fatca(engine):
+    """Tax residents (F-1 with 6+ years, H-1B) SHOULD get FBAR/3520/FATCA findings."""
+    # F-1 with 7 years → tax resident
+    ctx = EvaluationContext(
+        answers={
+            "stage": "stem_opt",
+            "years_in_us": 7,
+            "has_foreign_accounts": "yes",
+            "received_foreign_gifts": "yes",
+        },
+        extraction_a={},
+        extraction_b={},
+        comparisons={},
+    )
+    ids = [f.rule_id for f in engine.evaluate(ctx)]
+    assert "foreign_accounts_fbar_risk" in ids
+    assert "foreign_gifts_3520_risk" in ids
+    assert "advisory_fbar" in ids
+    assert "advisory_fatca_8938" in ids
+
+
+def test_h1b_is_tax_resident_for_fbar(engine):
+    """H-1B holders are tax residents even with <5 years in the US."""
+    ctx = EvaluationContext(
+        answers={
+            "stage": "h1b",
+            "years_in_us": 2,
+            "has_foreign_accounts": "yes",
+            "received_foreign_gifts": "yes",
+        },
+        extraction_a={},
+        extraction_b={},
+        comparisons={},
+    )
+    ids = [f.rule_id for f in engine.evaluate(ctx)]
+    assert "foreign_accounts_fbar_risk" in ids
+    assert "foreign_gifts_3520_risk" in ids
+
+
+def test_explicit_nra_status_overrides_years(engine):
+    """Explicit tax_residency_status takes precedence over years heuristic."""
+    ctx = EvaluationContext(
+        answers={
+            "stage": "stem_opt",
+            "years_in_us": 10,
+            "tax_residency_status": "Nonresident alien",
+            "has_foreign_accounts": "yes",
+            "received_foreign_gifts": "yes",
+        },
+        extraction_a={},
+        extraction_b={},
+        comparisons={},
+    )
+    ids = [f.rule_id for f in engine.evaluate(ctx)]
+    assert "foreign_accounts_fbar_risk" not in ids
+    assert "foreign_gifts_3520_risk" not in ids
+
+
+def test_is_nra_does_not_mutate_original_answers():
+    """EvaluationContext should not mutate the original answers dict."""
+    original = {"stage": "opt", "years_in_us": 2}
+    ctx = EvaluationContext(
+        answers=original,
+        extraction_a={},
+        extraction_b={},
+        comparisons={},
+    )
+    assert "is_nra" not in original
+    assert ctx.answers["is_nra"] == "yes"
+
+
 def test_data_room_rules_load_and_fire():
     engine = RuleEngine.from_yaml("config/rules/data_room.yaml")
 

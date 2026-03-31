@@ -311,9 +311,9 @@ rules:
         operator: eq
         value: "yes"
         source: answers
-      - field: years_in_us
-        operator: gt
-        value: 5
+      - field: is_nra
+        operator: neq
+        value: "yes"
         source: answers
     severity: warning
     finding:
@@ -328,6 +328,10 @@ rules:
     conditions:
       - field: received_foreign_gifts
         operator: eq
+        value: "yes"
+        source: answers
+      - field: is_nra
+        operator: neq
         value: "yes"
         source: answers
     severity: warning
@@ -417,9 +421,9 @@ rules:
     track: stem_opt
     type: advisory
     conditions:
-      - field: years_in_us
-        operator: gt
-        value: 5
+      - field: is_nra
+        operator: neq
+        value: "yes"
         source: answers
     severity: info
     finding:
@@ -432,9 +436,9 @@ rules:
     track: stem_opt
     type: advisory
     conditions:
-      - field: years_in_us
-        operator: gt
-        value: 5
+      - field: is_nra
+        operator: neq
+        value: "yes"
         source: answers
     severity: info
     finding:
