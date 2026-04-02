@@ -1,20 +1,33 @@
 # Model routing for document extraction.
-# Default model is used unless a doc_type-specific override is defined.
-# Routing decisions are based on bake-off results in scripts/bakeoff_results/.
+# Auto-generated from bake-off results on 2026-04-02.
+# Source: latest
 #
-# Providers: anthropic, openai, google
-# Re-run: python scripts/extraction_bakeoff.py --limit 30
-# Last updated: 2026-04-02 (10-doc bake-off)
+# Default: gpt-5.4-mini (openai/gpt-5.4-mini)
+# Re-run bake-off: python scripts/extraction_bakeoff.py --limit 50
+# Regenerate this file: python scripts/generate_model_routing.py
 
 default:
   provider: openai
   model: gpt-5.4-mini
-
 overrides:
-  # Gemini outperforms on these doc types (bake-off 2026-04-02)
-  i9:
-    provider: google
-    model: gemini-2.5-flash
+  1042s:
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
   e_verify_case:
     provider: google
     model: gemini-2.5-flash
+  h1b_registration:
+    provider: openai
+    model: gpt-5.4-nano
+  health_coverage_application:
+    provider: google
+    model: gemini-2.5-flash
+  i9:
+    provider: google
+    model: gemini-2.5-flash
+  lease:
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
+  passport:
+    provider: openai
+    model: gpt-5.4-nano
