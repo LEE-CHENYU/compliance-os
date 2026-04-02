@@ -4,6 +4,9 @@ import { useCallback, useEffect, useState, useRef, type ChangeEvent, type Compon
 import { useRouter } from "next/navigation";
 import { isLoggedIn, authHeaders, getUser, logout } from "@/lib/auth";
 import ReactMarkdown from "react-markdown";
+import ModeBar, { ChatMode } from "@/components/chat/ModeBar";
+import FormFillerUpload from "@/components/chat/FormFillerUpload";
+import FormPreviewCard, { FieldProposal } from "@/components/chat/FormPreviewCard";
 
 interface TimelineEvent {
   date: string;
@@ -293,6 +296,15 @@ export default function DashboardPage() {
   const [chatAnswered, setChatAnswered] = useState<Set<string>>(new Set());
   const [resolvedAssistantPromptIds, setResolvedAssistantPromptIds] = useState<Set<string>>(new Set());
   const [chatLoading, setChatLoading] = useState(false);
+  const [chatMode, setChatMode] = useState<ChatMode>("guardian");
+  const [formFillLoading, setFormFillLoading] = useState(false);
+  const [formFillPreview, setFormFillPreview] = useState<{
+    fields: FieldProposal[];
+    formFieldCount: number;
+    filledCount: number;
+    unfilledCount: number;
+    originalFile: File;
+  } | null>(null);
   const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string; category: string }[]>([]);
   const [showToken, setShowToken] = useState(false);
   const [tokenCopied, setTokenCopied] = useState(false);
@@ -795,6 +807,97 @@ export default function DashboardPage() {
       setTimeout(() => {
         document.getElementById("chat-scroll")?.scrollTo({ top: 99999, behavior: "smooth" });
       }, 100);
+    }
+  }
+
+  async function handleFormFillSubmit(file: File, instruction: string) {
+    if (!checks.length) return;
+    const checkId = checks[0].id;
+    setFormFillLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      if (instruction) formData.append("instruction", instruction);
+
+      const resp = await fetch(
+        `${API}/checks/${checkId}/form-fill/extract`,
+        { method: "POST", body: formData, headers: authHeaders() }
+      );
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: "Failed to process form" }));
+        throw new Error(err.detail || "Failed to process form");
+      }
+      const data = await resp.json();
+      setFormFillPreview({
+        fields: data.fields,
+        formFieldCount: data.form_field_count,
+        filledCount: data.filled_count,
+        unfilledCount: data.unfilled_count,
+        originalFile: file,
+      });
+    } catch (err) {
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          id: nextChatMessageId(),
+          role: "assistant",
+          text: err instanceof Error ? err.message : "Failed to process the form. Please try again.",
+        },
+      ]);
+    } finally {
+      setFormFillLoading(false);
+    }
+  }
+
+  async function handleFormFillGenerate(values: Record<string, string>) {
+    if (!formFillPreview || !checks.length) return;
+    const checkId = checks[0].id;
+    setFormFillLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", formFillPreview.originalFile);
+      formData.append("values", JSON.stringify(values));
+
+      const resp = await fetch(
+        `${API}/checks/${checkId}/form-fill/generate`,
+        { method: "POST", body: formData, headers: authHeaders() }
+      );
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: "Failed to generate PDF" }));
+        throw new Error(err.detail || "Failed to generate PDF");
+      }
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `filled_${formFillPreview.originalFile.name}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setFormFillPreview(null);
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          id: nextChatMessageId(),
+          role: "assistant",
+          text: `Your filled form "${formFillPreview.originalFile.name}" has been downloaded.`,
+        },
+      ]);
+    } catch (err) {
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          id: nextChatMessageId(),
+          role: "assistant",
+          text: err instanceof Error ? err.message : "Failed to generate the filled PDF. Please try again.",
+        },
+      ]);
+    } finally {
+      setFormFillLoading(false);
     }
   }
 
@@ -1589,10 +1692,13 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-blue-50/40 flex-shrink-0">
               <div>
                 <div className="text-[14px] font-semibold text-[#0d1424]">Guardian Assistant</div>
-                <div className="text-[11px] text-[#7b8ba5]">Ask anything about your compliance</div>
+                <div className="text-[11px] text-[#7b8ba5]">
+                  {chatMode === "guardian" ? "Ask anything about your compliance" : "Upload a fillable PDF to auto-complete"}
+                </div>
               </div>
               <button onClick={() => setChatOpen(false)} className="text-[#7b8ba5] hover:text-[#0d1424] text-lg w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-all">&times;</button>
             </div>
+            <ModeBar active={chatMode} onChange={setChatMode} />
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-5 space-y-4" id="chat-scroll">
@@ -1666,34 +1772,52 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )}
+              {formFillPreview && (
+                <FormPreviewCard
+                  fields={formFillPreview.fields}
+                  formFieldCount={formFillPreview.formFieldCount}
+                  filledCount={formFillPreview.filledCount}
+                  unfilledCount={formFillPreview.unfilledCount}
+                  onGenerate={handleFormFillGenerate}
+                  onCancel={() => setFormFillPreview(null)}
+                  disabled={formFillLoading}
+                />
+              )}
             </div>
 
-            {/* Input */}
-            <div className="p-4 border-t border-blue-50/40 flex-shrink-0">
-              <form onSubmit={async (e) => {
-                e.preventDefault();
-                const input = (e.target as HTMLFormElement).elements.namedItem("msg") as HTMLInputElement;
-                const msg = input.value.trim();
-                if (!msg || chatLoading) return;
-                input.value = "";
-                await sendChatMessage(msg);
-              }} className="flex gap-2">
-                <input
-                  name="msg"
-                  type="text"
-                  placeholder="Ask about your compliance..."
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-white/70 bg-white/60 text-[13px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
-                  disabled={chatLoading}
-                />
-                <button
-                  type="submit"
-                  disabled={chatLoading}
-                  className="px-4 py-2.5 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-[13px] font-medium flex-shrink-0 disabled:opacity-50"
-                >
-                  Send
-                </button>
-              </form>
-            </div>
+            {/* Input — mode-conditional */}
+            {chatMode === "guardian" ? (
+              <div className="p-4 border-t border-blue-50/40 flex-shrink-0">
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const input = (e.target as HTMLFormElement).elements.namedItem("msg") as HTMLInputElement;
+                  const msg = input.value.trim();
+                  if (!msg || chatLoading) return;
+                  input.value = "";
+                  await sendChatMessage(msg);
+                }} className="flex gap-2">
+                  <input
+                    name="msg"
+                    type="text"
+                    placeholder="Ask about your compliance..."
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-white/70 bg-white/60 text-[13px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
+                    disabled={chatLoading}
+                  />
+                  <button
+                    type="submit"
+                    disabled={chatLoading}
+                    className="px-4 py-2.5 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-[13px] font-medium flex-shrink-0 disabled:opacity-50"
+                  >
+                    Send
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <FormFillerUpload
+                onSubmit={handleFormFillSubmit}
+                disabled={formFillLoading}
+              />
+            )}
           </div>
         )}
       </div>
