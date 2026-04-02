@@ -8,9 +8,7 @@ from fastapi.responses import Response
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from compliance_os.web.models.auth import UserRow
 from compliance_os.web.models.database import get_session
-from compliance_os.web.models.tables_v2 import CheckRow
 from compliance_os.web.routers.chat import _build_context, _get_user
 from compliance_os.web.services.form_filler import (
     extract_acroform_fields,
@@ -18,7 +16,7 @@ from compliance_os.web.services.form_filler import (
     propose_field_values,
 )
 
-router = APIRouter(prefix="/api/checks/{check_id}/form-fill", tags=["form-fill"])
+router = APIRouter(prefix="/api/form-fill", tags=["form-fill"])
 
 _MAX_PDF_BYTES = 20 * 1024 * 1024  # 20 MB
 
@@ -48,17 +46,6 @@ class ExtractResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-def _get_check(check_id: str, user: UserRow, db: Session) -> CheckRow:
-    check = (
-        db.query(CheckRow)
-        .filter(CheckRow.id == check_id, CheckRow.user_id == user.id)
-        .first()
-    )
-    if not check:
-        raise HTTPException(404, "Check not found")
-    return check
-
-
 def _validate_pdf(file: UploadFile, pdf_bytes: bytes) -> None:
     filename = file.filename or ""
     if not filename.lower().endswith(".pdf"):
@@ -74,7 +61,6 @@ def _validate_pdf(file: UploadFile, pdf_bytes: bytes) -> None:
 
 @router.post("/extract", response_model=ExtractResponse)
 async def extract_and_propose(
-    check_id: str,
     file: UploadFile,
     instruction: str = Form(default=""),
     authorization: str = Header(None),
@@ -82,7 +68,6 @@ async def extract_and_propose(
 ):
     """Extract AcroForm fields from a PDF and propose values using RAG context."""
     user = _get_user(authorization, db)
-    _get_check(check_id, user, db)
 
     pdf_bytes = await file.read()
     _validate_pdf(file, pdf_bytes)
@@ -104,7 +89,6 @@ async def extract_and_propose(
         "db_session": db,
         "operation": "form_fill",
         "user_id": user.id,
-        "check_id": check_id,
     }
     try:
         proposals = propose_field_values(
@@ -167,15 +151,13 @@ async def extract_and_propose(
 
 @router.post("/generate")
 async def generate_filled_pdf(
-    check_id: str,
     file: UploadFile,
     values: str = Form(...),
     authorization: str = Header(None),
     db: Session = Depends(get_session),
 ):
     """Fill a PDF's AcroForm fields with provided values and return the filled PDF."""
-    user = _get_user(authorization, db)
-    _get_check(check_id, user, db)
+    _get_user(authorization, db)
 
     pdf_bytes = await file.read()
     _validate_pdf(file, pdf_bytes)

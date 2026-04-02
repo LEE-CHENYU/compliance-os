@@ -811,8 +811,6 @@ export default function DashboardPage() {
   }
 
   async function handleFormFillSubmit(file: File, instruction: string) {
-    if (!checks.length) return;
-    const checkId = checks[0].id;
     setFormFillLoading(true);
 
     try {
@@ -821,7 +819,7 @@ export default function DashboardPage() {
       if (instruction) formData.append("instruction", instruction);
 
       const resp = await fetch(
-        `${API}/checks/${checkId}/form-fill/extract`,
+        `${API}/form-fill/extract`,
         { method: "POST", body: formData, headers: authHeaders() }
       );
       if (!resp.ok) {
@@ -851,8 +849,7 @@ export default function DashboardPage() {
   }
 
   async function handleFormFillGenerate(values: Record<string, string>) {
-    if (!formFillPreview || !checks.length) return;
-    const checkId = checks[0].id;
+    if (!formFillPreview) return;
     setFormFillLoading(true);
 
     try {
@@ -861,7 +858,7 @@ export default function DashboardPage() {
       formData.append("values", JSON.stringify(values));
 
       const resp = await fetch(
-        `${API}/checks/${checkId}/form-fill/generate`,
+        `${API}/form-fill/generate`,
         { method: "POST", body: formData, headers: authHeaders() }
       );
       if (!resp.ok) {
