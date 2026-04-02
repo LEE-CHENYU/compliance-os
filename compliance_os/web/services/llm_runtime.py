@@ -76,7 +76,8 @@ def configured_llm_model(provider: str, *, task: str = "chat") -> str:
 
 
 def _require_api_key(provider: str) -> str:
-    env_name = "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY"
+    env_map = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY", "google": "GOOGLE_API_KEY"}
+    env_name = env_map.get(provider, f"{provider.upper()}_API_KEY")
     api_key = os.environ.get(env_name)
     if not api_key:
         raise LLMConfigError(f"{env_name} must be set when LLM_PROVIDER={provider}")
@@ -401,6 +402,123 @@ def extract_json(
             },
             usage_payload=None,
             error=exc,
+        )
+        raise
+
+
+def extract_json_with_model(
+    *,
+    provider: str,
+    model: str,
+    system_prompt: str,
+    user_prompt: str,
+    temperature: float = 0,
+    max_tokens: int = 4096,
+    usage_context: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Like extract_json but with an explicit provider and model.
+
+    Supports "anthropic", "openai", and "google" providers.
+    """
+    started_at = datetime.now(timezone.utc)
+    started_perf = perf_counter()
+
+    def _meta() -> dict:
+        return {
+            **(usage_context or {}),
+            "request_metadata": {
+                **dict((usage_context or {}).get("request_metadata") or {}),
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+                "response_format": "json_object",
+                "routed_provider": provider,
+                "routed_model": model,
+            },
+        }
+
+    try:
+        if provider == "anthropic":
+            import anthropic
+            client = anthropic.Anthropic(api_key=_require_api_key(provider))
+            response = client.messages.create(
+                model=model, max_tokens=max_tokens, system=system_prompt,
+                messages=[{"role": "user", "content": user_prompt}],
+                temperature=temperature,
+            )
+            usage_payload = _normalized_usage(provider, response)
+            content = response.content[0].text
+            if content.startswith("```"):
+                content = content.split("\n", 1)[1].rsplit("```", 1)[0]
+
+        elif provider == "openai":
+            from openai import OpenAI
+            client = OpenAI(api_key=_require_api_key(provider))
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                response_format={"type": "json_object"},
+                temperature=temperature,
+                max_completion_tokens=max_tokens,
+            )
+            usage_payload = _normalized_usage(provider, response)
+            content = response.choices[0].message.content
+
+        elif provider == "google":
+            import google.generativeai as genai
+            genai.configure(api_key=_require_api_key(provider))
+            gen_model = genai.GenerativeModel(
+                model_name=model,
+                system_instruction=system_prompt,
+                generation_config=genai.GenerationConfig(
+                    response_mime_type="application/json",
+                    temperature=temperature,
+                    max_output_tokens=max_tokens,
+                ),
+            )
+            response = gen_model.generate_content(user_prompt)
+            content = response.text
+            usage_meta = response.usage_metadata
+            usage_payload = {
+                "input_tokens": getattr(usage_meta, "prompt_token_count", None),
+                "output_tokens": getattr(usage_meta, "candidates_token_count", None),
+                "total_tokens": getattr(usage_meta, "total_token_count", None),
+                "cache_creation_input_tokens": None,
+                "cache_read_input_tokens": None,
+                "usage_details": None,
+            }
+        else:
+            raise LLMConfigError(f"Unsupported provider for routed extraction: {provider}")
+
+        result = json.loads(content)
+
+        completed_at = datetime.now(timezone.utc)
+        _persist_usage_record(
+            provider=provider, model=model, status="success",
+            started_at=started_at, completed_at=completed_at,
+            latency_ms=int((perf_counter() - started_perf) * 1000),
+            usage_context=_meta(), usage_payload=usage_payload, error=None,
+        )
+        return result
+
+    except json.JSONDecodeError as exc:
+        completed_at = datetime.now(timezone.utc)
+        _persist_usage_record(
+            provider=provider, model=model, status="error",
+            started_at=started_at, completed_at=completed_at,
+            latency_ms=int((perf_counter() - started_perf) * 1000),
+            usage_context=_meta(), usage_payload=locals().get("usage_payload"), error=exc,
+        )
+        raise
+    except Exception as exc:
+        completed_at = datetime.now(timezone.utc)
+        _persist_usage_record(
+            provider=provider, model=model, status="error",
+            started_at=started_at, completed_at=completed_at,
+            latency_ms=int((perf_counter() - started_perf) * 1000),
+            usage_context=_meta(), usage_payload=None, error=exc,
         )
         raise
 

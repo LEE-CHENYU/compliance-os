@@ -15,7 +15,8 @@ import os
 
 import fitz  # PyMuPDF
 
-from compliance_os.web.services.llm_runtime import extract_json
+from compliance_os.web.services.llm_runtime import extract_json, extract_json_with_model
+from compliance_os.web.services.model_router import resolve as resolve_model
 
 logger = logging.getLogger(__name__)
 
@@ -1477,8 +1478,25 @@ Document text:
 {text}
 
 Return ONLY valid JSON, no explanation."""
+
+    system = "You are a document field extractor. Return only valid JSON, no explanation or markdown."
+
+    # Use doc-type-aware model routing if available
+    routed = resolve_model(doc_type)
+    if routed:
+        return extract_json_with_model(
+            provider=routed.provider,
+            model=routed.model,
+            system_prompt=system,
+            user_prompt=prompt,
+            temperature=0,
+            max_tokens=4096,
+            usage_context=usage_context,
+        )
+
+    # Fallback to global LLM_PROVIDER config
     return extract_json(
-        system_prompt="You are a document field extractor. Return only valid JSON, no explanation or markdown.",
+        system_prompt=system,
         user_prompt=prompt,
         temperature=0,
         max_tokens=4096,
