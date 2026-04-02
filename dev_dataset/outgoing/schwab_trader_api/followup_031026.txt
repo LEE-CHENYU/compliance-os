@@ -1,0 +1,23 @@
+To: traderapi@schwab.com
+Subject: Re: Update on Trader API - Commercial Application
+
+Hi Schwab Trader API Team,
+
+I am following up on our previous correspondence from October 2025
+regarding API access for my account (devuser42@gmail.com).
+
+You mentioned that my Individual API access was approved and that
+Commercial access is only needed for apps distributed to other users.
+
+My question: Can the Individual Trader API access the brokerage account
+of my LLC (Greenfield Capital LLC)? The LLC has a Schwab
+brokerage account, and I need API access to programmatically retrieve
+positions and account data for internal portfolio tracking purposes.
+
+If Individual API access cannot be used with an LLC/entity account,
+would I need to apply for Commercial access instead?
+
+Thank you,
+Alex Zhang
+Greenfield Capital LLC
+(646) 555-0142

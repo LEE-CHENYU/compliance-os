@@ -1,0 +1,241 @@
+================================================================================
+DSO / ISSO EMAIL HISTORY — COMPREHENSIVE DOCUMENTATION
+Date: February 28, 2026
+Purpose: Document all DSO communications for H-1B preparation
+================================================================================
+
+================================================================================
+1. DSO CONTACT INFORMATION
+================================================================================
+
+  COLUMBIA UNIVERSITY ISSO (previous school, during STEM OPT):
+  ─────────────────────────────────────────────────────────────
+    General:        isso@columbia.edu
+    Reports:        issoreports@columbia.edu (automated)
+    Appointments:   https://isso.columbia.edu/content/contact-morningside-student-services
+    STEM Reports:   https://compass.isso.columbia.edu/istart/controllers/client/ClientEngine.cfm?serviceid=EFormReportingObligationsDuringtheFirst12MonthsofOptionalPracticalTraining0ServiceProvider&menuFlag=true
+    Reporting page: https://isso.columbia.edu/content/opt-reporting#!#text-10233
+    Address:        Armstrong Hall, 545 W. 112th Street, 4th Floor, New York, NY 10025
+    Note:           "DSOs are not assigned so any ISSO adviser can assist you" — Dawn
+    Known contact:  Dawn (ISSO Compliance Team)
+    Transfer staff: sj3152@columbia.edu (processed SEVIS transfer)
+    Student ID:     C009876543
+    SEVIS ID:       N0045267912
+
+  CIAM (current school):
+  ─────────────────────────────────────────────────────────────
+    PDSO:           Melissa Valle — melissa.valle@ciam.edu
+    DSO:            Sandy Chou — sandy.chou@ciam.edu
+    General:        dso@ciam.edu
+    Note:           SEVIS record transferred from Columbia to CIAM on 09/18/2025
+                    Sandy Chou is current DSO holding the SEVIS record
+
+================================================================================
+2. THREAD: I-983 MATERIAL CHANGES (Columbia ISSO)
+   Thread ID: 193abed9e89d76da
+   Date: December 6-9, 2024
+================================================================================
+
+  MESSAGE 1 — Chenyu → ISSO (Dec 6, 2024)
+  Subject: Urgent: Request for Guidance on Reporting Material Changes to Form I-983
+  To: issoreports@columbia.edu (likely via portal)
+
+    Content:
+    Reported that ~2 months ago, employer and Chenyu agreed to change
+    full-time to part-time (20 hrs/week) with modified hourly wage.
+    Both supervisor and Chenyu were unaware of compliance procedures.
+    Chenyu mistakenly believed reporting was only required for employer
+    change or termination. Realized during preparation to switch employers
+    that this constitutes a Material Change to I-983.
+    Apologized and requested instructions for submitting revised I-983.
+
+  MESSAGE 2 — Dawn (ISSO Compliance) → Chenyu (Dec 9, 2024)
+  Subject: Re: Urgent: Request for Guidance on Reporting Material Changes
+
+    Response:
+    "You can report your material changes to the ISSO now by submitting
+    a STEM OPT Report Form for 'Material Changes to my I-983.' You will
+    be prompted to upload your updated I-983 Form."
+
+    Link: https://compass.isso.columbia.edu/istart/controllers/client/
+          ClientEngine.cfm?serviceid=EFormReportingObligationsDuringthe
+          First12MonthsofOptionalPracticalTraining0ServiceProvider&menuFlag=true
+
+    Also referenced: https://isso.columbia.edu/content/opt-reporting#!#text-10233
+
+================================================================================
+3. THREAD: I-983 CLARIFICATION (Columbia ISSO)
+   Thread ID: 193ea4dea9b393c4
+   Date: December 21, 2024
+================================================================================
+
+  MESSAGE 1 — Chenyu → isso@columbia.edu (Dec 21, 2024)
+  Subject: Clarification on Form I-983 Submission
+
+    Content:
+    "Since I recently switched employers, could you clarify which option
+    I should select: 'I have a new employer' or 'My employment has ended,
+    or My STEM OPT is ending'? Additionally, I would like to confirm if
+    I need to complete and submit page 5 of Form I-983 due to employment
+    termination with one of my employers, even though my STEM OPT period
+    still has 13 months left."
+
+  STATUS: NO REPLY FOUND
+
+================================================================================
+4. STEM OPT REPORTS SUBMITTED & CONFIRMED (Automated)
+================================================================================
+
+  Report confirmations received (all from issoreports@columbia.edu):
+
+    1. Dec 10, 2024 — "Your STEM OPT Report was received"
+       (Filed after material change guidance from Dawn)
+    2. Dec 29, 2024 — "Your STEM OPT Report was received"
+    3. Jan 18, 2025 — "Your STEM OPT Report was received"
+    4. Feb 15, 2025 — "Your STEM OPT Report was received"
+    5. Feb 24, 2025 — "Your STEM OPT Report was received"
+    6. Mar 20, 2025 — "Your STEM OPT Report was received"
+    7. Jul 8, 2025  — "Your STEM OPT Report was received"
+       (Last report before SEVIS transfer)
+
+  Report due reminders received:
+    1. Dec 24, 2024 — "ISSO: STEM OPT Report Due"
+    2. Jun 23, 2025 — "ISSO: STEM OPT Report Due"
+       (6-month reporting cycle reminders)
+
+================================================================================
+5. SEVIS TRANSFER (Columbia → CIAM)
+================================================================================
+
+  Sep 10, 2025 — isso@columbia.edu:
+    "Your transfer request has been received C009876543"
+    "if you are currently approved for OPT or the STEM OPT extension,
+    be sure you are up-to-date with your reporting requirements"
+
+  Sep 18, 2025 — sj3152@columbia.edu:
+    "Your transfer request has been processed."
+    "Your SEVIS record was just released to your new school on [09/18/2025]."
+
+================================================================================
+6. OTHER COLUMBIA ISSO COMMUNICATIONS
+================================================================================
+
+  Oct 30, 2023 — "Your STEM OPT Extension I-20 Request has been received"
+  Oct 30, 2023 — "Your Address Update has been Received"
+  Oct 9, 2023  — "Your Address Update has been Received"
+  Apr 30, 2025 — "Your Address Update has been Received"
+  Jul 13, 2023 — "Your new I-20 with a travel signature has been approved"
+
+================================================================================
+7. CIAM DSO COMMUNICATIONS
+================================================================================
+
+  THREAD: CPT Application (Thread ID: 19a36b82d584ff9f)
+  Date: October-November 2025
+
+    Oct 30, 2025 — Chenyu → dso@ciam.edu + sandy.chou@ciam.edu:
+      CPT Application for Alex Zhang
+
+    Nov 4, 2025 — Sandy Chou → Chenyu:
+      "It was nice meeting you in person!"
+      Issued I-20 with CPT authorization Nov 4, 2025 – Apr 17, 2026
+      Connected with Registrar for INT501 enrollment
+
+    Nov 3, 2025 — Chenyu → Sandy:
+      Thanked for I-20 and enrollment help
+
+    Nov 5, 2025 — Sandy → Chenyu:
+      INT501 professor Dr. Magill extended assignment #1 deadline to Nov 9
+
+  THREAD: Spring 2026 Check-In (Thread ID: 19c8d4c4340b8ca5)
+  Date: February 24, 2026
+
+    Feb 24, 2026 — Melissa Valle (PDSO) → students:
+      Generic mid-term check-in, Reflection Week reminder
+      Signature shows:
+        Melissa, Director of Student Success/PDSO melissa.valle@ciam.edu
+        Sandy, Associate Director of Student Success/DSO sandy.chou@ciam.edu
+
+================================================================================
+8. EMPLOYER I-983 THREADS (for context)
+================================================================================
+
+  THREAD: XYZ Digital / Tiger Cloud I-983 (Thread ID: 18b1248a2687dd7f)
+  Date: October 2023 — October 2023
+  With: Amanda Klier (amanda.klier@vcvdigital.com)
+  16 messages. Key events:
+    - Chenyu sent I-983 form to Amanda for completion
+    - Amanda forwarded to Harry He for page 3
+    - Amanda completed pages 2 and 4
+    - Form needed ink signatures (university rejected digital)
+    - Amanda signed and returned
+
+  THREAD: XYZ Digital Compliance Update (Thread ID: 193a869f7b9f6e82)
+  Date: December 2024
+  With: Amanda Klier
+  7 messages. Key events:
+    - Chenyu requested updated I-983 for part-time change
+    - Discussed employer reporting obligations for employment termination
+    - Amanda asked how/where to report termination
+    - Chenyu explained: notify DSO within 5 business days
+    - Amanda provided signed I-983 pages
+
+  THREAD: BitSync STEM OPT Compliance (Thread ID: 193c5b3bca1fef72)
+  Date: December 14-16, 2024
+  With: Will Han (will@bitsync.com)
+  4 messages. Key events:
+    - Chenyu requested I-983 completion
+    - BitSync refused, claimed Chenyu "never did any actual work"
+    - BitSync accused Chenyu of creating "fake job duties"
+    - BitSync terminated employment
+    - Chenyu disputed claims, requested I-983 completion
+    - BitSync never signed I-983
+    *** THIS IS THE "ON-SITE I-983 ISSUE" — employer refused to sign ***
+    *** Stepanova flagged as potential "employment without authorization" ***
+
+================================================================================
+9. STEPANOVA'S ADVICE RE: SEVIS RECORD CHECK
+================================================================================
+
+  From consultation transcript (Feb 26, 2026), lines 203-209:
+
+  Stepanova: "Because what happens when the company fills out the I-983,
+  and you take it to the DSO, the DSO puts this information off the I-983
+  form. And they input it in your student record."
+
+  Stepanova: "But you may want to go back to that [previous] DSO that you
+  had and ask them, what is in your record? Just so that, you know, you
+  may want to ask them, you know, to take a screenshot of your employment
+  history and ask them to tell you if, you know, this company is clearly
+  in your record as one of the STEM OPT employers. And if the record is
+  missing anything whatsoever."
+
+  KEY QUESTIONS FOR DSO:
+    1. What employers are listed in my SEVIS record?
+    2. Is BitSync listed as a STEM OPT employer? What dates?
+    3. Was the BitSync I-983 ever submitted/recorded? (It shouldn't be —
+       they never signed it)
+    4. Was the material change for XYZ Digital (full-time → part-time)
+       properly recorded?
+    5. Is there any gap in employment coverage during STEM OPT?
+    6. What would USCIS see if they pulled my SEVIS employment history?
+
+================================================================================
+10. RECOMMENDED ACTION
+================================================================================
+
+  Since SEVIS record transferred to CIAM on 09/18/2025, Sandy Chou (DSO)
+  at CIAM now holds the record. Email Sandy Chou to request:
+
+  1. Full SEVIS employment history screenshot/export
+  2. Confirmation of what employers are listed
+  3. Whether BitSync appears in the record (and if so, with what dates)
+  4. Any gaps or anomalies in employment reporting
+  5. Whether the material change report (VCV part-time) was recorded
+
+  Also consider emailing Columbia ISSO (isso@columbia.edu) for historical
+  records that may not have transferred.
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================

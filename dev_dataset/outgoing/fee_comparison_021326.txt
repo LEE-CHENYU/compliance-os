@@ -1,0 +1,69 @@
+================================================================================
+H-1B FY2027 — IMMIGRATION ATTORNEY FEE COMPARISON
+Updated: February 13, 2026 (evening)
+================================================================================
+
+                          Arora (h1b1.com)       Shah Peerally Law
+                          ──────────────────     ──────────────────
+Registration Fee          $663 (incl. $168       $546 (excl. $168
+                          USCIS fee)             USCIS fee)
+                                                 → Total: $714 w/ USCIS
+
+Petition Legal Fee        $2,730 total           $2,730
+                          ($1,560 deposit +
+                           $1,170 balance)
+
+Consultation              $98 / 15 min          $117 / initial
+                          (credited if retain)   (unknown if credited)
+
+RFE Response              $780                 Not stated
+
+USCIS Filing Fees (paid by employer, same for both):
+──────────────────────────────────────────────────────
+  I-129 Base Fee          $359 (<26 emp) or $608 (26+)
+  H-1B Registration       $168
+  Fraud Prevention Fee    $390-$1,170 (varies by employer size)
+  ACWIA Training Fee      $585 (<26 emp) or $1,170 (26+)
+  Asylum Program Fee      $234 (<26 emp) or $468 (26+)
+  Premium Processing      $2,313 (optional)
+  One-Time Fee            $78,000 (if candidate outside USA — N/A for you)
+
+For our case (<26 employees):
+  I-129:                  $359
+  Registration:           $168 (already included in attorney reg fee)
+  Fraud Prevention:       $390
+  ACWIA Training:         $585
+  Asylum Program:         $234
+  ─────────────────────────
+  USCIS Total:            $1,736 (excl. premium processing)
+  + Premium Processing:   $2,313 (optional, for 15-day decision)
+
+TOTAL COST COMPARISON (registration + petition + USCIS fees):
+──────────────────────────────────────────────────────────────
+                          Arora              Shah Peerally
+Attorney (reg):           $663               $546
+Attorney (petition):      $2,730             $2,730
+USCIS fees:               $1,568*            $1,736**
+                          ──────             ──────
+TOTAL (no premium):       $4,961             $5,012
++ Premium Processing:     $7,274             $7,324
+
+* Arora's $663 includes the $168 USCIS registration fee
+** Shah Peerally's $546 does NOT include the $168 USCIS registration fee
+
+VERDICT:
+  Arora is ~$51 cheaper overall.
+  Arora has lower consultation fee ($98 vs $117) and credits it.
+  Shah Peerally is Bay Area local (Newark, CA) — easier for in-person.
+  Arora is NYC-based — all remote.
+  Both are competitively priced for H-1B.
+
+OTHER FIRMS (awaiting responses):
+  - Xu Law Group — fee info requested
+  - KG Immigration Law — fee info requested
+  - Sabrina Li Law — consultation available, fees unknown
+  - NPZ Law Group (visaserve) — fee info requested
+
+================================================================================
+END OF FEE COMPARISON
+================================================================================

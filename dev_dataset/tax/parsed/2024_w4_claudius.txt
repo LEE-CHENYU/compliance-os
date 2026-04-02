@@ -1,0 +1,75 @@
+```json
+{
+  "employee_name": {
+    "first_name_and_middle_initial": "Chenyu",
+    "last_name": "Li",
+    "full_name": "Alex Zhang"
+  },
+  "ssn": "XXX-XX-4321",
+  "employee_address": {
+    "street": "888 Main St, Apt 345",
+    "city_state_zip": "New York, NY 10044"
+  },
+  "filing_status": {
+    "selected": "Single or Married filing separately",
+    "single_or_married_filing_separately": true,
+    "married_filing_jointly": false,
+    "head_of_household": false
+  },
+  "employer": {
+    "name": "TechLaw AI Inc",
+    "address": "6920 SW 44th St, APT 107, Miami, FL 33155",
+    "ein": "XX-XXX7977",
+    "start_date": "12/16/2024"
+  },
+  "step_values": {
+    "step_1": {
+      "1a_first_name_and_middle_initial": "Chenyu",
+      "1b_last_name": "Li",
+      "1c_filing_status": "Single or Married filing separately",
+      "address_street": "888 Main St, Apt 345",
+      "address_city_state_zip": "New York, NY 10044",
+      "social_security_number": "XXX-XX-4321"
+    },
+    "step_2": {
+      "multiple_jobs_or_spouse_works_checkbox": true
+    },
+    "step_3": {
+      "qualifying_children_under_17_times_2000": "",
+      "other_dependents_times_500": "",
+      "total_dependents_amount": "0.0"
+    },
+    "step_4": {
+      "4a_other_income": "0.0",
+      "4b_deductions": "0.0",
+      "4c_extra_withholding": "0.0",
+      "4c_exemption_or_nra_note": ""
+    },
+    "step_5": {
+      "signature_date": "12/16/2024"
+    }
+  },
+  "raw_form_fields": {
+    "box_3_dependents_amount": "0.0",
+    "check_married_filing_jointly": "Off",
+    "employee_address_street": "888 Main St, Apt 345",
+    "box_3_part_1_qualifying_children_under_17_times_2000": "",
+    "employee_first_date_of_employment": "12/16/2024",
+    "box_4_a_other_income": "0.0",
+    "box_4_c_extra_withholding": "0.0",
+    "box_3_part_2_other_dependents_times_500": "",
+    "employee_last_name": "Li",
+    "company_name_and_address": "TechLaw AI Inc\n6920 SW 44th St, APT 107, Miami, FL 33155",
+    "employee_city_state_and_zip_code": "New York, NY 10044",
+    "box_4_b_deductions": "0.0",
+    "company_fein": "XX-XXX7977",
+    "check_single_or_married_filing_separately": "On",
+    "signature_date": "12/16/2024",
+    "check_head_of_household": "Off",
+    "social_security_number": "XXX-XX-4321",
+    "employee_first_name_and_initial": "Chenyu ",
+    "box_below_4_c_claim_exemption_or_nra": "",
+    "check_multiple_jobs": "On"
+  }
+}
+```

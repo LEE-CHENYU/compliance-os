@@ -1,0 +1,985 @@
+TAX & COMPLIANCE ISSUES REGISTER
+Alex Zhang / Greenfield Capital LLC
+Compiled: 02/12/2026
+Sources: Tax returns (2023, 2024), W-2s, 1042-S, 1099-INT, bank statements, lawyer consulting (02/06), updated knowledge (02/12)
+
+================================================================================
+PRIORITY LEGEND:  [CRITICAL] = Potential penalties / amendment needed
+                  [HIGH]     = Needs resolution before next filing
+                  [MEDIUM]   = Should address, lower urgency
+                  [INFO]     = Informational / already resolved
+================================================================================
+
+
+I. INCOME TAX RESIDENCY STATUS
+================================================================================
+Status: [CRITICAL] — Foundational issue affecting nearly all other items
+
+Both 2023 and 2024 returns were filed on Form 1040 (U.S. Resident), NOT Form 1040-NR.
+This means the IRS treats Alex Zhang as a U.S. resident for income-tax purposes.
+
+Implications:
+  - Worldwide income is reportable (including foreign accounts)
+  - 1042-S income must be included on 1040 and withholding claimed as credit
+  - Form 3520 applies if foreign gifts exceed $78,000 from a single person
+  - FBAR/FATCA applies to foreign financial accounts
+  - Form 8843 history needs review (per lawyer)
+
+Action: Confirm with lawyer whether 1040 filing was correct vs. 1040-NR.
+        If 1040 was incorrect, the cascade effect changes many items below.
+        Per lawyer consulting (02/06): "Confirm which returns were filed
+        (Form 1040 vs. 1040-NR) and Form 8843 history."
+
+
+II. 2023 TAX RETURN ISSUES
+================================================================================
+
+A. W-2 Wages Discrepancy [HIGH]
+   W-2 (Justworks/VCV):  $9,487.76  (Box 1)
+   1040 Line 1a reported: $10,140.00
+   Overstated by:         $652.24
+
+   The IRS receives W-2 data directly from employers. A mismatch of $652.24
+   may trigger a CP2000 notice. If no notice has been received yet, consider
+   whether an amended return (1040-X) is warranted.
+
+   Federal tax withheld per W-2: $1,081.17
+   1040 Line 25a reported:       $1,081.08  (matches)
+   At $0 taxable income (standard deduction exceeded income), the practical
+   tax impact is $0 — but the mismatch itself is a compliance issue.
+
+B. Schedule C Activity [MEDIUM]
+   Reported: $323 gross receipts, $1,211 expenses (net loss -$888)
+   Expenses: $1,079 legal/professional, $117 startup costs, $16 other
+   This loss reduced AGI to $9,252, below the $10,803 standard deduction.
+
+   Concern: Schedule C implies self-employment activity. Per lawyer consulting
+   (02/06), there is a "potential STEM OPT-period self-employment compliance
+   risk." The LLC's operating activities during STEM OPT need review.
+
+   Action: Prepare explanation of Schedule C activity for immigration counsel.
+
+
+III. 2024 TAX RETURN ISSUES
+================================================================================
+
+A. Unreported 1042-S Income [CRITICAL]
+   Because returns are filed as 1040 (U.S. resident), all 1042-S income
+   should have been reported and the withheld tax claimed as credit.
+
+   Schwab 1042-S (Account 0000-0890, 5 forms):
+     Interest (code 01):         $42.90 + $1,014.00 + $1.56 = $1,058.46
+     Dividends (code 06):        $53.04
+     Return of capital (code 37): $0.78
+     Federal tax withheld:        $3.90 + $5.46 = $9.36
+
+   TDA 1042-S (Account 999999999, 3 forms):
+     Interest (code 01):         $0.78 + $357.24 = $358.02
+     Dividends (code 06):        $24.96
+     Federal tax withheld:        $2.34
+
+   TOTALS NOT ON 2024 RETURN:
+     Interest:    $1,416.48  (not on Schedule B, which only shows $652.32)
+     Dividends:   $78.00    (not reported anywhere on return)
+     Tax withheld: $11.70    (may be part of Line 25c's $27.30, unclear)
+
+   2024 Schedule B only reports:
+     Citibank N.A. interest:              $171.84
+     US Treasury note market discount:    $242.58
+     US Treasury note market discount:    $237.90
+     Total:                               $652.32
+
+   Missing from Schedule B: $1,416 in interest from 1042-S forms.
+   Missing from return: $78 in dividends from 1042-S forms.
+
+   Potential additional tax: ~$1,494 unreported income at 12-22% bracket
+   = roughly $179-$328 plus potential accuracy penalty.
+
+   Action: Determine if amended return (1040-X) needed for 2024.
+
+B. NRA Status Confusion at Brokers [HIGH]
+   Both Schwab and TDA issued 1042-S (for non-resident aliens) instead
+   of 1099-INT/1099-DIV. This indicates the brokerage accounts are
+   flagged as NRA.
+
+   1042-S details show:
+     - Recipient country code: "CH" (China)
+     - Chapter 3 status code: 16 (Individual)
+     - Foreign TIN: Chinese ID number (110101199703150289)
+     - Tax treaty rates applied: 10% on interest/dividends (US-China treaty)
+
+   Since you file Form 1040 as a U.S. resident, you should:
+     1. Update W-8BEN to W-9 at both Schwab and any remaining TDA accounts
+     2. Report all 1042-S income on 1040 Schedule B
+     3. Claim the $12 withheld tax as credit (Line 25c or Form 1040 Line 25d)
+     4. Going forward, brokers will issue 1099 instead of 1042-S
+
+   Action: Update tax status at Schwab to U.S. person (file W-9).
+
+C. W-2 Wages Verification [INFO — appears correct]
+   Justworks (Acme Ventures): $46,763.42  (Box 1)
+   BitSync (Gusto):                 $2,823.12  (Box 1)
+   Total W-2 wages:                $49,586.53
+   1040 Line 1a reported:          $49,586.16  (matches, rounding)
+
+   Federal withholding:
+   Justworks:  $4,763.93
+   BitSync:      $160.22
+   Total:      $4,924.15
+   1040 Line 25a: $4,924.14  (matches)
+
+D. Missing Claudius W-2 [MEDIUM]
+   W-4 signed 12/16/2024 for TechLaw AI Inc (EIN XX-XXX7977).
+   If any wages were paid in Dec 2024, a W-2 should have been issued.
+   The 2024 return does not include wages from Claudius.
+
+   Action: Confirm whether any wages were actually paid in Dec 2024.
+           If yes, obtain W-2 and consider amendment.
+
+E. Schedule C (2024) [MEDIUM]
+   Only $69 in legal expenses reported, net loss $0.
+   The LLC (BSGC) had operating activity in 2024 including:
+     - Citibank CHK_1234 business checking activity
+     - Capital contributions and brokerage transfers
+   Verify Schedule C correctly reflects LLC activity (or lack thereof,
+   since SMLLC with no revenue may report $0).
+
+
+IV. FORM 3520 — FOREIGN GIFT REPORTING
+================================================================================
+Status: [CRITICAL] for 2025; [HIGH] for 2024
+
+Threshold: $78,000 aggregate per CALENDAR YEAR from a single foreign person.
+
+REPORTING PERIOD & DATE RULES:
+  - Form 3520 uses the CALENDAR YEAR (Jan 1 – Dec 31) as the measurement
+    period. Each year is independent.
+  - The operative date is the DATE RECEIVED by the U.S. person — i.e., the
+    date funds are credited/posted to the U.S. bank account, NOT the date
+    the foreign sender initiates the wire.
+  - For international wires that typically take 1-3 business days, a wire
+    sent from China on 12/30 but posted to the U.S. account on 1/2 would
+    count toward the FOLLOWING calendar year.
+  - The dates in our bank statements (cleared/posted dates) are the received
+    dates and are the correct basis for Form 3520 measurement.
+  - Form 3520 for a given tax year is due with the income tax return
+    (April 15 of the following year, extendable with Form 4868).
+    Both 2024 and 2025 Form 3520 (if needed) are due April 15, 2026.
+
+2024 OVERSEAS WIRE TRANSFERS RECEIVED (by U.S. bank posting date):
+  Date        Sender          Bank      Amount
+  12/16/2024  LI CHEN YU      Citibank  $24,152.75
+  12/16/2024  ZHANG ALEX        BOA      $14,820.06
+  12/26/2024  WANG MEILING     Citibank  $38,976.60
+  TOTAL 2024:                           $77,949.41
+
+  Per updated knowledge (02/12): "2024 gift receive is just below $78,000,
+  which may not trigger reporting requirement. (Still need to confirm.)"
+
+  Analysis: If all three transfers are from the SAME foreign person (mother),
+  the aggregate is $77,949.41 — just below $78,000 on a RECEIVED-DATE
+  basis, likely no Form 3520 required for 2024. However, if ANY earlier 2024
+  transfers exist that weren't captured in these bank statements, the
+  threshold could be crossed.
+
+  IMPORTANT: The different sender names (LI CHEN YU, WANG MEILING, ZHANG ALEX)
+  could represent different individuals. If they are actually from different
+  family members, each is well under $78K individually. Confirm with lawyer
+  whether IRS aggregates gifts from related family members or treats each
+  sender separately.
+
+2025 OVERSEAS WIRE TRANSFERS RECEIVED (by U.S. bank posting date):
+  Date        Sender          Bank      Amount
+  01/02/2025  WANG GUOQIANG       Citibank  $38,976.60
+  01/17/2025  LIU JIANGUO    Citibank  $38,992.20
+  03/19/2025  ZHAO XIUYING     Citibank  $38,984.40
+  05/12/2025  WANG GUOQIANG      Citibank  $38,984.40
+  08/22/2025  WANG MEILING     Citibank  $38,992.20
+  12/05/2025  LI CHEN YU       Citibank  $38,968.80
+  12/16/2025  LIU YANG        WF        $38,992.20
+  ─────────────────────────────────────────────────
+  TOTAL 2025 (7 wires):                 $272,890.80
+
+  BY APPARENT SENDER (for per-person $78K threshold analysis):
+    WANG GUOQIANG / WANG GUOQIANG:   $38,977 + $38,984 = $77,961  (likely same person)
+    LIU JIANGUO:               $38,992
+    ZHAO XIUYING:                $38,984
+    WANG MEILING:                $38,992
+    LI CHEN YU:                  $38,969
+    LIU YANG:                   $38,992
+
+  Per-sender analysis: No single sender name exceeds $78K individually.
+  However, the IRS Form 3520 instructions state that gifts from RELATED
+  foreign persons must be aggregated if there is reason to believe the
+  gifts would not have been made independently of each other (i.e., they
+  are part of a coordinated plan). Given that all senders appear to be
+  family members sending ~$39K each in a pattern, the IRS would very
+  likely treat these as related-party gifts subject to aggregation.
+
+  Under the related-party aggregation rule, the total $272,891 would be
+  measured against the $78K threshold as a single aggregate — meaning
+  Form 3520 IS REQUIRED for 2025.
+
+  FORM 3520 FILING GUIDANCE FOR 2025:
+    - Due date: April 15, 2026 (with 2025 tax return), extendable to
+      October 15, 2026 via Form 4868
+    - Report each gift separately on Part IV of Form 3520
+    - For each gift: date received (U.S. posting date), amount, description
+      of property, name/address of foreign donor, relationship to donor
+    - Attach explanation of the relationship between senders if treating
+      as related-party gifts
+    - If treating the $507K total as mother's money (per Section VI below),
+      the donor would be the mother regardless of which family member's
+      name appears on the wire
+    - Penalty for non-filing: 25% of the gift amount per year.
+      For $272,891, that would be ~$68,223 in penalties.
+    - Reasonable cause exception exists — if late, file with a reasonable
+      cause statement explaining why (e.g., unaware of requirement,
+      relied on tax preparer, etc.)
+
+  Per lawyer consulting (02/06): "Form 3520 — depends on income-tax residency
+  determination. If treated as a U.S. resident for income tax, then amend."
+
+  KEY QUESTION FOR LAWYER: If all $507K is treated as a gift from mother
+  (Path A in Section VI), do we file a single Form 3520 listing mother as
+  the donor for all wires across all years, or separate Form 3520s per
+  actual wire sender? The answer affects both the reporting format and the
+  $78K threshold calculation for 2024 (which is just under $78K).
+
+2026 OVERSEAS WIRE TRANSFERS (YTD, by U.S. bank posting date):
+  02/03/2026  LIU JIANGUO    Citibank  $38,992.20
+  TOTAL 2026 YTD:                        $38,992.20
+
+  Continue tracking 2026 gifts. If pattern continues (~$39K/month),
+  will exceed $78K threshold well before year-end.
+
+  Action: File Form 3520 for 2025 with 2025 tax return (due 4/15/2026).
+          Determine if 2024 requires Form 3520 (if total truly < $78K, no).
+          Track 2026 gifts for next year's filing.
+          Clarify related-party aggregation treatment with lawyer.
+
+
+V. FORM 5472 + PRO FORMA 1120 — FOREIGN-OWNED LLC REPORTING
+================================================================================
+Status: [MEDIUM] — Likely NOT required if U.S. resident; depends on $507K decision
+
+RULE: Form 5472 is required for:
+  (a) A 25%-or-more foreign-owned U.S. corporation, OR
+  (b) A foreign-owned U.S. disregarded entity (single-member LLC)
+  that had "reportable transactions" with a foreign or domestic related party.
+  A pro forma Form 1120 must accompany each Form 5472.
+  Penalty for non-filing: $19,500 per form, per year.
+  (IRS Instructions for Form 5472, Rev. Dec 2024)
+
+Per lawyer consulting (02/06): "Likely need to amend, because we made a
+capital contribution."
+
+2025 CAPITAL CONTRIBUTIONS TO BSGC LLC (XXX567):
+  ─────────────────────────────────────────────────
+  A. Cash from personal Schwab (JOURNAL FRM ...619):
+     02/27: $2,340 | 03/06: $17,160 | 06/30: $11,700
+     07/08: $7,020 | 12/23: $45,240 | 12/29: $39,000
+     Subtotal:                                 $122,460
+
+  B. Cash from personal Citibank (MoneyLink):
+     08/25: $23,400 | 09/19: $23,400 | 12/05: $35,100
+     Subtotal:                                 $81,900
+
+  C. Securities transferred (05/01/2025, at market value):
+     INTC 1,195 sh @ $15.58          $18,623.36
+     PDD 150 sh @ $82.66            $12,398.49
+     Treasury STRIP 60K @ $64.91     $38,948.22
+     CROX 222 sh @ $73.88            $16,401.72
+     OXY 1,483.879 sh @ $31.54      $46,806.36
+     T-Bills (3 lots, 80K face)      $61,883.19
+     Other (BIDU, SOLV, LBTYK,
+       VTWO, SHY, SLYV, VNQ,
+       EFA, FRCB, TBIL)              $5,579.28
+     Subtotal:                       $200,640.61
+
+  D. Additional securities (05/15 & 07/08):
+     T-Bill 25K @ $77.15 (05/15)     $19,288.29
+     Subtotal:                        $19,288.29
+
+  E. Less: returns to personal:
+     04/07: -$3,900 | 09/11: -$22,620
+     Subtotal:                        -$26,520.00
+
+  ─────────────────────────────────────────────────
+  NET 2025 CAPITAL CONTRIBUTIONS:    ~$397,769
+  ─────────────────────────────────────────────────
+
+ANALYSIS — IS FORM 5472 REQUIRED?
+
+  The answer depends entirely on WHO OWNS the LLC for tax purposes:
+
+  SCENARIO A — Chenyu is U.S. resident, $507K treated as GIFT (Path A):
+    - Chenyu is sole member and a U.S. person (filing Form 1040)
+    - LLC is a domestic disregarded entity owned by a U.S. person
+    - The entity is NOT "foreign-owned" under IRC §6038A
+    - Capital contributions are from Chenyu (U.S. person) to his own LLC
+    - No reportable transaction with a foreign related party
+    → Form 5472 NOT REQUIRED
+
+  SCENARIO B — $507K treated as NOMINEE (Path C, mother's money):
+    - If mother is the true beneficial owner of the funds in the LLC,
+      the entity could be treated as indirectly foreign-owned
+    - Capital contributions funded by foreign money = reportable transactions
+    → Form 5472 LIKELY REQUIRED + pro forma 1120
+
+  SCENARIO C — Chenyu is actually NRA (if 1040 filing was wrong):
+    - LLC owned by a foreign person
+    - All capital contributions are reportable transactions
+    → Form 5472 REQUIRED for every year with reportable transactions
+
+  BOTTOM LINE: Under the most likely path (Path A — gift, U.S. resident),
+  Form 5472 is NOT required because a U.S. person owning a domestic
+  disregarded entity does not trigger the foreign-ownership reporting rules.
+
+Per updated knowledge (02/12): "Need to check as a U.S. resident for income
+tax, if I need to amend form 5472 or not."
+
+Action: Confirm with lawyer — if Path A (gift) is chosen and residency
+        is confirmed as U.S. resident, Form 5472 should NOT be needed.
+        This is one of the cascade effects of the $507K decision.
+
+
+VI. THE $507K QUESTION — GIFT vs. LOAN vs. NOMINEE
+================================================================================
+Status: [CRITICAL] — Structural decision affecting multiple filings
+
+Per lawyer consulting (02/06), three paths for the ~$507K total received
+from overseas:
+
+  Path A — GIFT:
+    Treat as gifts from mother. Amend Form 3520 if U.S. resident for
+    income tax. Cannot use the $507K to fund the C-corp directly as
+    mother's equity.
+
+  Path B — LOAN:
+    Treat as a loan. Would need loan documentation, potentially creates
+    ~$2K-$3K tax on imputed interest.
+
+  Path C — NOMINEE/CUSTODIAL:
+    Treat as funds held in custody for mother. Would need to resolve
+    conflicting history in Schwab account information. "Potentially risky"
+    per lawyer.
+
+Per updated knowledge (02/12): "Among three options: 1. gift, 2. loan,
+3. nominee structure, [gift] might be most reasonable according to one
+lawyer in the initial unpaid intake."
+
+Action: Finalize decision with lawyer by 3/4 deadline.
+        This decision cascades into Form 3520, Form 5472, C-corp
+        capitalization, and estate tax planning.
+
+
+VII. FBAR / FATCA — FOREIGN ACCOUNT REPORTING
+================================================================================
+Status: [CRITICAL] — FBAR almost certainly required; FATCA needs verification
+
+These are TWO SEPARATE reporting requirements with different thresholds,
+different forms, and different filing destinations. Both apply to U.S.
+persons (citizens, residents, including resident aliens filing Form 1040).
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    FBAR vs. FATCA COMPARISON                           │
+├──────────────────┬──────────────────────┬──────────────────────────────┤
+│                  │ FBAR (FinCEN 114)    │ FATCA (Form 8938)            │
+├──────────────────┼──────────────────────┼──────────────────────────────┤
+│ Authority        │ Bank Secrecy Act     │ IRC §6038D (HIRE Act 2010)   │
+│ Filed with       │ FinCEN (not IRS)     │ IRS (attached to tax return) │
+│ Filing method    │ BSA E-Filing System  │ With Form 1040               │
+│                  │ (online only)        │                              │
+├──────────────────┼──────────────────────┼──────────────────────────────┤
+│ Threshold        │ $7,800 aggregate    │ Single filer in US:          │
+│ (single, in US)  │ at ANY TIME during   │ >$39,000 end of year OR     │
+│                  │ the calendar year    │ >$58,500 at any time         │
+├──────────────────┼──────────────────────┼──────────────────────────────┤
+│ What's reported  │ Foreign financial    │ Foreign financial assets     │
+│                  │ accounts (bank,      │ (broader: includes accounts, │
+│                  │ brokerage, mutual    │ stocks, interests in foreign │
+│                  │ fund, etc.)          │ entities, financial          │
+│                  │                      │ instruments, contracts)      │
+├──────────────────┼──────────────────────┼──────────────────────────────┤
+│ Due date         │ April 15, auto-      │ With tax return (April 15,   │
+│                  │ extended to Oct 15   │ or extended deadline)        │
+├──────────────────┼──────────────────────┼──────────────────────────────┤
+│ Penalty          │ Non-willful: up to   │ $7,800 per failure to       │
+│                  │ $12,898/violation    │ disclose + 40% penalty on    │
+│                  │ Willful: greater of  │ tax understatement from      │
+│                  │ $128,975 or 50% of   │ undisclosed assets           │
+│                  │ account balance      │                              │
+├──────────────────┼──────────────────────┼──────────────────────────────┤
+│ Key rule         │ "At any point" —     │ End-of-year OR any-time      │
+│                  │ even a 1-day peak    │ threshold (whichever is      │
+│                  │ over $8K triggers   │ lower)                       │
+│                  │ the requirement      │                              │
+└──────────────────┴──────────────────────┴──────────────────────────────┘
+
+IMPORTANT: Filing one does NOT exempt you from the other. If both
+thresholds are met, BOTH must be filed separately.
+
+─────────────────────────────────────────────────────────────────────────
+
+A. FBAR (FinCEN Form 114) [CRITICAL]
+
+   RULE: Any U.S. person who has a financial interest in, or signature
+   authority over, foreign financial accounts must file FBAR if the
+   AGGREGATE value of ALL foreign accounts exceeds $7,800 at ANY TIME
+   during the calendar year. This is measured by the highest balance
+   reached in each account, even for a single day, converted to USD.
+   (31 USC §5314; 31 CFR §1010.350)
+
+   Known foreign account:
+     Futu Securities International (Hong Kong)
+     Custodian: ICBC (Asia) Ltd.
+     Account ID: XXXXX6001225
+
+     Outgoing wires from BOA in Aug 2024:
+       08/14/2024: $7,800 (capital injection/infusion)
+       08/16/2024: $15,600 (capital injection/infusion)
+       Total deposited: $23,400
+
+   Since $23,400 was deposited into the Futu account, the account almost
+   certainly held more than $7,800 at some point, triggering the FBAR
+   requirement. The $8K threshold is AGGREGATE across ALL foreign accounts
+   — any other foreign accounts (e.g., bank accounts in China, if any)
+   would also count toward this aggregate.
+
+   FILING STATUS BY YEAR:
+     2024: FBAR REQUIRED (Futu account funded with $23K in Aug 2024)
+           Due: April 15, 2025 → auto-extended to Oct 15, 2025
+           STATUS: DELINQUENT (~4 months past extended deadline)
+           → FILE IMMEDIATELY (see filing plan below)
+     2025: FBAR REQUIRED if account still open with balance > $0
+           Due: April 15, 2026 → auto-extended to Oct 15, 2026
+           → File on time during normal 2025 tax season
+     2026: TBD based on whether account remains open
+
+   For each foreign account, must report:
+     - Financial institution name and address
+     - Account number
+     - Maximum account value during the year (in USD)
+     - Type of account (bank, securities, other)
+
+   IMPORTANT: FBAR is filed SEPARATELY from the tax return. It goes to
+   FinCEN through the BSA E-Filing System (bsaefiling.fincen.gov), NOT
+   to the IRS with Form 1040. There is no benefit to waiting for tax
+   season — it is a completely independent filing.
+
+   2024 FBAR — IMMEDIATE FILING PLAN:
+     1. Go to https://bsaefiling.fincen.gov/file/fbar
+     2. File FinCEN Form 114 for calendar year 2024
+     3. Report: Futu Securities International (Hong Kong)
+        - Institution: Futu Securities International (Hong Kong) Limited
+        - Custodian bank: ICBC (Asia) Ltd.
+        - Account ID: XXXXX6001225
+        - Account type: Securities / brokerage
+        - Maximum value during 2024: need to determine (at minimum $23K)
+     4. Select reason for late filing; include explanation:
+        "Taxpayer was unaware of FBAR reporting obligation for foreign
+        brokerage account. No prior contact from IRS regarding this
+        matter. Income from the account, if any, was reported on the
+        2024 Form 1040. Filing promptly upon learning of requirement."
+     5. Also check: are there any other foreign accounts (Chinese bank
+        accounts, etc.)? If so, include ALL foreign accounts on the FBAR.
+
+   NO-PENALTY POLICY FOR DELINQUENT FBAR:
+     The IRS will NOT impose a penalty if ALL three conditions are met:
+       (a) All income from the foreign accounts was properly reported
+           on U.S. tax returns and all tax was paid
+       (b) The IRS has NOT previously contacted you regarding an
+           income tax examination or delinquent returns
+       (c) The FBAR is filed through the delinquent submission procedures
+
+     LEGAL BASIS: This is IRS ADMINISTRATIVE POLICY (published on
+     irs.gov), NOT a statutory right. The IRS exercises enforcement
+     discretion to waive penalties for compliant taxpayers who self-
+     correct. It is not codified in the Internal Revenue Code or BSA
+     statute. The IRS could theoretically change this policy, but it
+     has been consistently offered and widely relied upon by tax
+     practitioners. There is no known instance of the IRS reneging
+     on this policy for a taxpayer who filed in good faith.
+
+     → The sooner you file, the smaller the risk that the IRS
+       initiates contact first and closes the no-penalty window.
+
+   Action: FILE 2024 FBAR NOW through BSA E-Filing.
+           Gather Futu account peak balance for 2024.
+           File 2025 FBAR on time by April/Oct 2026.
+           Confirm whether any other foreign accounts exist.
+
+─────────────────────────────────────────────────────────────────────────
+
+B. Form 8938 — FATCA (Foreign Account Tax Compliance Act) [HIGH]
+
+   RULE: U.S. persons must report specified foreign financial assets on
+   Form 8938 if the total value exceeds these thresholds:
+
+     Single filer living in the US:
+       >$39,000 on the LAST DAY of the tax year, OR
+       >$58,500 at ANY TIME during the tax year
+
+     Married filing jointly living in the US:
+       >$78,000 on the last day, OR >$117,000 at any time
+
+     Single filer living ABROAD:
+       >$156,000 on the last day, OR >$234,000 at any time
+   (IRC §6038D; IRS Instructions for Form 8938)
+
+   "Specified foreign financial assets" is BROADER than FBAR — includes:
+     - Foreign bank accounts
+     - Foreign brokerage/securities accounts
+     - Stock or securities issued by a foreign person
+     - Financial instruments or contracts with foreign counterparty
+     - Interest in a foreign entity
+
+   Analysis for Futu account:
+     $23,400 deposited in Aug 2024. If investments appreciated or if
+     account held >$39K at year-end or >$58K at any time → Form 8938
+     required. With $23K deposited, it depends on investment performance.
+
+   Action: Determine Futu account year-end balances and peak balances
+           for 2024 and 2025 to assess Form 8938 thresholds.
+
+─────────────────────────────────────────────────────────────────────────
+
+C. Delinquent Filing Procedures [INFO]
+
+   If FBAR or Form 8938 was not filed for prior years, the IRS offers:
+
+   1. Streamlined Filing Compliance (if non-willful):
+      - File last 3 years of returns + last 6 years of FBARs
+      - Pay 5% penalty on highest aggregate foreign account balance
+      - Certify that failure was non-willful
+
+   2. Delinquent FBAR Submission Procedures:
+      - File late FBARs through BSA E-Filing with explanation
+      - No penalty if IRS hasn't contacted you about it
+      - Include statement explaining why filing is late
+
+   3. Delinquent Form 8938:
+      - File with amended return or next return
+      - Attach reasonable cause statement
+
+   Action: Discuss with lawyer/CPA which procedure is appropriate
+           if 2024 FBAR was not filed.
+
+
+VIII. IMMIGRATION / EMPLOYMENT COMPLIANCE
+================================================================================
+Status: [HIGH] — Per lawyer consulting
+
+Per lawyer consulting (02/06), the following need review:
+
+A. STEM OPT Self-Employment Risk [HIGH]
+   Schedule C activity in 2023 ($323 revenue, $1,211 expenses) during
+   STEM OPT could raise questions about unauthorized self-employment.
+   "Potential STEM OPT-period self-employment compliance risk."
+
+B. I-983 Missing for One Employment [MEDIUM]
+   "I-983 was not obtained for one 1-month employment; assess the
+   compliance impact and prepare potential remedies."
+
+C. LLC Operating Activity During OPT [HIGH]
+   "Review any operating activities related to the SMLLC after the first
+   12 months of OPT, and prepare potential remedies."
+   Need employment history checklist: I-983, all W-2s, paystubs.
+
+D. LLC Retention During H-1B [MEDIUM]
+   "Is it still possible to retain the LLC as a passive asset-protection
+   vehicle during future H-1B employment?"
+   Lawyer to advise on ideal corporate arrangement.
+
+E. STEM OPT Self-Employment — Legal Risk Analysis [CRITICAL]
+   Added: 02/13/2026 (research findings)
+
+   1. THE CORE VIOLATION RISK
+      STEM OPT (24-month extension) does NOT permit traditional self-employment.
+      Unlike regular 12-month post-completion OPT (which allows self-employment),
+      STEM OPT requires:
+        - Bona fide employer-employee relationship (employer controls what/how/when)
+        - Employer enrolled in E-Verify
+        - Signed I-983 training plan with specific learning objectives
+        - Student may NOT provide employer attestations on their own behalf
+
+      An LLC where the student controls everything generally FAILS the employer-
+      employee test. If business was conducted through the LLC during STEM OPT
+      without a proper I-983 and E-Verify employer backing it — that is potentially
+      unauthorized employment.
+
+   2. MISREPRESENTATION FLAG RISK — INA §212(a)(6)(C)(i)
+      OPT misrepresentation flags are government notations indicating possible
+      false information, typically discovered during:
+        - Visa stamping at a consulate
+        - Border reentry / port of entry inspection
+        - Green card processing (I-485 / consular processing)
+        - H-1B extension adjudication
+
+      Triggers include:
+        - Employment with companies later deemed fraudulent
+        - Providing false information about OPT employment
+        - Self-employment or unauthorized work activity that doesn't match
+          what was reported in SEVP/SEVIS records
+        - Reporting discrepancy: SEVIS shows employer A, but Schedule C / LLC
+          filings show independent business activity
+
+      Key point: The underlying unauthorized employment violation is serious,
+      but a §212(a)(6)(C)(i) MISREPRESENTATION finding (concealing or lying
+      about it) is MUCH harder to waive and can trigger a PERMANENT
+      inadmissibility bar.
+
+   3. KNOWN SUCCESSFUL MITIGATIONS
+      No published pattern of "did unauthorized work on STEM OPT and got it
+      forgiven." Strategies used by immigration attorneys:
+
+      a. "Not employment" argument — If LLC activity was passive/de minimis
+         (holding assets, no active services rendered), argue it doesn't meet
+         the definition of unauthorized employment under 8 CFR 214.2(f).
+
+      b. Regular OPT vs STEM OPT timing — Regular 12-month post-completion
+         OPT DOES allow self-employment. If the LLC activity fell during the
+         initial 12-month OPT period (not the STEM extension), different rules
+         apply. CRITICAL: Map exact timeline of LLC activity against OPT dates.
+
+      c. Nunc pro tunc — Discretionary remedy to retroactively reinstate or
+         fix status. Very case-specific; requires showing equitable factors.
+
+      d. Proactive remediation narrative — Document the situation now with a
+         lawyer, build a factual record BEFORE USCIS ever asks, so there is a
+         prepared response during H-1B extension or green card filing.
+
+      e. Minimize exposure surface — Quantify exactly what happened: duration,
+         revenue ($323 in 2023), activity type, whether it was truly "work" vs
+         passive investment returns.
+
+      Precedent case (Sabrina Li Law): Startup founder got NOID on STEM OPT;
+      firm proved bona fide employer-employee relationship by distinguishing
+      employee role from ownership role. Approved in 2 days. However, this was
+      a prospective case (defending a pending application), not retroactive
+      remediation of past unauthorized work.
+
+   4. DISCLOSURE STRATEGY — KEY QUESTION FOR COUNSEL
+      Whether to proactively disclose the OPT-period LLC activity or not is
+      the central strategic decision. Arguments on both sides:
+
+      AGAINST proactive disclosure:
+        - No legal obligation to volunteer past violations unprompted
+        - USCIS may never cross-reference LLC records, tax returns, and SEVIS
+        - Disclosing creates a paper trail where none currently exists
+        - Cannot un-disclose once disclosed
+
+      FOR disclosure (or at least preparation):
+        - If USCIS discovers it later (H-1B extension, green card, visa stamp),
+          the cover-up is worse than the underlying violation
+        - §212(a)(6)(C)(i) misrepresentation (concealing when asked) carries a
+          PERMANENT inadmissibility bar — much worse than unauthorized employment
+        - Schedule C income, LLC formation records, state filings are discoverable
+        - Proactive framing controls the narrative and timing
+
+      RECOMMENDED MIDDLE GROUND (subject to attorney advice):
+        - Do NOT volunteer in filings unprompted
+        - DO prepare a full factual record privately with immigration counsel NOW
+        - Have a documented response strategy ready if ever asked
+        - NEVER lie if directly questioned — that is the §212(a)(6)(C)(i) trigger
+        - Structure future filings (H-1B extensions, green card petitions) to
+          minimize exposure to questions that could surface the issue
+
+   5. DISCOVERABILITY FACTORS — MAP WITH ATTORNEY
+      How likely is USCIS to find the LLC activity? Depends on:
+        - Schedule C on 2023 tax return ($323 revenue, $1,211 expenses)
+        - Wyoming LLC formation date vs STEM OPT dates
+        - SEVIS employment records — was different employer listed?
+        - Any I-983 training plan referencing the LLC or not
+        - Citibank 1099-INT to LLC EIN (on 2024 return)
+        - State business filings, registered agent records
+        - Whether Schedule C activity continued into H-1B period
+
+   6. PRIORITY ACTION ITEMS
+      [ ] Map exact timeline: OPT start → STEM OPT start → LLC formation →
+          LLC activity dates → H-1B start
+      [ ] Determine if LLC activity fell during regular OPT or STEM OPT period
+      [ ] Quantify all LLC "work" activity vs passive holding/investment
+      [ ] Discuss disclosure strategy with immigration counsel (Wed 2/18
+          Cyrus Mehta / Caitlin Box consultation, $312-475)
+      [ ] Gather: all I-983s, W-2s from OPT period, SEVIS employment history,
+          LLC operating agreement, Schedule C supporting docs
+
+
+IX. CITIBANK 1099-INT — LLC ACCOUNT
+================================================================================
+Status: [INFO — appears correctly reported]
+
+  Citibank issued 1099-INT to GREENFIELD CAPITAL LLC (EIN XX-XXX4106)
+  for $171.84 interest from CitiBusiness 6 Month CD.
+
+  This $171.84 appears on 2024 Schedule B line 1 and flows through correctly
+  to the 1040. Since the SMLLC is a disregarded entity, its income is
+  reported on the member's 1040.
+
+  No issues identified with this item.
+
+
+X. CAPITAL GAINS REPORTING (2024)
+================================================================================
+Status: [INFO — appears correctly reported]
+
+  Schedule D and Form 8949 match the Schwab Year-End Summary:
+    Short-term: $62,400 proceeds, $61,920 basis, -$480 adj = $0 gain
+      (Two T-note maturities, market discount offset)
+    Long-term: $3,779 proceeds, $1,704 basis = $2,075 gain
+      (WAL, ZION, MPX, ELA sales)
+
+  Minor rounding differences between Schwab report (cents) and tax return
+  (whole dollars) are normal and immaterial.
+
+
+XI. RELEVANT COURT CASES & PRECEDENTS
+================================================================================
+
+The following cases are directly relevant to the issues in this register.
+They establish (or are actively shaping) the rules around IRS penalty
+authority, reasonable cause defenses, and foreign reporting obligations.
+
+─────────────────────────────────────────────────────────────────────────
+
+A. Huang v. United States [ONGOING — most directly relevant]
+   Court: U.S. District Court, N.D. California
+   Case No. 24-cv-06298-RS
+   Status: ACTIVE — proceeding to merits (motion to dismiss denied May 2025)
+
+   FACTS: Ms. Jiaxing Huang, a Chinese national who relocated to the U.S.,
+   received substantial gifts from her non-resident foreign parents in 2015
+   and 2016 to purchase a home. She used TurboTax to file her returns.
+   TurboTax advised that recipients of foreign gifts do not need to report
+   them — only the gift-giver does. In 2018, she learned of Form 3520 and
+   promptly filed late. The IRS assessed penalties of $48,747.08 (2015)
+   and $22,419.15 (2016) — totaling ~$71K. She requested abatement for
+   reasonable cause; the IRS denied it.
+
+   RULING SO FAR: The court DENIED the government's motion to dismiss on
+   the reasonable cause claim. The court held that reliance on tax software
+   (TurboTax) may constitute reasonable cause for failing to file Form 3520.
+   The case will proceed to a full merits hearing.
+
+   WHY THIS MATTERS FOR US:
+     - Nearly identical fact pattern: Chinese family gifts to U.S. person
+     - Establishes that reliance on tax software/preparer can be reasonable
+       cause for Form 3520 penalties
+     - If Huang prevails, it strengthens the defense for anyone who was
+       unaware of Form 3520 requirements and filed late
+     - Our situation: if Form 3520 is filed late for 2024 or 2025, a
+       reasonable cause statement citing unawareness of the requirement
+       (especially for someone who used standard tax software or a
+       non-specialist preparer) has precedent support
+     - The IRS also changed policy in 2025: no longer auto-assessing
+       Form 3520 penalties — manual review required if reasonable cause
+       statement is attached
+
+─────────────────────────────────────────────────────────────────────────
+
+B. Farhy v. Commissioner [CIRCUIT SPLIT — potential Supreme Court case]
+   Tax Court: 160 T.C. No. 6 (April 3, 2023)
+   D.C. Circuit: Reversed (May 3, 2024)
+   Tax Court: Reaffirmed its position in Mukhi (Nov 18, 2024)
+   Supreme Court: Certiorari petition expected — circuit split exists
+
+   ISSUE: Does the IRS have statutory authority to ASSESS penalties under
+   IRC §6038(b) for failure to file international information returns
+   (Form 5471), or must it sue the taxpayer in court to collect?
+
+   WHAT HAPPENED:
+     - Tax Court (2023): Ruled the IRS CANNOT automatically assess Form
+       5471 penalties. IRC §6038(b) does not grant assessment authority.
+       The IRS must file a collection suit in federal court instead.
+     - D.C. Circuit (2024): REVERSED — held that Congress intended §6038(b)
+       penalties to be assessable. IRS CAN assess them.
+     - Tax Court (Nov 2024, in Mukhi): REAFFIRMED its original position
+       that IRS lacks assessment authority, creating a circuit split.
+     - Rehearing denied; Supreme Court petition likely.
+
+   WHY THIS MATTERS FOR US:
+     - The Farhy reasoning MAY extend to penalties under Forms 5472, 8938,
+       8865, and 926 — all of which use similar statutory language
+     - If the Supreme Court sides with the Tax Court, the IRS would need
+       to SUE taxpayers in federal court to collect these penalties,
+       rather than simply assessing them administratively
+     - This would make it significantly harder for the IRS to enforce
+       penalties for late/missing Form 5472 or Form 5471
+     - Current status: in Tax Court jurisdiction, penalties may be
+       unassessable; in D.C. Circuit, they are assessable
+     - PRACTICAL IMPACT: Even if penalties apply, the IRS enforcement
+       mechanism is actively being litigated. This creates leverage
+       for reasonable cause arguments and penalty abatement requests.
+
+─────────────────────────────────────────────────────────────────────────
+
+C. Mukhi v. Commissioner [Form 3520 penalties upheld, Form 5471 not]
+   Tax Court: 163 T.C. No. 8 (November 18, 2024)
+   Status: Decided — but contributes to Farhy circuit split
+
+   FACTS: Taxpayer established foreign corporations and foreign trusts,
+   transferred >$7 million to them, and pleaded guilty to filing false
+   tax returns and FBARs. IRS sought ~$9 million in Form 3520/3520-A
+   penalties and $93,600 in Form 5471 penalties.
+
+   RULINGS:
+     - Form 3520/3520-A penalties ($9M): UPHELD. The court rejected
+       constitutional challenges including:
+         * Due Process (5th Amendment): rejected
+         * Excessive Fines (8th Amendment): rejected — court held Form
+           3520 penalties are "remedial" (to encourage compliance), not
+           "punitive," so the Excessive Fines Clause does not apply
+         * Equal Protection: rejected
+     - Form 5471 penalties ($94K): IRS CANNOT ASSESS — reaffirming Farhy
+
+   WHY THIS MATTERS FOR US:
+     - BAD NEWS: Form 3520 penalties are enforceable and constitutional,
+       even at very high amounts ($9M in this case). The Excessive Fines
+       argument does not work for Form 3520.
+     - GOOD NEWS: This was an extreme case (criminal conviction, $7M+
+       in hidden assets). Our situation (family gifts, non-willful
+       unawareness) is far more sympathetic for reasonable cause.
+     - The Form 5472 penalty question remains open — Farhy/Mukhi logic
+       about assessment authority could potentially extend to §6038A
+       penalties (Form 5472), though this hasn't been directly tested.
+
+─────────────────────────────────────────────────────────────────────────
+
+D. Bittner v. United States [DECIDED — sets FBAR penalty precedent]
+   Supreme Court: 598 U.S. 85 (February 28, 2023)
+   Status: DECIDED — binding precedent
+
+   FACTS: Alexandru Bittner, a dual Romanian-U.S. citizen, returned to
+   the U.S. in 2011 and learned of his FBAR obligations. He filed late
+   reports for 2007-2011 covering 272 foreign accounts. The IRS assessed
+   penalties at $7,800 PER ACCOUNT × 272 = $2.12 million.
+
+   RULING: 5-4 decision in FAVOR of taxpayer. Non-willful FBAR penalties
+   apply PER REPORT (per year), NOT per account.
+     - Result: penalty reduced from ~$2.12M to ~$39K (5 years × $8K)
+
+   WHY THIS MATTERS FOR US:
+     - If FBAR is filed late for 2024 (Futu account), the maximum
+       non-willful penalty is $12,898 per REPORT (one per year), NOT
+       per account
+     - Even with multiple foreign accounts, the penalty is capped at
+       the per-report amount for non-willful violations
+     - HOWEVER: if the IRS determines the violation is "willful," the
+       per-report cap does NOT apply — penalties can be up to 50% of
+       account balance or $128,975 per account
+     - For our case: one account (Futu), likely non-willful → max
+       exposure ~$12,898 per year of non-filing
+
+─────────────────────────────────────────────────────────────────────────
+
+E. IRS Policy Change (2025) — Form 3520 Penalty Assessment [INFO]
+
+   Starting 2025, the IRS will NO LONGER automatically assess penalties
+   for late-filed Form 3520. Instead:
+     - If a reasonable cause statement is included with a late filing,
+       a human reviewer must evaluate it before any penalty is issued
+     - This is a significant shift from the prior practice of automatic
+       computer-generated penalty notices
+     - Effectively means: file late with a good reasonable cause letter
+       → much better chance of penalty abatement than before
+
+   Combined with Huang (TurboTax defense surviving dismissal), this
+   creates a favorable environment for filing delinquent Form 3520s
+   with reasonable cause explanations.
+
+─────────────────────────────────────────────────────────────────────────
+
+SUMMARY — CASE LAW IMPACT ON OUR SITUATION:
+
+  Form 3520 (foreign gifts):
+    → File with reasonable cause statement. Huang case supports
+      "didn't know about requirement" defense. IRS no longer auto-
+      assesses. Penalty abatement is realistic if filed proactively.
+
+  Form 5472 (LLC reporting):
+    → Likely not needed under Path A (U.S. resident, gift treatment).
+      But even if it were, Farhy circuit split means IRS assessment
+      authority is being actively challenged. Penalties may be
+      unassessable depending on jurisdiction.
+
+  FBAR:
+    → Bittner caps non-willful penalty at ~$12,898/year (per report).
+      Delinquent submission procedure (IRS administrative policy, not
+      statutory) available with no penalty if IRS hasn't contacted you.
+      FILE 2024 FBAR IMMEDIATELY — do not wait for tax season.
+
+  Form 8938:
+    → No major favorable case law. File if thresholds are met.
+      Penalty is $7,800 per failure. Reasonable cause defense available.
+
+
+XII. UPCOMING ACTIONS TIMELINE
+================================================================================
+
+IMMEDIATE (do now, before anything else):
+  [ ] FILE 2024 FBAR — delinquent since Oct 15, 2025
+      File via BSA E-Filing (bsaefiling.fincen.gov), NOT with tax return
+      Include reasonable cause statement re: unaware of requirement
+      No-penalty policy applies if IRS hasn't contacted you yet
+      (administrative policy, not statutory — file ASAP to preserve window)
+      Need: Futu account number, institution address, 2024 peak balance
+
+Before 3/4/2026 (lawyer deadline):
+  [ ] Finalize $507K classification (gift vs. loan vs. nominee)
+  [ ] Set up bank account for mother (East West Bank or similar)
+  [ ] Set up mother's personal stock account
+  [ ] Schwab durable POA for trading authority
+  [ ] C-corp incorporation funding decision ($273K-$312K)
+  [ ] Get co-working space
+
+For 2025 Tax Filing (due 4/15/2026):
+  [ ] File Form 3520 for 2025 foreign gifts (~$272,891)
+      Attach reasonable cause statement (Huang v. US supports defense)
+      IRS 2025 policy: no auto-assessment, manual review if RC attached
+  [ ] File 2025 FBAR on time via BSA E-Filing (due 4/15, ext to 10/15)
+  [ ] Include Form 8938 if Futu balance exceeded $39K EOY or $58K any time
+  [ ] Report 2025 W-2 from Acme Ventures ($9,734)
+  [ ] Determine if Form 5472 + 1120 needed for BSGC LLC
+      (likely NOT needed under Path A — U.S. resident, gift treatment)
+
+Amendments to Consider:
+  [ ] 2024 Form 1040-X for unreported 1042-S income (~$1,494)
+  [ ] 2024 Form 3520 if total foreign gifts actually >= $78,000
+  [ ] 2023 Form 1040-X for W-2 wage discrepancy ($652.24)
+  [ ] Form 5472 + 1120 for relevant years (if applicable under Path C)
+
+Broker Account Updates:
+  [ ] Update Schwab from W-8BEN to W-9 (U.S. person status)
+
+Treasury Securities Tax Treatment:
+  All Treasury securities (T-bills, T-notes, T-bonds, savings bonds) are
+  state/local tax-exempt regardless of where purchased — this is a feature
+  of Treasury securities themselves, not the platform.
+
+  Schwab Treasuries vs. TreasuryDirect savings bonds:
+
+  ┌─────────────────────────┬──────────────────────────────────┬──────────────────────────────────┐
+  │ Feature                 │ TreasuryDirect (I/EE bonds)      │ Schwab Treasuries (T-bills etc.) │
+  ├─────────────────────────┼──────────────────────────────────┼──────────────────────────────────┤
+  │ State/local tax exempt  │ Yes                              │ Yes (same)                       │
+  │ Federal tax deferral    │ Yes — up to 30 years             │ No — interest taxed annually     │
+  │ Education tax exclusion │ Yes — EE/I bonds for education   │ No                               │
+  │ Brokerage fees          │ None                             │ None (Schwab commission-free)    │
+  └─────────────────────────┴──────────────────────────────────┴──────────────────────────────────┘
+
+  Key insight: TreasuryDirect savings bonds have federal tax DEFERRAL —
+  no federal income tax until redemption. Schwab T-bills are taxed annually.
+  Deferral is valuable for long-held I-bonds (compound growth without
+  annual tax drag). Worth maxing $16K/year TreasuryDirect quota
+  ($8K electronic + $4K paper per person; $16K for two people).
+
+  For 2025 tax filing:
+  - Schwab 1099-INT will break out Treasury interest separately
+  - Treasury interest is excluded from CA state income tax return
+  - CA Schedule CA (540) adjustment needed to subtract Treasury interest
+
+================================================================================
+END OF ISSUES REGISTER
+================================================================================

@@ -1,0 +1,315 @@
+================================================================================
+CONSULTATION PREP — MURTHY LAW FIRM
+Date: Wednesday, February 26, 2026, 3:30 PM EST (12:30 PM PST)
+Attorney: Anna Stepanova
+Format: Phone call (20 minutes)
+Fee: $195 (paid)
+Phone: (410) 356-5440
+================================================================================
+
+================================================================================
+1. WHO IS ANNA STEPANOVA
+================================================================================
+
+  - Attorney at Murthy Law Firm (Owings Mills, MD)
+  - Listed on firm website, no independent publications found
+  - Experience level unknown — could be junior or mid-level
+  - No co-authored articles with Sheela Murthy (unlike Box with Mehta)
+  - Bar admission likely DC — not independently verified
+
+  THE FIRM:
+  - Founded 1994, 30+ years, ~100 professionals
+  - Sheela Murthy: Harvard LL.M., Avvo 10.0, AV Preeminent
+  - Published on entrepreneur H-1B since 2011
+  - Known concern: junior attorneys may lack depth, communicate via paralegals
+  - Flat-fee billing, H-1B fees not published
+
+  WHAT THIS MEANS: The firm is credentialed but Stepanova is untested.
+  This 20-minute call is your evaluation of HER, not the firm.
+  Measure her against Box's performance (5/5 must-pass criteria met).
+
+================================================================================
+2. WHAT THEY ALREADY KNOW
+================================================================================
+
+  You sent a detailed questionnaire/email to Murthy covering:
+    - F-1 status, currently on CPT, MS in Applied Analytics (STEM)
+    - Two entities: (a) Wyoming SMLLC (100% owner), (b) CA C-Corp
+      (mother as president/sole director, "Pacific River Capital")
+    - Owner-beneficiary H-1B under Modernization Rule
+    - STEM OPT compliance concern: LLC Schedule C income, unreported
+      to DSO, outside I-983 scope, one employer never signed I-983
+
+  ASSUME: Stepanova has read your submission. If she hasn't, or asks
+  you to repeat everything, that's a negative signal — you're paying
+  $195 for 20 minutes and shouldn't spend it on background recap.
+
+  OPENING LINE: "Hi Anna, thank you for taking the time. I submitted
+  a detailed questionnaire covering my situation — did you have a
+  chance to review it before the call?"
+
+================================================================================
+3. BENCHMARKS FROM PRIOR CONSULTATIONS
+================================================================================
+
+  Use these as cross-checks. These are established positions from
+  Box (Mehta) and Alcorn — Stepanova should match or exceed:
+
+  A. ENTITY / VALIDITY:
+     BOX: C-Corp preferred. Family member = independent, NOT self-employment.
+          Standard 3-year validity possible. SMLLC = 18 months.
+          But warned: family-owned invites scrutiny on whether job is real.
+     ALCORN: 18-month default for majority owner. Family company
+             "might qualify for 3-year."
+
+     → Does Stepanova agree with C-Corp strategy?
+     → Does she understand 18-month vs 3-year distinction?
+
+  B. $78K FEE:
+     BOX: Raised it. COS = exempt. Consular processing = triggers it.
+          Gray area for F-1 already in US.
+     ALCORN: Same analysis. COS exempt.
+
+     → Does Stepanova know about the $78K fee?
+     → If she raises it unprompted = strong. If you have to ask = neutral.
+     → If she doesn't know = concerning.
+
+  C. STEM OPT COMPLIANCE:
+     BOX: Full engagement. Disclosure recommended. Frame as passive
+          investor. Missing I-983 = employer's failure, not yours.
+          E-commerce activity "could be problematic." USCIS doesn't
+          typically require full tax returns for H-1B.
+     ALCORN: Self-employment generally not permitted on STEM OPT.
+             USCIS "almost invariably requests evidence of maintenance
+             of status" during COS. Consular processing resets issues
+             "provided no permanent bar is triggered."
+
+     → THIS IS THE CRITICAL TEST. If she deflects or refuses = fail.
+     → If she engages and provides strategy = strong signal.
+
+  D. DUAL REGISTRATION:
+     BOX: "Multiple companies can enter you in the H-1B lottery."
+     ALCORN: "You can only have 1 company sponsor you."
+     → This remains unresolved. Get Stepanova's take.
+
+================================================================================
+4. CRITICAL CONSTRAINT: 20 MINUTES
+================================================================================
+
+  Unlike Box (37 min Zoom) or Alcorn (email exchange + future consult),
+  you only have 20 minutes on the phone. This means:
+
+  PRIORITY ORDER — ask these in sequence, stop when time runs out:
+
+  ──────────────────────────────────────────────────────────────────────
+  PRIORITY 1: STEM OPT (7 minutes) — THE MAKE-OR-BREAK
+  ──────────────────────────────────────────────────────────────────────
+
+  Q1. "During my STEM OPT period (2022-2024), I operated a single-member
+      LLC that generated Schedule C income from e-commerce. This was not
+      reported to my DSO and was outside my I-983 training plan. What
+      is the risk for my H-1B change-of-status application?"
+
+      GOOD: Engages. Distinguishes STEM OPT vs standard OPT. Asks
+      follow-up questions about the LLC. Discusses discoverability.
+      BAD: "We don't have an opinion" or "it's fine, don't worry."
+      FAIL: Refuses to discuss, deflects, or doesn't understand the issue.
+
+  Q2. "Should I affirmatively disclose this in the H-1B petition,
+      or remain silent?"
+
+      GOOD: Clear recommendation with reasoning (either direction).
+      Box recommended: disclose + frame as passive investor.
+      BAD: "We'll figure it out later" or no opinion.
+
+  Q3. "One employer during my STEM OPT period never signed my I-983.
+      How does that affect my case?"
+
+      GOOD: Distinguishes procedural vs substantive violation. Provides
+      strategy (Box said: employer's failure, not yours).
+      BAD: Dismisses without analysis.
+
+  ──────────────────────────────────────────────────────────────────────
+  PRIORITY 2: ENTITY STRATEGY (5 minutes)
+  ──────────────────────────────────────────────────────────────────────
+
+  Q4. "I have a Wyoming SMLLC where I'm 100% owner and a California
+      C-Corp where my mother is president and sole director. Which
+      should file the H-1B petition, and does the choice affect
+      whether I get 18 months or 3 years of validity?"
+
+      GOOD: Nuanced. C-Corp allows family member as independent
+      decision-maker → possible 3-year. SMLLC = self-employment → 18 months.
+      BAD: "It doesn't matter" without reasoning.
+
+  Q5. "Can I register through both entities in the March lottery,
+      or only one?"
+
+      Box says: both OK if both would genuinely employ.
+      Alcorn says: only one.
+      → Get Stepanova's answer and reasoning.
+
+  ──────────────────────────────────────────────────────────────────────
+  PRIORITY 3: LOGISTICS & FEE (5 minutes)
+  ──────────────────────────────────────────────────────────────────────
+
+  Q6. "If I retain your firm, who would handle my case day-to-day —
+      you, another attorney, or Sheela Murthy?"
+
+      → THIS IS CRITICAL given the junior attorney concern.
+      → If she says "our team will handle it" = probe who specifically.
+      → If she says she would handle it personally = better.
+
+  Q7. "What is the total fee for registration + petition, including
+      the STEM OPT compliance analysis?"
+
+      → Murthy uses flat fees but doesn't publish H-1B pricing.
+      → Benchmark: Box/Mehta = $3,510. Alcorn = $2,730 reg only (petition TBD).
+      → Hibee = $3,120 total. Manifest = $2,730 total.
+
+  Q8. "The registration window opens March 4 — that's 6 days away.
+      Can your firm submit the registration in time if I retain you
+      this week?"
+
+      → If she hesitates or says probably not = deal-breaker.
+      → If she says yes, ask what's needed from you and by when.
+
+  Q9. "Is the $195 consultation fee credited toward the engagement?"
+
+  ──────────────────────────────────────────────────────────────────────
+  IF TIME PERMITS: $78K FEE
+  ──────────────────────────────────────────────────────────────────────
+
+  Q10. "Is there a $78,000 fee issue I should be aware of for my
+       H-1B? Does change of status vs consular processing matter?"
+
+       → Only ask this if she doesn't raise it herself.
+       → If she raises it unprompted = strong positive.
+
+================================================================================
+5. EVALUATION CRITERIA — PASS / FAIL
+================================================================================
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │ MUST-PASS (any failure = do not retain):                           │
+  │                                                                     │
+  │ [ ] Engages substantively on STEM OPT compliance (does NOT refuse) │
+  │ [ ] Provides a disclosure recommendation (disclose vs silent)      │
+  │ [ ] Gives a concrete risk assessment, not just "it'll be fine"     │
+  │ [ ] Demonstrates knowledge of owner-beneficiary Modernization Rule │
+  │ [ ] Can confirm March 4 registration timeline is achievable        │
+  │                                                                     │
+  │ STRONG POSITIVES:                                                   │
+  │ [ ] Raises $78K fee issue unprompted                              │
+  │ [ ] Asks follow-up questions about the LLC activity                │
+  │ [ ] Distinguishes STEM OPT from standard OPT self-employment      │
+  │ [ ] Discusses COS vs consular processing strategically             │
+  │ [ ] Provides clear entity recommendation with reasoning            │
+  │ [ ] Identifies who specifically will handle the case               │
+  │ [ ] Provides a specific fee quote (not "we'll send you an LRA")   │
+  │                                                                     │
+  │ RED FLAGS:                                                          │
+  │ [ ] "We don't have an opinion" on STEM OPT                        │
+  │ [ ] "It's fine, don't worry about it" without analysis             │
+  │ [ ] Hasn't read your submission / asks you to re-explain everything│
+  │ [ ] Unfamiliar with Modernization Rule's 18-month provision        │
+  │ [ ] Vague on who handles the case ("our team")                     │
+  │ [ ] Can't meet March 4 timeline                                    │
+  │ [ ] Pressures to retain without substantive answers                │
+  │ [ ] Tries to end the call early without covering STEM OPT          │
+  └─────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+6. DECISION FRAMEWORK
+================================================================================
+
+  SCENARIO A — Stepanova passes all must-pass criteria:
+    → Strong candidate. Request fee quote and engagement letter.
+    → Compare with Alcorn ($390 consult + $2,730+ registration).
+    → March 4 deadline: can they move fast enough?
+    → Risk: will Stepanova actually handle the case, or be replaced?
+
+  SCENARIO B — Strong on entity/H-1B but weak on STEM OPT:
+    → Consider retaining Murthy for filing only
+    → Seek separate STEM OPT compliance counsel (e.g., Reddy Neumann
+      Brown / Rebecca Chen for targeted second opinion)
+    → Same approach we considered for Arora
+
+  SCENARIO C — Stepanova fails (deflects, dismisses, lacks depth):
+    → Do not retain
+    → Alcorn becomes priority 1 (schedule Sophie ASAP)
+    → Consider Klasko Immigration (published 95% owner H-1B win)
+    → Consider Corstange Law (niche startup immigration firm)
+
+  SCENARIO D — Stepanova defers to Sheela Murthy on STEM OPT:
+    → Acceptable IF she explicitly says "this needs Sheela's review"
+    → Ask if Sheela would be involved in the STEM OPT analysis
+    → May indicate honest self-awareness rather than a gap
+    → But be wary — Sheela may be too busy to actually engage
+
+================================================================================
+7. ATTORNEYS IN PLAY — CURRENT STATUS (as of Feb 26)
+================================================================================
+
+  Attorney/Firm     | Consult | Status           | STEM OPT  | Fee Est.
+  ──────────────────┼─────────┼──────────────────┼───────────┼──────────
+  Box/Mehta         | $312    | DECLINED CASE    | EXCELLENT | $3,510
+  Stepanova/Murthy  | $195    | TODAY 3:30 ET    | UNTESTED  | Unknown
+  Alcorn/Sophie     | $390    | Awaiting reply   | Engaged*  | $2,730+ reg
+  Hibee/Wenjie Sun  | N/A     | Retainer unsigned| Unknown   | $3,120
+  Klasko            | TBD     | Not contacted    | Unknown   | Premium
+  Corstange         | TBD     | Not contacted    | Unknown   | Flat-fee
+  Serotte/Nagarajan | TBD     | Not contacted    | Unknown   | Unknown
+  Manifest Law      | TBD     | Not contacted    | Unknown   | $2,730
+
+  * Alcorn's email substantively addressed STEM OPT risk and $78K fee.
+
+  MARCH 4 DEADLINE: 6 days. Any firm retained must commit to filing
+  registration within this window.
+
+================================================================================
+8. LESSONS FROM BOX CONSULTATION (what excellence looks like)
+================================================================================
+
+  Box scored 5/5 on must-pass criteria in 37 minutes:
+    1. Engaged fully on STEM OPT — spent ~15 minutes, asked follow-up Qs
+    2. Distinguished STEM OPT from standard OPT self-employment rules
+    3. Addressed discoverability — "USCIS doesn't typically require full
+       tax returns for H-1B" but warned about misrepresentation risk
+    4. Clear recommendation: disclose + frame as passive investor
+    5. Concrete risk: e-commerce "could be problematic," passive investment
+       has better argument, missing I-983 was "beyond your control"
+
+  ADDITIONALLY Box:
+    - Explained $78K fee (COS exempt, consular triggers)
+    - Recommended C-Corp with consistent reasoning
+    - Provided documentation checklist
+    - Said both entities can register for lottery
+    - Quoted $3,510 total (40% upfront)
+    - No tangents, no fluff, answered questions in order
+
+  → Stepanova should match this standard. She has 20 minutes (not 37)
+    so she won't cover as much, but the quality should be comparable.
+  → If she matches Box on STEM OPT depth = very strong signal.
+  → If she falls below Arora's level (deflect, refuse) = immediate fail.
+
+================================================================================
+9. PRACTICAL NOTES
+================================================================================
+
+  - Record the call (iPhone native recording or Voice Memos)
+  - Have this prep document open during the call
+  - Take notes on specific answers — mark pass/fail in real time
+  - If she tries to end at 15 min without covering STEM OPT,
+    say: "I have one more critical question about a STEM OPT
+    compliance issue — this is the main reason I scheduled the call."
+  - Don't volunteer Box's specific strategy (passive investor framing)
+    — let Stepanova arrive at her own recommendation independently
+  - If she asks what other attorneys have said, you can mention that
+    one attorney recommended disclosure but DECLINED the case
+  - Key correction: Your degree is MS in APPLIED ANALYTICS (not
+    Financial Engineering) — correct if it comes up
+
+================================================================================
+END OF CONSULTATION PREP
+================================================================================

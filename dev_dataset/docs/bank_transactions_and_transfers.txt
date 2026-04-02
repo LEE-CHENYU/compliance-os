@@ -1,0 +1,93 @@
+BANK TRANSACTIONS AND POSITION TRANSFERS
+LLC XXX567 - Period: 02/25/2025 to 10/06/2025
+===============================================================================
+
+INCOMING TRANSACTIONS FROM BANKS
+===============================================================================
+
+MoneyLink Transfers (from Citibank):
+- 09/22/2025: $23,400.00 (Tfr Citibank NA, ALEX ZHANG)
+- 08/26/2025: $23,400.00 (Tfr CITIBANK NA, ALEX ZHANG)
+- 05/14/2025: $3,510.00 (Tfr Citibank NA, BAMBOO SHOOT GRO)
+- 05/14/2025: $3,510.00 (Tfr Citibank Na, BAMBOO SHOOT GRO)
+- 04/23/2025: $0.78 (Tfr Citibank Na, BAMBOO SHOOT GRO)
+
+Bank Interest (Schwab Bank):
+- 09/16/2025: $2.39
+- 08/18/2025: $2.03
+- 07/16/2025: $1.81
+- 06/16/2025: $0.76
+- 05/16/2025: $0.19
+- 04/16/2025: $0.17
+- 03/17/2025: $0.48
+
+Funds Received (Cashier's Checks):
+- 03/03/2025: $19,500.00
+- 03/03/2025: $19,500.00
+- 02/28/2025: $19,500.00
+
+Wire Received:
+- 02/25/2025: $2,861.66
+
+TOTAL INCOMING FROM BANKS: $108,172.58
+
+
+===============================================================================
+INCOMING POSITION TRANSFERS (Journaled Shares)
+===============================================================================
+
+05/01/2025 - Major position transfer:
+- INTC: 1,195 shares @ $15.58
+- PDD: 150 shares @ $82.66
+- US TREASURY STRIP 0%30 (912833XX3): 60,000 @ $65.2227
+- VTWO: 1 share @ $61.81
+- SHY: 1 share @ $64.50
+- SLYV: 10.0312 shares @ $57.68
+- CROX: 222 shares @ $73.88
+- VNQ: 1 share @ $69.12
+- OXY: 1,483.879 shares @ $31.54
+- EFA: 1 share @ $65.89
+- FRCB: 40 shares @ $0.0036
+- BIDU: 10 shares @ $68.57
+- US TREASURY BILL (912797PX9): 25,000 @ $76.4036
+- US TREASURY BILL (912797NW3): 25,000 @ $77.3404
+- US TREASURY BILL (912797NN3): 30,000 @ $77.6714
+- SOLV: 50 shares @ $51.18
+- LBTYK: 100 shares @ $8.87
+- TBIL: 1 share @ $38.88
+
+05/15/2025:
+- US TREASURY BILL (912797PN1): 25,000 @ $76.9143
+
+03/19/2025:
+- US TREASURY STRIP 0%35 (9128335A4): 25,000 (internal movement)
+
+
+===============================================================================
+OUTGOING POSITION TRANSFERS (Journaled Shares)
+===============================================================================
+
+07/08/2025:
+- PDD 06/18/2026 90.00 P PUT: -1 @ $6.04
+
+04/09/2025:
+- PDD 01/16/2026 95.00 P PUT: -1 @ $12.675
+
+
+===============================================================================
+CASH JOURNAL TRANSFERS (Between Accounts)
+===============================================================================
+
+Incoming Cash Journals (from account ...619):
+- 07/08/2025: $7,020.00
+- 06/30/2025: $11,700.00
+- 03/06/2025: $17,160.00
+- 02/27/2025: $2,340.00
+TOTAL INCOMING: $38,220.00
+
+Outgoing Cash Journals (to account ...619):
+- 09/11/2025: -$22,620.00
+- 04/07/2025: -$3,900.00
+TOTAL OUTGOING: -$26,520.00
+
+NET CASH JOURNAL TRANSFERS: $11,700.00

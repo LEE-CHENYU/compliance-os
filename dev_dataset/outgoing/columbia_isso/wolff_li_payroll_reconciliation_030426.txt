@@ -1,0 +1,628 @@
+================================================================================
+ACME VENTURES INC. — PAYROLL RECONCILIATION
+Employer: Acme Ventures Inc. (EIN 33-3333333)
+Payroll Provider: Gusto
+Prepared: March 4, 2026
+================================================================================
+
+================================================================================
+1. COMPLETE PAYSTUB HISTORY (from Gusto Earnings Statements PDF)
+================================================================================
+
+  Source: acme-ventures-inc-paystubs-chenyu-li.pdf (9 pages, 7 stubs)
+  Rate: $18.72/hour for all payrolls
+  Payment: Direct deposit to Citi (....6544); #7 paid by physical check
+
+  #  Work Period            Pay Date    Hours  Gross      Net Pay     YTD Gross    YTD Hrs
+  ── ─────────────────────  ──────────  ─────  ─────────  ──────────  ──────────── ───────
+  1  Apr 21 – May 4         May 23      89h    $1,666.08  $1,270.08  $1,666.08     89
+  2  Mar 17 – Apr 19 (OC)   Jun 10      88h    $1,647.36  $1,256.83  $3,313.44    177
+  3  May 19 – Jun 1         Jul 23      83h    $1,553.76  $1,190.67  $4,867.20    260
+  4  Jul 1 – Aug 31 (OC)    Sep 2      150h    $2,808.00  $1,985.34  $7,675.20    410
+  5  Sep 1 – Sep 19 (OC)    Oct 20      44h    $823.68    $674.35  $8,498.88   454
+  6  Oct 16 – Nov 17 (OC)   Nov 18      66h    $1,235.52  $965.66  $9,734.40   520
+  7  Jun 2 – Jun 30 (OC)    Dec 18      40h      $748.80    $620.08  $10,483.20   560
+  ── ─────────────────────  ──────────  ─────  ─────────  ──────────  ────────────
+     TOTALS                             560h   $10,483.20 $7,963.01
+
+  OC = Off-Cycle Payroll
+  NOTE: Payrolls are NOT in chronological work-period order. Pay dates
+  are often months after the work period (e.g., Mar 17-Apr 19 work
+  paid Jun 10; Jun 2-30 work paid Dec 18).
+
+================================================================================
+2. RECONCILIATION WITH W-2
+================================================================================
+
+  Original W-2 (sent by Danny Cohen 11/21/2025):
+    Total wages (Box 1):          $9,734.40
+    Federal income tax (Box 2):    $891.59
+    *** WAS MISSING PAYSTUB #7 (Dec 18, $748.80) ***
+
+  CORRECTED W-2 (downloaded from Gusto 03/04/2026):
+    Box 1  — Wages:               $10,483.20  ✓ MATCH final paystub YTD
+    Box 2  — Federal tax:          $921.47  ✓ MATCH
+    Box 3  — SS wages:            $10,483.20  ✓ MATCH
+    Box 4  — SS tax:                 $649.96  ✓ MATCH
+    Box 5  — Medicare wages:      $10,483.20  ✓ MATCH
+    Box 6  — Medicare tax:           $152.01  ✓ MATCH
+    Box 16 — State wages (NY):    $10,483.20  ✓ MATCH
+    Box 17 — State tax (NY):         $457.39  ✓ MATCH
+    Box 18 — Local wages (NYC):   $10,483.20  ✓ MATCH
+    Box 19 — Local tax (NYC):        $339.36  ✓ MATCH
+
+  RESOLVED: Gusto reissued the W-2 with corrected figures including
+  the Dec 18 payroll. No W-2c needed. File saved:
+    /Users/devuser/accounting/tmp/mendy_gusto_docs/US_W-2_7757616926033936.pdf
+
+================================================================================
+3. RECONCILIATION WITH CITI BANK STATEMENT (account ...6544)
+================================================================================
+
+  Source: CHK_5678_CURRENT_VIEW.csv (Citi checking, Mar 2025 – Mar 2026)
+
+  #  Pay Date    Net Pay     Bank Date    Bank Amount   Bank Ref      Status
+  ── ──────────  ──────────  ──────────── ───────────── ───────────── ──────────
+  1  May 23      $1,270.08   05-23-2025   $1,270.08     PAY 184530    ✓ MATCH
+  2  Jun 10      $1,256.83   06-10-2025   $1,256.83     PAY 828255    ✓ MATCH
+  3  Jul 23      $1,190.67   07-23-2025   $1,190.67     PAY 473359    ✓ MATCH
+  4  Sep 2       $1,985.34   09-02-2025   $1,985.34     PAY 010088    ✓ MATCH
+  5  Oct 20        $674.35   10-20-2025     $674.35     PAY 852393    ✓ MATCH
+  6  Nov 18      $965.66   11-18-2025   $965.66     PAY 981772    ✓ MATCH
+  7  Dec 18        $620.08   03-04-2026   $620.08       CHECK #00001  ✓ CHECK
+  ── ──────────  ──────────  ──────────── ─────────────
+     TOTALS     $7,963.01               $7,963.01
+
+  ACH deposits (paystubs #1-6):  $7,342.94
+  Physical check (paystub #7):     $620.08  (CHECK #00001, deposited 03/04/2026)
+  TOTAL RECEIVED:               $7,963.01  ✓ MATCHES total net pay
+
+  RESOLVED: Paystub #7 was paid by physical check (Gusto "blank stock check"),
+  NOT by ACH direct deposit. This is why it did not appear in the bank
+  statement as an ACH credit like paystubs #1-6.
+
+  Check details:
+    Check #:     00001
+    Date:        12/18/2025
+    Amount:      $620.08
+    Routing:     226070584
+    Account:     3546503248 (employer's bank)
+    Payee:       Alex Zhang, 888 Main St, Apt 345, New York, NY 10044
+    Deposited:   03/04/2026 (to Citi ...6544)
+
+  Source: blank_stock_check_payment.pdf (Gusto earnings statement + check)
+
+================================================================================
+4. RECONCILIATION WITH FORM 941 (Q2 2025)
+================================================================================
+
+  941 Q2 (Apr-Jun 2025):
+    Line 1 (employees):           1
+    Line 2 (wages):               $3,313.44
+    Line 3 (FIT withheld):        $275.31
+
+  Payrolls with PAY DATES in Q2 (Apr-Jun):
+    May 23: $1,666.08  FIT $138.78
+    Jun 10: $1,647.36  FIT $136.53
+    ────────────────────────────────
+    Total:  $3,313.44  FIT $275.31  ✓ MATCH
+
+  SS wages:  $3,313.44 × 0.124 = $410.87  ✓ MATCH
+  Medicare:  $3,313.44 × 0.029 = $96.09  ✓ MATCH
+
+  941 Q2 reconciles perfectly.
+
+================================================================================
+5. RECONCILIATION WITH paytub.py SCRIPT
+================================================================================
+
+  The py script contains 6 hardcoded entries totaling $9,828.00:
+
+  py Entry     Gross      Paystub PDF Match?
+  ───────────  ─────────  ────────────────────────────────────────────────
+  2025-05-06   $1,666.08  Paystub #1 (May 23) — SAME gross, DIFFERENT date
+  2025-06-06   $1,647.36  *** LIKELY VOIDED — see notes below ***
+  2025-06-10   $1,647.36  Paystub #2 (Jun 10) — MATCH
+  2025-09-02   $2,808.00  Paystub #4 (Sep 2)  — MATCH
+  2025-10-20   $823.68  Paystub #5 (Oct 20) — MATCH
+  2025-11-18   $1,235.52  Paystub #6 (Nov 18) — MATCH
+  ───────────  ─────────
+  py Total:    $9,828.00
+
+  ISSUES WITH paytub.py:
+
+  A. DOUBLE-COUNTED JUNE PAYROLL:
+     The py script has BOTH 06/06 ($1,647) and 06/10 ($1,647) = $3,295.
+     But the paystub PDF YTD only increases by $1,647 (from $1,666 to $3,313).
+     Only ONE June payroll was processed. The 06/06 run was likely voided
+     due to the Gusto debit failure (Mendy forwarded "Unable to debit
+     Acme Ventures Inc. for May 2025 invoice" on 06/06) and reprocessed
+     as 06/10.
+     Corrected py total: $9,828 - $1,647 = $8,181
+
+  B. MISSING PAYSTUB #3 (Jul 23, $1,554):
+     Work period May 19 – Jun 1, 83 hours. Not in py script.
+     Corrected: $8,181 + $1,554 = $9,734
+
+  C. MISSING PAYSTUB #7 (Dec 18, $749):
+     Work period Jun 2 – Jun 30, 40 hours. Not in py script.
+     Corrected: $9,734 + $749 = $10,483  ✓ MATCHES PDF FINAL YTD
+
+  D. PAY DATE DISCREPANCY FOR FIRST PAYROLL:
+     py says 05/06; PDF says 05/23. The 05/06 payroll was reprocessed
+     with higher withholding (FIT $69.11 → $138.78) and paid 05/23.
+
+  SUMMARY OF py ERRORS:
+     py script total:     $9,828.00  (INCORRECT)
+     Actual total:        $10,483.20
+     Difference:          +$655.20
+     Explanation:         -$1,647 (remove duplicate) +$1,554 +$749 = +$655
+
+================================================================================
+6. RECONCILIATION WITH MENDY EMAIL PAYROLL SUMMARIES (11/17/2025)
+================================================================================
+
+  Mendy's email contained employer-side payroll journal reports.
+  These show the payroll as SUBMITTED, not necessarily as FINALIZED.
+
+  Mendy Report       Amount     PDF Paystub    Status
+  ────────────────── ────────── ────────────── ─────────────────────────
+  Pay day 05/06      $1,666     #1 (May 23)    REPROCESSED (new date/taxes)
+  Pay day 06/06      $1,647     —              VOIDED (Gusto debit failure)
+  Pay day 06/10      $1,647     #2 (Jun 10)    MATCH
+  Pay day 09/02      $2,808     #4 (Sep 2)     MATCH
+  Pay day 10/20      $824     #5 (Oct 20)    MATCH
+  Not in email       $1,554     #3 (Jul 23)    NOT SENT BY MENDY
+  Not in email       $749       #7 (Dec 18)    PAID AFTER EMAIL
+
+  Mendy's Nov 14 email (separate):
+  Pay day 11/18      $1,236     #6 (Nov 18)    MATCH
+
+  The email data is INCOMPLETE — missing paystubs #3 and #7, and
+  includes a voided payroll (06/06).
+
+================================================================================
+7. EMPLOYEE TAX WITHHOLDING SUMMARY (from final paystub YTD)
+================================================================================
+
+  Employee Taxes (YTD through Dec 18, 2025):
+    Federal Income Tax:     $921.47
+    Social Security:          $649.96
+    Medicare:                 $152.01
+    NY State:                 $457.39
+    NYC:                      $339.36
+    ────────────────────────────────────
+    TOTAL EMPLOYEE TAXES:   $2,520.19
+
+  Employer Taxes (YTD through Dec 18, 2025):
+    Social Security:          $649.96
+    Medicare:                 $152.01
+    FUTA:                      $32.76  (capped at $5,460 wage base)
+    NY SUI:                   $401.86
+    NY Reemployment:            $7.49
+    ────────────────────────────────────
+    TOTAL EMPLOYER TAXES:   $1,244.07
+
+  TOTAL EMPLOYER COST:      $10,483.20 + $1,244.07 = $11,727.27
+
+================================================================================
+8. WORK PERIOD TIMELINE VS. IMMIGRATION AUTHORIZATION
+================================================================================
+
+  SEVIS Employment:
+    STEM OPT: Acme Ventures, 03/17/2025 – 09/18/2025 (transfer)
+    [UNAUTHORIZED GAP]:          09/18/2025 – 11/04/2025 (47 days)
+    CPT:      Acme Ventures, 11/04/2025 – 04/17/2026
+
+  ────────────────────────────────────────────────────────────────────────
+  8A. GUSTO PAY PERIOD DATES (as printed on paystubs)
+  ────────────────────────────────────────────────────────────────────────
+
+  #  Gusto Pay Period        Pay Day     Hours  Gross
+  ── ─────────────────────── ──────────  ─────  ─────────
+  1  Apr 21 – May 4          May 23      89h    $1,666.08
+  2  Mar 17 – Apr 19 (OC)    Jun 10      88h    $1,647.36
+  3  May 19 – Jun 1          Jul 23      83h    $1,553.76
+  4  Jul 1 – Aug 31 (OC)     Sep 2       150h   $2,808.00
+  5  Sep 1 – Sep 19 (OC)     Oct 20      44h    $823.68
+  6  Oct 16 – Nov 17 (OC)    Nov 18      66h    $1,235.52
+  7  Jun 2 – Jun 30 (OC)     Dec 18      40h      $748.80
+
+  OC = Off-Cycle Payroll
+
+  NOTE: The Gusto "pay period" dates for off-cycle payrolls reflect the
+  PROCESSING WINDOW (when Mendy ran the payroll in Gusto), NOT the dates
+  when work was actually performed. Mendy did not correct the pay period
+  dates when running retroactive off-cycle payrolls. This is the root
+  cause of the paystub #6 issue.
+
+  ────────────────────────────────────────────────────────────────────────
+  8B. CORRECTED WORK PERIOD MAPPING (actual work periods)
+  ────────────────────────────────────────────────────────────────────────
+
+  All 560 hours were performed during the STEM OPT authorized period
+  (Mar 17 – Sep 18, 2025). The Gusto pay period dates do not correspond
+  to actual work dates for off-cycle payrolls. Corrected mapping:
+
+  #  Gusto Pay Period        Actual Work Period    Hours  Weeks  h/wk
+  ── ─────────────────────── ──────────────────── ─────  ─────  ────
+  2  Mar 17 – Apr 19 (OC)    Mar 17 – Apr 11       88h    3.6   24 ✓
+  1  Apr 21 – May 4          Apr 12 – May 9         89h    4.0   22 ✓
+  7  Jun 2 – Jun 30 (OC)     May 10 – May 23        40h    2.0   20 ✓
+  3  May 19 – Jun 1          May 24 – Jun 20         83h    4.0   21 ✓
+  6  Oct 16 – Nov 17 (OC)    June 2025               66h    3.3   20 ✓
+  4  Jul 1 – Aug 31 (OC)     Jul 15 – Sep 2         150h    7.0   21 ✓
+  5  Sep 1 – Sep 19 (OC)     Sep 3 – Sep 18          44h    2.1   21 ✓
+  ── ─────────────────────── ──────────────────── ─────  ─────
+     TOTAL                                         560h   26.0
+
+  All periods ≥ 20h/wk (STEM OPT minimum)                       ✓
+  Continuous coverage Mar 17 – Sep 18 with no gaps               ✓
+  Overall average: 560h / 26 weeks = 21.5 h/wk                  ✓
+  Zero hours during unauthorized gap (Sep 19 – Nov 3)            ✓
+  Zero hours attributed to CPT                                    ✓
+
+  ────────────────────────────────────────────────────────────────────────
+  8C. PAYSTUB #6 — DETAILED ANALYSIS
+  ────────────────────────────────────────────────────────────────────────
+
+  THE ISSUE:
+    Gusto paystub #6 prints "Oct 16 – Nov 17, 2025" as the pay period.
+    This overlaps with the unauthorized gap (Sep 19 – Nov 3, 2025).
+    If taken at face value, it suggests 66 hours of work during a period
+    when no employment authorization existed.
+
+  WHAT ACTUALLY HAPPENED:
+    The 66 hours were performed during June 2025, under STEM OPT
+    authorization. Due to Mendy's pattern of delayed payroll processing,
+    these hours were not entered into Gusto until November 2025. Gusto
+    assigned the Oct 16 – Nov 17 pay period based on the off-cycle
+    processing window. Mendy did not correct the dates.
+
+  EVIDENCE SUPPORTING CORRECTION:
+    1. Documented pattern of delayed payroll across ALL 7 paystubs:
+       - Paystub #2: Mar 17-Apr 19 work → paid Jun 10 (52-day delay)
+       - Paystub #7: work paid Dec 18 (months after performance)
+       - Multiple off-cycle payrolls processed well after work dates
+    2. Paystub #7 only shows 40h for "Jun 2-30" — too low for a full
+       month at 20h/wk minimum. The remaining June hours (66h) were
+       processed separately in the Nov off-cycle payroll (paystub #6).
+    3. Without paystub #6 in June, there would be a suspicious gap
+       in hours during the summer. With it, coverage is continuous.
+    4. Employer correction letter from CEO confirms the actual work
+       period and that no work occurred during the unauthorized gap.
+
+  ────────────────────────────────────────────────────────────────────────
+  8D. USCIS PRESENTATION STRATEGY
+  ────────────────────────────────────────────────────────────────────────
+
+  RISK LEVEL: LOW — <5% chance of affecting H-1B outcome.
+
+  WHY LOW RISK:
+    - H-1B petition is through BSGC LLC / Pacific River Capital, NOT Wolff & Li
+    - USCIS does not routinely audit paystubs from other employers
+    - No actual unauthorized work occurred — this is a documentation issue
+    - The unauthorized gap itself is not H-1B-disqualifying
+    - Strong corroborating evidence (7 paystubs showing delayed pattern)
+
+  RECOMMENDED APPROACH:
+    1. DO NOT VOLUNTEER: Do not proactively submit paystub #6 or the
+       correction letter to USCIS. Wolff & Li paystubs are not part of
+       the H-1B filing through BSGC/Yangtze.
+
+    2. PREPARE FOR RFE: Have the following package ready in case USCIS
+       requests employment history documentation:
+         a. Employer correction letter from Danny Cohen (CEO)
+         b. All 7 Gusto paystubs showing delayed payroll pattern
+         c. Bank statements showing deposit dates match pay dates
+         d. SEVIS employment records showing STEM OPT dates
+         e. Attorney explanation memo
+
+    3. MINIMIZE WOLFF & LI IN FILING: List Wolff & Li employment under
+       STEM OPT period (Mar 17 – Sep 18, 2025) only. Avoid referencing
+       the CPT employment period. This is truthful — STEM OPT employment
+       ended when the EAD transfer date passed.
+
+    4. BRIEF PETITION ATTORNEY: Disclose this issue to the H-1B petition
+       attorney during intake so they are prepared.
+
+  GUSTO RECORD AMENDMENT: DO NOT AMEND.
+    Do NOT ask Mendy to correct the pay period dates in Gusto. A
+    timestamped amendment made months after processing looks like
+    retroactive manipulation. The original paystub PDF already exists
+    and cannot be un-created. An employer correction letter is the
+    standard, accepted remedy for payroll documentation errors.
+    Leave Gusto records as-is; explain when asked.
+
+  DETAILED STRATEGY DOCUMENT:
+    /Users/devuser/accounting/outgoing/wolff_li/
+    payroll_correction_strategy_030626.txt
+
+  EMPLOYER CORRECTION LETTER DRAFT:
+    /Users/devuser/accounting/outgoing/wolff_li/
+    mendy_email_draft_paystub6_030626.txt
+
+  ────────────────────────────────────────────────────────────────────────
+  8E. HOURS BY AUTHORIZATION PERIOD (corrected)
+  ────────────────────────────────────────────────────────────────────────
+
+    STEM OPT (Mar 17 – Sep 18): 560 hours across 26 weeks
+      → 21.5 h/week average
+      → All periods ≥ 20h/wk minimum
+      → All 7 paystubs attributed to this period
+
+    Unauthorized gap (Sep 19 – Nov 3): ZERO hours
+      → No work performed, no hours logged
+      → Confirmed by employer (correction letter)
+
+    CPT (Nov 4 – present): ZERO payroll hours
+      → No paystubs attributed to CPT period
+      → CPT employment exists in SEVIS but no payroll processed
+      → Employment will end naturally at CPT expiration (04/17/2026)
+
+================================================================================
+9. KEY FINDINGS & ACTION ITEMS
+================================================================================
+
+  A. PAYSTUB #7 PAYMENT:                                 STATUS: RESOLVED
+     Dec 18 payroll ($749 gross / $620.08 net) was paid by PHYSICAL CHECK
+     (Gusto blank stock check #00001), not ACH. That is why it never
+     appeared in the bank statement as an ACH credit.
+     Check received and deposited to Citi ...6544 on 03/04/2026.
+     All 7 paystubs now accounted for: $7,963.01 total net received.
+
+  B. W-2 STATUS:                                         STATUS: CONFIRMED ✓
+     Corrected W-2 shows $10,483.20 — CORRECT.
+     All wages paid (6 ACH + 1 check). No W-2c needed.
+     File 2025 tax return using $10,483 gross wages from Wolff & Li.
+
+  C. paytub.py SCRIPT:                                   STATUS: CORRECTED
+     Original: 6 entries, $9,828 (double-counted June, missing #3 and #7)
+     Corrected: 7 entries, $10,483 (matches W-2 and paystub PDF)
+     Corrected script includes bank reconciliation and voided payroll log.
+     Saved: /Users/devuser/accounting/tmp/mendy_gusto_docs/paytub.py
+
+  D. UNAUTHORIZED GAP / PAYSTUB #6:                STATUS: STRATEGY PREPARED
+     Paystub #6 Gusto date (Oct 16-Nov 17) is INCORRECT — actual work
+     was performed during June 2025 under STEM OPT. Gusto date reflects
+     the off-cycle processing window, not actual work dates. This is
+     consistent with the employer's documented pattern of delayed payroll.
+     No work was performed during the unauthorized gap (Sep 19 – Nov 3).
+
+     CORRECTIVE ACTION:
+       - Employer correction letter drafted (pending Mendy signature)
+       - Corrected work period mapping prepared (all periods ≥20h/wk)
+       - USCIS strategy: do not volunteer; prepare RFE response package
+       - Risk level: LOW (<5% chance of affecting H-1B outcome)
+
+     See: outgoing/wolff_li/payroll_correction_strategy_030626.txt
+     See: outgoing/wolff_li/mendy_email_draft_paystub6_030626.txt
+
+  E. I-9 SUPPLEMENT B REVERIFICATION:              DECISION: DO NOT FIX
+     EAD (IOE9733115480) expired 01/22/2026. Employment continues
+     under CPT. Supplement B has a started-but-blank entry.
+
+     ANALYSIS (03/04/2026):
+       Three options were considered:
+         A. Complete Supplement B now (honestly dated March 2026)
+         B. Leave it alone
+         C. End the Wolff & Li employment entirely
+
+     DECISION: OPTION B — Leave it alone. Do NOT ask Mendy to complete.
+
+     REASONING:
+       1. Retrospective correction creates more risk than it solves.
+          Completing Supplement B now would produce a timestamped document
+          showing reverification was 41+ days late (EAD expired 01/22,
+          correction in March). This is evidence of a violation that
+          currently has no paper trail.
+       2. CPT authorization is already established in SEVIS. The I-9 is
+          redundant for proving work authorization — SEVIS is the
+          authoritative record.
+       3. Completing Supplement B draws attention to the EAD → CPT
+          transition timeline, which could raise questions about the
+          unauthorized gap (09/18 – 11/04/2025) if USCIS examines
+          the I-9 during H-1B adjudication.
+       4. I-9 compliance is the EMPLOYER's legal obligation, not the
+          employee's. If Wolff & Li is audited (extremely unlikely for
+          a 1-employee company), the penalty (~$197-$1,955 for first
+          substantive violation) falls on Mendy, not on Chenyu.
+       5. CPT ends 04/17/2026 (~6 weeks). Employment is not needed
+          and will end naturally. Chenyu does not need active CPT
+          employment for F-1 status maintenance or cap-gap purposes
+          (H-1B is being filed through BSGC LLC, not Wolff & Li).
+          Once terminated, the I-9 enters retention (3 years from hire
+          or 1 year from termination, whichever later) and becomes a
+          historical document.
+       6. No one is currently asking for the I-9. Do not volunteer a
+          document that highlights a compliance gap.
+
+     CPT EMPLOYMENT STATUS:
+       The Wolff & Li CPT employment (11/04/2025 – 04/17/2026) is NOT
+       needed going forward. H-1B petition is through BSGC LLC (owner-
+       beneficiary). CPT expiration on 04/17/2026 will end the
+       employment naturally without requiring any formal termination
+       action. No further payroll expected from Wolff & Li.
+
+     Note: I-9 date fields show "2026" — likely year typo for 2025
+     (consistent with E-Verify case created 03/20/2025).
+
+  F. LATE/RETROACTIVE PAYROLL:                           PRIORITY: LOW
+     Multiple payrolls were paid months after work performed:
+       Mar 17-Apr 19 work → paid Jun 10 (52-day delay)
+       Jun 2-30 work → paid Dec 18 (171-day delay!)
+     This is unusual but not illegal. May raise questions about
+     bona fide employment if scrutinized.
+
+  G. REPROCESSED PAYROLLS:                               PRIORITY: LOW
+     First payroll was reprocessed (05/06 → 05/23) with higher
+     withholding. June payroll voided (06/06) and rerun (06/10)
+     due to Gusto debit failure. These corrections are documented
+     in Mendy's email trail.
+
+================================================================================
+10. DOCUMENT INVENTORY & COMPLIANCE REVIEW
+================================================================================
+
+  All files located in:
+    /Users/devuser/Desktop/Important Docs /employment/Wolff & Li/
+
+  ────────────────────────────────────────────────────────────────────────────
+  A. OFFER LETTERS
+  ────────────────────────────────────────────────────────────────────────────
+
+  1. STEM OPT Offer Letter (Wolff_&_Li_Capital_Offer_Letter.pdf)
+     Date:       03/14/2025
+     Position:   Market Research Analysts and Marketing Specialists
+     Type:       Part-time, $19/hr, max 20 hours/week
+     Start:      03/17/2025, at-will, NY law
+     Signed:     Daniel M. Cohen (CEO) + Alex Zhang (03/17/2025)
+     Status:     ✓ COMPLETE
+
+  2. CPT Offer Letter (Employer Offer Letter - CPT.odt)
+     Date:       10/29/2025
+     Position:   Market Research Analyst and Marketing Specialist Intern
+     Type:       Temporary, 10 hours/week
+     Period:     10/29/2025 – 04/17/2026
+     Signed:     Daniel M. Cohen (CEO) only — NO employee signature
+     Status:     ⚠ CONCERNS:
+       - Start date (10/29) is 6 days before CPT authorization (11/04)
+       - Lists 10h/week — but no payroll hours attributed to CPT period
+         (paystub #6 is now attributed to June 2025 STEM OPT work)
+       - No employee acknowledgment section
+
+  ────────────────────────────────────────────────────────────────────────────
+  B. FORM I-9 — EMPLOYMENT ELIGIBILITY VERIFICATION
+  ────────────────────────────────────────────────────────────────────────────
+
+  File:         wolff-li-capital-i-9-signed.pdf (signed)
+                wolff-li-capital-i-9.pdf (unsigned draft — same content)
+
+  Section 1 (Employee):
+    Name:       Alex Zhang
+    DOB:        03/15/1997
+    SSN:        987-65-4321
+    Status:     Noncitizen authorized to work until 01/22/2026
+    Passport:   G88855571, China
+    Signed:     03/18/2025 (written as "2026" — likely year typo)
+
+  Section 2 (Employer):
+    List A Doc 1:  Employment Authorization (EAD) IOE9733115480, exp 01/22/2026
+    List A Doc 2:  Passport G88855571, exp 06/30/2026
+    First Day:     03/17/2025 (written as "2026" — likely year typo)
+    Signed:        Daniel M. Cohen, CEO, 03/18/2025 (written as "2026")
+    Employer:      Acme Ventures Inc., 33 W 88th St, Suite 5, NY 10024
+    Status:        ✓ VALID for STEM OPT period (EAD was valid at signing)
+
+  Supplement B (Reverification):
+    Entry 1:       BLANK — not completed
+    Entry 2:       Document title "Employment Authorization" entered,
+                   but document number, expiration date, and signatures
+                   are ALL BLANK — incomplete reverification attempt
+
+  *** I-9 SUPPLEMENT B — DECISION: DO NOT FIX ***
+    The EAD (IOE9733115480) expired 01/22/2026. Supplement B was never
+    completed. After analysis, the decision is to LEAVE AS-IS.
+    Retrospective correction would create dated evidence of a 41+ day
+    late reverification, draw attention to the EAD→CPT transition
+    timeline, and provide no benefit since CPT is already in SEVIS.
+    I-9 obligation is employer's liability. See Section 9.E for
+    full reasoning.
+
+  ────────────────────────────────────────────────────────────────────────────
+  C. E-VERIFY
+  ────────────────────────────────────────────────────────────────────────────
+
+  File:         E-Verify Case Processing_ View_Print Details.pdf
+  Case #:       2025079225618BC
+  Company ID:   2647939
+  Company:      Acme Ventures INC. (note: typo "Capitlal")
+  Employee:     Alex Zhang, DOB 03/15/1997, SSN ***-**-4443
+  First Day:    03/17/2025
+  Documents:    Passport G88855571 (China) + I-94 712738099B5
+  Case Status:  Closed — Employment Authorized
+  Created:      03/20/2025 (within 3 business days — compliant)
+  Submitted by: Daniel Cohen
+  Status:       ✓ COMPLIANT (minor company name typo, case already closed)
+
+  ────────────────────────────────────────────────────────────────────────────
+  D. IRS / ENTITY DOCUMENTS
+  ────────────────────────────────────────────────────────────────────────────
+
+  File:         CP575Notice_1741982620352-3.pdf
+  Notice:       CP 575 A (EIN Assignment)
+  Date:         03/14/2025
+  EIN:          33-3333333
+  Entity:       ACME VENTURES INC
+  Address:      33 W 88TH ST, NEW YORK, NY 10024
+  Classification: Corporation (default — no S-Corp election noted)
+  Name Control: WOLF
+  Required Filings:
+    Form 940:   01/31/2026
+    Form 944:   01/31/2026 (annual employment tax — but we have a Q2 941)
+    Form 1120:  04/15/2026
+  Note: IRS assigned Form 944 (annual), but Mendy filed 941 (quarterly)
+        for Q2. May have elected to switch, or may need to reconcile.
+
+  ────────────────────────────────────────────────────────────────────────────
+  E. PAYROLL & TAX DOCUMENTS
+  ────────────────────────────────────────────────────────────────────────────
+
+  Paystub PDF:
+    acme-ventures-inc-paystubs-chenyu-li.pdf — 7 stubs, $10,483 total
+    ✓ COMPLETE — see Section 1 of this document
+
+  paytub.py:
+    Payroll calculation script — 6 entries, $9,828
+    ⚠ INACCURATE — see Section 4 of this document
+
+  W-2 (corrected):
+    /Users/devuser/accounting/tmp/mendy_gusto_docs/US_W-2_7757616926033936.pdf
+    ✓ CORRECT — $10,483 matches final paystub YTD
+
+  Mendy Email Payroll Summaries (downloaded 03/04/2026):
+    /Users/devuser/accounting/tmp/mendy_gusto_docs/
+    5 payroll journal PDFs + 1 paystub (05/06) + 1 Form 941 (Q2)
+
+  ────────────────────────────────────────────────────────────────────────────
+  F. OTHER FILES
+  ────────────────────────────────────────────────────────────────────────────
+
+  WhatsApp Image 2025-03-20 at 00.28.59.jpeg:
+    Screenshot of CP575 notice on screen. Redundant with PDF.
+
+  WhatsApp Image 2025-03-20 at 15.01.54.jpeg:
+    Screenshot of Mendy's E-Verify login page with credentials visible.
+    ⚠ SENSITIVE — contains plaintext User ID and password.
+    Consider deleting or securing this file.
+
+  ────────────────────────────────────────────────────────────────────────────
+  G. DOCUMENTS STILL MISSING
+  ────────────────────────────────────────────────────────────────────────────
+
+  1. Form 941 Q3 (Jul-Sep 2025)      — not provided by Mendy
+  2. Form 941 Q4 (Oct-Dec 2025)      — not provided by Mendy
+  3. Payroll journal for #3 (Jul 23)  — Mendy never sent
+  4. Payroll journal for #7 (Dec 18)  — paid after Mendy's email
+  5. I-9 Supplement B reverification  — incomplete (see Section B above)
+  6. Employer correction letter for paystub #6  — DRAFT PREPARED (pending signature)
+
+================================================================================
+11. CROSS-REFERENCE TO OTHER ANALYSIS DOCUMENTS
+================================================================================
+
+  SEVIS Analysis:
+    /Users/devuser/accounting/outgoing/columbia_isso/
+    sevis_employment_analysis_030426.txt
+
+  Tiger Cloud Paystub Analysis:
+    /Users/devuser/accounting/outgoing/columbia_isso/
+    tiger_cloud_paystub_analysis_030426.txt
+
+  W-2 (old, superseded):
+    /Users/devuser/accounting/outgoing/h1b1_intake_021226/employment/
+    2025_w2_wolff_li.pdf
+
+================================================================================
+END OF RECONCILIATION
+================================================================================

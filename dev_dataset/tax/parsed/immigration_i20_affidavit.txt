@@ -1,0 +1,119 @@
+================================================================================
+PARSED: AFFIDAVIT OF FINANCIAL SUPPORT AND FORM I-20 APPLICATION
+Source: /Users/devuser/accounting/legal/immigration/i20_affidavit_financial_support.pdf
+Parsed: 2026-02-12
+================================================================================
+
+DOCUMENT TYPE: Affidavit of Financial Support and Form I-20 Application
+Issuing Institution: California Institute of Advanced Management (CIAM)
+
+--------------------------------------------------------------------------------
+PART 1: APPLICANT (STUDENT) INFORMATION
+--------------------------------------------------------------------------------
+Student Name:           Alex Zhang (as it appears in passport)
+Date of Birth:          03/15/1997
+Gender:                 Male
+Country of Birth:       China
+City of Birth:          Nanjing
+Country of Citizenship: China
+Email:                  devuser42@gmail.com
+Phone (U.S.):           (646) 555-0142
+
+Program:                MBA (Master of Business Administration)
+SEVIS ID:               Not specified on this form (I-20 to be issued separately)
+
+Permanent Address (Home/Foreign Country):
+  Street:   10 E Reed St
+  City:     San Jose
+  State:    CA
+  Country:  United States
+  Zip:      95112
+  Phone:    8618652053798
+
+U.S. Mailing Address:
+  Street:   10 E Reed St
+  City:     San Jose
+  State:    CA
+  Country:  United States
+  Zip:      95112
+
+U.S. Physical Address:  Same as mailing address
+
+--------------------------------------------------------------------------------
+PART 2: DEPENDENTS INFORMATION
+--------------------------------------------------------------------------------
+Spouse:   N/A (Marital Status: N/A)
+Child 1:  Not listed
+Child 2:  Not listed
+Child 3:  Not listed
+Total Additional Funds for Dependents: Not applicable
+
+--------------------------------------------------------------------------------
+ESTIMATED ONE-YEAR STUDENT EXPENSES - MBA
+--------------------------------------------------------------------------------
+1. Total Indirect Costs (Living Off Campus):         $14,483.04
+   1a.) Room & Board:                                $10,175.88
+   1b.) Transportation:                              $1,655.94
+   1c.) Personal/Miscellaneous:                      $2,651.22
+
+2. Total Cost for Program (Full Time):               $10,544.04
+   2a.) Tuition:                                     $10,544.04
+   2b.) Admissions Application Fee:                  $0.00
+
+TOTAL COST OF EXPENSES FOR 1 YEAR OF THE MBA PROGRAM: $25,027.08
+
+Note: Tuition amounts are estimates and may change. Actual expenses might vary.
+
+--------------------------------------------------------------------------------
+PART 3: FINANCIAL RESOURCES INFORMATION
+--------------------------------------------------------------------------------
+Funding Source Options:
+  1. Personal Funds - Requires bank statement (no older than 3 months) showing
+     at least $25,027.08 in liquid assets.
+  2. Private Sponsor - Family member/friend/institution must provide letter of
+     intent and bank statement showing at least $25,027.08 in liquid assets.
+  3. Public Agency - Embassy/government/public institution must provide updated
+     certification of financial support.
+
+Required Documentation:
+  - Bank Statement / Financial Support Verification
+  - Copy of passport biographical page
+  - Copy of current visa
+  - Copy of I-94 form
+  - Copy of I-20 or DS-2019 and EAD (if applicable)
+  - Copy of passport biographical page for all dependents (if applicable)
+
+--------------------------------------------------------------------------------
+SPONSOR INFORMATION
+--------------------------------------------------------------------------------
+1st Sponsor:
+  Name:                  Alex Zhang
+  Relationship:          Self (self-sponsored)
+  Date:                  10/15/2025
+  Address:               10 E Reed St, San Jose
+  Country:               United States
+  Sponsorship Amount:    $25,027.08
+  Currency:              USD
+
+2nd Sponsor:             None listed
+
+--------------------------------------------------------------------------------
+PART 4: APPLICANT'S SIGNATURE
+--------------------------------------------------------------------------------
+Signature:  Alex Zhang
+Date:       10/15/2025
+
+Certification: "I hereby certify that all information given above is true and
+correct. I certify that sufficient financial resources will be available to
+cover all expenses for the duration of my MBA studies at California Institute
+of Advanced Management (CIAM). Further, I agree to be responsible for all
+expenses not covered by the sponsor and to obtain and maintain adequate health
+insurance coverage throughout enrollment at CIAM."
+
+--------------------------------------------------------------------------------
+I-20 DELIVERY NOTES
+--------------------------------------------------------------------------------
+- I-20 will be sent via email once processed.
+- Paper version available for pickup during office hours or next on-campus class.
+- Express mail: $39 domestic / $78 international.
+- Contact: cashier@ciam.edu for payment arrangements.

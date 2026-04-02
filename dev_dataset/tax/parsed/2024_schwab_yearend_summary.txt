@@ -1,0 +1,48 @@
+**Schwab Year-End Summary Financial Extraction**
+Source: `tax/2024/Year-End Summary - 2024_2025-03-07_619.PDF`  
+Account: `0000-0890`  
+Tax year: `2024`  
+Date prepared: `2025-03-07`
+
+**1) Realized Gain/Loss Summary**
+| Category | Proceeds | Cost Basis (Adjusted) | Wash Sale Disallowed | Market Discount | Realized G/L (Before MD) | Realized G/L (After MD) |
+|---|---:|---:|---:|---:|---:|---:|
+| Short-Term Total | $62,400.00 | $61,919.52 | -- | $480.48 | $480.48 | $0.00 |
+| Long-Term Total | $3,779.05 | $1,703.91 | -- | $0.00 | $2,075.14 | $2,075.14 |
+| **Total Realized Gain/(Loss)** | **$66,179.05** | **$63,623.43** | **--** | **$480.48** | **$2,555.62** | **$2,075.14** |
+
+**2) Individual Security Transactions (All Lots)**
+| Term | Security | CUSIP | Qty/Par | Date Acquired | Date Sold | Proceeds | Cost Basis | Wash Sale | Market Discount | G/L Before MD | G/L After MD |
+|---|---|---|---:|---|---|---:|---:|---:|---:|---:|---:|
+| Short | US TREASUR NT 3.25%08XXX**MATURED** | 91282CFG1 | 40,000.00 | 04/04/24 | 08/31/24 | $31,200.00 | $30,957.26 | -- | $242.74 | $242.74 | $0.00 |
+| Short | US TREASUR NT 3.25%08XXX**MATURED** | 91282CFG1 | 40,000.00 | 04/05/24 | 08/31/24 | $31,200.00 | $30,962.26 | -- | $237.74 | $237.74 | $0.00 |
+| Long | ENVELA CORP | 29402E102 | 1.00 | 04/20/23 | 08/19/24 | $3.90 | $5.30 | -- | $0.00 | $(1.80) | $(1.80) |
+| Long | MARINE PRODS CORP | 568427108 | 1.00 | 04/17/23 | 08/19/24 | $7.18 | $10.49 | -- | $0.00 | $(4.25) | $(4.25) |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 5.00 | 03/14/23 | 08/19/24 | $304.93 | $101.40 | -- | $0.00 | $203.53 | $203.53 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 5.00 | 03/14/23 | 08/19/24 | $304.93 | $109.20 | -- | $0.00 | $195.73 | $195.73 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 5.00 | 03/14/23 | 08/19/24 | $304.93 | $136.50 | -- | $0.00 | $168.43 | $168.43 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 5.00 | 03/14/23 | 08/19/24 | $304.93 | $146.25 | -- | $0.00 | $158.68 | $158.68 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 5.00 | 03/15/23 | 08/19/24 | $304.93 | $109.20 | -- | $0.00 | $195.73 | $195.73 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 10.00 | 03/20/23 | 08/19/24 | $609.87 | $234.00 | -- | $0.00 | $375.87 | $375.87 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 5.00 | 04/19/23 | 08/19/24 | $304.93 | $153.43 | -- | $0.00 | $151.51 | $151.51 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 5.00 | 04/19/23 | 08/19/24 | $304.93 | $157.83 | -- | $0.00 | $147.10 | $147.10 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 5.00 | 04/19/23 | 08/19/24 | $304.93 | $158.26 | -- | $0.00 | $146.67 | $146.67 |
+| Long | WESTERN ALLIANCE BANCORP | 957638109 | 10.00 | 04/19/23 | 08/19/24 | $609.85 | $313.01 | -- | $0.00 | $296.84 | $296.84 |
+| Long | ZIONS BANCORP N A | 989701107 | 3.00 | 03/17/23 | 08/19/24 | $108.79 | $69.03 | -- | $0.00 | $39.76 | $39.76 |
+
+**3) Security Subtotals (As Reported)**
+| Security | Term | Proceeds | Cost Basis | Market Discount | G/L Before MD | G/L After MD |
+|---|---|---:|---:|---:|---:|---:|
+| US TREASUR NT 3.25%08XXX**MATURED** | Short | $62,400.00 | $61,919.52 | $480.48 | $480.48 | $0.00 |
+| ENVELA CORP | Long | $3.90 | $5.30 | $0.00 | $(1.80) | $(1.80) |
+| MARINE PRODS CORP | Long | $7.18 | $10.49 | $0.00 | $(4.25) | $(4.25) |
+| WESTERN ALLIANCE BANCORP | Long | $3,659.18 | $1,619.09 | $0.00 | $2,040.10 | $2,040.10 |
+| ZIONS BANCORP N A | Long | $108.79 | $69.03 | $0.00 | $39.76 | $39.76 |
+
+**4) Amortization & Accretion for Fixed Income (Taxable Bonds)**
+| Security | CUSIP | Qty/Par | Date Acquired | Close Date | Adjusted Cost Basis | Bond Premium YTD | Market Discount YTD | Bond Premium LTD | Market Discount LTD |
+|---|---|---:|---|---|---:|---:|---:|---:|---:|
+| US TREASUR NT 3.25%08XXX**MATURED** | 91282CFG1 | 40,000.00 | 04/04/24 | 08/31/24 | $30,957.26 | $0.00 | $242.74 | $0.00 | $242.74 |
+| US TREASUR NT 3.25%08XXX**MATURED** | 91282CFG1 | 40,000.00 | 04/05/24 | 08/31/24 | $30,962.26 | $0.00 | $237.74 | $0.00 | $237.74 |
+| **Total** |  |  |  |  |  | **$0.00** | **$480.48** | **$0.00** | **$480.48** |
+

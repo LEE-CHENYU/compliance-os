@@ -1,0 +1,30 @@
+================================================================================
+RECONCILIATION SUMMARY
+Generated: 2025-10-08 11:05:10
+================================================================================
+
+RECONCILIATION CHECKS:
+
+  ✗ FAIL  Moneylink Matched
+  ✗ FAIL  Journal Matched
+  ✓ PASS  Cashiers Check 100K
+  ✓ PASS  Position Transfers Balanced
+  ✗ FAIL  Contributions Sourced
+  ✗ FAIL  Distributions Traced
+
+
+OVERALL STATUS: ✗ SOME CHECKS FAILED
+
+
+STATISTICS:
+  Total transactions: 939
+  Matched groups: 54
+  Unmatched transactions: 202
+
+
+TRANSACTIONS BY ACCOUNT:
+  BOA: 466
+  CHK_1234: 84
+  CHK_5678: 62
+  XXX567: 163
+  XXX890: 164

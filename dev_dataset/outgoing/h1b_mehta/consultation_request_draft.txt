@@ -1,0 +1,63 @@
+To: info@cyrusmehta.com
+Subject: Consultation Request — Owner-Beneficiary H-1B + STEM OPT Compliance Issue
+
+Dear Mr. Mehta,
+
+I am writing to request a consultation with you specifically, regarding
+an FY2027 H-1B cap petition with an owner-beneficiary structure and a
+prior STEM OPT compliance concern.
+
+I have read your published work on this topic — particularly "Biden's
+USCIS Welcomes Entrepreneurs Through the H-1B and O Visas" (Jan 2025)
+and "Pathways for Terminated H-1B Workers Who Want to Become
+Entrepreneurs" (2023) — and believe your expertise is directly on point.
+
+Case summary:
+
+Beneficiary: F-1 status (currently on CPT), MS in Financial Engineering
+(STEM-designated). Proposed job title: Financial Specialist.
+
+Petitioning entity: Family investment management company. Two entities
+available:
+  (a) Wyoming single-member LLC — I am 100% owner, actively operating
+  (b) California C-Corp — my mother is president/sole director, I would
+      be the sole employee
+
+I understand the Jan 2025 Modernization Rule addresses the
+employer-employee relationship for controlling owners. My questions go
+beyond the basics:
+
+1. ENTITY STRUCTURE: Given that the Modernization Rule caps the initial
+   petition and first extension at 18 months each for controlling
+   owners, is there a strategic advantage to using the C-Corp (where my
+   mother as president/director could arguably provide oversight) to
+   obtain standard 3-year validity instead? Or does USCIS look through
+   that structure?
+
+2. STEM OPT COMPLIANCE (the harder question): During my prior STEM OPT
+   period (2022-2024), I operated a single-member LLC that generated
+   Schedule C income from e-commerce activity. This LLC activity was
+   not reported to SEVP/DSO and was outside the scope of my I-983
+   training plan. Additionally, one employer during that period never
+   signed my I-983.
+
+   I need an assessment of:
+   - Whether this constitutes unauthorized employment under 8 CFR
+     214.2(f) or a status violation
+   - The discoverability risk (Schedule C on tax returns vs SEVIS records)
+   - Whether INA §212(a)(6)(C)(i) misrepresentation is implicated
+   - Whether this should be affirmatively disclosed in the H-1B
+     petition or addressed differently
+   - The practical risk level for an H-1B change-of-status application
+     given this history
+
+I have consulted with another attorney who declined to engage on
+question 2, which is why I am specifically seeking your expertise.
+
+Please let me know your earliest availability. I understand the
+consultation fee is $370 for a session with you directly. The
+registration window opens March 4, so time is a factor.
+
+Thank you,
+Alex Zhang
+(646) 555-0142

@@ -1,0 +1,120 @@
+================================================================================
+INBOX CHECK — February 26, 2026 (evening)
+================================================================================
+
+================================================================================
+1. MURTHY LAW FIRM — Fee Quote (RECEIVED, ANALYZED)
+================================================================================
+
+  Thread:   19c9bcd1a3e94d16
+  From:     clientservice@murthy.com (Shaquae Snook, Client Service Specialist I)
+  Date:     Thu, Feb 26, 2026 21:13 UTC
+  Subject:  Murthy Law Firm - Fee Quote
+
+  Content:  "Attorney Stepanova requested we provide the attached fee
+             schedules in follow-up to your consultation."
+
+  Attachments:
+    1. H1BcoCapReg_PS_FY27.pdf — Registration Payment Schedule ($390 + $168)
+    2. H1BcoII_PS.pdf — Full Petition Payment Schedule ($2,223)
+
+  ACTION: Analyzed. See fee_analysis_022626.txt
+  STATUS: No further action needed with Murthy. ELIMINATED on substance.
+
+================================================================================
+2. ALCORN — Missed Appointment (ACTION REQUIRED)
+================================================================================
+
+  Thread:   19c972af201a30d6
+  From:     Alcorn Immigration Law <help@alcorn.law>
+  Date:     Wed, Feb 25, 2026 23:38 UTC
+  Subject:  Let's Get Back on Track - Chenyu's Missed Appointment!
+
+  Content:  "We missed you at your scheduled appointment! Would you please
+             reply within 48 hours to let us know your availability to
+             reschedule?"
+
+  CONTEXT:
+    - Sophie Alcorn sent a calendar invite for Wed Feb 25, 3:20 PM PST
+      (Thread: 19c8c99ad1b4010d, from sophie@alcorn.law, Feb 23)
+    - This consultation was MISSED
+    - 48-hour reply window = by ~Feb 27, 2026 23:38 UTC
+
+  ACTION REQUIRED:
+    → Reply ASAP to reschedule
+    → Sophie is the most promising remaining attorney option
+    → Alcorn email substantively addressed STEM OPT + $78K fee
+    → Consultation fee: $390
+    → This is HIGH PRIORITY given March 4 deadline
+
+  THREAD HISTORY (19c6ce2222ecfa19, 18 messages):
+    - Original consultation request sent Feb 17
+    - Back-and-forth on scheduling
+    - Sophie personally sent calendar invite Feb 23
+    - Appointment was for Feb 25 3:20 PM PST
+    - Missed → this follow-up email
+
+================================================================================
+3. HIBEE — No Reply Yet
+================================================================================
+
+  Thread:   19be7131f8a0ab1e
+  Our email sent:  Feb 26, 2026 (today)
+  To:       yiwen@hibee.us
+  CC:       services@hibee.us, zidong@hibee.us, lorelei.pu@hibee.us
+  Subject:  (reply to existing thread from Jan 22)
+
+  Questions asked:
+    1. Who would be attorney of record (Wenjie Sun, Xiaochen Lai, Momo Ren)?
+    2. Who handles day-to-day petition preparation?
+    3. Engagement with Sun & Ren PLLC or Hibee International Consulting?
+    4. Does Sun & Ren PLLC carry malpractice insurance?
+    5. March 4 timeline feasibility?
+
+  ACTION: Awaiting reply. Follow up if no response by Feb 27 EOD.
+
+================================================================================
+4. CPA FIRMS — No Replies
+================================================================================
+
+  Wolf Group (Fan Chen)  — No reply. Discovery meeting not yet booked.
+                           Scheduling link: schedulewiththewolfgroup.as.me/FANDISCO
+  GW Carter              — No reply to initial outreach.
+  Dark Horse CPAs        — No reply to initial outreach.
+  Gary Engler            — No reply to initial outreach.
+  Dimov Tax              — Received newsletter only (not a case reply).
+
+  ACTION: Book Wolf Group discovery meeting. Consider follow-up to others.
+
+================================================================================
+5. OTHER — No Activity
+================================================================================
+
+  Arora (h1b1.com)       — Last activity Feb 14 (7 messages in thread).
+                           Data sheet deadline Mar 1 was 3 days ago (overdue).
+  Klasko Immigration     — Not yet contacted.
+  Corstange Law          — Not yet contacted.
+  Serotte/Nagarajan      — Not yet contacted.
+  Manifest Law           — Not yet contacted.
+
+================================================================================
+PRIORITY ACTIONS
+================================================================================
+
+  1. [IMMEDIATE] Reply to Alcorn to reschedule Sophie consultation
+     → 48-hour window closing ~Feb 27 evening
+     → Most promising remaining attorney
+
+  2. [TODAY/TOMORROW] Follow up with Hibee if no reply by Feb 27 EOD
+
+  3. [URGENT] Contact Klasko Immigration (published 95% owner H-1B win)
+
+  4. [URGENT] Contact Corstange Law (niche startup immigration)
+
+  5. [THIS WEEK] Book Wolf Group discovery meeting for CPA
+
+  6. [THIS WEEK] Resolve EIN issue — mother calls IRS (267) 941-1099
+
+================================================================================
+END OF INBOX STATUS
+================================================================================

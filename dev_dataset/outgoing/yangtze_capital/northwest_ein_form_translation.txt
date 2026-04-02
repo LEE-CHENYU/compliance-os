@@ -1,0 +1,142 @@
+Northwest Registered Agent — 联邦EIN税号申请表（中文翻译）
+==========================================================
+适用于：非美国公民申请联邦雇主识别号码（EIN / Tax ID）
+
+==========================================================
+负责人信息 (Responsible Party)
+==========================================================
+负责人: Meiling Wang（王美玲）
+  - "负责人"是指对公司有控制权、管理权或指导权的个人
+  - 必须是真实个人，不能是公司名称
+
+名 (First Name): Yunhong
+姓 (Last Name): Chen
+电话号码 (Phone Number): ________
+
+==========================================================
+公司信息
+==========================================================
+公司注册所在州 (State where articles of incorporation are filed):
+  California（加利福尼亚州）
+
+公司用途/业务目的 (Company Purpose):
+  ________（例如：投资咨询、数据分析、金融服务等）
+
+开始营业日期 (Start Date):
+  ________
+
+会计年度结束月份 (Fiscal Year End):
+  April（4月）
+  ⚠️ 注意：大多数公司选择12月（December）。
+  4月是非标准选择，可能影响报税时间。
+
+==========================================================
+员工信息
+==========================================================
+未来12个月内是否有（或预计有）员工需要发W-2表格？
+(You have, or expect to have, employees who will receive W-2)
+  ________（是/否）
+
+预计未来12个月内最多有多少员工？
+(Highest number of other employees expected in next 12 months)
+  ________
+
+预计未来12个月内最多有多少农业员工？
+(Highest number of agricultural employees expected)
+  ________
+
+==========================================================
+特殊税务问题（通常全选"否"）
+==========================================================
+是否需要提交720表格（联邦消费税季度申报）？
+(Needs to file Form 720 - Quarterly Federal Excise Tax Return)
+  ________（通常选：否）
+
+首次支付工资或年金的日期
+(First date wages or annuities paid)
+  ________
+
+是否涉及赌博/博彩？(Involves gambling/wagering)
+  否 (No)
+
+是否销售或制造酒精、烟草或枪支？
+(Sells or manufactures alcohol, tobacco, or firearms)
+  否 (No)
+
+是否拥有应税总重量55,000磅或以上的公路机动车辆？
+(Owns a highway motor vehicle with taxable gross weight of 55,000+ lbs)
+  否 (No)
+
+==========================================================
+公司主要地址 (Company Principal Address)
+==========================================================
+选项：
+  ☑ 使用Northwest的地址，保护个人隐私
+    (Use our address. Keep yours private.)
+  ☐ 使用我自己的地址，可能会公开
+    (Use my address. This may become publicly available.)
+
+地址第一行 (Line 1): ________
+地址第二行 (Line 2): ________
+城市 (City): ________
+县 (County): ________
+州 (State): California
+邮编 (Zip Code): ________
+国家 (Country): United States（美国）
+
+==========================================================
+公司邮寄地址 (Company Mailing Address)
+==========================================================
+选项：
+  ☑ 使用Northwest的地址，保护个人隐私
+  ☐ 使用我自己的地址
+
+地址第一行 (Line 1): ________
+地址第二行 (Line 2): ________
+城市 (City): ________
+州 (State): California
+邮编 (Zip Code): ________
+国家 (Country): United States（美国）
+
+==========================================================
+负责人签名 (Responsible Party Signature)
+==========================================================
+签名 (Signature): Meiling Wang
+签名日期 (Date of Signature): ________
+
+==========================================================
+申请详情 (Details)
+==========================================================
+公司名称 (Company): Pacific River Capital
+类型 (Type): Filing（申报）
+管辖范围 (Jurisdiction): Federal（联邦）
+完成日期 (Completion Date): 2026年2月23日
+状态 (Status): Submitted to IRS（已提交给IRS）
+  → 意思是Northwest已经把SS-4表格传真给IRS了
+  → IRS处理时间大约4-6周
+  → 可以打电话 (267) 941-1099 尝试加快处理
+
+==========================================================
+重要术语解释
+==========================================================
+EIN (Employer Identification Number):
+  雇主识别号码，相当于公司的"身份证号码"。
+  开银行账户、报税、雇人都需要。
+
+SS-4:
+  IRS的EIN申请表格。
+
+W-2:
+  雇主每年给员工的工资和税务报表。
+
+Responsible Party（负责人）:
+  对公司有实际控制权的个人。通常是总裁、
+  唯一董事或大股东。
+
+Fiscal Year End（会计年度结束）:
+  公司的会计年度最后一个月。大多数公司是12月。
+  你选的是4月，意味着报税截止日期会不同于
+  大多数公司。
+
+Articles of Incorporation（公司章程）:
+  在州政府注册公司时提交的正式文件。

@@ -1,0 +1,117 @@
+================================================================================
+PARSED: H-1B FLAT FEE RETAINER AGREEMENT (HIBEE)
+Source: /Users/devuser/accounting/legal/immigration/h1b_retainer_hibee.pdf
+Parsed: 2026-02-12
+================================================================================
+
+DOCUMENT TYPE: Flat Fee Retainer Agreement
+Date on Contract: January 22, 2026
+
+--------------------------------------------------------------------------------
+PARTIES
+--------------------------------------------------------------------------------
+Company (Service Provider):
+  Name:     Hibee International Consulting Inc.
+  Address:  12 E 49th St., New York, NY 10017, United States
+  Website:  www.hibee.us
+  Email:    services@hibee.us
+
+Client (Petitioner / Employer):
+  Name:     Greenfield Capital LLC
+
+Beneficiary (Employee / H-1B Applicant):
+  Name:     Alex Zhang
+
+Cooperative Law Firm:
+  Referred to as "Attorney" -- Company's exclusive cooperative law firm will
+  file the H-1B petition to USCIS on behalf of Client.
+
+--------------------------------------------------------------------------------
+SCOPE OF SERVICES (Clause 2)
+--------------------------------------------------------------------------------
+- Immigration services in connection with the filing of an H-1B cap-subject
+  petition on behalf of Alex Zhang.
+- Company's exclusive cooperative law firm ("Attorney") shall file Client's
+  H-1B Petition to USCIS.
+- This contract does NOT obligate Company to provide services for:
+  - Any appeal to any administrative board
+  - Any judicial courts
+
+--------------------------------------------------------------------------------
+FEES AND COSTS (Clause 3)
+--------------------------------------------------------------------------------
+Initial Fee:
+  Amount:   $468.00 (non-refundable)
+  Timing:   Upon execution of the contract
+
+Filing/Flat Fee:
+  Amount:   $2,652.00 (flat fee)
+  Timing:   Before Company begins to prepare the I-129 petition
+
+TOTAL COMPANY FEES: $3,120.00 ($468 + $2,652)
+
+Note: These fees do NOT include:
+  - USCIS filing fees
+  - Shipping fees
+
+RFE Response Fee (if applicable):
+  Amount:   $1,170.00 (non-refundable)
+  Timing:   Must be paid in advance before Attorney commences RFE response work
+  Condition: Only applies if USCIS issues a Request for Evidence (RFE) and
+             Client elects to continue using Company's services
+
+Late Payment:
+  Administrative cost:  $23.40 per past due payment
+  Interest rate:        9% or highest rate permitted by law (whichever is lower)
+  Collection costs:     Client agrees to pay reasonable legal fees if collection
+                        action is necessary
+
+--------------------------------------------------------------------------------
+COSTS AND EXPENSES (Clause 4)
+--------------------------------------------------------------------------------
+- Company authorized to incur reasonable costs for express mails to expedite
+  H-1B petition preparation.
+- Client responsible for payment upon receipt of invoices.
+
+--------------------------------------------------------------------------------
+KEY TERMS AND CONDITIONS
+--------------------------------------------------------------------------------
+
+1. CONDITIONS (Clause 1):
+   Contract takes effect only when Client returns a signed copy AND pays the
+   initial $468 fee.
+
+2. DISCLAIMER OF GUARANTEE (Clause 5):
+   No guarantee of outcome or timeframe. Company agrees to diligently and
+   faithfully pursue the matter.
+
+3. CLIENT'S COOPERATION (Clause 6):
+   Client must:
+   - Provide complete and accurate information and documentation
+   - Cooperate fully with Company
+   - Keep Company informed of changes (address, phone, employment, case matters)
+   - Execute all required documents, applications, and agreements
+   - Obtain all necessary documents and information promptly
+   - Provide Company with all communications from others regarding the case
+   Failure to provide accurate/complete information is grounds for Company to
+   terminate the contract (no refund in such case).
+
+4. EFFECTIVE DATE (Clause 7):
+   Contract takes effect when conditions in Clause 1 are performed, but the
+   effective date is retroactive to the date Company first provided services.
+   The January 22, 2026 date is for reference only. Even if the contract does
+   not take effect, Client must pay reasonable value of services performed.
+
+5. LANGUAGE:
+   Contract explained in Chinese or a language the client fully understands.
+
+--------------------------------------------------------------------------------
+SIGNATURES (Clause - Signature Page)
+--------------------------------------------------------------------------------
+Company: Hibee International Consulting Inc.
+  Signed: Yes (handwritten signature present)
+
+Client: Greenfield Capital LLC
+  Signed: Signature line present (appears unsigned in document)
+
+Date of Agreement: January 22, 2026

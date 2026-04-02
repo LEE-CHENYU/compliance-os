@@ -1,0 +1,63 @@
+```json
+{
+  "source_file": "tax/2024/bank_document_7521979570670228494.pdf",
+  "document_metadata": {
+    "document_type": "IRS Form W-4 (Employee's Withholding Certificate)",
+    "tax_year": "2024",
+    "omb_no": "1545-0074",
+    "cat_no": "10220Q",
+    "pdf_version": "1.7",
+    "pages": 4,
+    "page_size": "611.976 x 791.968 pts (letter)",
+    "encrypted": "no",
+    "form_type": "AcroForm",
+    "file_size_bytes": 212118
+  },
+  "form_fields": {
+    "employee_first_name_and_initial": "Chenyu ",
+    "employee_last_name": "Li",
+    "social_security_number": "XXX-XX-4321",
+    "employee_address_street": "888 Main St",
+    "employee_city_state_and_zip_code": "New York, NY 10044",
+
+    "check_single_or_married_filing_separately": "On",
+    "check_married_filing_jointly": "Off",
+    "check_head_of_household": "Off",
+    "check_multiple_jobs": "Off",
+
+    "box_3_part_1_qualifying_children_under_17_times_2000": null,
+    "box_3_part_2_other_dependents_times_500": null,
+    "box_3_dependents_amount": "0.0",
+
+    "box_4_a_other_income": "0.0",
+    "box_4_b_deductions": "0.0",
+    "box_4_c_extra_withholding": "0.0",
+    "box_below_4_c_claim_exemption_or_nra": null,
+
+    "signature_date": "11/16/2024",
+    "company_name_and_address": "BitSync, Inc.\n242 W 53rd Street, Apt. 21E, New York, NY 10019",
+    "employee_first_date_of_employment": "10/30/2024",
+    "company_fein": "XX-XXX1213"
+  },
+  "derived_values": {
+    "employee_full_name": "Alex Zhang",
+    "filing_status_selected": "Single or Married filing separately",
+    "step_3_total_dependents_credits": "0.0",
+    "step_4a_other_income": "0.0",
+    "step_4b_deductions": "0.0",
+    "step_4c_extra_withholding": "0.0"
+  },
+  "notes": {
+    "signature_present_on_page_1": true,
+    "pages_2_to_4": "Standard IRS W-4 instructions, worksheet text, and withholding lookup tables are present."
+  },
+  "full_extraction_artifact": {
+    "path": "tmp/pdfs/bank_document_7521979570670228494_extracted.json",
+    "contains": [
+      "all fields above",
+      "full text for page_1..page_4",
+      "structured Page 4 withholding tables (all numeric cells)"
+    ]
+  }
+}
+```

@@ -1,0 +1,236 @@
+================================================================================
+ANNA STEPANOVA CONSULTATION EVALUATION — Wed Feb 26, 3:30 PM EST (~26 min)
+================================================================================
+Fee: $195 (20 min phone call)
+Phone: (410) 356-5440
+Recording: New Recording 30.m4a
+Transcript: consultation_transcript_stepanova_022626.txt
+================================================================================
+
+================================================================================
+EVALUATION AGAINST PREP CRITERIA
+================================================================================
+
+MUST-PASS CRITERIA:
+─────────────────────────────────────────────────────────────────────────────────
+  [PASS] Engages substantively on STEM OPT compliance
+         → Spent ~14 minutes on STEM OPT. Asked detailed follow-up questions
+           about timeline, which employer, when I-983 failed, whether user
+           reported to DSO, whether user quit. Thorough information gathering.
+         → Identified core risk clearly: "it's employment without authorization"
+           and "the government may take the position that you did violate
+           your status."
+         → Gave practical advice: check SEVIS record with old DSO, get
+           screenshot of employment history to know exactly what's on file.
+
+  [PASS] Provides a disclosure recommendation
+         → CLEAR: "you have to disclose the employment... you're not hiding it"
+         → Strategy: argue it wasn't your fault, you reported to SEVIS,
+           employer failed to provide I-983, you quit when you realized.
+         → "It's a sympathetic situation."
+
+  [PASS] Gives concrete risk assessment
+         → "USCIS may take the position that you did violate your status"
+         → "It may come up at some point in the future when USCIS is looking
+           through your record"
+         → Did NOT sugarcoat it — honest about the risk while noting
+           mitigating arguments.
+
+  [FAIL] Demonstrates knowledge of owner-beneficiary Modernization Rule
+         → THIS IS THE CRITICAL FAILURE.
+         → When user mentioned Modernization Rule and owner-beneficiary,
+           Stepanova pushed back: "self-sponsorship is not allowed for H-1B"
+         → Recommended 49/51 ownership split with a partner — this is the
+           OLD approach BEFORE the Jan 2025 Modernization Rule
+         → When user pushed back twice ("But there's a modernization rule,
+           isn't it?"), she said: "you can have a stake in the company,
+           but you cannot be completely self-sponsored"
+         → Did NOT acknowledge that 100% owner-beneficiary is now permitted
+           under the Modernization Rule (effective Jan 17, 2025)
+         → Did NOT distinguish 18-month vs 3-year validity
+         → Said familial relationship "may also be a problem" without
+           analyzing the C-Corp structure with mother as president
+         → Recommended user schedule ANOTHER paid consultation with a
+           different attorney who specializes in this area
+
+  [FAIL] Can confirm March 4 registration timeline
+         → Explicitly said: "I don't think we have enough time for this"
+         → Pushed for additional consultation rather than moving to action
+         → She works in "special projects department" (appeals, motions) —
+           NOT the nonimmigrant/H-1B filing department
+
+  RESULT: 3/5 MUST-PASS CRITERIA MET — FAILED ON THE TWO MOST CRITICAL
+
+STRONG POSITIVES:
+─────────────────────────────────────────────────────────────────────────────────
+  [✗] Raises $78K fee issue unprompted — NOT MENTIONED
+  [✓] Asks follow-up questions about STEM OPT employer — EXCELLENT
+      → Asked about E-Verify, I-983 timeline, DSO reporting, when user
+        quit, how many days gap between employers, W-2 status, tax filing
+  [✗] Distinguishes STEM OPT from standard OPT self-employment — NOT DONE
+  [✗] Discusses COS vs consular processing — NOT MENTIONED
+  [✗] Provides clear entity recommendation with reasoning — FAILED
+      → Recommended "get a partner, 49/51 split" — pre-Modernization advice
+  [✗] Identifies who specifically will handle the case — CANNOT
+      → Explicitly said "we cannot give you the name before the case
+        actually comes in"
+  [✗] Provides a specific fee quote — DID NOT
+      → Said they'd send fee schedule by email
+
+RED FLAGS:
+─────────────────────────────────────────────────────────────────────────────────
+  [✗] Unfamiliar with Modernization Rule's owner-beneficiary provision
+      → THIS IS A DEAL-BREAKER. The entire case depends on this rule.
+      → She twice pushed back when user mentioned it.
+      → Recommended the PRE-2025 approach (49/51 split, board of directors)
+
+  [✗] Recommended scheduling ANOTHER paid consultation
+      → "You should really speak with somebody and devote a whole
+        consultation slot to that"
+      → She self-identified as NOT the right attorney for this case
+      → She's in "special projects" not H-1B initial filings
+
+  [✗] Implied she can't meet the March 4 timeline
+      → "I don't think we have enough time for this"
+
+  [✗] Flagged day-one CPT school (CIM) as "maybe an issue"
+      → "Which is itself, maybe an issue with that, for status maintenance"
+      → NEW CONCERN not raised by any other attorney
+
+  [✗] Said user cannot be EIN responsible party
+      → "If you are an agent for the company, then that becomes a
+        management decision"
+      → This may be an overly conservative reading — the EIN responsible
+        party is a tax designation, not necessarily a corporate governance
+        role. But it's worth noting as her position.
+
+================================================================================
+NEW INFORMATION FROM THIS CONSULTATION
+================================================================================
+
+  1. DAY-ONE CPT RISK: Stepanova flagged CIM (California Institute of
+     Advanced Management) as potentially problematic for status maintenance.
+     This is a new risk factor not raised by Box or Alcorn.
+
+  2. SEVIS RECORD CHECK: Practical advice — go back to the old DSO and
+     ask for a screenshot of the SEVIS employment history to understand
+     exactly what USCIS would see. Very actionable.
+
+  3. I-983 10-DAY RULE: Employer should provide I-983 within 10 days of
+     employment start. If they didn't, user should have quit at that point.
+     This clarifies the timeline of when the violation began.
+
+  4. EIN RESPONSIBLE PARTY: Stepanova's position is that user cannot be
+     the EIN responsible party without risking the independence argument.
+     This aligns with our earlier analysis but is the first attorney to
+     state it explicitly.
+
+  5. DISCLOSURE STRATEGY: Similar to Box's approach but slightly different —
+     Box said "disclose + frame as passive investor." Stepanova said
+     "disclose + argue employer's fault + you quit when you realized."
+     Both recommend disclosure but with different framing.
+
+     WAIT — IMPORTANT DISTINCTION: Stepanova was discussing the STEM OPT
+     employer without I-983 (company #2). She did NOT discuss the LLC
+     e-commerce activity (the undisclosed SMLLC). The user did not get to
+     raise the LLC issue during this call. This means the most sensitive
+     compliance question — the undisclosed LLC — was NOT addressed.
+
+================================================================================
+COMPARISON: STEPANOVA vs BOX vs ALCORN
+================================================================================
+
+                         │ STEPANOVA (Feb 26)    │ BOX (Feb 19)         │ ALCORN (email)
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  Modernization Rule     │ NOT UNDERSTOOD        │ Clear, explained     │ Referenced
+                         │ Pushed back on it     │ 18-mo vs 3-yr        │ 18-mo default
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  Entity recommendation  │ 49/51 split (old      │ C-Corp, consistent   │ C-Corp possible
+                         │ approach, pre-2025)   │ reasoning            │ for 3-year
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  $78K fee              │ Not mentioned         │ Raised, explained    │ Raised, explained
+                         │                       │ COS exemption        │ COS exemption
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  STEM OPT engagement    │ Good — thorough       │ Excellent — full     │ Mentioned risk,
+                         │ info gathering, clear │ engagement, strategy │ limited detail
+                         │ risk assessment       │ for both LLC + I-983 │ (email only)
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  LLC issue addressed    │ NO — not discussed    │ YES — passive        │ Self-employment
+                         │ (ran out of time)     │ investor framing     │ risk noted
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  Disclosure rec.        │ Disclose (I-983 only) │ Disclose (both LLC   │ Not in email
+                         │                       │ and I-983)           │
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  COS vs consular        │ Not discussed         │ COS preferred,       │ Consular resets
+                         │                       │ consular triggers fee│ status issues
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  Can meet March 4?      │ "Don't think we have  │ Docs by March 3      │ TBD
+                         │ enough time"          │ (but then DECLINED)  │
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  Who handles case?      │ Unknown (workload     │ Box personally       │ Sophie Alcorn
+                         │ based assignment)     │ (but firm DECLINED)  │
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  Fee estimate           │ Unknown (sending      │ $3,510 total         │ $2,730 reg only
+                         │ fee schedule by email)│                      │ (petition TBD)
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+  Consultation fee       │ $195                  │ $312 (credited)      │ $390
+  ───────────────────────┼───────────────────────┼──────────────────────┼──────────────────
+
+================================================================================
+OVERALL ASSESSMENT
+================================================================================
+
+  VERDICT: FAIL — DO NOT RETAIN FOR H-1B OWNER-BENEFICIARY FILING
+
+  Anna Stepanova demonstrated:
+    1. GOOD STEM OPT information gathering and risk assessment
+    2. Clear disclosure recommendation (for the I-983 issue)
+    3. Practical advice (check SEVIS record)
+    4. Honesty about her limitations (deferred to other department)
+
+  HOWEVER, she critically failed on:
+    1. Owner-beneficiary Modernization Rule — did not understand it
+    2. Recommended pre-2025 approach (49/51 split) that contradicts current law
+    3. Cannot meet March 4 timeline
+    4. Not the filing attorney — case would be assigned to unknown person
+    5. $78K fee not mentioned
+    6. COS vs consular processing not discussed
+    7. LLC e-commerce issue never addressed (biggest compliance risk)
+
+  The owner-beneficiary failure is disqualifying. This is the FOUNDATION
+  of the entire H-1B strategy. An attorney who doesn't understand or agree
+  with the Modernization Rule's provisions cannot effectively file an
+  owner-beneficiary petition.
+
+  Her STEM OPT analysis was competent but incomplete — she only addressed
+  the I-983 employer issue, not the undisclosed LLC. Box addressed both.
+
+  NEW CONCERN: Her flag about day-one CPT (CIM) is worth noting and
+  should be raised with whatever attorney is ultimately retained.
+
+================================================================================
+USEFUL TAKEAWAYS (even though firm is not recommended)
+================================================================================
+
+  1. Check SEVIS record with old DSO — get screenshot of employment history
+  2. I-983 must be provided within 10 days of employment start
+  3. Being EIN responsible party could undermine independence (her position)
+  4. Day-one CPT school may raise status maintenance concerns
+  5. The I-983 employer issue (company #2) is on the record via W-2 and
+     tax returns — cannot hide it, must frame it favorably
+
+================================================================================
+DECISION: NEXT STEPS
+================================================================================
+
+  1. DO NOT retain Murthy for H-1B filing
+  2. Wait for their fee schedule email (for reference only)
+  3. PRIORITY: Alcorn (Sophie) — schedule consultation ASAP
+  4. CONTACT: Klasko Immigration — published 95% owner H-1B case win
+  5. CONTACT: Corstange Law — niche startup immigration firm
+  6. RAISE with next attorney: day-one CPT concern from Stepanova
+  7. ACTION: Check SEVIS record with old DSO per Stepanova's advice
+
+================================================================================
+END OF CONSULTATION EVALUATION
+================================================================================

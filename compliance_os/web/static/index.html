@@ -35,114 +35,270 @@
         </article>
       </section>
 
-      <main class="workspace-grid">
-        <aside class="rail rail-left">
-          <section class="panel">
-            <div class="panel-header">
-              <h2>Concerns</h2>
-              <span class="panel-hint">Tracked issues</span>
-            </div>
-            <div id="concern-list" class="list-stack"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-header">
-              <h2>Inbox</h2>
-              <span class="panel-hint">Gmail threads</span>
-            </div>
-            <div id="thread-list" class="list-stack"></div>
-          </section>
+      <main class="workspace-shell">
+        <aside class="panel concern-rail">
+          <div class="panel-header">
+            <h2>Concerns</h2>
+            <span class="panel-hint">Pick one issue</span>
+          </div>
+          <p class="rail-copy">
+            Choose the compliance issue you want to work on. The rest of the workspace
+            will narrow to that concern.
+          </p>
+          <div id="concern-list" class="list-stack"></div>
         </aside>
 
-        <section class="center-column">
-          <section class="panel hero-panel">
-            <div class="panel-header">
+        <section class="workspace-stage">
+          <section class="panel stage-header">
+            <div class="stage-header-top">
               <div>
+                <p class="mini-heading">Selected concern</p>
                 <h2 id="concern-title">Select a concern</h2>
-                <p id="concern-meta" class="panel-hint"></p>
+                <p id="concern-meta" class="stage-meta"></p>
               </div>
               <div class="badges">
                 <span id="concern-priority" class="priority-pill"></span>
                 <span id="concern-status" class="status-pill"></span>
               </div>
             </div>
-            <p id="concern-summary" class="hero-summary"></p>
-            <div class="hero-why">
-              <span>Why now</span>
-              <p id="concern-why"></p>
+            <p id="concern-summary" class="stage-summary"></p>
+            <div class="tab-bar" role="tablist" aria-label="Workspace modes">
+              <button
+                type="button"
+                class="tab-btn active"
+                data-tab="discovery"
+                role="tab"
+                aria-selected="true"
+              >
+                Discovery
+              </button>
+              <button
+                type="button"
+                class="tab-btn"
+                data-tab="dataroom"
+                role="tab"
+                aria-selected="false"
+              >
+                Data Room
+              </button>
+              <button
+                type="button"
+                class="tab-btn"
+                data-tab="review"
+                role="tab"
+                aria-selected="false"
+              >
+                Review
+              </button>
+              <button
+                type="button"
+                class="tab-btn"
+                data-tab="cowork"
+                role="tab"
+                aria-selected="false"
+              >
+                Co-Work
+              </button>
             </div>
-            <div>
-              <p class="mini-heading">Suggested prompts</p>
-              <div id="quick-prompts" class="chip-row"></div>
-            </div>
-            <div>
-              <p class="mini-heading">Next actions</p>
-              <ul id="next-steps" class="checklist"></ul>
+            <p id="tab-description" class="tab-description"></p>
+          </section>
+
+          <section id="tab-discovery" class="tab-panel active" data-tab-panel="discovery">
+            <div class="discovery-grid">
+              <section class="panel discovery-summary-panel">
+                <div class="panel-header">
+                  <h2>Current Understanding</h2>
+                  <span class="panel-hint">Structured intake</span>
+                </div>
+                <div class="discovery-meta-grid">
+                  <article class="meta-card">
+                    <span class="mini-heading">Case type</span>
+                    <strong id="discovery-case-type"></strong>
+                  </article>
+                  <article class="meta-card">
+                    <span class="mini-heading">Current stage</span>
+                    <strong id="discovery-stage"></strong>
+                  </article>
+                  <article class="meta-card">
+                    <span class="mini-heading">Urgency</span>
+                    <strong id="discovery-urgency"></strong>
+                  </article>
+                </div>
+                <p id="discovery-understanding" class="panel-copy"></p>
+                <div class="hero-why">
+                  <span>Context</span>
+                  <p id="discovery-context"></p>
+                </div>
+                <div>
+                  <p class="mini-heading">Watch-outs</p>
+                  <ul id="discovery-watchouts" class="checklist"></ul>
+                </div>
+              </section>
+
+              <section class="panel discovery-question-panel">
+                <div class="panel-header">
+                  <h2>Interactive Discovery</h2>
+                  <span id="discovery-progress" class="panel-hint"></span>
+                </div>
+                <p class="panel-copy">
+                  Answer the highest-value intake questions first. The system uses these
+                  answers to request the right files and frame the review like a structured
+                  professional intake.
+                </p>
+                <div id="discovery-question-list" class="question-stack"></div>
+              </section>
+
+              <section class="panel discovery-state-panel">
+                <div class="panel-header">
+                  <h2>Case Record</h2>
+                  <span class="panel-hint">Captured vs missing</span>
+                </div>
+                <div class="discovery-state-grid">
+                  <div>
+                    <p class="mini-heading">Captured facts</p>
+                    <ul id="discovery-facts" class="checklist"></ul>
+                  </div>
+                  <div>
+                    <p class="mini-heading">Still missing</p>
+                    <ul id="discovery-missing" class="checklist"></ul>
+                  </div>
+                </div>
+              </section>
             </div>
           </section>
 
-          <section class="panel assistant-panel">
-            <div class="panel-header">
-              <h2>Claude Co-Work</h2>
-              <span class="panel-hint">Inspect, ask, draft, act</span>
-            </div>
-            <div id="assistant-feed" class="assistant-feed"></div>
-            <form id="assistant-form" class="assistant-form">
-              <label class="sr-only" for="assistant-input">Ask the workspace</label>
-              <textarea
-                id="assistant-input"
-                rows="3"
-                placeholder="Ask about the selected concern, inspect Gmail context, or draft a follow-up..."
-              ></textarea>
-              <button type="submit">Run workspace check</button>
-            </form>
-          </section>
+          <section id="tab-dataroom" class="tab-panel" data-tab-panel="dataroom">
+            <div class="room-grid">
+              <section class="panel upload-panel room-wide">
+                <div class="panel-header">
+                  <h2>Data Room Upload</h2>
+                  <span id="upload-summary" class="panel-hint"></span>
+                </div>
+                <div class="dropzone-card">
+                  <p class="dropzone-title">Start with the files this case actually needs.</p>
+                  <p class="panel-copy">
+                    Discovery should narrow which documents matter. Upload requests below are
+                    tied to the selected concern so the data room becomes a structured case
+                    record instead of a generic file dump.
+                  </p>
+                </div>
+                <div id="upload-request-list" class="request-stack"></div>
+              </section>
 
-          <section class="panel evidence-panel">
-            <div class="evidence-grid">
-              <div>
-                <div class="panel-header compact">
-                  <h2>Documents</h2>
-                  <span class="panel-hint">Evidence trail</span>
+              <section class="panel vault-panel">
+                <div class="panel-header">
+                  <h2>Data Room Contents</h2>
+                  <span class="panel-hint">Structured evidence</span>
                 </div>
                 <div id="document-list" class="evidence-stack"></div>
-              </div>
-              <div>
-                <div class="panel-header compact">
-                  <h2>Thread Detail</h2>
-                  <span class="panel-hint">Selected inbox context</span>
+              </section>
+
+              <section class="panel ingestion-panel">
+                <div class="panel-header">
+                  <h2>Ingestion Status</h2>
+                  <span class="panel-hint">Preprocess and extract</span>
                 </div>
-                <div id="thread-detail" class="thread-detail"></div>
+                <div id="ingestion-job-list" class="job-stack"></div>
+              </section>
+
+              <section class="panel correspondence-panel room-wide">
+                <div class="panel-header">
+                  <h2>Linked Correspondence</h2>
+                  <span class="panel-hint">Evidence outside uploaded files</span>
+                </div>
+                <div class="correspondence-grid">
+                  <div>
+                    <p class="mini-heading">Threads</p>
+                    <div id="thread-list" class="list-stack"></div>
+                  </div>
+                  <div>
+                    <p class="mini-heading">Selected thread</p>
+                    <div id="thread-detail" class="thread-detail"></div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section id="tab-review" class="tab-panel" data-tab-panel="review">
+            <div class="overview-grid">
+              <section class="panel overview-main">
+                <div class="panel-header">
+                  <h2>Review Dashboard</h2>
+                  <span class="panel-hint">What matters now</span>
+                </div>
+                <div class="hero-why">
+                  <span>Why now</span>
+                  <p id="concern-why"></p>
+                </div>
+                <div>
+                  <p class="mini-heading">Next actions</p>
+                  <ul id="next-steps" class="checklist"></ul>
+                </div>
+              </section>
+
+              <div class="overview-side">
+                <section class="panel">
+                  <div class="panel-header">
+                    <h2>Deadlines</h2>
+                    <span class="panel-hint">Deterministic status</span>
+                  </div>
+                  <div id="deadline-list" class="deadline-stack"></div>
+                </section>
+
+                <section class="panel">
+                  <div class="panel-header">
+                    <h2>Risk Cards</h2>
+                    <span class="panel-hint">Escalate when needed</span>
+                  </div>
+                  <div id="risk-list" class="risk-stack"></div>
+                </section>
               </div>
             </div>
           </section>
+
+          <section id="tab-cowork" class="tab-panel" data-tab-panel="cowork">
+            <div class="cowork-grid">
+              <section class="panel prompt-panel">
+                <div class="panel-header">
+                  <h2>Prompt Starters</h2>
+                  <span class="panel-hint">Ask with context</span>
+                </div>
+                <p class="panel-copy">
+                  Use the prompts below to inspect the current concern, generate a follow-up,
+                  or ask for a concise status read.
+                </p>
+                <div id="quick-prompts" class="chip-row"></div>
+              </section>
+
+              <section class="panel assistant-panel">
+                <div class="panel-header">
+                  <h2>Claude Co-Work</h2>
+                  <span class="panel-hint">Inspect, ask, draft, act</span>
+                </div>
+                <div id="assistant-feed" class="assistant-feed"></div>
+                <form id="assistant-form" class="assistant-form">
+                  <label class="sr-only" for="assistant-input">Ask the workspace</label>
+                  <textarea
+                    id="assistant-input"
+                    rows="3"
+                    placeholder="Ask about the selected concern, inspect Gmail context, or draft a follow-up..."
+                  ></textarea>
+                  <button type="submit">Run workspace check</button>
+                </form>
+              </section>
+
+              <section class="panel draft-panel">
+                <div class="panel-header">
+                  <h2>Draft Queue</h2>
+                  <span class="panel-hint">Approval before send</span>
+                </div>
+                <div id="draft-list" class="draft-stack"></div>
+              </section>
+            </div>
+          </section>
+
         </section>
-
-        <aside class="rail rail-right">
-          <section class="panel">
-            <div class="panel-header">
-              <h2>Deadlines</h2>
-              <span class="panel-hint">Deterministic status</span>
-            </div>
-            <div id="deadline-list" class="deadline-stack"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-header">
-              <h2>Risk Cards</h2>
-              <span class="panel-hint">Human escalation boundary</span>
-            </div>
-            <div id="risk-list" class="risk-stack"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-header">
-              <h2>Draft Queue</h2>
-              <span class="panel-hint">Approval before send</span>
-            </div>
-            <div id="draft-list" class="draft-stack"></div>
-          </section>
-        </aside>
       </main>
     </div>
 

@@ -1,0 +1,170 @@
+version: "1.0.0"
+
+rules:
+  - id: i9_everify_name_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: i9_everify_employee_name
+        operator: mismatch
+        source: comparison
+    severity: critical
+    finding:
+      title: "Form I-9 employee name does not match E-Verify"
+      action: "Confirm the employee identity used for onboarding and correct the source records before relying on the verification trail."
+      consequence: "Employment verification record inconsistency"
+      immigration_impact: true
+
+  - id: employment_letter_i9_name_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: employment_letter_i9_employee_name
+        operator: mismatch
+        source: comparison
+    severity: critical
+    finding:
+      title: "Employment letter employee name does not match Form I-9"
+      action: "Confirm the employee identity across the offer or employment letter and the onboarding record before relying on the work-authorization trail."
+      consequence: "Employment identity inconsistency"
+      immigration_impact: true
+
+  - id: employment_letter_paystub_employer_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: employment_letter_paystub_employer_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Employment letter employer does not match paystub employer"
+      action: "Verify whether the worker is paid through a PEO, payroll processor, or a different legal employer name before using the payroll trail for review."
+      consequence: "Employer-of-record inconsistency"
+      immigration_impact: true
+
+  - id: i9_everify_first_day_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: i9_everify_first_day_of_employment
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Form I-9 first day of employment does not match E-Verify"
+      action: "Cross-check the employee start date across payroll, I-9, and E-Verify before using it in compliance review."
+      consequence: "Employment start-date inconsistency"
+      immigration_impact: true
+
+  - id: h1b_registration_entity_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: h1b_registration_g28_entity_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "H-1B registration employer does not match G-28 client entity"
+      action: "Verify the petitioning entity across the registration record and attorney filing package before relying on the H-1B filing set."
+      consequence: "Petitioning entity inconsistency"
+      immigration_impact: true
+
+  - id: h1b_receipt_signatory_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: h1b_registration_receipt_signatory_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "H-1B registration signatory does not match payment receipt cardholder"
+      action: "Confirm who submitted and paid for the filing so the petition support trail remains internally consistent."
+      consequence: "H-1B payment-support inconsistency"
+      immigration_impact: true
+
+  - id: cpt_application_i20_student_name_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: cpt_application_i20_student_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "CPT application student name does not match Form I-20"
+      action: "Confirm the student identity across school-issued CPT paperwork and the active Form I-20 before relying on the employment authorization history."
+      consequence: "Student identity inconsistency"
+      immigration_impact: true
+
+  - id: i94_class_of_admission_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: i94_i20_class_of_admission
+        operator: mismatch
+        source: comparison
+    severity: critical
+    finding:
+      title: "I-94 class of admission does not align with F-1 evidence"
+      action: "Verify the traveler’s most recent admission class before relying on the I-20-based status history."
+      consequence: "Status-history inconsistency"
+      immigration_impact: true
+
+  - id: passport_ead_birthdate_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: passport_ead_date_of_birth
+        operator: mismatch
+        source: comparison
+    severity: critical
+    finding:
+      title: "Passport date of birth does not match EAD"
+      action: "Confirm the identity documents before using them for review or downstream filings."
+      consequence: "Identity record inconsistency"
+      immigration_impact: true
+
+  - id: resume_passport_name_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: resume_passport_candidate_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Resume candidate name does not match passport"
+      action: "Confirm the preferred resume name versus the legal passport name so later filings and evidence packages use the right identity format."
+      consequence: "Resume-to-identity naming inconsistency"
+      immigration_impact: false
+
+  - id: w2_tax_return_year_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: w2_tax_return_tax_year
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Form W-2 tax year does not match the tax return"
+      action: "Check whether the wrong tax return year was uploaded or whether a filing is missing from the data room."
+      consequence: "Tax-year continuity gap"
+      immigration_impact: false
+
+  - id: form_1042s_tax_return_year_mismatch
+    track: data_room
+    type: comparison
+    conditions:
+      - field: 1042s_tax_return_tax_year
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: "Form 1042-S tax year does not match the tax return"
+      action: "Confirm the withholding form year and whether the corresponding annual return is present."
+      consequence: "Tax withholding record mismatch"
+      immigration_impact: false

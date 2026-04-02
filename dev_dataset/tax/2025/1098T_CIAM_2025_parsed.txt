@@ -1,0 +1,42 @@
+================================================================================
+PARSED: 2025 Form 1098-T — Tuition Statement
+Source: tax/2025/1098T_CIAM_2025_decrypted.pdf
+Received: 2026-03-09 (via eFileMyForms, from sales@efilemyforms.com)
+Parsed: 2026-03-09
+================================================================================
+
+FILER (School):
+  Name:     California Institute of Advanced Management (CIAM)
+  Address:  1000 S Fremont Ave., Mailbox 45, Bldg A10, Suite 10402
+            Alhambra, CA 91803
+  Phone:    (626) 350-1500
+  EIN:      45-2648658
+
+STUDENT:
+  Name:     Alex Zhang
+  TIN:      XXX-XX-4321
+  Address:  10 E Reed St, San Jose, CA 95112
+  AutoID:   838811
+
+AMOUNTS:
+  Box 1:  $5,272.02  — Payments received for qualified tuition and related expenses
+  Box 4:  $0         — Adjustments made for a prior year
+  Box 5:  $0         — Scholarships or grants
+  Box 6:  $0         — Adjustments to scholarships or grants for a prior year
+  Box 10: $0         — Insurance contract reimbursement/refund
+
+CHECKBOXES:
+  Box 7:  [X] Amount in Box 1 includes amounts for academic period Jan–Mar 2026
+  Box 8:  [X] At least half-time student
+  Box 9:  [X] Graduate student
+
+NOTES:
+  - Tuition payments in 2025: $1,801.27 (Oct 23) + $3,514.68 (Dec 12) = $5,315.95
+  - 1098-T reports $5,272.02 ($43.93 difference — likely non-qualified fees)
+  - Box 7 checked: some tuition applies to Spring 2026 term (paid in 2025)
+  - Use with Form 8863 to claim education credits on 2025 tax return
+  - Contact for questions: 1098t@ciam.edu
+
+================================================================================
+END
+================================================================================

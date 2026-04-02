@@ -1,0 +1,169 @@
+================================================================================
+UNEMPLOYMENT CALCULATION VALIDATION
+Prepared: March 6, 2026
+Source files:
+  - sevis_employment_analysis_030426.txt
+  - clinipulse_exclusion_sensitivity_030626.txt
+================================================================================
+
+PURPOSE
+
+Validate the unemployment arithmetic using an actual unemployment-day method
+and list all employment periods used in that calculation.
+
+COUNTING METHOD USED IN THIS VALIDATION
+
+Use actual unemployment days only:
+
+- If a student becomes unemployed before the first job starts, count from the
+  first day of authorized OPT unemployment through the day before the first
+  job starts.
+- If one job ends and another job starts later, count from the day after the
+  earlier job ends through the day before the next job starts.
+- Do not count the next job's start date as unemployment.
+
+Examples used here:
+
+- OPT start 01/23/2023 -> first employer start 04/21/2023 = 88 days
+- Claudius ended 02/06/2025, so actual unemployment is 02/07/2025 - 02/19/2025 = 13 days
+- CliniPulse ended 03/11/2025, so actual unemployment is 03/12/2025 - 03/16/2025 = 5 days
+- If Tiger Cloud effectively ended 11/30/2024, actual unemployment before
+  Claudius is 12/01/2024 - 12/15/2024 = 15 days
+
+EMPLOYMENT PERIODS LIST
+
+1. POST-COMPLETION OPT PERIOD
+
+- OPT authorized period:
+  01/23/2023 - 01/22/2024
+
+- Wall Street Consulting LLC:
+  04/21/2023 - 05/22/2023
+
+- Tiger Cloud, LLC (OPT entry):
+  05/22/2023 - NO END DATE in SEVIS
+  Practical note: existing analysis says this should end no later than
+  01/22/2024 for the OPT-period entry.
+
+- Greenfield Capital LLC (OPT entry):
+  06/23/2023 - NO END DATE in SEVIS
+
+2. STEM OPT PERIOD
+
+- STEM OPT authorized period:
+  01/23/2024 - 01/22/2026
+  Practical note: existing analysis treats 09/18/2025 as the effective end
+  of the STEM OPT period because the SEVIS record transferred on that date.
+
+- Tiger Cloud LLC (STEM entry):
+  01/23/2024 - 12/16/2024
+  Paystub note: separate evidence only proves pay through 11/30/2024.
+
+- TechLaw AI Inc.:
+  12/16/2024 - 02/06/2025
+
+- CliniPulse LLC:
+  02/20/2025 - 03/11/2025
+
+- Acme Ventures Inc. (STEM entry):
+  03/17/2025 - NO END DATE in SEVIS
+  Practical note: existing analysis says this should end on 09/18/2025.
+
+3. POST-STEM / CPT
+
+- No work authorization period:
+  09/18/2025 - 11/04/2025
+  Existing analysis does NOT count this toward STEM OPT unemployment because
+  the STEM OPT period had already ended.
+
+- Acme Ventures Inc. (CPT):
+  11/04/2025 - 04/17/2026
+
+EMPLOYERS NOT COUNTED IN THE CURRENT SEVIS UNEMPLOYMENT MATH
+
+- DataSync Inc.
+  Existing analysis says BitSync does NOT appear in the SEVIS record and is
+  therefore not part of the current SEVIS-based unemployment calculation.
+
+CURRENT UNEMPLOYMENT CALCULATION (VALIDATED)
+
+1. OPT unemployment
+
+- OPT start 01/23/2023 -> first employer start 04/21/2023
+- Calculation: 04/21/2023 - 01/23/2023 = 88 days
+
+OPT subtotal:
+
+- 88 days
+
+2. STEM OPT unemployment under the baseline analysis
+
+- Claudius ended 02/06/2025
+- Actual unemployment period: 02/07/2025 - 02/19/2025
+- Calculation: 13 days
+
+- CliniPulse ended 03/11/2025
+- Actual unemployment period: 03/12/2025 - 03/16/2025
+- Calculation: 5 days
+
+STEM baseline subtotal:
+
+- 13 + 5 = 18 days
+
+3. Scenario 1 in the current report
+
+- OPT: 88
+- STEM baseline: 18
+
+Scenario 1 total:
+
+- 88 + 18 = 106 days
+
+4. Scenario 2 in the current report
+
+- Same as Scenario 1, plus the disputed Tiger Cloud interval
+- If Tiger Cloud effectively ended 11/30/2024, actual unemployment before
+  Claudius is 12/01/2024 - 12/15/2024 = 15 days
+
+Scenario 2 total:
+
+- 88 + 18 + 15 = 121 days
+
+VALIDATION RESULT
+
+- Scenario 1 total is about 106 / 150 under an actual unemployment-day method.
+
+- Scenario 2 total is about 121 / 150 under that same method.
+
+CLINIPULSE EXCLUSION STRESS TEST
+
+If CliniPulse is excluded as valid employment, then the two baseline STEM gaps
+collapse into one continuous gap:
+
+- Claudius ended 02/06/2025
+- Wolff & Li starts 03/17/2025
+- Actual unemployment period if CliniPulse is excluded:
+  02/07/2025 - 03/16/2025 = 38 days
+
+That yields:
+
+- Scenario 1 + exclude CliniPulse:
+  88 + 38 = 126 days
+
+- Scenario 2 + exclude CliniPulse:
+  88 + 38 + 15 = 141 days
+
+BOTTOM LINE
+
+The unemployment calculation validates under an actual unemployment-day
+method as follows.
+
+Current documented totals:
+
+- Scenario 1: 106 / 150
+- Scenario 2: 121 / 150
+
+Stress-test totals if CliniPulse is excluded:
+
+- Scenario 1: 126 / 150
+- Scenario 2: 141 / 150

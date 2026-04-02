@@ -1,0 +1,79 @@
+Arora Reply — Wage Level III & G-28 Acceptance Instructions
+============================================================
+Date received: 03/11/2026, 8:30 AM ET
+Thread: Re: Pacific River Capital registration — wage level & G-28 acceptance
+Thread ID: 19cda043127d1834
+Message ID: CA+sJ1tvGoiaBxkh2aoYMRgZRQwpLcojuqA4ooQPfdu-qyHwGHg@mail.gmail.com
+
+============================================================
+1. WAGE LEVEL III
+============================================================
+
+  Arora's response (verbatim):
+    "We do not foresee any problems with filing this registration at
+     Level III wage."
+
+  Analysis:
+    - No detailed RFE risk analysis provided
+    - No discussion of Job Zone 5 implications for SOC 13-2099.01
+    - No engagement with the four justification factors sent on 03/06
+      (language, special knowledge, supervisory duty, no licensure)
+    - Contrast with MT Law: Cindy Chen actively analyzing the same four
+      factors and flagged Job Zone 5 as a specific RFE risk area
+    - Bottom line: Arora is comfortable proceeding but has not demonstrated
+      petition-stage preparedness on this issue
+
+============================================================
+2. G-28 & H-1BR ACCEPTANCE INSTRUCTIONS
+============================================================
+
+  Arora referenced his 03/06 email (Thread ID: 19cc62122b195573):
+    Subject: "H1B registration--review/authorization requested to enable
+              filing [ ALEX ZHANG ]"
+
+  The email contains 7-step portal guide with screenshot attachments:
+
+    Step 1: Log into my.uscis.gov → view draft registrations
+            (should list beneficiary: Alex Zhang)
+
+    Step 2: Review G-28 draft → CHECK ALL 3 NOTICE DELIVERY BOXES
+            (notices to attorney, secure ID docs to attorney, I-94 to client)
+
+    Step 3: Accept/approve the G-28
+
+    Step 4: Provide electronic signature (Meiling Wang)
+
+    Step 5: Review H-1BR draft → confirm all fields correct → sign
+
+    Step 6: Accept/approve the H-1BR
+
+    Step 7: "Finish & Send to Representative"
+            → This sends the approved forms to Arora for payment & submission
+
+  Note: USCIS sends email from no-reply@uscis.dhs.gov to the employer
+  (info@pacific-river-capital.com). If not received, check spam. Alternatively,
+  Meiling Wang can log into my.uscis.gov directly.
+
+  Screenshot attachments in the 03/06 email:
+    - image.png (USCIS notification email sample)
+    - EmployerViewDrafts.JPG
+    - G28AcceptNotices.JPG
+    - ApproveG28.JPG
+    - Client'ssignature.JPG
+    - SubmittingSignatureforH1BR.JPG
+    - ApproveH1BR.JPG
+    - Finish&SendtoREP.JPG
+
+============================================================
+3. ACTION STATUS UPDATE
+============================================================
+
+  [DONE]  Arora confirms Wage Level III — no concerns
+  [DONE]  G-28 acceptance instructions received (check all 3 boxes)
+  [TODO]  Meiling Wang must complete Steps 1-7 on my.uscis.gov
+  [TODO]  Verify Meiling Wang has portal access (info@pacific-river-capital.com)
+  [TODO]  After Step 7, Arora receives authorization to file + pay
+
+============================================================
+END
+============================================================

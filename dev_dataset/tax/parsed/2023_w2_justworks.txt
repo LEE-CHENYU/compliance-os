@@ -1,0 +1,58 @@
+```json
+{
+  "form_type": "W-2",
+  "tax_year": "2023",
+  "employee_ssn": "XXX-XX-4321",
+  "employer": {
+    "name": "JUSTWORKS EMPLOYMENT GROUP LLC",
+    "ein": "11-1111111",
+    "address_line_1": "P.O. BOX 7119 CHURCH STREET STATION",
+    "address_line_2": "NEW YORK, NY 10008"
+  },
+  "control_number": "M000000",
+  "employee": {
+    "name": "ALEX ZHANG",
+    "address_line_1": "42 W 33RD ST, 15D, NEW YORK, NY 10001",
+    "address_line_2": "NEW YORK, NY 10025"
+  },
+  "boxes": {
+    "1": "12163.80",
+    "2": "1386.12",
+    "3": "12163.80",
+    "4": "754.16",
+    "5": "12163.80",
+    "6": "176.36",
+    "7": "",
+    "8": "",
+    "9": "",
+    "10": "",
+    "11": "",
+    "12": {
+      "12a": { "code": "DD", "amount": "1410.48" },
+      "12b": "",
+      "12c": "",
+      "12d": ""
+    },
+    "13": {
+      "statutory_employee": false,
+      "retirement_plan": false,
+      "third_party_sick_pay": false
+    },
+    "14": {
+      "description": "NY-PFL",
+      "amount": "59.16"
+    },
+    "15": {
+      "state": "NY",
+      "employer_state_id_number": "462283648"
+    },
+    "16": "12163.80",
+    "17": "573.76",
+    "18": "12163.80",
+    "19": "429.20",
+    "20": "NYC"
+  }
+}
+```
+
+All visible W-2 copies in the PDF show the same values.

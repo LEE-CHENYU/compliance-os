@@ -1,0 +1,257 @@
+================================================================================
+H-1B MODERNIZATION RULE — OWNER-BENEFICIARY VALIDATION RESEARCH
+Date: February 26, 2026
+Purpose: Validate Stepanova/Murthy advice against current law
+================================================================================
+
+================================================================================
+1. RULE IDENTIFICATION
+================================================================================
+
+  Official Title: "Modernizing H-1B Requirements, Providing Flexibility
+                   in the F-1 Program, and Program Improvements Affecting
+                   Other Nonimmigrant Workers"
+
+  Federal Register:  89 FR 103054 (December 18, 2024)
+  Document Number:   2024-29354
+  Effective Date:    January 17, 2025
+  Pages:             103054-103200 (147 pages)
+  Issuing Agency:    USCIS / DHS
+  PDF:               govinfo.gov/content/pkg/FR-2024-12-18/pdf/2024-29354.pdf
+
+  Key CFR Sections Amended:
+    8 CFR 214.2(h)(4)(ii)       — "United States employer" + "controlling interest"
+    8 CFR 214.2(h)(9)(iii)(E)   — Validity period for beneficiary-owners
+    8 CFR 214.2(h)(2)(i)(B),(F) — Employer requirements
+
+================================================================================
+2. OWNER-BENEFICIARY: 100% SELF-SPONSORSHIP IS PERMITTED
+================================================================================
+
+  The rule explicitly codifies that a beneficiary who owns MORE THAN 50%
+  of (or has majority voting rights in) the petitioning entity may be
+  eligible for H-1B status.
+
+  USCIS FAQ (direct quote):
+    "A company in which you have a controlling interest — meaning, you
+     own more than 50% or have majority voting rights in the company —
+     may qualify as your employer and may petition for H-1B status on
+     your behalf."
+
+  KEY REQUIREMENTS:
+    1. Must be a formal legal entity (LLC, S-Corp, C-Corp)
+       → Sole proprietorships are EXCLUDED (no legal separation)
+    2. Beneficiary must perform specialty occupation duties MAJORITY of time
+    3. Non-specialty duties must be directly related to owning/directing
+       the business (signing leases, investor relations, contracts,
+       business planning, talent acquisition)
+    4. Company needs: bona fide job offer, legal US presence, amenable
+       to service of process, IRS Tax ID (EIN)
+
+  NO PARTNER REQUIRED. NO 49/51 SPLIT REQUIRED. NO INDEPENDENT BOARD
+  OF DIRECTORS REQUIRED. A 100% single-member LLC qualifies.
+
+================================================================================
+3. VALIDITY PERIODS — 18-MONTH vs 3-YEAR
+================================================================================
+
+  8 CFR 214.2(h)(9)(iii)(E):
+
+  ┌──────────────────┬───────────────────────┬──────────────────────────┐
+  │ Period           │ Controlling (>50%)    │ Non-Controlling (≤50%)   │
+  ├──────────────────┼───────────────────────┼──────────────────────────┤
+  │ Initial petition │ 18 months max         │ Up to 3 years            │
+  │ 1st extension    │ 18 months max         │ Up to 3 years            │
+  │ 2nd+ extensions  │ Up to 3 years         │ Up to 3 years            │
+  │ Maximum stay     │ 6 years (standard)    │ 6 years (standard)       │
+  └──────────────────┴───────────────────────┴──────────────────────────┘
+
+  PRACTICAL EFFECT: Two 18-month periods (3 years total), then standard
+  3-year extensions up to the 6-year H-1B max. This is a more frequent
+  renewal requirement, NOT a cap on total stay.
+
+================================================================================
+4. PRE-2025 vs POST-2025 — WHY STEPANOVA WAS WRONG
+================================================================================
+
+  PRE-2025 (NEUFELD MEMO ERA, 2010-2025):
+  ─────────────────────────────────────────
+    The Neufeld Memo (January 8, 2010) established the "right to control"
+    test. When beneficiary = owner, the company couldn't easily demonstrate
+    it had the "right to control" the beneficiary's work.
+
+    ATTORNEY WORKAROUND: 49/51 ownership split with a partner. The 51%
+    holder (friend, family member) demonstrated "right to control."
+    Complex board structures with independent directors were also used.
+
+    NOTE: Neufeld Memo was partially rescinded on June 17, 2020 (ITServe
+    Alliance settlement), relaxing the standard to "at least one" of the
+    hire/pay/fire/supervise factors. But uncertainty remained until 2025.
+
+  POST-JANUARY 17, 2025 (MODERNIZATION RULE):
+  ─────────────────────────────────────────────
+    1. REMOVED employer-employee relationship requirement from "US employer"
+       definition for beneficiary-owned petitioners
+    2. EXPLICITLY CODIFIED that >50% owners are eligible
+    3. ELIMINATED the need for independent board structures
+    4. DEFINED "controlling interest" clearly in regulations for first time
+    5. PERMITTED entrepreneurial duties alongside specialty occupation work
+
+  STEPANOVA'S ADVICE (Feb 26, 2026 consultation):
+    → "Self-sponsorship is not allowed for H-1B"
+    → "Get a partner, 49/51 split"
+    → This is PRE-2025 NEUFELD MEMO advice, 13 months outdated
+    → Her own firm (Murthy) published about the Modernization Rule
+       on January 27, 2025: "New Regulation Simplifies Process for
+       H1B Entrepreneurs" (murthy.com/2025/01/27/...)
+
+================================================================================
+5. C-CORP STRATEGY — PACIFIC RIVER CAPITAL ANALYSIS
+================================================================================
+
+  STRUCTURE: User owns NO shares. Mother (Meiling Wang) is sole
+  shareholder, president, and sole director.
+
+  LEGAL ANALYSIS:
+    The 18-month limitation applies when "the beneficiary owns more than
+    50% of the petitioner or has majority voting rights." If user owns
+    NO shares and has NO voting rights → technically NOT a "beneficiary-
+    owner with controlling interest" → 18-month limitation may NOT apply
+    → Standard 3-year validity potentially available.
+
+  ATTORNEY POSITIONS:
+    BOX (Mehta):      C-Corp with family member = independent, not self-
+                      employment. Standard 3-year possible. BUT warned:
+                      family-owned invites scrutiny on whether job is real.
+    ALCORN:           "Might qualify for 3-year."
+    ARORA:            Entity type doesn't matter. Recommended Yangtze
+                      initially, then walked it back to "doesn't matter."
+    STEPANOVA:        Did NOT analyze this. Recommended 49/51 split instead.
+                      Said family relationship "may also be a problem."
+
+  RISKS:
+    1. USCIS skepticism of family-owned companies — may look beyond
+       formal structure to determine de facto control
+    2. The regulation does NOT include "related party attribution" —
+       mother's ownership is NOT imputed to child
+    3. But USCIS has broad discretion to scrutinize: genuine job, salary
+       will be paid, ability to pay, legitimate employer-employee
+       relationship
+    4. Site visits may probe actual power dynamics
+
+================================================================================
+6. $78,000 FILING FEE
+================================================================================
+
+  AUTHORITY: Presidential Proclamation, September 19, 2025
+             Sections 212(f) and 215(a) of the INA
+
+  DOES NOT APPLY TO:
+    ✓ Change of status (F-1 → H-1B) — EXEMPT
+    ✓ Extension of stay for persons already in H-1B
+    ✓ Amendment petitions for H-1B workers in the US
+    ✓ Change of employer for H-1B workers in the US
+
+  APPLIES TO:
+    ✗ New H-1B petitions for beneficiaries OUTSIDE the US
+    ✗ Petitions requesting CONSULAR PROCESSING (even if beneficiary
+      is currently in the US)
+
+  CONFIRMED BY: Box, Alcorn, Murthy (FAQ #10), USCIS alert, Yale OISS
+
+  STRATEGIC IMPLICATION: COS (change of status) is the strongly preferred
+  filing strategy. Consular processing would trigger the $78K fee.
+
+================================================================================
+7. DUAL REGISTRATION
+================================================================================
+
+  CAN MULTIPLE COMPANIES REGISTER THE SAME BENEFICIARY? YES.
+
+  The beneficiary-centric selection process (FY2025 onwards) means each
+  beneficiary gets ONE lottery entry regardless of how many registrations
+  are submitted. If selected, ALL registering employers are notified.
+
+  DHS initially proposed prohibiting related entities from dual-registering
+  (8 CFR 214.2(h)(2)(i)(G)) but DID NOT FINALIZE this provision. Average
+  registrations per beneficiary for FY2026: 1.01.
+
+  ATTORNEY POSITIONS:
+    BOX:      Both companies can register (correct)
+    ALCORN:   "Only one" (likely practical advice — dual reg doesn't
+              improve odds, not a legal prohibition)
+    ARORA:    Both can register, $663 each (correct)
+
+  FY2027 WEIGHTED SELECTION: Wage-based weighted lottery. If multiple
+  registrations, system uses the LOWEST wage level → actually a
+  disadvantage. Weights: Level IV = 4x, Level III = 3x, Level II = 2x,
+  Level I = 1x.
+
+================================================================================
+8. ASSESSMENT OF ALL ATTORNEYS ON MODERNIZATION RULE
+================================================================================
+
+  ┌──────────────────┬──────────────────────────────────────────────────┐
+  │ Attorney         │ Modernization Rule Understanding                │
+  ├──────────────────┼──────────────────────────────────────────────────┤
+  │ Box (Mehta)      │ EXCELLENT — Full understanding. Explained 18-mo │
+  │                  │ vs 3-yr. C-Corp strategy. Owner-beneficiary OK. │
+  │                  │ BUT FIRM DECLINED THE CASE.                     │
+  ├──────────────────┼──────────────────────────────────────────────────┤
+  │ Arora (h1b1)     │ GOOD — Correctly said 100% owner is no longer   │
+  │                  │ a barrier. Entity type doesn't matter. No board │
+  │                  │ needed. BUT FAILED on STEM OPT compliance.      │
+  ├──────────────────┼──────────────────────────────────────────────────┤
+  │ Alcorn (Sophie)  │ ADEQUATE — Referenced Modernization Rule. 18-mo │
+  │                  │ default for majority owner. C-Corp "might       │
+  │                  │ qualify for 3-year." Limited detail (email only).│
+  ├──────────────────┼──────────────────────────────────────────────────┤
+  │ Stepanova        │ FAILED — Did NOT understand the rule. Pushed    │
+  │ (Murthy)         │ back TWICE when user mentioned it. Recommended  │
+  │                  │ pre-2025 approach (49/51 split). DISQUALIFYING. │
+  ├──────────────────┼──────────────────────────────────────────────────┤
+  │ Hibee/Sun & Ren  │ UNKNOWN — Not yet tested on this issue.        │
+  └──────────────────┴──────────────────────────────────────────────────┘
+
+================================================================================
+9. SOURCES
+================================================================================
+
+  PRIMARY:
+    [1] Federal Register 89 FR 103054 (Dec 18, 2024)
+        federalregister.gov/documents/2024/12/18/2024-29354/...
+    [2] USCIS H-1B Specialty Occupations page
+        uscis.gov/working-in-the-united-states/h-1b-specialty-occupations
+    [3] USCIS FAQ for H-1B Nonimmigrant Status
+        uscis.gov/working-in-the-united-states/temporary-workers/
+        h-1b-specialty-occupations/faqs-for-individuals-in-h-1b-...
+    [4] 8 CFR 214.2(h)(4)(ii) — Controlling interest definition
+    [5] 8 CFR 214.2(h)(9)(iii)(E) — Validity period limitation
+
+  SECONDARY:
+    [6] USCIS Policy Manual Volume 2, Part H
+    [7] Murthy Law Firm: "New Regulation Simplifies Process for H1B
+        Entrepreneurs" (Jan 27, 2025)
+    [8] Holland & Knight: H-1B Modernization Rule Analysis (Jan 2025)
+    [9] ArentFox Schiff: Key Changes to H-1B Visa Program
+    [10] Capitol Immigration Law Group: H-1B Rule Changes for Entrepreneurs
+    [11] Cyrus Mehta Blog: Entrepreneurs Through H-1B and O Visas (Jan 2025)
+    [12] Serotte Law: H-1B Modernization Rule for Founders & Startups
+
+  $78K FEE:
+    [13] USCIS alert: Presidential Proclamation on H-1B $78K Fee
+    [14] Yale OISS: USCIS Clarifies $78,000 H-1B Fee
+    [15] American Immigration Council: H-1B $78K Fee Implementation
+    [16] CDF Labor Law: USCIS Clarifies $78,000 Fee
+
+  WEIGHTED LOTTERY:
+    [17] Federal Register: Weighted Selection Process (2025-23853, Dec 29, 2025)
+
+  HISTORICAL:
+    [18] Neufeld Memo (Jan 8, 2010) — archived at uscis.gov
+    [19] ITServe Alliance rescission (Jun 17, 2020)
+    [20] Klasko Immigration: Employer-Employee Relationship Guidance
+
+================================================================================
+END OF RESEARCH REPORT
+================================================================================

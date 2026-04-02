@@ -1,0 +1,274 @@
+═══════════════════════════════════════════════════════════════════════════════
+ACCOUNT ANALYSIS SUMMARY - $78,000 CASH WITHDRAWAL INVESTIGATION
+Date: October 8, 2025
+═══════════════════════════════════════════════════════════════════════════════
+
+ACCOUNTS ANALYZED:
+═══════════════════════════════════════════════════════════════════════════════
+
+1. CHK_1234 - CITIBANK BUSINESS CHECKING (Greenfield Capital LLC)
+2. CHK_5678 - CITIBANK PERSONAL CHECKING (Alex Zhang)
+3. stmt-2.csv - BANK OF AMERICA PERSONAL CHECKING (Alex Zhang)
+
+
+KEY FINDING: $78,000 CASH WITHDRAWAL (02/27/2025)
+═══════════════════════════════════════════════════════════════════════════════
+
+WITHDRAWN FROM: CHK_1234 (Business Checking)
+  Date: 02/27/2025
+  Amount: $78,000.00
+  Method: Teller withdrawal (CASH)
+
+SEARCHED IN:
+  ✗ CHK_5678 (Personal Citibank) - NOT FOUND
+  ✗ stmt-2 (Personal Bank of America) - NOT FOUND
+  ✗ Schwab LLC account XXX567 - NOT FOUND
+
+CONCLUSION: $78,000 taken as CASH - whereabouts unknown
+  Possible uses:
+    - Physical cash kept at home
+    - Deposited to another unseen account
+    - Large cash purchases
+    - Given to family members
+    - Foreign investment accounts
+
+
+ACTIVITY AROUND 02/27/2025:
+═══════════════════════════════════════════════════════════════════════════════
+
+02/25/2025:
+  Personal (6544) → Business (5039): +$59,409.57
+  Personal → Business: +$2,861.66 (wire to Schwab)
+
+02/26/2025:
+  Business (5039) → Personal (6544): +$39,000 (reversed)
+
+02/27/2025:
+  Personal (6544) → Business (5039): +$39,000
+  Business (5039) → CASH: -$78,000 ⚠️ DISTRIBUTION
+
+NET RESULT: Moved money around, then withdrew $78,000 cash
+
+
+ACCOUNT RELATIONSHIPS:
+═══════════════════════════════════════════════════════════════════════════════
+
+CHK_1234 (Business) ←→ CHK_5678 (Personal Citibank)
+  - Frequent transfers via "Transfer to/from Checking"
+  - MoneyLink to Schwab LLC: $9,882.44 total (Q1-Q2 2025)
+
+CHK_5678 (Personal) ←→ Schwab LLC XXX567
+  - MoneyLink contributions: $46,800 in Q3-2025
+  - MoneyLink distributions: $22,620 (09/12/2025)
+
+stmt-2 (BOA Personal) ←→ Various
+  - International wires received (family?)
+  - Schwab MoneyLink activity
+  - Large personal expenses
+
+
+CAPITAL CONTRIBUTIONS SUMMARY (All Sources):
+═══════════════════════════════════════════════════════════════════════════════
+
+TO SCHWAB LLC (XXX567):
+
+CASH CONTRIBUTIONS:
+  Q1-2025: $80,861.66 (wires, cashier's checks, journals)
+  Q2-2025: $18,720.78 (MoneyLink, journals)
+  Q3-2025: $53,820.00 (MoneyLink, journals)
+  TOTAL CASH: $153,402.44
+
+POSITION TRANSFERS (In-Kind):
+  Q2-2025: $12,111,210.49 (19 securities transferred 05/01/2025)
+
+TOTAL CAPITAL INTO SCHWAB LLC: $12,264,612.93
+
+SOURCES OF CASH CONTRIBUTIONS:
+  - Business checking (CHK_1234): $9,882.44
+  - Personal checking (CHK_5678): ~$46,800+
+  - Cashier's checks: $58,500
+  - Journal transfers: $38,220 (from account ...619)
+
+
+DISTRIBUTIONS SUMMARY:
+═══════════════════════════════════════════════════════════════════════════════
+
+FROM SCHWAB LLC (XXX567):
+  Q2-2025: $3,900 (04/07/2025 - Journal TO ...619)
+  Q3-2025: $22,620 (09/11/2025 - Journal TO ...619)
+  TOTAL FROM SCHWAB: $26,520
+
+FROM BUSINESS CHECKING (CHK_1234):
+  Q1-2025: $78,000 (02/27/2025 - CASH withdrawal) ⚠️ MISSING
+  Q2-2025: $780 (04/30/2025 - teller)
+  Q3-2025: $546 (09/12/2025 - withdrawal)
+  TOTAL FROM CHK_1234: $79,326
+
+TOTAL DISTRIBUTIONS (ALL SOURCES): $105,846
+
+
+SCHWAB LLC MONEYLINK ACTIVITY (CHK_5678 ←→ Schwab):
+═══════════════════════════════════════════════════════════════════════════════
+
+CONTRIBUTIONS (Personal → LLC):
+  01/03/2025: $54,600
+  01/13/2025: $36,660
+  03/20/2025: $35,100
+  04/08/2025: $3,900
+  05/14/2025: $35,100
+  08/26/2025: $23,400
+  09/09/2025: $11,700
+  09/22/2025: $23,400
+
+DISTRIBUTIONS (LLC → Personal):
+  01/27/2025: $12,480 (credit to personal)
+  09/12/2025: $22,620 (credit to personal)
+
+INTERNAL TRANSFERS (Business CHK_1234 → LLC):
+  NOT true contributions - moving LLC's own money from checking to brokerage
+  05/14/2025: $3,510 + $3,510
+  04/23/2025: $0.78
+  02/25/2025: $2,861.66
+
+
+ENTITY STRUCTURE (NEEDS CLARIFICATION):
+═══════════════════════════════════════════════════════════════════════════════
+
+SCHWAB ACCOUNT XXX567:
+  - Name: "Limit Liability Company XXX567" (unclear exact name)
+  - Type: LLC brokerage account
+  - Bank: Charles Schwab
+  - Assets: $12.1M+ in securities
+
+CHK_1234 BUSINESS CHECKING:
+  - Bank: Citibank
+  - May be same LLC or different entity
+  - Journal references to account "...619" (unknown)
+
+QUESTION: Are CHK_1234 and Schwab XXX567 the SAME LLC or DIFFERENT entities?
+
+
+DOCUMENTATION NEEDED:
+═══════════════════════════════════════════════════════════════════════════════
+
+IMMEDIATE ACTION REQUIRED:
+
+1. Q1-2025 DISTRIBUTION DOCUMENT for CHK_1234:
+   - $78,000 cash distribution on 02/27/2025
+   - Must be documented for tax purposes
+   - Taxable regardless of where cash went
+
+2. CLARIFY ENTITY STRUCTURE:
+   - Is CHK_1234 the same LLC as Schwab XXX567?
+   - What is account "...619" (appears in journals)?
+   - Are these internal transfers or separate entities?
+
+3. LOCATE $78,000 CASH:
+   - Where did it go?
+   - Personal use, investment, or savings?
+   - Need to document for IRS audit trail
+
+4. BUSINESS CHECKING DOCUMENTS:
+   - If CHK_1234 is a separate LLC from Schwab, need separate docs
+   - Capital contribution consents for Zelle deposits from owner
+   - Distribution authorizations for withdrawals
+
+
+TAX IMPLICATIONS:
+═══════════════════════════════════════════════════════════════════════════════
+
+SCHWAB LLC:
+  ✓ Documented: $153,402.44 cash contributions
+  ✓ Documented: $12,111,210.49 position transfers (IRC § 721)
+  ✓ Documented: $26,520 distributions
+  ✓ Documents generated by script
+
+CHK_1234 BUSINESS:
+  ✗ NOT DOCUMENTED: $78,000 distribution (02/27/2025)
+  ✗ NOT DOCUMENTED: $1,326 other withdrawals
+  ✗ NOT DOCUMENTED: ~$114,660 capital contributions (Zelle, deposits)
+  ⚠️ URGENT: Need quarterly documents for this entity
+
+$78,000 CASH DISTRIBUTION:
+  - Must be reported on personal tax return
+  - K-1 should reflect this distribution
+  - Taxable as ordinary income or return of capital (depends on basis)
+  - No documentation currently exists
+
+
+DISCREPANCIES & RED FLAGS:
+═══════════════════════════════════════════════════════════════════════════════
+
+1. MISSING CASH: $78,000 withdrawn but not deposited anywhere visible
+   → Could trigger IRS questions if audited
+
+2. ENTITY CONFUSION: Unclear if CHK_1234 and Schwab XXX567 are same LLC
+   → Need to clarify for proper tax reporting
+
+3. INTERNAL TRANSFERS: $9,882.44 showing as "contributions" in Schwab
+   → Actually internal transfers if same entity
+   → Could be double-counting capital if not careful
+
+4. ACCOUNT "...619": Frequent journal transfers to/from unknown account
+   → Need to identify this account
+   → Could be another LLC account or personal savings
+
+
+RECOMMENDATIONS:
+═══════════════════════════════════════════════════════════════════════════════
+
+IMMEDIATE (Before Tax Season):
+
+1. Identify where $78,000 cash went
+   - Check all other bank accounts
+   - Review large purchases in Q1-2025
+   - Ask family members if received cash
+
+2. Create Q1-2025 distribution document for CHK_1234
+   - Document $78,000 cash withdrawal
+   - Include solvency certifications
+   - Sign and file with tax preparer
+
+3. Clarify entity structure
+   - Confirm if CHK_1234 = Schwab XXX567 (same LLC?)
+   - Identify account "...619"
+   - Map all account relationships
+
+4. Update script for CHK_1234 if separate entity
+   - Generate contribution consents for Zelle deposits
+   - Generate distribution authorizations
+   - Separate quarterly documents
+
+5. Review with tax preparer
+   - Show all accounts and entities
+   - Explain $78,000 cash withdrawal
+   - Ensure proper K-1 reporting
+   - Verify no double-counting of contributions
+
+
+LONGER TERM:
+
+1. Maintain separate accounting for each entity
+2. Clearly label internal transfers vs true contributions
+3. Document all distributions contemporaneously
+4. Keep better records of cash movements
+5. Consider reducing large cash withdrawals (IRS scrutiny)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+BOTTOM LINE
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ SCHWAB LLC: Fully documented with script-generated forms
+✗ CHK_1234 BUSINESS: Missing documentation for $78K+ in activity
+⚠️ $78,000 CASH: Location unknown - must be reported on taxes regardless
+
+NEXT STEPS:
+1. Find the $78,000 cash
+2. Document CHK_1234 distributions
+3. Clarify entity relationships
+4. Meet with tax preparer before filing
+
+═══════════════════════════════════════════════════════════════════════════════
+END OF SUMMARY
+═══════════════════════════════════════════════════════════════════════════════

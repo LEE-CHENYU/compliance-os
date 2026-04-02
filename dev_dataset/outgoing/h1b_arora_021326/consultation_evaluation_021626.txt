@@ -1,0 +1,152 @@
+================================================================================
+ARORA CONSULTATION EVALUATION — Monday Feb 16, 4:00pm EST (~21 minutes)
+================================================================================
+Fee Paid: $98 (Helcim)
+Call: 212-268-3580, spoke with Ajay Arora directly
+Recording: 580 Ohlone Ave, Apt 100.m4a (transcribed via OpenAI Whisper API)
+
+================================================================================
+SUMMARY OF ADVICE RECEIVED
+================================================================================
+
+QUESTION 1: WHICH ENTITY SHOULD PETITION? (BSGC LLC vs Pacific River Capital)
+────────────────────────────────────────────────────────────────────────────────
+  Initial recommendation: Pacific River Capital (C-Corp with mother as president)
+
+  When pressed for reasoning, walked it back to: "It doesn't matter."
+
+  Key points from Arora:
+    - Under H-1B Modernization Rules (effective Jan 2025), beneficiary being
+      100% owner is NO LONGER a barrier to employer-employee relationship
+    - USCIS does not restrict entity type — LLC vs C-Corp doesn't matter
+    - No need to show independent board of directors anymore
+    - RECOMMENDED (not required) that someone else sign the petition
+      → Meiling Wang (mother, president) signing = ideal from their side
+    - Entity choice should be based on TAX considerations, not immigration
+    - Company docs (formation, tax returns, bank statements) are NOT normally
+      attached to the H-1B petition — just enter company info (name, address, EIN)
+    - Family investment company structure is fine — not unusual
+    - Need bank account and paper trail, but no minimum company size
+    - Job title: "Financial Specialist" — matches degree, good for H-1B
+
+  ASSESSMENT: The final answer was correct and grounded in current law.
+  However, the initial recommendation (Pacific River Capital) was given without
+  clear reasoning and was effectively reversed when challenged. This suggests
+  he didn't fully analyze the facts before speaking.
+
+QUESTION 2: STEM OPT COMPLIANCE (The Expertise Test)
+────────────────────────────────────────────────────────────────────────────────
+  Arora's response: DEFLECTED / DISMISSED
+
+  When I raised LLC e-commerce activity during STEM OPT period:
+    → "We don't have an opinion on how you maintain your, you know,
+       comply with STEM OPT guidelines when you have STEM OPT."
+
+  When I raised missing I-983 from one employer:
+    → "I'd call it, perhaps you were not employed during that time.
+       Rather than improperly employed."
+    → "You can be openly unemployed for 150 days. Not a problem at all."
+
+  Overall assessment of STEM OPT risk:
+    → "Unlikely to be an RFE" because currently on F-1 CPT, not OPT
+
+  WHAT HE DID NOT DO (per our evaluation criteria):
+    ✗ Did NOT distinguish regular OPT vs STEM OPT self-employment rules
+    ✗ Did NOT ask follow-up questions about nature of LLC activity
+    ✗ Did NOT discuss whether passive investment = "employment" under
+      8 CFR 214.2(f)
+    ✗ Did NOT address discoverability risk (Schedule C on tax return vs SEVIS)
+    ✗ Did NOT discuss INA §212(a)(6)(C)(i) misrepresentation risk
+    ✗ Did NOT recommend a strategy (disclose vs don't disclose)
+    ✗ Said "we don't have an opinion" — explicit refusal to engage
+    ✗ Said "unlikely to be an RFE" without substantive analysis
+
+  MATCHED RED FLAGS FROM PREP DOCUMENT:
+    ✗ "Says 'it's fine, don't worry about it' without analysis"
+    ✗ "Doesn't ask follow-up questions about the nature of LLC activity"
+    ✗ "Seems unfamiliar with the employer-employee relationship test
+       for STEM OPT" (or at minimum, unwilling to discuss it)
+
+================================================================================
+COMMUNICATION STYLE CONCERNS
+================================================================================
+
+  PATTERN: Consistently diverged from direct questions into tangential topics.
+
+  Examples from the call:
+
+  1. [01:46] Asked which entity to use → Arora talked about multiple
+     registrations from different companies (not what was asked)
+
+  2. [11:46] Asked why Yangtze over SMLLC → Arora talked about job titles
+     and duty descriptions instead of answering the entity question
+
+  3. [13:40] Had to explicitly say: "Let's don't diverge. Like, let's answer
+     one question, one by one." — to redirect him back to the question
+
+  4. [14:11] Asked the SAME entity question a THIRD time before getting
+     the actual answer: "It's also okay to use a single member LLC"
+
+  5. [17:15] Tried to raise STEM OPT compliance concerns → Arora cut off
+     mid-sentence and pivoted to general statements about STEM OPT employment
+
+  6. [17:37] Had to re-raise the STEM OPT concern a second time, only to
+     have it dismissed with "we don't have an opinion"
+
+  ASSESSMENT: This pattern could indicate:
+    a. Billing optimization — tangents consume the 15-min paid window,
+       leaving less time for substantive analysis
+    b. Liability avoidance — refusing to give specific opinions before
+       formal engagement (the "retain me first" approach)
+    c. Lack of depth on STEM OPT compliance issues specifically
+    d. General communication style (verbose, not client-focused)
+
+  Regardless of intent, the result was the same: 21 minutes consumed,
+  the harder question (STEM OPT) went unanswered, and I had to ask
+  the easier question (entity choice) three times to get a straight answer.
+
+================================================================================
+USEFUL INFORMATION EXTRACTED
+================================================================================
+
+  Despite the communication issues, several useful data points:
+
+  1. H-1B Modernization Rules (Jan 2025) — owner=beneficiary is now OK
+  2. Entity type (LLC vs Corp) is irrelevant for USCIS purposes
+  3. Company formation docs are NOT attached to H-1B petition
+  4. No minimum company size requirement
+  5. Family investment company structure is acceptable
+  6. LCA filed AFTER lottery selection (first week of April)
+  7. 90 days after lottery to file petition (end of June deadline)
+  8. "Financial Specialist" is a good job title for the petition
+  9. Recommend (not require) a different person to sign the petition
+  10. Can register BOTH entities if desired ($663 each)
+  11. 150-day aggregate unemployment tolerance on OPT/STEM OPT
+  12. Treat the unsigned I-983 period as "unemployment" not "improper employment"
+
+================================================================================
+DECISION & NEXT STEPS
+================================================================================
+
+  STATUS: DO NOT PAY $663 YET
+
+  CONCERNS:
+    - Arora failed the expertise test on STEM OPT compliance
+    - Communication style requires excessive redirection
+    - Initial entity recommendation was reversed when challenged
+    - "We don't have an opinion" on the most critical compliance issue
+
+  NEXT STEPS:
+    1. Schedule Shah Peerally consultation ($117, credited toward $546)
+       → Already emailed Memoona/Dharshini to schedule ASAP
+       → Prepare same two questions, see how Shah handles Q2
+    2. Research additional attorneys with deeper STEM OPT / compliance
+       expertise — may need a specialist separate from H-1B filing attorney
+    3. $663 Arora deadline: end of February — still have ~12 days
+    4. Consider: Arora may still be the right filing attorney (good on
+       process, knows Modernization Rules) but may need a SEPARATE
+       compliance attorney for the STEM OPT issue
+
+================================================================================
+END OF EVALUATION
+================================================================================

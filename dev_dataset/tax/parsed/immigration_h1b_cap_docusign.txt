@@ -1,0 +1,189 @@
+================================================================================
+PARSED: H-1B CAP LEGAL SERVICES AGREEMENT (MT LAW LLC - DOCUSIGN VERSION)
+Source: /Users/devuser/accounting/legal/immigration/h1b_cap_legal_services_docusign.pdf
+Parsed: 2026-02-12
+================================================================================
+
+DOCUMENT TYPE: Legal Services Agreement - H-1B Petition (DocuSign Execution Copy)
+DocuSign Envelope ID: CFFCF97A-7ABB-4069-83CA-2BCD9F5BD347
+Pages: 8
+
+--------------------------------------------------------------------------------
+PARTIES
+--------------------------------------------------------------------------------
+Attorney (Service Provider):
+  Name:     MT Law LLC
+  Address:  430 Bedford Street, Suite 200, Lexington, MA 02420
+  Phone:    (800) 345-1899
+  Fax:      (888) 345-1388
+
+Client (Petitioner / Employer):
+  Name:     Greenfield Capital LLC
+
+Beneficiary (Employee / H-1B Applicant):
+  Name:     Alex Zhang
+
+Fiscal Year Target: FY 2027 H-1B Cap
+
+--------------------------------------------------------------------------------
+SCOPE OF SERVICES (Clause 1)
+--------------------------------------------------------------------------------
+Identical to the unsigned agreement version:
+
+(1) BEFORE FY 2027 H-1B Cap Lottery:
+    a. Eligibility assessment consultation for H-1B Petition
+    b. Guide Petitioner (Employer) and Beneficiary (Employee) in collecting
+       and reviewing required documents for the lottery
+    c. Guide compliance with Immigration Regulations and U.S. Department of
+       Labor requirements for H-1B category
+    d. Prepare and submit H-1B Registration to USCIS
+
+(2) AFTER FY 2027 H-1B Cap Lottery (only if selected):
+    a. Prepare Petitioner's Letter of Support
+    b. Prepare and submit Labor Condition Application to U.S. Dept. of Labor
+    c. Organize all required supporting documentation for Petition Package
+    d. Draft cover letter for the H-1B Petition
+    e. Prepare all required forms: I-129, I-129 H Classification Supplement,
+       I-129 H Data Collection, and G-28
+    f. Submit completed Petition to proper USCIS Service Center
+    g. Contact USCIS to check on status of pending case
+    h. Prepare, file, and pursue the H-1B Petition to the best of ability
+
+--------------------------------------------------------------------------------
+LEGAL FEES (Clause 2)
+--------------------------------------------------------------------------------
+
+TOTAL ATTORNEY'S FEE: $2,574.00 (for one Beneficiary)
+
+  Part 1 - Before Lottery:  $234.00
+    - Does NOT include $167.70 USCIS H-1B Registration fee
+
+  Part 2 - After Lottery (only if selected): $2,340.00
+    - Due upon receipt of invoice (only if registration is selected)
+
+RFE/NOID RESPONSE FEES (additional, if applicable):
+  Simple inquiry (business address/location/registration):
+    Fee: $390.00
+
+  Complex inquiries (single):
+    Fee: $1,404.00 - $1,560.00
+
+  Combination of 2+ complex inquiries:
+    Fee: $1,950.00 - $2,730.00
+
+--------------------------------------------------------------------------------
+COSTS AND EXPENSES (Clause 3)
+--------------------------------------------------------------------------------
+Printing and Shipping Fee: $117.00
+  - Only applicable if registration is selected by USCIS
+
+--------------------------------------------------------------------------------
+GOVERNMENT FILING FEES (Clause 17)
+--------------------------------------------------------------------------------
+
+FEE SCHEDULE - H-1B CAP LOTTERY REGISTRATION:
+  Legal Fees:                      $234 per Applicant
+  H-1B Lottery Filing Fee (USCIS): $168 per Applicant
+  TOTAL:                           $402 per Applicant
+
+FEE SCHEDULE - FULL PETITION IF SELECTED:
+
+                                    25 or less       26 or more
+  Description                       employees        employees
+  ---------------------------------------------------------------
+  Legal Fees                        $2,340.00        $2,340.00
+  Printing and Shipping Fee         $117.00          $117.00
+  I-129 H Filing Fee                $358.80          $608.40
+  U.S. Worker Training Fee          $585.00          $1,170.00
+  Fraud Detection Fee               $390.00          $390.00
+  Asylum Program Fee                $234.00          $468.00
+  ---------------------------------------------------------------
+  TOTAL (without Premium)           $4,024.80        $5,093.40
+  Optional Premium Processing       $2,312.70        $2,312.70
+  TOTAL (with Premium)              $6,337.50        $7,406.10
+
+Note: Filing fees subject to change per USCIS policy.
+
+--------------------------------------------------------------------------------
+ESCROW AND PAYMENT TERMS (Clause 4)
+--------------------------------------------------------------------------------
+- $234.00 held in escrow until H-1B Registration is submitted to USCIS
+- Once Registration is submitted (regardless of lottery result), $234 is
+  earned revenue
+- If selected, $2,340.00 invoiced and held in escrow until petition is
+  prepared and ready to file; then removed as earned revenue
+- Escrow governed by Massachusetts law for client trust accounts
+
+--------------------------------------------------------------------------------
+KEY TERMS AND CONDITIONS
+--------------------------------------------------------------------------------
+
+Modifications (Clause 5): Must be in writing, signed by both parties.
+
+Prior Agreements (Clause 6): Incorporates all prior agreements.
+
+Guarantee (Clause 7): Due diligence, no guarantees on outcome.
+
+Client Cooperation (Clause 8): Client must provide truthful/accurate info.
+Failure gives Attorney right to withdraw.
+
+Severability (Clause 9): Invalid clauses do not affect rest of agreement.
+
+Informed Consent & Risk Acknowledgements (Clause 10):
+  (1)  No guarantee of outcome
+  (2)  USCIS may issue RFE/NOID
+  (3)  Denial may result in loss of status, unlawful presence, 3/10-year bars
+  (4)  Possibility of removal proceedings (NTA)
+  (5)  Travel and consular processing risks
+  (6)  DHS site visits and verification
+  (7)  Employer/position changes require amended filings
+  (8)  Premium processing only expedites timeframes, not approval
+  (9)  Changes in law/USCIS policy may affect eligibility
+  (10) Additional fees for strategic options after adverse action
+
+Warranty of Accuracy (Clause 11): Client warrants truthfulness of all documents.
+
+Conflict of Interest (Clause 12): Permitted Adverse Representation allowed.
+
+Effective Date (Clause 13): Upon both signatures and receipt of $234.00 fee.
+
+Withdrawal (Clause 14):
+  - After petition submitted: no refund
+  - Before submission: refund of USCIS fees, Attorney's Fee less prorated
+    work at $234.00/hour
+  - Must be in writing
+
+Dispute Resolution (Clause 15): Binding arbitration in Massachusetts (AAA).
+Client waives court/jury trial. Claims within one year of accrual.
+
+Limitation of Liability (Clause 16): Capped at total compensation received.
+
+--------------------------------------------------------------------------------
+SIGNATURES AND DOCUSIGN EXECUTION
+--------------------------------------------------------------------------------
+DocuSign Envelope ID: CFFCF97A-7ABB-4069-83CA-2BCD9F5BD347
+
+MT Law LLC:
+  Signature line present on page 8
+  Date: Not visible in extracted text
+
+Client (Greenfield Capital LLC):
+  Signature line present on page 8
+  Date: Not visible in extracted text
+
+Note: This is the DocuSign execution copy of the same Legal Services Agreement.
+The DocuSign Envelope ID confirms this document was routed through DocuSign
+for electronic signature. The substantive terms are identical to the unsigned
+version (h1b_cap_legal_services_agreement.pdf). The DocuSign envelope ID
+(CFFCF97A-7ABB-4069-83CA-2BCD9F5BD347) appears on every page as a watermark,
+confirming it is the authoritative electronically-executed version of the
+agreement.
+
+--------------------------------------------------------------------------------
+COMPARISON NOTE
+--------------------------------------------------------------------------------
+This DocuSign version is substantively identical to the unsigned agreement at:
+  /Users/devuser/accounting/legal/immigration/h1b_cap_legal_services_agreement.pdf
+
+The key difference is that this copy was processed through DocuSign for
+electronic execution, as evidenced by the envelope ID on every page.

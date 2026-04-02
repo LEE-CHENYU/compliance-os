@@ -1,0 +1,661 @@
+═══════════════════════════════════════════════════════════════════════════════
+QUARTERLY CAPITAL CONTRIBUTION & DISTRIBUTION TEMPLATES
+Greenfield Capital LLC (Wyoming)
+EIN: 12-3456789 | Formation Date: June 16, 2023
+═══════════════════════════════════════════════════════════════════════════════
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEMPLATE 1: QUARTERLY CAPITAL CONTRIBUTION — WRITTEN CONSENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WRITTEN CONSENT OF SOLE MEMBER/MANAGER
+CAPITAL CONTRIBUTION RESOLUTION
+
+LLC:                    Greenfield Capital LLC
+                        (A Wyoming Limited Liability Company)
+                        EIN: 12-3456789
+
+Member/Manager:         Alex Zhang (Sole Member)
+
+Date of Consent:        _______________, 20___
+
+Contribution Quarter:   ☐ Q1-20___ (Jan-Mar)  ☐ Q2-20___ (Apr-Jun)
+                        ☐ Q3-20___ (Jul-Sep)  ☐ Q4-20___ (Oct-Dec)
+
+───────────────────────────────────────────────────────────────────────────────
+
+RECITALS:
+
+WHEREAS, Greenfield Capital LLC (the "Company") is a Wyoming limited
+liability company formed on June 16, 2023, and governed by W.S. § 17-29-101 et
+seq. (Wyoming Limited Liability Company Act);
+
+WHEREAS, Alex Zhang is the sole Member and Manager of the Company with full
+authority to act pursuant to W.S. § 17-29-407 and the Company's Operating
+Agreement;
+
+WHEREAS, the Member desires to make a capital contribution to strengthen the
+Company's financial position and support its business operations;
+
+NOW, THEREFORE, acting as the sole Member and Manager, I hereby adopt the
+following resolutions:
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 1: AUTHORITY & GOVERNING LAW
+
+I, Alex Zhang, acting as the sole Member and Manager under W.S. § 17-29-407,
+hereby approve, ratify, and consent to the capital contribution described
+herein. This consent constitutes a valid corporate action under Wyoming law and
+is effective immediately upon execution.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 2: CAPITAL CONTRIBUTION DETAILS
+
+The following capital contribution is hereby approved and accepted:
+
+   AMOUNT:                  $________________
+
+   CONTRIBUTION METHOD:     ☐ Wire Transfer
+                            ☐ MoneyLink/ACH Transfer
+                            ☐ Cashier's Check
+                            ☐ Personal Check
+                            ☐ Other: _______________
+
+   ORIGINATING BANK:        ☐ Citibank NA
+                            ☐ Other: _______________
+
+   ORIGINATING ACCOUNT:     Personal account ending: ________
+
+   RECEIVING BANK:          Charles Schwab Bank
+
+   RECEIVING ACCOUNT:       Greenfield Capital LLC
+                            EIN-based account ending: ________
+
+   BANK REFERENCE/TRACE #:  ___________________________
+
+   TRANSFER DATE:           _______________, 20___
+
+   BANK MEMO (if any):      CAPCONTR-BSGC-20__Q_-[Method]-[Trace#]
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 3: NATURE OF CONTRIBUTION
+
+The Member expressly represents, warrants, and confirms:
+
+   A. EQUITY, NOT DEBT: This contribution constitutes a permanent capital
+      contribution to the Company's equity and is NOT a loan, advance, or
+      debt obligation of any kind.
+
+   B. NO REPAYMENT OBLIGATION: The Company has no obligation to repay,
+      reimburse, or return this contribution except through proper
+      distributions as determined by the Manager in accordance with Wyoming
+      law and the Operating Agreement.
+
+   C. NO INTEREST: This contribution does not accrue interest and does not
+      create any creditor relationship between the Member and the Company.
+
+   D. INCREASES CAPITAL ACCOUNT: This contribution increases the Member's
+      capital account balance and equity interest in the Company.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 4: FRAUDULENT TRANSFER DEFENSES (Pre-Claim Planning)
+
+The Member represents and warrants, to the best of their knowledge and belief,
+as of the date of this consent:
+
+   A. SOLVENCY: The Company is solvent, has assets exceeding liabilities, and
+      can pay its debts as they become due in the ordinary course of business.
+
+   B. NO CLAIMS: Neither the Company nor the Member is subject to any known,
+      pending, threatened, or reasonably anticipated:
+
+      i.   Lawsuits, claims, or legal proceedings;
+      ii.  Tax assessments, audits, or disputes;
+      iii. Creditor demands or collection actions;
+      iv.  Contractual disputes; or
+      v.   Any other liability that could be materially adverse.
+
+   C. NO FRAUDULENT INTENT: This contribution is made in good faith for
+      legitimate business purposes and is not made with any intent to:
+
+      i.   Hinder, delay, or defraud any creditor;
+      ii.  Place assets beyond the reach of creditors;
+      iii. Prefer one creditor over another; or
+      iv.  Violate any fraudulent transfer or conveyance law.
+
+   D. FAIR VALUE RECEIVED: The Company receives fair and adequate consideration
+      for this contribution in the form of cash that will be used for bona
+      fide business operations, investments, and activities.
+
+   E. REASONABLY EQUIVALENT VALUE: The Member is contributing personal funds
+      that represent reasonably equivalent value for the increase in the
+      Member's equity interest.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 5: BOOKS & RECORDS
+
+The Company's bookkeeper, accountant, or Manager shall record this contribution
+in the Company's books and records as follows:
+
+   JOURNAL ENTRY:
+
+   Date: _______________, 20___
+
+   Dr. Cash                                    $______________
+       Cr. Member's Equity - Capital
+           Contributions (Alex Zhang)                           $______________
+
+   DESCRIPTION: Q[#]-20__ capital contribution from sole member Alex Zhang via
+                [Wire/MoneyLink/Check] - [Bank Trace #]
+
+   CAPITAL ACCOUNT: The Member's capital account shall be increased by
+                    $______________ as of the contribution date.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 6: TAX TREATMENT
+
+This contribution is not taxable to the Company or the Member under IRC § 721,
+as it represents a contribution to capital by a partner/member. No gain or loss
+is recognized by either party on this transaction.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 7: RECORDKEEPING
+
+A copy of this Written Consent shall be:
+
+   • Filed in the Company's minute book/records binder
+   • Attached to the quarterly accounting records
+   • Provided to the Company's tax preparer with the annual tax return
+   • Retained for a minimum of 7 years per IRS recordkeeping requirements
+
+───────────────────────────────────────────────────────────────────────────────
+
+EXECUTED this _____ day of ______________, 20___.
+
+
+                                    ________________________________________
+                                    Alex Zhang, Sole Member and Manager
+                                    Greenfield Capital LLC
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEMPLATE 2: CAPITAL CONTRIBUTION RECEIPT & ATTRIBUTION STATEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CAPITAL CONTRIBUTION RECEIPT
+AND SOURCE ATTRIBUTION STATEMENT
+
+LLC:                    Greenfield Capital LLC
+                        EIN: 12-3456789
+
+Date Funds Received:    _______________, 20___
+
+Quarter:                Q___ - 20___
+
+───────────────────────────────────────────────────────────────────────────────
+
+RECEIPT ACKNOWLEDGMENT:
+
+The Company hereby acknowledges receipt of:
+
+   AMOUNT:                  $________________
+
+   RECEIVED FROM:           Alex Zhang, Sole Member
+
+   SOURCE ATTRIBUTION:      Personal funds from Alex Zhang's personal bank
+                            account at [Citibank NA / Other: __________]
+
+   TRANSFER METHOD:         [Wire / MoneyLink / Cashier's Check / Other]
+
+   BANK REFERENCE/TRACE:    ___________________________
+
+   DEPOSITED TO:            Greenfield Capital LLC
+                            Charles Schwab Bank
+                            Account ending: ________
+
+   EXTERNAL BANK MEMO:      CAPCONTR-BSGC-20__Q_-[Method]-[Trace#]
+
+───────────────────────────────────────────────────────────────────────────────
+
+NATURE OF FUNDS:
+
+The funds described above are accepted as a CAPITAL CONTRIBUTION (equity
+investment) and NOT as indebtedness, loan, advance, or any other form of
+borrowing.
+
+The funds shall be used for legitimate business purposes of the Company,
+including but not limited to:
+   • Investment activities
+   • Operating expenses
+   • Asset purchases
+   • Cash reserves
+   • Other business needs as determined by the Manager
+
+───────────────────────────────────────────────────────────────────────────────
+
+CONTRIBUTOR ACKNOWLEDGMENTS:
+
+The contributor (Alex Zhang) acknowledges and agrees:
+
+   1. No distribution, dividend, pledge, encumbrance, or transfer rights are
+      granted to the contributor other than those expressly provided in the
+      Company's Operating Agreement.
+
+   2. The contribution is subject to the risks of the business and may be lost
+      if the Company incurs losses or becomes insolvent.
+
+   3. No repayment schedule, maturity date, or interest rate applies to this
+      contribution.
+
+   4. Any return of capital or distribution requires separate authorization
+      and must satisfy Wyoming's solvency and surplus requirements.
+
+───────────────────────────────────────────────────────────────────────────────
+
+RECEIVED AND ACCEPTED BY:
+
+
+________________________________________    Date: _______________
+Alex Zhang, Manager
+(Receiving on behalf of Greenfield Capital LLC)
+
+
+CONTRIBUTED BY:
+
+
+________________________________________    Date: _______________
+Alex Zhang, Member
+(Contributing in individual capacity)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEMPLATE 3: QUARTERLY MEMBER DISTRIBUTION AUTHORIZATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WRITTEN CONSENT OF SOLE MEMBER/MANAGER
+DISCRETIONARY DISTRIBUTION RESOLUTION
+
+LLC:                    Greenfield Capital LLC
+                        (A Wyoming Limited Liability Company)
+                        EIN: 12-3456789
+
+Member/Manager:         Alex Zhang (Sole Member)
+
+Date of Authorization:  _______________, 20___
+
+Distribution Quarter:   ☐ Q1-20___ (Jan-Mar)  ☐ Q2-20___ (Apr-Jun)
+                        ☐ Q3-20___ (Jul-Sep)  ☐ Q4-20___ (Oct-Dec)
+
+───────────────────────────────────────────────────────────────────────────────
+
+RECITALS:
+
+WHEREAS, Greenfield Capital LLC (the "Company") is a Wyoming limited
+liability company governed by W.S. § 17-29-101 et seq.;
+
+WHEREAS, Alex Zhang is the sole Member and Manager with authority to authorize
+distributions pursuant to W.S. § 17-29-405 and the Operating Agreement;
+
+WHEREAS, pursuant to the Operating Agreement, distributions are discretionary
+and may be withheld, reduced, or deferred by the Manager at any time;
+
+WHEREAS, the Manager has reviewed the Company's financial condition and desires
+to authorize a distribution to the Member;
+
+NOW, THEREFORE, acting as the sole Member and Manager, I hereby adopt the
+following resolutions:
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 1: AUTHORITY & DISCRETION
+
+I, Alex Zhang, acting as Manager under W.S. § 17-29-407 and the Company's
+Operating Agreement, hereby authorize a discretionary distribution. This
+distribution is:
+
+   • NOT mandatory or required
+   • Subject to Manager discretion
+   • Subject to solvency and surplus tests under Wyoming law
+   • Revocable if circumstances change before the distribution is made
+   • Subject to all restrictions in the Operating Agreement
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 2: DISTRIBUTION DECLARED (Complete if authorizing distribution)
+
+☐ DISTRIBUTION AUTHORIZED - Complete the following:
+
+   DISTRIBUTION AMOUNT:     $________________
+
+   PAYEE:                   Alex Zhang (Sole Member)
+
+   DISTRIBUTION DATE:       _______________, 20___
+
+   DISTRIBUTION METHOD:     ☐ ACH Transfer
+                            ☐ Wire Transfer
+                            ☐ Check
+                            ☐ Other: _______________
+
+   ORIGINATING ACCOUNT:     Greenfield Capital LLC
+                            Charles Schwab Bank
+                            Account ending: ________
+
+   DESTINATION ACCOUNT:     Alex Zhang personal account
+                            Bank: [Citibank NA / Other: __________]
+                            Account ending: ________
+
+   MEMO/DESCRIPTION:        DIST-BSGC-20__Q_-[Method]
+
+
+☐ NO DISTRIBUTION THIS QUARTER - Manager elects to retain all funds in the
+  Company for business purposes.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 3: WYOMING SOLVENCY & SURPLUS TESTS (W.S. § 17-29-405)
+
+[COMPLETE ONLY IF DISTRIBUTION IS AUTHORIZED]
+
+Before authorizing this distribution, I have reviewed the Company's financial
+condition and hereby certify the following:
+
+A. BALANCE SHEET TEST (Asset/Liability Test):
+
+   After giving effect to this distribution, the Company:
+
+   ☐ WILL have total assets exceeding total liabilities
+
+   Supporting calculations:
+
+   Total Assets (after distribution):        $________________
+   Total Liabilities (after distribution):   $________________
+   Net Assets (Surplus):                     $________________
+
+   ☐ PASSES the balance sheet test
+
+
+B. EQUITY INSOLVENCY TEST (Cash Flow Test):
+
+   After giving effect to this distribution, the Company:
+
+   ☐ WILL be able to pay its debts as they come due in the ordinary course
+     of business over the next 12 months
+
+   Supporting factors considered:
+
+   • Current cash and liquid investments:    $________________
+   • Expected income next 12 months:         $________________
+   • Expected expenses next 12 months:       $________________
+   • Known liabilities due next 12 months:   $________________
+
+   ☐ PASSES the equity insolvency test
+
+
+C. SURPLUS TEST:
+
+   After giving effect to this distribution:
+
+   Member's Capital Account before distribution:  $________________
+   Distribution Amount:                            $________________
+   Member's Capital Account after distribution:   $________________
+
+   ☐ The Company maintains adequate capital reserves for business operations
+
+
+D. OVERALL SOLVENCY CERTIFICATION:
+
+   I certify that, after giving effect to this distribution:
+
+   ☐ The Company is SOLVENT under Wyoming law
+   ☐ The Company satisfies W.S. § 17-29-405 requirements
+   ☐ The distribution does not violate the Operating Agreement
+   ☐ The distribution does not violate any loan covenants or contractual
+     restrictions
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 4: NO CREDITOR PREJUDICE & FRAUDULENT TRANSFER DEFENSES
+
+I represent and warrant that this distribution:
+
+   A. Is made in good faith for legitimate purposes (compensating the Member
+      for capital at risk);
+
+   B. Does NOT violate any restrictions, limitations, or prohibitions in:
+      i.   The Operating Agreement
+      ii.  Any loan agreements or credit facilities
+      iii. Any court orders or settlement agreements
+      iv.  Any applicable law or regulation
+
+   C. Is NOT made with any intent to hinder, delay, or defraud any creditor;
+
+   D. Does NOT render the Company insolvent or unable to pay debts;
+
+   E. Does NOT constitute a fraudulent transfer or conveyance under:
+      i.   Wyoming Uniform Fraudulent Transfer Act
+      ii.  Federal bankruptcy law (11 U.S.C. § 548)
+      iii. Any other applicable fraudulent transfer law
+
+   F. To the best of my knowledge, neither the Company nor the Member is
+      subject to any known, pending, threatened, or reasonably anticipated
+      claims, lawsuits, or liabilities that would make this distribution
+      improper or preferential.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 5: TAX TREATMENT
+
+This distribution represents:
+
+   ☐ Return of capital (non-taxable distribution reducing Member's basis)
+   ☐ Profit distribution (taxable as ordinary income or capital gain)
+   ☐ Mix of both (see allocation below)
+
+   Return of Capital Amount:     $________________
+   Profit Distribution Amount:   $________________
+
+Tax reporting:
+   • Member will receive IRS Form K-1 for the tax year
+   • Distribution does not constitute W-2 wages or compensation
+   • Distribution is not subject to self-employment tax
+   • Member is responsible for all tax compliance
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 6: BOOKS & RECORDS
+
+The Company shall record this distribution in its books and records as follows:
+
+   JOURNAL ENTRY:
+
+   Date: _______________, 20___
+
+   Dr. Member's Equity - Distributions (Alex Zhang)   $______________
+       Cr. Cash                                                       $______________
+
+   OR (if reducing capital account):
+
+   Dr. Member's Equity - Capital (Alex Zhang)         $______________
+       Cr. Cash                                                       $______________
+
+   DESCRIPTION: Q[#]-20__ discretionary distribution to sole member Alex Zhang
+                via [ACH/Wire/Check] - Authorized by Written Consent dated
+                [Date]
+
+   CAPITAL ACCOUNT: The Member's capital account shall be reduced by
+                    $______________ as of the distribution date.
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 7: MEMBER ACKNOWLEDGMENT
+
+As the sole Member receiving this distribution, I acknowledge:
+
+   • This distribution is discretionary and not guaranteed
+   • Future distributions may be reduced, suspended, or eliminated
+   • This distribution reduces the Company's cash available for operations
+   • I have no right to demand future distributions
+   • All distribution decisions are within Manager discretion
+
+───────────────────────────────────────────────────────────────────────────────
+
+SECTION 8: RECORDKEEPING
+
+A copy of this Written Consent shall be:
+
+   • Filed in the Company's minute book/records binder
+   • Attached to the quarterly accounting records
+   • Provided to the Company's tax preparer
+   • Retained for a minimum of 7 years
+
+───────────────────────────────────────────────────────────────────────────────
+
+EXECUTED this _____ day of ______________, 20___.
+
+
+AUTHORIZED BY MANAGER:
+
+________________________________________    Date: _______________
+Alex Zhang, Manager
+Greenfield Capital LLC
+
+
+ACKNOWLEDGED BY MEMBER:
+
+________________________________________    Date: _______________
+Alex Zhang, Member
+Greenfield Capital LLC
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUARTERLY RECORDKEEPING CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For each quarter, complete the following to maximize liability protection:
+
+CAPITAL CONTRIBUTIONS:
+
+☐ Complete Template 1 (Written Consent) for each contribution
+☐ Complete Template 2 (Receipt & Attribution) for each contribution
+☐ Attach bank transfer confirmations/receipts
+☐ Update capital account ledger
+☐ File in LLC minute book/records binder
+☐ Scan and save digital copies
+☐ Provide copies to tax preparer
+
+DISTRIBUTIONS:
+
+☐ Complete Template 3 (Distribution Authorization) if distributing
+☐ Perform and document solvency tests BEFORE distributing
+☐ Attach bank transfer confirmations showing distribution sent
+☐ Update capital account ledger
+☐ File in LLC minute book/records binder
+☐ Scan and save digital copies
+☐ Provide copies to tax preparer
+
+QUARTERLY FINANCIAL REVIEW:
+
+☐ Review balance sheet (assets vs. liabilities)
+☐ Review income statement (profits/losses for quarter)
+☐ Review cash flow statement
+☐ Update capital account schedule
+☐ Reconcile all bank accounts
+☐ Document any significant business decisions
+☐ Review compliance with Operating Agreement
+
+ANNUAL REQUIREMENTS:
+
+☐ File Wyoming Annual Report (due each year)
+☐ Pay Wyoming Annual License Tax ($47 minimum)
+☐ File federal tax return (Form 1065 or 1040 Schedule C)
+☐ Issue K-1 to member (if filing 1065)
+☐ Review and update Operating Agreement if needed
+☐ Maintain registered agent service
+☐ Hold annual meeting (even if sole member - document it!)
+
+───────────────────────────────────────────────────────────────────────────────
+
+IMPORTANT NOTES:
+
+1. CONTEMPORANEOUS DOCUMENTATION: Complete these forms at the time of each
+   transaction, not retroactively. Courts give more weight to contemporaneous
+   documentation.
+
+2. CONSISTENCY: Use these forms every quarter, even if amounts are small.
+   Consistency demonstrates respect for corporate formalities.
+
+3. SOLVENCY TESTS: ALWAYS perform solvency tests before distributions.
+   Distributing when insolvent can pierce the LLC veil and expose you to
+   personal liability.
+
+4. SEPARATION: Keep LLC funds completely separate from personal funds. Never
+   commingle.
+
+5. BUSINESS PURPOSE: Only use LLC funds for legitimate business purposes
+   documented in the Operating Agreement.
+
+6. RETAIN RECORDS: Keep all LLC records for minimum 7 years (IRS requirement)
+   or longer for legal protection.
+
+7. OPERATING AGREEMENT: These templates assume you have a written Operating
+   Agreement. If not, create one immediately.
+
+8. PROFESSIONAL ADVICE: These templates provide documentation but are not a
+   substitute for legal or tax advice. Consult professionals for complex
+   situations.
+
+───────────────────────────────────────────────────────────────────────────────
+
+RECOMMENDED FOLDER STRUCTURE:
+
+/LLC_Records/
+  /Formation_Documents/
+    - Articles_of_Organization.pdf
+    - Operating_Agreement.pdf
+    - EIN_Confirmation_CP575.pdf
+  /Minutes_and_Resolutions/
+    /2025/
+      /Q1/
+        - Capital_Contribution_Consent_2025_Q1.pdf
+        - Distribution_Authorization_2025_Q1.pdf
+      /Q2/
+      /Q3/
+      /Q4/
+  /Bank_Statements/
+    /2025/
+      /01_January/
+      /02_February/
+      [etc...]
+  /Tax_Returns/
+    - 2023_Form_1065.pdf
+    - 2024_Form_1065.pdf
+    [etc...]
+  /Capital_Account_Ledger/
+    - Capital_Account_Schedule_2025.xlsx
+
+═══════════════════════════════════════════════════════════════════════════════
+END OF TEMPLATES
+═══════════════════════════════════════════════════════════════════════════════

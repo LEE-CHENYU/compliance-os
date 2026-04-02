@@ -1,0 +1,1742 @@
+source_root: "/Users/lichenyu/Desktop/Important Docs "
+
+batches:
+  - id: batch_01
+    number: 1
+    focus: STEM OPT and entity core records
+    status: completed
+    record: docs/data-room-batch-01.md
+    validation_hooks:
+      - name: batch_01_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_checks_router_v2.py
+          tests/test_extractor.py
+          tests/test_auth.py
+          -q
+    source_scope:
+      - stem opt
+      - employment
+      - Tax
+    target_size: 10
+
+  - id: batch_02
+    number: 2
+    focus: company formation, leases, insurance or medical, 1042-S, and passport control
+    status: completed
+    record: docs/data-room-batch-02.md
+    validation_hooks:
+      - name: batch_02_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_documents_router.py
+          tests/test_extractor.py
+          tests/test_checks_router_v2.py
+          -q
+    source_scope:
+      - BSGC
+      - 公司信息
+      - Personal Info Archive
+      - Tax
+    target_size: 10
+
+  - id: batch_03
+    number: 3
+    focus: payroll, I-9, E-Verify, I-765, and H-1B registration support
+    status: completed
+    record: docs/data-room-batch-03.md
+    validation_hooks:
+      - name: batch_03_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_documents_router.py
+          tests/test_dashboard_router.py
+          tests/test_checks_router_v2.py
+          tests/test_extractor.py
+          tests/test_llm_runtime.py
+          -q
+    source_scope:
+      - employment
+      - H1b Petition
+    target_size: 10
+
+  - id: batch_04
+    number: 4
+    focus: H-1B petition notices, status summaries, receipt or approval evidence, and supporting filings
+    status: completed
+    record: docs/data-room-batch-04.md
+    validation_hooks:
+      - name: batch_04_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_04_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 04
+    source_scope:
+      - H1b Petition
+    target_size: 10
+
+  - id: batch_05
+    number: 5
+    focus: identity, travel, I-20 history, and overflow tax or personal archive records
+    status: completed
+    record: docs/data-room-batch-05.md
+    validation_hooks:
+      - name: batch_05_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_05_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 05
+    source_scope:
+      - i20
+      - Personal Info Archive
+      - Tax
+      - "[root]"
+    target_size: 10
+
+  - id: batch_06
+    number: 6
+    focus: root-level identity, visa, EAD, diploma, and transcript anchors
+    status: completed
+    record: docs/data-room-batch-06.md
+    validation_hooks:
+      - name: batch_06_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_06_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 06
+    source_scope:
+      - "[root]"
+    target_size: 10
+
+  - id: batch_07
+    number: 7
+    focus: employment continuity across additional I-9, offer-letter, and paystub records
+    status: completed
+    record: docs/data-room-batch-07.md
+    validation_hooks:
+      - name: batch_07_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_07_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 07
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_08
+    number: 8
+    focus: STEM OPT archive continuity across additional I-983 versions and support records
+    status: completed
+    record: docs/data-room-batch-08.md
+    validation_hooks:
+      - name: batch_08_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_08_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 08
+    source_scope:
+      - stem opt
+    target_size: 10
+
+  - id: batch_09
+    number: 9
+    focus: BSGC archive governance, EIN, operating-agreement, and contract records
+    status: completed
+    record: docs/data-room-batch-09.md
+    validation_hooks:
+      - name: batch_09_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_09_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 09
+    source_scope:
+      - BSGC
+    target_size: 10
+
+  - id: batch_10
+    number: 10
+    focus: tax overflow plus H-1B employee passport, visa, EAD, and transcript evidence
+    status: completed
+    record: docs/data-room-batch-10.md
+    validation_hooks:
+      - name: batch_10_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_10_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 10
+    source_scope:
+      - Tax
+      - H1b Petition
+      - "[root]"
+    target_size: 10
+
+  - id: batch_11
+    number: 11
+    focus: academic credential and business license anchor records
+    status: completed
+    record: docs/data-room-batch-11.md
+    validation_hooks:
+      - name: batch_11_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_11_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 11
+    source_scope:
+      - "[root]"
+      - transcript
+      - 公司信息
+    target_size: 10
+
+  - id: batch_12
+    number: 12
+    focus: company access, payment account, public-key, recovery-code, and filing artifacts
+    status: completed
+    record: docs/data-room-batch-12.md
+    validation_hooks:
+      - name: batch_12_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_12_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 12
+    source_scope:
+      - 公司信息
+      - BSGC
+      - Yangtze Capital
+    target_size: 10
+
+  - id: batch_13
+    number: 13
+    focus: I-20 history, admission, and enrollment continuity records
+    status: completed
+    record: docs/data-room-batch-13.md
+    validation_hooks:
+      - name: batch_13_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_13_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 13
+    source_scope:
+      - i20
+      - H1b Petition
+    target_size: 10
+
+  - id: batch_14
+    number: 14
+    focus: medical, residence, membership, and family identity support records
+    status: completed
+    record: docs/data-room-batch-14.md
+    validation_hooks:
+      - name: batch_14_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_14_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 14
+    source_scope:
+      - Medical
+      - Personal Info Archive
+      - Mom ID
+    target_size: 10
+
+  - id: batch_15
+    number: 15
+    focus: resume and work-sample career materials
+    status: completed
+    record: docs/data-room-batch-15.md
+    validation_hooks:
+      - name: batch_15_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_15_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 15
+    source_scope:
+      - CV & Cover Letters
+    target_size: 10
+
+  - id: batch_16
+    number: 16
+    focus: employment supplemental agreements, notices, and payroll continuity
+    status: completed
+    record: docs/data-room-batch-16.md
+    validation_hooks:
+      - name: batch_16_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_16_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 16
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_17
+    number: 17
+    focus: STEM OPT admin, guidance, and filing-support artifacts
+    status: completed
+    record: docs/data-room-batch-17.md
+    validation_hooks:
+      - name: batch_17_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_17_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 17
+    source_scope:
+      - stem opt
+    target_size: 10
+
+  - id: batch_18
+    number: 18
+    focus: collection, receipts, and bank-support financial records
+    status: completed
+    record: docs/data-room-batch-18.md
+    validation_hooks:
+      - name: batch_18_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_18_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 18
+    source_scope:
+      - Lease
+      - Tax
+      - W2
+      - Invoice
+      - Personal Finance
+    target_size: 10
+
+  - id: batch_19
+    number: 19
+    focus: education credential overflow and language-test records
+    status: completed
+    record: docs/data-room-batch-19.md
+    validation_hooks:
+      - name: batch_19_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_19_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 19
+    source_scope:
+      - CV & Cover Letters
+    target_size: 10
+
+  - id: batch_20
+    number: 20
+    focus: I-20 overflow, transfer-pending continuity, and USCIS account support
+    status: completed
+    record: docs/data-room-batch-20.md
+    validation_hooks:
+      - name: batch_20_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_20_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 20
+    source_scope:
+      - i20
+    target_size: 10
+
+  - id: batch_21
+    number: 21
+    focus: early multilingual resume archive continuity
+    status: completed
+    record: docs/data-room-batch-21.md
+    validation_hooks:
+      - name: batch_21_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_21_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 21
+    source_scope:
+      - CV & Cover Letters
+    target_size: 10
+
+  - id: batch_22
+    number: 22
+    focus: later resume archive and targeted role variants
+    status: completed
+    record: docs/data-room-batch-22.md
+    validation_hooks:
+      - name: batch_22_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_22_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 22
+    source_scope:
+      - CV & Cover Letters
+    target_size: 10
+
+  - id: batch_23
+    number: 23
+    focus: VCV payroll continuity from late 2023 through mid 2024
+    status: completed
+    record: docs/data-room-batch-23.md
+    validation_hooks:
+      - name: batch_23_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_23_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 23
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_24
+    number: 24
+    focus: VCV payroll continuity from mid 2024 through late 2024
+    status: completed
+    record: docs/data-room-batch-24.md
+    validation_hooks:
+      - name: batch_24_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_24_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 24
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_25
+    number: 25
+    focus: STEM OPT I-983 overflow versions and templates
+    status: completed
+    record: docs/data-room-batch-25.md
+    validation_hooks:
+      - name: batch_25_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_25_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 25
+    source_scope:
+      - stem opt
+    target_size: 10
+
+  - id: batch_26
+    number: 26
+    focus: resume archive overflow plus education credential anchors
+    status: completed
+    record: docs/data-room-batch-26.md
+    validation_hooks:
+      - name: batch_26_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_26_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 26
+    source_scope:
+      - CV & Cover Letters
+      - H1b Petition
+      - "[root]"
+    target_size: 10
+
+  - id: batch_27
+    number: 27
+    focus: employment payroll, offer-letter, E-Verify, bank, and filing-fee continuity
+    status: completed
+    record: docs/data-room-batch-27.md
+    validation_hooks:
+      - name: batch_27_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_27_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 27
+    source_scope:
+      - employment
+      - legal
+    target_size: 10
+
+  - id: batch_28
+    number: 28
+    focus: remaining I-983 overflow and employment-side STEM OPT request records
+    status: completed
+    record: docs/data-room-batch-28.md
+    validation_hooks:
+      - name: batch_28_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_28_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 28
+    source_scope:
+      - stem opt
+      - employment
+    target_size: 10
+
+  - id: batch_29
+    number: 29
+    focus: identity, tax, residence, CPT, and filing-confirmation support artifacts
+    status: completed
+    record: docs/data-room-batch-29.md
+    validation_hooks:
+      - name: batch_29_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_29_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 29
+    source_scope:
+      - Mom ID
+      - i20
+      - W2
+      - Lease
+      - employment
+      - "[root]"
+    target_size: 10
+
+  - id: batch_30
+    number: 30
+    focus: employment agreements, reminders, legal responses, and HR correspondence
+    status: completed
+    record: docs/data-room-batch-30.md
+    validation_hooks:
+      - name: batch_30_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_30_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 30
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_31
+    number: 31
+    focus: employment legal and admin overflow including NDAs, signature packets, check images, tax forms, and EIN paperwork
+    status: completed
+    record: docs/data-room-batch-31.md
+    validation_hooks:
+      - name: batch_31_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_31_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 31
+    source_scope:
+      - employment
+      - Tax
+      - Yangtze Capital
+    target_size: 10
+
+  - id: batch_32
+    number: 32
+    focus: employment screenshot overflow across Justworks, WhatsApp, and recruiter chat captures
+    status: completed
+    record: docs/data-room-batch-32.md
+    validation_hooks:
+      - name: batch_32_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_32_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 32
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_33
+    number: 33
+    focus: Bitsync chat-export asset archive part one
+    status: completed
+    record: docs/data-room-batch-33.md
+    validation_hooks:
+      - name: batch_33_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_33_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 33
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_34
+    number: 34
+    focus: Bitsync chat-export asset archive part two
+    status: completed
+    record: docs/data-room-batch-34.md
+    validation_hooks:
+      - name: batch_34_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_34_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 34
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_35
+    number: 35
+    focus: education scans, student-admin screenshots, website filing artifacts, and account setup overflow
+    status: completed
+    record: docs/data-room-batch-35.md
+    validation_hooks:
+      - name: batch_35_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_35_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 35
+    source_scope:
+      - CV & Cover Letters
+      - i20
+      - Veeup.cc
+      - 授权书
+      - "[root]"
+    target_size: 10
+
+  - id: batch_36
+    number: 36
+    focus: personal and company identity archive scans across BSGC and personal records
+    status: completed
+    record: docs/data-room-batch-36.md
+    validation_hooks:
+      - name: batch_36_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_36_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 36
+    source_scope:
+      - BSGC
+      - Personal Info Archive
+    target_size: 10
+
+  - id: batch_37
+    number: 37
+    focus: root identity images and profile-photo archive overflow
+    status: completed
+    record: docs/data-room-batch-37.md
+    validation_hooks:
+      - name: batch_37_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_37_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 37
+    source_scope:
+      - "[root]"
+      - CV & Cover Letters
+    target_size: 10
+
+  - id: batch_38
+    number: 38
+    focus: hiring portal, website-admin, and account-security screenshot overflow
+    status: completed
+    record: docs/data-room-batch-38.md
+    validation_hooks:
+      - name: batch_38_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_38_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 38
+    source_scope:
+      - Happyhunting Screenshot
+      - Veeup.cc
+      - "[root]"
+    target_size: 10
+
+  - id: batch_39
+    number: 39
+    focus: Bitsync employment chat and legal-guidance screenshots part one
+    status: completed
+    record: docs/data-room-batch-39.md
+    validation_hooks:
+      - name: batch_39_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_39_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 39
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_40
+    number: 40
+    focus: remaining employment screenshot residue plus STEM and chat-export admin overflow
+    status: completed
+    record: docs/data-room-batch-40.md
+    validation_hooks:
+      - name: batch_40_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_40_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 40
+    source_scope:
+      - employment
+      - stem opt
+    target_size: 10
+
+  - id: batch_41
+    number: 41
+    focus: Bitsync chat-export asset overflow part one from the numbered archive copy
+    status: completed
+    record: docs/data-room-batch-41.md
+    validation_hooks:
+      - name: batch_41_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_41_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 41
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_42
+    number: 42
+    focus: Bitsync chat-export asset overflow part two from the numbered archive copy
+    status: completed
+    record: docs/data-room-batch-42.md
+    validation_hooks:
+      - name: batch_42_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_42_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 42
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_43
+    number: 43
+    focus: Bitsync chat-export asset overflow part three from the numbered archive copy
+    status: completed
+    record: docs/data-room-batch-43.md
+    validation_hooks:
+      - name: batch_43_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_43_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 43
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_44
+    number: 44
+    focus: Bitsync chat-export asset overflow part four from the second numbered archive copy
+    status: completed
+    record: docs/data-room-batch-44.md
+    validation_hooks:
+      - name: batch_44_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_44_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 44
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_45
+    number: 45
+    focus: Bitsync chat-export asset overflow part five from the second numbered archive copy
+    status: completed
+    record: docs/data-room-batch-45.md
+    validation_hooks:
+      - name: batch_45_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          -q
+      - name: batch_45_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 45
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_46
+    number: 46
+    focus: Bitsync chat-export asset overflow part six from the second numbered archive copy
+    status: completed
+    record: docs/data-room-batch-46.md
+    validation_hooks:
+      - name: batch_46_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_46_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 46
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_47
+    number: 47
+    focus: Bitsync chat-export asset overflow part seven from the second numbered archive copy
+    status: completed
+    record: docs/data-room-batch-47.md
+    validation_hooks:
+      - name: batch_47_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_47_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 47
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_48
+    number: 48
+    focus: Bitsync chat-export asset overflow part eight across the second archive copy and primary archive
+    status: completed
+    record: docs/data-room-batch-48.md
+    validation_hooks:
+      - name: batch_48_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_48_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 48
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_49
+    number: 49
+    focus: Bitsync chat-export asset overflow part nine from the primary archive
+    status: completed
+    record: docs/data-room-batch-49.md
+    validation_hooks:
+      - name: batch_49_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_49_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 49
+    source_scope:
+      - employment
+    target_size: 10
+
+  - id: batch_50
+    number: 50
+    focus: remaining primary chat-export assets plus the residual opaque identifier text artifact
+    status: completed
+    record: docs/data-room-batch-50.md
+    validation_hooks:
+      - name: batch_50_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_codex_loop_scripts.py
+          -q
+      - name: batch_50_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 50
+    source_scope:
+      - employment
+      - 公司信息
+    target_size: 9
+
+  - id: batch_51
+    number: 51
+    focus: early Word resume archive continuity across 2022 and early 2023 variants
+    status: completed
+    record: docs/data-room-batch-51.md
+    validation_hooks:
+      - name: batch_51_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_51_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 51
+    source_scope:
+      - CV & Cover Letters
+    target_size: 11
+
+  - id: batch_52
+    number: 52
+    focus: mid-cycle Word resume archive and role-variant continuity across 2023 and 2024
+    status: completed
+    record: docs/data-room-batch-52.md
+    validation_hooks:
+      - name: batch_52_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_52_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 52
+    source_scope:
+      - CV & Cover Letters
+    target_size: 11
+
+  - id: batch_53
+    number: 53
+    focus: late Word resume archive, Jobright overflow, and H-1B resume continuity
+    status: completed
+    record: docs/data-room-batch-53.md
+    validation_hooks:
+      - name: batch_53_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_53_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 53
+    source_scope:
+      - CV & Cover Letters
+      - H1b Petition
+    target_size: 10
+
+  - id: batch_54
+    number: 54
+    focus: Word cover letters, employment-letter support, and employer-assistance request records
+    status: completed
+    record: docs/data-room-batch-54.md
+    validation_hooks:
+      - name: batch_54_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_54_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 54
+    source_scope:
+      - CV & Cover Letters
+      - BSGC
+      - employment
+      - stem opt
+    target_size: 12
+
+  - id: batch_55
+    number: 55
+    focus: Word work-sample archive plus H-1B registration worksheet support
+    status: completed
+    record: docs/data-room-batch-55.md
+    validation_hooks:
+      - name: batch_55_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_55_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 55
+    source_scope:
+      - CV & Cover Letters
+      - H1b Petition
+    target_size: 12
+
+  - id: batch_56
+    number: 56
+    focus: accounting-derived bank statements, brokerage statements, and transfer evidence not present in Important Docs
+    status: completed
+    record: docs/data-room-batch-56.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_56_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_56_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 56
+    source_scope:
+      - bank_statements
+    target_size: 16
+
+  - id: batch_57
+    number: 57
+    focus: accounting-derived entity legal packets, H-1B representation forms, and registration drafts
+    status: completed
+    record: docs/data-room-batch-57.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_57_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_57_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 57
+    source_scope:
+      - legal
+    target_size: 15
+
+  - id: batch_58
+    number: 58
+    focus: accounting-derived CIAM, school, and immigration support packets outside the original corpus
+    status: completed
+    record: docs/data-room-batch-58.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_58_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_58_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 58
+    source_scope:
+      - legal
+      - outgoing
+      - tax
+      - tmp
+    target_size: 14
+
+  - id: batch_59
+    number: 59
+    focus: accounting-derived H-1B intake worksheets, counsel packets, and filing invoices
+    status: in_progress
+    record: docs/data-room-batch-59.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_59_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_59_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 59
+    source_scope:
+      - outgoing
+      - tmp
+    target_size: 15
+
+  - id: batch_60
+    number: 60
+    focus: accounting-derived payroll, tax-support, and standalone form residue
+    status: planned
+    record: docs/data-room-batch-60.md
+    source_root: "/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files"
+    validation_hooks:
+      - name: batch_60_focused_tests
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} -m pytest
+          tests/test_classifier_service.py
+          tests/test_extractor.py
+          tests/test_batch_validation.py
+          tests/test_data_room_batch_loop.py
+          tests/test_checks_router_v2.py
+          -q
+      - name: batch_60_real_source_validation
+        retries: 1
+        retry_delay_sec: 1
+        timeout_sec: 1200
+        command: >
+          {python_quoted} scripts/validate_data_room_batch.py
+          --manifest config/data_room_batches.yaml
+          --batch-number 60
+    source_scope:
+      - tax
+      - legal
+      - outgoing
+      - tmp
+    target_size: 17

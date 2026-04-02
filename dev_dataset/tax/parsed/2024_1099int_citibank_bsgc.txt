@@ -1,0 +1,88 @@
+```json
+{
+  "source_file": "tax/2024/document.pdf",
+  "form": {
+    "type": "IRS Form 1099-INT",
+    "title": "Statement of Interest Income",
+    "tax_year": "2024",
+    "omb_no": "1545-0112",
+    "revision": "Rev. 1-2024",
+    "copy": "COPY B FOR RECIPIENT",
+    "statement_pages": 3,
+    "pdf_pages": 4,
+    "document_code": "001/R1/04F000",
+    "batch_code": "012"
+  },
+  "payer_info": {
+    "name": "Citibank, N.A.",
+    "tin": "13-5266470",
+    "address": null
+  },
+  "recipient_info": {
+    "name": "GREENFIELD CAPITAL LLC",
+    "tin_displayed": "XX-XXX4106",
+    "address_line_1": "601 W 110TH ST APT 6K4",
+    "city": "NEW YORK",
+    "state": "NY",
+    "zip": "10025"
+  },
+  "service_center": {
+    "name": "U.S. Service Center",
+    "address_line_1": "P.O. Box 769006",
+    "city_state_zip": "San Antonio, TX 78245-9013"
+  },
+  "fatca_filing_requirement_checked": false,
+  "summary_line_amounts": {
+    "line_1_interest_income": "$171.84",
+    "line_2_early_withdrawal_penalty": "$0.00",
+    "line_3_interest_on_us_savings_bonds_and_treas_obligations": "$0.00",
+    "line_4_federal_income_tax_withheld": "$0.00"
+  },
+  "line_amounts_boxes_1_to_17": {
+    "line_1": "$171.84",
+    "line_2": "$0.00",
+    "line_3": "$0.00",
+    "line_4": "$0.00",
+    "line_5": null,
+    "line_6": null,
+    "line_7": null,
+    "line_8": null,
+    "line_9": null,
+    "line_10": null,
+    "line_11": null,
+    "line_12": null,
+    "line_13": null,
+    "line_14": null,
+    "line_15": null,
+    "line_16": null,
+    "line_17": null
+  },
+  "account_details": [
+    {
+      "account_title": "GREENFIELD CAPITAL LLC",
+      "account_number_masked": "XXXXXX3008",
+      "account_type": "CitiBusiness 6 Month CD",
+      "account_status": "Open",
+      "printed_account_line_amounts": {
+        "line_1": "$171.84",
+        "line_2": null,
+        "line_3": null,
+        "line_4": null
+      },
+      "inferred_account_line_amounts_from_single_account_and_summary_totals": {
+        "line_2": "$0.00",
+        "line_3": "$0.00",
+        "line_4": "$0.00"
+      }
+    }
+  ],
+  "contact_info_on_form": {
+    "phone_citibusiness": "1-877-528-0990",
+    "phone_international": "210-677-3790",
+    "tty": "711 or other Relay Service",
+    "availability": "24 hours a day, 7 days a week",
+    "call_note": "To ensure quality service, calls may be monitored and recorded."
+  },
+  "additional_notice": "Please allow until February 10, 2025 to receive tax year 2024 income information on any other Citibank accounts you may have."
+}
+```

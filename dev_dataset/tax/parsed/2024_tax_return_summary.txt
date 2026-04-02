@@ -1,0 +1,112 @@
+2024 Tax Return Financial Data Report  
+Note: the PDF contains duplicated copies of some schedules; values below are deduplicated to one set.
+
+**Form 1040 (U.S. Individual Income Tax Return)**
+| Line | Amount |
+|---|---:|
+| 1a | $49,586.16 |
+| 1h | $0.00 |
+| 1z | $49,586.16 |
+| 2b | $652.08 |
+| 7 | $2,074.80 |
+| 8 | $0.00 |
+| 9 | $52,313.04 |
+| 11 | $52,313.04 |
+| 12 | $11,388.00 |
+| 13 | $0.00 |
+| 14 | $11,388.00 |
+| 15 | $40,925.04 |
+| 16 | $5,002.92 |
+| 18 | $5,002.92 |
+| 22 | $5,002.92 |
+| 23 | $0.00 |
+| 24 | $5,002.92 |
+| 25a | $4,924.14 |
+| 25c | $27.30 |
+| 25d | $4,951.44 |
+| 33 | $4,951.44 |
+| 37 | $51.48 |
+
+**Schedule B (Interest and Ordinary Dividends)**
+| Line | Detail | Amount |
+|---|---|---:|
+| 1 | Citibank, N.A. interest | $171.84 |
+| 1 | US Treasury note accrued market discount | $242.58 |
+| 1 | US Treasury note accrued market discount | $237.90 |
+| 2 | Total interest | $652.32 |
+| 4 | Taxable interest to Form 1040 line 2b | $652.32 |
+
+**Schedule C (Profit or Loss From Business)**
+| Line | Amount |
+|---|---:|
+| 17 (Legal and professional services) | $68.64 |
+| 28 (Total expenses before home expense) | $68.64 |
+| 29 (Tentative profit/loss) | -$68.64 |
+| 31 (Net profit/loss) | $0.00 |
+
+**Schedule D (Capital Gains and Losses)**
+| Line | Column(s) | Amount |
+|---|---|---:|
+| 3 | (d) Proceeds | $62,400.00 |
+| 3 | (e) Cost basis | $61,919.52 |
+| 3 | (g) Adjustments | -$480.48 |
+| 3 | (h) Gain/(loss) | $0.00 |
+| 7 | (h) Net short-term gain/(loss) | $0.00 |
+| 10 | (d) Proceeds | $3,779.10 |
+| 10 | (e) Cost basis | $1,704.30 |
+| 10 | (h) Gain/(loss) | $2,074.80 |
+| 15 | (h) Net long-term gain/(loss) | $2,074.80 |
+| 16 | Combined lines 7 and 15 | $2,074.80 |
+
+**Form 8949 (Sales and Other Dispositions of Capital Assets)**
+
+Part I (Short-Term, line 1 entries):
+| Txn | Description | Proceeds (d) | Basis (e) | Code | Adj (g) | Gain/(loss) (h) |
+|---|---|---:|---:|---|---:|---:|
+| 1 | 40000.00 US TREASUR NT 3.25%08XXX**MATURED** (04/04/24 to 08/31/24) | $31,200.00 | $30,957.42 | D | -$242.58 | $0.00 |
+| 2 | 40000.00 US TREASUR NT 3.25%08XXX**MATURED** (04/05/24 to 08/31/24) | $31,200.00 | $30,962.10 | D | -$237.90 | $0.00 |
+
+Part I, line 2 totals:
+| Line | Proceeds (d) | Basis (e) | Adj (g) | Gain/(loss) (h) |
+|---|---:|---:|---:|---:|
+| 2 | $62,400.00 | $61,919.52 | -$480.48 | $0.00 |
+
+Part II (Long-Term, line 1 entries):
+| Txn | Description | Proceeds (d) | Basis (e) | Gain/(loss) (h) |
+|---|---|---:|---:|---:|
+| 1 | 5 WESTERN ALLIANCE BANCORP | $304.98 | $109.20 | $195.78 |
+| 2 | 5 WESTERN ALLIANCE BANCORP | $304.98 | $101.40 | $203.58 |
+| 3 | 5 WESTERN ALLIANCE BANCORP | $304.98 | $146.64 | $158.34 |
+| 4 | 5 WESTERN ALLIANCE BANCORP | $304.98 | $136.50 | $168.48 |
+| 5 | 5 WESTERN ALLIANCE BANCORP | $304.98 | $109.20 | $195.78 |
+| 6 | 3 ZIONS BANCORP N A | $108.42 | $69.42 | $39.00 |
+| 7 | 10 WESTERN ALLIANCE BANCORP | $609.96 | $234.00 | $375.96 |
+| 8 | 1 MARINE PRODS CORP | $7.02 | $10.14 | -$3.12 |
+| 9 | 10 WESTERN ALLIANCE BANCORP | $609.96 | $312.78 | $297.18 |
+| 10 | 5 WESTERN ALLIANCE BANCORP | $304.98 | $157.56 | $147.42 |
+| 11 | 5 WESTERN ALLIANCE BANCORP | $304.98 | $153.66 | $151.32 |
+| 12 | 5 WESTERN ALLIANCE BANCORP | $304.98 | $158.34 | $146.64 |
+| 13 | 1 ENVELA CORP | $3.90 | $5.46 | -$1.56 |
+
+Part II, line 2 totals:
+| Line | Proceeds (d) | Basis (e) | Gain/(loss) (h) |
+|---|---:|---:|---:|
+| 2 | $3,779.10 | $1,704.30 | $2,074.80 |
+
+**Form 8995 (Qualified Business Income Deduction)**
+| Line | Amount |
+|---|---:|
+| 1i (col c) | $0.00 |
+| 1ii (col c) | $0.00 |
+| 2 | $0.00 |
+| 3 | -$888.42 |
+| 4 | $0.00 |
+| 5 | $0.00 |
+| 10 | $0.00 |
+| 11 | $40,925.04 |
+| 12 | $2,074.80 |
+| 13 | $38,850.24 |
+| 14 | $7,770.36 |
+| 15 | $0.00 |
+| 16 | -$888.42 |
+| 17 | $0.00 |

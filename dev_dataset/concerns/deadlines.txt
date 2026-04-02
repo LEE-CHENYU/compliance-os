@@ -1,0 +1,205 @@
+DEADLINE TRACKER — Alex Zhang
+As of: 03/20/2026
+================================================================================
+
+STATUS KEY:  [OVERDUE]  = Past due, act immediately
+             [URGENT]   = Due within 30 days
+             [UPCOMING] = Due within 90 days
+             [LATER]    = Due 90+ days out
+             [DONE]     = Completed
+
+================================================================================
+OVERDUE
+================================================================================
+
+[OVERDUE] 2024 FBAR (FinCEN Form 114)
+  Was due:    10/15/2025 (auto-extended from 04/15/2025)
+  Status:     DELINQUENT — 156 days past deadline as of 03/20/2026
+  Action:     File NOW via BSA E-Filing (bsaefiling.fincen.gov)
+              No-penalty window closes if IRS contacts you first
+  Need:       Futu Securities account peak balance for 2024
+  Ref:        concerns/tax_and_compliance_issues_021226.txt § VII.A
+
+================================================================================
+FEBRUARY 2026
+================================================================================
+
+[OVERDUE] Obtain Claudius 2025 W-2
+  Due:        01/31/2026 (employer was required to issue by this date)
+  Status:     48 days overdue as of 03/20/2026
+  Action:     Contact TechLaw AI Inc (609-917-0444)
+              to request W-2 access via Gusto or mailed copy.
+              Expected amounts: ~$5,436 gross, ~$589 federal withheld.
+              Needed for 2025 tax return.
+  Ref:        2025_paystub_claudius_02-25.txt
+
+================================================================================
+MARCH 2026
+================================================================================
+
+[OVERDUE] Lawyer action items — Before 3/4/2026
+  Due:        03/04/2026
+  Status:     16 days overdue as of 03/20/2026
+  Action:     Finalize all of the following before lawyer meeting:
+              [ ] Finalize $507K classification (gift vs. loan vs. nominee)
+              [ ] Set up bank account for mother (East West Bank or similar)
+              [ ] Set up mother's personal stock account
+              [ ] Schwab durable POA for trading authority
+              [ ] C-corp incorporation funding decision ($273K-$312K)
+              [ ] Get co-working space
+  Ref:        concerns/lawyer_consulting_020626.txt
+
+[DONE] FY2027 H-1B — Choose Attorney & Complete Data Sheet
+  Due:        03/01/2026 (Arora data sheet deadline)
+  Completed:  03/02/2026
+  Summary:    1. Chose Arora (registration-only, $663)
+              2. Petitioning entity: BSGC LLC (EIN: 12-3456789)
+              3. Data sheet completed and sent to Arora (03/02/2026)
+              4. Payment: $663 via credit card — PAID (Arora confirmed receipt 03/03)
+  Ref:        outgoing/h1b_arora_021326/Data_Sheet_H1B_Registration_2026_BSGC_FILLED.docx
+
+[OVERDUE] Dimov Tax Consultation Call
+  Date:       03/16/2026, 10:30 AM EST
+  Contact:    Jordan Venne, Dimov Tax
+  Status:     4 days past scheduled call as of 03/20/2026
+  Action:     Discuss:
+              [ ] Form 3520 reporting — 2025 foreign gifts ($272,891)
+              [ ] 2026 wire transfers: $39K from Liu Jianguo (confirm relationship)
+              [ ] Mother's $22K HSBC HK transfer — counts toward $78K threshold?
+              [ ] FBAR/FATCA for HSBC HK account (8888****0000)
+              [ ] 2024 delinquent FBAR filing strategy
+  Ref:        bank_statements/wire_transfers_2026/README.txt
+              concerns/tax_and_compliance_issues_021226.txt
+
+[OVERDUE] FY2027 H-1B Registration Period (USCIS)
+  Due:        03/04/2026 (noon EST) to 03/19/2026 (noon EST)
+  Status:     Registration window closed 03/19/2026 at 09:00 AM PDT
+  Action:     Confirm immediately whether Arora submitted the registration.
+              If submitted, monitor for lottery results in late March 2026.
+              If selected: 90 days to file full petition
+  Depends on: Attorney engagement, entity decision, data sheet, payment
+  Ref:        https://www.h1b1.com/practices/electronic-registration/
+
+================================================================================
+APRIL 2026
+================================================================================
+
+[URGENT] 2025 Federal Tax Return (Form 1040)
+  Due:        04/15/2026 (extendable to 10/15/2026 via Form 4868)
+  Action:     File 2025 return including:
+              - W-2 from Acme Ventures ($10,483 — corrected W-2 obtained 03/04)
+              - W-2 from TechLaw AI (TBD — paystubs show
+                YTD $5,435.55 through 02/25/2026, but 2025 W-2 not yet seen)
+              - Schedule C for BSGC LLC activity
+              - BSGC brokerage income (dividends, interest, capital gains)
+  Ref:        2025_w2.txt, 2025_paystub_claudius_*.txt
+
+[URGENT] Form 3520 — 2025 Foreign Gifts ($272,891)
+  Due:        04/15/2026 (with tax return; extendable with Form 4868)
+  Action:     File Form 3520 reporting 7 overseas wire transfers totaling
+              $272,891. Attach reasonable cause statement.
+              List each wire on Part IV with date received, amount, donor info.
+  Ref:        concerns/tax_and_compliance_issues_021226.txt § IV
+
+[URGENT] Form 8938 (FATCA) — 2025
+  Due:        04/15/2026 (with tax return)
+  Action:     File if Futu account balance exceeded $39K year-end or $58K
+              at any time during 2025. Determine Futu balances.
+  Ref:        concerns/tax_and_compliance_issues_021226.txt § VII.B
+
+[URGENT] 2025 FBAR (FinCEN Form 114)
+  Due:        04/15/2026 (auto-extends to 10/15/2026)
+  Action:     File via BSA E-Filing if foreign accounts > $8K aggregate
+              at any point in 2025. Report Futu account + any others.
+  Ref:        concerns/tax_and_compliance_issues_021226.txt § VII.A
+
+[URGENT] Renew CPT at CIAM
+  Date:       04/17/2026 (current CPT period ends)
+  Action:     Request CPT renewal from CIAM DSO if needed.
+              Not required to be employed under CPT.
+              CIAM program runs to 12/24/2027, so renewal is available.
+  Ref:        immigration_i20_history.txt § CPT Employment Authorization
+
+[URGENT] 2024 Amended Returns (if filing)
+  Due:        04/15/2026 (recommended deadline to file with 2025 return)
+  Action:     Consider filing:
+              [ ] 1040-X for unreported 1042-S income (~$1,494)
+              [ ] 1040-X for 2023 W-2 wage discrepancy ($652.24)
+              [ ] Form 3520 for 2024 if gifts >= $78,000 (currently $77,949)
+  Ref:        concerns/tax_and_compliance_issues_021226.txt § II, III
+
+================================================================================
+JUNE 2026
+================================================================================
+
+[UPCOMING] BSGC LLC Annual Report — Wyoming
+  Due:        06/01/2026 (anniversary month of formation)
+  Action:     File annual report with Wyoming Secretary of State
+              Fee: $78.00
+              CRITICAL: If not paid within 60 days (by ~08/01/2026),
+              entity is subject to administrative dissolution.
+  Ref:        bsgc_llc_formation.txt § Annual Report Requirements
+
+[URGENT] H-1B FY2027 Petition Filing Deadline (if selected in lottery)
+  Due:        04/01/2026 - 06/30/2026
+  Action:     If selected, engage boutique attorney for full petition.
+              Arora engaged for registration only; petition attorney TBD.
+              Candidates: Alcorn (priority), Klasko, Corstange, Hibee (backup)
+              Cost: TBD (varies by firm)
+  Ref:        concerns/registration_upgrade_strategy_022626.txt
+
+[LATER] Passport Expiration
+  Date:       06/30/2026
+  Impact:     Passport G88855571 expires. Must renew BEFORE:
+              - Any international travel
+              - Consular processing for H-1B (if applicable)
+              - I-9 re-verification with new employer
+  Action:     Apply for Chinese passport renewal at nearest consulate.
+              Processing time: typically 4-6 weeks.
+              Recommend starting renewal by April 2026 at latest.
+  Ref:        immigration_h1b_fy2026_petition.txt § Notes for FY2027
+
+================================================================================
+OCTOBER 2026
+================================================================================
+
+[LATER] H-1B Start Date (if approved)
+  Date:       10/01/2026
+  Impact:     If FY2027 H-1B is approved, employment under H-1B begins.
+              Cap-gap rule: if petition is pending/approved, OPT/CPT can
+              extend through 09/30/2026.
+  Ref:        immigration_h1b_fy2026_petition.txt § Cap-Gap Rule
+
+[LATER] 2025 FBAR Extended Deadline
+  Due:        10/15/2026
+  Action:     Final deadline for 2025 FBAR if not filed by 04/15/2026.
+
+================================================================================
+2027
+================================================================================
+
+[LATER] CIAM MBA Program End
+  Date:       12/24/2027
+  Impact:     End of current F-1 program. After this, need either:
+              - H-1B status (if approved), or
+              - OPT/STEM OPT (if eligible for new degree), or
+              - Transfer to another program, or
+              - Depart U.S.
+  Ref:        immigration_i20_history.txt
+
+================================================================================
+RECURRING
+================================================================================
+
+BSGC LLC Annual Report — Wyoming
+  When:       June 1 each year (perpetual)
+  Fee:        $78
+  Consequence: Dissolution if 60+ days late
+
+FBAR — Every Year
+  When:       April 15 (auto-extends to Oct 15)
+  Condition:  If foreign accounts aggregate > $8K at any time during year
+
+================================================================================
+END OF DEADLINE TRACKER
+================================================================================

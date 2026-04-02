@@ -1,0 +1,294 @@
+================================================================================
+NON-ZELLE UNMATCHED TRANSACTIONS
+Generated: 2025-10-08
+================================================================================
+
+SUMMARY BY TYPE:
+================================================================================
+
+WIRE TRANSFERS:
+  Incoming (5):    $194,926.59
+  Outgoing (12):   -$3,013.76
+  Net:             $191,912.82
+
+TELLER TRANSACTIONS:
+  Withdrawals (6): -$16,645.20
+  Deposits (1):    $546.00
+  Net:             -$16,099.20
+
+CHECKING TRANSFERS:
+  Outgoing (3):    -$59,812.05
+  Incoming (1):    $780.00
+  Net:             -$59,032.05
+
+JOURNAL TRANSFERS:
+  Outgoing (1):    -$5,460.00
+
+MONEYLINK:
+  Incoming (1):    $6,069.52
+
+TOTAL NET UNMATCHED (NON-ZELLE): $117,299.06
+
+
+DETAILED TRANSACTIONS:
+================================================================================
+
+BOA (Bank of America Personal)
+--------------------------------------------------------------------------------
+
+WIRE TRANSFERS:
+  2024-08-14 |   -10,000.00 | WIRE_OUT
+    WIRE TYPE:INTL OUT DATE:240814 TIME:1717 ET TRN:XXXXXXXXXX317509
+
+  2024-08-14 |       -45.00 | WIRE_OUT
+    Wire Transfer Fee
+
+  2024-08-16 |   -20,000.00 | WIRE_OUT
+    WIRE TYPE:INTL OUT DATE:240816 TIME:1500 ET TRN:XXXXXXXXXX458641
+
+  2024-08-16 |       -45.00 | WIRE_OUT
+    Wire Transfer Fee
+
+  2024-12-16 |    19,000.08 | WIRE_IN
+    WIRE TYPE:INTL IN DATE:241216 TIME:1440 ET TRN:XXXXXXXXXX308077
+
+  2024-12-16 |       -15.00 | WIRE_OUT
+    Wire Transfer Fee
+
+MONEYLINK:
+  2024-08-19 |     7,781.44 | MONEYLINK_IN
+    SCHWAB BROKERAGE DES:MONEYLINK ID:XXXXXXXXXX92619 INDN:ALEX ZHANG
+    ⚠️ NO MATCHING OUTFLOW FOUND
+
+
+CHK_1234 (Business Checking - Citibank)
+--------------------------------------------------------------------------------
+
+WIRE TRANSFERS:
+  2025-02-25 |       -17.00 | WIRE_OUT
+    FEE-WIRE TRNFR
+
+  2025-02-25 |    -3,668.80 | WIRE_OUT
+    FUNDS TRN OUT CBOL WIRE TO Charles Schwab & Co., Inc. #405
+    ✓ MATCHES: XXX567 wire in $2,861.66 on 02/25/2025
+
+  2025-03-07 |       -17.00 | WIRE_OUT
+    FEE-WIRE TRNFR
+
+  2025-03-07 |      -515.00 | WIRE_OUT
+    FUNDS TRN OUT CBOL WIRE TO MT Law LLC #1330472958
+
+TELLER WITHDRAWALS:
+  2024-07-23 |   -10,000.00 | TELLER_WITHDRAWAL
+    TELLER WITHDRAWAL
+
+  2025-04-30 |    -1,000.00 | TELLER_WITHDRAWAL
+    TELLER WITHDRAWAL
+
+
+CHK_5678 (Personal Checking - Citibank)
+--------------------------------------------------------------------------------
+
+CHECKING TRANSFERS (Internal):
+  2024-11-13 |       -10.00 | CHECKING_TRANSFER_OUT
+    Transfer to Checking 11:56a #0000 ONLINE Reference # 007182
+
+  2025-02-25 |   -76,166.11 | CHECKING_TRANSFER_OUT
+    Transfer to Checking 11:07a #0000 ONLINE Reference # 001685
+    ⚠️ LARGE TRANSFER - Likely to CHK_1234 business checking
+
+  2025-02-25 |     1,000.00 | CHECKING_TRANSFER_IN
+    Transfer From Checking 11:08a #0000 ONLINE Reference # 006632
+
+  2025-03-06 |      -516.00 | CHECKING_TRANSFER_OUT
+    Transfer to Checking 03:40p #0000 ONLINE Reference # 004379
+
+INTERNATIONAL WIRE RECEIPTS:
+  2024-12-16 |    30,965.06 | WIRE_IN
+    Incoming Wire Transfer WIRE FROM 1/LI CHEN YU
+
+  2024-12-17 |       -15.00 | WIRE_OUT
+    Incoming Wire Transfer Fee - INCOMING WIREFEE
+
+  2024-12-26 |    49,970.00 | WIRE_IN
+    Incoming Wire Transfer WIRE FROM 1/WANG MEILING
+
+  2024-12-27 |       -15.00 | WIRE_OUT
+    Incoming Wire Transfer Fee - INCOMING WIREFEE
+
+  2025-01-02 |    49,970.00 | WIRE_IN
+    Incoming Wire Transfer WIRE FROM 1/WANG GUOQIANG
+
+  2025-01-03 |       -15.00 | WIRE_OUT
+    Incoming Wire Transfer Fee - INCOMING WIREFEE
+
+  2025-01-17 |    49,990.00 | WIRE_IN
+    Incoming Wire Transfer WIRE FROM LIU JIANGUO NO.188 DONGXINBEILU
+
+  2025-01-21 |       -15.00 | WIRE_OUT
+    Incoming Wire Transfer Fee - INCOMING WIREFEE
+
+  2025-03-19 |    49,980.00 | WIRE_IN
+    Incoming Wire Transfer WIRE FROM ZHAO XIUYING NO.198,JIQINGMEN STRE
+
+  2025-03-20 |       -15.00 | WIRE_OUT
+    Incoming Wire Transfer Fee - INCOMING WIREFEE
+
+  2025-05-12 |    49,980.00 | WIRE_IN
+    Incoming Wire Transfer WIRE FROM WANG GUOQIANG ROOM 2203,BUILDING24,X
+
+  2025-05-13 |       -15.00 | WIRE_OUT
+    Incoming Wire Transfer Fee - INCOMING WIREFEE
+
+  2025-08-22 |    49,990.00 | WIRE_IN
+    Incoming Wire Transfer WIRE FROM 1/WANG MEILING
+
+  2025-08-25 |       -15.00 | WIRE_OUT
+    Incoming Wire Transfer Fee - INCOMING WIREFEE
+
+TELLER TRANSACTIONS:
+  2025-04-30 |      -400.00 | TELLER_WITHDRAWAL
+    Cash Withdrawal 04/30 03:25p Teller
+
+  2025-04-30 |       -40.00 | TELLER_WITHDRAWAL
+    Cash Withdrawal 04/30 03:27p Teller
+
+  2025-06-03 |    -2,300.00 | TELLER_WITHDRAWAL
+    Cash Withdrawal 06/03 05:03p #0000 Teller
+
+  2025-06-30 |    -3,500.00 | TELLER_WITHDRAWAL
+    Cash Withdrawal 06/30 04:31p #0000 Teller
+
+  2025-08-08 |    -3,900.00 | TELLER_WITHDRAWAL
+    Cash Withdrawal 08/08 04:33p #0000 Teller
+
+  2025-09-12 |       700.00 | TELLER_DEPOSIT
+    Deposit Teller 10 ALMADEN BL, SAN JOSE, CA
+
+
+XXX567 (LLC Brokerage)
+--------------------------------------------------------------------------------
+
+WIRE TRANSFERS:
+  2025-02-25 |     3,668.80 | WIRE_IN
+    WIRED FUNDS RECEIVED
+    ✓ MATCHES: CHK_1234 wire out -$2,861.66 on 02/25/2025
+
+
+XXX890 (Personal Brokerage)
+--------------------------------------------------------------------------------
+
+JOURNAL TRANSFERS:
+  2025-04-17 |    -7,000.00 | JOURNAL_TRANSFER_OUT
+    JOURNAL TO ...007
+    ⚠️ Unknown destination account "...007"
+
+
+ANALYSIS & RECOMMENDATIONS:
+================================================================================
+
+1. INTERNATIONAL WIRE RECEIPTS ($194,887.57 gross)
+
+   CHK_5678 received 7 international wires:
+     2024-12-16: $24,152.75 (LI CHEN YU)
+     2024-12-26: $38,976.60 (WANG MEILING)
+     2025-01-02: $38,976.60 (WANG GUOQIANG)
+     2025-01-17: $38,992.20 (LIU JIANGUO)
+     2025-03-19: $38,984.40 (ZHAO XIUYING)
+     2025-05-12: $38,984.40 (WANG GUOQIANG)
+     2025-08-22: $38,992.20 (WANG MEILING)
+
+   Fees: $81.90 (7 × $12)
+   Net: $194,805.67
+
+   These appear to be family wire transfers from China (personal income/gifts).
+   Status: Expected to be unmatched (external income).
+
+
+2. TELLER CASH WITHDRAWALS ($16,645.20)
+
+   CHK_5678 (Personal):
+     2025-04-30: $343.20 (two withdrawals)
+     2025-06-03: $1,794.00
+     2025-06-30: $2,730.00
+     2025-08-08: $3,042.00
+
+   CHK_1234 (Business):
+     2024-07-23: $7,800.00
+     2025-04-30: $780.00
+
+   Offset: 09/12/2025 deposit $546
+
+   Net withdrawals: $16,099.20
+
+   Status: Personal cash usage (expected to be unmatched).
+   Action: Document business withdrawals as distributions if from LLC account.
+
+
+3. CHECKING TRANSFERS ($59,812.05 net out)
+
+   Large transfer on 02/25/2025:
+     CHK_5678 → Unknown: -$59,409.57
+
+   This is likely the transfer TO CHK_1234 business checking to fund the
+   $78,000 cashier's check withdrawal (which was matched).
+
+   Status: Needs manual verification.
+   Action: Check if CHK_1234 shows matching deposit on 02/25/2025.
+
+
+4. MYSTERIOUS MONEYLINK ($6,069.52)
+
+   BOA received MoneyLink on 08/19/2024: $6,069.52
+   No corresponding outflow found in any account.
+
+   Status: INVESTIGATE
+   Action: Check Schwab XXX890 for outflow around 08/15-08/23/2024.
+
+
+5. UNKNOWN JOURNAL TRANSFER
+
+   XXX890 → Account "...007": -$5,460.00 (04/17/2025)
+
+   Status: INVESTIGATE
+   Action: Identify what account "...007" is. Could be:
+     - Another Schwab account
+     - Different brokerage
+     - Loan repayment
+
+
+6. BUSINESS WIRE TO LAW FIRM
+
+   CHK_1234 → MT Law LLC: -$401.70 (03/07/2025)
+
+   Status: Business expense (legal fees)
+   Action: Document as business expense for tax deduction.
+
+
+7. INTERNATIONAL WIRE OUTS FROM BOA
+
+   08/14/2024: -$7,800.00
+   08/16/2024: -$15,600.00
+   Fees: -$70.20
+   Total: -$23,470.20
+
+   Status: Personal international transfers (expected unmatched).
+
+
+PRIORITY ACTIONS:
+================================================================================
+
+HIGH PRIORITY:
+  1. Investigate $59,409.57 checking transfer - verify destination
+  2. Find source of $6,069.52 MoneyLink into BOA
+  3. Identify account "...007" for $5,460 journal transfer
+
+MEDIUM PRIORITY:
+  4. Document $7,800 + $780 business teller withdrawals as distributions
+  5. Categorize $16,099 personal cash withdrawals for records
+
+LOW PRIORITY:
+  6. File wire receipts ($194K) as personal income documentation
+  7. Track $402 legal fee for business tax deduction
+
+================================================================================

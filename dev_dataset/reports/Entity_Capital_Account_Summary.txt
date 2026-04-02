@@ -1,0 +1,71 @@
+================================================================================
+ENTITY CAPITAL ACCOUNT SUMMARY
+Generated: 2025-10-08 11:05:10
+================================================================================
+
+
+Greenfield Capital LLC (Combined CHK_1234 + XXX567)
+================================================================================
+
+  Q1-2025:
+    Contributions:  $  85,953.58
+    Distributions:  $  78,000.00
+    Net:            $   7,953.58
+
+  Q2-2025:
+    Contributions:  $   14,900.34
+    Distributions:  $    4,680.00
+    Net:            $   10,220.34
+
+  Q3-2024:
+    Contributions:  $    4,259.14
+    Distributions:  $   7,800.00
+    Net:            $   -4,539.56
+
+  Q3-2025:
+    Contributions:  $   53,820.00
+    Distributions:  $   22,620.00
+    Net:            $   31,200.00
+
+  Q4-2024:
+    Contributions:  $   10,485.15
+    Distributions:  $        0.00
+    Net:            $   10,485.15
+
+  TOTAL:
+    Contributions:  $  169,418.22
+    Distributions:  $  113,100.00
+    Net:            $   56,318.22
+
+Personal Brokerage XXX890
+================================================================================
+
+  Q1-2025:
+    Contributions:  $  145,860.00
+    Distributions:  $   31,980.00
+    Net:            $  113,880.00
+
+  Q2-2025:
+    Contributions:  $   42,900.00
+    Distributions:  $   17,160.00
+    Net:            $   25,740.00
+
+  Q3-2025:
+    Contributions:  $   34,320.00
+    Distributions:  $   32,370.00
+    Net:            $    1,950.00
+
+  Q4-2024:
+    Contributions:  $   23,010.00
+    Distributions:  $        0.00
+    Net:            $   23,010.00
+
+  Q4-2025:
+    Contributions:  $        0.00
+    Distributions:  $    1,170.00
+    Net:            $   -1,500.00
+
+  TOTAL:
+    Contributions:  $  246,090.00
+    Distributions:  $  82,680.00
+    Net:            $  163,410.00

@@ -1,0 +1,489 @@
+================================================================================
+SEVIS EMPLOYMENT RECORD — COMPREHENSIVE ANALYSIS
+Source: Columbia ISSO reply (Evelyn), March 4, 2026 (ASK0966365)
+Supplemented with: Justworks paystubs, W-2, I-983 forms, I-20 records
+Prepared: March 4, 2026
+================================================================================
+
+================================================================================
+1. POST-COMPLETION OPT (01/23/2023 – 01/22/2024)
+   Unemployment limit: 90 days aggregate
+================================================================================
+
+  SEVIS  Employer                         FT/PT  Start       End         Days
+  ID     ─────────────────────────────────────────────────────────────────────
+  —      [UNEMPLOYED]                     —      01/23/2023  04/20/2023  ~88 days
+  —      Wall Street Consulting LLC       FT     04/21/2023  05/22/2023  31 days
+  10353683 Tiger Cloud, LLC               FT     05/22/2023  NO END DATE  ← OPEN
+  10406938 Bamboo Shoot Growth Cap. LLC   FT     06/23/2023  NO END DATE  ← OPEN
+
+  UNEMPLOYMENT TOTAL (OPT): ~88 days out of 90 allowed
+  *** CRITICALLY CLOSE — only ~2 days of margin ***
+  NOTE: These ~88 days carry forward into the cumulative 150-day
+  STEM OPT limit (see Section 2).
+
+  OPEN END DATES:
+    - Tiger Cloud, LLC (10353683): No end date. Continued into STEM OPT
+      under a different employer ID (87-3138342). OPT entry should end
+      no later than 01/22/2024 (OPT end).
+    - BSGC LLC (10406938): No end date. User is 100% owner and now
+      using BSGC as H-1B petitioner. Was OPT employment ever formally
+      ended? See Section 7B for detailed analysis.
+
+================================================================================
+2. STEM OPT (01/23/2024 – 01/22/2026; transferred 09/18/2025)
+   Unemployment limit: 150 days aggregate (CUMULATIVE with OPT period)
+   NOTE: The 150-day limit is NOT a fresh counter. It replaces the
+   90-day OPT limit, adding only 60 additional days. Unemployment
+   accrued during OPT carries forward into STEM OPT.
+================================================================================
+
+  SEVIS  Employer                         FT/PT  Start       End
+  ID     ─────────────────────────────────────────────────────────────────
+  —      Tiger Cloud LLC (87-3138342)     FT→PT  01/23/2024  12/16/2024
+  —      [GAP]                            —      —           —
+  —      Claudius Legal Intel (85-0937977)FT     12/16/2024  02/06/2025
+  —      [GAP]                            —      02/07/2025  02/19/2025
+  —      CliniPulse LLC (93-3367148)      FT     02/20/2025  03/11/2025
+  —      [GAP]                            —      03/12/2025  03/16/2025
+  11388901 Acme Ventures (33-3333333)FT     03/17/2025  NO END DATE ← OPEN
+
+  [NO WORK AUTHORIZATION]                 —      09/18/2025  11/04/2025
+  * SEVIS transferred to CIAM; STEM OPT ended. CPT not yet issued.
+  * Employment during this 47-day period was NOT authorized.
+  * This gap does NOT count toward STEM OPT unemployment (STEM OPT
+    already ended; student was in F-1 student status at CIAM).
+
+  I-983 FORMS ON FILE (all 4 STEM OPT employers):
+    1. Tiger Cloud LLC — original I-983 signed 10/27/2023
+       Material change I-983 signed 12/09/2024 (FT→PT, effective 10/01/2024)
+    2. TechLaw AI — I-983 on file
+    3. CliniPulse LLC — I-983 on file
+    4. Acme Ventures Inc. — I-983 on file
+
+================================================================================
+3. CPT (11/04/2025 – 04/17/2026)
+   No unemployment limit for CPT
+================================================================================
+
+  Employer                         FT/PT  Start       End
+  ─────────────────────────────────────────────────────────────────────
+  Acme Ventures Inc.          PT     11/04/2025  04/17/2026
+
+  No issues. CPT has defined start and end dates.
+
+================================================================================
+4. COMPLETE SEVIS RECORD (ALL PERIODS, CHRONOLOGICAL)
+================================================================================
+
+  #   Period  Employer                  FT/PT  Start       End          Status
+  ─── ─────── ────────────────────────  ────── ──────────  ───────────  ───────
+  1   OPT     [UNEMPLOYED]              —      01/23/2023  04/20/2023  ~88 days
+  2   OPT     Wall Street Consulting    FT     04/21/2023  05/22/2023  OK
+  3   OPT     Tiger Cloud, LLC          FT     05/22/2023  NO END DATE OPEN ←
+  4   OPT     BSGC LLC                  FT     06/23/2023  NO END DATE OPEN ←
+  5   STEM    Tiger Cloud LLC           FT→PT  01/23/2024  12/16/2024  OK*
+  6   STEM    Claudius Legal Intel      FT     12/16/2024  02/06/2025  OK
+  7   STEM    CliniPulse LLC            FT     02/20/2025  03/11/2025  OK
+  8   STEM    Acme Ventures        FT     03/17/2025  NO END DATE OPEN ←
+  9   —       [NO WORK AUTH]            —      09/18/2025  11/04/2025  CONCERN
+  10  CPT     Acme Ventures Inc.   PT     11/04/2025  04/17/2026  OK
+
+  * Tiger Cloud STEM OPT entry (#5) has end date 12/16/2024 but paystub
+    evidence shows last payment covers only through 11/30/2024. See Section 6.
+
+  ENTRIES WITH OPEN END DATES: 3 (#3, #4, #8)
+  BitSync: CONFIRMED NOT IN SEVIS RECORD (favorable)
+  Material change (Tiger Cloud FT→PT): Approved 12/11/2024 — properly recorded
+
+================================================================================
+5. UNEMPLOYMENT PERIOD ANALYSIS (DETAILED)
+================================================================================
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ A. OPT PERIOD UNEMPLOYMENT (01/23/2023 – 01/22/2024)                   │
+  │    Limit: 90 days                                                       │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │                                                                          │
+  │  Gap                       From        To          Calendar Days         │
+  │  ────────────────────────  ──────────  ──────────  ──────────────        │
+  │  OPT start → 1st employer  01/23/2023  04/20/2023  ~88 days             │
+  │                                                                          │
+  │  OPT UNEMPLOYMENT TOTAL:                            ~88 days             │
+  │  OPT LIMIT:                                         90 days              │
+  │  MARGIN:                                            ~2 days              │
+  │  STATUS: *** CRITICALLY CLOSE ***                                        │
+  │                                                                          │
+  │  NOTE: From 05/22/2023 onward, Tiger Cloud and BSGC overlap, so         │
+  │  there is no unemployment for the remainder of the OPT period.           │
+  │  However, both entries have NO END DATE (see Section 7).                 │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ B. STEM OPT PERIOD UNEMPLOYMENT (01/23/2024 – 09/18/2025)             │
+  │    Limit: 150 days CUMULATIVE (replaces 90-day OPT limit)              │
+  │    Carries forward: ~88 days from OPT period                            │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │                                                                          │
+  │  Gap                       From        To          Calendar Days         │
+  │  ────────────────────────  ──────────  ──────────  ──────────────        │
+  │  Tiger Cloud → Claudius    12/16/2024  12/16/2024  0 days               │
+  │  Claudius → CliniPulse     02/07/2025  02/19/2025  13 days              │
+  │  CliniPulse → Wolff & Li   03/12/2025  03/16/2025  5 days               │
+  │                                                                          │
+  │  STEM OPT PERIOD UNEMPLOYMENT:              18 days                      │
+  │                                                                          │
+  │  POTENTIAL ADDITIONAL (see Section 6):                                   │
+  │  Tiger Cloud unpaid gap    12/01/2024  12/15/2024  15 days (?)          │
+  │  (Last paystub covers through 11/30. If employment effectively           │
+  │   ended 11/30, these 15 days may count as unemployment.)                 │
+  │                                                                          │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ C. CUMULATIVE UNEMPLOYMENT CALCULATION                                  │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │                                                                          │
+  │  SCENARIO 1 — Per SEVIS dates (employment through 12/16/2024):          │
+  │    OPT unemployment:         ~88 days                                    │
+  │    STEM OPT unemployment:     18 days                                    │
+  │    CUMULATIVE TOTAL:         ~106 days / 150 days allowed               │
+  │    REMAINING MARGIN:          ~44 days                                   │
+  │                                                                          │
+  │  SCENARIO 2 — If Tiger Cloud ended 11/30 (last paystub date):          │
+  │    OPT unemployment:         ~88 days                                    │
+  │    STEM OPT unemployment:     18 days + 15 days = 33 days               │
+  │    CUMULATIVE TOTAL:         ~121 days / 150 days allowed               │
+  │    REMAINING MARGIN:          ~29 days                                   │
+  │                                                                          │
+  │  EITHER SCENARIO: Within the 150-day limit.                             │
+  │  Scenario 2 has less margin but is still compliant.                     │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ D. POST-STEM OPT GAP (NOT COUNTED AS UNEMPLOYMENT)                     │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │                                                                          │
+  │  09/18/2025 – 11/04/2025:  47 days with NO work authorization           │
+  │  STEM OPT ended (SEVIS transferred to CIAM).                            │
+  │  CPT not yet issued. Student was in F-1 status at CIAM.                 │
+  │  This does NOT count toward the 150-day STEM OPT limit because          │
+  │  STEM OPT had already ended.                                             │
+  │  However, any employment during this period was UNAUTHORIZED.            │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+6. TIGER CLOUD LLC — PAYSTUB-VERIFIED EMPLOYMENT TIMELINE
+================================================================================
+
+  SEVIS record shows:  01/23/2024 – 12/16/2024 (328 days, FT)
+  Actual per paystubs: 01/01/2024 – 11/30/2024 (last paystub period end)
+  Payroll via:         Justworks Employment Group LLC (EIN 11-1111111)
+
+  I-983 TERMS:
+    Original:      40 hrs/week, $5,070/month ($60,840/year)
+    Material Change: 20 hrs/week, $19/hour, effective 10/01/2024
+
+  FULL-TIME (Jan – Sep 2024):
+    18 semi-monthly paystubs at $2,535.00 each
+    FT Total: $45,630.00
+    Consistent with I-983 ($5,070/month)
+
+  PART-TIME (Oct – Nov 2024):
+    6 paystubs totaling $4,068.48
+
+    Period           Gross     Hours (Reg)  Rate      Notes
+    ───────────────  ────────  ───────────  ────────  ───────────────────────
+    09/22 – 10/05    $499      0h work      $12/hr    PTO payout only
+    10/06 – 10/19    $749      20h work     $12/hr    + 40h PTO
+    10/20 – 11/02    $749      40h work     $19/hr    Rate corrected
+    11/03 – 11/16    $749      40h work     $19/hr    OK
+    10/01 – 10/19    $574      —            off-cycle $6/hr x 92h correction
+    11/17 – 11/30    $749      40h work     $19/hr    FINAL PAYSTUB
+    ───────────────  ────────
+    PT TOTAL:        $4,068
+
+  GRAND TOTAL: $45,630 + $4,068 = $49,698.48 (YTD verified)
+  W-2 Box 1: $49,698 - $2,935.06 (pre-tax health ins.) = $46,763.42
+
+  *** NO PAYSTUB EXISTS FOR 12/01 – 12/16/2024 (16 DAYS) ***
+  Last paystub covers through 11/30/2024 only.
+  SEVIS says employment ended 12/16/2024.
+  See Section 7E for implications.
+
+  Detailed paystub analysis: tiger_cloud_paystub_analysis_030426.txt
+
+================================================================================
+7. CONCERNS & ISSUES REQUIRING ATTENTION
+================================================================================
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ A. OPEN END DATES IN SEVIS (3 entries)                    PRIORITY: HIGH│
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  1. Tiger Cloud, LLC — OPT period (SEVIS ID 10353683)
+     Start: 05/22/2023, NO END DATE
+     Should have ended by: 01/22/2024 (OPT end) at latest
+     Continued into STEM OPT under different employer ID (87-3138342)
+     ACTION: Report end date to close OPT entry. Suggest 01/22/2024
+     or the actual last date of employment under this employer ID.
+     WHO: Columbia ISSO (record originated under Columbia)
+
+  2. BSGC LLC — OPT period (SEVIS ID 10406938)
+     Start: 06/23/2023, NO END DATE
+     BSGC is the H-1B petitioning entity — this is sensitive.
+     See Section 7B for full analysis.
+     ACTION: Legal review needed before deciding on end date.
+
+  3. Acme Ventures Inc. — STEM OPT period (SEVIS ID 11388901)
+     Start: 03/17/2025, NO END DATE
+     Must end: 09/18/2025 (SEVIS transfer date; STEM OPT ended)
+     CPT for same employer started 11/04/2025
+     GAP: 09/18/2025 – 11/04/2025 = 47 days with NO work authorization
+     ACTION NEEDED: Report end date of 09/18/2025 to DSO immediately.
+     WHO: Ask CIAM DSO (Sandy Chou / Melissa Valle) whether they can
+     update this, or whether Columbia ISSO must do it since the STEM OPT
+     record originated under Columbia.
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ B. BSGC LLC DURING STEM OPT                         PRIORITY: CRITICAL │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  BSGC LLC is listed under OPT with no end date from 06/23/2023.
+  During STEM OPT (01/23/2024 – 09/18/2025), BSGC is NOT listed as a
+  STEM OPT employer. There is no I-983 for BSGC.
+
+  RISK SCENARIOS:
+    a) If user was actively working for BSGC during STEM OPT:
+       → Could be construed as unauthorized employment (no I-983, not
+         reported as STEM OPT employer)
+       → Would need to have been added as a concurrent STEM OPT employer
+
+    b) If user was passive owner only (not actively employed):
+       → Passive ownership alone may not constitute "employment"
+       → No I-983 required for passive ownership
+       → But USCIS could challenge this characterization
+
+    c) BSGC is now the H-1B petitioning entity:
+       → Having an open-ended OPT employment record for BSGC could be
+         viewed favorably (shows ongoing business activity) OR
+       → Could raise questions about unauthorized STEM OPT employment
+         if BSGC wasn't properly listed
+
+  BOTTOM LINE: This needs legal review BEFORE the H-1B petition is filed.
+  The attorney should advise on:
+    - Whether to report an end date for BSGC OPT employment
+    - How to characterize the BSGC relationship during STEM OPT
+    - Whether this creates any inadmissibility or denial risk
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ C. TIGER CLOUD RATE DISCREPANCY                      PRIORITY: MEDIUM  │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  I-983 Material Change specifies: $19/hour, effective 10/01/2024
+
+  Paystub reality:
+    10/01 – 10/19:  Initially paid at $12/hr (8 paystub-documented hours
+                    of actual work at $12/hr, plus PTO at $12/hr)
+    10/20 onward:   Corrected to $19/hr
+    11/22:          Off-cycle correction of $574 for 10/01-10/19
+                    ($6/hr x 92 hours = $574)
+
+  The financial discrepancy was fully corrected via the off-cycle payment.
+  However, the paystubs create a paper trail showing:
+    - The employer initially set the rate at $12/hr, not $19/hr
+    - The I-983 was signed 12/09/2024 but backdated to 10/01/2024
+    - For the first ~3 weeks, paystubs don't match I-983 terms
+
+  RISK: If USCIS requests paystubs and compares to I-983, the initial
+  $12/hr rate is a documentary inconsistency. The off-cycle correction
+  mitigates this but doesn't fully eliminate the concern.
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ D. TIGER CLOUD HOURS COMPLIANCE (I-983)               PRIORITY: MEDIUM │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  I-983 Material Change requires: minimum 20 hours/week
+
+  Period             Regular Work Hours  Hrs/Week  Compliant?
+  ────────────────── ──────────────────  ────────  ──────────
+  09/22 – 10/05      0h (PTO only)       0h/wk     NO
+  10/06 – 10/19      20h                 10h/wk    NO
+  10/20 – 11/02      40h                 20h/wk    YES
+  11/03 – 11/16      40h                 20h/wk    YES
+  11/17 – 11/30      40h                 20h/wk    YES
+  12/01 – 12/16      NO PAYSTUB          UNKNOWN   UNKNOWN
+
+  The first ~3 weeks of PT (10/01 – 10/19) show below 20h/week of
+  actual work hours. PTO payout does NOT count as work hours for I-983.
+
+  MITIGATING FACTORS:
+    - Transition period from FT to PT (administrative adjustment)
+    - Justworks payroll transition caused delayed processing
+    - All early PT paystubs were paid late (11/06 for Sep/Oct periods)
+    - From 10/20 onward, hours consistently meet 20h/week minimum
+
+  RISK: Technical I-983 violation for the transition period, but unlikely
+  to be flagged unless USCIS does a granular paystub-by-paystub review.
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ E. TIGER CLOUD 16-DAY UNPAID GAP (12/01 – 12/16)     PRIORITY: MEDIUM │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  SEVIS employment end date:   12/16/2024
+  Last paystub covers through: 11/30/2024
+  Gap with NO paystub:         12/01 – 12/16/2024 (16 days)
+
+  POSSIBLE EXPLANATIONS:
+    a) Employment actually ended ~11/30 and 12/16 is a delayed reporting date
+    b) Employee worked but was never paid (wage/payroll issue)
+    c) Employee was on unpaid leave / not scheduled
+    d) Final payroll was simply not processed
+
+  IMMIGRATION IMPACT:
+    If employment effectively ended 11/30:
+      - 15 additional unemployment days → cumulative total ~121/150
+      - Still within limit but margin shrinks to ~29 days
+    If employment continued through 12/16 (unpaid):
+      - No additional unemployment but raises I-983 compliance question
+        (I-983 requires compensation — unpaid "employment" may not qualify)
+
+  RECOMMENDATION: Clarify with Tiger Cloud / Amanda Klier whether the
+  actual last date of work was 11/30 or 12/16. If 11/30, determine
+  whether SEVIS end date should be corrected.
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ F. UNAUTHORIZED WORK GAP (09/18/2025 – 11/04/2025)   PRIORITY: HIGH   │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  STEM OPT ended:    09/18/2025 (SEVIS transferred to CIAM)
+  CPT issued:        11/04/2025
+  Gap:               47 days with NO work authorization
+
+  During this period, the student was in F-1 status at CIAM but had
+  no employment authorization (STEM OPT ended, CPT not yet issued).
+
+  Acme Ventures STEM OPT employment currently shows NO END DATE.
+  This means SEVIS still shows active STEM OPT employment that
+  technically ended 47+ days ago.
+
+  CRITICAL: Must NOT have worked for Wolff & Li (or anyone else)
+  during this 47-day period. Any employment would be unauthorized.
+
+  ACTION: Report Wolff & Li STEM OPT end date as 09/18/2025.
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ G. MATERIAL CHANGE TIMING                             PRIORITY: LOW    │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  I-983 Material Change was signed 12/09/2024 but effective 10/01/2024.
+  This means the PT arrangement was reported ~2 months after it took effect.
+
+  STEM OPT regulations require reporting material changes within 10 days.
+  The ~2-month delay is a technical violation.
+
+  Columbia ISSO approved the material change 12/11/2024, which provides
+  some institutional cover.
+
+  RISK: Low. USCIS rarely scrutinizes the exact date a material change
+  was reported vs. when it took effect, especially when the DSO approved it.
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ H. BitSync STATUS                                     PRIORITY: NONE   │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+  CONFIRMED: BitSync does NOT appear in the SEVIS employment record.
+  This is favorable — no trace of the problematic BitSync employment.
+
+================================================================================
+8. SUMMARY DASHBOARD
+================================================================================
+
+  UNEMPLOYMENT:
+    OPT Unemployment:          ~88 days (of 90-day OPT-only limit)
+    STEM OPT Unemployment:      18 days additional
+    CUMULATIVE TOTAL:          ~106 / 150 days (44 days margin)
+    WORST CASE (if +15 days):  ~121 / 150 days (29 days margin)
+    NOTE: 150-day limit is cumulative across OPT + STEM OPT, NOT fresh
+
+  SEVIS RECORD:
+    Total employers in SEVIS:   7 (across OPT + STEM OPT + CPT)
+    BitSync in record:          NO (favorable)
+    I-983s on file:             All 4 STEM OPT employers
+    Material change:            Properly recorded (12/11/2024)
+    Open end dates:             3 entries need action
+
+  W-2 / PAY VERIFICATION:
+    2024 W-2 Box 1:             $46,763.42 (verified against paystubs)
+    2024 YTD Gross:             $49,698.48
+    Pre-tax deductions:         $2,935.06
+    Verification:               $49,698.48 - $2,935.06 = $46,763.42 ✓
+
+  GAPS & CONCERNS:
+    Unauthorized work gap:      09/18/2025 – 11/04/2025 (47 days)
+    Unpaid paystub gap:         12/01 – 12/16/2024 (16 days)
+    Rate discrepancy:           $12/hr initial vs $19/hr I-983 (corrected)
+    Hours shortfall:            First 3 weeks PT below 20h/week minimum
+    BSGC OPT overlap:           Open-ended OPT entry + no STEM OPT I-983
+
+================================================================================
+9. PRIORITIZED ACTION ITEMS
+================================================================================
+
+  PRIORITY 1 — IMMEDIATE (before H-1B petition):
+
+    [ ] Report Wolff & Li STEM OPT end date of 09/18/2025 to DSO
+        Contact: CIAM DSO (Sandy Chou / Melissa Valle)
+        Or: Columbia ISSO if CIAM cannot update (record originated there)
+
+    [ ] Legal review of BSGC LLC open-ended OPT employment
+        Does it overlap with / conflict with STEM OPT period?
+        How to characterize for H-1B petition?
+        Should an end date be reported? If so, what date?
+
+  PRIORITY 2 — BEFORE TAX FILING:
+
+    [ ] Clarify Tiger Cloud actual end date (11/30 vs 12/16)
+        Contact: Amanda Klier at Tiger Cloud LLC
+        Determines whether 15 additional unemployment days exist
+
+    [ ] Close Tiger Cloud OPT entry (SEVIS ID 10353683)
+        Report end date of 01/22/2024 (OPT end) or earlier
+
+  PRIORITY 3 — FOR RECORDS:
+
+    [ ] Confirm 09/18-11/04 gap had zero employment activity
+        Important for future immigration filings / RFEs
+
+    [ ] Obtain documentation of rate correction from Tiger Cloud
+        The off-cycle paystub note is helpful but a formal letter
+        from the employer confirming the correction would be better
+
+================================================================================
+10. SOURCE DOCUMENTS
+================================================================================
+
+  SEVIS Record:
+    Columbia ISSO reply, March 4, 2026 (ASK0966365, via Evelyn)
+
+  Paystubs:
+    /Users/devuser/Desktop/Important Docs /employment/VCV/paystubs_2024/
+    (18 FT + 6 PT = 24 files total)
+    Detailed analysis: tiger_cloud_paystub_analysis_030426.txt (same dir)
+
+  W-2:
+    /Users/devuser/accounting/tax/2024/2024_w2_justworks_wolffli.pdf
+
+  I-983 Forms:
+    Original: .../stem opt/i983/vcv_outdated_versions/I983-ink signed.pdf
+    Material Change: .../stem opt/i983/vcv/Cheney i983 Form_signed_120924.pdf
+
+  I-20:
+    STEM OPT I-20: .../outgoing/h1b1_intake_021226/i20/05_columbia_stemopt.pdf
+
+  DSO Communications:
+    /Users/devuser/accounting/outgoing/columbia_isso/dso_email_history_022826.txt
+
+================================================================================
+END OF ANALYSIS
+================================================================================

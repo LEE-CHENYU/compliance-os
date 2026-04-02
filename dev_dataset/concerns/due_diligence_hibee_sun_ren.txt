@@ -1,0 +1,914 @@
+================================================================================
+DUE DILIGENCE REPORT: HIBEE INTERNATIONAL CONSULTING INC. / SUN & REN PLLC
+Compiled: 02/23/2026
+================================================================================
+
+ENTITY:           Hibee International Consulting Inc.
+TYPE:             CONSULTING COMPANY (NOT a law firm — see Section 5)
+WEBSITE:          hibee.us
+ADDRESS:          14 Pennsylvania Plaza, Suite 1317, New York, NY 10122
+CO-FOUNDER:       Chuyi Wang (non-attorney, AI/tech background, Boston University)
+LEGAL COUNSEL:    Wenjie Sun (Of Counsel), Xiaochen Lai (Immigration Counsel)
+
+LAW FIRM:         Sun & Ren PLLC
+PARTNERS:         Wenjie Sun (Founding Partner), Momo Ren (Co-Founding Partner)
+ADDRESS:          14 Penn Plaza, Suite 2000 (also listed as 1317), New York, NY 10122
+PHONE:            (631) 888-3636
+WEBSITE:          sunrenlaw.com
+EMAIL:            info@sunrenlaw.com
+
+EXECUTIVE SUMMARY:
+  Hibee International Consulting Inc. is a CONSULTING COMPANY, not a law firm.
+  It explicitly disclaims providing legal advice on its website: "Hibee
+  International Consulting Inc. is a consulting company providing business
+  advisory and cross-border compliance support services. Hibee does not itself
+  provide legal advice." The actual legal work appears to be performed through
+  Sun & Ren PLLC, a legitimate New York-licensed law firm co-founded by Wenjie
+  Sun and Momo Ren. The two attorneys listed on Hibee's website (Wenjie Sun and
+  Xiaochen Lai) are licensed attorneys. However, the co-founder of Hibee itself
+  (Chuyi Wang) is NOT an attorney — she has a background in AI, quantitative
+  finance, and venture capital (Boston University). This creates a significant
+  structural question: the client-facing entity is a consulting company operated
+  by a non-attorney, with attorneys in an "of counsel" or "counsel" capacity.
+
+  No disciplinary actions, malpractice claims, or fraud allegations were found
+  against any of the attorneys. However, there is a NOTABLE ABSENCE of
+  independent client reviews on any platform — no Google reviews, no Avvo
+  reviews, no Yelp reviews, no Reddit discussions, no immigration forum
+  mentions for either Hibee or Sun & Ren PLLC. The "1,000+ H-1B approvals"
+  claim is unverifiable. The company appears to be relatively new and primarily
+  serves Chinese-speaking clients. The fee schedule is not published.
+
+  DD SCORE: 5.5 / 10 — MODERATE CAUTION ADVISED
+
+  VERDICT: MIXED — Legitimate attorneys, but unusual business structure raises
+  questions. No adverse findings, but also very thin independent verification.
+
+================================================================================
+1. WENJIE SUN — OF COUNSEL / IMMIGRATION COUNSEL / FOUNDING PARTNER, SUN & REN
+================================================================================
+
+  A. NY BAR ADMISSION & LICENSE
+  ─────────────────────────────────────────────────────────────────
+    Registration Number:  5126982
+    Admission Year:       2013
+    Status:               CURRENTLY REGISTERED (confirmed via OpenGovNY)
+    Next Registration:    February 2027
+    Admitted In:          Third Judicial Department (Albany), New York State
+    Employer on Record:   Sun & Ren PLLC
+    Office Address:       225 W 34th St Ste 2000, New York, NY 10122-2000
+    Phone:                (631) 888-3636
+    Email:                wenjie0201(a)gmail.com
+
+    NOTE: NY does not use "bar numbers" — the OCA registration number
+    (5126982) is for internal record-keeping only.
+
+    Verification Source:  https://opengovny.com/attorney/5126982
+                          https://opengovus.com/new-york-state-attorney/5126982
+
+    RESULT: BAR REGISTRATION VERIFIED — Currently registered, active
+
+  B. EDUCATION
+  ─────────────────────────────────────────────────────────────────
+    Law School:           College of William and Mary (William & Mary Law School)
+    Degree:               J.D. (Juris Doctor)
+    Graduated:            2012
+    Bar Admission:        2013 (one year after graduation — standard timeline)
+
+    Undergraduate:        NOT PUBLICLY DISCLOSED
+
+    Verification:         Confirmed via OpenGovNY, Super Lawyers, Martindale,
+                          and firm website. All sources consistently report
+                          William & Mary Law School.
+
+    RESULT: LAW SCHOOL VERIFIED — William & Mary Law School, Class of 2012
+
+  C. DISCIPLINARY HISTORY, COMPLAINTS, MALPRACTICE
+  ─────────────────────────────────────────────────────────────────
+    SEARCHES CONDUCTED:
+      - OpenGovNY attorney record: No disciplinary notations
+      - EOIR disciplined practitioners list: NOT FOUND on list
+      - Avvo disciplinary section: No disciplinary information reported
+      - Martindale-Hubbell: No disciplinary flags
+      - Ripoff Report: No complaints found
+      - BBB: No complaints found
+      - Google search for "Wenjie Sun" + complaint / malpractice / disciplinary:
+        NO RESULTS
+      - NY Attorney Grievance Committee (general search): No results
+      - USAComplaints: No results
+      - Reddit / VisaJourney / Trackitt / immigration forums: No mentions
+
+    RESULT: ZERO ADVERSE FINDINGS — No disciplinary actions, no complaints,
+            no malpractice claims found anywhere.
+
+  D. REVIEWS ON ATTORNEY DIRECTORIES
+  ─────────────────────────────────────────────────────────────────
+    AVVO:
+      Profile exists: https://www.avvo.com/attorneys/10036-ny-wenjie-sun-4551829.html
+      Rating:         NOT DISPLAYED (profile not fully claimed)
+      Reviews:        ZERO client reviews
+      Endorsements:   None
+      ASSESSMENT: Profile exists but is essentially empty. No client feedback.
+
+    MARTINDALE-HUBBELL:
+      Profile exists: https://www.martindale.com/attorney/wenjie-sun-300721380/
+      Rating:         DISTINGUISHED
+                      ("Widely respected by peers for high professional
+                       achievement and ethical standards")
+      Reviews:        ZERO client reviews visible
+      ASSESSMENT: Peer-rated "Distinguished" — this is a positive indicator.
+      Note: "Distinguished" is Martindale's second-highest rating (below
+      "AV Preeminent"). It is based on peer review, not client reviews.
+
+    SUPER LAWYERS:
+      Profile exists: https://profiles.superlawyers.com/new-york/new-york/lawyer/wenjie-sun/bfb9a08b-3285-42b3-b1e4-5086b37c922f.html
+      Designation:    RISING STARS (2016-2025, 10 consecutive years)
+      Practice:       Immigration (Business focus)
+      Languages:      English, Chinese-Mandarin
+      ASSESSMENT: Rising Stars recognition for 10 consecutive years is a
+      strong positive indicator. Note: Hibee's website claims "Rising Star
+      2016-2019" (4 years) and "Top Woman Lawyer" — but Super Lawyers shows
+      Rising Stars from 2016-2025 (10 years). The website appears to be
+      UNDERSTATING her recognition, not overstating it. This is mildly
+      reassuring — firms that inflate credentials typically overstate, not
+      understate.
+
+      IMPORTANT DISTINCTION: "Rising Stars" is NOT the same as "Super Lawyers."
+      Rising Stars is the junior designation (attorneys under 40 or <10 years
+      practice). "Super Lawyers" is the senior designation (top 5%). Sun has
+      NOT been named a full "Super Lawyer" — only "Rising Star." The Hibee
+      website does call her recognition "Super Lawyers recognition" which is
+      technically accurate (it is the Super Lawyers organization) but could
+      be misleading to consumers who assume it means the top-tier designation.
+
+    JUSTIA:
+      NO PROFILE FOUND
+
+    U.S. NEWS LAWYER DIRECTORY:
+      Profile exists: https://lawyers.usnews.com/lawyers/wenjie-sun/296292
+      Practice:       Immigration Law
+      Experience:     14 years
+      Listed with:    Sun & Ren PLLC
+
+    GOOGLE REVIEWS:
+      No Google Business profile found for Wenjie Sun individually
+      No Google reviews found for Sun & Ren PLLC (profile may not exist)
+
+    YELP:
+      Sun & Ren PLLC has a Yelp listing:
+      https://www.yelp.com/biz/sun-and-ren-new-york
+      No visible reviews were found in search results.
+
+    RESULT: VERY THIN REVIEW PRESENCE — Zero client reviews on any platform.
+            Martindale "Distinguished" peer rating and Super Lawyers Rising
+            Stars (2016-2025) are positive professional indicators, but there
+            is NO independent client feedback available anywhere.
+
+  E. PUBLISHED ARTICLES & CASE RESULTS
+  ─────────────────────────────────────────────────────────────────
+    Published Articles:   NO formal legal publications found (no law review
+                          articles, no AILA publications, no blog posts on
+                          immigration law topics found in public search)
+    LinkedIn Posts:       Some LinkedIn posts about PERM process and case
+                          outcomes (informal, not published articles)
+    Case Results:         None published publicly. Firm website does not
+                          feature a case results page.
+    AILA Membership:      NOT CONFIRMED — no AILA membership or committee
+                          participation found in search results
+
+    ASSESSMENT: The absence of published legal writing is notable for an
+    attorney with 13 years of experience and 1,000+ claimed H-1B cases.
+    Immigration attorneys who are thought leaders in the field typically
+    publish articles, blog posts, or contribute to AILA resources. The
+    absence doesn't indicate a problem, but it means there is less
+    independent evidence of legal expertise beyond the self-reported claims.
+
+    RESULT: NO PUBLISHED WORK FOUND — Limited independent evidence of
+            thought leadership
+
+  F. SUPER LAWYERS RECOGNITION VERIFICATION
+  ─────────────────────────────────────────────────────────────────
+    CLAIM (Hibee website):  "Super Lawyers recognition as Top Woman Lawyer;
+                             Rising Star 2016-2019"
+    VERIFIED (Super Lawyers): Rising Stars 2016-2025 (10 consecutive years)
+
+    ANALYSIS:
+      - Rising Stars 2016-2025: VERIFIED and actually BETTER than claimed
+      - "Top Woman Lawyer": Super Lawyers does publish lists of top women
+        lawyers. This claim was not independently verified but is plausible
+        given her Rising Stars selection.
+      - The website says "2016-2019" but actual designation runs 2016-2025.
+        Website appears to be outdated rather than inflated.
+
+    RESULT: SUPER LAWYERS RISING STARS VERIFIED (2016-2025)
+
+================================================================================
+2. XIAOCHEN LAI — IMMIGRATION COUNSEL
+================================================================================
+
+  A. BAR ADMISSIONS
+  ─────────────────────────────────────────────────────────────────
+    CLAIMED:
+      - Licensed in New York State
+      - Licensed in China
+
+    NEW YORK BAR:
+      Status: COULD NOT VERIFY DIRECTLY
+      - OpenGovNY search for "Xiaochen Lai" did NOT return a matching record
+      - The search returned several attorneys named "Xiaochen" but Lai was
+        NOT among them
+      - The NY OCA attorney search portal could not be accessed directly
+      - Her LinkedIn profile states "New York State and China admitted attorney"
+
+    CHINA BAR:
+      Status: CANNOT VERIFY (Chinese bar records not accessible from US)
+
+    ASSESSMENT: The inability to find Xiaochen Lai in the OpenGovNY database
+    is a MILD CONCERN. Possible explanations:
+      (a) She may be registered under a different name or spelling
+      (b) She may have been admitted recently and not yet updated in the
+          database
+      (c) She may hold inactive registration while primarily based in China
+          (her LinkedIn suggests she is located in the Jing'an District,
+          which is in Shanghai, China — NOT in New York)
+      (d) The database search may have been incomplete
+
+    RED FLAG: If she is primarily based in Shanghai, China, her ability to
+    actively practice US immigration law may be limited. Her role at Hibee
+    may be advisory rather than hands-on case management.
+
+    RECOMMENDATION: Directly verify at:
+      https://iapps.courts.state.ny.us/attorneyservices/search
+      Search: Last Name = "Lai", First Name = "Xiaochen"
+
+    RESULT: NY BAR ADMISSION NOT INDEPENDENTLY VERIFIED — requires direct
+            verification
+
+  B. EDUCATION
+  ─────────────────────────────────────────────────────────────────
+    CLAIMED:
+      - Master of Laws (LL.M.), Fudan University (Shanghai, China)
+      - LL.M., College of William & Mary (Virginia, USA)
+
+    VERIFICATION:
+      - Fudan University: Tier-1 Chinese university (C9 League). CANNOT
+        independently verify enrollment.
+      - College of William & Mary: CONSISTENT with Hibee website, LinkedIn,
+        and multiple search results. William & Mary does offer an LL.M.
+        program. Interestingly, this is the SAME law school as Wenjie Sun,
+        suggesting they may have been classmates or connected through
+        William & Mary's alumni network.
+
+    RESULT: EDUCATION CLAIMS CONSISTENT BUT NOT INDEPENDENTLY VERIFIED
+
+  C. PROFESSIONAL BACKGROUND
+  ─────────────────────────────────────────────────────────────────
+    Prior Experience:     Dentons (per LinkedIn) — a major international law
+                          firm with strong China practice
+    Specialty:            Advising Chinese enterprises on US market entry,
+                          investment structuring, operational expansion
+    Claimed Clients:      1,000+ high-net-worth individuals assisted with
+                          immigration status
+    Location:             Appears to be based in Shanghai (Jing'an District)
+                          per LinkedIn, NOT in New York
+
+    AVVO:                 NO PROFILE FOUND
+    MARTINDALE:           NO PROFILE FOUND
+    SUPER LAWYERS:        NO LISTING FOUND
+    JUSTIA:               NO PROFILE FOUND
+    PUBLISHED WORK:       NONE FOUND
+
+    RESULT: MINIMAL INDEPENDENT VERIFICATION — No attorney directory
+            profiles, no reviews, no published work found. Dentons
+            background is credible if accurate.
+
+  D. REVIEWS
+  ─────────────────────────────────────────────────────────────────
+    ZERO reviews found on any platform for Xiaochen Lai.
+
+================================================================================
+3. HIBEE INTERNATIONAL CONSULTING INC.
+================================================================================
+
+  A. BUSINESS REGISTRATION
+  ─────────────────────────────────────────────────────────────────
+    Entity Type:          CONSULTING COMPANY (Inc.)
+    Incorporated:         COULD NOT VERIFY — No NY Secretary of State record
+                          found in search results. Direct search recommended at:
+                          https://apps.dos.ny.gov/publicInquiry/
+    Trademark:            "HIBEE" registered with USPTO (Serial No. 99571082)
+                          Categories: Business consulting services; employment
+                          hiring, recruiting, placement, staffing and career
+                          networking services
+    Co-Founder:           Chuyi Wang (non-attorney)
+                          Background: Boston University, AI/tech, quant finance,
+                          venture capital (Riviera Holdings), previously full-
+                          time parent. NOT a lawyer.
+    Legal Counsel:        Wenjie Sun (Of Counsel), Xiaochen Lai (Counsel)
+    Address:              14 Pennsylvania Plaza, Suite 1317, New York, NY 10122
+
+    TRADEMARK CATEGORIES NOTE: The trademark registration covers "business
+    consulting" and "employment hiring, recruiting, placement, staffing" —
+    it does NOT specifically cover legal services, which is consistent with
+    Hibee's disclaimer that it is not a law firm and does not provide legal
+    advice.
+
+    RESULT: BUSINESS REGISTRATION NOT INDEPENDENTLY VERIFIED — Trademark
+            filing confirms entity exists. Incorporation details unknown.
+
+  B. BBB PROFILE
+  ─────────────────────────────────────────────────────────────────
+    BBB Listing:          NOT FOUND
+    BBB Complaints:       NONE (no listing exists to have complaints)
+
+    ASSESSMENT: The absence of a BBB listing is not unusual for a small
+    consulting company, but it means there is no BBB-mediated complaint
+    resolution available.
+
+    RESULT: NO BBB PRESENCE
+
+  C. REVIEWS & RATINGS ACROSS PLATFORMS
+  ─────────────────────────────────────────────────────────────────
+    GOOGLE REVIEWS:       NO Google Business profile found
+    YELP:                 NO Yelp listing found for Hibee
+    AVVO:                 N/A (Hibee is not a law firm)
+    TRUSTPILOT:           NO listing found
+    REDDIT:               ZERO mentions found on any immigration subreddit
+    VISAJOURNEY:          ZERO mentions found
+    TRACKITT:             ZERO mentions found
+    GLASSDOOR:            NO employee reviews found for Hibee specifically
+                          (Glassdoor shows a "Wenjie Sun & Associates" listing
+                           with immigration attorney salary data — relationship
+                           unclear)
+
+    WEBSITE TESTIMONIALS: Hibee's website contains client testimonials,
+    including one stating: "Very professional. Highly recommended. Filed my
+    EB-1B with Ms. Sun with ease. Got request for more evidence first from
+    premium processing. Ms. Sun was able to work through the case and
+    highlight my strength in the field. Finally get my I-140 approved in a
+    timely manner."
+
+    ASSESSMENT: These website testimonials CANNOT be independently verified.
+    They appear only on the company's own website and are not corroborated
+    by any third-party review platform.
+
+    CHINESE-LANGUAGE PLATFORMS: Hibee appears to serve a primarily Chinese-
+    speaking clientele. Reviews may exist on Chinese-language platforms
+    (WeChat groups, Xiaohongshu/RedNote, Zhihu) that are not accessible
+    through English-language web searches. A search for Hibee on Chinese
+    platforms returned no results, but this may be due to these platforms'
+    content being behind app-only walls.
+
+    RESULT: ZERO INDEPENDENT REVIEWS FOUND ON ANY PLATFORM — This is the
+            single most significant gap in this due diligence report.
+
+  D. "1,000+ H-1B APPROVALS" CLAIM
+  ─────────────────────────────────────────────────────────────────
+    CLAIM: "Secured 1,000+ H-1B approvals for her clients" (Wenjie Sun)
+
+    VERIFICATION ATTEMPTED:
+      - No USCIS case data publicly available to verify
+      - No public case results published on any website
+      - No attorney directory independently verifies this claim
+      - No third-party article or ranking cites this number
+      - The claim appears only on Hibee's website and in Hibee/Sun & Ren
+        promotional materials
+
+    PLAUSIBILITY CHECK:
+      Sun has been practicing since 2013 (13 years). To reach 1,000+ H-1B
+      approvals over 13 years, she would need approximately 77 approvals per
+      year, or roughly 6-7 per month. For a dedicated H-1B practitioner,
+      this is PLAUSIBLE but on the higher end. Many H-1B attorneys handle
+      50-100+ cases per year. If Sun & Ren operates as a volume practice
+      (which serving Chinese clients through a consulting platform like
+      Hibee suggests), this number is achievable.
+
+    SAME CLAIM FOR LAI: Xiaochen Lai is separately credited with "1,000+
+    high-net-worth individuals" assisted with immigration status. This is a
+    different claim (not specifically H-1B, and "assisted" is vaguer than
+    "approvals").
+
+    RESULT: UNVERIFIABLE — Plausible but cannot be confirmed. No independent
+            source corroborates this number. Treat as marketing claim.
+
+  E. OWNER-BENEFICIARY H-1B
+  ─────────────────────────────────────────────────────────────────
+    Hibee's website lists services including H-1B, O-1A, O-1B, L-1, and
+    various green card categories. Their H-1B Q&A page discusses general
+    H-1B requirements and lottery process.
+
+    SPECIFIC MENTION OF OWNER-BENEFICIARY H-1B: NOT FOUND on Hibee's
+    website or in any Hibee marketing materials. The H-1B Modernization Rule
+    (effective January 17, 2025) allowing owner-beneficiary H-1B petitions
+    is relatively new. Hibee's website does not explicitly advertise this
+    service.
+
+    Sun & Ren PLLC website: Could not extract content (Wix website did not
+    render for automated access). Their services page lists H-1B generally
+    but specific mention of owner-beneficiary cases was not found.
+
+    ASSESSMENT: While Hibee/Sun & Ren likely CAN handle owner-beneficiary
+    H-1B cases (it falls within standard H-1B practice), they do NOT
+    specifically advertise this service. This is worth asking about directly
+    during consultation.
+
+    RESULT: NOT SPECIFICALLY ADVERTISED — Ask directly
+
+  F. STEM OPT COMPLIANCE
+  ─────────────────────────────────────────────────────────────────
+    SPECIFIC MENTION OF STEM OPT COMPLIANCE: NOT FOUND on Hibee's website
+    or Sun & Ren's website.
+
+    Hibee's services focus on visa petition categories (H-1B, O-1, L-1,
+    green cards). STEM OPT compliance is an employer-side obligation that
+    involves I-983 training plans, E-Verify enrollment, and DOL wage
+    compliance. This is a different area than visa petition preparation.
+
+    ASSESSMENT: STEM OPT compliance does not appear to be a core service
+    offering. This is a specialized employer-compliance service that not
+    all immigration attorneys handle.
+
+    RESULT: NOT OFFERED (or at least not advertised)
+
+  G. FEE SCHEDULE
+  ─────────────────────────────────────────────────────────────────
+    Published Fee Schedule:  NOT FOUND
+    Hibee's website does not publish attorney fees or consulting fees.
+    The H-1B Q&A page discusses USCIS government filing fees but not
+    Hibee/Sun & Ren's professional fees.
+
+    GOVERNMENT FEES MENTIONED (from Hibee's H-1B Q&A):
+      - USCIS base application fee: $359 or $608 (depending on company size)
+      - ACWIA fee: not specified
+      - Anti-fraud fee: not specified
+      - Asylum program fee: not specified
+      - Premium processing: $2,188
+
+    NOTE: These are government fees, not attorney/consulting fees.
+
+    RESULT: FEE SCHEDULE NOT PUBLISHED — Must be obtained via consultation
+
+  H. TEAM SIZE & STRUCTURE
+  ─────────────────────────────────────────────────────────────────
+    HIBEE (Consulting Company):
+      - Chuyi Wang, Co-Founder (non-attorney, AI/tech background)
+      - Wenjie Sun, Of Counsel / Immigration Counsel (attorney)
+      - Xiaochen Lai, Immigration Counsel (attorney, possibly China-based)
+      - Unknown number of additional staff (paralegals, admin, etc.)
+
+    SUN & REN PLLC (Law Firm):
+      - Wenjie Sun, Founding Partner
+      - Momo Ren, Co-Founding Partner
+      - Unknown number of associates, paralegals, or support staff
+      - ZoomInfo lists the firm but does not provide headcount
+
+    EVENTS: Hibee has hosted events including a "Stablecoins & Web3 Founders
+    Forum" at Trump Tower (October 2025) — notably, this is a fintech/crypto
+    event, NOT an immigration event. This suggests Hibee operates across
+    multiple business verticals, not solely immigration consulting.
+
+    LINKTREE: Hibee has a Linktree page (linktr.ee/hibee.us) with links to
+    various social media channels.
+
+    NYU STARTUP COMPETITION: Co-founder Chuyi Wang participated as a
+    panelist at the 2025 NYU China-US Startup Competition (December 2025),
+    discussing AI's impact on business expansion. This reinforces that
+    Hibee is positioned as a startup/tech company, not primarily as an
+    immigration services provider.
+
+    RESULT: SMALL TEAM — 2 attorneys (one possibly China-based), 1 non-
+            attorney co-founder. Team size is minimal for a company claiming
+            1,000+ H-1B approvals. The attorneys' work appears to be done
+            through Sun & Ren PLLC, which has at least 2 partners.
+
+================================================================================
+4. SUN & REN PLLC — THE LAW FIRM
+================================================================================
+
+  A. NY REGISTRATION STATUS
+  ─────────────────────────────────────────────────────────────────
+    Entity Type:          PLLC (Professional Limited Liability Company)
+    Jurisdiction:         New York
+    Partners:             Wenjie Sun (Reg. #5126982, admitted 2013)
+                          Momo Ren (admitted 2016)
+    Address (Super Lawyers):  14 Penn Plaza, Suite 1317, New York, NY 10122
+    Address (OpenGovNY):      225 W 34th St Ste 2000, New York, NY 10122
+                              (Note: 14 Penn Plaza IS 225 W 34th St — same building)
+    Phone:                (631) 888-3636
+
+    NY SECRETARY OF STATE: Could not directly access entity search to verify
+    active registration. PLLC registration should be verifiable at:
+      https://apps.dos.ny.gov/publicInquiry/
+
+    SUPER LAWYERS FIRM PROFILE:
+      https://profiles.superlawyers.com/new-york/new-york/lawfirm/sun-and-ren-pllc/157b1f53-81e2-4a7f-832b-b54bc8d0c97e.html
+      2 attorneys selected to Super Lawyers or Rising Stars lists
+
+    ASSESSMENT: Sun & Ren PLLC appears to be a legitimate, operating NY law
+    firm with two licensed partners, both of whom have Super Lawyers Rising
+    Stars designations. The firm is listed on multiple professional platforms
+    (Super Lawyers, LawInfo, Yelp, LinkedIn, SignalHire, Indeed).
+
+    RESULT: APPEARS ACTIVE AND LEGITIMATE — Direct verification with NY DOS
+            recommended
+
+  B. WHO IS "REN"?
+  ─────────────────────────────────────────────────────────────────
+    Full Name:            Monica (Momo) Ren
+    Title:                Co-Founder and Partner, Sun & Ren PLLC
+    Bar Admission:        New York, 2016
+    Law School:           The George Washington University Law School (LL.M.)
+    Undergrad:            University of International Business and Economics
+                          (UIBE, Beijing — a prestigious Chinese university
+                           focused on economics and trade)
+    Languages:            English, Mandarin
+    Practice:             Employment-based and family-based immigration law
+                          (H-1B, L-1, O-1, TN, PERM, EB-2/3, EB-5, family)
+    Super Lawyers:        Rising Stars 2018-2024 (7 years)
+    LinkedIn:             https://www.linkedin.com/in/monica-momo-ren-81761539/
+    Got.Law Profile:      https://got.law/attorney/momo-ren/
+    Address:              1500 Broadway Ste 2200, New York, NY (Got.Law)
+                          225 W 34th St Ste 2000, New York, NY (OpenGovNY)
+
+    Prior Experience:     Reputable US-China law firms representing public and
+                          state-owned companies, startups, small/medium businesses
+    Activities:           Frequent lecturer on immigration law, regulation,
+                          policy and compliance before private organizations
+                          and educational institutions
+
+    NOTABLE: Momo Ren is NOT listed on Hibee's website as part of their team.
+    She appears to operate solely through Sun & Ren PLLC. This means the law
+    firm has two partners, but Hibee's consulting platform features only one
+    of them (Wenjie Sun). The reason for this separation is unknown but could
+    indicate that Hibee is Sun's separate business venture, with Ren focusing
+    on the law firm's direct clients.
+
+    OpenGovNY Record: Found in database but full registration details
+    (registration number, status) were not fully accessible during search.
+    Year of admission (2016) and employer (Sun & Ren PLLC) confirmed.
+
+    RESULT: MOMO REN VERIFIED — Legitimate attorney, Super Lawyers Rising
+            Stars, GW Law LL.M., admitted 2016
+
+  C. DISCIPLINARY / COMPLAINT HISTORY — SUN & REN PLLC
+  ─────────────────────────────────────────────────────────────────
+    SEARCHES CONDUCTED:
+      - "Sun & Ren" + disciplinary / complaint / malpractice: NO RESULTS
+      - "Momo Ren" + disciplinary / complaint: NO RESULTS
+      - EOIR disciplined practitioners: NEITHER Sun NOR Ren on the list
+      - Ripoff Report: NO complaints
+      - BBB: NO listing
+      - Reddit / immigration forums: NO mentions
+      - NY Attorney Grievance Committee: NO results
+
+    Indeed Employee Review: One employee review states "Ms. Ren is a nice
+    and professional lawyer" and praises the "kind colleagues and young
+    team." Notes high-quality clients, reasonable workload, no forced
+    overtime. This is a POSITIVE internal indicator.
+
+    RESULT: ZERO ADVERSE FINDINGS for Sun & Ren PLLC or Momo Ren
+
+================================================================================
+5. RED FLAGS ANALYSIS
+================================================================================
+
+  RED FLAG #1: CONSULTING COMPANY vs. LAW FIRM (HIGH CONCERN)
+  ─────────────────────────────────────────────────────────────────
+    ISSUE: Hibee International Consulting Inc. is explicitly NOT a law firm.
+    Its website states: "Hibee does not itself provide legal advice." Yet the
+    company markets immigration services including H-1B, O-1, L-1, and green
+    card applications — services that require legal representation.
+
+    STRUCTURE: The legal work appears to be channeled through Sun & Ren PLLC,
+    with Wenjie Sun serving in a dual capacity (Founding Partner of Sun & Ren
+    PLLC and Of Counsel to Hibee). This is a LEGAL GRAY AREA:
+
+    - If Hibee functions purely as a marketing/consulting front-end that
+      refers clients to Sun & Ren PLLC for legal work, this is potentially
+      acceptable but raises questions about fee-splitting with non-attorneys
+      (prohibited under NY ethics rules) and unauthorized practice of law.
+
+    - NY Rule of Professional Conduct 5.4(a) prohibits lawyers from sharing
+      legal fees with nonlawyers, with limited exceptions. If Hibee (owned
+      by non-attorney Chuyi Wang) receives a portion of legal fees, this
+      could be an ethics violation.
+
+    - NY Rule 5.4(b) prohibits forming a partnership with a nonlawyer if
+      any of the activities of the partnership consist of the practice of law.
+
+    - The key question is: Does the client's retainer agreement name SUN &
+      REN PLLC as the legal services provider, or HIBEE? If the engagement
+      letter is with Sun & Ren PLLC and Hibee merely makes the introduction,
+      this may be acceptable. If the engagement letter is with Hibee, this
+      is a potential unauthorized practice of law issue.
+
+    COMPARISON: This is similar to how some Chinese-owned consulting companies
+    in the US market immigration services to Chinese clients but use licensed
+    attorneys for the actual legal work. Some of these arrangements are
+    legitimate; others have resulted in ethics complaints and fraud charges.
+
+    SEVERITY: MEDIUM-HIGH — Not inherently disqualifying, but requires
+    clarification. Before engaging, ASK:
+      1. "Will my retainer agreement be with Sun & Ren PLLC or with Hibee?"
+      2. "Who holds my client file — Sun & Ren or Hibee?"
+      3. "If there is a malpractice issue, who carries the malpractice
+          insurance — Sun & Ren PLLC or Hibee?"
+      4. "How are fees split between Hibee and Sun & Ren PLLC?"
+
+  RED FLAG #2: ZERO INDEPENDENT CLIENT REVIEWS (MEDIUM CONCERN)
+  ─────────────────────────────────────────────────────────────────
+    ISSUE: Despite claiming 1,000+ H-1B approvals and years of practice,
+    there are ZERO client reviews on any independent platform for either
+    Hibee or Sun & Ren PLLC.
+
+    - Avvo: 0 reviews (Wenjie Sun)
+    - Google: No Google Business profile found
+    - Yelp: Listing exists but 0 reviews (Sun & Ren)
+    - Reddit: 0 mentions
+    - Immigration forums: 0 mentions
+    - Trustpilot: 0 reviews
+    - Martindale: 0 client reviews
+
+    POSSIBLE EXPLANATIONS:
+      (a) Client base is primarily Chinese-speaking and reviews may be on
+          Chinese platforms (WeChat, Xiaohongshu, Zhihu) not accessible
+          through English searches
+      (b) The firm may not actively solicit reviews
+      (c) The practice may be newer/smaller than the 1,000+ claim suggests
+      (d) Clients may be reluctant to leave public reviews due to
+          immigration sensitivity concerns
+
+    SEVERITY: MEDIUM — The complete absence of reviews makes independent
+    verification of service quality impossible. This is unusual for a
+    practice claiming 1,000+ cases.
+
+  RED FLAG #3: UNVERIFIABLE "1,000+" CLAIMS (LOW-MEDIUM CONCERN)
+  ─────────────────────────────────────────────────────────────────
+    ISSUE: Both attorneys associated with Hibee claim "1,000+" in their
+    marketing:
+      - Sun: "1,000+ H-1B approvals"
+      - Lai: "1,000+ high-net-worth individuals"
+
+    These numbers cannot be verified through any independent source.
+    The use of "1,000+" by both attorneys for different metrics feels
+    like a marketing template rather than precise record-keeping.
+
+    SEVERITY: LOW-MEDIUM — Common in immigration marketing. Not fraudulent
+    per se, but should be treated as promotional claims, not verified facts.
+
+  RED FLAG #4: CO-FOUNDER IS NOT AN ATTORNEY (MEDIUM CONCERN)
+  ─────────────────────────────────────────────────────────────────
+    ISSUE: Chuyi Wang, co-founder of Hibee, is not an attorney. Her
+    background is in:
+      - AI and technology
+      - Quantitative finance
+      - Venture capital (Riviera Holdings)
+      - Boston University education
+      - Previously a full-time parent
+
+    She has no legal training, no bar admission, and no immigration law
+    experience. Yet she co-founded a company that markets immigration
+    legal services.
+
+    Hibee hosted a "Stablecoins & Web3 Founders Forum" at Trump Tower
+    (October 2025) and Wang participated in the NYU China-US Startup
+    Competition (December 2025). These activities suggest Hibee is
+    positioned as a tech startup, not primarily as an immigration
+    services provider.
+
+    SEVERITY: MEDIUM — A non-attorney running a company that markets
+    legal services is a structural concern. The disclaimer on the website
+    ("Hibee does not itself provide legal advice") may provide legal cover,
+    but the practical reality is that clients coming to hibee.us expect
+    immigration legal services.
+
+  RED FLAG #5: XIAOCHEN LAI BAR STATUS UNVERIFIED (MEDIUM CONCERN)
+  ─────────────────────────────────────────────────────────────────
+    ISSUE: Xiaochen Lai's NY bar registration could not be found in the
+    OpenGovNY database. Her LinkedIn suggests she is based in Shanghai
+    (Jing'an District), not New York.
+
+    SEVERITY: MEDIUM — Requires direct verification before engaging.
+    If she is based in China, her role may be advisory (Chinese client
+    relations) rather than active US immigration case management.
+
+  RED FLAG #6: HIBEE OPERATES ACROSS MULTIPLE BUSINESS VERTICALS (LOW)
+  ─────────────────────────────────────────────────────────────────
+    ISSUE: Hibee appears to operate in multiple areas:
+      - Immigration consulting (primary public-facing service)
+      - Business consulting services (per trademark filing)
+      - Employment recruiting/staffing (per trademark filing)
+      - Crypto/Web3 events (Trump Tower stablecoins event)
+      - AI startup activities (NYU competition, co-founder's AI focus)
+      - Career networking services (per trademark filing)
+
+    A company that does immigration consulting, crypto events, AI, and
+    recruiting simultaneously is unusual. It may indicate that immigration
+    is not the company's sole or even primary focus.
+
+    SEVERITY: LOW — Not inherently problematic, but worth noting. Dedicated
+    immigration practices tend to produce better outcomes than companies
+    where immigration is one of many service lines.
+
+  NOT A RED FLAG: IMMIGRATION FRAUD ALLEGATIONS
+  ─────────────────────────────────────────────────────────────────
+    SEARCHED FOR:
+      - Immigration fraud allegations against Hibee: NONE FOUND
+      - Immigration fraud allegations against Sun & Ren: NONE FOUND
+      - Immigration fraud allegations against Wenjie Sun: NONE FOUND
+      - Immigration fraud allegations against Momo Ren: NONE FOUND
+      - Immigration fraud allegations against Xiaochen Lai: NONE FOUND
+      - EOIR disciplinary actions: NONE FOUND
+      - Pattern of complaints: NO PATTERN (zero complaints found)
+
+    RESULT: NO FRAUD ALLEGATIONS OR PATTERNS OF COMPLAINTS FOUND
+
+================================================================================
+6. COMPARATIVE ANALYSIS
+================================================================================
+
+  Compared to firms previously evaluated in this due diligence series:
+
+  CYRUS D. MEHTA & PARTNERS PLLC:
+    - Chambers Band 2, Star Individual managing partner
+    - 45+ Google reviews (4.8/5.0)
+    - Extensive published work, AILA leadership
+    - $312 consultation fee
+    - DD Score: ~8.5/10
+
+  SOPHIE ALCORN (previously evaluated):
+    - Silicon Valley solo practitioner
+    - Forbes contributor, Stanford lecturer
+    - Extensive public presence
+    - DD Score: varies
+
+  HIBEE / SUN & REN:
+    - No Chambers ranking
+    - Zero Google reviews
+    - No published legal writing
+    - No AILA involvement documented
+    - Fee schedule unknown
+    - Consulting company structure
+    - DD Score: 5.5/10
+
+  The gap between Hibee and a firm like Cyrus Mehta is significant. Hibee
+  has legitimate attorneys (Super Lawyers Rising Stars is real), but the
+  overall profile lacks the independent validation, review history, thought
+  leadership, and structural clarity found in top-tier immigration practices.
+
+================================================================================
+7. DD SCORE & RECOMMENDATION
+================================================================================
+
+  DD SCORE: 5.5 / 10 — MODERATE CAUTION ADVISED
+
+  SCORING BREAKDOWN:
+    Attorney Credentials (Sun):          7/10  (verified bar, Rising Stars,
+                                                Martindale Distinguished, W&M
+                                                Law School — all legitimate)
+    Attorney Credentials (Lai):          4/10  (bar status unverified, no
+                                                directory presence, possibly
+                                                China-based)
+    Business Structure:                  4/10  (consulting company, not law
+                                                firm; non-attorney co-founder;
+                                                potential ethics questions)
+    Client Reviews / Independent         2/10  (ZERO reviews on ANY platform;
+    Verification:                               no forum mentions; unverifiable
+                                                marketing claims)
+    Disciplinary / Complaint Record:     9/10  (completely clean — no adverse
+                                                findings of any kind)
+    Published Work / Thought Leadership: 3/10  (no published articles, no AILA
+                                                involvement, no blog posts)
+    Transparency / Fee Disclosure:       3/10  (no fee schedule, unclear
+                                                Hibee vs. Sun & Ren structure)
+    Firm Track Record / Recognition:     5/10  (Super Lawyers Rising Stars is
+                                                real but no Chambers, no Best
+                                                Lawyers, no AILA awards)
+
+  RECOMMENDATION:
+
+  IF CONSIDERING ENGAGEMENT WITH HIBEE / SUN & REN:
+
+    MUST-ASK QUESTIONS BEFORE ENGAGEMENT:
+    ─────────────────────────────────────────────────────────────────
+    1. "Will my retainer/engagement agreement be with Sun & Ren PLLC or
+        with Hibee International Consulting Inc.?" (CRITICAL — must be
+        with the law firm for legal protection)
+
+    2. "Who will be the attorney of record on my case — Wenjie Sun or
+        Xiaochen Lai? Will Momo Ren be involved?"
+
+    3. "Does Sun & Ren PLLC carry malpractice insurance? What is the
+        coverage amount?"
+
+    4. "How are fees structured? Is there a separate consulting fee for
+        Hibee and a separate legal fee for Sun & Ren?"
+
+    5. "Do you have experience with owner-beneficiary H-1B petitions
+        under the 2025 Modernization Rule?"
+
+    6. "Do you handle STEM OPT employer compliance (I-983 training plans,
+        E-Verify obligations)?"
+
+    7. "Can you provide references from previous H-1B clients (with their
+        permission)?"
+
+    8. "Where is Xiaochen Lai physically located — New York or China?"
+
+    9. "What is the fee for an initial consultation, and is it applied
+        toward the retainer if we proceed?"
+
+    10. "What is your H-1B approval rate for FY2025 and FY2026 cases
+         specifically?"
+
+  OVERALL ASSESSMENT:
+    Hibee/Sun & Ren is NOT a scam and the attorneys appear legitimate.
+    Wenjie Sun is a real, licensed, actively registered NY attorney with
+    13 years of experience and verified Super Lawyers recognition. Momo
+    Ren is also legitimate. However, the COMPLETE absence of independent
+    client reviews, the consulting company structure with a non-attorney
+    co-founder, the inability to verify Xiaochen Lai's bar status, the
+    unverifiable marketing claims, and the lack of published legal work
+    or AILA involvement mean that the quality of service CANNOT be
+    independently assessed through publicly available information.
+
+    For a matter as important as H-1B immigration, the inability to find
+    ANY independent client feedback is a significant gap. Compare this to
+    firms with dozens of Google reviews, published case studies, and
+    third-party rankings.
+
+    PROCEED ONLY WITH CAUTION AND AFTER OBTAINING SATISFACTORY ANSWERS
+    TO THE ABOVE QUESTIONS.
+
+================================================================================
+SOURCES & REFERENCES
+================================================================================
+
+Hibee International Consulting Inc.:
+  - Website: https://www.hibee.us/
+  - H-1B Q&A: https://www.hibee.us/h1bq-a
+  - Trademark: https://uspto.report/TM/99571082
+  - LinkedIn: https://www.linkedin.com/company/hibee_us
+  - Linktree: https://linktr.ee/hibee.us
+  - NYU Competition: https://markets.financialcontent.com/wral/article/marketersmedia-2025-12-18-2025-nyu-chinaus-startup-competition-concludes-with-strong-cross-border-innovation-momentum
+
+Wenjie Sun:
+  - OpenGovNY: https://opengovny.com/attorney/5126982
+  - Avvo: https://www.avvo.com/attorneys/10036-ny-wenjie-sun-4551829.html
+  - Super Lawyers: https://profiles.superlawyers.com/new-york/new-york/lawyer/wenjie-sun/bfb9a08b-3285-42b3-b1e4-5086b37c922f.html
+  - Martindale: https://www.martindale.com/attorney/wenjie-sun-300721380/
+  - US News: https://lawyers.usnews.com/lawyers/wenjie-sun/296292
+  - LinkedIn: https://www.linkedin.com/in/wenjie-sun-8078a73b/
+
+Xiaochen Lai:
+  - LinkedIn: https://www.linkedin.com/in/xiaochen-lai-5569369b/
+  - Hibee website bio: https://www.hibee.us/
+
+Momo Ren:
+  - Super Lawyers: https://profiles.superlawyers.com/new-york/new-york/lawyer/momo-ren/899eeeb5-e006-41c8-ab71-149f5a6d3f79.html
+  - LinkedIn: https://www.linkedin.com/in/monica-momo-ren-81761539/
+  - Got.Law: https://got.law/attorney/momo-ren/
+
+Sun & Ren PLLC:
+  - Website: https://www.sunrenlaw.com/
+  - About: https://www.sunrenlaw.com/about
+  - Super Lawyers Firm: https://profiles.superlawyers.com/new-york/new-york/lawfirm/sun-and-ren-pllc/157b1f53-81e2-4a7f-832b-b54bc8d0c97e.html
+  - Yelp: https://www.yelp.com/biz/sun-and-ren-new-york
+  - Indeed: https://www.indeed.com/cmp/Sun-&-Ren-Pllc
+  - LawInfo: https://www.lawinfo.com/lawfirm/new-york/new-york/sun-and-ren-pllc/157b1f53-81e2-4a7f-832b-b54bc8d0c97e.html
+
+Chuyi Wang:
+  - LinkedIn: https://www.linkedin.com/in/chuyi-wang-elsie/
+
+NY Bar Verification (recommended direct check):
+  - https://iapps.courts.state.ny.us/attorneyservices/search
+  - Search for: "Sun, Wenjie" | "Ren, Momo" | "Lai, Xiaochen"
+
+EOIR Disciplined Practitioners:
+  - https://www.justice.gov/eoir/list-of-currently-disciplined-practitioners
+
+Complaint Sites Searched (no results for any party):
+  - Ripoff Report: https://www.ripoffreport.com/
+  - BBB: https://www.bbb.org/
+  - USAComplaints: https://usacomplaints.com/
+
+================================================================================
+REPORT METADATA
+================================================================================
+Report Compiled:       February 23, 2026
+Compiled By:           Due Diligence Research
+Sources Reviewed:      35+ web sources, 10+ attorney/legal directories,
+                       6+ review platforms, 3+ immigration forums
+Bar Status (Sun):      VERIFIED — Currently registered (#5126982)
+Bar Status (Ren):      PARTIALLY VERIFIED — Admitted 2016, at Sun & Ren PLLC
+Bar Status (Lai):      NOT VERIFIED — Not found in OpenGovNY database
+Related Reports:       due_diligence_cyrus_mehta.txt
+                       due_diligence_kaitlyn_box.txt
+                       due_diligence_sophie_alcorn.txt
+
+Last Updated:          02/23/2026
+Status:                COMPLETE
+
+================================================================================
+END OF DUE DILIGENCE REPORT
+================================================================================

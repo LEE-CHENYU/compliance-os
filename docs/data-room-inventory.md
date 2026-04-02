@@ -1,0 +1,291 @@
+# Data Room Inventory
+
+Source folder: `/Users/lichenyu/Desktop/Important Docs `
+
+Snapshot date: `2026-03-29`
+
+## Current inventory
+
+- total files excluding `.DS_Store` and `Thumbs.db`: `586`
+- directly ingestible by the current v1 data-room path (`pdf/png/jpg/jpeg/csv/txt/docx`, excluding Office lock files like `~$*.docx`): `540`
+- rejected Office temp artifacts under the supported-extension set: `1`
+
+Top-level file counts:
+- `employment`: `240`
+- `CV & Cover Letters`: `107`
+- `stem opt`: `54`
+- `[root]`: `34`
+- `H1b Petition`: `25`
+- `BSGC`: `23`
+- `i20`: `20`
+- `Tax`: `16`
+- `公司信息`: `11`
+- `Personal Info Archive`: `10`
+
+Extension counts:
+- `.pdf`: `266`
+- `.png`: `151`
+- `.docx`: `57`
+- `.jpg`: `35`
+- `.jpeg`: `25`
+- `.odg`: `10`
+- `.txt`: `6`
+- `.heic`: `3`
+- `.zip`: `3`
+- `.rtf`: `3`
+
+## Follow-on accounting slice
+
+- comparison record: `docs/accounting-vs-important-docs-2026-03-29.md`
+- derived source folder: `/Users/lichenyu/Desktop/accounting-not-in-important-docs-20260329/files`
+- copied accounting-only files: `77`
+- selection rule: raw accounting documents not already present in `Important Docs`, excluding derived extraction/report folders unless no raw counterpart existed
+
+## Batch ledger
+
+- Batch 01:
+  - focus: STEM OPT and entity core records
+  - status: completed
+  - record: `docs/data-room-batch-01.md`
+- Batch 02:
+  - focus: company formation, leases, insurance/medical, `1042-S`, passport control
+  - status: completed
+  - record: `docs/data-room-batch-02.md`
+- Batch 03:
+  - focus: payroll, `I-9`, E-Verify, `I-765`, H-1B registration support
+  - status: completed
+  - record: `docs/data-room-batch-03.md`
+- Batch 04:
+  - focus: H-1B petition notices, status summaries, receipt/approval evidence, and supporting filings
+  - status: completed
+  - record: `docs/data-room-batch-04.md`
+- Batch 05:
+  - focus: identity, travel, `I-20` history, and overflow tax/personal archive records
+  - status: completed
+  - record: `docs/data-room-batch-05.md`
+- Batch 06:
+  - focus: root-level identity, visa, EAD, diploma, and transcript anchors
+  - status: completed
+  - record: `docs/data-room-batch-06.md`
+- Batch 07:
+  - focus: employment continuity across additional `I-9`, offer-letter, and paystub records
+  - status: completed
+  - record: `docs/data-room-batch-07.md`
+- Batch 08:
+  - focus: STEM OPT archive continuity across additional `I-983` versions and support records
+  - status: completed
+  - record: `docs/data-room-batch-08.md`
+- Batch 09:
+  - focus: BSGC archive governance, EIN, operating-agreement, and contract records
+  - status: completed
+  - record: `docs/data-room-batch-09.md`
+- Batch 10:
+  - focus: tax overflow plus H-1B employee passport, visa, EAD, and transcript evidence
+  - status: completed
+  - record: `docs/data-room-batch-10.md`
+- Batch 11:
+  - focus: academic credential and business license anchor records
+  - status: completed
+  - record: `docs/data-room-batch-11.md`
+- Batch 12:
+  - focus: company access, payment account, public-key, recovery-code, and filing artifacts
+  - status: completed
+  - record: `docs/data-room-batch-12.md`
+- Batch 13:
+  - focus: `I-20` history, admission, and enrollment continuity records
+  - status: completed
+  - record: `docs/data-room-batch-13.md`
+- Batch 14:
+  - focus: medical, residence, membership, and family identity support records
+  - status: completed
+  - record: `docs/data-room-batch-14.md`
+- Batch 15:
+  - focus: resume and work-sample career materials
+  - status: completed
+  - record: `docs/data-room-batch-15.md`
+- Batch 16:
+  - focus: employment supplemental agreements, notices, and payroll continuity
+  - status: completed
+  - record: `docs/data-room-batch-16.md`
+- Batch 17:
+  - focus: STEM OPT admin, guidance, and filing-support artifacts
+  - status: completed
+  - record: `docs/data-room-batch-17.md`
+- Batch 18:
+  - focus: collection, receipts, and bank-support financial records
+  - status: completed
+  - record: `docs/data-room-batch-18.md`
+- Batch 19:
+  - focus: education credential overflow and language-test records
+  - status: completed
+  - record: `docs/data-room-batch-19.md`
+- Batch 20:
+  - focus: I-20 overflow, transfer-pending continuity, and USCIS account support
+  - status: completed
+  - record: `docs/data-room-batch-20.md`
+- Batch 21:
+  - focus: early multilingual resume archive continuity
+  - status: completed
+  - record: `docs/data-room-batch-21.md`
+- Batch 22:
+  - focus: later resume archive and targeted role variants
+  - status: completed
+  - record: `docs/data-room-batch-22.md`
+- Batch 23:
+  - focus: VCV payroll continuity from late 2023 through mid 2024
+  - status: completed
+  - record: `docs/data-room-batch-23.md`
+- Batch 24:
+  - focus: VCV payroll continuity from mid 2024 through late 2024
+  - status: completed
+  - record: `docs/data-room-batch-24.md`
+- Batch 25:
+  - focus: STEM OPT I-983 overflow versions and templates
+  - status: completed
+  - record: `docs/data-room-batch-25.md`
+- Batch 26:
+  - focus: resume archive overflow plus education credential anchors
+  - status: completed
+  - record: `docs/data-room-batch-26.md`
+- Batch 27:
+  - focus: employment payroll, offer-letter, E-Verify, bank, and filing-fee continuity
+  - status: completed
+  - record: `docs/data-room-batch-27.md`
+- Batch 28:
+  - focus: remaining I-983 overflow and employment-side STEM OPT request records
+  - status: completed
+  - record: `docs/data-room-batch-28.md`
+- Batch 29:
+  - focus: identity, tax, residence, CPT, and filing-confirmation support artifacts
+  - status: completed
+  - record: `docs/data-room-batch-29.md`
+- Batch 30:
+  - focus: employment agreements, reminders, legal responses, and HR correspondence
+  - status: completed
+  - record: `docs/data-room-batch-30.md`
+- Batch 31:
+  - focus: employment legal and admin overflow including NDAs, signature packets, check images, tax forms, and EIN paperwork
+  - status: completed
+  - record: `docs/data-room-batch-31.md`
+- Batch 32:
+  - focus: employment screenshot overflow across Justworks, WhatsApp, and recruiter chat captures
+  - status: completed
+  - record: `docs/data-room-batch-32.md`
+- Batch 33:
+  - focus: Bitsync chat-export asset archive part one
+  - status: completed
+  - record: `docs/data-room-batch-33.md`
+- Batch 34:
+  - focus: Bitsync chat-export asset archive part two
+  - status: completed
+  - record: `docs/data-room-batch-34.md`
+- Batch 35:
+  - focus: education scans, student-admin screenshots, website filing artifacts, and account setup overflow
+  - status: completed
+  - record: `docs/data-room-batch-35.md`
+- Batch 36:
+  - focus: personal and company identity archive scans across BSGC and personal records
+  - status: completed
+  - record: `docs/data-room-batch-36.md`
+- Batch 37:
+  - focus: root identity images and profile-photo archive overflow
+  - status: completed
+  - record: `docs/data-room-batch-37.md`
+- Batch 38:
+  - focus: hiring portal, website-admin, and account-security screenshot overflow
+  - status: completed
+  - record: `docs/data-room-batch-38.md`
+- Batch 39:
+  - focus: Bitsync employment chat and legal-guidance screenshots part one
+  - status: completed
+  - record: `docs/data-room-batch-39.md`
+- Batch 40:
+  - focus: remaining employment screenshot residue plus STEM and chat-export admin overflow
+  - status: completed
+  - record: `docs/data-room-batch-40.md`
+- Batch 41:
+  - focus: Bitsync chat-export asset overflow part one from the numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-41.md`
+- Batch 42:
+  - focus: Bitsync chat-export asset overflow part two from the numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-42.md`
+- Batch 43:
+  - focus: Bitsync chat-export asset overflow part three from the numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-43.md`
+- Batch 44:
+  - focus: Bitsync chat-export asset overflow part four from the second numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-44.md`
+- Batch 45:
+  - focus: Bitsync chat-export asset overflow part five from the second numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-45.md`
+- Batch 46:
+  - focus: Bitsync chat-export asset overflow part six from the second numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-46.md`
+- Batch 47:
+  - focus: Bitsync chat-export asset overflow part seven from the second numbered archive copy
+  - status: completed
+  - record: `docs/data-room-batch-47.md`
+- Batch 48:
+  - focus: Bitsync chat-export asset overflow part eight across the second archive copy and primary archive
+  - status: completed
+  - record: `docs/data-room-batch-48.md`
+- Batch 49:
+  - focus: Bitsync chat-export asset overflow part nine from the primary archive
+  - status: completed
+  - record: `docs/data-room-batch-49.md`
+- Batch 50:
+  - focus: remaining primary chat-export assets plus the residual opaque identifier text artifact
+  - status: completed
+  - record: `docs/data-room-batch-50.md`
+- Batch 51:
+  - focus: early Word resume archive continuity across 2022 and early 2023 variants
+  - status: completed
+  - record: `docs/data-room-batch-51.md`
+- Batch 52:
+  - focus: mid-cycle Word resume archive and role-variant continuity across 2023 and 2024
+  - status: completed
+  - record: `docs/data-room-batch-52.md`
+- Batch 53:
+  - focus: late Word resume archive, Jobright overflow, and H-1B resume continuity
+  - status: completed
+  - record: `docs/data-room-batch-53.md`
+- Batch 54:
+  - focus: Word cover letters, employment-letter support, and employer-assistance request records
+  - status: completed
+  - record: `docs/data-room-batch-54.md`
+- Batch 55:
+  - focus: Word work-sample archive plus H-1B registration worksheet support
+  - status: completed
+  - record: `docs/data-room-batch-55.md`
+- Batch 56:
+  - focus: accounting-derived bank statements, brokerage statements, and transfer evidence not present in Important Docs
+  - status: completed
+  - record: `docs/data-room-batch-56.md`
+- Batch 57:
+  - focus: accounting-derived entity legal packets, H-1B representation forms, and registration drafts
+  - status: completed
+  - record: `docs/data-room-batch-57.md`
+- Batch 58:
+  - focus: accounting-derived CIAM, school, and immigration support packets outside the original corpus
+  - status: completed
+  - record: `docs/data-room-batch-58.md`
+- Batch 59:
+  - focus: accounting-derived H-1B intake worksheets, counsel packets, and filing invoices
+  - status: in progress
+  - record: `docs/data-room-batch-59.md`
+- Batch 60:
+  - focus: accounting-derived payroll, tax-support, and standalone form residue
+  - status: planned
+  - record: `docs/data-room-batch-60.md`
+
+## Current priorities
+
+1. Keep Batches `01` through `58` stable under focused tests plus real-source validation.
+2. Resolve the accounting-derived follow-on queue in Batches `59` through `60` before opening another source slice.
+3. The next platform step after the accounting queue is still retrieval and vector search over persisted OCR and DOCX text, then deeper comparison coverage for the newly added families.

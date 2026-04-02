@@ -1,0 +1,776 @@
+================================================================================
+DUE DILIGENCE REPORT — ALENA SHAUTSOVA / LAW OFFICE OF ALENA SHAUTSOVA, P.C.
+Subject: Immigration attorney evaluation for H-1B owner-beneficiary representation
+Originally Compiled: 02/17/2026
+Updated: 02/23/2026
+================================================================================
+
+EXECUTIVE SUMMARY:
+  Alena Shautsova is a legitimate, well-credentialed immigration attorney with
+  18+ years of practice, strong professional recognition (Super Lawyers 2015-2025,
+  AILA member since 2012, ABA involvement, 10.0 Avvo), and a large online
+  following (370K+ across YouTube/Facebook). She claims 89 self-sponsored H-1B
+  approvals in Q1 2025 — a claim that is SELF-REPORTED and NOT independently
+  verifiable. Her published self-sponsorship guide shows operational familiarity
+  with H-1B mechanics but lacks doctrinal rigor (no case citations, no CFR
+  references). No disciplinary actions, malpractice suits, or red flags found.
+  Her core expertise appears rooted in asylum, removal defense, and family
+  immigration, with self-sponsored H-1B as a newer service offering. Overall,
+  a credible attorney, but the "89 approvals" claim and the depth of her
+  owner-beneficiary H-1B expertise warrant skeptical inquiry during consultation.
+
+  DD SCORE: 7.5 / 10
+
+  VERDICT: CREDIBLE — WORTH CONSULTING, WITH CAVEATS
+  Proceed to consultation, but probe for specifics on self-sponsored H-1B
+  experience and verify the "89 approvals" claim with evidence during the meeting.
+
+  KHOLOUD SAMY GABER: CONFIRMED as a Legal Assistant / Paralegal at the firm
+  since February 2025. She is NOT an attorney — she holds an LL.B. from Cairo
+  University. If Kholoud offered consultation options, she is doing so as firm
+  staff, not as legal counsel. The consultation would be with Alena Shautsova
+  (the attorney), not Kholoud. This is normal practice — paralegals and legal
+  assistants commonly handle scheduling and intake.
+
+================================================================================
+1. ATTORNEY IDENTIFICATION & CREDENTIALS
+================================================================================
+
+  Full Name:          Alena Shautsova, Esq.
+  Firm Name:          Law Office of Alena Shautsova, P.C.
+  Type:               Professional Corporation (P.C.)
+  Founded:            2008
+  Years in Practice:  18+ years (admitted 2008)
+
+  LOCATION:
+    Primary Office:   2908A Emmons Ave, Brooklyn, NY 11235
+    Second Office:    175 Eileen Way, Syosset, NY 11791
+
+  CONTACT:
+    Phone:            (917) 885-2261
+    Email:            office@shautsova.com
+    Website:          https://shautsova.com/
+    Alt Websites:     https://www.russianspeakinglawyerny.com/
+                      https://www.workharassmentattorneys.com/
+    Hours:            Mon-Sat 9:00 AM - 8:00 PM; Sun - Closed
+
+  EDUCATION:
+    Undergraduate:    Belarusian State University (Belarus)
+                      Juris Doctor equivalent (law degree), graduated with honors
+                      Year: ~2004
+    Second Degree:    Economics and Management (Belarus, institution not specified)
+    U.S. Law Degree:  Case Western Reserve University, School of Law (Cleveland, OH)
+                      LL.M. (Master of Laws), 2006
+                      Scholarship: Eduard S. Muskie Fellowship (U.S. Dept of State, 2005)
+    Continuing Ed:    NYSBA Young Lawyers Section Trial Academy (2011)
+
+  NOTE ON LL.M. vs. J.D.:
+    Shautsova has an LL.M. (one-year master's degree for foreign-trained lawyers),
+    NOT a J.D. (the standard 3-year U.S. law degree). This is the standard path
+    for foreign-trained lawyers in New York and is completely legitimate. Case
+    Western Reserve is ABA-accredited (~#80 nationally). Not a negative factor.
+
+  LANGUAGES:
+    Russian (native), Belarusian (native), Arabic (listed on Super Lawyers),
+    German (listed on Super Lawyers), English (professional)
+
+================================================================================
+2. STATE BAR VERIFICATION & COURT ADMISSIONS
+================================================================================
+
+  NY BAR STATUS:
+    Bar Exam:         Passed 2007
+    Admitted:         2008 (New York)
+    Registration #:   NOT FOUND in public searches (NY courts portal returned 403;
+                      must verify directly at iapps.courts.state.ny.us or by calling
+                      OCA at 212-428-2800)
+    Status:           PRESUMED ACTIVE — listed as licensed since 2008 on Super
+                      Lawyers, Justia, AILA, and Avvo (all require active license);
+                      Super Lawyers profile confirms "Licensed since 2008"
+    Disciplinary:     NO DISCIPLINARY ACTIONS FOUND
+                      - No results in searches for "Shautsova" + grievance/discipline
+                      - Not found on EOIR list of disciplined practitioners
+                      - No Avvo disciplinary records noted
+                      - No results for suspension/disbarment searches
+
+  COURT ADMISSIONS:
+    - All New York State Courts
+    - U.S. District Court, Southern District of New York (2010)
+    - U.S. District Court, Eastern District of New York (2010)
+    - U.S. Court of Appeals, 2nd Circuit
+    - United States Supreme Court (2012)
+
+  PROFESSIONAL MEMBERSHIPS:
+    - American Immigration Lawyers Association (AILA) — member since 2012
+    - New York State Bar Association (NYSBA)
+    - American Bar Association (ABA)
+    - Nassau County Bar Association
+
+  PROFESSIONAL ROLES & LEADERSHIP:
+    - ABA Delegate to House of Delegates (NYSBA Young Lawyers Section)
+    - ABA Representative to United Nations ECOSOC (2015-2016)
+    - ABA Co-Chair of Membership in New York
+    - NYSBA Special Committee on Immigration Representation (only Russian-speaking
+      attorney on this committee)
+    - NYSBA COSAC Committee (Committee on Standards of Attorney Conduct)
+    - Organized Disaster Legal Services after Hurricane Sandy
+    - Judge at various New York Immigration moot court competitions
+    - Developed CLE programs for New York and US lawyers
+
+  LIMITATION: Could not directly access the NY OCA attorney search portal.
+  RECOMMEND verifying directly at:
+    https://iapps.courts.state.ny.us/attorneyservices/search
+    Search: Last Name = "Shautsova", First Name = "Alena"
+
+================================================================================
+3. SPECIALIZATION — H-1B, OWNER-BENEFICIARY, STEM OPT
+================================================================================
+
+  SERVICES LISTED ON WEBSITE (shautsova.com/services/):
+    [x] Family-Based Immigration (marriage petitions, fiance visas, AOS, I-751, VAWA)
+    [x] Employment Visas: EB1, EB2 NIW, EB2 PERM, EB3, EB4, O-1, P-1, E-2,
+        H-1B, H-2B, E visas, TN visas
+    [x] Green Card Applications
+    [x] Asylum and Humanitarian Relief (asylum, CAT, withholding, U visa, T visa)
+    [x] Deportation Defense
+    [x] Citizenship and Naturalization
+    [x] Waivers and Appeals (I-601, I-212, I-601A, BIA, federal court)
+    [x] Business/Investment Visas
+    [x] Litigation (employment discrimination)
+
+  H-1B CAP CASES:
+    Listed: YES — H-1B is explicitly listed as an employment visa service
+    Evidence of depth: MODERATE — firm website lists H-1B among many visa types
+    but does not have a dedicated H-1B page with detailed information about cap
+    registration, lottery, specialty occupation analysis, etc.
+
+  OWNER-BENEFICIARY H-1B / SELF-SPONSORED H-1B:
+    Listed: YES — published a comprehensive guide in June 2025:
+      https://shautsova.com/2025/06/11/self-sponsoring-your-h-1b-visa-a-
+      comprehensive-guide-for-entrepreneurs-in-2025/
+    Claims: 89 self-sponsored H-1B approvals in Q1 2025 (UNVERIFIED — see Sec. 6)
+    The guide discusses:
+      - DHS final rule effective January 17, 2025
+      - Board governance requirements
+      - Employer-employee relationship structuring
+      - Prevailing wage and DOL OES data
+      - USCIS Fraud Detection scrutiny
+    WEAKNESSES of the guide:
+      - No case citations (no AAO decisions, no BIA decisions)
+      - No CFR references
+      - No USCIS policy memoranda cited
+      - Unsourced statistics ("63% of RFEs," "41% denials")
+      - Proprietary frameworks that cannot be verified
+      - Marketing-oriented rather than scholarly
+
+  STEM OPT COMPLIANCE:
+    NOT explicitly listed as a service.
+    The firm has content about EB-2 NIW for STEM professionals
+    (https://www.shautsova.com/law-publications/eb-2-national-interest-waiver-
+    stem-professionals.html) but this is EB-2 NIW, not STEM OPT employer compliance.
+    No evidence found of STEM OPT I-983 training plan preparation, E-Verify
+    compliance assistance, or employer-side STEM OPT regulatory guidance.
+
+  CORE EXPERTISE ASSESSMENT:
+    DEEP EXPERTISE (demonstrated through years of publications and practice):
+      - Asylum law (multiple articles, videos, AILA specialization)
+      - Removal/deportation defense
+      - Immigration court hearings and appeals
+      - Family-based immigration (adjustment, waivers, VAWA)
+      - Criminal immigration consequences
+
+    MODERATE EXPERTISE (service offered, limited published depth):
+      - Employment-based immigration (H-1B, O-1, E-2)
+      - Self-sponsored H-1B (one guide published June 2025)
+      - EB-2 NIW
+      - Employment discrimination (separate website)
+
+    NO EVIDENCE / NOT OFFERED:
+      - STEM OPT compliance (employer-side)
+      - H-1B owner-beneficiary case law analysis
+      - Business formation for immigration purposes (beyond blog level)
+
+================================================================================
+4. REVIEWS & RATINGS — ALL PLATFORMS
+================================================================================
+
+  AVVO:
+    URL:              https://www.avvo.com/attorneys/11235-ny-alena-shautsova-1802451.html
+    Avvo Rating:      10.0 "Superb" (CONFIRMED — highest possible rating)
+    Client Reviews:   58+ reviews, 5.0 stars average
+    Awards:           Avvo Clients' Choice Award 2021 & 2025
+                      Avvo Top Contributor Award 2012-2018, 2021, 2025
+    Disciplinary:     NONE found
+    Peer Endorsements: Multiple — described as "exceptional," "extremely talented,"
+                       "very hardworking and diligent"
+
+  YELP:
+    URL:              https://www.yelp.com/biz/alena-shautsova-new-york
+    Reviews:          14 reviews (as of February 2026)
+    Rating:           Not extracted (Yelp blocked direct access)
+    Listed in:        Top 10 Best Immigration Attorneys in New York, NY (Yelp)
+
+  BIRDEYE (aggregated from multiple platforms):
+    URL:              https://reviews.birdeye.com/alena-shautsova-law-offices-155666455328649
+    Reviews:          281 reviews
+    Rating:           4.7 stars
+
+  GOOGLE REVIEWS:
+    Rating:           Estimated 4.7-4.8 stars (based on Birdeye aggregation)
+    Reviews:          Part of the 281 Birdeye aggregate
+
+  MARTINDALE-HUBBELL:
+    Client Rating:    5.0 out of 5.0
+    Peer Rating:      "Notable" (recognized for strong ethical standards)
+    Awards:           Client Champion Award
+    URL:              https://www.martindale.com/organization/law-offices-of-alena-shautsova-157091215/
+
+  SUPER LAWYERS:
+    Status:           Rising Stars 2015-2021; Super Lawyers 2022-2025
+    Note:             Only 2.5% of attorneys in New York Metro receive this distinction
+    URL:              https://profiles.superlawyers.com/new-york/new-york/lawyer/
+                      alena-shautsova/75306cac-ea16-4e6e-8c4b-9a19e0080b73.html
+
+  JUSTIA:
+    URL:              https://lawyers.justia.com/lawyer/alena-shautsova-1493940
+    Profile:          Active, comprehensive listing
+
+  CHAMBER OF COMMERCE:
+    Reviews:          135 reviews
+    Rating:           4.8 stars
+
+  LAWYERRATINGZ:
+    Reviews:          2 reviews (both 5.0 stars, from 2011 and 2012)
+    Rating:           5.0 overall
+
+  LAWYERS.COM:
+    URL:              https://www.lawyers.com/brooklyn/new-york/alena-shautsova-158135129-a/
+
+  BBB (Better Business Bureau):
+    Listing:          NOT FOUND — no BBB profile exists
+    Note:             Not unusual for small immigration law firms; BBB participation
+                      is voluntary and more common for consumer-facing businesses
+
+  REVIEW SUMMARY:
+    Total reviews:    ~490+ across all platforms
+    Average rating:   4.7-5.0 depending on platform
+    Negative reviews: ONE mildly negative found — a ReachAttorneys reviewer stated:
+                      "Did not find them very knowledgeable for the money they charge,
+                      as I already had some experience with other lawyers. For example
+                      their consultation is $273, the most expensive I ever heard."
+    Red flags:        NONE identified from reviews
+
+  CLIENT PRAISE THEMES:
+    - Thorough case preparation and organization
+    - Responsive communication, including late-night email replies
+    - Fair and competitive pricing
+    - Successful case outcomes (approvals, asylum grants, green cards)
+    - Anticipates challenges and prepares clients for each step
+    - Associates and staff are "equally outstanding"
+    - EB2 NIW approvals with no RFE
+    - Green card approvals in as little as 25 days
+
+  NOTABLE QUOTE: "With Alena Shautsova, you are getting ELITE quality service
+  for the price of your normal lawyer."
+
+  CONCERN: Near-zero negative reviews across 490+ reviews is statistically
+  unusual for any professional with 18 years and hundreds of cases. Possible
+  explanations:
+    (a) Genuinely excellent service (best case)
+    (b) Active review management / removal of negative reviews (concerning)
+    (c) Client base is predominantly Russian-speaking and may not use
+        English-language review platforms for complaints
+    (d) Selection bias — only satisfied clients leave reviews
+  This is NOT a red flag by itself, but warrants noting.
+
+================================================================================
+5. DISCIPLINARY ACTIONS, COMPLAINTS, MALPRACTICE
+================================================================================
+
+  SEARCHES CONDUCTED:
+    - "Alena Shautsova" + grievance committee / disciplinary action / suspension
+    - "Alena Shautsova" + malpractice / lawsuit / complaint
+    - "Alena Shautsova" + scam / fraud / "rip off" / "stay away" / unprofessional
+    - EOIR disciplinary list search
+    - BBB complaint search
+    - Yelp negative review search
+    - Avvo disciplinary records check
+
+  RESULTS: NO ADVERSE FINDINGS
+    - No malpractice lawsuits found
+    - No disciplinary proceedings found
+    - No grievance committee actions found
+    - No fraud or scam allegations found
+    - Not on EOIR list of disciplined practitioners
+    - No BBB complaints (no BBB listing exists)
+    - No negative search results of any kind (except the one mild Yelp-style
+      complaint about $273 consultation fee being expensive)
+
+  LIMITATION: Could not directly access:
+    - NY OCA attorney search portal (403 error)
+    - NY courts case search (would require separate portal)
+    - PACER federal court records (requires paid account)
+
+  RECOMMENDATION: Verify directly via:
+    (1) NY OCA: https://iapps.courts.state.ny.us/attorneyservices/search
+    (2) NY Appellate Division, 2nd Dept (Brooklyn jurisdiction):
+        https://www.nycourts.gov/courts/ad2/attorneymatters_complaintaboutalawyer.shtml
+    (3) EOIR: https://www.justice.gov/eoir/list-of-currently-disciplined-practitioners
+
+================================================================================
+6. THE "89 SELF-SPONSORED H-1B APPROVALS IN Q1 2025" CLAIM
+================================================================================
+
+  THE CLAIM: "We've secured 89 self-sponsored H-1B approvals in Q1 2025 alone
+  for clients in AI, cleantech, and advanced manufacturing."
+
+  SOURCE: The claim appears ONLY on shautsova.com, specifically in:
+    https://shautsova.com/2025/06/11/self-sponsoring-your-h-1b-visa-a-
+    comprehensive-guide-for-entrepreneurs-in-2025/
+  Published: June 11, 2025
+
+  INDEPENDENT VERIFICATION: NONE FOUND
+    - The claim is not cited by any third-party source
+    - No independent media or legal publication has verified this number
+    - The USCIS H-1B Employer Data Hub does not list individual attorney firms
+    - H1BGrader and MyVisaJobs would list petitioning employers, not attorneys
+    - The only source for this number is Shautsova's own marketing material
+
+  PLAUSIBILITY ASSESSMENT:
+    89 self-sponsored H-1B approvals in a single quarter is a VERY HIGH number.
+    For context:
+      - Self-sponsored H-1B became explicitly permitted on January 17, 2025
+      - Q1 2025 = January-March 2025 (only 2.5 months after rule took effect)
+      - This would mean ~30 approvals per month, or ~7 per week
+      - Premium processing takes 15 business days; regular can take 6+ months
+      - For 89 approvals in Q1, most would need to have been filed very rapidly
+        after the Jan 17 rule AND used premium processing
+      - This is possible for a high-volume firm, but exceptionally unusual for
+        a firm with 7 total staff members (1 attorney, 1 senior paralegal,
+        1 legal assistant, 2 other team members, 1 legal secretary, 1 marketing)
+
+  ADDITIONAL UNSOURCED STATISTICS IN THE GUIDE:
+    - "63% of RFEs in Q1 2025 citing insufficient board governance documents"
+    - "41% denials" for pre-revenue startups without binding contracts
+    - "22% of denials linked to incorrect OES wage level selections"
+    - Neither statistic is sourced or independently verifiable
+    - USCIS does not publish RFE breakdown data at this granularity
+
+  VERDICT ON THE CLAIM:
+    UNVERIFIED — TREAT WITH SKEPTICISM
+    The claim is plausible but unsubstantiated. During consultation, ask for:
+      (1) Case list or anonymized approval notices demonstrating volume
+      (2) Specific examples of self-sponsored H-1B cases handled
+      (3) RFE rate for her self-sponsored cases specifically
+      (4) Whether "89 approvals" means initial approvals, change-of-status,
+          extensions, or a combination
+
+================================================================================
+7. FEE INFORMATION
+================================================================================
+
+  PUBLISHED FEES: MINIMAL
+    - Consultation fee: $273 (per one reviewer on ReachAttorneys)
+    - No case fee schedules published on website
+    - No H-1B-specific pricing available
+
+  CLIENT DESCRIPTIONS OF FEES:
+    - "Speaking of payment, Alena's prices are more than fair."
+    - "Ms Alena is honest, her fee is fair with the high quality of work she produce."
+    - "Her fees are very reasonable."
+    - "ELITE quality service for the price of your normal lawyer."
+    - The firm offers "after-pay" / flexible payment options
+
+  CONSULTATION OPTIONS:
+    - In-person consultations at Brooklyn and Syosset offices
+    - Skype/video consultations available
+    - Appointments available during flexible and after-work hours
+
+  FEE STRUCTURE:
+    Per website: "The attorney's fees vary based on the difficulty of issues of
+    a particular case, attorney's experience and the area where the attorney
+    comes from."
+
+  IMMIGRATION COST CALCULATOR:
+    URL: https://www.shautsova.com/immigration-applications/calculator-cost-case.html
+    - Calculator exists for Asylum and Adjustment of Status (Spouse) cases
+    - Does NOT include H-1B or employment-based visa cost calculators
+
+  COMPARISON TO BENCHMARK FIRMS:
+    Arora:          FULL TRANSPARENCY — $663 reg, $2,730 petition, $3,393 total
+    Cyrus Mehta:    $370 (Mehta) / $273-450 (associates) consultation
+    Sophie Alcorn:  Not published (likely premium)
+    Shautsova:      ~$273 consultation (per reviewer); case fees not published
+
+================================================================================
+8. TEAM SIZE & KEY STAFF
+================================================================================
+
+  TOTAL TEAM SIZE: 7 people (per firm website "About" page)
+
+  PRINCIPAL ATTORNEY:
+    Alena Shautsova, Esq. — Founder, Immigration and Civil Lawyer
+      Email: office@shautsova.com
+      Bar: NY 2008 | SDNY | EDNY | 2nd Circuit | US Supreme Court
+      Languages: Russian, Belarusian, Arabic, German, English
+
+  SENIOR PARALEGAL / TEAM MANAGER:
+    Gregory Abrams
+      Education: Columbia University, magna cum laude (human rights specialization)
+      Tenure: 12+ years at the firm
+      Focus: Family-based petitions, employment immigration, EB2 NIW,
+             asylum, VAWA, I-130 petitions
+      Note: Longest-tenured non-attorney staff member
+
+  LEGAL ASSISTANT / PARALEGAL:
+    ** Kholoud Samy Gaber **
+      Email: kholoud.gaber@shautsova.com
+      Education: LL.B. from Cairo University, Faculty of Law (English Section),
+                 graduated "Very Good with Honors"
+      Joined: February 2025 (~1 year at firm)
+      Focus: Asylum matters, family-based immigration, deportation defense
+      Languages: Arabic and English (fluent in both)
+      Note: She is NOT an attorney. She is a legal assistant/paralegal.
+            If she offered consultation options, she is acting as intake/
+            scheduling staff. This is normal and appropriate. The actual
+            legal consultation would be with attorney Alena Shautsova.
+
+  TEAM MEMBERS:
+    Muhammed Haider ("Memer")
+      Focus: Form assistance, case material organization, client communication
+      Known for: Exceptional attention to detail
+
+    Jesyon Montero
+      Role: Team member (specific title not published)
+
+  LEGAL SECRETARY:
+    Marwan Twig
+      Joined: September 2024
+      Languages: English and Arabic
+      Focus: Organizational support, client communication
+
+  SOCIAL MEDIA MARKETING SPECIALIST:
+    Olivia Turea
+      Focus: Social media content creation and management
+      Languages: Russian, English, French, Romanian
+      Note: This is a marketing role, not legal staff
+
+  TEAM ASSESSMENT:
+    - 1 attorney + 6 support staff
+    - Solo practitioner structure with paralegal/assistant support
+    - Gregory Abrams (12+ years, Columbia) is the most experienced staff member
+    - Kholoud Samy Gaber is relatively new (joined Feb 2025) and focuses on
+      asylum/family, not employment-based immigration
+    - No associate attorneys listed — Alena appears to be the only licensed
+      attorney at the firm
+    - For a firm claiming 89 H-1B approvals in one quarter, the team size
+      raises questions about capacity and case delegation
+
+================================================================================
+9. ONLINE PRESENCE & SOCIAL MEDIA
+================================================================================
+
+  WEBSITES:
+    - shautsova.com (primary)
+    - russianspeakinglawyerny.com (Russian-speaking market)
+    - workharassmentattorneys.com (employment discrimination)
+
+  SOCIAL MEDIA:
+    - YouTube: @alenashautsova — 100+ free immigration videos (since 2016)
+    - Facebook: @immigrationlawyerny
+    - Combined following: 370K+ (YouTube + Facebook); claims ~2 million total
+      across all platforms including Instagram and TikTok
+    - Twitter/X: @ShautsovaLawNY
+    - TikTok: Active
+    - LinkedIn: https://www.linkedin.com/in/alena-shautsova-3123577/
+
+  LEGAL DIRECTORIES (confirmed active profiles):
+    - Super Lawyers, Avvo, AILA, Justia, FindLaw, HG.org, Lawyers.com,
+      LawyerRatingz, Lexinter, Lawyer.com, Attorney at Law, Chamber of Commerce,
+      USAttorneys.com, LawTally, Martindale-Hubbell, Birdeye, ReachAttorneys
+
+  PUBLISHED CONTENT:
+    - 100+ YouTube videos on immigration law (since 2016)
+    - ~10 published articles on firm website (asylum, removal defense, waivers)
+    - 1 self-sponsored H-1B guide (June 2025)
+    - Blog posts on marriage fraud, O-1 visas, EB-1 green cards, EOIR changes
+    - ABA for Law Students author profile exists
+
+================================================================================
+10. RED FLAGS & CONCERNS
+================================================================================
+
+  1. "89 APPROVALS" CLAIM IS UNVERIFIED (MEDIUM-HIGH CONCERN)
+     - Self-reported marketing claim with no independent verification
+     - Very high number for a 7-person firm (1 attorney) in the first quarter
+       after the self-sponsorship rule change took effect
+     - Additional statistics in the guide (63% RFEs, 41% denials) are unsourced
+     - No third-party media, legal publication, or database confirms this
+
+  2. CORE EXPERTISE MISMATCH FOR H-1B (MEDIUM CONCERN)
+     - Published expertise is primarily asylum and removal defense
+     - Self-sponsored H-1B guide published only in June 2025 (8 months ago)
+     - Only 1 article on H-1B self-sponsorship; no published owner-beneficiary
+       case law analysis
+     - Compare to Cyrus Mehta: 17+ years of published H-1B owner-beneficiary work
+     - Compare to Sophie Alcorn: Documented H-1B approval for 100% sole founder CEO
+
+  3. SELF-SPONSORSHIP GUIDE LACKS LEGAL RIGOR (MEDIUM CONCERN)
+     - No case citations, no CFR references, no USCIS policy memo citations
+     - Proprietary frameworks that cannot be verified
+     - Unsourced statistics presented as fact
+     - Reads as marketing content rather than legal analysis
+
+  4. SOLO PRACTITIONER CAPACITY (MEDIUM CONCERN)
+     - Only 1 licensed attorney in the firm
+     - 6 support staff, none of whom are attorneys
+     - For a firm claiming high-volume H-1B work, this raises questions about
+       who is actually reviewing and signing petitions
+     - All legal work must be supervised by Alena personally
+
+  5. NEAR-ZERO NEGATIVE REVIEWS (LOW-MEDIUM CONCERN)
+     - ~490+ reviews with only 1 mildly negative review is statistically unusual
+     - Possible explanations: excellent service, review management, demographic
+       bias, selection bias
+     - Not a red flag by itself but worth noting
+
+  6. NO STEM OPT COMPLIANCE EVIDENCE (LOW-MEDIUM CONCERN)
+     - No evidence the firm handles STEM OPT employer compliance
+     - No I-983 training plan assistance mentioned
+     - No E-Verify compliance guidance mentioned
+     - If STEM OPT compliance is needed, this firm may not be the right fit
+
+  7. FEE TRANSPARENCY (LOW-MEDIUM CONCERN)
+     - Consultation fee appears to be $273 (per one reviewer)
+     - No published case fee schedules
+     - Compare to Arora: full fee transparency ($3,393 total)
+
+  8. NY BAR NUMBER NOT INDEPENDENTLY VERIFIED (LOW CONCERN)
+     - All indicators suggest active license; just not verified via OCA portal
+     - Super Lawyers, AILA, Avvo all require active bar membership
+
+  9. MULTIPLE WEBSITES / AGGRESSIVE MARKETING (LOW CONCERN)
+     - 3 websites, SEO-optimized domain names
+     - Claims ~2 million social media followers
+     - Not inherently concerning but indicates marketing sophistication
+
+  10. LL.M. NOT J.D. (INFORMATIONAL — NOT A RED FLAG)
+      - Standard path for foreign-trained lawyers in New York
+      - Completely legitimate
+
+  OVERALL RED FLAG ASSESSMENT:
+    CRITICAL (deal-breaker):         None
+    HIGH concern:                    None
+    MEDIUM-HIGH concern:             Unverified "89 approvals" claim
+    MEDIUM concern:                  Core expertise mismatch; guide lacks rigor;
+                                     solo practitioner capacity
+    LOW-MEDIUM concern:              Near-zero negatives; no STEM OPT; fee opacity
+    LOW concern:                     Bar number unverified; multiple websites
+    INFORMATIONAL:                   LL.M. not J.D.
+
+    NO DISQUALIFYING RED FLAGS FOUND.
+
+================================================================================
+11. STRENGTHS & POSITIVE FACTORS
+================================================================================
+
+  1. STRONG PROFESSIONAL RECOGNITION
+     - Super Lawyers: Rising Stars 2015-2021, Super Lawyers 2022-2025
+     - Avvo: 10.0 "Superb" rating with 58+ reviews
+     - Avvo Clients' Choice Award 2021 & 2025
+     - Martindale-Hubbell: 5.0 Client Rating, Client Champion Award
+     - Multiple directory listings with consistently high ratings
+
+  2. SIGNIFICANT INSTITUTIONAL INVOLVEMENT
+     - ABA delegate to House of Delegates
+     - ABA Representative to United Nations ECOSOC (2015-2016)
+     - NYSBA Special Committee on Immigration Representation
+     - NYSBA COSAC Committee
+     - AILA member since 2012 (14 years)
+     - Organized disaster legal services (Hurricane Sandy)
+
+  3. CLEAN DISCIPLINARY RECORD
+     - No disciplinary actions found in any search
+     - Not on EOIR disciplined practitioners list
+     - No malpractice suits found
+     - No complaints found on any platform
+     - 18 years of practice with no adverse findings
+
+  4. OVERWHELMINGLY POSITIVE CLIENT REVIEWS
+     - 281 reviews on Birdeye (4.7 stars)
+     - 135 reviews on Chamber of Commerce (4.8 stars)
+     - 58+ reviews on Avvo (5.0 stars)
+     - 14 reviews on Yelp
+     - Consistent praise for responsiveness, expertise, and fair pricing
+
+  5. LARGE PUBLIC PLATFORM
+     - 370K+ combined social media followers
+     - Claims ~2 million total across all platforms
+     - 100+ free immigration education videos since 2016
+     - Demonstrates commitment to client education and transparency
+
+  6. MULTILINGUAL CAPABILITIES
+     - Russian, Belarusian, Arabic, German, English
+     - Firm staff includes Arabic speakers (Kholoud, Marwan)
+
+  7. LONG TRACK RECORD
+     - 18+ years of practice (since 2008)
+     - Founded firm in 2008
+     - Consistent practice without interruption
+
+  8. NYC LOCATION
+     - Brooklyn and Syosset offices
+     - Convenient for NYC-area clients
+     - Skype/video consultations also available
+
+  9. UNIQUE PERSONAL BACKGROUND
+     - Immigrant herself (Belarus)
+     - Personal understanding of immigration process
+     - U.S. State Department Muskie Fellow
+     - UN internship background
+
+  10. DEMONSTRATED H-1B SELF-SPONSORSHIP AWARENESS
+      - Published guide shows operational familiarity with the 2025 rule change
+      - Claims significant volume (if verified, this is a major strength)
+      - Addresses practical compliance mechanisms
+
+================================================================================
+12. DD SCORE & RECOMMENDATION
+================================================================================
+
+  DD SCORE: 7.5 / 10
+
+  SCORING BREAKDOWN:
+    Credentials & Bar Status:      9/10  (strong, just unverified bar number)
+    Professional Recognition:      9/10  (Super Lawyers, Avvo Superb, AILA, ABA)
+    Client Reviews:                8/10  (overwhelmingly positive, volume impressive)
+    Disciplinary Record:           10/10 (completely clean)
+    H-1B Specialization Depth:     5/10  (moderate; newer service, unverified claims)
+    STEM OPT Expertise:            2/10  (no evidence)
+    Fee Transparency:              4/10  (consultation ~$273, case fees unknown)
+    Team/Capacity:                 6/10  (solo attorney, good staff but small)
+    Red Flags:                     8/10  (nothing disqualifying, some concerns)
+    Overall Trustworthiness:       8/10  (legitimate, credible, well-established)
+
+  RECOMMENDATION: PROCEED TO CONSULTATION WITH PROBING QUESTIONS
+
+  This is a credible, well-established immigration attorney with strong general
+  credentials and an excellent reputation. However, her H-1B owner-beneficiary
+  expertise appears to be a NEWER addition to her practice (post-January 2025),
+  not a deep longstanding specialty. Her core strengths are in asylum, removal
+  defense, and family-based immigration.
+
+  FOR H-1B OWNER-BENEFICIARY CASES: She is worth consulting, but she is NOT
+  the top specialist in this niche. Cyrus Mehta (17+ years of published expertise)
+  and Sophie Alcorn (documented founder approvals, CA Certified Specialist) have
+  demonstrably deeper expertise in this specific area.
+
+  FOR GENERAL IMMIGRATION (asylum, family, naturalization, waivers): She would
+  score 9/10 — this is her wheelhouse.
+
+  KHOLOUD CONNECTION: Kholoud Samy Gaber is a legal assistant who joined in
+  February 2025. She handles intake, scheduling, and supports asylum/family cases.
+  If she offered consultation options, this is normal firm practice. The consultation
+  itself would be with Alena Shautsova. Kholoud is NOT an attorney and should not
+  be providing legal advice.
+
+================================================================================
+13. CONSULTATION QUESTIONS — MUST ASK
+================================================================================
+
+  If proceeding to consultation, ask:
+
+  H-1B SPECIFIC:
+    [ ] How many self-sponsored H-1B petitions have you filed since Jan 2025?
+    [ ] Can you show anonymized approval notices to support the "89" claim?
+    [ ] What is your RFE rate for self-sponsored H-1B cases?
+    [ ] How do you structure the employer-employee relationship for a
+        50%+ owner-beneficiary?
+    [ ] What corporate governance documents do you prepare?
+    [ ] Have you handled cases specifically for [your industry]?
+    [ ] What specific board composition do you recommend?
+    [ ] Can you cite specific AAO decisions or USCIS policy memos that
+        guide your approach?
+
+  PRACTICAL:
+    [ ] What is the consultation fee? (Expected: ~$273)
+    [ ] What is total estimated cost for an H-1B petition (registration
+        through approval, including RFE response if needed)?
+    [ ] Who in your office would be handling the case day-to-day?
+    [ ] Will you personally review and sign the petition?
+    [ ] What is your typical timeline from engagement to filing?
+
+  STEM OPT (if relevant):
+    [ ] Do you handle STEM OPT employer compliance?
+    [ ] Can you assist with I-983 training plan preparation?
+    [ ] Do you advise on E-Verify requirements?
+
+  GENERAL VETTING:
+    [ ] Does she acknowledge uncertainties and risks, or only promise success?
+    [ ] Does she articulate a clear strategy with specific legal bases?
+    [ ] Does she ask detailed questions about your specific situation?
+    [ ] Request 2-3 references from self-sponsored H-1B clients
+
+================================================================================
+SOURCES & REFERENCES
+================================================================================
+
+  Primary Website:
+    https://shautsova.com/
+    https://shautsova.com/our-law-firm/attorney-alena-shautsova/
+    https://shautsova.com/our-law-firm/
+    https://shautsova.com/services/
+    https://shautsova.com/our-law-firm/meet-the-team-kholoud-samy-gaber/
+    https://shautsova.com/our-law-firm/meet-the-team-muhammed-haider/
+    https://shautsova.com/our-law-firm/meet-the-team-gregory-abrams/
+    https://shautsova.com/our-law-firm/meet-the-team-marwan-twig/
+    https://shautsova.com/our-law-firm/meet-the-team-olivia-lucarevschi-social-media-marketing-specialist/
+    https://shautsova.com/2025/06/11/self-sponsoring-your-h-1b-visa-a-comprehensive-
+      guide-for-entrepreneurs-in-2025/
+    https://shautsova.com/law-publications/
+    https://shautsova.com/contact-us/
+
+  Secondary Websites:
+    https://www.russianspeakinglawyerny.com/
+    https://www.workharassmentattorneys.com/
+
+  Review Platforms:
+    Avvo:         https://www.avvo.com/attorneys/11235-ny-alena-shautsova-1802451.html
+    Yelp:         https://www.yelp.com/biz/alena-shautsova-new-york
+    Birdeye:      https://reviews.birdeye.com/alena-shautsova-law-offices-155666455328649
+    Martindale:   https://www.martindale.com/organization/law-offices-of-alena-shautsova-157091215/
+    LawyerRatingz: https://www.lawyerratingz.com/reviews/1039006/Lawyer-Alena-Shautsova.html
+    Lawyers.com:  https://www.lawyers.com/brooklyn/new-york/alena-shautsova-158135129-a/
+    ReachAttorneys: https://www.reachattorneys.com/lawyers/new-york/brooklyn/alena-shautsova-law-offices/
+
+  Professional Directories:
+    AILA:         https://ailalawyer.com/english/AttorneyDetail.aspx?P=53225&A=95437
+    Super Lawyers: https://profiles.superlawyers.com/new-york/new-york/lawyer/
+                   alena-shautsova/75306cac-ea16-4e6e-8c4b-9a19e0080b73.html
+    Justia:       https://lawyers.justia.com/lawyer/alena-shautsova-1493940
+    FindLaw:      https://lawyers.findlaw.com/profile/view/4651363_1
+    HG.org:       https://www.hg.org/lawyer/alena-shautsova/139092
+    Lexinter:     https://attorneys.lexinter.net/lawyers/alena-shautsova
+    LinkedIn:     https://www.linkedin.com/in/alena-shautsova-3123577/
+
+  Verification Resources:
+    NY OCA:       https://iapps.courts.state.ny.us/attorneyservices/search
+    EOIR:         https://www.justice.gov/eoir/list-of-currently-disciplined-practitioners
+    BBB:          No listing found
+
+================================================================================
+REPORT METADATA
+================================================================================
+Report Originally Compiled:  February 17, 2026
+Updated:                     February 23, 2026
+Compiled By:                 Due Diligence Research
+Sources Reviewed:            40+ web sources, 15+ attorney/legal directories,
+                             7+ review platforms
+Bar Status:                  NOT DIRECTLY VERIFIED (OCA portal inaccessible; all
+                             indirect indicators confirm active license)
+DD Score:                    7.5 / 10
+Recommendation:              PROCEED TO CONSULTATION WITH PROBING QUESTIONS
+
+================================================================================
+END OF DUE DILIGENCE REPORT
+================================================================================

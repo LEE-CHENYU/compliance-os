@@ -1,0 +1,261 @@
+version: "1.0.0"
+
+rules:
+  # === Logic rules (fire based on answers + tax return extraction) ===
+
+  - id: nra_scorp_invalid
+    track: entity
+    type: logic
+    conditions:
+      - field: owner_residency
+        operator: neq
+        value: "us_citizen_or_pr"
+        source: answers
+      - field: form_type
+        operator: eq
+        value: "1120-S"
+        source: extraction_b
+    severity: critical
+    finding:
+      title: "S-Corp election invalid — NRAs cannot own S-Corporations"
+      action: "Consult a CPA immediately. Election is void retroactively."
+      consequence: "Cascading tax liability"
+      immigration_impact: false
+
+  - id: missing_5472
+    track: entity
+    type: logic
+    conditions:
+      - field: owner_residency
+        operator: neq
+        value: "us_citizen_or_pr"
+        source: answers
+      - field: entity_type
+        operator: eq
+        value: "smllc"
+        source: answers
+      - field: form_5472_present
+        operator: eq
+        value: "False"
+        source: extraction_b
+    severity: warning
+    finding:
+      title: "Form 5472 not detected in filing"
+      action: "File 5472 + pro forma 1120. Required annually even with $0 revenue."
+      consequence: "$25K/year penalty"
+      immigration_impact: false
+
+  - id: schedule_c_on_opt
+    track: entity
+    type: logic
+    conditions:
+      - field: schedules_present
+        operator: contains
+        value: "schedule_c"
+        source: extraction_b
+      - field: visa_type
+        operator: eq
+        value: "f1_opt_stem"
+        source: answers
+    severity: warning
+    finding:
+      title: "Schedule C self-employment income while on OPT"
+      action: "Self-employment on OPT has strict rules. Verify with DSO."
+      consequence: "Unauthorized work risk"
+      immigration_impact: true
+
+  - id: foreign_capital_undocumented
+    track: entity
+    type: logic
+    conditions:
+      - field: foreign_capital_transfer
+        operator: eq
+        value: "yes"
+        source: answers
+    severity: warning
+    finding:
+      title: "Foreign capital transfer without documentation"
+      action: "Get a capital contribution agreement drafted. Without it, IRS can recharacterize as income."
+      consequence: "Income recharacterization"
+      immigration_impact: false
+
+  - id: corporate_veil_risk
+    track: entity
+    type: logic
+    conditions:
+      - field: separate_bank_account
+        operator: eq
+        value: "no"
+        source: answers
+    severity: warning
+    finding:
+      title: "No separate business bank account"
+      action: "Open a dedicated business account. Mixing funds can pierce the corporate veil."
+      consequence: "Personal liability"
+      immigration_impact: false
+
+  - id: wrong_form_type
+    track: entity
+    type: logic
+    conditions:
+      - field: owner_residency
+        operator: neq
+        value: "us_citizen_or_pr"
+        source: answers
+      - field: form_type
+        operator: eq
+        value: "1040"
+        source: extraction_b
+    severity: warning
+    finding:
+      title: "Filed 1040 instead of 1040-NR"
+      action: "NRAs should file 1040-NR. Filing 1040 claims resident status incorrectly."
+      consequence: "Contradicts immigration status"
+      immigration_impact: true
+
+  # === Formation age rules ===
+
+  - id: first_year_filing_deadlines
+    track: entity
+    type: logic
+    conditions:
+      - field: formation_age
+        operator: eq
+        value: "this_year"
+        source: answers
+    severity: warning
+    finding:
+      title: "First-year filing deadlines are approaching"
+      action: "New entities must file their first tax return, state annual report, and any required information returns (5472, BOI) within their first year. Miss these and penalties start immediately."
+      consequence: "Multiple first-year penalties"
+      immigration_impact: false
+
+  - id: cumulative_5472_penalty
+    track: entity
+    type: logic
+    conditions:
+      - field: formation_age
+        operator: eq
+        value: "3_plus_years"
+        source: answers
+      - field: owner_residency
+        operator: neq
+        value: "us_citizen_or_pr"
+        source: answers
+      - field: entity_type
+        operator: eq
+        value: "smllc"
+        source: answers
+    severity: critical
+    finding:
+      title: "Potential cumulative $25K/year Form 5472 penalties"
+      action: "If Form 5472 was never filed, penalties accumulate for every year since formation. For a 3+ year old entity, that could be $75K+ in penalties. There is no statute of limitations. File immediately and consult a CPA about penalty abatement."
+      consequence: "$75K+ cumulative penalty"
+      immigration_impact: false
+
+  - id: no_revenue_still_must_file
+    track: entity
+    type: logic
+    conditions:
+      - field: owner_residency
+        operator: neq
+        value: "us_citizen_or_pr"
+        source: answers
+      - field: entity_type
+        operator: eq
+        value: "smllc"
+        source: answers
+    severity: info
+    finding:
+      title: "Filing required even with zero revenue"
+      action: "Foreign-owned single-member LLCs must file Form 5472 + pro forma 1120 every year, regardless of whether the entity earned any income."
+      consequence: "$25K/year if missed"
+      immigration_impact: false
+
+  # === Advisory rules ===
+
+  - id: advisory_state_annual_report
+    track: entity
+    type: advisory
+    conditions: []
+    severity: info
+    finding:
+      title: "State annual report"
+      action: "Did you file your annual report on time?"
+      consequence: "Loses good standing"
+      immigration_impact: false
+
+  - id: advisory_registered_agent
+    track: entity
+    type: advisory
+    conditions: []
+    severity: info
+    finding:
+      title: "Registered agent"
+      action: "Is your registered agent service still active?"
+      consequence: "Entity dissolution"
+      immigration_impact: false
+
+  - id: advisory_entity_fbar
+    track: entity
+    type: advisory
+    conditions:
+      - field: owner_residency
+        operator: neq
+        value: "outside_us"
+        source: answers
+    severity: info
+    finding:
+      title: "FBAR (FinCEN 114)"
+      action: "Does the entity control any foreign accounts over $10K?"
+      consequence: "Up to $100K fine"
+      immigration_impact: false
+
+  - id: advisory_dividend_withholding
+    track: entity
+    type: advisory
+    conditions:
+      - field: entity_type
+        operator: eq
+        value: "c_corp"
+        source: answers
+      - field: owner_residency
+        operator: neq
+        value: "us_citizen_or_pr"
+        source: answers
+    severity: info
+    finding:
+      title: "Dividend withholding"
+      action: "Are you withholding 30% on distributions to NRA shareholders?"
+      consequence: "30% owed to IRS"
+      immigration_impact: false
+
+  - id: advisory_form_3520
+    track: entity
+    type: advisory
+    conditions:
+      - field: foreign_capital_transfer
+        operator: eq
+        value: "yes"
+        source: answers
+    severity: info
+    finding:
+      title: "Form 3520"
+      action: "Did you receive >$100K from a foreign person this year?"
+      consequence: "25% penalty"
+      immigration_impact: false
+
+  - id: advisory_boi_foreign
+    track: entity
+    type: advisory
+    conditions:
+      - field: owner_residency
+        operator: eq
+        value: "outside_us"
+        source: answers
+    severity: info
+    finding:
+      title: "FinCEN BOI"
+      action: "Is your foreign entity registered to do business in the US?"
+      consequence: "$500/day penalty"
+      immigration_impact: false

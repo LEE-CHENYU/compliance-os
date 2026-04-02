@@ -1,0 +1,154 @@
+================================================================================
+SCHWAB BROKERAGE STATEMENT - PARSED OUTPUT
+================================================================================
+Source: schwab_brokerage_stmt_xxx619_2025-07.pdf
+Parsed: 2026-02-12
+
+================================================================================
+ACCOUNT INFORMATION
+================================================================================
+Account Type:       Schwab One International Account
+Account Holder:     ALEX ZHANG
+Account Number:     0000-0890
+Statement Period:   July 1-31, 2025
+
+================================================================================
+ACCOUNT SUMMARY
+================================================================================
+Beginning Account Value (07/01):    $8,325.02
+Ending Account Value (07/31):       $807.92
+
+  Deposits:                          $0.00
+  Withdrawals:                       ($8,190.00)
+  Dividends and Interest:            $0.16
+  Transfer of Securities:            $604.50
+  Market Appreciation/(Depreciation):$68.25
+  Expenses:                          $0.00
+
+YTD Summary:
+  Beginning Account Value:           $92,530.57
+  Deposits:                          $188,760.00
+  Withdrawals:                       ($62,010.00)
+  Dividends and Interest:            $247.57
+  Transfer of Securities:            ($217,533.05)
+  Market Appreciation/(Depreciation):($1,186.42)
+  Expenses:                          ($0.75)
+  Ending Account Value:              $807.92
+
+================================================================================
+ASSET ALLOCATION
+================================================================================
+Cash and Cash Investments:           $807.92    (100%)
+----------------------------------------------
+Total:                               $807.92    (100%)
+
+================================================================================
+POSITIONS SUMMARY
+================================================================================
+Beginning Value (07/01):             $8,325.02
+Transfer of Securities (In/Out):     $604.50
+Dividends Reinvested:                $0.00
+Cash Activity:                       ($8,189.84)
+Change in Market Value:              $68.25
+Ending Value (07/31):                $807.92
+Cost Basis:                          $0.00
+Unrealized Gain/(Loss):              $0.00
+
+================================================================================
+CASH AND CASH INVESTMENTS
+================================================================================
+Type              Symbol   Description     Quantity   Price    Beg Balance    End Balance    Change
+Cash              --       --              --         --       $8,997.77     $807.92      ($8,189.84)
+
+Total Cash and Cash Investments:                               $8,997.77     $807.92      ($8,189.84)
+
+================================================================================
+HOLDINGS - FIXED INCOME
+================================================================================
+(None)
+
+================================================================================
+HOLDINGS - EQUITIES
+================================================================================
+(None)
+
+================================================================================
+HOLDINGS - EXCHANGE TRADED FUNDS
+================================================================================
+(None)
+
+================================================================================
+HOLDINGS - OPTIONS
+================================================================================
+(None)
+
+================================================================================
+TRANSACTIONS SUMMARY
+================================================================================
+Beginning Cash (07/01):              $8,997.77
+  Deposits:                          $0.00
+  Withdrawals:                       ($8,190.00)
+  Purchases:                         $0.00
+  Sales/Redemptions:                 $0.00
+  Dividends/Interest:                $0.16
+  Expenses:                          $0.00
+Ending Cash (07/31):                 $807.92
+Other Activity:                      $604.50
+
+================================================================================
+TRANSACTION DETAILS
+================================================================================
+Date    Category      Action                Symbol/CUSIP                Description                                  Qty            Price      Charges    Amount         Realized G/L
+07/08   Withdrawal    Journaled Funds       --                         JOURNAL TO 12709239                          --             --         --         ($7,020.00)    --
+07/08   Other Act.    Journaled Shares      PDD 06/18/2026 90.00 P    PUT PDD HOLDINGS INC ADR $70 EXP 06/18/26    1.0000         $6.04      --         $604.50        --
+07/23   Withdrawal    MoneyLink Txn         --                         Tfr BANK OF AMERICA, N, ALEX ZHANG            --             --         --         ($1,170.00)    --
+07/30   Interest      NRA Tax               --                         SCHWAB1 INT 06/27-07/29                      --             --         --         ($0.06)        --
+07/30   Interest      Credit Interest       --                         SCHWAB1 INT 06/27-07/29                      --             --         --         $0.22          --
+
+Total Transactions:                                                                                                                                     ($7,585.34)    $0.00
+
+================================================================================
+GAIN OR (LOSS) SUMMARY
+================================================================================
+                    Short-Term                          Long-Term
+                    Gain       (Loss)     Net           Gain       (Loss)     Net
+This Period:        $0.00      $0.00      $0.00         $0.00      $0.00      $0.00
+YTD:                                      ($491.09)                           $133.10
+Unrealized:                                                                   $0.00
+
+================================================================================
+INCOME SUMMARY
+================================================================================
+                              This Period                  YTD
+                              Tax-Exempt   Taxable         Tax-Exempt   Taxable
+Schwab One Interest:          $0.00        $0.22           $0.00        $5.65
+Cash Dividends:               $0.00        $0.00           $0.00        $171.74
+Treasury Bond Interest:       $0.00        $0.00           $0.00        $170.62
+Total Income:                 $0.00        $0.22           $0.00        $348.01
+
+Note: Interest period 06/27-07/29: $0.22 based on 0.049% average Schwab One
+interest rate paid on 11 days with average daily balance of $12,188.78.
+
+================================================================================
+CASH BALANCE DETAIL
+================================================================================
+Ending Cash:                        $807.92
+Total Cash & Cash Investments:      $807.92
+
+================================================================================
+BANK SWEEP ACTIVITY
+================================================================================
+(No bank sweep activity - account uses Schwab One Interest feature)
+
+================================================================================
+MARGIN LOAN INFORMATION
+================================================================================
+Opening Margin Loan Balance:     $0.00
+Closing Margin Loan Balance:     $0.00
+Funds Available to Withdraw:     $807.92
+Securities Buying Power:         $807.92
+Margin Loan Rates:               10.825% - 12.575%
+
+================================================================================
+END OF STATEMENT
+================================================================================

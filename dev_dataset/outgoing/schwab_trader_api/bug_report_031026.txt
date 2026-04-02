@@ -1,0 +1,58 @@
+To: traderapi@schwab.com
+Subject: Bug Report — Empty Positions and Incorrect currentBalances for LLC Account
+
+Hi Schwab Trader API Team,
+
+I am reporting a data inconsistency with the Trader API for an LLC
+brokerage account (Greenfield Capital LLC, account ending 9239).
+
+When calling GET /trader/v1/accounts/{accountHash}?fields=positions,
+the response shows:
+
+  - initialBalances.accountValue = $517,986 (correct start-of-day value)
+  - currentBalances.liquidationValue = $29,929 (incorrect — missing equities)
+  - currentBalances.longMarketValue = $0
+  - positions array: empty []
+
+The initialBalances correctly reflects ~$488K in equity positions, but
+currentBalances and the positions list return as if the account holds
+no equity positions. The account does hold equities — this can be
+verified via thinkorswim or schwab.com.
+
+This appears to be a data loading issue specific to entity/LLC accounts,
+as my individual account returns positions correctly through the same
+API call.
+
+Could you please investigate and advise:
+  1. Is this a known issue with LLC/entity account types?
+  2. Is there a timeline for a fix?
+  3. Is there a workaround to retrieve real-time positions for this account?
+
+API details:
+  - Developer account: devuser42@gmail.com
+  - Access type: Individual
+  - Account type: LLC brokerage account
+  - Endpoint: GET /trader/v1/accounts/{accountHash}?fields=positions
+
+Thank you,
+Alex Zhang
+Greenfield Capital LLC
+(646) 555-0142
+
+--- RESOLUTION (03/10/2026, via thinkorswim live chat) ---
+
+Root cause: LLC account *9239 is NOT thinkorswim-enabled.
+  - Without thinkorswim enablement, the Trader API will NOT return:
+    - Full account access / positions
+    - Order entry capabilities
+    - Order or transaction history
+  - initialBalances still shows correct values (legacy data), but
+    currentBalances and positions require thinkorswim enablement.
+
+Fix: Enable thinkorswim for the LLC account via:
+  schwab.com → Trade tab → Trading Platforms → "Learn how to enable thinkorswim"
+  Takes overnight to process.
+
+Once enabled, API will return full positions and correct currentBalances.
+
+Chat agents: Matthew_Sh (trade desk), Sherkhan_T (API specialist)

@@ -1,0 +1,25 @@
+To: team@dimovtax.com
+Subject: Re: New Contact: chenyu li
+
+Hi George,
+
+Yes — I've attached a pro forma P&L and balance sheet for the LLC
+(Greenfield Capital LLC, EIN: 12-3456789).
+
+A few notes:
+  - The LLC is a single-member disregarded entity, so all activity flows
+    to my personal 1040 (Schedule C / Schedule D).
+  - The pro forma was compiled from bank and brokerage transaction CSVs.
+    I've flagged items that need to be reconciled against year-end
+    statements and the 2025 1099 composite from Schwab.
+  - Security sale proceeds are listed but cost basis should come from
+    the 1099-B (I can provide that once it's issued).
+  - The Citibank business checking data I have only goes through
+    September 2025 — I'll pull the Q4 transactions and December
+    statement separately.
+
+Let me know if you need anything else to finalize the quote.
+
+Thank you,
+Alex Zhang
+(646) 555-0142

@@ -1,0 +1,652 @@
+================================================================================
+OPERATING AGREEMENT
+GREENFIELD CAPITAL LLC
+A Wyoming Limited Liability Company
+================================================================================
+
+This Operating Agreement ("Agreement") is entered into and effective as of
+June 16, 2023, by Alex Zhang, as the sole member ("Member") of Bamboo Shoot
+Growth Capital LLC, a Wyoming limited liability company (the "Company").
+
+WITNESSETH:
+
+WHEREAS, the Company was formed under the laws of the State of Wyoming by
+filing Articles of Organization with the Wyoming Secretary of State on or
+about June 16, 2023; and
+
+WHEREAS, the Member desires to set forth the terms and conditions governing
+the management, operation, and affairs of the Company;
+
+NOW, THEREFORE, in consideration of the mutual covenants and agreements
+contained herein, the Member hereby agrees as follows:
+
+
+================================================================================
+ARTICLE I - ORGANIZATION
+================================================================================
+
+1.1   FORMATION
+      The Company was formed as a limited liability company under the Wyoming
+      Limited Liability Company Act (Wyo. Stat. Ann. § 17-29-101 et seq.) on
+      June 16, 2023.
+
+1.2   NAME
+      The name of the Company is:
+
+      Greenfield Capital LLC
+
+1.3   PRINCIPAL OFFICE
+      The principal office of the Company is located at:
+
+      100 Main St Ste A
+      Sheridan, Wyoming 82801
+
+      The Member may change the principal office address upon written notice.
+
+1.4   REGISTERED AGENT AND OFFICE
+      The Company's registered agent and registered office in Wyoming are:
+
+      Registered Agents Inc
+      100 Main St Ste A
+      Sheridan, Wyoming 82801
+
+      The registered agent and office may be changed in accordance with
+      Wyoming law.
+
+1.5   EMPLOYER IDENTIFICATION NUMBER
+      The Company's Federal Employer Identification Number (EIN) is:
+
+      12-3456789
+
+1.6   PURPOSE
+      The purpose of the Company is to engage in any lawful business activity
+      permitted under Wyoming law, including but not limited to:
+
+      (a) Investment management and trading of securities;
+      (b) Holding and managing cash and cash equivalents;
+      (c) Acquiring, holding, and disposing of stocks, bonds, and other
+          investment instruments;
+      (d) Such other activities as may be necessary, convenient, or
+          incidental to the foregoing.
+
+1.7   TERM
+      The Company shall continue in existence perpetually unless dissolved
+      pursuant to Article VIII of this Agreement or as otherwise required
+      by law.
+
+
+================================================================================
+ARTICLE II - MEMBER
+================================================================================
+
+2.1   MEMBER INFORMATION
+      The sole member of the Company is:
+
+      Name:    Alex Zhang
+
+2.2   MEMBERSHIP INTEREST
+      The Member owns 100% of the membership interests in the Company.
+
+2.3   MEMBER MEETINGS
+      (a) The Member shall hold an annual meeting to review the Company's
+          affairs, financial condition, and business operations.
+
+      (b) The annual meeting shall be held during the first quarter of each
+          calendar year.
+
+      (c) Minutes of each annual meeting shall be prepared and maintained
+          with the Company's records.
+
+      (d) Special meetings may be held at any time as determined necessary
+          by the Member.
+
+2.4   TRANSFER OF MEMBERSHIP INTEREST
+      The Member may transfer all or part of the membership interest to any
+      person or entity, subject to compliance with applicable securities laws
+      and tax regulations.
+
+
+================================================================================
+ARTICLE III - MANAGEMENT
+================================================================================
+
+3.1   MEMBER-MANAGED
+      The Company is a member-managed limited liability company. The Member
+      shall have full, exclusive, and complete authority to manage and control
+      the business and affairs of the Company.
+
+3.2   POWERS OF MEMBER
+      The Member shall have all powers necessary or convenient to carry out
+      the Company's business, including but not limited to:
+
+      (a) Opening and maintaining bank and brokerage accounts;
+      (b) Executing contracts and agreements on behalf of the Company;
+      (c) Buying, selling, and trading securities and investment instruments;
+      (d) Hiring employees, contractors, and professional advisors;
+      (e) Filing tax returns and maintaining tax records;
+      (f) Making capital contributions and distributions;
+      (g) Borrowing money and granting security interests;
+      (h) Acquiring and disposing of Company property;
+      (i) Taking any action necessary for the Company's business.
+
+3.3   STANDARD OF CARE
+      The Member shall manage the Company's affairs in good faith and in a
+      manner reasonably believed to be in the best interests of the Company.
+
+3.4   COMPENSATION
+      The Member shall not receive any salary or guaranteed payment for
+      services rendered to the Company, but may receive distributions as
+      provided in Article V.
+
+
+================================================================================
+ARTICLE IV - CAPITAL CONTRIBUTIONS
+================================================================================
+
+4.1   INITIAL CAPITAL CONTRIBUTION
+      As of the date of formation, the Member has made or shall make capital
+      contributions to the Company as documented in the Company's books and
+      records.
+
+4.2   ADDITIONAL CAPITAL CONTRIBUTIONS
+      The Member may make additional capital contributions at any time in
+      such amounts and forms (cash, securities, or other property) as the
+      Member determines.
+
+4.3   CAPITAL ACCOUNT
+      (a) A capital account shall be maintained for the Member in accordance
+          with Treasury Regulation Section 1.704-1(b)(2)(iv).
+
+      (b) The Member's capital account shall be:
+          - Increased by: (i) cash contributions, (ii) fair market value of
+            property contributed, (iii) Company income and gains;
+          - Decreased by: (i) cash distributions, (ii) fair market value of
+            property distributed, (iii) Company losses and deductions.
+
+      (c) A Master Capital Account Ledger shall be maintained documenting
+          all contributions, distributions, and capital account balance.
+
+4.4   SECURITIES TRANSFERS
+      When securities or other investment instruments are transferred from
+      the Member's personal accounts to the Company's accounts:
+
+      (a) Such transfers shall be treated as capital contributions;
+      (b) The contribution amount shall be the fair market value of the
+          securities on the transfer date;
+      (c) All securities transfers shall be documented with:
+          - Date of transfer
+          - Description and quantity of securities
+          - Market price per unit on transfer date
+          - Total fair market value contributed
+      (d) Supporting documentation shall include brokerage statements showing
+          the position transfer or "journaled shares" transaction.
+
+4.5   CAPITAL CONTRIBUTION DOCUMENTATION
+      (a) All capital contributions shall be documented in writing via a
+          Capital Contribution Consent executed by the Member.
+
+      (b) Each Capital Contribution Consent shall include:
+          - Date of contribution
+          - Amount or description of property contributed
+          - Fair market value (if non-cash)
+          - Source of contribution (bank account, brokerage account, etc.)
+          - Updated capital account balance
+
+      (c) Capital Contribution Consents shall be maintained with the
+          Company's records and organized by calendar quarter.
+
+4.6   NO OBLIGATION TO CONTRIBUTE
+      The Member shall have no obligation to make additional capital
+      contributions except as voluntarily determined by the Member.
+
+4.7   NO INTEREST ON CAPITAL
+      No interest shall be paid on any capital contribution.
+
+4.8   RETURN OF CONTRIBUTIONS
+      Capital contributions may be returned to the Member only through
+      distributions as provided in Article V, or upon dissolution as
+      provided in Article VIII.
+
+
+================================================================================
+ARTICLE V - DISTRIBUTIONS
+================================================================================
+
+5.1   DISTRIBUTIONS
+      The Member may cause the Company to make distributions at such times
+      and in such amounts as the Member determines in the Member's sole
+      discretion.
+
+5.2   SOLVENCY REQUIREMENT
+      No distribution shall be made if, after giving effect to the
+      distribution:
+
+      (a) The Company would not be able to pay its debts as they become due
+          in the ordinary course of business (Wyoming Statute § 17-29-405(a));
+          or
+
+      (b) The Company's total assets would be less than the sum of its total
+          liabilities (Wyoming Statute § 17-29-405(b)).
+
+5.3   DISTRIBUTION AUTHORIZATION
+      (a) All distributions shall be authorized in writing via a Distribution
+          Authorization executed by the Member.
+
+      (b) Each Distribution Authorization shall include:
+          - Date of distribution
+          - Amount of distribution
+          - Method of distribution (cash, securities, or other property)
+          - Destination account (if applicable)
+          - Certification that the distribution complies with the solvency
+            requirements of Section 5.2
+          - Updated capital account balance
+
+      (c) Distribution Authorizations shall be maintained with the Company's
+          records and organized by calendar quarter.
+
+5.4   FORM OF DISTRIBUTIONS
+      Distributions may be made in:
+      (a) Cash;
+      (b) Securities or other investment instruments;
+      (c) Other property; or
+      (d) Any combination of the foregoing.
+
+5.5   SECURITIES DISTRIBUTIONS
+      When securities or other investment instruments are distributed from
+      the Company's accounts to the Member's personal accounts:
+
+      (a) The distribution amount shall be the fair market value of the
+          securities on the distribution date;
+      (b) All securities distributions shall be documented with:
+          - Date of distribution
+          - Description and quantity of securities
+          - Market price per unit on distribution date
+          - Total fair market value distributed
+      (c) Supporting documentation shall include brokerage statements showing
+          the position transfer or "journaled shares" transaction.
+
+5.6   TAX DISTRIBUTIONS
+      The Member may authorize distributions in amounts sufficient to pay
+      estimated federal and state income taxes attributable to Company income
+      allocated to the Member.
+
+5.7   TIMING OF DISTRIBUTIONS
+      Unless otherwise specified in the Distribution Authorization,
+      distributions shall be paid within thirty (30) days of authorization.
+
+
+================================================================================
+ARTICLE VI - BANKING AND ACCOUNTS
+================================================================================
+
+6.1   SEPARATE ACCOUNTS REQUIRED
+      The Company shall maintain bank accounts and brokerage accounts
+      separate and distinct from the personal accounts of the Member.
+
+6.2   AUTHORIZED ACCOUNTS
+      The Company maintains the following accounts:
+
+      (a) Business Checking Account:
+          Bank:           Citibank, N.A.
+          Account Name:   Greenfield Capital LLC
+          Account Number: *****1234
+          Account Type:   Business Checking
+
+      (b) Investment Brokerage Account:
+          Brokerage:      Charles Schwab & Co., Inc.
+          Account Name:   Greenfield Capital LLC
+          Account Number: ****567
+          Account Type:   Limited Liability Company Brokerage Account
+
+6.3   ADDITIONAL ACCOUNTS
+      The Member may open, maintain, and close additional bank accounts,
+      brokerage accounts, or other financial accounts as deemed necessary
+      for the Company's business.
+
+6.4   AUTHORIZED SIGNATORIES
+      The Member is authorized to be a signatory on all Company accounts and
+      may execute checks, withdrawal slips, wire transfers, and other banking
+      or brokerage instructions on behalf of the Company.
+
+6.5   PROHIBITION ON COMMINGLING
+      The Member shall NOT commingle the Company's funds or assets with the
+      Member's personal funds or assets. All Company funds shall be deposited
+      in Company accounts and all Company expenses shall be paid from Company
+      accounts.
+
+6.6   ACCOUNTING METHOD
+      The Company shall maintain its books and records on the accrual method
+      of accounting, or such other method as required by applicable tax law.
+
+6.7   FISCAL YEAR
+      The Company's fiscal year shall be the calendar year ending December 31.
+
+
+================================================================================
+ARTICLE VII - BOOKS, RECORDS, AND REPORTING
+================================================================================
+
+7.1   BOOKS AND RECORDS
+      The Company shall maintain complete and accurate books and records,
+      including:
+
+      (a) A current list of the Member's name and address;
+      (b) A copy of the Articles of Organization and all amendments;
+      (c) A copy of this Operating Agreement and all amendments;
+      (d) Copies of the Company's federal, state, and local tax returns for
+          at least seven (7) years;
+      (e) Financial statements for at least seven (7) years;
+      (f) Master Capital Account Ledger showing all contributions and
+          distributions;
+      (g) Master Transaction Ledger reconciling all accounts;
+      (h) Capital Contribution Consents;
+      (i) Distribution Authorizations;
+      (j) Minutes of annual meetings;
+      (k) Bank and brokerage account statements;
+      (l) Securities transfer documentation;
+      (m) Investment records and trade confirmations;
+      (n) Contracts, agreements, and other material documents.
+
+7.2   LOCATION OF RECORDS
+      All books and records shall be maintained at the Company's principal
+      office or such other location as determined by the Member.
+
+7.3   RETENTION PERIOD
+      All books and records shall be retained for at least seven (7) years,
+      or such longer period as required by applicable law or tax regulations.
+
+7.4   TAX MATTERS
+      (a) The Member shall be the "Tax Matters Partner" (or "Partnership
+          Representative" under current law) and shall have authority to
+          make all tax elections and handle all tax matters on behalf of
+          the Company.
+
+      (b) The Company may be treated as a disregarded entity for federal
+          income tax purposes, or may elect to be taxed as a partnership
+          or corporation as determined by the Member.
+
+      (c) The Company shall timely file all required federal, state, and
+          local tax returns.
+
+7.5   ANNUAL REPORT
+      The Company shall file an annual report with the Wyoming Secretary of
+      State as required by Wyoming law, on or before the anniversary of the
+      Company's formation date each year.
+
+7.6   PROFESSIONAL ADVISORS
+      The Member may engage accountants, attorneys, investment advisors, and
+      other professional advisors as deemed necessary for the Company's
+      business.
+
+
+================================================================================
+ARTICLE VIII - DISSOLUTION AND WINDING UP
+================================================================================
+
+8.1   EVENTS OF DISSOLUTION
+      The Company shall dissolve upon the earliest to occur of:
+
+      (a) The written consent of the Member to dissolve the Company;
+      (b) The death or incapacity of the Member, unless continued pursuant
+          to the Member's estate plan;
+      (c) The entry of a decree of judicial dissolution under Wyoming law;
+      (d) Any other event requiring dissolution under Wyoming law.
+
+8.2   WINDING UP
+      Upon dissolution, the Company shall wind up its affairs as follows:
+
+      (a) The Member (or a person designated by the Member) shall serve as
+          liquidating trustee;
+
+      (b) The liquidating trustee shall:
+          (i)   Pay or provide for all debts and obligations of the Company;
+          (ii)  Set aside reserves for contingent or unforeseen liabilities;
+          (iii) Sell Company assets or distribute assets in kind to the Member;
+          (iv)  Distribute remaining assets to the Member;
+          (v)   File a certificate of dissolution with the Wyoming Secretary
+                of State.
+
+      (c) The liquidating trustee shall have all powers necessary to wind up
+          and liquidate the Company's business and affairs.
+
+8.3   DISTRIBUTION ON DISSOLUTION
+      After payment of all debts, obligations, and expenses, and after setting
+      aside reserves, the remaining assets shall be distributed to the Member
+      in accordance with the Member's positive capital account balance.
+
+8.4   NO LIABILITY FOR NEGATIVE CAPITAL ACCOUNT
+      The Member shall not be obligated to restore any negative capital
+      account balance.
+
+
+================================================================================
+ARTICLE IX - LIABILITY AND INDEMNIFICATION
+================================================================================
+
+9.1   LIMITED LIABILITY OF MEMBER
+      (a) The Member's liability for the Company's debts, obligations, and
+          liabilities shall be limited to the Member's capital contributions
+          to the Company.
+
+      (b) The Member shall not be personally liable for any debt, obligation,
+          or liability of the Company, whether arising in contract, tort, or
+          otherwise, solely by reason of being a member of the Company.
+
+      (c) The assets of the Company shall be the sole recourse for the
+          Company's debts, obligations, and liabilities.
+
+9.2   NO PERSONAL GUARANTEES IMPLIED
+      This Agreement does not create any personal guarantee or personal
+      liability of the Member for Company debts or obligations, except to
+      the extent the Member voluntarily executes a personal guarantee in
+      writing.
+
+9.3   INDEMNIFICATION
+      (a) The Company shall indemnify the Member against any losses, damages,
+          liabilities, expenses, and costs (including reasonable attorneys'
+          fees) arising from any claim related to the Company's business,
+          except to the extent such losses result from the Member's:
+          (i)   Willful misconduct;
+          (ii)  Knowing violation of law;
+          (iii) Breach of this Agreement;
+          (iv)  Improper personal benefit.
+
+      (b) Indemnification shall be paid from Company assets and shall not
+          be a personal obligation of the Member.
+
+9.4   INSURANCE
+      The Company may purchase and maintain insurance on behalf of the Member
+      against any liability asserted against or incurred by the Member in
+      connection with the Company's business.
+
+9.5   CHARGING ORDER PROTECTION
+      (a) Under Wyoming law, if a judgment creditor of the Member obtains a
+          charging order against the Member's membership interest, such
+          creditor shall only have the rights of an assignee and shall not
+          become a member or have any management rights.
+
+      (b) The creditor's sole remedy shall be to receive distributions, if
+          and when made by the Company to the Member.
+
+
+================================================================================
+ARTICLE X - GENERAL PROVISIONS
+================================================================================
+
+10.1  AMENDMENTS
+      This Agreement may be amended or modified only by a written instrument
+      executed by the Member.
+
+10.2  GOVERNING LAW
+      This Agreement and the Company shall be governed by and construed in
+      accordance with the laws of the State of Wyoming.
+
+10.3  SEVERABILITY
+      If any provision of this Agreement is held to be invalid or
+      unenforceable, the remaining provisions shall continue in full force
+      and effect.
+
+10.4  BINDING EFFECT
+      This Agreement shall be binding upon and inure to the benefit of the
+      Member and the Member's heirs, executors, administrators, successors,
+      and permitted assigns.
+
+10.5  ENTIRE AGREEMENT
+      This Agreement constitutes the entire agreement between the Member and
+      the Company with respect to the subject matter hereof and supersedes
+      all prior agreements and understandings, whether oral or written.
+
+10.6  COUNTERPARTS
+      This Agreement may be executed in counterparts, each of which shall be
+      deemed an original and all of which together shall constitute one and
+      the same instrument.
+
+10.7  HEADINGS
+      The headings in this Agreement are for convenience only and shall not
+      affect the interpretation of any provision.
+
+10.8  WAIVER
+      No waiver of any provision of this Agreement shall be effective unless
+      in writing and signed by the Member. No waiver of any provision shall
+      be deemed a waiver of any other provision, nor shall any waiver
+      constitute a continuing waiver.
+
+10.9  NOTICES
+      Any notice required or permitted under this Agreement shall be in
+      writing and shall be deemed given when delivered personally, sent by
+      certified mail (return receipt requested), or sent by recognized
+      overnight courier service to the Member's address on file with the
+      Company.
+
+10.10 COMPLIANCE WITH FORMALITIES
+      The Member acknowledges that maintaining the Company's limited liability
+      protection requires:
+
+      (a) Maintaining separate bank and brokerage accounts;
+      (b) Not commingling Company and personal funds;
+      (c) Documenting capital contributions and distributions;
+      (d) Maintaining accurate books and records;
+      (e) Using the Company name on all contracts and documents;
+      (f) Filing required annual reports and tax returns;
+      (g) Holding annual meetings and maintaining minutes;
+      (h) Following the terms of this Operating Agreement.
+
+      The Member agrees to diligently comply with these formalities.
+
+
+================================================================================
+ARTICLE XI - ACKNOWLEDGMENTS AND CERTIFICATIONS
+================================================================================
+
+11.1  ACKNOWLEDGMENT OF FORMALITIES
+      The Member acknowledges that:
+
+      (a) The Company is a separate legal entity from the Member;
+
+      (b) Maintaining the corporate veil and limited liability protection
+          requires strict adherence to corporate formalities;
+
+      (c) Failure to maintain separate accounts, document contributions and
+          distributions, or follow this Operating Agreement could result in
+          loss of limited liability protection;
+
+      (d) The Member has reviewed this Operating Agreement and understands
+          its terms and obligations.
+
+11.2  CURRENT STATUS CERTIFICATION
+      As of the execution date below, the Member certifies:
+
+      (a) The Company has maintained separate bank and brokerage accounts
+          since formation;
+
+      (b) Capital contributions and distributions have been documented;
+
+      (c) A Master Capital Account Ledger has been established and is being
+          maintained;
+
+      (d) Quarterly Capital Contribution Consents have been prepared for all
+          contributions;
+
+      (e) Distribution Authorizations have been prepared for all distributions;
+
+      (f) The Company's books and records are accurate and current;
+
+      (g) All required tax returns and annual reports have been filed.
+
+
+================================================================================
+SIGNATURE
+================================================================================
+
+IN WITNESS WHEREOF, the Member has executed this Operating Agreement as of
+the date first written above.
+
+
+MEMBER:
+
+_____________________________________
+Alex Zhang, Member
+Date: _______________
+
+
+================================================================================
+ACKNOWLEDGMENT
+================================================================================
+
+STATE OF _________________ )
+                          ) ss:
+COUNTY OF ________________ )
+
+
+On this _____ day of _____________, 20___, before me, the undersigned notary
+public, personally appeared Alex Zhang, proved to me through satisfactory
+evidence of identification, which was a driver's license, to be the person
+whose name is signed on the preceding document, and acknowledged to me that
+he signed it voluntarily for its stated purpose as the Member of Bamboo Shoot
+Growth Capital LLC.
+
+
+                                    _____________________________________
+                                    Notary Public
+                                    My Commission Expires: ___________
+
+
+[NOTARY SEAL]
+
+
+================================================================================
+END OF OPERATING AGREEMENT
+================================================================================
+
+IMPORTANT NOTES:
+
+1. This Operating Agreement should be signed, dated, and notarized.
+
+2. Maintain this Agreement with your important Company records.
+
+3. Keep copies of this Agreement with:
+   - Your personal records
+   - Your accountant/tax preparer
+   - Your attorney (if applicable)
+   - The Company's registered agent (if required)
+
+4. Update this Agreement if:
+   - You add additional members
+   - You change the management structure
+   - Wyoming law changes significantly
+   - Your business activities change materially
+
+5. Annual Compliance Reminders:
+   - File Wyoming Annual Report by June 16 each year
+   - Hold annual member meeting (even if informal)
+   - Update capital account ledger with all contributions/distributions
+   - Prepare quarterly contribution and distribution documentation
+   - Maintain separation between personal and Company accounts
+   - Use "Greenfield Capital LLC" on all contracts and documents
+
+6. This Operating Agreement is designed for liability protection. Consult
+   with a Wyoming attorney if you have specific legal questions or need
+   customization for your particular situation.
+
+7. Retention: Keep this document for at least 7 years after the Company
+   dissolves.
