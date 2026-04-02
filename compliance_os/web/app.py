@@ -19,6 +19,7 @@ from compliance_os.web.routers import auth as auth_router
 from compliance_os.web.routers import dashboard
 from compliance_os.web.routers import chat as chat_router
 from compliance_os.web.routers import retrieval as retrieval_router
+from compliance_os.web.routers import form_fill as form_fill_router
 
 
 @asynccontextmanager
@@ -70,6 +71,7 @@ app.include_router(retrieval_router.router)
 app.include_router(auth_router.router)
 app.include_router(dashboard.router)
 app.include_router(chat_router.router)
+app.include_router(form_fill_router.router)
 
 
 @app.get("/healthz")
