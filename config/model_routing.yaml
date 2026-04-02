@@ -1,10 +1,9 @@
 # Model routing for document extraction.
-# Auto-generated from bake-off results on 2026-04-02.
-# Source: latest
+# Auto-generated on 2026-04-02 from 5 bake-off runs (3348 total evaluations).
 #
 # Default: gpt-5.4-mini (openai/gpt-5.4-mini)
 # Re-run bake-off: python scripts/extraction_bakeoff.py --limit 50
-# Regenerate this file: python scripts/generate_model_routing.py
+# Regenerate routing: python scripts/generate_model_routing.py
 
 default:
   provider: openai
