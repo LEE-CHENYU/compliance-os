@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir \
     fastapi uvicorn sqlalchemy python-multipart pymupdf openai \
     "psycopg[binary]" \
     python-dotenv pydantic pydantic-settings pyyaml python-dateutil \
-    rapidfuzz bcrypt pyjwt anthropic mistralai
+    rapidfuzz bcrypt pyjwt anthropic mistralai google-generativeai
 
 # Copy application code
 COPY compliance_os/ ./compliance_os/
