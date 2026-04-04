@@ -6,6 +6,170 @@
   body {
     @apply bg-stone-50 text-stone-900 antialiased;
   }
+
+  /* Dark mode: override the glassmorphic surfaces via CSS */
+  .dark {
+    color-scheme: dark;
+  }
+
+  /* === Dark mode surface overrides === */
+
+  /* Nav bar */
+  .dark nav {
+    background: rgba(13, 17, 24, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  /* Cards, panels, chat bubbles — anything with bg-white/XX */
+  .dark [class*="bg-white/"] {
+    background-color: rgba(30, 36, 50, 0.6) !important;
+  }
+  .dark [class*="bg-white/50"] {
+    background-color: rgba(30, 36, 50, 0.5) !important;
+  }
+  .dark [class*="bg-white/60"] {
+    background-color: rgba(30, 36, 50, 0.6) !important;
+  }
+  .dark [class*="bg-white/40"] {
+    background-color: rgba(30, 36, 50, 0.4) !important;
+  }
+  .dark [class*="bg-white/70"] {
+    background-color: rgba(30, 36, 50, 0.7) !important;
+  }
+  .dark [class*="bg-white/90"] {
+    background-color: rgba(30, 36, 50, 0.9) !important;
+  }
+  .dark [class*="bg-white/95"] {
+    background-color: rgba(30, 36, 50, 0.95) !important;
+  }
+
+  /* Borders */
+  .dark [class*="border-white/"] {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+  .dark [class*="border-blue-50/"] {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
+  .dark [class*="border-blue-100/"] {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+  .dark [class*="border-blue-200/"] {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  /* Text colors */
+  .dark [style*="color: rgb(13, 20, 36)"],
+  .dark .text-\[\#0d1424\] {
+    color: #e8ecf4 !important;
+  }
+  .dark .text-\[\#556480\] {
+    color: #8e9ab5 !important;
+  }
+  .dark .text-\[\#7b8ba5\] {
+    color: #6b7a94 !important;
+  }
+  .dark .text-\[\#3a5a8c\] {
+    color: #7ba3d4 !important;
+  }
+  .dark .text-\[\#3d6bc5\] {
+    color: #7ba3d4 !important;
+  }
+
+  /* Specific background overrides */
+  .dark .bg-\[\#dce4f0\]\/60 {
+    background: rgba(13, 17, 24, 0.8) !important;
+  }
+  .dark .bg-\[\#e8eff6\] {
+    background: #121620 !important;
+  }
+
+  /* Input fields */
+  .dark input,
+  .dark textarea,
+  .dark select {
+    background-color: rgba(30, 36, 50, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #e8ecf4 !important;
+  }
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: #6b7a94 !important;
+  }
+  .dark input:focus,
+  .dark textarea:focus {
+    border-color: #5b8dee !important;
+  }
+
+  /* Buttons — keep the blue gradient buttons as-is, style non-gradient buttons */
+  .dark button:not([class*="bg-gradient"]) {
+    color: #c0c8d8;
+  }
+
+  /* Sidebar active state */
+  .dark [class*="bg-\[#5b8dee\]/8"] {
+    background-color: rgba(91, 141, 238, 0.15) !important;
+  }
+
+  /* Scrollbar */
+  .dark ::-webkit-scrollbar {
+    width: 6px;
+  }
+  .dark ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  /* Chat message bubbles — keep user blue gradient, style assistant */
+  .dark .chat-md {
+    color: #e8ecf4;
+  }
+  .dark .chat-md p,
+  .dark .chat-md li,
+  .dark .chat-md div {
+    color: #e8ecf4 !important;
+  }
+
+  /* Details/summary in dark mode */
+  .dark details summary {
+    color: #6b7a94 !important;
+  }
+
+  /* Badge/chip hover states */
+  .dark [class*="hover:bg-white/"] {
+    --tw-bg-opacity: 0.1;
+  }
+
+  /* Dashed borders (upload zones) */
+  .dark [class*="border-dashed"] {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  /* Stat cards with amber/emerald colors — keep them but soften */
+  .dark .bg-amber-50 {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+  }
+  .dark .bg-emerald-50 {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+  }
+  .dark .bg-blue-50 {
+    background-color: rgba(91, 141, 238, 0.1) !important;
+  }
+  .dark .bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+  }
+
+  /* Popover / dropdown panels */
+  .dark [class*="bg-white/95"] {
+    background-color: rgba(25, 30, 42, 0.95) !important;
+  }
+
+  /* Divide lines */
+  .dark [class*="divide-blue-50/"] > * + * {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
 }
 
 /* === Landing page responsive === */

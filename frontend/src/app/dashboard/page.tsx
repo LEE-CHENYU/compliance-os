@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import ModeBar, { ChatMode } from "@/components/chat/ModeBar";
 import FormFillerUpload from "@/components/chat/FormFillerUpload";
 import FormPreviewCard, { FieldProposal } from "@/components/chat/FormPreviewCard";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 interface TimelineEvent {
   date: string;
@@ -91,6 +92,7 @@ interface ChatMessage {
   text: string;
   chips?: AssistantPromptChoice[];
   references?: ChatReferenceDoc[];
+  mode?: ChatMode;
 }
 
 interface Stats {
@@ -175,6 +177,9 @@ interface DashboardDocumentLink {
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://localhost:8000/api/dashboard"
   : "/api/dashboard";
+const FORM_FILL_API = typeof window !== "undefined" && window.location.hostname === "localhost"
+  ? "http://localhost:8000/api/form-fill"
+  : "/api/form-fill";
 const AUTH_API = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://localhost:8000/api/auth"
   : "/api/auth";
@@ -313,6 +318,12 @@ export default function DashboardPage() {
   const [openClawLoading, setOpenClawLoading] = useState(false);
   const [openClawError, setOpenClawError] = useState<string | null>(null);
   const chatMessageCounterRef = useRef(0);
+  const guardianMessages = chatMessages.filter((message) => message.mode !== "form-filler");
+  const formFillerMessages = chatMessages.filter((message) => message.mode === "form-filler");
+  const visibleChatMessages = chatMode === "guardian" ? guardianMessages : formFillerMessages;
+  const hasGuardianQuestion = guardianMessages.some(
+    (message) => message.role === "assistant" && Boolean(message.chips?.length),
+  );
 
   const nextChatMessageId = useCallback(() => {
     chatMessageCounterRef.current += 1;
@@ -438,6 +449,7 @@ export default function DashboardPage() {
     id: `assistant-prompt:${prompt.id}`,
     role: "assistant",
     text: prompt.text,
+    mode: "guardian",
     chips: prompt.choices.map((choice) => ({
       label: choice.label,
       value: choice.label,
@@ -613,7 +625,9 @@ export default function DashboardPage() {
     await prepareUploadBatch(files);
   }
 
-  const hasActiveChatPrompt = chatMessages.some((message) => message.role === "assistant" && Boolean(message.chips?.length));
+  const hasActiveChatPrompt = guardianMessages.some(
+    (message) => message.role === "assistant" && Boolean(message.chips?.length),
+  );
 
   // Generate proactive questions based on what we know and what's missing.
   useEffect(() => {
@@ -623,7 +637,9 @@ export default function DashboardPage() {
     const pendingIntegrityPrompt = timeline.assistant_prompts.find(
       (prompt) =>
         !resolvedAssistantPromptIds.has(prompt.id)
-        && !chatMessages.some((message) => message.id === `assistant-prompt:${prompt.id}`),
+        && !chatMessages.some(
+          (message) => message.mode !== "form-filler" && message.id === `assistant-prompt:${prompt.id}`,
+        ),
     );
     if (pendingIntegrityPrompt) {
       setChatMessages((prev) => [...prev, makeAssistantPromptMessage(pendingIntegrityPrompt)]);
@@ -741,13 +757,16 @@ export default function DashboardPage() {
     if (unanswered.length > 0) {
       const nextQuestion = unanswered[0];
       const nextMessageId = `assistant-question:${nextQuestion.id}`;
-      if (!chatMessages.some((message) => message.id === nextMessageId)) {
+      if (!chatMessages.some(
+        (message) => message.mode !== "form-filler" && message.id === nextMessageId,
+      )) {
         setChatMessages((prev) => [
           ...prev,
           {
             id: nextMessageId,
             role: "assistant",
             text: nextQuestion.text,
+            mode: "guardian",
             chips: makeQuestionChips(nextQuestion.id, nextQuestion.chips),
           },
         ]);
@@ -787,21 +806,43 @@ export default function DashboardPage() {
   }, [timeline?.assistant_prompts, resolvedAssistantPromptIds, makeAssistantPromptMessage]);
 
   async function sendChatMessage(text: string) {
-    const newMessages = [...chatMessages, { id: nextChatMessageId(), role: "user" as const, text }];
-    setChatMessages(newMessages);
+    const userMessage: ChatMessage = {
+      id: nextChatMessageId(),
+      role: "user",
+      text,
+      mode: "guardian",
+    };
+    setChatMessages((prev) => [...prev, userMessage]);
     setChatLoading(true);
 
     try {
-      const history = newMessages.map((m) => ({ role: m.role, text: m.text }));
+      const history = [...guardianMessages, userMessage].map((m) => ({ role: m.role, text: m.text }));
       const resp = await fetch(chatApi, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
       });
       const data = await resp.json();
-      setChatMessages((prev) => [...prev, { id: nextChatMessageId(), role: "assistant", text: data.reply, references: data.references || [] }]);
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          id: nextChatMessageId(),
+          role: "assistant",
+          text: data.reply,
+          references: data.references || [],
+          mode: "guardian",
+        },
+      ]);
     } catch {
-      setChatMessages((prev) => [...prev, { id: nextChatMessageId(), role: "assistant", text: "Sorry, I couldn\u2019t process that. Please try again." }]);
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          id: nextChatMessageId(),
+          role: "assistant",
+          text: "Sorry, I couldn\u2019t process that. Please try again.",
+          mode: "guardian",
+        },
+      ]);
     } finally {
       setChatLoading(false);
       setTimeout(() => {
@@ -819,7 +860,7 @@ export default function DashboardPage() {
       if (instruction) formData.append("instruction", instruction);
 
       const resp = await fetch(
-        `${API}/form-fill/extract`,
+        `${FORM_FILL_API}/extract`,
         { method: "POST", body: formData, headers: authHeaders() }
       );
       if (!resp.ok) {
@@ -841,6 +882,7 @@ export default function DashboardPage() {
           id: nextChatMessageId(),
           role: "assistant",
           text: err instanceof Error ? err.message : "Failed to process the form. Please try again.",
+          mode: "form-filler",
         },
       ]);
     } finally {
@@ -858,7 +900,7 @@ export default function DashboardPage() {
       formData.append("values", JSON.stringify(values));
 
       const resp = await fetch(
-        `${API}/form-fill/generate`,
+        `${FORM_FILL_API}/generate`,
         { method: "POST", body: formData, headers: authHeaders() }
       );
       if (!resp.ok) {
@@ -882,6 +924,7 @@ export default function DashboardPage() {
           id: nextChatMessageId(),
           role: "assistant",
           text: `Your filled form "${formFillPreview.originalFile.name}" has been downloaded.`,
+          mode: "form-filler",
         },
       ]);
     } catch (err) {
@@ -891,6 +934,7 @@ export default function DashboardPage() {
           id: nextChatMessageId(),
           role: "assistant",
           text: err instanceof Error ? err.message : "Failed to generate the filled PDF. Please try again.",
+          mode: "form-filler",
         },
       ]);
     } finally {
@@ -936,7 +980,7 @@ export default function DashboardPage() {
 
       setChatMessages((prev) => [
         ...prev,
-        { id: nextChatMessageId(), role: "user", text: chip.label },
+        { id: nextChatMessageId(), role: "user", text: chip.label, mode: "guardian" },
       ]);
       setChatLoading(true);
       try {
@@ -960,6 +1004,7 @@ export default function DashboardPage() {
             id: nextChatMessageId(),
             role: "assistant",
             text: "I applied that document-mapping choice and refreshed your timeline.",
+            mode: "guardian",
           },
         ]);
       } catch {
@@ -969,6 +1014,7 @@ export default function DashboardPage() {
             id: nextChatMessageId(),
             role: "assistant",
             text: "I couldn't apply that mapping change. Please try again.",
+            mode: "guardian",
           },
         ]);
       } finally {
@@ -1000,8 +1046,8 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3 flex items-center justify-between bg-[#dce4f0]/60 backdrop-blur-2xl border-b border-blue-200/20">
-        <div className="text-lg font-extrabold text-[#0d1424] flex items-center gap-2.5">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3 flex items-center justify-between bg-[#dce4f0]/60 dark:bg-[#0d1118]/80 backdrop-blur-2xl border-b border-blue-200/20 dark:border-white/5 transition-colors">
+        <div className="text-lg font-extrabold text-[#0d1424] dark:text-white flex items-center gap-2.5">
           <div className="flex flex-col gap-[3px]" style={{transform:'perspective(200px) rotateX(-8deg) rotateY(12deg)'}}>
             <div className="h-[5px] w-6 rounded-sm" style={{background:'linear-gradient(135deg, #5b8dee, #4a74d4)',transform:'translateX(2px)'}} />
             <div className="h-[5px] w-6 rounded-sm" style={{background:'linear-gradient(135deg, #5b8dee, #4a74d4)',transform:'translateX(-1px)'}} />
@@ -1010,7 +1056,8 @@ export default function DashboardPage() {
           Guardian
         </div>
         <div className="flex items-center gap-2 md:gap-4">
-          <span className="text-sm text-[#556480] hidden md:inline">{user?.email}</span>
+          <ThemeToggle />
+          <span className="text-sm text-[#556480] dark:text-[#8e9ab5] hidden md:inline">{user?.email}</span>
           <div className="relative">
             <button
               onClick={() => {
@@ -1684,11 +1731,13 @@ export default function DashboardPage() {
       {/* Right-side Chat Panel */}
       <div className={`fixed top-14 right-0 bottom-0 z-30 transition-all duration-300 ${chatOpen ? "w-80 md:w-96" : "w-0"}`}>
         {chatOpen && (
-          <div className="h-full bg-white/40 backdrop-blur-xl border-l border-white/50 flex flex-col">
+          <div className="h-full bg-white/40 dark:bg-[#1a1f2e]/80 backdrop-blur-xl border-l border-white/50 dark:border-white/5 flex flex-col transition-colors">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-blue-50/40 flex-shrink-0">
               <div>
-                <div className="text-[14px] font-semibold text-[#0d1424]">Guardian Assistant</div>
+                <div className="text-[14px] font-semibold text-[#0d1424]">
+                  {chatMode === "guardian" ? "Guardian Assistant" : "Form Filler"}
+                </div>
                 <div className="text-[11px] text-[#7b8ba5]">
                   {chatMode === "guardian" ? "Ask anything about your compliance" : "Upload a fillable PDF to auto-complete"}
                 </div>
@@ -1699,14 +1748,23 @@ export default function DashboardPage() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-5 space-y-4" id="chat-scroll">
-              {chatMessages.length === 0 && (
+              {visibleChatMessages.length === 0 && (
                 <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
-                  <div className="text-[13px] text-[#0d1424] leading-relaxed mb-1">Hi! I&apos;m your Guardian assistant.</div>
-                  <div className="text-[12px] text-[#556480] leading-relaxed">I can answer questions about your immigration, tax, or business compliance. I also have context about your uploaded documents and findings.</div>
+                  {chatMode === "guardian" ? (
+                    <>
+                      <div className="text-[13px] text-[#0d1424] leading-relaxed mb-1">Hi! I&apos;m your Guardian assistant.</div>
+                      <div className="text-[12px] text-[#556480] leading-relaxed">I can answer questions about your immigration, tax, or business compliance. I also have context about your uploaded documents and findings.</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-[13px] text-[#0d1424] leading-relaxed mb-1">Upload a fillable PDF to auto-complete it.</div>
+                      <div className="text-[12px] text-[#556480] leading-relaxed">This mode only shows form-filling output. Guardian questions and compliance prompts stay in Guardian mode.</div>
+                    </>
+                  )}
                 </div>
               )}
-              {chatMessages.map((msg, i) => (
-                <div key={i} className={msg.role === "user" ? "flex justify-end" : ""}>
+              {visibleChatMessages.map((msg) => (
+                <div key={msg.id} className={msg.role === "user" ? "flex justify-end" : ""}>
                   {msg.role === "assistant" ? (
                     <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60 chat-md">
                       <ReactMarkdown components={{
@@ -1760,7 +1818,7 @@ export default function DashboardPage() {
                   )}
                 </div>
               ))}
-              {chatLoading && (
+              {chatMode === "guardian" && chatLoading && (
                 <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
                   <div className="flex gap-1.5">
                     <div className="w-2 h-2 rounded-full bg-[#5b8dee] animate-bounce" style={{animationDelay:'0ms'}} />
@@ -1769,7 +1827,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )}
-              {formFillPreview && (
+              {chatMode === "form-filler" && formFillPreview && (
                 <FormPreviewCard
                   fields={formFillPreview.fields}
                   formFieldCount={formFillPreview.formFieldCount}
@@ -1833,9 +1891,11 @@ export default function DashboardPage() {
             </div>
           </div>
           <span className="text-[12px] font-medium text-[#3a5a8c] hidden md:inline">
-            {chatMessages.some((m) => m.role === "assistant" && m.chips) ? "We have a question for you" : "Guardian Assistant"}
+            {chatMode === "guardian"
+              ? (hasGuardianQuestion ? "We have a question for you" : "Guardian Assistant")
+              : "Form Filler"}
           </span>
-          {chatMessages.some((m) => m.role === "assistant" && m.chips) && (
+          {chatMode === "guardian" && hasGuardianQuestion && (
             <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
           )}
         </button>
