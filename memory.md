@@ -1,15 +1,14 @@
 # Compliance OS Memory
 
-Last updated: 2026-03-19
+Last updated: 2026-04-06
 
 This file is implementation-specific working memory for the repo. It should stay short, factual, and revision-friendly. Use `docs/product_master.md` for the durable product definition.
 
 ## Current Repo Reality
 
-- Repo is an extracted prototype from the accounting workflow.
-- Git history is minimal: only the initial extraction commit exists.
-- There were no existing product docs in `docs/` before this session.
-- Current product surface is CLI-only.
+- Repo started as an extracted prototype from the accounting workflow and is now a live FastAPI + Next.js web app.
+- Current product surface includes auth, dashboard/timeline views, document intake and review, grounded chat, and form-fill APIs.
+- Fly deployment exists for the combined app at `guardian-compliance.fly.dev`.
 - Current codebase already contains real domain logic, especially:
   - deterministic compliance rules,
   - deadline status computation,
@@ -27,7 +26,8 @@ This file is implementation-specific working memory for the repo. It should stay
 - `compliance_os/indexer/classifier.py`
 - `config/document_types.yaml`
 - `compliance_os/query/engine.py`
-- `compliance_os/cli.py`
+- `compliance_os/web/app.py`
+- `compliance_os/web/routers/dashboard.py`
 - `docs/product_master.md`
 
 ## Extracted Product Truths
@@ -53,7 +53,13 @@ This file is implementation-specific working memory for the repo. It should stay
 ## Decisions From This Session
 
 - Create a master product doc and a separate repo memory file.
-- Treat the current repo as a backend logic prototype, not a complete product.
+- Treat the current repo as a live MVP workbench, not yet a complete multi-tenant product.
+- Narrow the day-to-day operating surface to four canonical artifacts:
+  - `README.md`
+  - `docs/product_master.md`
+  - `docs/mvp_engineering.md`
+  - `docs/roadmap.md`
+- Keep backlog execution in GitHub Issues and PRs instead of adding placeholder planning templates.
 - Make the authenticated app the future system of record.
 - Use messaging as a companion interface, not the primary source of truth.
 - Do not commit to iMessage-first.
@@ -105,7 +111,6 @@ This file is implementation-specific working memory for the repo. It should stay
 
 - persistent profile store
 - durable event store
-- authenticated UI
 - multi-tenant isolation model
 - consent and privacy settings
 - audit logging
@@ -116,27 +121,24 @@ This file is implementation-specific working memory for the repo. It should stay
 
 ## Recommended Next Build Steps
 
-1. Add a persistent database schema for:
-   - users
-   - profiles
-   - documents
-   - extracted facts
-   - events
-   - deadlines
-   - concerns
-2. Build the first authenticated dashboard:
-   - deadlines
-   - risks
-   - document vault
-   - missing items
-3. Add structured extraction from uploaded documents into profile facts.
-4. Add notification service with email/SMS first.
-5. Add privacy surfaces:
+1. Harden intake and evidence handling:
+   - duplicate visibility
+   - extraction issue visibility
+   - canonical-document selection
+2. Tighten the authenticated workspace:
+   - cited risk and chat explanations
+   - fewer demo-only assumptions
+   - consistent session failure handling
+3. Finish reviewed action flows:
+   - form-fill proposal review
+   - filled PDF generation
+   - approval gates before action execution
+4. Add privacy surfaces:
    - data map
    - connector permissions
    - audit log
    - delete/export
-6. Add expert escalation model for high-risk issues.
+5. Add Gmail and expert-escalation flows only after the workspace state model is stable.
 
 ## Product Risks To Keep In Mind
 
