@@ -12,6 +12,52 @@ export interface AuthUser {
   token: string;
 }
 
+type MixpanelClient = {
+  identify?: (distinctId: string) => void;
+  register?: (properties: Record<string, unknown>) => void;
+  reset?: () => void;
+  people?: {
+    set?: (properties: Record<string, unknown>) => void;
+  };
+};
+
+function getMixpanel(): MixpanelClient | null {
+  if (typeof window === "undefined") return null;
+  return (window as Window & { mixpanel?: MixpanelClient }).mixpanel ?? null;
+}
+
+function safelyInvokeMixpanel(action: () => void) {
+  try {
+    action();
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("Mixpanel call skipped", error);
+    }
+  }
+}
+
+export function syncMixpanelUser(data: { user_id: string; email: string }) {
+  if (process.env.NODE_ENV !== "production") return;
+  const mixpanel = getMixpanel();
+  if (!mixpanel) return;
+
+  safelyInvokeMixpanel(() => {
+    mixpanel.identify?.(data.user_id);
+  });
+  safelyInvokeMixpanel(() => {
+    mixpanel.register?.({
+      user_id: data.user_id,
+      email: data.email,
+    });
+  });
+  safelyInvokeMixpanel(() => {
+    mixpanel.people?.set?.({
+      $email: data.email,
+      email: data.email,
+    });
+  });
+}
+
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("guardian_token");
@@ -39,12 +85,14 @@ function saveAuth(data: { token: string; user_id: string; email: string }) {
   localStorage.setItem("guardian_token", data.token);
   localStorage.setItem("guardian_user_id", data.user_id);
   localStorage.setItem("guardian_email", data.email);
+  syncMixpanelUser(data);
 }
 
 export function logout() {
   localStorage.removeItem("guardian_token");
   localStorage.removeItem("guardian_user_id");
   localStorage.removeItem("guardian_email");
+  getMixpanel()?.reset?.();
 }
 
 export async function register(email: string, password: string): Promise<AuthUser> {
