@@ -40,8 +40,20 @@ def configured_app_environment() -> str:
     return "dev"
 
 
-def configured_llm_provider() -> str:
-    provider = (os.environ.get("LLM_PROVIDER") or "").strip().lower()
+def configured_llm_provider(*, task: str = "chat") -> str:
+    env_names: tuple[str, ...]
+    if task == "voice":
+        env_names = ("VOICE_LLM_PROVIDER", "LLM_PROVIDER")
+    else:
+        env_names = ("LLM_PROVIDER",)
+
+    provider = ""
+    for env_name in env_names:
+        value = (os.environ.get(env_name) or "").strip().lower()
+        if value:
+            provider = value
+            break
+
     if provider:
         if provider not in {"anthropic", "openai"}:
             raise LLMConfigError(f"Unsupported LLM_PROVIDER {provider}")
@@ -69,8 +81,27 @@ def configured_llm_model(provider: str, *, task: str = "chat") -> str:
                 "ANTHROPIC_EXTRACTION_MODEL",
                 os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
             )
+        if task == "voice":
+            return os.environ.get(
+                "ANTHROPIC_VOICE_MODEL",
+                os.environ.get("ANTHROPIC_CHAT_MODEL", os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")),
+            )
+        if task == "chat":
+            return os.environ.get("ANTHROPIC_CHAT_MODEL", os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6"))
         return os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
     if provider == "openai":
+        if task == "extraction":
+            return os.environ.get(
+                "OPENAI_EXTRACTION_MODEL",
+                os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"),
+            )
+        if task == "voice":
+            return os.environ.get(
+                "OPENAI_VOICE_MODEL",
+                os.environ.get("OPENAI_CHAT_MODEL", os.environ.get("OPENAI_MODEL", "gpt-5.4")),
+            )
+        if task == "chat":
+            return os.environ.get("OPENAI_CHAT_MODEL", os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"))
         return os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     raise LLMConfigError(f"Unsupported provider {provider}")
 
@@ -529,10 +560,11 @@ def chat_completion(
     messages: list[dict[str, str]],
     temperature: float = 0.3,
     max_tokens: int = 1024,
+    task: str = "chat",
     usage_context: dict[str, Any] | None = None,
 ) -> str:
-    provider = configured_llm_provider()
-    model = configured_llm_model(provider)
+    provider = configured_llm_provider(task=task)
+    model = configured_llm_model(provider, task=task)
     started_at = datetime.now(timezone.utc)
     started_perf = perf_counter()
 
@@ -563,6 +595,7 @@ def chat_completion(
                         "temperature": temperature,
                         "max_tokens": max_tokens,
                         "message_count": len(messages),
+                        "task": task,
                     },
                 },
                 usage_payload=_normalized_usage(provider, response),
@@ -573,12 +606,16 @@ def chat_completion(
         from openai import OpenAI
 
         client = OpenAI(api_key=_require_api_key(provider))
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "system", "content": system_prompt}] + messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-        )
+        request_kwargs = {
+            "model": model,
+            "messages": [{"role": "system", "content": system_prompt}] + messages,
+            "temperature": temperature,
+        }
+        if model.startswith("gpt-5"):
+            request_kwargs["max_completion_tokens"] = max_tokens
+        else:
+            request_kwargs["max_tokens"] = max_tokens
+        response = client.chat.completions.create(**request_kwargs)
         completed_at = datetime.now(timezone.utc)
         _persist_usage_record(
             provider=provider,
@@ -594,6 +631,7 @@ def chat_completion(
                     "temperature": temperature,
                     "max_tokens": max_tokens,
                     "message_count": len(messages),
+                    "task": task,
                 },
             },
             usage_payload=_normalized_usage(provider, response),
@@ -616,6 +654,7 @@ def chat_completion(
                     "temperature": temperature,
                     "max_tokens": max_tokens,
                     "message_count": len(messages),
+                    "task": task,
                 },
             },
             usage_payload=None,

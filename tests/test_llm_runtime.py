@@ -10,6 +10,7 @@ from compliance_os.web.services.llm_runtime import (
     LLMConfigError,
     chat_completion,
     configured_app_environment,
+    configured_llm_model,
     configured_llm_provider,
     extract_json,
 )
@@ -21,6 +22,22 @@ def test_configured_llm_provider_prefers_explicit_setting(monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
 
     assert configured_llm_provider() == "anthropic"
+
+
+def test_configured_llm_provider_supports_voice_override(monkeypatch):
+    monkeypatch.setenv("LLM_PROVIDER", "anthropic")
+    monkeypatch.setenv("VOICE_LLM_PROVIDER", "openai")
+
+    assert configured_llm_provider(task="voice") == "openai"
+    assert configured_llm_provider(task="chat") == "anthropic"
+
+
+def test_configured_llm_model_supports_openai_voice_override(monkeypatch):
+    monkeypatch.setenv("OPENAI_MODEL", "gpt-base")
+    monkeypatch.setenv("OPENAI_VOICE_MODEL", "gpt-voice")
+
+    assert configured_llm_model("openai", task="voice") == "gpt-voice"
+    assert configured_llm_model("openai", task="chat") == "gpt-base"
 
 
 def test_extract_json_uses_anthropic_when_configured(monkeypatch):
@@ -48,6 +65,7 @@ def test_extract_json_uses_anthropic_when_configured(monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "anthropic")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "anthropic-test-key")
     monkeypatch.setenv("ANTHROPIC_MODEL", "claude-test-model")
+    monkeypatch.setenv("ANTHROPIC_EXTRACTION_MODEL", "claude-extraction-model")
     monkeypatch.setitem(sys.modules, "anthropic", SimpleNamespace(Anthropic=FakeAnthropic))
     monkeypatch.setattr(
         "compliance_os.web.services.llm_runtime._persist_usage_record",
@@ -62,7 +80,7 @@ def test_extract_json_uses_anthropic_when_configured(monkeypatch):
 
     assert result == {"field": "value"}
     assert captured["api_key"] == "anthropic-test-key"
-    assert captured["kwargs"]["model"] == "claude-test-model"
+    assert captured["kwargs"]["model"] == "claude-extraction-model"
     assert captured["kwargs"]["system"] == "extract system"
     assert recorded["provider"] == "anthropic"
     assert recorded["status"] == "success"

@@ -1,6 +1,8 @@
 """LLM-powered chat assistant with user context."""
 from __future__ import annotations
 
+from typing import Literal
+
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -42,6 +44,7 @@ def _newest_extracted_fields(check, doc_types: tuple[str, ...]) -> dict[str, str
 class ChatRequest(BaseModel):
     message: str
     history: list[dict[str, str]] = []  # [{"role": "user"|"assistant", "text": "..."}]
+    mode: Literal["chat", "voice"] = "chat"
 
 
 class ChatReferenceDoc(BaseModel):
@@ -211,6 +214,26 @@ You have access to the user's compliance profile below. Use this context to give
 {context}
 """
 
+VOICE_SYSTEM_PROMPT = """You are Guardian, a voice-first compliance assistant for immigrants in the US. You help users understand their immigration, tax, and business compliance obligations through spoken conversation.
+
+Today's date: {today}
+
+IMPORTANT RULES:
+1. You are NOT a lawyer. Never provide legal advice. Always recommend consulting a qualified attorney for specific legal questions.
+2. Be calm, procedural, and evidence-based. Never be alarmist.
+3. Speak like a concise human guide, not a report writer.
+4. Return plain text only. Do not use markdown, bullet lists, headings, numbering, or rich formatting.
+5. Keep the response easy to say out loud: short paragraphs, short sentences, direct wording.
+6. When appropriate, briefly summarize the top issue, the next deadline, and the best next step.
+7. Ask at most one concise follow-up question.
+8. Always frame findings as potential risks or things worth checking, never definitive legal conclusions.
+9. Use today's date when computing deadlines, grace periods, days remaining, or overdue status. Be precise with dates.
+
+You have access to the user's compliance profile below. Use this context to give personalized, relevant answers.
+
+{context}
+"""
+
 
 @router.post("", response_model=ChatResponse)
 def chat(
@@ -223,7 +246,8 @@ def chat(
 
     # Build messages for the LLM
     from datetime import date
-    system = SYSTEM_PROMPT.format(context=context_text, today=date.today().isoformat())
+    system_template = VOICE_SYSTEM_PROMPT if body.mode == "voice" else SYSTEM_PROMPT
+    system = system_template.format(context=context_text, today=date.today().isoformat())
     messages = []
     for msg in body.history:
         messages.append({"role": msg["role"], "content": msg["text"]})
@@ -233,15 +257,17 @@ def chat(
         reply = chat_completion(
             system_prompt=system,
             messages=messages,
-            temperature=0.3,
-            max_tokens=1024,
+            temperature=0.2 if body.mode == "voice" else 0.3,
+            max_tokens=900 if body.mode == "voice" else 1024,
+            task=body.mode,
             usage_context={
                 "db_session": db,
-                "operation": "chat_assistant",
+                "operation": "voice_assistant" if body.mode == "voice" else "chat_assistant",
                 "user_id": user.id,
                 "request_metadata": {
                     "history_count": len(body.history),
                     "message_length": len(body.message),
+                    "mode": body.mode,
                 },
             },
         )

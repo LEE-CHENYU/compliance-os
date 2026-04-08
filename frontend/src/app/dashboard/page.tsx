@@ -1,5 +1,7 @@
 "use client";
 
+import Vapi from "@vapi-ai/web";
+import type { ClientMessageTranscript, CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 import { useCallback, useEffect, useState, useRef, type ChangeEvent, type ComponentPropsWithoutRef, type DragEvent as ReactDragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, authHeaders, getUser, logout } from "@/lib/auth";
@@ -95,6 +97,8 @@ interface ChatMessage {
   mode?: ChatMode;
 }
 
+type VoiceCallState = "idle" | "connecting" | "active" | "error";
+
 interface Stats {
   documents: number;
   risks: number;
@@ -174,6 +178,12 @@ interface DashboardDocumentLink {
   category: string;
 }
 
+interface ProcessingIndicatorState {
+  progress: number;
+  title: string;
+  detail: string;
+}
+
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://localhost:8000/api/dashboard"
   : "/api/dashboard";
@@ -185,6 +195,19 @@ const AUTH_API = typeof window !== "undefined" && window.location.hostname === "
   : "/api/auth";
 
 const DASHBOARD_ACCEPT = ".pdf,.png,.jpg,.jpeg,.csv,.txt,.docx";
+const VOICE_CONVERSATION_STARTER = "Give me a brief spoken review of my current dashboard: the top-line issues, the next deadline, and the single most useful next step. Then ask me one concise follow-up question to continue the conversation naturally.";
+const VAPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY?.trim();
+const GUARDIAN_VOICE_MODEL = process.env.NEXT_PUBLIC_GUARDIAN_VOICE_MODEL?.trim() || "gpt-4.1-mini";
+const GUARDIAN_VOICE_ID = process.env.NEXT_PUBLIC_GUARDIAN_VOICE_ID?.trim() || "Elliot";
+const GUARDIAN_VOICE_PROMPT = [
+  "You are Guardian, a calm voice guide for a user's compliance dashboard.",
+  "Open with a concise dashboard review, not a generic greeting.",
+  "Summarize the top-line issues, the next deadline, and the single best next step.",
+  "Keep each turn natural and spoken, with short sentences and no markdown.",
+  "Ask at most one short follow-up question at a time.",
+  "Frame risks as things worth checking, not definitive legal conclusions.",
+  "You are not a lawyer and should not provide legal advice.",
+].join(" ");
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
   student_status: { bg: "rgba(6,182,212,0.1)", text: "#0891b2", border: "rgba(6,182,212,0.12)", label: "Student Status" },
@@ -197,6 +220,139 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   personal: { bg: "rgba(236,72,153,0.1)", text: "#db2777", border: "rgba(236,72,153,0.12)", label: "Personal" },
   other: { bg: "rgba(107,114,128,0.1)", text: "#6b7280", border: "rgba(107,114,128,0.12)", label: "Other" },
 };
+
+function clampProgress(progress: number): number {
+  return Math.min(1, Math.max(0, progress));
+}
+
+function stripMarkdownForTranscript(text: string): string {
+  return text
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/_([^_]+)_/g, "$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function getVoiceErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  return "Voice assistant failed to start.";
+}
+
+function isTranscriptMessage(message: unknown): message is ClientMessageTranscript {
+  return Boolean(
+    message
+      && typeof message === "object"
+      && "type" in message
+      && typeof (message as { type?: string }).type === "string"
+      && (message as { type: string }).type.startsWith("transcript"),
+  );
+}
+
+function buildVoiceContextMessage(
+  timeline: TimelineData | null,
+  stats: Stats | null,
+  documents: { filename: string; doc_type: string; category: string }[],
+) {
+  const keyFacts = (timeline?.key_facts || []).slice(0, 8)
+    .map((fact) => `${fact.label}: ${fact.value}`)
+    .join("\n");
+  const advisories = (timeline?.advisories || []).slice(0, 4)
+    .map((advisory) => `${advisory.title} — ${advisory.action}`)
+    .join("\n");
+  const integrityIssues = (timeline?.integrity_issues || []).slice(0, 3)
+    .map((issue) => `${issue.title} — ${issue.message}`)
+    .join("\n");
+  const deadlines = (timeline?.deadlines || []).slice(0, 4)
+    .map((deadline) => `${deadline.title} | ${deadline.date} | ${deadline.days} days`)
+    .join("\n");
+  const documentLines = documents.slice(0, 8)
+    .map((document) => `${document.filename} (${document.doc_type}, ${document.category})`)
+    .join("\n");
+
+  return [
+    VOICE_CONVERSATION_STARTER,
+    "",
+    `Dashboard snapshot: ${stats?.documents || 0} documents, ${stats?.risks || 0} needs-attention items, ${(timeline?.advisories || []).length} potential risks, next deadline in ${stats?.next_deadline_days ?? "unknown"} days.`,
+    deadlines ? `Deadlines:\n${deadlines}` : "Deadlines: none available.",
+    advisories ? `Potential risks:\n${advisories}` : "Potential risks: none available.",
+    integrityIssues ? `Data gaps:\n${integrityIssues}` : "Data gaps: none available.",
+    keyFacts ? `Key facts:\n${keyFacts}` : "Key facts: none available.",
+    documentLines ? `Documents on file:\n${documentLines}` : "Documents on file: none available.",
+  ].join("\n\n");
+}
+
+function createGuardianVoiceAssistant(): CreateAssistantDTO {
+  return {
+    firstMessageMode: "assistant-waits-for-user",
+    backgroundSound: "off",
+    maxDurationSeconds: 1200,
+    model: {
+      provider: "openai",
+      model: GUARDIAN_VOICE_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: GUARDIAN_VOICE_PROMPT,
+        },
+      ],
+    },
+    transcriber: {
+      provider: "deepgram",
+      model: "flux-general-en",
+      language: "en",
+    },
+    voice: {
+      provider: "vapi",
+      voiceId: GUARDIAN_VOICE_ID,
+      speed: 1.02,
+    },
+  };
+}
+
+function ProgressRing({
+  progress,
+  size = 36,
+  label,
+}: {
+  progress: number;
+  size?: number;
+  label?: string;
+}) {
+  const normalizedProgress = clampProgress(progress);
+  return (
+    <div
+      className="relative shrink-0"
+      style={{ width: size, height: size }}
+      aria-label={label || `Progress ${Math.round(normalizedProgress * 100)} percent`}
+      role="img"
+    >
+      <div
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: `conic-gradient(#5b8dee ${normalizedProgress * 360}deg, rgba(91,141,238,0.14) ${normalizedProgress * 360}deg 360deg)`,
+        }}
+      />
+      <div className="absolute inset-[4px] rounded-full bg-white/85 backdrop-blur-sm" />
+      <div className="absolute inset-0 flex items-center justify-center text-[9px] font-semibold text-[#3d6bc5]">
+        {Math.round(normalizedProgress * 100)}%
+      </div>
+    </div>
+  );
+}
 
 function normalizeSelectedSourcePath(file: File): string | null {
   const relativePath = "webkitRelativePath" in file
@@ -317,17 +473,54 @@ export default function DashboardPage() {
   const [openClawToken, setOpenClawToken] = useState<string | null>(null);
   const [openClawLoading, setOpenClawLoading] = useState(false);
   const [openClawError, setOpenClawError] = useState<string | null>(null);
+  const [processingIndicator, setProcessingIndicator] = useState<ProcessingIndicatorState | null>(null);
+  const [voiceCallState, setVoiceCallState] = useState<VoiceCallState>("idle");
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [assistantTranscript, setAssistantTranscript] = useState("");
+  const [userTranscript, setUserTranscript] = useState("");
+  const [assistantSpeaking, setAssistantSpeaking] = useState(false);
+  const [micMuted, setMicMuted] = useState(false);
   const chatMessageCounterRef = useRef(0);
+  const processingHideTimeoutRef = useRef<number | null>(null);
+  const vapiRef = useRef<Vapi | null>(null);
+  const guardianMessagesRef = useRef<ChatMessage[]>([]);
   const guardianMessages = chatMessages.filter((message) => message.mode !== "form-filler");
   const formFillerMessages = chatMessages.filter((message) => message.mode === "form-filler");
   const visibleChatMessages = chatMode === "guardian" ? guardianMessages : formFillerMessages;
   const hasGuardianQuestion = guardianMessages.some(
     (message) => message.role === "assistant" && Boolean(message.chips?.length),
   );
+  const voiceReady = Boolean(VAPI_PUBLIC_KEY);
+  const voiceBusy = voiceCallState === "connecting";
+  const voiceActive = voiceCallState === "active";
+  const voiceListening = voiceActive && !assistantSpeaking && !micMuted;
 
   const nextChatMessageId = useCallback(() => {
     chatMessageCounterRef.current += 1;
     return `chat-${chatMessageCounterRef.current}`;
+  }, []);
+
+  const updateProcessingIndicator = useCallback((progress: number, title: string, detail: string) => {
+    if (processingHideTimeoutRef.current) {
+      window.clearTimeout(processingHideTimeoutRef.current);
+      processingHideTimeoutRef.current = null;
+    }
+    setProcessingIndicator({ progress: clampProgress(progress), title, detail });
+  }, []);
+
+  const clearProcessingIndicator = useCallback((delay = 0) => {
+    if (processingHideTimeoutRef.current) {
+      window.clearTimeout(processingHideTimeoutRef.current);
+      processingHideTimeoutRef.current = null;
+    }
+    if (delay <= 0) {
+      setProcessingIndicator(null);
+      return;
+    }
+    processingHideTimeoutRef.current = window.setTimeout(() => {
+      setProcessingIndicator(null);
+      processingHideTimeoutRef.current = null;
+    }, delay);
   }, []);
 
   const refreshDashboard = useCallback(async () => {
@@ -485,6 +678,10 @@ export default function DashboardPage() {
     loadOpenClawConnection();
   }, [loadOpenClawConnection, showToken]);
 
+  useEffect(() => {
+    guardianMessagesRef.current = guardianMessages;
+  }, [guardianMessages]);
+
   function resetUploadState() {
     setPreparedUploads([]);
     setShowUploadReview(false);
@@ -507,7 +704,15 @@ export default function DashboardPage() {
       const toUpload = items.filter(
         (item) => item.action === "upload" && (item.status === "ready" || item.status === "duplicate"),
       );
-      for (const item of toUpload) {
+      const totalUploads = Math.max(toUpload.length, 1);
+      updateProcessingIndicator(0.22, "Processing documents", `${toUpload.length} file${toUpload.length === 1 ? "" : "s"} queued`);
+      for (let index = 0; index < toUpload.length; index += 1) {
+        const item = toUpload[index];
+        updateProcessingIndicator(
+          0.22 + (index / totalUploads) * 0.62,
+          "Processing documents",
+          `Uploading and analyzing ${index + 1} of ${totalUploads}: ${item.fileName}`,
+        );
         const form = new FormData();
         form.append("file", item.file, item.file.name);
         form.append("doc_type", uploadDocType || item.resolvedDocType || "other");
@@ -524,14 +729,23 @@ export default function DashboardPage() {
         if (!resp.ok) {
           throw new Error(body?.detail?.message || body?.detail || `Upload failed for ${item.fileName}`);
         }
+        updateProcessingIndicator(
+          0.22 + ((index + 1) / totalUploads) * 0.62,
+          "Processing documents",
+          `${index + 1} of ${totalUploads} files processed`,
+        );
       }
+      updateProcessingIndicator(0.92, "Refreshing dashboard", "Updating your timeline and risk summary");
       await refreshDashboard();
+      updateProcessingIndicator(1, "Dashboard updated", "Your latest document analysis is ready");
+      clearProcessingIndicator(1400);
       setShowUploadPanel(false);
       setUploadDocType("");
       resetUploadState();
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : "Upload failed");
       setShowUploadReview(true);
+      clearProcessingIndicator();
     } finally {
       if (!preserveLoading) {
         setUploading(false);
@@ -547,6 +761,7 @@ export default function DashboardPage() {
     setUploading(true);
     setUploadError(null);
     setShowUploadPanel(false);
+    updateProcessingIndicator(0.08, "Reviewing files", `${uniqueFiles.length} file${uniqueFiles.length === 1 ? "" : "s"} selected`);
     try {
       const form = new FormData();
       for (const item of uniqueFiles) {
@@ -595,12 +810,15 @@ export default function DashboardPage() {
       setPreparedUploads(prepared);
       if (needsReview) {
         setShowUploadReview(true);
+        updateProcessingIndicator(1, "Review complete", "Please confirm duplicates or unresolved files before upload");
+        clearProcessingIndicator(1400);
         return;
       }
       await executeUploadBatch(prepared, true);
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : "Could not prepare uploads");
       setShowUploadPanel(true);
+      clearProcessingIndicator();
     } finally {
       setUploading(false);
     }
@@ -805,43 +1023,50 @@ export default function DashboardPage() {
     return () => window.clearInterval(interval);
   }, [timeline?.assistant_prompts, resolvedAssistantPromptIds, makeAssistantPromptMessage]);
 
-  async function sendChatMessage(text: string) {
+  const sendChatMessage = useCallback(async (text: string) => {
     const userMessage: ChatMessage = {
       id: nextChatMessageId(),
       role: "user",
       text,
       mode: "guardian",
     };
+    const history = [...guardianMessagesRef.current, userMessage];
+    guardianMessagesRef.current = history;
     setChatMessages((prev) => [...prev, userMessage]);
     setChatLoading(true);
 
     try {
-      const history = [...guardianMessages, userMessage].map((m) => ({ role: m.role, text: m.text }));
       const resp = await fetch(chatApi, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
+        body: JSON.stringify({ message: text, history: history.slice(0, -1).map((m) => ({ role: m.role, text: m.text })) }),
       });
       const data = await resp.json();
+      const replyText = data.reply || "I was not able to summarize that just now.";
+      const assistantMessage: ChatMessage = {
+        id: nextChatMessageId(),
+        role: "assistant",
+        text: replyText,
+        references: data.references || [],
+        mode: "guardian",
+      };
+      guardianMessagesRef.current = [...history, assistantMessage];
       setChatMessages((prev) => [
         ...prev,
-        {
-          id: nextChatMessageId(),
-          role: "assistant",
-          text: data.reply,
-          references: data.references || [],
-          mode: "guardian",
-        },
+        assistantMessage,
       ]);
     } catch {
+      const fallbackText = "Sorry, I couldn't process that. Please try again.";
+      const assistantMessage: ChatMessage = {
+        id: nextChatMessageId(),
+        role: "assistant",
+        text: fallbackText,
+        mode: "guardian",
+      };
+      guardianMessagesRef.current = [...history, assistantMessage];
       setChatMessages((prev) => [
         ...prev,
-        {
-          id: nextChatMessageId(),
-          role: "assistant",
-          text: "Sorry, I couldn\u2019t process that. Please try again.",
-          mode: "guardian",
-        },
+        assistantMessage,
       ]);
     } finally {
       setChatLoading(false);
@@ -849,7 +1074,130 @@ export default function DashboardPage() {
         document.getElementById("chat-scroll")?.scrollTo({ top: 99999, behavior: "smooth" });
       }, 100);
     }
-  }
+  }, [chatApi, nextChatMessageId]);
+
+  const stopVoiceConversation = useCallback(async () => {
+    const activeVapi = vapiRef.current;
+    if (!activeVapi) {
+      return;
+    }
+
+    try {
+      await activeVapi.stop();
+    } catch {
+      // Ignore local transport shutdown failures.
+    }
+
+    activeVapi.removeAllListeners();
+    vapiRef.current = null;
+    setVoiceCallState("idle");
+    setAssistantSpeaking(false);
+    setMicMuted(false);
+  }, []);
+
+  const startVoiceConversation = useCallback(async () => {
+    if (!voiceReady || vapiRef.current || voiceBusy) {
+      if (!voiceReady) {
+        setVoiceError("Add NEXT_PUBLIC_VAPI_PUBLIC_KEY in frontend/.env.local to enable the same live voice stack as Decid.");
+      }
+      return;
+    }
+
+    const nextVapi = new Vapi(VAPI_PUBLIC_KEY as string);
+    const contextMessage = buildVoiceContextMessage(timeline, stats, documents);
+
+    vapiRef.current = nextVapi;
+    setVoiceCallState("connecting");
+    setVoiceError(null);
+    setAssistantTranscript("");
+    setUserTranscript("");
+
+    nextVapi.on("call-start", () => {
+      setVoiceCallState("active");
+      setVoiceError(null);
+      nextVapi.send({
+        type: "add-message",
+        message: {
+          role: "system",
+          content: contextMessage,
+        },
+        triggerResponseEnabled: true,
+      });
+    });
+
+    nextVapi.on("call-end", () => {
+      nextVapi.removeAllListeners();
+      if (vapiRef.current === nextVapi) {
+        vapiRef.current = null;
+      }
+      setVoiceCallState("idle");
+      setAssistantSpeaking(false);
+      setMicMuted(false);
+    });
+
+    nextVapi.on("speech-start", () => {
+      setAssistantSpeaking(true);
+    });
+
+    nextVapi.on("speech-end", () => {
+      setAssistantSpeaking(false);
+    });
+
+    nextVapi.on("message", (message) => {
+      if (!isTranscriptMessage(message)) {
+        return;
+      }
+
+      const transcript = stripMarkdownForTranscript(message.transcript.trim());
+      if (!transcript) {
+        return;
+      }
+
+      if (message.role === "assistant") {
+        setAssistantTranscript(transcript);
+        return;
+      }
+
+      if (message.role === "user") {
+        setUserTranscript(transcript);
+      }
+    });
+
+    nextVapi.on("error", (error) => {
+      nextVapi.removeAllListeners();
+      if (vapiRef.current === nextVapi) {
+        vapiRef.current = null;
+      }
+      setVoiceCallState("error");
+      setAssistantSpeaking(false);
+      setMicMuted(false);
+      setVoiceError(getVoiceErrorMessage(error));
+    });
+
+    try {
+      await nextVapi.start(createGuardianVoiceAssistant());
+    } catch (error) {
+      nextVapi.removeAllListeners();
+      if (vapiRef.current === nextVapi) {
+        vapiRef.current = null;
+      }
+      setVoiceCallState("error");
+      setAssistantSpeaking(false);
+      setMicMuted(false);
+      setVoiceError(getVoiceErrorMessage(error));
+    }
+  }, [documents, stats, timeline, voiceBusy, voiceReady]);
+
+  useEffect(() => () => {
+    if (processingHideTimeoutRef.current) {
+      window.clearTimeout(processingHideTimeoutRef.current);
+    }
+    if (vapiRef.current) {
+      void vapiRef.current.stop();
+      vapiRef.current.removeAllListeners();
+      vapiRef.current = null;
+    }
+  }, []);
 
   async function handleFormFillSubmit(file: File, instruction: string) {
     setFormFillLoading(true);
@@ -1144,7 +1492,19 @@ export default function DashboardPage() {
               </>
             )}
           </div>
-          <button onClick={() => setShowUploadPanel(true)} className="px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs md:text-sm font-semibold">
+          {processingIndicator && (
+            <div className="hidden lg:flex items-center gap-3 rounded-full border border-white/60 bg-white/70 px-3 py-2 shadow-[0_6px_18px_rgba(91,141,238,0.08)]">
+              <ProgressRing progress={processingIndicator.progress} size={32} label={processingIndicator.title} />
+              <div className="min-w-0">
+                <div className="text-[11px] font-semibold text-[#0d1424]">{processingIndicator.title}</div>
+                <div className="max-w-[180px] truncate text-[10px] text-[#7b8ba5]">{processingIndicator.detail}</div>
+              </div>
+            </div>
+          )}
+          <button onClick={() => setShowUploadPanel(true)} className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs md:text-sm font-semibold">
+            {processingIndicator && (
+              <span className="inline-flex h-2.5 w-2.5 rounded-full border border-white/70 border-t-transparent animate-spin" />
+            )}
             + Upload document
           </button>
           <button onClick={() => { logout(); router.push("/"); }} className="text-xs md:text-sm text-[#7b8ba5]">
@@ -1217,6 +1577,115 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+
+          <section className="mb-8 overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(234,241,251,0.92))] backdrop-blur-xl shadow-[0_10px_36px_rgba(91,141,238,0.08)]">
+            <div className="p-5 md:p-7">
+              <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                <div className="max-w-2xl">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">Voice Conversation</div>
+                  <h2 className="mt-2 text-[24px] font-bold leading-tight text-[#0d1424]">Talk to Guardian</h2>
+                  <p className="mt-3 text-[14px] leading-7 text-[#556480]">
+                    This uses the same live voice flow as Decid. Guardian speaks first, listens live, and keeps the latest transcript in this panel.
+                  </p>
+                </div>
+
+                <div className="flex shrink-0 items-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (voiceActive) {
+                        void stopVoiceConversation();
+                        return;
+                      }
+                      void startVoiceConversation();
+                    }}
+                    disabled={voiceBusy}
+                    aria-label={voiceActive ? "Stop live voice" : "Start live voice"}
+                    className={`inline-flex items-center gap-3 rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
+                      voiceActive
+                        ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_12px_28px_rgba(91,141,238,0.2)]"
+                        : "border border-blue-100/50 bg-white/85 text-[#3a5a8c] hover:bg-white"
+                    } disabled:cursor-not-allowed disabled:opacity-50`}
+                  >
+                    <span className={`inline-flex h-10 w-10 items-center justify-center rounded-full ${
+                      voiceActive ? "bg-white/18" : "bg-[#5b8dee]/8"
+                    }`}>
+                      <span className={`block h-4 w-4 rounded-full ${
+                        voiceActive ? "bg-white" : "bg-[#5b8dee]"
+                      }`} />
+                    </span>
+                    {!voiceReady
+                      ? "Voice unavailable"
+                      : voiceBusy
+                        ? "Connecting..."
+                        : voiceActive
+                          ? "Stop voice"
+                          : "Start live voice"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-[24px] border border-white/70 bg-white/55 p-4 shadow-[0_6px_22px_rgba(91,141,238,0.06)]">
+                <div className="flex items-center justify-between gap-3 border-b border-blue-100/35 pb-3">
+                  <div>
+                    <div className="text-[13px] font-semibold text-[#0d1424]">Transcript</div>
+                    <div className="text-[12px] text-[#7b8ba5]">
+                      {!voiceReady
+                        ? "Waiting for the Vapi public key"
+                        : voiceBusy
+                          ? "Connecting the live voice assistant"
+                        : voiceListening
+                        ? "Listening for your reply"
+                        : assistantSpeaking
+                          ? "Guardian is speaking"
+                          : voiceActive
+                            ? "Conversation paused"
+                            : "No voice conversation yet"}
+                    </div>
+                  </div>
+                  <div className="text-[11px] font-medium text-[#7b8ba5]">
+                    {voiceActive ? `Voice: ${GUARDIAN_VOICE_ID}` : "Assistant-led review"}
+                  </div>
+                </div>
+
+                {voiceError && (
+                  <div className="mt-4 rounded-2xl border border-red-200 bg-red-50/80 px-4 py-3 text-[12px] text-red-700">
+                    {voiceError}
+                  </div>
+                )}
+
+                <div className="mt-4 space-y-3 rounded-[22px] border border-blue-100/40 bg-[#f8fbff] p-4">
+                  <div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">Guardian</div>
+                    {voiceBusy ? (
+                      <div className="mt-2 flex gap-1.5">
+                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "300ms" }} />
+                      </div>
+                    ) : (
+                      <p className="mt-2 whitespace-pre-wrap text-[14px] leading-7 text-[#556480]">
+                        {assistantTranscript || "Guardian will summarize the dashboard here once the live voice review starts."}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="border-t border-blue-100/35 pt-3">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">You</div>
+                    <p className="mt-2 whitespace-pre-wrap text-[14px] leading-7 text-[#556480]">
+                      {userTranscript || "Your latest spoken reply will appear here."}
+                    </p>
+                  </div>
+
+                  {!voiceReady && (
+                    <p className="border-t border-blue-100/35 pt-3 text-[12px] leading-6 text-[#7b8ba5]">
+                      Add <code className="rounded bg-white/80 px-1 text-[#3a5a8c]">NEXT_PUBLIC_VAPI_PUBLIC_KEY</code> in <code className="rounded bg-white/80 px-1 text-[#3a5a8c]">frontend/.env.local</code> to use the same voice stack as Decid.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* Mobile view toggle */}
           <div className="flex md:hidden gap-1.5 mb-4 overflow-x-auto">
