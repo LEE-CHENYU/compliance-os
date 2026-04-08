@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { getUser, syncMixpanelUser } from "@/lib/auth";
 
 export default function MixpanelIdentitySync() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const user = getUser();
@@ -17,7 +16,7 @@ export default function MixpanelIdentitySync() {
     }
 
     syncMixpanelUser(user);
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   return null;
 }

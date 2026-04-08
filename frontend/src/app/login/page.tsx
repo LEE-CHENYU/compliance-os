@@ -4,6 +4,8 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { login, register, getGoogleAuthUrl, handleGoogleCallback } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export default function LoginPageWrapper() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-[#8e9ab5]">Loading...</div>}>

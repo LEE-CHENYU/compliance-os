@@ -1,7 +1,7 @@
 "use client";
 
 import Vapi from "@vapi-ai/web";
-import type { ClientMessageTranscript, CreateAssistantDTO } from "@vapi-ai/web/dist/api";
+import type { ClientMessageTranscript, CreateAssistantDTO, OpenAIModel, VapiVoice } from "@vapi-ai/web/dist/api";
 import { useCallback, useEffect, useState, useRef, type ChangeEvent, type ComponentPropsWithoutRef, type DragEvent as ReactDragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, authHeaders, getUser, logout } from "@/lib/auth";
@@ -197,8 +197,8 @@ const AUTH_API = typeof window !== "undefined" && window.location.hostname === "
 const DASHBOARD_ACCEPT = ".pdf,.png,.jpg,.jpeg,.csv,.txt,.docx";
 const VOICE_CONVERSATION_STARTER = "Give me a brief spoken review of my current dashboard: the top-line issues, the next deadline, and the single most useful next step. Then ask me one concise follow-up question to continue the conversation naturally.";
 const VAPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY?.trim();
-const GUARDIAN_VOICE_MODEL = process.env.NEXT_PUBLIC_GUARDIAN_VOICE_MODEL?.trim() || "gpt-4.1-mini";
-const GUARDIAN_VOICE_ID = process.env.NEXT_PUBLIC_GUARDIAN_VOICE_ID?.trim() || "Elliot";
+const SUPPORTED_GUARDIAN_VOICE_MODELS = ["gpt-4.1-mini", "gpt-4.1", "gpt-5-mini", "gpt-5"] as const satisfies readonly OpenAIModel["model"][];
+const SUPPORTED_GUARDIAN_VOICE_IDS = ["Elliot", "Kylie", "Rohan", "Lily", "Savannah", "Hana", "Neha", "Cole", "Harry", "Paige", "Spencer", "Leah", "Tara"] as const satisfies readonly VapiVoice["voiceId"][];
 const GUARDIAN_VOICE_PROMPT = [
   "You are Guardian, a calm voice guide for a user's compliance dashboard.",
   "Open with a concise dashboard review, not a generic greeting.",
@@ -208,6 +208,19 @@ const GUARDIAN_VOICE_PROMPT = [
   "Frame risks as things worth checking, not definitive legal conclusions.",
   "You are not a lawyer and should not provide legal advice.",
 ].join(" ");
+
+function resolveGuardianVoiceModel(value?: string) {
+  const nextModel = value?.trim();
+  return SUPPORTED_GUARDIAN_VOICE_MODELS.find((model) => model === nextModel) || "gpt-4.1-mini";
+}
+
+function resolveGuardianVoiceId(value?: string) {
+  const nextVoiceId = value?.trim();
+  return SUPPORTED_GUARDIAN_VOICE_IDS.find((voiceId) => voiceId === nextVoiceId) || "Elliot";
+}
+
+const GUARDIAN_VOICE_MODEL = resolveGuardianVoiceModel(process.env.NEXT_PUBLIC_GUARDIAN_VOICE_MODEL);
+const GUARDIAN_VOICE_ID = resolveGuardianVoiceId(process.env.NEXT_PUBLIC_GUARDIAN_VOICE_ID);
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
   student_status: { bg: "rgba(6,182,212,0.1)", text: "#0891b2", border: "rgba(6,182,212,0.12)", label: "Student Status" },

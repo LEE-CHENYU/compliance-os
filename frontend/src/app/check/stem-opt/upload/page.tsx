@@ -4,6 +4,8 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument, getCheck } from "@/lib/api-v2";
 
+export const dynamic = "force-dynamic";
+
 interface UploadSlot {
   docType: string;
   label: string;

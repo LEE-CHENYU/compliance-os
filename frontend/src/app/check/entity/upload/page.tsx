@@ -4,6 +4,8 @@ import { Suspense, useCallback, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument } from "@/lib/api-v2";
 
+export const dynamic = "force-dynamic";
+
 export default function EntityUploadPage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-[#8e9ab5]">Loading...</div>}>
