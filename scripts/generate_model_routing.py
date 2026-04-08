@@ -34,6 +34,8 @@ MODEL_REGISTRY = {
 }
 
 DEFAULT_MODEL_KEY = "gpt-5.4-mini"
+HAIKU_MODEL_KEY = "haiku-4.5"
+ACCURACY_TIE_EPSILON = 0.005
 
 
 def load_all_reports() -> list[tuple[str, dict]]:
@@ -127,7 +129,16 @@ def pick_best_model(accuracies: dict[str, float], cost_by_model: dict[str, float
         return DEFAULT_MODEL_KEY
 
     best_acc = max(accuracies.values())
-    tied = [mk for mk, acc in accuracies.items() if acc >= best_acc - 0.005]
+    default_acc = accuracies.get(DEFAULT_MODEL_KEY, 0.0)
+    haiku_acc = accuracies.get(HAIKU_MODEL_KEY)
+
+    # For batch-style extraction work, prefer Haiku whenever it is effectively tied
+    # with the best available model and is not worse than the default GPT path.
+    if haiku_acc is not None:
+        if haiku_acc >= best_acc - ACCURACY_TIE_EPSILON and haiku_acc >= default_acc - ACCURACY_TIE_EPSILON:
+            return HAIKU_MODEL_KEY
+
+    tied = [mk for mk, acc in accuracies.items() if acc >= best_acc - ACCURACY_TIE_EPSILON]
 
     if len(tied) == 1:
         return tied[0]

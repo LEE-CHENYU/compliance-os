@@ -1,5 +1,5 @@
 # Model routing for document extraction.
-# Auto-generated on 2026-04-02 from 5 bake-off runs (3348 total evaluations).
+# Auto-generated on 2026-04-08 from 5 bake-off runs (3348 total evaluations).
 #
 # Default: gpt-5.4-mini (openai/gpt-5.4-mini)
 # Re-run bake-off: python scripts/extraction_bakeoff.py --limit 50
@@ -12,21 +12,36 @@ overrides:
   1042s:
     provider: anthropic
     model: claude-haiku-4-5-20251001
+  articles_of_organization:
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
   e_verify_case:
     provider: google
     model: gemini-2.5-flash
   h1b_registration:
-    provider: openai
-    model: gpt-5.4-nano
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
   health_coverage_application:
-    provider: google
-    model: gemini-2.5-flash
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
   i9:
     provider: google
     model: gemini-2.5-flash
+  insurance_policy:
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
   lease:
     provider: anthropic
     model: claude-haiku-4-5-20251001
   passport:
-    provider: openai
-    model: gpt-5.4-nano
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
+  paystub:
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
+  registered_agent_consent:
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
+  w2:
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
