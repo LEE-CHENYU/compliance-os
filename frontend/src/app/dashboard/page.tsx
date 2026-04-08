@@ -695,7 +695,15 @@ export default function DashboardPage() {
     }
   }
 
-  async function executeUploadBatch(items: PreparedUploadItem[], preserveLoading = false) {
+  async function executeUploadBatch(
+    items: PreparedUploadItem[],
+    options?: {
+      preserveLoading?: boolean;
+      reopenReviewOnError?: boolean;
+    },
+  ) {
+    const preserveLoading = options?.preserveLoading ?? false;
+    const reopenReviewOnError = options?.reopenReviewOnError ?? true;
     if (!preserveLoading) {
       setUploading(true);
     }
@@ -743,9 +751,15 @@ export default function DashboardPage() {
       setUploadDocType("");
       resetUploadState();
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : "Upload failed");
-      setShowUploadReview(true);
-      clearProcessingIndicator();
+      const message = error instanceof Error ? error.message : "Upload failed";
+      setUploadError(message);
+      if (reopenReviewOnError) {
+        setShowUploadReview(true);
+        clearProcessingIndicator();
+      } else {
+        updateProcessingIndicator(1, "Upload interrupted", message);
+        clearProcessingIndicator(5000);
+      }
     } finally {
       if (!preserveLoading) {
         setUploading(false);
@@ -814,7 +828,7 @@ export default function DashboardPage() {
         clearProcessingIndicator(1400);
         return;
       }
-      await executeUploadBatch(prepared, true);
+      await executeUploadBatch(prepared, { preserveLoading: true });
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : "Could not prepare uploads");
       setShowUploadPanel(true);
@@ -1493,7 +1507,7 @@ export default function DashboardPage() {
             )}
           </div>
           {processingIndicator && (
-            <div className="hidden lg:flex items-center gap-3 rounded-full border border-white/60 bg-white/70 px-3 py-2 shadow-[0_6px_18px_rgba(91,141,238,0.08)]">
+            <div className="hidden md:flex items-center gap-3 rounded-full border border-white/60 bg-white/70 px-3 py-2 shadow-[0_6px_18px_rgba(91,141,238,0.08)]">
               <ProgressRing progress={processingIndicator.progress} size={32} label={processingIndicator.title} />
               <div className="min-w-0">
                 <div className="text-[11px] font-semibold text-[#0d1424]">{processingIndicator.title}</div>
@@ -2184,7 +2198,11 @@ export default function DashboardPage() {
                     </button>
                     <button
                       disabled={uploading || !preparedUploads.some((item) => item.action === "upload")}
-                      onClick={() => executeUploadBatch(preparedUploads)}
+                      onClick={() => {
+                        setShowUploadReview(false);
+                        setUploadError(null);
+                        void executeUploadBatch(preparedUploads, { reopenReviewOnError: false });
+                      }}
                       className="px-3.5 py-2 rounded-xl text-[12px] font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white disabled:opacity-50"
                     >
                       {uploading ? "Uploading..." : "Upload selected"}
