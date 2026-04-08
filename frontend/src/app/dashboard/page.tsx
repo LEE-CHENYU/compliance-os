@@ -97,7 +97,7 @@ interface ChatMessage {
   mode?: ChatMode;
 }
 
-type VoiceCallState = "idle" | "connecting" | "active" | "error";
+type VoiceCallState = "idle" | "connecting" | "active" | "ended" | "error";
 
 interface Stats {
   documents: number;
@@ -263,6 +263,14 @@ function getVoiceErrorMessage(error: unknown) {
   }
 
   return "Voice assistant failed to start.";
+}
+
+function isVoiceConversationEndedMessage(message: string) {
+  const normalized = message.toLowerCase();
+  return normalized.includes("meeting has ended")
+    || normalized.includes("conversation ended")
+    || normalized.includes("ended due to ejection")
+    || normalized.includes("call has ended");
 }
 
 function isTranscriptMessage(message: unknown): message is ClientMessageTranscript {
@@ -496,6 +504,7 @@ export default function DashboardPage() {
   const chatMessageCounterRef = useRef(0);
   const processingHideTimeoutRef = useRef<number | null>(null);
   const vapiRef = useRef<Vapi | null>(null);
+  const voiceCallStartedRef = useRef(false);
   const guardianMessagesRef = useRef<ChatMessage[]>([]);
   const guardianMessages = chatMessages.filter((message) => message.mode !== "form-filler");
   const formFillerMessages = chatMessages.filter((message) => message.mode === "form-filler");
@@ -506,6 +515,7 @@ export default function DashboardPage() {
   const voiceReady = Boolean(VAPI_PUBLIC_KEY);
   const voiceBusy = voiceCallState === "connecting";
   const voiceActive = voiceCallState === "active";
+  const voiceEnded = voiceCallState === "ended";
   const voiceListening = voiceActive && !assistantSpeaking && !micMuted;
 
   const nextChatMessageId = useCallback(() => {
@@ -1117,7 +1127,9 @@ export default function DashboardPage() {
 
     activeVapi.removeAllListeners();
     vapiRef.current = null;
+    voiceCallStartedRef.current = false;
     setVoiceCallState("idle");
+    setVoiceError(null);
     setAssistantSpeaking(false);
     setMicMuted(false);
   }, []);
@@ -1134,12 +1146,14 @@ export default function DashboardPage() {
     const contextMessage = buildVoiceContextMessage(timeline, stats, documents);
 
     vapiRef.current = nextVapi;
+    voiceCallStartedRef.current = false;
     setVoiceCallState("connecting");
     setVoiceError(null);
     setAssistantTranscript("");
     setUserTranscript("");
 
     nextVapi.on("call-start", () => {
+      voiceCallStartedRef.current = true;
       setVoiceCallState("active");
       setVoiceError(null);
       nextVapi.send({
@@ -1157,7 +1171,9 @@ export default function DashboardPage() {
       if (vapiRef.current === nextVapi) {
         vapiRef.current = null;
       }
-      setVoiceCallState("idle");
+      voiceCallStartedRef.current = false;
+      setVoiceCallState("ended");
+      setVoiceError(null);
       setAssistantSpeaking(false);
       setMicMuted(false);
     });
@@ -1195,10 +1211,13 @@ export default function DashboardPage() {
       if (vapiRef.current === nextVapi) {
         vapiRef.current = null;
       }
-      setVoiceCallState("error");
+      const message = getVoiceErrorMessage(error);
+      const shouldTreatAsEnded = voiceCallStartedRef.current && isVoiceConversationEndedMessage(message);
+      voiceCallStartedRef.current = false;
+      setVoiceCallState(shouldTreatAsEnded ? "ended" : "error");
       setAssistantSpeaking(false);
       setMicMuted(false);
-      setVoiceError(getVoiceErrorMessage(error));
+      setVoiceError(shouldTreatAsEnded ? null : message);
     });
 
     try {
@@ -1208,6 +1227,7 @@ export default function DashboardPage() {
       if (vapiRef.current === nextVapi) {
         vapiRef.current = null;
       }
+      voiceCallStartedRef.current = false;
       setVoiceCallState("error");
       setAssistantSpeaking(false);
       setMicMuted(false);
@@ -1223,6 +1243,7 @@ export default function DashboardPage() {
       void vapiRef.current.stop();
       vapiRef.current.removeAllListeners();
       vapiRef.current = null;
+      voiceCallStartedRef.current = false;
     }
   }, []);
 
@@ -1647,7 +1668,9 @@ export default function DashboardPage() {
                         ? "Connecting..."
                         : voiceActive
                           ? "Stop voice"
-                          : "Start live voice"}
+                          : voiceEnded
+                            ? "Start another review"
+                            : "Start live voice"}
                   </button>
                 </div>
               </div>
@@ -1661,23 +1684,31 @@ export default function DashboardPage() {
                         ? "Waiting for the Vapi public key"
                         : voiceBusy
                           ? "Connecting the live voice assistant"
+                        : voiceEnded
+                          ? "Conversation ended"
                         : voiceListening
-                        ? "Listening for your reply"
-                        : assistantSpeaking
-                          ? "Guardian is speaking"
-                          : voiceActive
-                            ? "Conversation paused"
-                            : "No voice conversation yet"}
+                          ? "Listening for your reply"
+                          : assistantSpeaking
+                            ? "Guardian is speaking"
+                            : voiceActive
+                              ? "Conversation paused"
+                              : "No voice conversation yet"}
                     </div>
                   </div>
                   <div className="text-[11px] font-medium text-[#7b8ba5]">
-                    {voiceActive ? `Voice: ${GUARDIAN_VOICE_ID}` : "Assistant-led review"}
+                    {voiceActive || voiceEnded ? `Voice: ${GUARDIAN_VOICE_ID}` : "Assistant-led review"}
                   </div>
                 </div>
 
                 {voiceError && (
                   <div className="mt-4 rounded-2xl border border-red-200 bg-red-50/80 px-4 py-3 text-[12px] text-red-700">
                     {voiceError}
+                  </div>
+                )}
+
+                {!voiceError && voiceEnded && (
+                  <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-[12px] text-[#4f6fb4]">
+                    Conversation ended. Start another review when you&apos;re ready.
                   </div>
                 )}
 

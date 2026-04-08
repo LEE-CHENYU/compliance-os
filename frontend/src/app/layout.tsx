@@ -8,8 +8,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 
 const inter = Inter({ subsets: ["latin"] });
-const MIXPANEL_TOKEN = "52a8229c479acb020f3f2317b09537a0";
-const MIXPANEL_BOOTSTRAP = `
+const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN?.trim();
+const MIXPANEL_BOOTSTRAP = MIXPANEL_TOKEN ? `
   (function(e){
     if (window.__guardianMixpanelBootstrapped) return;
     if (window.mixpanel && typeof window.mixpanel.identify === "function" && !Array.isArray(window.mixpanel)) {
@@ -38,11 +38,10 @@ const MIXPANEL_BOOTSTRAP = `
   })(document);
 
   mixpanel.init('${MIXPANEL_TOKEN}', {
-    autocapture: true,
-    record_sessions_percent: 100,
+    autocapture: false,
     track_pageview: true,
   });
-`;
+` : "";
 
 export const metadata: Metadata = {
   title: "Guardian",
@@ -50,7 +49,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const enableMixpanel = process.env.NODE_ENV === "production";
+  const enableMixpanel = process.env.NODE_ENV === "production" && Boolean(MIXPANEL_TOKEN);
 
   return (
     <html lang="en" suppressHydrationWarning>
