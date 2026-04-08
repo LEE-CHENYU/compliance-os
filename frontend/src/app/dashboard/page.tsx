@@ -253,13 +253,49 @@ function stripMarkdownForTranscript(text: string): string {
     .trim();
 }
 
-function getVoiceErrorMessage(error: unknown) {
+function getVoiceErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
 
   if (typeof error === "string") {
     return error;
+  }
+
+  if (error && typeof error === "object") {
+    const maybeError = error as {
+      message?: unknown;
+      error?: unknown;
+      errorMsg?: unknown;
+      reason?: unknown;
+      details?: unknown;
+    };
+
+    if (typeof maybeError.message === "string" && maybeError.message.trim()) {
+      return maybeError.message;
+    }
+
+    if (typeof maybeError.errorMsg === "string" && maybeError.errorMsg.trim()) {
+      return maybeError.errorMsg;
+    }
+
+    if (typeof maybeError.reason === "string" && maybeError.reason.trim()) {
+      return maybeError.reason;
+    }
+
+    if (maybeError.error) {
+      const nestedError = getVoiceErrorMessage(maybeError.error);
+      if (nestedError !== "Voice assistant failed to start.") {
+        return nestedError;
+      }
+    }
+
+    if (maybeError.details) {
+      const nestedDetails = getVoiceErrorMessage(maybeError.details);
+      if (nestedDetails !== "Voice assistant failed to start.") {
+        return nestedDetails;
+      }
+    }
   }
 
   return "Voice assistant failed to start.";
@@ -270,7 +306,8 @@ function isVoiceConversationEndedMessage(message: string) {
   return normalized.includes("meeting has ended")
     || normalized.includes("conversation ended")
     || normalized.includes("ended due to ejection")
-    || normalized.includes("call has ended");
+    || normalized.includes("call has ended")
+    || normalized.includes("customer-ended-call");
 }
 
 function isTranscriptMessage(message: unknown): message is ClientMessageTranscript {
@@ -280,6 +317,17 @@ function isTranscriptMessage(message: unknown): message is ClientMessageTranscri
       && "type" in message
       && typeof (message as { type?: string }).type === "string"
       && (message as { type: string }).type.startsWith("transcript"),
+  );
+}
+
+function isStatusUpdateMessage(message: unknown): message is { type: "status-update"; status: string; endedReason?: string } {
+  return Boolean(
+    message
+      && typeof message === "object"
+      && "type" in message
+      && "status" in message
+      && (message as { type?: string }).type === "status-update"
+      && typeof (message as { status?: string }).status === "string",
   );
 }
 
@@ -1187,6 +1235,14 @@ export default function DashboardPage() {
     });
 
     nextVapi.on("message", (message) => {
+      if (isStatusUpdateMessage(message) && message.status === "ended") {
+        setVoiceCallState("ended");
+        setVoiceError(null);
+        setAssistantSpeaking(false);
+        setMicMuted(false);
+        return;
+      }
+
       if (!isTranscriptMessage(message)) {
         return;
       }
