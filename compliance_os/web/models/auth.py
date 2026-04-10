@@ -25,6 +25,7 @@ class UserRow(Base):
     id = Column(String, primary_key=True, default=_uuid)
     email = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
+    role = Column(String, nullable=False, default="user")
     created_at = Column(DateTime, default=_now)
     updated_at = Column(DateTime, default=_now, onupdate=_now)
 
@@ -63,6 +64,7 @@ class AuthResponse(BaseModel):
     token: str
     user_id: str
     email: str
+    role: str
 
 
 class OpenClawTokenInfo(BaseModel):
@@ -93,6 +95,7 @@ class OpenClawTokenIssueResponse(OpenClawConnectionStatus):
 class UserOut(BaseModel):
     id: str
     email: str
+    role: str
     created_at: datetime
 
     class Config:

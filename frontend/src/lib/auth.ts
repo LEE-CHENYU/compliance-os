@@ -10,6 +10,7 @@ export interface AuthUser {
   user_id: string;
   email: string;
   token: string;
+  role?: string;
 }
 
 type MixpanelClient = {
@@ -68,8 +69,9 @@ export function getUser(): AuthUser | null {
   const token = localStorage.getItem("guardian_token");
   const user_id = localStorage.getItem("guardian_user_id");
   const email = localStorage.getItem("guardian_email");
+  const role = localStorage.getItem("guardian_role") || undefined;
   if (!token || !user_id || !email) return null;
-  return { token, user_id, email };
+  return { token, user_id, email, role };
 }
 
 export function isLoggedIn(): boolean {
@@ -81,10 +83,15 @@ export function authHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-function saveAuth(data: { token: string; user_id: string; email: string }) {
+function saveAuth(data: { token: string; user_id: string; email: string; role?: string }) {
   localStorage.setItem("guardian_token", data.token);
   localStorage.setItem("guardian_user_id", data.user_id);
   localStorage.setItem("guardian_email", data.email);
+  if (data.role) {
+    localStorage.setItem("guardian_role", data.role);
+  } else {
+    localStorage.removeItem("guardian_role");
+  }
   syncMixpanelUser(data);
 }
 
@@ -92,6 +99,7 @@ export function logout() {
   localStorage.removeItem("guardian_token");
   localStorage.removeItem("guardian_user_id");
   localStorage.removeItem("guardian_email");
+  localStorage.removeItem("guardian_role");
   getMixpanel()?.reset?.();
 }
 
@@ -135,8 +143,9 @@ export function handleGoogleCallback(params: URLSearchParams): AuthUser | null {
   const token = params.get("token");
   const email = params.get("email");
   const user_id = params.get("user_id");
+  const role = params.get("role") || undefined;
   if (token && email && user_id) {
-    const data = { token, email, user_id };
+    const data = { token, email, user_id, role };
     saveAuth(data);
     return data;
   }

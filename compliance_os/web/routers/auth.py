@@ -21,6 +21,7 @@ from compliance_os.web.models.auth import (
     UserRow,
 )
 from compliance_os.web.models.database import get_session
+from compliance_os.web.models.marketplace import MarketplaceUserRow
 from compliance_os.web.models.tables_v2 import CheckRow
 from compliance_os.web.services.auth_service import (
     create_token,
@@ -125,17 +126,48 @@ def _require_auth_user(
     return payload, user
 
 
+def _sync_marketplace_user(user: UserRow, db: Session) -> None:
+    marketplace_user = (
+        db.query(MarketplaceUserRow)
+        .filter(MarketplaceUserRow.email == user.email)
+        .first()
+    )
+    if marketplace_user is None:
+        db.add(
+            MarketplaceUserRow(
+                email=user.email,
+                source="direct",
+                role=user.role or "user",
+            )
+        )
+        db.flush()
+        return
+
+    marketplace_user.role = user.role or marketplace_user.role or "user"
+
+
+def _auth_response_for_user(user: UserRow, db: Session) -> AuthResponse:
+    _sync_marketplace_user(user, db)
+    db.commit()
+    db.refresh(user)
+    token = create_token(user.id, user.email)
+    return AuthResponse(token=token, user_id=user.id, email=user.email, role=user.role)
+
+
 @router.post("/register", response_model=AuthResponse)
 def register(body: RegisterRequest, db: Session = Depends(get_session)):
     existing = db.query(UserRow).filter(UserRow.email == body.email).first()
     if existing:
         raise HTTPException(409, "Email already registered")
-    user = UserRow(email=body.email, password_hash=hash_password(body.password))
+    user = UserRow(email=body.email, password_hash=hash_password(body.password), role="user")
     db.add(user)
-    db.commit()
-    db.refresh(user)
-    token = create_token(user.id, user.email)
-    return AuthResponse(token=token, user_id=user.id, email=user.email)
+    db.flush()
+    return _auth_response_for_user(user, db)
+
+
+@router.post("/signup", response_model=AuthResponse)
+def signup(body: RegisterRequest, db: Session = Depends(get_session)):
+    return register(body, db)
 
 
 @router.post("/login", response_model=AuthResponse)
@@ -143,8 +175,7 @@ def login(body: LoginRequest, db: Session = Depends(get_session)):
     user = db.query(UserRow).filter(UserRow.email == body.email).first()
     if not user or not verify_password(body.password, user.password_hash):
         raise HTTPException(401, "Invalid email or password")
-    token = create_token(user.id, user.email)
-    return AuthResponse(token=token, user_id=user.id, email=user.email)
+    return _auth_response_for_user(user, db)
 
 
 @router.get("/me", response_model=UserOut)
@@ -266,17 +297,21 @@ def google_callback(code: str, request: Request, db: Session = Depends(get_sessi
         user = UserRow(
             email=email,
             password_hash="google_oauth_" + str(uuid.uuid4()),  # No password for OAuth users
+            role="user",
         )
         db.add(user)
-        db.commit()
-        db.refresh(user)
+        db.flush()
+
+    _sync_marketplace_user(user, db)
+    db.commit()
+    db.refresh(user)
 
     # Create JWT
     token = create_token(user.id, user.email)
 
     # Redirect to frontend with token in URL fragment
     return RedirectResponse(
-        url=f"{_frontend_url(request)}/login?token={token}&email={email}&user_id={user.id}",
+        url=f"{_frontend_url(request)}/login?token={token}&email={email}&user_id={user.id}&role={user.role}",
     )
 
 
@@ -300,10 +335,9 @@ def google_token_login(body: GoogleTokenRequest, db: Session = Depends(get_sessi
         user = UserRow(
             email=email,
             password_hash="google_oauth_" + str(uuid.uuid4()),
+            role="user",
         )
         db.add(user)
-        db.commit()
-        db.refresh(user)
+        db.flush()
 
-    token = create_token(user.id, user.email)
-    return AuthResponse(token=token, user_id=user.id, email=user.email)
+    return _auth_response_for_user(user, db)

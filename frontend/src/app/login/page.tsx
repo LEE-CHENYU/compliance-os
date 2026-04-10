@@ -17,6 +17,7 @@ export default function LoginPageWrapper() {
 function LoginPage() {
   const router = useRouter();
   const params = useSearchParams();
+  const nextPath = params.get("next") || "/dashboard";
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,10 +30,10 @@ function LoginPage() {
     if (token) {
       const user = handleGoogleCallback(params);
       if (user) {
-        router.push("/dashboard");
+        router.push(nextPath);
       }
     }
-  }, [params, router]);
+  }, [nextPath, params, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,7 +45,7 @@ function LoginPage() {
       } else {
         await login(email, password);
       }
-      router.push("/dashboard");
+      router.push(nextPath);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {

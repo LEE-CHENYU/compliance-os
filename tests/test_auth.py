@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 from compliance_os.web.app import app
 from compliance_os.web.models.database import get_session
+from compliance_os.web.models.marketplace import MarketplaceUserRow
 from compliance_os.web.models.tables_v2 import Base as BaseV2, CheckRow
 
 
@@ -43,6 +44,7 @@ def test_register(client):
     data = resp.json()
     assert "token" in data
     assert data["email"] == "test@example.com"
+    assert data["role"] == "user"
 
 
 def test_register_duplicate(client):
@@ -70,6 +72,27 @@ def test_me_with_token(client):
     resp = client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
     assert resp.status_code == 200
     assert resp.json()["email"] == "me@example.com"
+    assert resp.json()["role"] == "user"
+
+
+def test_signup_alias_creates_marketplace_user(client):
+    resp = client.post("/api/auth/signup", json={"email": "marketplace-user@example.com", "password": "pass123"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["email"] == "marketplace-user@example.com"
+    assert data["role"] == "user"
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        marketplace_user = (
+            session.query(MarketplaceUserRow)
+            .filter(MarketplaceUserRow.email == "marketplace-user@example.com")
+            .first()
+        )
+        assert marketplace_user is not None
+        assert marketplace_user.role == "user"
+    finally:
+        session.close()
 
 
 def test_me_without_token(client):
