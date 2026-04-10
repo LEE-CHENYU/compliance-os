@@ -1,0 +1,114 @@
+products:
+  - sku: form_8843_free
+    name: "Form 8843 (Free)"
+    description: "Generate Form 8843, get filing instructions, and track whether you actually mailed it."
+    price_cents: 0
+    tier: tier_0
+    requires_attorney: false
+    requires_questionnaire: false
+    active: true
+    category: tax
+    filing_method: "mail or attach to 1040-NR package"
+    fulfillment_mode: "self-serve"
+    headline: "Required for many F-1, J-1, M-1, and Q visitors even with zero income"
+    highlights:
+      - "Deterministic PDF generation against the IRS form"
+      - "Standalone mailing checklist with Austin address"
+      - "Mark-as-mailed tracking and reminder scaffolding"
+    cta_label: "Generate for free"
+    path: "/form-8843"
+
+  - sku: form_8843_mailing_service
+    name: "Form 8843 Mailing Service"
+    description: "Guardian prints and mails your completed Form 8843 packet once signature and fulfillment ops are enabled."
+    price_cents: 1900
+    tier: tier_0_5_fulfillment
+    requires_attorney: false
+    requires_questionnaire: false
+    active: false
+    category: tax
+    filing_method: "mail fulfillment beta"
+    fulfillment_mode: "ops-assisted"
+    headline: "Optional clerical fulfillment once the mailing beta is enabled"
+    highlights:
+      - "Print and mail assistance"
+      - "Tracking proof returned to the user"
+      - "Gated behind signature and ops validation"
+    cta_label: "Join mailing waitlist"
+    path: "/form-8843"
+
+  - sku: student_tax_1040nr
+    name: "Student Tax Filing (1040-NR + 8843)"
+    description: "Prepare the nonresident student tax package and flag treaty benefits before filing."
+    price_cents: 2900
+    tier: tier_0
+    requires_attorney: false
+    requires_questionnaire: false
+    active: true
+    category: tax
+    filing_method: "tax return package"
+    fulfillment_mode: "software"
+    headline: "For international students with U.S. income who also need Form 1040-NR"
+    highlights:
+      - "Package-oriented workflow instead of standalone Form 8843"
+      - "Treaty-aware review path"
+      - "Natural next step after the free wedge"
+    cta_label: "Coming next"
+    path: "/services/student_tax_1040nr"
+
+  - sku: h1b_doc_check
+    name: "H-1B Document Check"
+    description: "Upload your H-1B packet and get a structured review for missing fields, inconsistencies, and timing issues."
+    price_cents: 4900
+    tier: tier_0
+    requires_attorney: false
+    requires_questionnaire: false
+    active: true
+    category: immigration
+    filing_method: "document review"
+    fulfillment_mode: "software"
+    headline: "AI-assisted review of the petition package before submission"
+    highlights:
+      - "Cross-checks across petition documents"
+      - "Flags obvious mismatches before filing"
+      - "Designed for users without dedicated counsel"
+    cta_label: "Coming next"
+    path: "/services/h1b_doc_check"
+
+  - sku: fbar_check
+    name: "FBAR Compliance Check"
+    description: "Assess whether aggregate foreign balances trigger an FBAR filing obligation and prepare the next-step guidance."
+    price_cents: 4900
+    tier: tier_0
+    requires_attorney: false
+    requires_questionnaire: false
+    active: true
+    category: tax
+    filing_method: "FinCEN e-file"
+    fulfillment_mode: "software"
+    headline: "Find out whether your foreign accounts create an FBAR requirement"
+    highlights:
+      - "Aggregates account balances against the threshold"
+      - "Produces filing guidance instead of vague warnings"
+      - "Keeps FinCEN-specific instructions separate from IRS mail flows"
+    cta_label: "Coming next"
+    path: "/services/fbar_check"
+
+  - sku: election_83b
+    name: "83(b) Election Filing"
+    description: "Generate the election packet, calculate the 30-day deadline, and walk the user through the certified-mail step."
+    price_cents: 9900
+    tier: tier_0
+    requires_attorney: false
+    requires_questionnaire: false
+    active: true
+    category: startup
+    filing_method: "mail"
+    fulfillment_mode: "software"
+    headline: "Time-sensitive startup tax paperwork with explicit mailing guidance"
+    highlights:
+      - "Deadline-first workflow"
+      - "Certified mail instructions built into delivery"
+      - "Shares the same mail-aware completion model as Form 8843"
+    cta_label: "Coming next"
+    path: "/services/election_83b"

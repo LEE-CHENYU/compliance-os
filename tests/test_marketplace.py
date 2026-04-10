@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from sqlalchemy import inspect
 from sqlalchemy.orm import Session
@@ -13,12 +13,15 @@ from compliance_os.web.models.database import create_engine_and_tables
 def test_marketplace_tables_created(tmp_path):
     engine = create_engine_and_tables(str(tmp_path / "marketplace.db"))
 
-    tables = set(inspect(engine).get_table_names())
+    inspector = inspect(engine)
+    tables = set(inspector.get_table_names())
 
     assert "mp_users" in tables
     assert "mp_products" in tables
     assert "mp_orders" in tables
     assert "mp_email_sequences" in tables
+    order_columns = {column["name"] for column in inspector.get_columns("mp_orders")}
+    assert {"delivery_method", "filing_deadline", "mailing_status", "mailed_at", "tracking_number"} <= order_columns
 
 
 def test_create_marketplace_user_and_order(tmp_path):
@@ -55,6 +58,9 @@ def test_create_marketplace_user_and_order(tmp_path):
             product_sku=product.sku,
             status="completed",
             amount_cents=0,
+            delivery_method="user_mail",
+            filing_deadline=date(2026, 6, 15),
+            mailing_status="needs_signature",
             intake_data={"visa_type": "F-1"},
             result_data={"pdf_path": "/tmp/form_8843.pdf"},
             completed_at=datetime.now(timezone.utc),
@@ -71,4 +77,6 @@ def test_create_marketplace_user_and_order(tmp_path):
         assert user.id is not None
         assert order.id is not None
         assert user.orders[0].id == order.id
+        assert user.orders[0].delivery_method == "user_mail"
+        assert user.orders[0].mailing_status == "needs_signature"
         assert user.email_sequences[0].sequence_name == "form_8843_welcome"

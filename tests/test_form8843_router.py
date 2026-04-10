@@ -36,11 +36,30 @@ def test_form8843_generate_endpoint(client, monkeypatch, tmp_path):
     assert body["order_id"]
     assert body["user_id"]
     assert body["pdf_url"].endswith(f"/api/form8843/orders/{body['order_id']}/pdf")
+    assert body["mailing_status"] == "needs_signature"
+    assert body["filing_deadline"] == "2026-06-15"
+    assert "Austin, TX 73301-0215" in body["filing_instructions"]["address_block"]
 
     pdf_response = client.get(body["pdf_url"])
     assert pdf_response.status_code == 200
     assert pdf_response.headers["content-type"] == "application/pdf"
     assert pdf_response.content[:4] == b"%PDF"
+
+    order_response = client.get(f"/api/form8843/orders/{body['order_id']}")
+    assert order_response.status_code == 200
+    assert order_response.json()["mailing_status"] == "needs_signature"
+
+    mailing_kit_response = client.get(f"/api/form8843/orders/{body['order_id']}/mailing-kit")
+    assert mailing_kit_response.status_code == 200
+    assert "Austin, TX 73301-0215" in mailing_kit_response.json()["address_block"]
+
+    mark_mailed_response = client.post(
+        f"/api/form8843/orders/{body['order_id']}/mark-mailed",
+        json={"tracking_number": "9407 1000 0000 0000 0000 00"},
+    )
+    assert mark_mailed_response.status_code == 200
+    assert mark_mailed_response.json()["mailing_status"] == "mailed"
+    assert mark_mailed_response.json()["tracking_number"] == "9407 1000 0000 0000 0000 00"
 
     from compliance_os.web.models.marketplace import EmailSequenceRow, MarketplaceUserRow, OrderRow
 
@@ -53,7 +72,16 @@ def test_form8843_generate_endpoint(client, monkeypatch, tmp_path):
         assert order is not None
         assert order.product_sku == "form_8843_free"
         assert order.status == "completed"
+        assert order.delivery_method == "user_mail"
+        assert order.filing_deadline.isoformat() == "2026-06-15"
+        assert order.mailing_status == "mailed"
+        assert order.tracking_number == "9407 1000 0000 0000 0000 00"
         assert order.result_data["pdf_path"]
-        assert session.query(EmailSequenceRow).filter(EmailSequenceRow.user_id == user.id).count() == 1
+        sequences = session.query(EmailSequenceRow).filter(EmailSequenceRow.user_id == user.id).all()
+        assert len(sequences) == 3
+        by_name = {sequence.sequence_name: sequence for sequence in sequences}
+        assert f"form_8843_welcome:{order.id}" in by_name
+        assert by_name[f"form_8843_mail_reminder:{order.id}"].completed is True
+        assert by_name[f"form_8843_deadline_reminder:{order.id}"].completed is True
     finally:
         session.close()

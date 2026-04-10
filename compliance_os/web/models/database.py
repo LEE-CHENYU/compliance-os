@@ -63,6 +63,8 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     from compliance_os.web.models.tables_v2 import Base as BaseV2  # noqa: F401
     BaseV2.metadata.create_all(engine)
     _ensure_v2_columns(engine)
+    _ensure_auth_columns(engine)
+    _ensure_marketplace_columns(engine)
     return engine
 
 
@@ -180,6 +182,95 @@ def _repair_v2_document_lineage(conn) -> None:
                     "is_active": is_active,
                 },
             )
+
+
+def _ensure_marketplace_columns(engine: Engine) -> None:
+    """Add newly introduced SQLite columns for marketplace orders."""
+    if engine.dialect.name != "sqlite":
+        return
+
+    inspector = inspect(engine)
+    if "mp_orders" not in inspector.get_table_names():
+        return
+
+    existing = {col["name"] for col in inspector.get_columns("mp_orders")}
+    wanted = {
+        "delivery_method": "TEXT DEFAULT 'download_only'",
+        "filing_deadline": "DATE",
+        "mailing_status": "TEXT DEFAULT 'not_required'",
+        "mailed_at": "DATETIME",
+        "tracking_number": "TEXT",
+    }
+
+    with engine.begin() as conn:
+        for name, ddl in wanted.items():
+            if name not in existing:
+                conn.execute(text(f"ALTER TABLE mp_orders ADD COLUMN {name} {ddl}"))
+
+        conn.execute(
+            text(
+                """
+                UPDATE mp_orders
+                SET delivery_method = COALESCE(
+                    delivery_method,
+                    CASE
+                        WHEN product_sku = 'form_8843_free' THEN 'user_mail'
+                        ELSE 'download_only'
+                    END
+                )
+                """
+            )
+        )
+        conn.execute(
+            text(
+                """
+                UPDATE mp_orders
+                SET mailing_status = COALESCE(
+                    mailing_status,
+                    CASE
+                        WHEN product_sku = 'form_8843_free' THEN 'needs_signature'
+                        ELSE 'not_required'
+                    END
+                )
+                """
+            )
+        )
+        conn.execute(
+            text(
+                """
+                UPDATE mp_orders
+                SET filing_deadline = COALESCE(
+                    filing_deadline,
+                    CASE
+                        WHEN product_sku = 'form_8843_free' THEN '2026-06-15'
+                        ELSE NULL
+                    END
+                )
+                """
+            )
+        )
+
+
+def _ensure_auth_columns(engine: Engine) -> None:
+    """Add newly introduced SQLite columns for auth users."""
+    if engine.dialect.name != "sqlite":
+        return
+
+    inspector = inspect(engine)
+    if "users" not in inspector.get_table_names():
+        return
+
+    existing = {col["name"] for col in inspector.get_columns("users")}
+    wanted = {
+        "role": "TEXT DEFAULT 'user'",
+    }
+
+    with engine.begin() as conn:
+        for name, ddl in wanted.items():
+            if name not in existing:
+                conn.execute(text(f"ALTER TABLE users ADD COLUMN {name} {ddl}"))
+
+        conn.execute(text("UPDATE users SET role = COALESCE(role, 'user')"))
 
 
 _engine = None

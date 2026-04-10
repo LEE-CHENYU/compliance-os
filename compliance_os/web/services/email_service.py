@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import html
 import json
 import os
 from pathlib import Path
@@ -28,10 +29,27 @@ def _render_template(name: str, context: dict[str, str]) -> str:
     return content
 
 
-def send_form_8843_welcome(to_email: str, full_name: str, pdf_bytes: bytes) -> dict[str, str]:
+def _steps_html(steps: list[str]) -> str:
+    if not steps:
+        return ""
+    return "<ol>" + "".join(f"<li>{html.escape(step)}</li>" for step in steps) + "</ol>"
+
+
+def send_form_8843_welcome(
+    to_email: str,
+    full_name: str,
+    pdf_bytes: bytes,
+    filing_context: dict[str, object] | None = None,
+) -> dict[str, str]:
     """Send the generated Form 8843 as an email attachment when Resend is configured."""
     api_key = (os.environ.get("RESEND_API_KEY") or "").strip()
     from_email = (os.environ.get("RESEND_FROM_EMAIL") or "Guardian <hello@guardiancompliance.app>").strip()
+    next_context = filing_context or {}
+    address_block = str(next_context.get("address_block", "") or "").strip()
+    address_block_html = "<br/>".join(html.escape(line) for line in address_block.splitlines()) if address_block else ""
+    filing_deadline = str(next_context.get("deadline_label", "") or "")
+    filing_summary = html.escape(str(next_context.get("summary", "") or ""))
+    steps = [str(step) for step in next_context.get("steps", []) if str(step).strip()]
 
     if not api_key:
         return {"status": "skipped", "reason": "missing_resend_api_key"}
@@ -40,7 +58,16 @@ def send_form_8843_welcome(to_email: str, full_name: str, pdf_bytes: bytes) -> d
         "from": from_email,
         "to": [to_email],
         "subject": "Your Form 8843 is ready",
-        "html": _render_template("form_8843_welcome.html", {"full_name": full_name}),
+        "html": _render_template(
+            "form_8843_welcome.html",
+            {
+                "full_name": html.escape(full_name),
+                "filing_summary": filing_summary,
+                "filing_deadline": html.escape(filing_deadline),
+                "address_block": address_block_html,
+                "filing_steps": _steps_html(steps),
+            },
+        ),
         "attachments": [
             {
                 "filename": "Form_8843.pdf",

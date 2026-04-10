@@ -258,6 +258,9 @@ export default function Home() {
         <div className="nav-links-desktop" style={{display:'flex',gap:32,fontSize:14,fontWeight:500,color:'#7b8ba5'}}>
           <a href="#cloud" style={{textDecoration:'none',color:'inherit'}}>What we check</a>
           <a href="#how" style={{textDecoration:'none',color:'inherit'}}>How it works</a>
+          <button onClick={() => router.push("/services")} style={{background:'transparent',border:'none',padding:0,color:'inherit',font:'inherit',cursor:'pointer'}}>
+            Services
+          </button>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:12}}>
           {loggedIn ? (
@@ -305,6 +308,9 @@ export default function Home() {
             <a href="#cloud" style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',textDecoration:'none',backdropFilter:'blur(12px)',whiteSpace:'nowrap',display:'inline-block'}}>
               See what we check
             </a>
+            <button onClick={() => router.push("/services")} style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',cursor:'pointer',backdropFilter:'blur(12px)',whiteSpace:'nowrap'}}>
+              Browse services
+            </button>
           </div>
           <div style={{display:'flex',gap:28}}>
             {[["47","Forms tracked"],["23","Deadlines"],["156","Key phrases"]].map(([n,l]) => (

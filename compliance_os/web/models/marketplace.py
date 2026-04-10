@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
-from sqlalchemy import JSON, Boolean, Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Boolean, Column, Date, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from compliance_os.web.models.tables_v2 import Base
@@ -114,6 +114,11 @@ class OrderRow(Base):
     stripe_session_id = Column(String, nullable=True)
     stripe_payment_intent_id = Column(String, nullable=True)
     amount_cents = Column(Integer, nullable=False, default=0)
+    delivery_method = Column(String, nullable=False, default="download_only")
+    filing_deadline = Column(Date, nullable=True)
+    mailing_status = Column(String, nullable=False, default="not_required")
+    mailed_at = Column(DateTime, nullable=True)
+    tracking_number = Column(String, nullable=True)
     intake_data = Column(JSON, nullable=True)
     result_data = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=_now)
