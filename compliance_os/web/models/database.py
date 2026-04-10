@@ -49,6 +49,17 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     from compliance_os.web.models.tables import CaseRow, DiscoveryAnswerRow, ChatMessageRow, DocumentRow  # noqa: F401
     Base.metadata.create_all(engine)
     # Guardian check flow tables (v2)
+    from compliance_os.web.models.marketplace import (  # noqa: F401
+        AttorneyAssignmentRow,
+        AttorneyRow,
+        EmailSequenceRow,
+        LimitedScopeAgreementRow,
+        MarketplaceUserRow,
+        OrderRow,
+        ProductRow,
+        QuestionnaireConfigRow,
+        QuestionnaireResponseRow,
+    )
     from compliance_os.web.models.tables_v2 import Base as BaseV2  # noqa: F401
     BaseV2.metadata.create_all(engine)
     _ensure_v2_columns(engine)

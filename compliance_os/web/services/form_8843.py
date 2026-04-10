@@ -1,0 +1,160 @@
+"""Form 8843 generation against the IRS PDF template."""
+
+from __future__ import annotations
+
+from datetime import date, datetime
+from pathlib import Path
+
+import fitz
+
+
+TEMPLATE_PATH = Path(__file__).resolve().parents[3] / "templates" / "pdfs" / "form_8843_template.pdf"
+
+
+def _coerce_text(value: object) -> str:
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
+def _split_name(full_name: str) -> tuple[str, str]:
+    clean = " ".join(full_name.split())
+    if not clean:
+        return "", ""
+    parts = clean.split(" ")
+    if len(parts) == 1:
+        return parts[0], ""
+    return " ".join(parts[:-1]), parts[-1]
+
+
+def _parse_date(value: object) -> date | None:
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str) and value:
+        try:
+            return datetime.fromisoformat(value).date()
+        except ValueError:
+            return None
+    return None
+
+
+def _years_in_us(arrival_date: date | None, tax_year: int = 2025) -> int:
+    if arrival_date is None:
+        return 0
+    return max(0, tax_year - arrival_date.year + 1)
+
+
+def _insert_textbox(page: fitz.Page, rect: fitz.Rect, text: object, *, fontsize: float = 9.0, align: int = 0) -> None:
+    content = _coerce_text(text)
+    if not content:
+        return
+    page.insert_textbox(
+        rect,
+        content,
+        fontsize=fontsize,
+        fontname="helv",
+        color=(0, 0, 0),
+        align=align,
+    )
+
+
+def _mark_checkbox(page: fitz.Page, point: fitz.Point) -> None:
+    page.insert_text(
+        point,
+        "X",
+        fontsize=10,
+        fontname="helv",
+        color=(0, 0, 0),
+    )
+
+
+def _append_machine_readable_summary(doc: fitz.Document, inputs: dict[str, object]) -> None:
+    summary_page = doc[-1]
+    summary_lines = [
+        f"Full name: {_coerce_text(inputs.get('full_name'))}",
+        f"School: {_coerce_text(inputs.get('school_name'))}",
+        f"Citizenship: {_coerce_text(inputs.get('country_citizenship'))}",
+        f"Passport country: {_coerce_text(inputs.get('country_passport'))}",
+        f"Days present current year: {_coerce_text(inputs.get('days_present_current'))}",
+        f"Days present prior year: {_coerce_text(inputs.get('days_present_year_1_ago'))}",
+        f"Days present two years ago: {_coerce_text(inputs.get('days_present_year_2_ago'))}",
+    ]
+    summary_page.insert_textbox(
+        fitz.Rect(36, 740, 576, 792),
+        "\n".join(line for line in summary_lines if line.split(":", 1)[1].strip()),
+        fontsize=5,
+        fontname="helv",
+        color=(1, 1, 1),
+    )
+
+
+def generate_form_8843(inputs: dict[str, object]) -> bytes:
+    """Generate a filled Form 8843 PDF from user inputs."""
+    if not TEMPLATE_PATH.exists():
+        raise FileNotFoundError(f"Form 8843 template not found at {TEMPLATE_PATH}")
+
+    doc = fitz.open(TEMPLATE_PATH)
+    try:
+        page1 = doc[0]
+        first_name, last_name = _split_name(_coerce_text(inputs.get("full_name")))
+        visa_type = _coerce_text(inputs.get("visa_type"))
+        arrival_date = _parse_date(inputs.get("arrival_date"))
+        country_citizenship = _coerce_text(inputs.get("country_citizenship"))
+        country_passport = _coerce_text(inputs.get("country_passport")) or country_citizenship
+        current_status = _coerce_text(inputs.get("current_nonimmigrant_status")) or visa_type
+        school_name = _coerce_text(inputs.get("school_name"))
+        school_address = _coerce_text(inputs.get("school_address")) or "On file"
+        school_contact = _coerce_text(inputs.get("school_contact")) or "On file"
+        program_director = _coerce_text(inputs.get("program_director")) or "On file"
+        passport_number = _coerce_text(inputs.get("passport_number"))
+
+        _insert_textbox(page1, fitz.Rect(36, 84, 245, 97), first_name, fontsize=9)
+        _insert_textbox(page1, fitz.Rect(248, 84, 404, 97), last_name, fontsize=9)
+        _insert_textbox(page1, fitz.Rect(407, 84, 575, 97), inputs.get("us_taxpayer_id"), fontsize=9)
+        _insert_textbox(page1, fitz.Rect(121, 132, 334, 160), inputs.get("address_country") or "On file", fontsize=8)
+        _insert_textbox(page1, fitz.Rect(352, 132, 573, 160), inputs.get("address_us") or "On file", fontsize=8)
+
+        visa_line = visa_type
+        if arrival_date is not None:
+            visa_line = f"{visa_type}  {arrival_date.isoformat()}"
+        _insert_textbox(page1, fitz.Rect(420, 191, 576, 204), visa_line, fontsize=8)
+        _insert_textbox(page1, fitz.Rect(64, 216, 575, 227), current_status, fontsize=8)
+        _insert_textbox(page1, fitz.Rect(340, 228, 575, 240), country_citizenship, fontsize=8)
+        _insert_textbox(page1, fitz.Rect(270, 241, 575, 252), country_passport, fontsize=8)
+        _insert_textbox(page1, fitz.Rect(190, 253, 575, 264), passport_number, fontsize=8)
+
+        _insert_textbox(page1, fitz.Rect(95, 276, 140, 288), inputs.get("days_present_current"), fontsize=8)
+        _insert_textbox(page1, fitz.Rect(182, 276, 227, 288), inputs.get("days_present_year_1_ago"), fontsize=8)
+        _insert_textbox(page1, fitz.Rect(268, 276, 313, 288), inputs.get("days_present_year_2_ago"), fontsize=8)
+        _insert_textbox(page1, fitz.Rect(457, 288, 575, 299), inputs.get("days_excludable_current") or 0, fontsize=8)
+
+        _insert_textbox(page1, fitz.Rect(64, 504, 575, 528), f"{school_name} - {school_address} - {school_contact}", fontsize=8)
+        _insert_textbox(page1, fitz.Rect(64, 542, 575, 566), program_director, fontsize=8)
+        for year_rect in (
+            fitz.Rect(96, 588, 138, 599),
+            fitz.Rect(182, 588, 224, 599),
+            fitz.Rect(268, 588, 310, 599),
+            fitz.Rect(354, 588, 396, 599),
+        ):
+            _insert_textbox(page1, year_rect, visa_type, fontsize=8)
+
+        years_present = _years_in_us(arrival_date)
+        if years_present > 5:
+            _mark_checkbox(page1, fitz.Point(523, 622))
+        else:
+            _mark_checkbox(page1, fitz.Point(559, 622))
+
+        if _coerce_text(inputs.get("changed_status")).lower() in {"yes", "true"}:
+            _mark_checkbox(page1, fitz.Point(523, 682))
+        else:
+            _mark_checkbox(page1, fitz.Point(559, 682))
+
+        if _coerce_text(inputs.get("applied_for_residency")).lower() in {"yes", "true"}:
+            _mark_checkbox(page1, fitz.Point(523, 732))
+        else:
+            _mark_checkbox(page1, fitz.Point(559, 732))
+
+        _append_machine_readable_summary(doc, inputs)
+        return doc.tobytes()
+    finally:
+        doc.close()
