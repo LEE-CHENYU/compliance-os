@@ -2,19 +2,58 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import FilingChecklistCard from "@/components/form8843/FilingChecklistCard";
 import { isLoggedIn } from "@/lib/auth";
 import {
+  downloadMarketplaceArtifact,
   getMarketplaceOrder,
+  markMarketplaceOrderMailed,
+  processMarketplaceOrder,
   resolveForm8843PdfUrl,
+  saveMarketplaceOrderFileIntake,
+  saveMarketplaceOrderJsonIntake,
   type Form8843OrderResponse,
   type MarketplaceOrder,
 } from "@/lib/marketplace";
 
 
 export const dynamic = "force-dynamic";
+
+const H1B_FILE_INPUTS = [
+  { name: "h1b_registration_file", label: "H-1B registration notice" },
+  { name: "h1b_status_summary_file", label: "Status summary or petition timeline" },
+  { name: "h1b_g28_file", label: "G-28 or representative form" },
+  { name: "h1b_filing_invoice_file", label: "Attorney invoice or filing invoice" },
+  { name: "h1b_filing_fee_receipt_file", label: "Fee receipt or payment confirmation" },
+] as const;
+
+type FbarAccountForm = {
+  institution_name: string;
+  country: string;
+  account_type: string;
+  max_balance_usd: string;
+  account_number_last4: string;
+};
+
+type FbarFormState = {
+  tax_year: string;
+  owner_name: string;
+  accounts: FbarAccountForm[];
+};
+
+type Election83BFormState = {
+  taxpayer_name: string;
+  taxpayer_address: string;
+  company_name: string;
+  property_description: string;
+  grant_date: string;
+  share_count: string;
+  fair_market_value_per_share: string;
+  exercise_price_per_share: string;
+  vesting_schedule: string;
+};
 
 function formatDate(value: string | null): string {
   if (!value) {
@@ -29,6 +68,53 @@ function formatDate(value: string | null): string {
     day: "numeric",
     year: "numeric",
   });
+}
+
+function formatMoney(value: number | null | undefined): string {
+  if (typeof value !== "number") {
+    return "Not available";
+  }
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function formatLabel(value: string): string {
+  return value.replace(/_/g, " ");
+}
+
+function createEmptyFbarAccount(): FbarAccountForm {
+  return {
+    institution_name: "",
+    country: "",
+    account_type: "",
+    max_balance_usd: "",
+    account_number_last4: "",
+  };
+}
+
+function createInitialFbarForm(): FbarFormState {
+  return {
+    tax_year: String(new Date().getFullYear() - 1),
+    owner_name: "",
+    accounts: [createEmptyFbarAccount()],
+  };
+}
+
+function createInitial83BForm(): Election83BFormState {
+  return {
+    taxpayer_name: "",
+    taxpayer_address: "",
+    company_name: "",
+    property_description: "Restricted common stock",
+    grant_date: "",
+    share_count: "",
+    fair_market_value_per_share: "",
+    exercise_price_per_share: "",
+    vesting_schedule: "",
+  };
 }
 
 function toForm8843Order(order: MarketplaceOrder | null): Form8843OrderResponse | null {
@@ -58,6 +144,13 @@ export default function AccountOrderDetailPage() {
   const [order, setOrder] = useState<MarketplaceOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionNote, setActionNote] = useState<string | null>(null);
+  const [busyAction, setBusyAction] = useState<"save" | "process" | "mail" | null>(null);
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [h1bFiles, setH1bFiles] = useState<Record<string, File | null>>({});
+  const [fbarForm, setFbarForm] = useState<FbarFormState>(() => createInitialFbarForm());
+  const [election83BForm, setElection83BForm] = useState<Election83BFormState>(() => createInitial83BForm());
 
   useEffect(() => {
     if (!orderId) {
@@ -76,6 +169,7 @@ export default function AccountOrderDetailPage() {
       .then((nextOrder) => {
         if (!cancelled) {
           setOrder(nextOrder);
+          setTrackingNumber(nextOrder.tracking_number ?? "");
         }
       })
       .catch((nextError) => {
@@ -94,8 +188,606 @@ export default function AccountOrderDetailPage() {
     };
   }, [orderId, router]);
 
-  const form8843Order = useMemo(() => toForm8843Order(order), [order]);
+  const form8843Order = toForm8843Order(order);
   const pdfUrl = resolveForm8843PdfUrl(order?.pdf_url ?? null);
+  const result = order?.result ?? null;
+  const isSlice3Sku = order ? ["h1b_doc_check", "fbar_check", "election_83b"].includes(order.product_sku) : false;
+
+  function applyOrder(nextOrder: MarketplaceOrder, note: string) {
+    setOrder(nextOrder);
+    setTrackingNumber(nextOrder.tracking_number ?? "");
+    setActionError(null);
+    setActionNote(note);
+  }
+
+  function updateFbarAccount(index: number, field: keyof FbarAccountForm, value: string) {
+    setFbarForm((current) => ({
+      ...current,
+      accounts: current.accounts.map((account, accountIndex) => (
+        accountIndex === index
+          ? { ...account, [field]: value }
+          : account
+      )),
+    }));
+  }
+
+  async function handleSaveIntake() {
+    if (!order) {
+      return;
+    }
+
+    setBusyAction("save");
+    setActionError(null);
+    setActionNote(null);
+
+    try {
+      if (order.product_sku === "h1b_doc_check") {
+        const formData = new FormData();
+        let count = 0;
+        for (const field of H1B_FILE_INPUTS) {
+          const file = h1bFiles[field.name];
+          if (!file) {
+            continue;
+          }
+          formData.append(field.name, file);
+          count += 1;
+        }
+        if (!count) {
+          throw new Error("Upload at least one H-1B packet document before saving intake.");
+        }
+        const nextOrder = await saveMarketplaceOrderFileIntake(order.order_id, formData);
+        applyOrder(nextOrder, "Documents saved. Run the review when you are ready.");
+        return;
+      }
+
+      if (order.product_sku === "fbar_check") {
+        const rawAccounts = fbarForm.accounts.map((account) => ({
+          institution_name: account.institution_name.trim(),
+          country: account.country.trim(),
+          account_type: account.account_type.trim(),
+          max_balance_usd: account.max_balance_usd.trim(),
+          account_number_last4: account.account_number_last4.trim(),
+        }));
+        const accounts = rawAccounts
+          .filter((account) => (
+            account.institution_name ||
+            account.country ||
+            account.account_type ||
+            account.account_number_last4 ||
+            account.max_balance_usd
+          ))
+          .map((account) => ({
+            ...account,
+            max_balance_usd: Number(account.max_balance_usd),
+          }));
+
+        if (!fbarForm.owner_name.trim()) {
+          throw new Error("Enter the account owner name.");
+        }
+        if (!fbarForm.tax_year.trim()) {
+          throw new Error("Enter the tax year you want reviewed.");
+        }
+        if (!accounts.length) {
+          throw new Error("Add at least one foreign account.");
+        }
+        if (accounts.some((account) => !account.institution_name || !account.country || !account.account_type || !Number.isFinite(account.max_balance_usd))) {
+          throw new Error("Complete each foreign account row before saving intake.");
+        }
+
+        const nextOrder = await saveMarketplaceOrderJsonIntake(order.order_id, {
+          tax_year: Number(fbarForm.tax_year),
+          owner_name: fbarForm.owner_name.trim(),
+          accounts,
+        });
+        applyOrder(nextOrder, "FBAR intake saved. Run the compliance check to generate the result.");
+        return;
+      }
+
+      if (order.product_sku === "election_83b") {
+        const requiredValues = [
+          election83BForm.taxpayer_name,
+          election83BForm.taxpayer_address,
+          election83BForm.company_name,
+          election83BForm.property_description,
+          election83BForm.grant_date,
+          election83BForm.share_count,
+          election83BForm.fair_market_value_per_share,
+          election83BForm.exercise_price_per_share,
+          election83BForm.vesting_schedule,
+        ];
+        if (requiredValues.some((value) => !String(value).trim())) {
+          throw new Error("Complete every 83(b) field before saving intake.");
+        }
+        const nextOrder = await saveMarketplaceOrderJsonIntake(order.order_id, {
+          taxpayer_name: election83BForm.taxpayer_name.trim(),
+          taxpayer_address: election83BForm.taxpayer_address.trim(),
+          company_name: election83BForm.company_name.trim(),
+          property_description: election83BForm.property_description.trim(),
+          grant_date: election83BForm.grant_date,
+          share_count: Number(election83BForm.share_count),
+          fair_market_value_per_share: Number(election83BForm.fair_market_value_per_share),
+          exercise_price_per_share: Number(election83BForm.exercise_price_per_share),
+          vesting_schedule: election83BForm.vesting_schedule.trim(),
+        });
+        applyOrder(nextOrder, "83(b) intake saved. Generate the packet when you are ready.");
+      }
+    } catch (nextError) {
+      setActionError(nextError instanceof Error ? nextError.message : "Could not save intake");
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function handleProcessOrder() {
+    if (!order) {
+      return;
+    }
+
+    setBusyAction("process");
+    setActionError(null);
+    setActionNote(null);
+    try {
+      const nextOrder = await processMarketplaceOrder(order.order_id);
+      applyOrder(nextOrder, "Processing complete.");
+    } catch (nextError) {
+      setActionError(nextError instanceof Error ? nextError.message : "Could not process this order");
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function handleMarkMailed() {
+    if (!order) {
+      return;
+    }
+
+    setBusyAction("mail");
+    setActionError(null);
+    setActionNote(null);
+    try {
+      const nextOrder = await markMarketplaceOrderMailed(order.order_id, {
+        tracking_number: trackingNumber.trim() || undefined,
+      });
+      applyOrder(nextOrder, "Mailing confirmation saved.");
+    } catch (nextError) {
+      setActionError(nextError instanceof Error ? nextError.message : "Could not save mailing confirmation");
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  function renderIntakeSection() {
+    if (!order || order.product_sku === "form_8843_free" || !isSlice3Sku) {
+      return null;
+    }
+
+    const inputClassName = "mt-2 w-full rounded-2xl border border-[#dbe5f2] bg-white px-4 py-3 text-[14px] text-[#1a2942] outline-none transition focus:border-[#9db8e6]";
+    const labelClassName = "text-[12px] font-semibold uppercase tracking-[0.14em] text-[#7384a0]";
+
+    if (order.result_ready) {
+      return (
+        <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Intake</div>
+          <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Input already captured</h2>
+          <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
+            This order has already been processed. Start a new order from the service page if you want to run another scenario.
+          </p>
+        </section>
+      );
+    }
+
+    return (
+      <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Intake</div>
+            <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Provide the inputs for this order</h2>
+            <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
+              Guardian keeps the intake inside this workspace so the order page acts as the operating surface, not just a receipt.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => void handleSaveIntake()}
+            disabled={busyAction === "save"}
+            className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
+          >
+            {busyAction === "save" ? "Saving intake..." : "Save intake"}
+          </button>
+        </div>
+
+        {order.product_sku === "h1b_doc_check" ? (
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {H1B_FILE_INPUTS.map((field) => (
+              <label
+                key={field.name}
+                className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4"
+              >
+                <div className={labelClassName}>{field.label}</div>
+                <input
+                  type="file"
+                  accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
+                  className={`${inputClassName} file:mr-4 file:rounded-full file:border-0 file:bg-[#eef4ff] file:px-4 file:py-2 file:text-[13px] file:font-semibold file:text-[#355694]`}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null;
+                    setH1bFiles((current) => ({ ...current, [field.name]: file }));
+                  }}
+                />
+                <div className="mt-2 text-[13px] text-[#6e7f9a]">
+                  {h1bFiles[field.name]?.name || "No file selected"}
+                </div>
+              </label>
+            ))}
+          </div>
+        ) : null}
+
+        {order.product_sku === "fbar_check" ? (
+          <div className="mt-6 space-y-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Tax year</div>
+                <input
+                  value={fbarForm.tax_year}
+                  onChange={(event) => setFbarForm((current) => ({ ...current, tax_year: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="2025"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Account owner</div>
+                <input
+                  value={fbarForm.owner_name}
+                  onChange={(event) => setFbarForm((current) => ({ ...current, owner_name: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="Wei Liu"
+                />
+              </label>
+            </div>
+
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#7384a0]">Foreign accounts</div>
+                <button
+                  type="button"
+                  onClick={() => setFbarForm((current) => ({ ...current, accounts: [...current.accounts, createEmptyFbarAccount()] }))}
+                  className="rounded-full border border-[#dbe5f2] bg-white px-4 py-2 text-[13px] font-semibold text-[#40536f]"
+                >
+                  Add account
+                </button>
+              </div>
+              <div className="mt-4 space-y-4">
+                {fbarForm.accounts.map((account, index) => (
+                  <div
+                    key={`${index}-${account.institution_name}`}
+                    className="rounded-[24px] border border-[#dbe5f2] bg-[#fbfdff] p-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="text-[14px] font-semibold text-[#1a2942]">Account {index + 1}</div>
+                      {fbarForm.accounts.length > 1 ? (
+                        <button
+                          type="button"
+                          onClick={() => setFbarForm((current) => ({
+                            ...current,
+                            accounts: current.accounts.filter((_, accountIndex) => accountIndex !== index),
+                          }))}
+                          className="text-[13px] font-semibold text-[#8a5160]"
+                        >
+                          Remove
+                        </button>
+                      ) : null}
+                    </div>
+                    <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                      <label>
+                        <div className={labelClassName}>Institution</div>
+                        <input
+                          value={account.institution_name}
+                          onChange={(event) => updateFbarAccount(index, "institution_name", event.target.value)}
+                          className={inputClassName}
+                          placeholder="HSBC Hong Kong"
+                        />
+                      </label>
+                      <label>
+                        <div className={labelClassName}>Country</div>
+                        <input
+                          value={account.country}
+                          onChange={(event) => updateFbarAccount(index, "country", event.target.value)}
+                          className={inputClassName}
+                          placeholder="Hong Kong"
+                        />
+                      </label>
+                      <label>
+                        <div className={labelClassName}>Account type</div>
+                        <input
+                          value={account.account_type}
+                          onChange={(event) => updateFbarAccount(index, "account_type", event.target.value)}
+                          className={inputClassName}
+                          placeholder="Checking"
+                        />
+                      </label>
+                      <label>
+                        <div className={labelClassName}>Max balance (USD)</div>
+                        <input
+                          value={account.max_balance_usd}
+                          onChange={(event) => updateFbarAccount(index, "max_balance_usd", event.target.value)}
+                          className={inputClassName}
+                          placeholder="7000"
+                        />
+                      </label>
+                      <label>
+                        <div className={labelClassName}>Account last 4</div>
+                        <input
+                          value={account.account_number_last4}
+                          onChange={(event) => updateFbarAccount(index, "account_number_last4", event.target.value)}
+                          className={inputClassName}
+                          placeholder="1122"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {order.product_sku === "election_83b" ? (
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+              <div className={labelClassName}>Taxpayer name</div>
+              <input
+                value={election83BForm.taxpayer_name}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, taxpayer_name: event.target.value }))}
+                className={inputClassName}
+                placeholder="Jessica Chen"
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4 md:col-span-2">
+              <div className={labelClassName}>Taxpayer address</div>
+              <input
+                value={election83BForm.taxpayer_address}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, taxpayer_address: event.target.value }))}
+                className={inputClassName}
+                placeholder="123 Startup Way, San Francisco, CA 94107"
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+              <div className={labelClassName}>Company</div>
+              <input
+                value={election83BForm.company_name}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, company_name: event.target.value }))}
+                className={inputClassName}
+                placeholder="CliniPulse, Inc."
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+              <div className={labelClassName}>Grant date</div>
+              <input
+                type="date"
+                value={election83BForm.grant_date}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, grant_date: event.target.value }))}
+                className={inputClassName}
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4 md:col-span-2">
+              <div className={labelClassName}>Property description</div>
+              <input
+                value={election83BForm.property_description}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, property_description: event.target.value }))}
+                className={inputClassName}
+                placeholder="Restricted common stock"
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+              <div className={labelClassName}>Share count</div>
+              <input
+                value={election83BForm.share_count}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, share_count: event.target.value }))}
+                className={inputClassName}
+                placeholder="10000"
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+              <div className={labelClassName}>FMV per share</div>
+              <input
+                value={election83BForm.fair_market_value_per_share}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, fair_market_value_per_share: event.target.value }))}
+                className={inputClassName}
+                placeholder="0.02"
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+              <div className={labelClassName}>Exercise price per share</div>
+              <input
+                value={election83BForm.exercise_price_per_share}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, exercise_price_per_share: event.target.value }))}
+                className={inputClassName}
+                placeholder="0.01"
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4 md:col-span-2">
+              <div className={labelClassName}>Vesting schedule</div>
+              <textarea
+                value={election83BForm.vesting_schedule}
+                onChange={(event) => setElection83BForm((current) => ({ ...current, vesting_schedule: event.target.value }))}
+                className={`${inputClassName} min-h-[120px] resize-y`}
+                placeholder="25% after 12 months, then monthly over 36 months"
+              />
+            </label>
+          </div>
+        ) : null}
+      </section>
+    );
+  }
+
+  function renderResultSection() {
+    if (!order || order.product_sku === "form_8843_free" || !result) {
+      return null;
+    }
+
+    return (
+      <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/84 p-6 shadow-[0_22px_70px_rgba(61,84,128,0.07)]">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Result</div>
+        <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Guardian output</h2>
+        {result.summary ? (
+          <div className="mt-4 rounded-[22px] border border-[#e4edf7] bg-[#fbfdff] px-5 py-4 text-[15px] leading-7 text-[#435774]">
+            {result.summary}
+          </div>
+        ) : null}
+
+        {(typeof result.aggregate_max_balance_usd === "number" || typeof result.requires_fbar === "boolean" || result.filing_deadline) ? (
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {typeof result.aggregate_max_balance_usd === "number" ? (
+              <div className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Aggregate balance</div>
+                <div className="mt-2 text-[22px] font-bold text-[#13213b]">{formatMoney(result.aggregate_max_balance_usd)}</div>
+              </div>
+            ) : null}
+            {typeof result.requires_fbar === "boolean" ? (
+              <div className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">FBAR required</div>
+                <div className="mt-2 text-[22px] font-bold text-[#13213b]">{result.requires_fbar ? "Yes" : "No"}</div>
+              </div>
+            ) : null}
+            {result.filing_deadline ? (
+              <div className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Deadline</div>
+                <div className="mt-2 text-[22px] font-bold text-[#13213b]">{formatDate(result.filing_deadline)}</div>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {result.findings.length ? (
+          <div className="mt-6">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7384a0]">Findings</div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {result.findings.map((finding) => (
+                <article
+                  key={`${finding.rule_id}-${finding.title}`}
+                  className="rounded-[22px] border border-[#e4edf7] bg-[#fbfdff] p-4"
+                >
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">
+                    {finding.severity} · {finding.category}
+                  </div>
+                  <h3 className="mt-2 text-[18px] font-semibold text-[#13213b]">{finding.title}</h3>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">{finding.consequence}</p>
+                  <div className="mt-4 rounded-2xl border border-[#dbe5f2] bg-white px-4 py-3 text-[14px] text-[#40536f]">
+                    {finding.action}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {result.next_steps.length ? (
+          <div className="mt-6 rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-5">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7384a0]">Next steps</div>
+            <div className="mt-4 space-y-3">
+              {result.next_steps.map((step) => (
+                <div key={step} className="flex gap-3 text-[14px] leading-6 text-[#435774]">
+                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#5b8dee]" />
+                  <span>{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {result.mailing_instructions ? (
+          <div className="mt-6 rounded-[22px] border border-[#f1e3b4] bg-[#fff9eb] p-5">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#9b7a22]">Mailing</div>
+            <h3 className="mt-2 text-[20px] font-semibold text-[#6b5214]">{result.mailing_instructions.headline}</h3>
+            <p className="mt-3 text-[14px] leading-6 text-[#856921]">{result.mailing_instructions.summary}</p>
+            <div className="mt-4 space-y-3">
+              {result.mailing_instructions.steps.map((step) => (
+                <div key={step} className="flex gap-3 text-[14px] leading-6 text-[#856921]">
+                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#d4ab3a]" />
+                  <span>{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {result.artifacts.length ? (
+          <div className="mt-6">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7384a0]">Downloads</div>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {result.artifacts.map((artifact) => {
+                return (
+                  <button
+                    key={artifact.filename}
+                    type="button"
+                    onClick={() => {
+                      void downloadMarketplaceArtifact(artifact.url, artifact.filename).catch((nextError) => {
+                        setActionError(nextError instanceof Error ? nextError.message : "Could not download artifact");
+                      });
+                    }}
+                    className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a]"
+                  >
+                    {artifact.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        {result.comparisons?.length ? (
+          <div className="mt-6">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7384a0]">Cross-checks</div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {result.comparisons.map((comparison) => (
+                <div
+                  key={comparison.field_name}
+                  className="rounded-[22px] border border-[#e4edf7] bg-[#fbfdff] p-4 text-[14px] text-[#435774]"
+                >
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">
+                    {formatLabel(comparison.field_name)}
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    <div>A: {comparison.value_a || "Not found"}</div>
+                    <div>B: {comparison.value_b || "Not found"}</div>
+                    <div className="font-semibold text-[#13213b]">
+                      {comparison.status} · confidence {Math.round(comparison.confidence * 100)}%
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {result.document_summary?.length ? (
+          <div className="mt-6">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7384a0]">Documents reviewed</div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {result.document_summary.map((document) => (
+                <div
+                  key={`${document.doc_type}-${document.filename}`}
+                  className="rounded-[22px] border border-[#e4edf7] bg-[#fbfdff] p-4"
+                >
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">
+                    {formatLabel(document.doc_type)}
+                  </div>
+                  <div className="mt-2 text-[16px] font-semibold text-[#13213b]">{document.filename}</div>
+                  <div className="mt-4 space-y-2 text-[14px] text-[#435774]">
+                    {Object.entries(document.fields).map(([fieldName, value]) => (
+                      <div key={fieldName}>
+                        <span className="font-semibold text-[#13213b]">{formatLabel(fieldName)}:</span>{" "}
+                        <span>{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </section>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f5f8fd_0%,#eef4fb_100%)] px-6 py-10">
@@ -137,7 +829,7 @@ export default function AccountOrderDetailPage() {
                 <div className="rounded-3xl border border-[#dbe5f2] bg-[#f8fbff] px-5 py-4 text-right">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Status</div>
                   <div className="mt-1 text-[18px] font-semibold capitalize text-[#1a2942]">
-                    {order.status.replace(/_/g, " ")}
+                    {formatLabel(order.status)}
                   </div>
                 </div>
               </div>
@@ -158,7 +850,7 @@ export default function AccountOrderDetailPage() {
                 <div className="rounded-2xl border border-[#dbe5f2] bg-[#fbfdff] p-4">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Mailing</div>
                   <div className="mt-2 text-[14px] font-medium capitalize text-[#1a2942]">
-                    {order.mailing_status.replace(/_/g, " ")}
+                    {formatLabel(order.mailing_status)}
                   </div>
                 </div>
               </div>
@@ -185,6 +877,18 @@ export default function AccountOrderDetailPage() {
               </div>
             </section>
 
+            {actionError ? (
+              <div className="mt-6 rounded-[28px] border border-[#ffd6d6] bg-[#fff4f4] px-5 py-4 text-[14px] text-[#a33a3a]">
+                {actionError}
+              </div>
+            ) : null}
+
+            {actionNote ? (
+              <div className="mt-6 rounded-[28px] border border-[#cfe7d3] bg-[#f3fbf4] px-5 py-4 text-[14px] text-[#326247]">
+                {actionNote}
+              </div>
+            ) : null}
+
             {!!order.product.highlights.length ? (
               <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Included</div>
@@ -197,6 +901,91 @@ export default function AccountOrderDetailPage() {
                       {highlight}
                     </div>
                   ))}
+                </div>
+              </section>
+            ) : null}
+
+            {isSlice3Sku ? (
+              <section className="mt-6 grid gap-4 md:grid-cols-3">
+                <div className="rounded-[24px] border border-[#dbe5f2] bg-white/84 p-5 shadow-[0_16px_50px_rgba(61,84,128,0.06)]">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Step 1</div>
+                  <div className="mt-2 text-[19px] font-semibold text-[#13213b]">Save intake</div>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+                    {order.intake_complete ? "Captured" : "Still needed"}
+                  </p>
+                </div>
+                <div className="rounded-[24px] border border-[#dbe5f2] bg-white/84 p-5 shadow-[0_16px_50px_rgba(61,84,128,0.06)]">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Step 2</div>
+                  <div className="mt-2 text-[19px] font-semibold text-[#13213b]">Run processing</div>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+                    {order.result_ready ? "Completed" : order.intake_complete ? "Ready" : "Blocked on intake"}
+                  </p>
+                </div>
+                <div className="rounded-[24px] border border-[#dbe5f2] bg-white/84 p-5 shadow-[0_16px_50px_rgba(61,84,128,0.06)]">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Step 3</div>
+                  <div className="mt-2 text-[19px] font-semibold text-[#13213b]">Download or mail</div>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+                    {order.result_ready ? "Available now" : "Waiting for output"}
+                  </p>
+                </div>
+              </section>
+            ) : null}
+
+            {renderIntakeSection()}
+
+            {isSlice3Sku && order.intake_complete && !order.result_ready ? (
+              <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Processing</div>
+                    <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Run this order</h2>
+                    <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
+                      Intake is saved. Run the product workflow to generate the report, packet, or filing guidance.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => void handleProcessOrder()}
+                    disabled={busyAction === "process"}
+                    className="inline-flex rounded-full bg-[#5b8dee] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#9db8e6]"
+                  >
+                    {busyAction === "process" ? "Processing..." : "Run now"}
+                  </button>
+                </div>
+              </section>
+            ) : null}
+
+            {renderResultSection()}
+
+            {order.delivery_method === "user_mail" && order.product_sku !== "form_8843_free" && order.result_ready ? (
+              <section className="mt-6 rounded-[28px] border border-[#f1e3b4] bg-[#fff9eb] p-6 shadow-[0_18px_48px_rgba(118,91,22,0.08)]">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9b7a22]">Mailing confirmation</div>
+                <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#6b5214]">Record when you mailed this packet</h2>
+                <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#856921]">
+                  This workflow ends with a physical mailing step. Save the tracking number once you have sent the packet.
+                </p>
+                <div className="mt-5 grid gap-4 md:grid-cols-[1fr,auto]">
+                  <label className="rounded-[22px] border border-[#ebd7a2] bg-white/75 p-4">
+                    <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#9b7a22]">Tracking number</div>
+                    <input
+                      value={trackingNumber}
+                      onChange={(event) => setTrackingNumber(event.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-[#ebd7a2] bg-white px-4 py-3 text-[14px] text-[#6b5214] outline-none transition focus:border-[#d4ab3a]"
+                      placeholder="9407 1000 0000 0000 1234 56"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => void handleMarkMailed()}
+                    disabled={busyAction === "mail" || order.mailing_status === "mailed"}
+                    className="self-end inline-flex rounded-full bg-[#c98f20] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#b8821b] disabled:cursor-not-allowed disabled:bg-[#e0c27c]"
+                  >
+                    {order.mailing_status === "mailed"
+                      ? "Already marked mailed"
+                      : busyAction === "mail"
+                        ? "Saving..."
+                        : "Mark as mailed"}
+                  </button>
                 </div>
               </section>
             ) : null}
@@ -216,6 +1005,16 @@ export default function AccountOrderDetailPage() {
                   });
                 }}
               />
+            ) : null}
+
+            {!isSlice3Sku && !form8843Order ? (
+              <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Workflow</div>
+                <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">This order type is not implemented yet</h2>
+                <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
+                  The catalog entry exists, but the interactive account workflow for this product is still pending the earlier marketplace checkout slice.
+                </p>
+              </section>
             ) : null}
           </>
         ) : null}

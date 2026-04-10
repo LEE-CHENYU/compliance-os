@@ -49,6 +49,60 @@ export interface MarketplaceProduct {
   path: string | null;
 }
 
+export interface MarketplaceArtifact {
+  label: string;
+  filename: string;
+  url: string;
+}
+
+export interface MarketplaceFinding {
+  rule_id: string;
+  severity: string;
+  category: string;
+  title: string;
+  action: string;
+  consequence: string;
+  immigration_impact?: boolean;
+}
+
+export interface MarketplaceDocumentSummary {
+  doc_type: string;
+  filename: string;
+  fields: Record<string, string>;
+}
+
+export interface MarketplaceComparison {
+  field_name: string;
+  value_a: string | null;
+  value_b: string | null;
+  match_type: string;
+  status: string;
+  confidence: number;
+  detail?: string | null;
+}
+
+export interface MarketplaceMailingInstructions {
+  headline: string;
+  summary: string;
+  steps: string[];
+}
+
+export interface MarketplaceResultPayload {
+  order_id: string;
+  product_sku: string;
+  summary: string | null;
+  findings: MarketplaceFinding[];
+  finding_count: number;
+  next_steps: string[];
+  artifacts: MarketplaceArtifact[];
+  requires_fbar?: boolean;
+  aggregate_max_balance_usd?: number;
+  filing_deadline?: string | null;
+  document_summary?: MarketplaceDocumentSummary[];
+  comparisons?: MarketplaceComparison[];
+  mailing_instructions?: MarketplaceMailingInstructions | null;
+}
+
 export interface Form8843FilingInstructions {
   scenario: string;
   headline: string;
@@ -83,6 +137,7 @@ export interface Form8843OrderResponse {
 }
 
 export interface MarketplaceOrder {
+  user_id: string;
   order_id: string;
   product_sku: string;
   status: string;
@@ -96,11 +151,17 @@ export interface MarketplaceOrder {
   mailed_at: string | null;
   tracking_number: string | null;
   product: MarketplaceProduct;
+  intake_complete: boolean;
   result_ready: boolean;
+  summary?: string | null;
+  finding_count?: number;
+  next_steps?: string[];
+  artifacts?: MarketplaceArtifact[];
   pdf_url?: string | null;
   email_status?: string | null;
   filing_instructions?: Form8843FilingInstructions;
   mailing_service_available?: boolean;
+  result?: MarketplaceResultPayload;
 }
 
 export interface Form8843GenerateResponse extends Form8843OrderResponse {
@@ -150,6 +211,18 @@ export async function getMarketplaceProduct(sku: string, includeInactive = false
   return parseResponse<MarketplaceProduct>(response);
 }
 
+export async function createMarketplaceOrder(sku: string): Promise<MarketplaceOrder> {
+  const response = await fetch(`${API}/marketplace/orders`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify({ sku }),
+  });
+  return parseResponse<MarketplaceOrder>(response);
+}
+
 export async function listMarketplaceOrders(): Promise<MarketplaceOrder[]> {
   const response = await fetch(`${API}/marketplace/orders`, {
     headers: authHeaders(),
@@ -161,6 +234,63 @@ export async function listMarketplaceOrders(): Promise<MarketplaceOrder[]> {
 export async function getMarketplaceOrder(orderId: string): Promise<MarketplaceOrder> {
   const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}`, {
     headers: authHeaders(),
+  });
+  return parseResponse<MarketplaceOrder>(response);
+}
+
+export async function saveMarketplaceOrderJsonIntake(
+  orderId: string,
+  payload: Record<string, unknown>,
+): Promise<MarketplaceOrder> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/intake`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(payload),
+  });
+  return parseResponse<MarketplaceOrder>(response);
+}
+
+export async function saveMarketplaceOrderFileIntake(
+  orderId: string,
+  formData: FormData,
+): Promise<MarketplaceOrder> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/intake`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: formData,
+  });
+  return parseResponse<MarketplaceOrder>(response);
+}
+
+export async function processMarketplaceOrder(orderId: string): Promise<MarketplaceOrder> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/process`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+  return parseResponse<MarketplaceOrder>(response);
+}
+
+export async function getMarketplaceOrderResult(orderId: string): Promise<MarketplaceResultPayload> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/result`, {
+    headers: authHeaders(),
+  });
+  return parseResponse<MarketplaceResultPayload>(response);
+}
+
+export async function markMarketplaceOrderMailed(
+  orderId: string,
+  payload: { mailed_at?: string; tracking_number?: string } = {},
+): Promise<MarketplaceOrder> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/mark-mailed`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(payload),
   });
   return parseResponse<MarketplaceOrder>(response);
 }
@@ -195,4 +325,37 @@ export function resolveForm8843PdfUrl(pdfUrl: string | null): string | null {
     return pdfUrl;
   }
   return `${API}${pdfUrl.replace(/^\/api/, "")}`;
+}
+
+export function resolveMarketplaceArtifactUrl(url: string | null): string | null {
+  if (!url) {
+    return null;
+  }
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+  return `${API}${url.replace(/^\/api/, "")}`;
+}
+
+export async function downloadMarketplaceArtifact(url: string, filename: string): Promise<void> {
+  const targetUrl = resolveMarketplaceArtifactUrl(url);
+  if (!targetUrl) {
+    throw new Error("Artifact URL is not available");
+  }
+
+  const response = await fetch(targetUrl, {
+    headers: authHeaders(),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.detail || "Could not download artifact");
+  }
+
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = filename;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 }

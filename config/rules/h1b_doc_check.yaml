@@ -1,0 +1,99 @@
+version: "1.0.0"
+rules:
+  - id: h1b_missing_registration_packet
+    track: h1b_doc_check
+    type: completeness
+    severity: critical
+    conditions:
+      - source: answers
+        field: missing_registration_packet
+        operator: eq
+        value: true
+    finding:
+      title: "Registration document missing"
+      action: "Upload the H-1B registration record before relying on the packet review."
+      consequence: "Without the registration document, Guardian cannot verify the employer identity or registration number."
+
+  - id: h1b_missing_registration_number
+    track: h1b_doc_check
+    type: completeness
+    severity: warning
+    conditions:
+      - source: answers
+        field: registration_number
+        operator: missing
+        value:
+    finding:
+      title: "Registration number missing"
+      action: "Confirm that the USCIS registration number is present and legible in the packet."
+      consequence: "Missing registration identifiers make it harder to reconcile later H-1B filing documents."
+
+  - id: h1b_entity_name_mismatch
+    track: h1b_doc_check
+    type: inconsistency
+    severity: critical
+    conditions:
+      - source: comparison
+        field: h1b_registration_g28_entity_name
+        operator: mismatch
+        value:
+    finding:
+      title: "Entity names do not align across the registration and G-28"
+      action: "Make sure the same petitioner legal name appears in both the USCIS registration and the G-28."
+      consequence: "A petitioner-name mismatch can force a costly rework before filing."
+
+  - id: h1b_petitioner_invoice_mismatch
+    track: h1b_doc_check
+    type: inconsistency
+    severity: warning
+    conditions:
+      - source: comparison
+        field: h1b_registration_invoice_petitioner_name
+        operator: mismatch
+        value:
+    finding:
+      title: "Invoice petitioner name does not match the registration"
+      action: "Confirm the billing record is tied to the same petitioner listed in the registration."
+      consequence: "Billing mismatches can indicate the wrong entity is being prepared for filing."
+
+  - id: h1b_signatory_payment_mismatch
+    track: h1b_doc_check
+    type: inconsistency
+    severity: info
+    conditions:
+      - source: comparison
+        field: h1b_registration_receipt_signatory_name
+        operator: mismatch
+        value:
+    finding:
+      title: "Payment cardholder differs from the registration signatory"
+      action: "Double-check that the payment record and signatory history make sense for the filing."
+      consequence: "This is often benign, but it can complicate the audit trail if the payer is unexpected."
+
+  - id: h1b_amount_mismatch
+    track: h1b_doc_check
+    type: inconsistency
+    severity: warning
+    conditions:
+      - source: comparison
+        field: h1b_invoice_receipt_amount
+        operator: mismatch
+        value:
+    finding:
+      title: "Invoice total and payment receipt amount do not match"
+      action: "Resolve the fee discrepancy before submitting the packet."
+      consequence: "Fee mismatches can delay filing if the wrong amount was paid."
+
+  - id: h1b_window_closed
+    track: h1b_doc_check
+    type: timing
+    severity: critical
+    conditions:
+      - source: answers
+        field: petition_window_closed
+        operator: eq
+        value: true
+    finding:
+      title: "The petition filing window appears to be closed"
+      action: "Confirm the filing calendar immediately and do not assume the packet is still timely."
+      consequence: "A missed H-1B filing window can stop the petition from moving forward."

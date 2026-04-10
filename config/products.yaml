@@ -72,7 +72,7 @@ products:
       - "Cross-checks across petition documents"
       - "Flags obvious mismatches before filing"
       - "Designed for users without dedicated counsel"
-    cta_label: "Coming next"
+    cta_label: "Start document review"
     path: "/services/h1b_doc_check"
 
   - sku: fbar_check
@@ -91,7 +91,7 @@ products:
       - "Aggregates account balances against the threshold"
       - "Produces filing guidance instead of vague warnings"
       - "Keeps FinCEN-specific instructions separate from IRS mail flows"
-    cta_label: "Coming next"
+    cta_label: "Start FBAR check"
     path: "/services/fbar_check"
 
   - sku: election_83b
@@ -110,5 +110,5 @@ products:
       - "Deadline-first workflow"
       - "Certified mail instructions built into delivery"
       - "Shares the same mail-aware completion model as Form 8843"
-    cta_label: "Coming next"
+    cta_label: "Start 83(b) packet"
     path: "/services/election_83b"

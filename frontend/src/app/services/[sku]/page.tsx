@@ -1,17 +1,53 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
-import { getMarketplaceProduct, type MarketplaceProduct } from "@/lib/marketplace";
+import { isLoggedIn } from "@/lib/auth";
+import {
+  createMarketplaceOrder,
+  getMarketplaceProduct,
+  type MarketplaceProduct,
+} from "@/lib/marketplace";
+
+
+const LIVE_WORKFLOW_SKUS = new Set([
+  "form_8843_free",
+  "h1b_doc_check",
+  "fbar_check",
+  "election_83b",
+]);
+
+function ctaCopy(product: MarketplaceProduct): string {
+  if (product.sku === "form_8843_free") {
+    return "Generate Form 8843";
+  }
+  if (!LIVE_WORKFLOW_SKUS.has(product.sku)) {
+    return "Workflow coming next";
+  }
+  if (product.sku === "h1b_doc_check") {
+    return "Start document review";
+  }
+  if (product.sku === "fbar_check") {
+    return "Start FBAR check";
+  }
+  if (product.sku === "election_83b") {
+    return "Start 83(b) packet";
+  }
+  return product.cta_label || "Start service";
+}
 
 
 export default function ServiceDetailPage() {
+  const router = useRouter();
   const params = useParams<{ sku: string }>();
+  const searchParams = useSearchParams();
   const sku = typeof params?.sku === "string" ? params.sku : "";
   const [product, setProduct] = useState<MarketplaceProduct | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [starting, setStarting] = useState(false);
+  const startTriggeredRef = useRef(false);
 
   useEffect(() => {
     if (!sku) {
@@ -37,6 +73,63 @@ export default function ServiceDetailPage() {
     };
   }, [sku]);
 
+  async function startWorkflow(currentProduct: MarketplaceProduct) {
+    if (currentProduct.sku === "form_8843_free") {
+      router.push("/form-8843");
+      return;
+    }
+
+    if (!LIVE_WORKFLOW_SKUS.has(currentProduct.sku)) {
+      setError("This service is configured in the catalog, but its live workflow is not implemented yet.");
+      return;
+    }
+
+    if (!isLoggedIn()) {
+      router.push(`/login?next=${encodeURIComponent(`/services/${currentProduct.sku}?start=1`)}`);
+      return;
+    }
+
+    setStarting(true);
+    setError(null);
+    try {
+      const order = await createMarketplaceOrder(currentProduct.sku);
+      router.push(`/account/orders/${order.order_id}`);
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Could not start this service");
+      setStarting(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!product || searchParams.get("start") !== "1" || startTriggeredRef.current) {
+      return;
+    }
+    startTriggeredRef.current = true;
+    if (product.sku === "form_8843_free") {
+      router.push("/form-8843");
+      return;
+    }
+    if (!LIVE_WORKFLOW_SKUS.has(product.sku)) {
+      setError("This service is configured in the catalog, but its live workflow is not implemented yet.");
+      return;
+    }
+    if (!isLoggedIn()) {
+      router.push(`/login?next=${encodeURIComponent(`/services/${product.sku}?start=1`)}`);
+      return;
+    }
+
+    setStarting(true);
+    setError(null);
+    createMarketplaceOrder(product.sku)
+      .then((order) => {
+        router.push(`/account/orders/${order.order_id}`);
+      })
+      .catch((nextError) => {
+        setError(nextError instanceof Error ? nextError.message : "Could not start this service");
+        setStarting(false);
+      });
+  }, [product, router, searchParams]);
+
   if (error) {
     return (
       <div className="min-h-screen bg-[#eef4fb] px-6 py-16">
@@ -58,7 +151,13 @@ export default function ServiceDetailPage() {
   }
 
   const price = product.price_cents === 0 ? "Free" : `$${(product.price_cents / 100).toFixed(0)}`;
-  const primaryHref = product.path || (product.active ? `/services/${product.sku}` : "/services");
+  const isLiveWorkflow = LIVE_WORKFLOW_SKUS.has(product.sku);
+  const canStart = product.active && isLiveWorkflow;
+  const asideTitle = !product.active
+    ? "Configured but not launched yet"
+    : isLiveWorkflow
+      ? "Live workflow available now"
+      : "Catalog entry is live, workflow is next";
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#edf3f9_0%,#f7faff_100%)] px-6 py-12">
@@ -118,24 +217,31 @@ export default function ServiceDetailPage() {
               <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8ca2cc]">
                 {product.active ? "Availability" : "Upcoming"}
               </div>
-              <div className="mt-3 text-[24px] font-bold">
-                {product.active ? "Ready for the next implementation slice" : "Configured but not launched yet"}
-              </div>
+              <div className="mt-3 text-[24px] font-bold">{asideTitle}</div>
               <p className="mt-4 text-[14px] leading-7 text-[#cad6ec]">
-                {product.active
-                  ? "The catalog entry is live now. Checkout and intake will layer on top of this SKU instead of inventing one-off flows per product."
-                  : "This SKU is intentionally visible in the config-backed catalog so the storefront and roadmap stay aligned before checkout goes live."}
+                {!product.active
+                  ? "This SKU is intentionally visible in the config-backed catalog so the storefront and roadmap stay aligned before checkout goes live."
+                  : isLiveWorkflow
+                    ? "This product can create an order right now, collect intake inside the account workspace, and run the current Slice 3 processing flow."
+                    : "This service is still represented in the catalog, but the product workflow is intentionally held until the earlier checkout slice lands."}
               </p>
-              <Link
-                href={primaryHref}
-                className={`mt-6 inline-flex rounded-full px-5 py-3 text-[14px] font-semibold transition ${
-                  product.active
-                    ? "bg-white text-[#10203d] hover:bg-[#eef4ff]"
-                    : "border border-white/20 bg-transparent text-white hover:border-white/35"
-                }`}
-              >
-                {product.cta_label || (product.active ? "View workflow" : "Back to catalog")}
-              </Link>
+              {canStart ? (
+                <button
+                  type="button"
+                  onClick={() => void startWorkflow(product)}
+                  disabled={starting}
+                  className="mt-6 inline-flex rounded-full bg-white px-5 py-3 text-[14px] font-semibold text-[#10203d] transition hover:bg-[#eef4ff] disabled:cursor-not-allowed disabled:bg-white/60"
+                >
+                  {starting ? "Opening order..." : ctaCopy(product)}
+                </button>
+              ) : (
+                <Link
+                  href="/services"
+                  className="mt-6 inline-flex rounded-full border border-white/20 bg-transparent px-5 py-3 text-[14px] font-semibold text-white transition hover:border-white/35"
+                >
+                  Back to catalog
+                </Link>
+              )}
             </aside>
           </div>
         </div>
