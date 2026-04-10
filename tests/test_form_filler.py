@@ -17,16 +17,51 @@ from compliance_os.web.services.form_filler import (
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_pdf_with_text_field(field_name: str = "FirstName", field_value: str = "") -> bytes:
+def _make_pdf_with_text_field(
+    field_name: str = "FirstName",
+    field_value: str = "",
+    *,
+    field_label: str = "",
+    drawn_label: str = "",
+) -> bytes:
     """Create a minimal PDF with a single text widget."""
     doc = fitz.open()
     page = doc.new_page()
+    if drawn_label:
+        page.insert_text((50, 42), drawn_label, fontsize=11)
     widget = fitz.Widget()
     widget.rect = fitz.Rect(50, 50, 300, 80)
     widget.field_type = fitz.PDF_WIDGET_TYPE_TEXT
     widget.field_name = field_name
     widget.field_value = field_value
+    if field_label:
+        widget.field_label = field_label
     page.add_widget(widget)
+    return doc.tobytes()
+
+
+def _make_pdf_with_checkbox(
+    field_name: str = "Check Box0",
+    *,
+    option_label: str = "Yes",
+    question_text: str = "",
+) -> bytes:
+    """Create a minimal PDF with a single checkbox and nearby explanatory text."""
+    doc = fitz.open()
+    page = doc.new_page()
+    if question_text:
+        page.insert_textbox(
+            fitz.Rect(50, 20, 420, 60),
+            question_text,
+            fontsize=11,
+        )
+    widget = fitz.Widget()
+    widget.rect = fitz.Rect(50, 70, 62, 82)
+    widget.field_type = fitz.PDF_WIDGET_TYPE_CHECKBOX
+    widget.field_name = field_name
+    page.add_widget(widget)
+    if option_label:
+        page.insert_text((72, 80), option_label, fontsize=11)
     return doc.tobytes()
 
 
@@ -75,6 +110,36 @@ class TestExtractAcroformFields:
         pdf_bytes = _make_pdf_with_text_field("FieldOnPage0")
         fields = extract_acroform_fields(pdf_bytes)
         assert fields[0]["page"] == 0
+
+    def test_extract_acroform_fields_prefers_embedded_widget_label(self):
+        pdf_bytes = _make_pdf_with_text_field(
+            "Text Field0",
+            field_label="Student Name",
+        )
+        fields = extract_acroform_fields(pdf_bytes)
+
+        assert fields[0]["field_label"] == "Student Name"
+        assert fields[0]["field_context"] == ""
+
+    def test_extract_acroform_fields_uses_nearby_text_for_generic_names(self):
+        pdf_bytes = _make_pdf_with_text_field(
+            "Text Field0",
+            drawn_label="Student Name",
+        )
+        fields = extract_acroform_fields(pdf_bytes)
+
+        assert fields[0]["field_label"] == "Student Name"
+
+    def test_extract_acroform_fields_extracts_checkbox_context(self):
+        pdf_bytes = _make_pdf_with_checkbox(
+            "Check Box0",
+            option_label="Yes",
+            question_text="Do you have any bank accounts outside the US?",
+        )
+        fields = extract_acroform_fields(pdf_bytes)
+
+        assert fields[0]["field_label"] == "Yes"
+        assert "bank accounts outside the US" in fields[0]["field_context"]
 
 
 # ---------------------------------------------------------------------------

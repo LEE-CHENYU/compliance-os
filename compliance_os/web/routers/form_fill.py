@@ -17,6 +17,7 @@ from compliance_os.web.services.form_filler import (
 )
 
 router = APIRouter(prefix="/api/form-fill", tags=["form-fill"])
+legacy_router = APIRouter(prefix="/api/dashboard/form-fill", tags=["form-fill"])
 
 _MAX_PDF_BYTES = 20 * 1024 * 1024  # 20 MB
 
@@ -29,6 +30,9 @@ _MAX_PDF_BYTES = 20 * 1024 * 1024  # 20 MB
 class FieldProposal(BaseModel):
     field_name: str
     field_type: str = ""
+    field_label: str = ""
+    field_context: str = ""
+    page: int | None = None
     proposed_value: str = ""
     confidence: str = ""
     source: str = ""
@@ -60,6 +64,7 @@ def _validate_pdf(file: UploadFile, pdf_bytes: bytes) -> None:
 
 
 @router.post("/extract", response_model=ExtractResponse)
+@legacy_router.post("/extract", response_model=ExtractResponse, include_in_schema=False)
 async def extract_and_propose(
     file: UploadFile,
     instruction: str = Form(default=""),
@@ -119,6 +124,9 @@ async def extract_and_propose(
             FieldProposal(
                 field_name=name,
                 field_type=f.get("field_type", ""),
+                field_label=f.get("field_label", ""),
+                field_context=f.get("field_context", ""),
+                page=f.get("page"),
                 proposed_value=proposal.get("proposed_value", ""),
                 confidence=proposal.get("confidence", ""),
                 source=proposal.get("source", ""),
@@ -132,6 +140,9 @@ async def extract_and_propose(
                 FieldProposal(
                     field_name=name,
                     field_type="",
+                    field_label="",
+                    field_context="",
+                    page=None,
                     proposed_value=proposal.get("proposed_value", ""),
                     confidence=proposal.get("confidence", ""),
                     source=proposal.get("source", ""),
@@ -150,6 +161,7 @@ async def extract_and_propose(
 
 
 @router.post("/generate")
+@legacy_router.post("/generate", include_in_schema=False)
 async def generate_filled_pdf(
     file: UploadFile,
     values: str = Form(...),
