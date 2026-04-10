@@ -112,3 +112,41 @@ products:
       - "Shares the same mail-aware completion model as Form 8843"
     cta_label: "Start 83(b) packet"
     path: "/services/election_83b"
+
+  - sku: opt_execution
+    name: "OPT Application — Execution Mode"
+    description: "For self-directed users: Guardian qualifies the case, an attorney reviews it, and the filing is tracked through completion."
+    price_cents: 19900
+    tier: tier_1a_execution
+    requires_attorney: true
+    requires_questionnaire: true
+    active: true
+    category: immigration
+    filing_method: "attorney filing"
+    fulfillment_mode: "execution mode"
+    headline: "For straightforward OPT cases where the user can gather the documents and the attorney can execute the filing"
+    highlights:
+      - "Questionnaire routes the user to execution or advisory"
+      - "Limited-scope agreement captured before attorney review"
+      - "Attorney dashboard tracks sign-off and filing confirmation"
+    cta_label: "Start OPT questionnaire"
+    path: "/services/opt_execution"
+
+  - sku: opt_advisory
+    name: "OPT Application — Advisory Mode"
+    description: "For users with complexity flags or uncertainty who need a strategy-first attorney workflow before filing."
+    price_cents: 49900
+    tier: tier_1b_advisory
+    requires_attorney: true
+    requires_questionnaire: true
+    active: true
+    category: immigration
+    filing_method: "attorney consultation + filing"
+    fulfillment_mode: "advisory mode"
+    headline: "For OPT cases with eligibility, timing, or history questions that should not be forced through an execution lane"
+    highlights:
+      - "Same qualifying questionnaire as execution mode"
+      - "Complexity flags route the user toward the higher-touch lane"
+      - "Guardian keeps the upgrade path visible instead of hiding it inside chat"
+    cta_label: "Start OPT questionnaire"
+    path: "/services/opt_advisory"

@@ -1,0 +1,40 @@
+service: opt_execution
+title: "Let's find the right OPT service"
+description: "This helps Guardian recommend Execution Mode ($199) or Advisory Mode ($499)."
+sections:
+  - id: situation
+    title: "Your situation"
+    required_for_execution: all
+    items:
+      - id: f1_good_standing
+        label: "I'm currently on F-1 status in good standing"
+      - id: full_time_enrolled
+        label: "I've maintained full-time enrollment for at least one academic year"
+      - id: employment_plan
+        label: "I have a clear employment plan or I am actively seeking one"
+      - id: school_confirmed_eligible
+        label: "My school has confirmed that I'm eligible for OPT"
+  - id: documents
+    title: "Your documents"
+    required_for_execution: all
+    items:
+      - id: has_i20
+        label: "I have my current I-20 with OPT recommendation"
+      - id: has_passport
+        label: "I have my passport and visa documents"
+      - id: has_photos
+        label: "I have two passport-style photos ready"
+  - id: complexity_flags
+    title: "Complexity flags"
+    required_for_execution: all_unchecked
+    items:
+      - id: denied_before
+        label: "I've been denied OPT before"
+      - id: prior_rfe
+        label: "I've had a prior visa refusal or RFE"
+      - id: unauthorized_employment
+        label: "I've had unauthorized employment issues"
+      - id: late_application
+        label: "I'm applying post-completion with less than 30 days notice"
+routing:
+  user_override_allowed: true

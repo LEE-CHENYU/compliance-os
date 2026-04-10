@@ -22,6 +22,7 @@ from compliance_os.web.routers import retrieval as retrieval_router
 from compliance_os.web.routers import form_fill as form_fill_router
 from compliance_os.web.routers import form8843 as form8843_router
 from compliance_os.web.routers import marketplace as marketplace_router
+from compliance_os.web.routers import attorney as attorney_router
 
 
 @asynccontextmanager
@@ -77,6 +78,7 @@ app.include_router(form_fill_router.router)
 app.include_router(form_fill_router.legacy_router)
 app.include_router(form8843_router.router)
 app.include_router(marketplace_router.router)
+app.include_router(attorney_router.router)
 
 
 @app.get("/healthz")

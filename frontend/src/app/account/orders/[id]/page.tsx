@@ -55,6 +55,15 @@ type Election83BFormState = {
   vesting_schedule: string;
 };
 
+type OptIntakeFormState = {
+  desired_start_date: string;
+  employment_plan_text: string;
+  passport_file: File | null;
+  i20_file: File | null;
+  photo_file: File | null;
+  employment_plan_file: File | null;
+};
+
 function formatDate(value: string | null): string {
   if (!value) {
     return "Not available";
@@ -117,6 +126,17 @@ function createInitial83BForm(): Election83BFormState {
   };
 }
 
+function createInitialOptIntakeForm(): OptIntakeFormState {
+  return {
+    desired_start_date: "",
+    employment_plan_text: "",
+    passport_file: null,
+    i20_file: null,
+    photo_file: null,
+    employment_plan_file: null,
+  };
+}
+
 function toForm8843Order(order: MarketplaceOrder | null): Form8843OrderResponse | null {
   if (!order?.filing_instructions) {
     return null;
@@ -151,6 +171,7 @@ export default function AccountOrderDetailPage() {
   const [h1bFiles, setH1bFiles] = useState<Record<string, File | null>>({});
   const [fbarForm, setFbarForm] = useState<FbarFormState>(() => createInitialFbarForm());
   const [election83BForm, setElection83BForm] = useState<Election83BFormState>(() => createInitial83BForm());
+  const [optIntakeForm, setOptIntakeForm] = useState<OptIntakeFormState>(() => createInitialOptIntakeForm());
 
   useEffect(() => {
     if (!orderId) {
@@ -192,6 +213,7 @@ export default function AccountOrderDetailPage() {
   const pdfUrl = resolveForm8843PdfUrl(order?.pdf_url ?? null);
   const result = order?.result ?? null;
   const isSlice3Sku = order ? ["h1b_doc_check", "fbar_check", "election_83b"].includes(order.product_sku) : false;
+  const isOptSku = order ? ["opt_execution", "opt_advisory"].includes(order.product_sku) : false;
 
   function applyOrder(nextOrder: MarketplaceOrder, note: string) {
     setOrder(nextOrder);
@@ -310,6 +332,41 @@ export default function AccountOrderDetailPage() {
           vesting_schedule: election83BForm.vesting_schedule.trim(),
         });
         applyOrder(nextOrder, "83(b) intake saved. Generate the packet when you are ready.");
+        return;
+      }
+
+      if (order.product_sku === "opt_execution" || order.product_sku === "opt_advisory") {
+        const formData = new FormData();
+        let fieldCount = 0;
+        if (optIntakeForm.desired_start_date) {
+          formData.append("desired_start_date", optIntakeForm.desired_start_date);
+          fieldCount += 1;
+        }
+        if (optIntakeForm.employment_plan_text.trim()) {
+          formData.append("employment_plan_text", optIntakeForm.employment_plan_text.trim());
+          fieldCount += 1;
+        }
+        if (optIntakeForm.passport_file) {
+          formData.append("passport_file", optIntakeForm.passport_file);
+          fieldCount += 1;
+        }
+        if (optIntakeForm.i20_file) {
+          formData.append("i20_file", optIntakeForm.i20_file);
+          fieldCount += 1;
+        }
+        if (optIntakeForm.photo_file) {
+          formData.append("photo_file", optIntakeForm.photo_file);
+          fieldCount += 1;
+        }
+        if (optIntakeForm.employment_plan_file) {
+          formData.append("employment_plan_file", optIntakeForm.employment_plan_file);
+          fieldCount += 1;
+        }
+        if (!fieldCount) {
+          throw new Error("Provide OPT intake details before saving.");
+        }
+        const nextOrder = await saveMarketplaceOrderFileIntake(order.order_id, formData);
+        applyOrder(nextOrder, "OPT intake saved. Review the agreement next.");
       }
     } catch (nextError) {
       setActionError(nextError instanceof Error ? nextError.message : "Could not save intake");
@@ -789,6 +846,94 @@ export default function AccountOrderDetailPage() {
     );
   }
 
+  function renderOptIntakeSection() {
+    if (!order || !isOptSku) {
+      return null;
+    }
+
+    const inputClassName = "mt-2 w-full rounded-2xl border border-[#dbe5f2] bg-white px-4 py-3 text-[14px] text-[#1a2942] outline-none transition focus:border-[#9db8e6]";
+    const labelClassName = "text-[12px] font-semibold uppercase tracking-[0.14em] text-[#7384a0]";
+
+    return (
+      <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">OPT intake</div>
+            <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Prepare the attorney review packet</h2>
+            <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
+              Upload the core OPT documents and add the intended start date so the attorney has a clean execution packet before filing.
+            </p>
+          </div>
+          {!order.intake_complete ? (
+            <button
+              type="button"
+              onClick={() => void handleSaveIntake()}
+              disabled={busyAction === "save"}
+              className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
+            >
+              {busyAction === "save" ? "Saving intake..." : "Save intake"}
+            </button>
+          ) : (
+            <div className="rounded-full border border-[#cfe7d3] bg-[#f3fbf4] px-4 py-2 text-[13px] font-semibold text-[#326247]">
+              Intake captured
+            </div>
+          )}
+        </div>
+
+        {!order.intake_complete ? (
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+              <div className={labelClassName}>Desired OPT start date</div>
+              <input
+                type="date"
+                value={optIntakeForm.desired_start_date}
+                onChange={(event) => setOptIntakeForm((current) => ({ ...current, desired_start_date: event.target.value }))}
+                className={inputClassName}
+              />
+            </label>
+            <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4 md:col-span-2">
+              <div className={labelClassName}>Employment plan</div>
+              <textarea
+                value={optIntakeForm.employment_plan_text}
+                onChange={(event) => setOptIntakeForm((current) => ({ ...current, employment_plan_text: event.target.value }))}
+                className={`${inputClassName} min-h-[120px] resize-y`}
+                placeholder="Describe the role you intend to pursue and how it connects to your field of study."
+              />
+            </label>
+            {[
+              ["passport_file", "Passport"],
+              ["i20_file", "I-20 with OPT recommendation"],
+              ["photo_file", "Passport-style photo"],
+              ["employment_plan_file", "Employment plan document"],
+            ].map(([fieldName, label]) => (
+              <label key={fieldName} className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>{label}</div>
+                <input
+                  type="file"
+                  accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
+                  className={`${inputClassName} file:mr-4 file:rounded-full file:border-0 file:bg-[#eef4ff] file:px-4 file:py-2 file:text-[13px] file:font-semibold file:text-[#355694]`}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null;
+                    setOptIntakeForm((current) => ({ ...current, [fieldName]: file }));
+                  }}
+                />
+                <div className="mt-2 text-[13px] text-[#6e7f9a]">
+                  {optIntakeForm[fieldName as keyof OptIntakeFormState] instanceof File
+                    ? (optIntakeForm[fieldName as keyof OptIntakeFormState] as File).name
+                    : "No file selected"}
+                </div>
+              </label>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] px-5 py-4 text-[14px] leading-7 text-[#435774]">
+            The core OPT intake is already saved. Continue to the agreement step to activate attorney review.
+          </div>
+        )}
+      </section>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f5f8fd_0%,#eef4fb_100%)] px-6 py-10">
       <div className="mx-auto max-w-5xl">
@@ -931,7 +1076,85 @@ export default function AccountOrderDetailPage() {
               </section>
             ) : null}
 
+            {isOptSku ? (
+              <section className="mt-6 grid gap-4 md:grid-cols-5">
+                <div className="rounded-[24px] border border-[#dbe5f2] bg-white/84 p-5 shadow-[0_16px_50px_rgba(61,84,128,0.06)]">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Step 1</div>
+                  <div className="mt-2 text-[19px] font-semibold text-[#13213b]">Questionnaire</div>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+                    {order.questionnaire_response_id ? "Captured" : "Not linked"}
+                  </p>
+                </div>
+                <div className="rounded-[24px] border border-[#dbe5f2] bg-white/84 p-5 shadow-[0_16px_50px_rgba(61,84,128,0.06)]">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Step 2</div>
+                  <div className="mt-2 text-[19px] font-semibold text-[#13213b]">Intake</div>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+                    {order.intake_complete ? "Captured" : "Still needed"}
+                  </p>
+                </div>
+                <div className="rounded-[24px] border border-[#dbe5f2] bg-white/84 p-5 shadow-[0_16px_50px_rgba(61,84,128,0.06)]">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Step 3</div>
+                  <div className="mt-2 text-[19px] font-semibold text-[#13213b]">Agreement</div>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+                    {order.agreement_signed ? "Signed" : "Pending signature"}
+                  </p>
+                </div>
+                <div className="rounded-[24px] border border-[#dbe5f2] bg-white/84 p-5 shadow-[0_16px_50px_rgba(61,84,128,0.06)]">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Step 4</div>
+                  <div className="mt-2 text-[19px] font-semibold text-[#13213b]">Attorney review</div>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+                    {order.attorney_assignment?.decision ? order.attorney_assignment.decision.replace(/_/g, " ") : "Waiting for assignment"}
+                  </p>
+                </div>
+                <div className="rounded-[24px] border border-[#dbe5f2] bg-white/84 p-5 shadow-[0_16px_50px_rgba(61,84,128,0.06)]">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Step 5</div>
+                  <div className="mt-2 text-[19px] font-semibold text-[#13213b]">Filing</div>
+                  <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+                    {result?.receipt_number ? "Receipt recorded" : "Pending filing"}
+                  </p>
+                </div>
+              </section>
+            ) : null}
+
             {renderIntakeSection()}
+            {renderOptIntakeSection()}
+
+            {isOptSku && order.intake_complete && !order.agreement_signed ? (
+              <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Agreement</div>
+                    <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Sign the limited-scope agreement</h2>
+                    <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
+                      Guardian will not assign the case into attorney review until the engagement is signed.
+                    </p>
+                  </div>
+                  <Link
+                    href={`/account/orders/${order.order_id}/agreement`}
+                    className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a]"
+                  >
+                    Open agreement
+                  </Link>
+                </div>
+              </section>
+            ) : null}
+
+            {isOptSku && order.agreement_signed ? (
+              <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Attorney lane</div>
+                <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Attorney review is now the active step</h2>
+                <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
+                  {order.attorney_assignment?.attorney?.full_name
+                    ? `${order.attorney_assignment.attorney.full_name} is assigned to this case.`
+                    : "An attorney will be assigned as part of the execution workflow."}
+                </p>
+                {order.attorney_assignment?.attorney ? (
+                  <div className="mt-4 rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] px-5 py-4 text-[14px] leading-6 text-[#435774]">
+                    {order.attorney_assignment.attorney.full_name} · {order.attorney_assignment.attorney.bar_state || "State pending"} · {order.attorney_assignment.attorney.bar_number || "Bar number pending"}
+                  </div>
+                ) : null}
+              </section>
+            ) : null}
 
             {isSlice3Sku && order.intake_complete && !order.result_ready ? (
               <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
@@ -956,6 +1179,16 @@ export default function AccountOrderDetailPage() {
             ) : null}
 
             {renderResultSection()}
+
+            {isOptSku && result?.receipt_number ? (
+              <section className="mt-6 rounded-[28px] border border-[#cfe7d3] bg-[#f3fbf4] p-6 shadow-[0_18px_48px_rgba(50,98,71,0.08)]">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#5b8669]">Receipt</div>
+                <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#183926]">{result.receipt_number}</h2>
+                <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#326247]">
+                  {result.filing_confirmation || "The attorney recorded the filing confirmation for this case."}
+                </p>
+              </section>
+            ) : null}
 
             {order.delivery_method === "user_mail" && order.product_sku !== "form_8843_free" && order.result_ready ? (
               <section className="mt-6 rounded-[28px] border border-[#f1e3b4] bg-[#fff9eb] p-6 shadow-[0_18px_48px_rgba(118,91,22,0.08)]">
@@ -1007,7 +1240,7 @@ export default function AccountOrderDetailPage() {
               />
             ) : null}
 
-            {!isSlice3Sku && !form8843Order ? (
+            {!isSlice3Sku && !isOptSku && !form8843Order ? (
               <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Workflow</div>
                 <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">This order type is not implemented yet</h2>

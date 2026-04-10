@@ -14,8 +14,23 @@ from sqlalchemy.orm import Session
 from starlette.datastructures import UploadFile
 
 from compliance_os.web.models.auth import UserRow
-from compliance_os.web.models.database import get_session
-from compliance_os.web.models.marketplace import EmailSequenceRow, MarketplaceUserRow, OrderRow, ProductRow
+from compliance_os.web.models.database import DATA_DIR, get_session
+from compliance_os.web.models.marketplace import (
+    EmailSequenceRow,
+    LimitedScopeAgreementRow,
+    MarketplaceUserRow,
+    OrderRow,
+    ProductRow,
+    QuestionnaireResponseRow,
+)
+from compliance_os.web.services.attorney_workflow import (
+    assign_attorney_to_order,
+    latest_agreement,
+    latest_assignment,
+    render_limited_scope_agreement,
+    select_available_attorney,
+    serialize_assignment,
+)
 from compliance_os.web.services.auth_service import get_bearer_payload
 from compliance_os.web.services.election_83b import process_election_83b
 from compliance_os.web.services.fbar_check import process_fbar_check
@@ -34,9 +49,22 @@ from compliance_os.web.services.product_catalog import (
     serialize_product,
     sync_product_catalog,
 )
+from compliance_os.web.services.questionnaire import (
+    evaluate,
+    normalize_questionnaire_responses,
+    serialize_questionnaire_config,
+)
 
 
 router = APIRouter(prefix="/api/marketplace", tags=["marketplace"])
+
+OPT_EXECUTION_DIR = DATA_DIR / "marketplace" / "opt_execution"
+OPT_EXECUTION_FILE_FIELDS = {
+    "passport_file": "passport",
+    "i20_file": "i20_opt_recommendation",
+    "photo_file": "passport_photo",
+    "employment_plan_file": "employment_plan",
+}
 
 
 def _now() -> datetime:
@@ -45,6 +73,22 @@ def _now() -> datetime:
 
 class CreateOrderRequest(BaseModel):
     sku: str
+    questionnaire_response_id: str | None = None
+    chosen_mode: str | None = None
+
+
+class QuestionnaireItemRequest(BaseModel):
+    item_id: str
+    checked: bool
+
+
+class QuestionnaireSubmitRequest(BaseModel):
+    responses: list[QuestionnaireItemRequest]
+
+
+class AgreementSignRequest(BaseModel):
+    signature: str
+    agreement_text_snapshot: str
 
 
 class MarkMailedRequest(BaseModel):
@@ -70,6 +114,14 @@ def _serialize_artifacts(order: OrderRow, result_data: dict[str, Any]) -> list[d
     return artifacts
 
 
+def _save_opt_uploaded_document(order_id: str, filename: str, content: bytes) -> Path:
+    order_dir = OPT_EXECUTION_DIR / order_id / "uploads"
+    order_dir.mkdir(parents=True, exist_ok=True)
+    path = order_dir / filename
+    path.write_bytes(content)
+    return path
+
+
 def _serialize_result_payload(order: OrderRow) -> dict[str, Any]:
     result_data = order.result_data or {}
     findings = list(result_data.get("findings") or [])
@@ -87,6 +139,9 @@ def _serialize_result_payload(order: OrderRow) -> dict[str, Any]:
         "document_summary": list(result_data.get("document_summary") or []),
         "comparisons": list(result_data.get("comparisons") or []),
         "mailing_instructions": result_data.get("mailing_instructions"),
+        "receipt_number": result_data.get("receipt_number"),
+        "filing_confirmation": result_data.get("filing_confirmation"),
+        "filed_at": result_data.get("filed_at"),
     }
 
 
@@ -175,10 +230,33 @@ def _filing_context_from_order(order: OrderRow) -> dict[str, Any]:
     return context
 
 
+def _questionnaire_service_sku(product_sku: str) -> str:
+    if product_sku in {"opt_execution", "opt_advisory"}:
+        return "opt_execution"
+    return product_sku
+
+
+def _serialize_agreement(order: OrderRow) -> dict[str, Any] | None:
+    agreement = latest_agreement(order)
+    if agreement is None:
+        return None
+    return {
+        "agreement_id": agreement.id,
+        "signed_at": agreement.signed_at.isoformat() if agreement.signed_at else None,
+        "user_signature": agreement.user_signature,
+    }
+
+
 def _serialize_order(order: OrderRow, *, include_result: bool = False) -> dict[str, Any]:
     config = get_product_config(order.product_sku, include_inactive=True)
     product = serialize_product(config) if config is not None else _fallback_product(order)
     result_data = order.result_data or {}
+    intake_data = order.intake_data or {}
+    assignment = latest_assignment(order)
+
+    intake_complete = bool(order.intake_data)
+    if order.product_sku in {"opt_execution", "opt_advisory"}:
+        intake_complete = bool(intake_data.get("client_intake"))
 
     body: dict[str, Any] = {
         "order_id": order.id,
@@ -195,12 +273,17 @@ def _serialize_order(order: OrderRow, *, include_result: bool = False) -> dict[s
         "mailed_at": order.mailed_at.isoformat() if order.mailed_at else None,
         "tracking_number": order.tracking_number,
         "product": product,
-        "intake_complete": bool(order.intake_data),
+        "intake_complete": intake_complete,
         "result_ready": bool(result_data),
         "summary": result_data.get("summary"),
         "finding_count": int(result_data.get("finding_count") or len(result_data.get("findings") or [])),
         "next_steps": list(result_data.get("next_steps") or []),
         "artifacts": _serialize_artifacts(order, result_data),
+        "questionnaire_response_id": intake_data.get("questionnaire_response_id"),
+        "chosen_mode": intake_data.get("chosen_mode"),
+        "agreement_signed": latest_agreement(order) is not None,
+        "agreement": _serialize_agreement(order),
+        "attorney_assignment": serialize_assignment(assignment),
     }
 
     if order.product_sku == "form_8843_free":
@@ -314,6 +397,57 @@ def get_product(
     return serialize_product(product)
 
 
+@router.get("/products/{sku}/questionnaire")
+def get_product_questionnaire(
+    sku: str,
+    db: Session = Depends(get_session),
+) -> dict[str, Any]:
+    sync_product_catalog(db)
+    db.commit()
+    product = get_product_config(sku, include_inactive=True)
+    if product is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if not bool(product.get("requires_questionnaire")):
+        raise HTTPException(status_code=400, detail="This product does not use a questionnaire")
+    return serialize_questionnaire_config(_questionnaire_service_sku(sku))
+
+
+@router.post("/products/{sku}/questionnaire")
+def submit_product_questionnaire(
+    sku: str,
+    payload: QuestionnaireSubmitRequest,
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+) -> dict[str, Any]:
+    _, marketplace_user = _require_marketplace_account(authorization, db)
+    sync_product_catalog(db)
+    product = db.get(ProductRow, sku)
+    if product is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if not product.requires_questionnaire:
+        raise HTTPException(status_code=400, detail="This product does not use a questionnaire")
+
+    normalized_responses = normalize_questionnaire_responses([item.model_dump() for item in payload.responses])
+    evaluation = evaluate(sku, normalized_responses)
+    response_row = QuestionnaireResponseRow(
+        user_id=marketplace_user.id,
+        service_sku=product.sku,
+        responses=normalized_responses,
+        recommendation=evaluation.recommendation,
+    )
+    db.add(response_row)
+    db.commit()
+    db.refresh(response_row)
+    return {
+        "questionnaire_response_id": response_row.id,
+        "recommendation": evaluation.recommendation,
+        "advisory_reason": evaluation.advisory_reason,
+        "execution_reason": evaluation.execution_reason,
+        "missing_required_items": evaluation.missing_required_items,
+        "complexity_flags": evaluation.complexity_flags,
+    }
+
+
 @router.post("/orders")
 def create_order(
     payload: CreateOrderRequest,
@@ -329,11 +463,46 @@ def create_order(
     if not product.active:
         raise HTTPException(status_code=400, detail="This product is not active yet")
 
+    intake_data: dict[str, Any] | None = None
+    status = "draft"
+    delivery_method = "download_only"
+    mailing_status = "not_required"
+
+    if product.requires_questionnaire:
+        if not payload.questionnaire_response_id:
+            raise HTTPException(status_code=400, detail="Questionnaire response is required for this product")
+        questionnaire_response = (
+            db.query(QuestionnaireResponseRow)
+            .filter(
+                QuestionnaireResponseRow.id == payload.questionnaire_response_id,
+                QuestionnaireResponseRow.user_id == marketplace_user.id,
+            )
+            .first()
+        )
+        if questionnaire_response is None:
+            raise HTTPException(status_code=404, detail="Questionnaire response not found")
+        chosen_mode = payload.chosen_mode or questionnaire_response.recommendation or "execution"
+        if product.sku == "opt_execution" and chosen_mode != "execution":
+            raise HTTPException(status_code=400, detail="OPT Execution orders must use chosen_mode=execution")
+        if product.sku == "opt_advisory" and chosen_mode != "advisory":
+            raise HTTPException(status_code=400, detail="OPT Advisory orders must use chosen_mode=advisory")
+        intake_data = {
+            "questionnaire_response_id": questionnaire_response.id,
+            "chosen_mode": chosen_mode,
+            "questionnaire_recommendation": questionnaire_response.recommendation,
+            "questionnaire_responses": questionnaire_response.responses,
+        }
+        status = "agreement_pending"
+        delivery_method = "attorney_filing"
+
     order = OrderRow(
         user_id=marketplace_user.id,
         product_sku=product.sku,
-        status="draft",
+        status=status,
         amount_cents=product.price_cents,
+        delivery_method=delivery_method,
+        mailing_status=mailing_status,
+        intake_data=intake_data,
     )
     db.add(order)
     db.commit()
@@ -366,6 +535,79 @@ def get_order(
     return _serialize_order(_get_owned_order(order_id, marketplace_user, db), include_result=True)
 
 
+@router.get("/orders/{order_id}/agreement")
+def get_order_agreement(
+    order_id: str,
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+) -> dict[str, Any]:
+    _, marketplace_user = _require_marketplace_account(authorization, db)
+    order = _get_owned_order(order_id, marketplace_user, db)
+    if order.product_sku not in {"opt_execution", "opt_advisory"}:
+        raise HTTPException(status_code=400, detail="This order does not use a limited-scope agreement")
+
+    attorney = latest_assignment(order).attorney if latest_assignment(order) is not None else None
+    agreement = latest_agreement(order)
+    agreement_text = agreement.agreement_text if agreement is not None else render_limited_scope_agreement(order, marketplace_user, attorney)
+    return {
+        "order_id": order.id,
+        "agreement_text": agreement_text,
+        "signed": agreement is not None,
+        "agreement": _serialize_agreement(order),
+    }
+
+
+@router.post("/orders/{order_id}/sign-agreement")
+def sign_order_agreement(
+    order_id: str,
+    payload: AgreementSignRequest,
+    request: Request,
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+) -> dict[str, Any]:
+    _, marketplace_user = _require_marketplace_account(authorization, db)
+    order = _get_owned_order(order_id, marketplace_user, db)
+    if order.product_sku not in {"opt_execution", "opt_advisory"}:
+        raise HTTPException(status_code=400, detail="This order does not use a limited-scope agreement")
+    if not payload.signature.strip():
+        raise HTTPException(status_code=400, detail="Typed signature is required")
+    if not (order.intake_data or {}).get("client_intake"):
+        raise HTTPException(status_code=400, detail="Complete OPT intake before signing the agreement")
+
+    if latest_agreement(order) is not None:
+        raise HTTPException(status_code=400, detail="Agreement already signed")
+
+    attorney = latest_assignment(order).attorney if latest_assignment(order) is not None else None
+    if attorney is None:
+        attorney = select_available_attorney(db)
+    if attorney is None:
+        raise HTTPException(status_code=400, detail="No attorney is currently available")
+
+    agreement = LimitedScopeAgreementRow(
+        order_id=order.id,
+        user_id=marketplace_user.id,
+        attorney_id=attorney.id,
+        agreement_text=payload.agreement_text_snapshot,
+        user_signature=payload.signature.strip(),
+        user_ip=request.client.host if request.client is not None else None,
+        user_agent=request.headers.get("user-agent"),
+    )
+    db.add(agreement)
+    assignment = assign_attorney_to_order(order, db)
+    order.status = "attorney_review"
+    order.updated_at = _now()
+    db.commit()
+    db.refresh(order)
+    db.refresh(agreement)
+    db.refresh(assignment)
+    return {
+        "agreement_id": agreement.id,
+        "signed_at": agreement.signed_at.isoformat() if agreement.signed_at else None,
+        "order": _serialize_order(order, include_result=True),
+        "attorney_assignment": serialize_assignment(assignment),
+    }
+
+
 @router.post("/orders/{order_id}/intake")
 async def save_order_intake(
     order_id: str,
@@ -395,6 +637,38 @@ async def save_order_intake(
         if not documents:
             raise HTTPException(status_code=400, detail="Upload at least one H-1B packet document")
         intake_data = {"documents": documents}
+    elif order.product_sku in {"opt_execution", "opt_advisory"}:
+        form = await request.form()
+        documents: list[dict[str, Any]] = []
+        for field_name, doc_type in OPT_EXECUTION_FILE_FIELDS.items():
+            candidate = form.get(field_name)
+            if not isinstance(candidate, UploadFile) or not candidate.filename:
+                continue
+            content = await candidate.read()
+            saved_path = _save_opt_uploaded_document(order.id, candidate.filename, content)
+            documents.append(
+                {
+                    "doc_type": doc_type,
+                    "filename": candidate.filename,
+                    "path": str(saved_path),
+                }
+            )
+        desired_start_date = str(form.get("desired_start_date") or "").strip()
+        employment_plan_text = str(form.get("employment_plan_text") or "").strip()
+        if not documents and not desired_start_date and not employment_plan_text:
+            raise HTTPException(status_code=400, detail="Provide OPT intake details before saving")
+        existing = dict(order.intake_data or {})
+        existing["client_intake"] = {
+            "desired_start_date": desired_start_date or None,
+            "employment_plan_text": employment_plan_text or None,
+            "documents": documents,
+            "prefill_preview": {
+                "forms": ["I-765", "G-28"],
+                "supporting_documents": [document["doc_type"] for document in documents],
+                "desired_start_date": desired_start_date or None,
+            },
+        }
+        intake_data = existing
     else:
         intake_data = await request.json()
         if not isinstance(intake_data, dict):
@@ -402,7 +676,10 @@ async def save_order_intake(
         _validate_json_intake(order, intake_data)
 
     order.intake_data = intake_data
-    order.status = "intake_complete"
+    if order.product_sku in {"opt_execution", "opt_advisory"}:
+        order.status = "intake_complete" if latest_agreement(order) is None else "attorney_review"
+    else:
+        order.status = "intake_complete"
     order.updated_at = _now()
     db.commit()
     db.refresh(order)

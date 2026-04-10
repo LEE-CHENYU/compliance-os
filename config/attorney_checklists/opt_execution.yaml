@@ -1,0 +1,21 @@
+service: opt_execution
+checklist:
+  - id: passport_match
+    label: "Beneficiary info matches passport (name, DOB, citizenship)"
+  - id: i20_valid
+    label: "I-20 has valid OPT recommendation from the DSO"
+  - id: employment_plan
+    label: "Employment plan is coherent and related to the major"
+  - id: timing_ok
+    label: "Filing window is appropriate for OPT timing"
+  - id: no_prior_denials
+    label: "No prior OPT denials were disclosed"
+  - id: no_unauthorized_work
+    label: "No unauthorized employment was disclosed"
+  - id: photos_valid
+    label: "Passport photos appear usable for USCIS filing"
+  - id: fee_payment_ready
+    label: "USCIS filing fee payment method is confirmed"
+decision:
+  all_checked: "Execute — sign G-28 and file"
+  any_unchecked: "Flag to Guardian — offer Advisory upgrade"

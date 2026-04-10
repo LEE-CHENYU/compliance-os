@@ -87,6 +87,64 @@ export interface MarketplaceMailingInstructions {
   steps: string[];
 }
 
+export interface MarketplaceAgreement {
+  agreement_id: string;
+  signed_at: string | null;
+  user_signature?: string | null;
+}
+
+export interface MarketplaceAttorney {
+  attorney_id: string;
+  full_name: string;
+  email: string;
+  bar_state: string | null;
+  bar_number: string | null;
+  bar_verified: boolean;
+  languages?: string[];
+  location?: string | null;
+}
+
+export interface MarketplaceAttorneyAssignment {
+  assignment_id: string;
+  attorney_id: string;
+  decision: string;
+  assigned_at: string | null;
+  reviewed_at: string | null;
+  completed_at: string | null;
+  checklist_responses?: Record<string, boolean>;
+  attorney_notes?: string | null;
+  attorney?: MarketplaceAttorney | null;
+}
+
+export interface QuestionnaireItem {
+  id: string;
+  label: string;
+}
+
+export interface QuestionnaireSection {
+  id: string;
+  title: string;
+  required_for_execution: string;
+  items: QuestionnaireItem[];
+}
+
+export interface MarketplaceQuestionnaireConfig {
+  service: string;
+  title: string;
+  description: string;
+  sections: QuestionnaireSection[];
+  routing?: Record<string, unknown>;
+}
+
+export interface MarketplaceQuestionnaireResult {
+  questionnaire_response_id: string;
+  recommendation: string;
+  advisory_reason: string | null;
+  execution_reason: string | null;
+  missing_required_items: string[];
+  complexity_flags: string[];
+}
+
 export interface MarketplaceResultPayload {
   order_id: string;
   product_sku: string;
@@ -101,6 +159,9 @@ export interface MarketplaceResultPayload {
   document_summary?: MarketplaceDocumentSummary[];
   comparisons?: MarketplaceComparison[];
   mailing_instructions?: MarketplaceMailingInstructions | null;
+  receipt_number?: string | null;
+  filing_confirmation?: string | null;
+  filed_at?: string | null;
 }
 
 export interface Form8843FilingInstructions {
@@ -153,6 +214,11 @@ export interface MarketplaceOrder {
   product: MarketplaceProduct;
   intake_complete: boolean;
   result_ready: boolean;
+  questionnaire_response_id?: string | null;
+  chosen_mode?: string | null;
+  agreement_signed?: boolean;
+  agreement?: MarketplaceAgreement | null;
+  attorney_assignment?: MarketplaceAttorneyAssignment | null;
   summary?: string | null;
   finding_count?: number;
   next_steps?: string[];
@@ -177,6 +243,58 @@ export interface Form8843MailingKitResponse {
   mailing_label_text: string;
   envelope_template_text: string;
   recommended_service: string;
+}
+
+export interface MarketplaceAgreementResponse {
+  order_id: string;
+  agreement_text: string;
+  signed: boolean;
+  agreement?: MarketplaceAgreement | null;
+}
+
+export interface AttorneyDashboardResponse {
+  attorney: MarketplaceAttorney | null;
+  pending_cases: Array<{
+    order_id: string;
+    product_sku: string | null;
+    status: string | null;
+    decision: string;
+    assigned_at: string | null;
+    client_email: string | null;
+    client_name: string | null;
+  }>;
+  completed_cases: Array<{
+    order_id: string;
+    product_sku: string | null;
+    status: string | null;
+    decision: string;
+    assigned_at: string | null;
+    client_email: string | null;
+    client_name: string | null;
+  }>;
+  stats: {
+    pending_review: number;
+    completed_reviews: number;
+    total_cases: number;
+  };
+}
+
+export interface AttorneyCaseResponse {
+  order: MarketplaceOrder;
+  assignment: MarketplaceAttorneyAssignment | null;
+  agreement: {
+    agreement_id: string;
+    signed_at: string | null;
+    user_signature: string | null;
+    agreement_text: string | null;
+  } | null;
+  checklist: {
+    service: string;
+    checklist: QuestionnaireItem[];
+    decision: Record<string, string>;
+  };
+  intake_data: Record<string, unknown>;
+  result: Record<string, unknown>;
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
@@ -211,16 +329,39 @@ export async function getMarketplaceProduct(sku: string, includeInactive = false
   return parseResponse<MarketplaceProduct>(response);
 }
 
-export async function createMarketplaceOrder(sku: string): Promise<MarketplaceOrder> {
+export async function createMarketplaceOrder(
+  sku: string,
+  options?: { questionnaire_response_id?: string; chosen_mode?: string },
+): Promise<MarketplaceOrder> {
   const response = await fetch(`${API}/marketplace/orders`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       ...authHeaders(),
     },
-    body: JSON.stringify({ sku }),
+    body: JSON.stringify({ sku, ...options }),
   });
   return parseResponse<MarketplaceOrder>(response);
+}
+
+export async function getMarketplaceQuestionnaire(sku: string): Promise<MarketplaceQuestionnaireConfig> {
+  const response = await fetch(`${API}/marketplace/products/${encodeURIComponent(sku)}/questionnaire`);
+  return parseResponse<MarketplaceQuestionnaireConfig>(response);
+}
+
+export async function submitMarketplaceQuestionnaire(
+  sku: string,
+  responses: Array<{ item_id: string; checked: boolean }>,
+): Promise<MarketplaceQuestionnaireResult> {
+  const response = await fetch(`${API}/marketplace/products/${encodeURIComponent(sku)}/questionnaire`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify({ responses }),
+  });
+  return parseResponse<MarketplaceQuestionnaireResult>(response);
 }
 
 export async function listMarketplaceOrders(): Promise<MarketplaceOrder[]> {
@@ -293,6 +434,90 @@ export async function markMarketplaceOrderMailed(
     body: JSON.stringify(payload),
   });
   return parseResponse<MarketplaceOrder>(response);
+}
+
+export async function getMarketplaceAgreement(orderId: string): Promise<MarketplaceAgreementResponse> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/agreement`, {
+    headers: authHeaders(),
+  });
+  return parseResponse<MarketplaceAgreementResponse>(response);
+}
+
+export async function signMarketplaceAgreement(
+  orderId: string,
+  payload: { signature: string; agreement_text_snapshot: string },
+): Promise<{
+  agreement_id: string;
+  signed_at: string | null;
+  order: MarketplaceOrder;
+  attorney_assignment: MarketplaceAttorneyAssignment | null;
+}> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/sign-agreement`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(payload),
+  });
+  return parseResponse(response);
+}
+
+export async function getAttorneyDashboard(): Promise<AttorneyDashboardResponse> {
+  const response = await fetch(`${API}/attorney/dashboard`, {
+    headers: authHeaders(),
+  });
+  return parseResponse<AttorneyDashboardResponse>(response);
+}
+
+export async function getAttorneyCase(orderId: string): Promise<AttorneyCaseResponse> {
+  const response = await fetch(`${API}/attorney/cases/${encodeURIComponent(orderId)}`, {
+    headers: authHeaders(),
+  });
+  return parseResponse<AttorneyCaseResponse>(response);
+}
+
+export async function reviewAttorneyCase(
+  orderId: string,
+  payload: {
+    checklist_responses: Record<string, boolean>;
+    decision: string;
+    notes?: string;
+  },
+): Promise<{
+  decision_recorded: boolean;
+  next_action: string;
+  assignment: MarketplaceAttorneyAssignment | null;
+  order: MarketplaceOrder;
+}> {
+  const response = await fetch(`${API}/attorney/cases/${encodeURIComponent(orderId)}/review`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(payload),
+  });
+  return parseResponse(response);
+}
+
+export async function fileAttorneyCase(
+  orderId: string,
+  payload: { receipt_number: string; filing_confirmation?: string },
+): Promise<{
+  filed_at: string;
+  receipt_number: string;
+  order: MarketplaceOrder;
+}> {
+  const response = await fetch(`${API}/attorney/cases/${encodeURIComponent(orderId)}/file`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(payload),
+  });
+  return parseResponse(response);
 }
 
 export async function getForm8843Order(orderId: string): Promise<Form8843OrderResponse> {

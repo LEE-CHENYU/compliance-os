@@ -101,7 +101,7 @@ export default function ServicesPage() {
             <div>
               <h1 className="text-[40px] font-extrabold tracking-tight text-[#0d1424]">Browse the first marketplace products</h1>
               <p className="mt-4 max-w-3xl text-[16px] leading-7 text-[#556480]">
-                The catalog is now config-driven. Form 8843, H-1B document review, FBAR check, and the 83(b) packet workflow are live; the remaining rail can now layer in product by product instead of rebuilding the storefront each time.
+                The catalog is now config-driven. Form 8843, H-1B document review, FBAR check, the 83(b) packet workflow, and the first OPT attorney lane are live; the remaining rail can now layer in product by product instead of rebuilding the storefront each time.
               </p>
             </div>
             <Link

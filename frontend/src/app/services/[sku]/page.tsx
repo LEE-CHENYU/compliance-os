@@ -17,6 +17,8 @@ const LIVE_WORKFLOW_SKUS = new Set([
   "h1b_doc_check",
   "fbar_check",
   "election_83b",
+  "opt_execution",
+  "opt_advisory",
 ]);
 
 function ctaCopy(product: MarketplaceProduct): string {
@@ -34,6 +36,9 @@ function ctaCopy(product: MarketplaceProduct): string {
   }
   if (product.sku === "election_83b") {
     return "Start 83(b) packet";
+  }
+  if (product.sku === "opt_execution" || product.sku === "opt_advisory") {
+    return "Start OPT questionnaire";
   }
   return product.cta_label || "Start service";
 }
@@ -85,7 +90,15 @@ export default function ServiceDetailPage() {
     }
 
     if (!isLoggedIn()) {
-      router.push(`/login?next=${encodeURIComponent(`/services/${currentProduct.sku}?start=1`)}`);
+      const nextPath = currentProduct.requires_questionnaire
+        ? `/services/${currentProduct.sku}/questionnaire`
+        : `/services/${currentProduct.sku}?start=1`;
+      router.push(`/login?next=${encodeURIComponent(nextPath)}`);
+      return;
+    }
+
+    if (currentProduct.requires_questionnaire) {
+      router.push(`/services/${currentProduct.sku}/questionnaire`);
       return;
     }
 
@@ -114,7 +127,14 @@ export default function ServiceDetailPage() {
       return;
     }
     if (!isLoggedIn()) {
-      router.push(`/login?next=${encodeURIComponent(`/services/${product.sku}?start=1`)}`);
+      const nextPath = product.requires_questionnaire
+        ? `/services/${product.sku}/questionnaire`
+        : `/services/${product.sku}?start=1`;
+      router.push(`/login?next=${encodeURIComponent(nextPath)}`);
+      return;
+    }
+    if (product.requires_questionnaire) {
+      router.push(`/services/${product.sku}/questionnaire`);
       return;
     }
 
@@ -221,8 +241,10 @@ export default function ServiceDetailPage() {
               <p className="mt-4 text-[14px] leading-7 text-[#cad6ec]">
                 {!product.active
                   ? "This SKU is intentionally visible in the config-backed catalog so the storefront and roadmap stay aligned before checkout goes live."
-                  : isLiveWorkflow
-                    ? "This product can create an order right now, collect intake inside the account workspace, and run the current Slice 3 processing flow."
+                  : product.requires_questionnaire
+                    ? "This product starts with a qualifying checklist, then routes the user into the attorney-backed workflow instead of dropping directly into a generic order."
+                    : isLiveWorkflow
+                      ? "This product can create an order right now, collect intake inside the account workspace, and run the current self-serve processing flow."
                     : "This service is still represented in the catalog, but the product workflow is intentionally held until the earlier checkout slice lands."}
               </p>
               {canStart ? (
