@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -64,6 +65,9 @@ def _parse_args() -> argparse.Namespace:
                         help="shorthand for --phases discover,generate,evaluate,aggregate")
     parser.add_argument("--fail-fast", action="store_true",
                         help="abort on first per-case error")
+    parser.add_argument("--backend", choices=["codex", "claude-batch"],
+                        default=os.environ.get("RUBRIC_BACKEND", "codex"),
+                        help="LLM backend for generator + judge (default: codex)")
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-q", "--quiet", action="store_true")
     return parser.parse_args()
@@ -159,10 +163,17 @@ def main() -> int:
     _apply_regen(args, manifest)
 
     if "generate" in phases:
-        logger.info("Phase 1 generate-missing: checking %d cases", len(manifest))
-        new_count, skip_count, gen_warnings = generate_missing(
-            manifest, fixture_dir=FIXTURE_DIR, rules_dir=CONFIG_RULES_DIR,
-        )
+        logger.info("Phase 1 generate-missing: checking %d cases (backend=%s)",
+                    len(manifest), args.backend)
+        if args.backend == "claude-batch":
+            from rubric.claude_batch_client import batch_generate
+            new_count, skip_count, gen_warnings = batch_generate(
+                manifest, rules_dir=CONFIG_RULES_DIR, fixture_dir=FIXTURE_DIR,
+            )
+        else:
+            new_count, skip_count, gen_warnings = generate_missing(
+                manifest, fixture_dir=FIXTURE_DIR, rules_dir=CONFIG_RULES_DIR,
+            )
         warnings.extend(gen_warnings)
         telemetry.generator_calls = new_count
         telemetry.generator_calls_cached = skip_count
@@ -186,18 +197,54 @@ def main() -> int:
 
     judge_records: dict = {}
     if "judge" in phases:
-        logger.info("Phase 3 judge: grading %d cases", len(eval_records))
-        for spec in manifest:
-            eval_rec = eval_records.get(spec.case_id)
-            fixture = _load_fixture(spec.case_id)
-            if not fixture or not eval_rec:
-                continue
-            try:
-                judge_records[spec.case_id] = judge_case(fixture, eval_rec)
-            except Exception as e:  # noqa: BLE001
-                warnings.append(f"judge crashed for {spec.case_id}: {e}")
-                if args.fail_fast:
-                    return 1
+        logger.info("Phase 3 judge: grading %d cases (backend=%s)",
+                    len(eval_records), args.backend)
+        if args.backend == "claude-batch":
+            from rubric.claude_batch_client import batch_judge
+            from rubric.io import sha256_of_obj, sha256_of_text
+            from rubric.judge import (
+                _rubric_version,
+                compute_judge_cache_key,
+                render_judge_prompt,
+            )
+            from rubric.models import JudgeRecord
+
+            rubric_version = _rubric_version()
+            cases_to_judge: list = []
+            for spec in manifest:
+                eval_rec = eval_records.get(spec.case_id)
+                fixture = _load_fixture(spec.case_id)
+                if not fixture or not eval_rec:
+                    continue
+                findings_hash = sha256_of_obj(eval_rec.findings)
+                prompt = render_judge_prompt(fixture, eval_rec)
+                prompt_hash = sha256_of_text(prompt)
+                cache_key = compute_judge_cache_key(
+                    eval_rec.input_hash, findings_hash, rubric_version, prompt_hash,
+                )
+                cached_path = JUDGE_CACHE_DIR / f"{cache_key}.json"
+                if cached_path.exists():
+                    judge_records[spec.case_id] = JudgeRecord.from_dict(load_json(cached_path))
+                    continue
+                cases_to_judge.append((fixture, eval_rec))
+
+            if cases_to_judge:
+                batch_results = batch_judge(
+                    cases_to_judge, cache_dir=JUDGE_CACHE_DIR,
+                )
+                judge_records.update(batch_results)
+        else:
+            for spec in manifest:
+                eval_rec = eval_records.get(spec.case_id)
+                fixture = _load_fixture(spec.case_id)
+                if not fixture or not eval_rec:
+                    continue
+                try:
+                    judge_records[spec.case_id] = judge_case(fixture, eval_rec)
+                except Exception as e:  # noqa: BLE001
+                    warnings.append(f"judge crashed for {spec.case_id}: {e}")
+                    if args.fail_fast:
+                        return 1
 
     if "aggregate" in phases:
         prior = None  # could load the most recent out/rubric-loop-*.json here

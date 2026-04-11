@@ -1257,3 +1257,184 @@ def test_goldens_total_at_least_40():
     from rubric.io import GOLDENS_DIR
     count = len(list(GOLDENS_DIR.glob("*.json")))
     assert count >= 40, f"expected >=40 static goldens, got {count}"
+
+
+def test_claude_batch_client_importable():
+    """Smoke test that the new module imports without side effects."""
+    from rubric.claude_batch_client import batch_generate, batch_judge
+    assert callable(batch_generate)
+    assert callable(batch_judge)
+
+
+def test_claude_batch_generate_skips_existing_fixtures(tmp_path):
+    """batch_generate should respect already-existing fixtures and skip them."""
+    from unittest.mock import MagicMock
+
+    from rubric.claude_batch_client import batch_generate
+
+    fixture_dir = tmp_path / "rubric_fixtures"
+    fixture_dir.mkdir()
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "stem_opt.yaml").write_text("version: 0.1.0\nrules: []\n")
+
+    spec = CaseSpec(
+        case_id="A-stem_opt-sample-pos",
+        slice="A",
+        track="stem_opt",
+        target_rule_id="sample",
+        target_rule_snapshot={"id": "sample"},
+        probe_intent="test",
+        gen_strategy="llm",
+    )
+    (fixture_dir / "A-stem_opt-sample-pos.json").write_text(json.dumps({
+        "case_id": "A-stem_opt-sample-pos",
+        "slice": "A",
+        "track": "stem_opt",
+        "target_rule_id": "sample",
+        "probe_intent": "test",
+        "generated_by": "hand",
+        "generated_at": "2026-04-10T00:00:00Z",
+        "generator_prompt_hash": None,
+        "flavor_hint": None,
+        "input": {"answers": {}, "extraction_a": {}, "extraction_b": {}, "comparisons": {}},
+        "expected": {
+            "must_fire_rule_ids": [],
+            "must_not_fire_rule_ids": [],
+            "expected_nra": "no",
+            "expected_track": "stem_opt",
+            "notes": "",
+        },
+    }))
+
+    fake_client = MagicMock()
+    new_count, skip_count, warnings = batch_generate(
+        [spec], rules_dir=rules_dir, fixture_dir=fixture_dir, client=fake_client,
+    )
+    assert new_count == 0
+    assert skip_count == 1
+    # Client should never have been called since nothing needed generating
+    fake_client.messages.batches.create.assert_not_called()
+
+
+def test_claude_batch_generate_submits_and_parses(tmp_path):
+    """batch_generate should submit a batch, poll, and write fixtures."""
+    from unittest.mock import MagicMock
+
+    from rubric.claude_batch_client import batch_generate
+
+    fixture_dir = tmp_path / "rubric_fixtures"
+    fixture_dir.mkdir()
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "stem_opt.yaml").write_text("version: 0.1.0\nrules: []\n")
+
+    spec = CaseSpec(
+        case_id="A-stem_opt-sample-pos",
+        slice="A",
+        track="stem_opt",
+        target_rule_id="sample",
+        target_rule_snapshot={"id": "sample", "conditions": []},
+        probe_intent="test",
+        gen_strategy="llm",
+    )
+
+    fake_client = MagicMock()
+    fake_batch = MagicMock()
+    fake_batch.id = "msgbatch_abc"
+    fake_batch.processing_status = "in_progress"
+    fake_client.messages.batches.create.return_value = fake_batch
+
+    # First retrieve: still processing. Second: ended.
+    fake_retrieve_results = [
+        MagicMock(processing_status="in_progress"),
+        MagicMock(processing_status="ended"),
+    ]
+    fake_client.messages.batches.retrieve.side_effect = fake_retrieve_results
+
+    fake_succeeded_result = MagicMock()
+    fake_succeeded_result.custom_id = "gen-A-stem_opt-sample-pos"
+    fake_succeeded_result.result.type = "succeeded"
+    fake_msg = MagicMock()
+    fake_msg.content = [MagicMock(type="text", text=json.dumps({
+        "input": {
+            "answers": {"stage": "stem_opt", "years_in_us": 3},
+            "extraction_a": {},
+            "extraction_b": {},
+            "comparisons": {},
+        },
+        "expected": {
+            "must_fire_rule_ids": ["sample"],
+            "must_not_fire_rule_ids": [],
+            "expected_nra": "yes",
+            "expected_track": "stem_opt",
+            "notes": "",
+        },
+        "flavor_hint": None,
+    }))]
+    fake_succeeded_result.result.message = fake_msg
+    fake_client.messages.batches.results.return_value = [fake_succeeded_result]
+
+    # Patch time.sleep to avoid real delay in the polling loop
+    import rubric.claude_batch_client as cbc
+    original_sleep = cbc.time.sleep
+    cbc.time.sleep = lambda _: None
+    try:
+        new_count, skip_count, warnings = batch_generate(
+            [spec], rules_dir=rules_dir, fixture_dir=fixture_dir, client=fake_client,
+        )
+    finally:
+        cbc.time.sleep = original_sleep
+
+    assert new_count == 1
+    assert skip_count == 0
+    fixture_path = fixture_dir / "A-stem_opt-sample-pos.json"
+    assert fixture_path.exists()
+    written = json.loads(fixture_path.read_text())
+    assert written["generated_by"].startswith("claude-batch")
+    assert written["input"]["answers"]["stage"] == "stem_opt"
+
+
+def test_claude_batch_generate_writes_sentinel_on_error(tmp_path):
+    """batch_generate should write a sentinel fixture when a request errors."""
+    from unittest.mock import MagicMock
+
+    from rubric.claude_batch_client import batch_generate
+
+    fixture_dir = tmp_path / "rubric_fixtures"
+    fixture_dir.mkdir()
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "stem_opt.yaml").write_text("version: 0.1.0\nrules: []\n")
+
+    spec = CaseSpec(
+        case_id="A-stem_opt-boom-pos",
+        slice="A",
+        track="stem_opt",
+        target_rule_id="boom",
+        target_rule_snapshot={"id": "boom", "conditions": []},
+        probe_intent="boom",
+        gen_strategy="llm",
+    )
+
+    fake_client = MagicMock()
+    fake_batch = MagicMock()
+    fake_batch.id = "msgbatch_err"
+    fake_client.messages.batches.create.return_value = fake_batch
+    fake_client.messages.batches.retrieve.return_value = MagicMock(processing_status="ended")
+
+    fake_error_result = MagicMock()
+    fake_error_result.custom_id = "gen-A-stem_opt-boom-pos"
+    fake_error_result.result.type = "errored"
+    fake_error_result.result.error.type = "invalid_request"
+    fake_error_result.result.error.message = "bad request"
+    fake_client.messages.batches.results.return_value = [fake_error_result]
+
+    new_count, skip_count, warnings = batch_generate(
+        [spec], rules_dir=rules_dir, fixture_dir=fixture_dir, client=fake_client,
+    )
+    assert new_count == 0
+    assert len(warnings) == 1
+    assert "invalid_request" in warnings[0]
+    sentinel = json.loads((fixture_dir / "A-stem_opt-boom-pos.json").read_text())
+    assert sentinel["last_error"]["kind"] == "invalid_request"
