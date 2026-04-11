@@ -223,3 +223,145 @@ def test_ensure_dirs_creates_missing_paths(tmp_path):
     ensure_dirs(p)
     assert p.is_dir()
     ensure_dirs(p)  # idempotent
+
+
+from rubric.discover import (
+    build_manifest,
+    build_positive_intent,
+    build_negative_intent,
+)
+from rubric.models import CoverageGap
+
+
+def _write_sample_rules(rules_dir: Path) -> None:
+    rules_dir.mkdir(parents=True, exist_ok=True)
+    (rules_dir / "stem_opt.yaml").write_text("""
+version: "0.1.0"
+rules:
+  - id: sample_rule_a
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: stage
+        operator: eq
+        value: stem_opt
+        source: answers
+    severity: warning
+    finding: {title: T, action: A, consequence: C}
+""")
+
+
+def test_discover_creates_ab_pair_per_rule(tmp_path):
+    rules_dir = tmp_path / "rules"
+    goldens_dir = tmp_path / "goldens"
+    goldens_dir.mkdir(parents=True)
+    _write_sample_rules(rules_dir)
+
+    cases = build_manifest(rules_dir, goldens_dir)
+    case_ids = {c.case_id for c in cases}
+    assert "A-stem_opt-sample_rule_a-pos" in case_ids
+    assert "B-stem_opt-sample_rule_a-neg" in case_ids
+    assert len(cases) == 2
+
+
+def test_discover_loads_static_goldens(tmp_path):
+    rules_dir = tmp_path / "rules"
+    goldens_dir = tmp_path / "goldens"
+    _write_sample_rules(rules_dir)
+    goldens_dir.mkdir(parents=True)
+    (goldens_dir / "C-operator-test.json").write_text(json.dumps({
+        "case_id": "C-operator-test",
+        "slice": "C",
+        "track": "stem_opt",
+        "target_rule_id": None,
+        "probe_intent": "probe the contains operator on a scalar",
+        "generated_by": "hand",
+        "generated_at": "2026-04-10T00:00:00Z",
+        "generator_prompt_hash": None,
+        "flavor_hint": None,
+        "input": {"answers": {}, "extraction_a": {}, "extraction_b": {}, "comparisons": {}},
+        "expected": {
+            "must_fire_rule_ids": [],
+            "must_not_fire_rule_ids": [],
+            "expected_nra": "no",
+            "expected_track": "stem_opt",
+            "notes": "contains on scalar returns False",
+        },
+    }))
+    cases = build_manifest(rules_dir, goldens_dir)
+    golden_cases = [c for c in cases if c.slice == "C"]
+    assert len(golden_cases) == 1
+    assert golden_cases[0].case_id == "C-operator-test"
+    assert golden_cases[0].gen_strategy == "golden"
+    assert golden_cases[0].fixture_content is not None
+
+
+def test_discover_raises_coverage_gap_when_rule_missing(tmp_path):
+    """If a rule YAML has a rule that has NO entry in the discover function's
+    output (impossible today but a guard for future refactors), CoverageGap fires."""
+    rules_dir = tmp_path / "rules"
+    goldens_dir = tmp_path / "goldens"
+    goldens_dir.mkdir(parents=True)
+
+    _write_sample_rules(rules_dir)
+    (goldens_dir / "C-covers-nothing.json").write_text(json.dumps({
+        "case_id": "C-covers-nothing",
+        "slice": "C",
+        "track": "stem_opt",
+        "target_rule_id": "sample_rule_a",
+        "probe_intent": "covers",
+        "generated_by": "hand",
+        "generated_at": "2026-04-10T00:00:00Z",
+        "generator_prompt_hash": None,
+        "flavor_hint": None,
+        "input": {"answers": {}, "extraction_a": {}, "extraction_b": {}, "comparisons": {}},
+        "expected": {"must_fire_rule_ids": [], "must_not_fire_rule_ids": [],
+                     "expected_nra": "no", "expected_track": "stem_opt", "notes": ""},
+    }))
+    cases = build_manifest(rules_dir, goldens_dir)
+    assert len(cases) == 3  # A + B + C
+
+    (rules_dir / "stem_opt.yaml").write_text("""
+version: "0.1.0"
+rules:
+  - id: sample_rule_a
+    track: stem_opt
+    type: logic
+    conditions: []
+    severity: info
+    finding: {title: T, action: A, consequence: C}
+  - id: sample_rule_b
+    track: stem_opt
+    type: logic
+    conditions: []
+    severity: info
+    finding: {title: T, action: A, consequence: C}
+""")
+    cases = build_manifest(rules_dir, goldens_dir)
+    rule_ids_in_manifest = {c.target_rule_id for c in cases if c.target_rule_id}
+    assert "sample_rule_a" in rule_ids_in_manifest
+    assert "sample_rule_b" in rule_ids_in_manifest
+
+
+def test_positive_intent_mentions_rule_id():
+    rule = {
+        "id": "job_title_mismatch",
+        "conditions": [
+            {"field": "job_title", "operator": "mismatch", "source": "comparison"},
+        ],
+    }
+    intent = build_positive_intent(rule)
+    assert "job_title_mismatch" in intent
+    assert "mismatch" in intent or "fire" in intent
+
+
+def test_negative_intent_describes_near_miss():
+    rule = {
+        "id": "job_title_mismatch",
+        "conditions": [
+            {"field": "job_title", "operator": "mismatch", "source": "comparison"},
+        ],
+    }
+    intent = build_negative_intent(rule)
+    assert "NOT" in intent or "not fire" in intent.lower()
+    assert "job_title_mismatch" in intent
