@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
 
 export type Form8843WizardState = {
@@ -164,6 +164,7 @@ export default function OnboardingWizard({
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void> | void;
 }) {
   const [stepIndex, setStepIndex] = useState(0);
+  const submitIntentRef = useRef(false);
   const step = STEPS[stepIndex];
   const stepComplete = step.isValid(form);
   const isLastStep = stepIndex === STEPS.length - 1;
@@ -173,6 +174,7 @@ export default function OnboardingWizard({
   );
 
   function advanceStep() {
+    submitIntentRef.current = false;
     setStepIndex((current) => Math.min(STEPS.length - 1, current + 1));
   }
 
@@ -188,6 +190,11 @@ export default function OnboardingWizard({
       event.preventDefault();
       return;
     }
+    if (!submitIntentRef.current) {
+      event.preventDefault();
+      return;
+    }
+    submitIntentRef.current = false;
     void onSubmit(event);
   }
 
@@ -357,6 +364,9 @@ export default function OnboardingWizard({
           ) : (
             <button
               type="submit"
+              onClick={() => {
+                submitIntentRef.current = true;
+              }}
               disabled={!canSubmit || submitting}
               className={`rounded-full px-6 py-3 text-[14px] font-semibold transition ${
                 canSubmit && !submitting

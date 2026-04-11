@@ -91,7 +91,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
   }, [orderId]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !currentUser || !freshCompletion) {
+    if (typeof window === "undefined" || currentUser || !freshCompletion) {
       setShowOnboardingPrompt(false);
       return;
     }

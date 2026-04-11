@@ -58,6 +58,23 @@ def _insert_textbox(page: fitz.Page, rect: fitz.Rect, text: object, *, fontsize:
     )
 
 
+def _insert_text(page: fitz.Page, point: fitz.Point | tuple[float, float], text: object, *, fontsize: float = 9.0) -> None:
+    content = _coerce_text(text)
+    if not content:
+        return
+    page.insert_text(
+        point,
+        content,
+        fontsize=fontsize,
+        fontname="helv",
+        color=(0, 0, 0),
+    )
+
+
+def _paint_answer_strip(page: fitz.Page, rect: fitz.Rect) -> None:
+    page.draw_rect(rect, color=None, fill=(1, 1, 1), overlay=True)
+
+
 def _mark_checkbox(page: fitz.Page, point: fitz.Point) -> None:
     page.insert_text(
         point,
@@ -108,51 +125,49 @@ def generate_form_8843(inputs: dict[str, object]) -> bytes:
         program_director = _coerce_text(inputs.get("program_director")) or "On file"
         passport_number = _coerce_text(inputs.get("passport_number"))
 
-        _insert_textbox(page1, fitz.Rect(36, 84, 245, 97), first_name, fontsize=9)
-        _insert_textbox(page1, fitz.Rect(248, 84, 404, 97), last_name, fontsize=9)
-        _insert_textbox(page1, fitz.Rect(407, 84, 575, 97), inputs.get("us_taxpayer_id"), fontsize=9)
+        _insert_text(page1, (38, 118), first_name, fontsize=9)
+        _insert_text(page1, (251, 118), last_name, fontsize=9)
+        _insert_text(page1, (410, 118), inputs.get("us_taxpayer_id"), fontsize=9)
         _insert_textbox(page1, fitz.Rect(121, 132, 334, 160), inputs.get("address_country") or "On file", fontsize=8)
         _insert_textbox(page1, fitz.Rect(352, 132, 573, 160), inputs.get("address_us") or "On file", fontsize=8)
 
         visa_line = visa_type
         if arrival_date is not None:
             visa_line = f"{visa_type}  {arrival_date.isoformat()}"
-        _insert_textbox(page1, fitz.Rect(420, 191, 576, 204), visa_line, fontsize=8)
-        _insert_textbox(page1, fitz.Rect(64, 216, 575, 227), current_status, fontsize=8)
-        _insert_textbox(page1, fitz.Rect(340, 228, 575, 240), country_citizenship, fontsize=8)
-        _insert_textbox(page1, fitz.Rect(270, 241, 575, 252), country_passport, fontsize=8)
-        _insert_textbox(page1, fitz.Rect(190, 253, 575, 264), passport_number, fontsize=8)
+        _paint_answer_strip(page1, fitz.Rect(420, 193, 575, 205))
+        _insert_text(page1, (420, 203), visa_line, fontsize=8)
+        _paint_answer_strip(page1, fitz.Rect(402, 205, 575, 217))
+        _insert_text(page1, (405, 215), current_status, fontsize=7)
+        _paint_answer_strip(page1, fitz.Rect(340, 229, 575, 241))
+        _insert_text(page1, (344, 239), country_citizenship, fontsize=8)
+        _paint_answer_strip(page1, fitz.Rect(268, 241, 575, 253))
+        _insert_text(page1, (272, 251), country_passport, fontsize=8)
+        _paint_answer_strip(page1, fitz.Rect(190, 253, 575, 265))
+        _insert_text(page1, (194, 263), passport_number, fontsize=8)
 
-        _insert_textbox(page1, fitz.Rect(95, 276, 140, 288), inputs.get("days_present_current"), fontsize=8)
-        _insert_textbox(page1, fitz.Rect(182, 276, 227, 288), inputs.get("days_present_year_1_ago"), fontsize=8)
-        _insert_textbox(page1, fitz.Rect(268, 276, 313, 288), inputs.get("days_present_year_2_ago"), fontsize=8)
-        _insert_textbox(page1, fitz.Rect(457, 288, 575, 299), inputs.get("days_excludable_current") or 0, fontsize=8)
+        _insert_text(page1, (96, 287), inputs.get("days_present_current"), fontsize=8)
+        _insert_text(page1, (182, 287), inputs.get("days_present_year_1_ago"), fontsize=8)
+        _insert_text(page1, (268, 287), inputs.get("days_present_year_2_ago"), fontsize=8)
+        _insert_text(page1, (392, 299), inputs.get("days_excludable_current") or 0, fontsize=8)
 
-        _insert_textbox(page1, fitz.Rect(64, 504, 575, 528), f"{school_name} - {school_address} - {school_contact}", fontsize=8)
-        _insert_textbox(page1, fitz.Rect(64, 542, 575, 566), program_director, fontsize=8)
-        for year_rect in (
-            fitz.Rect(96, 588, 138, 599),
-            fitz.Rect(182, 588, 224, 599),
-            fitz.Rect(268, 588, 310, 599),
-            fitz.Rect(354, 588, 396, 599),
-        ):
-            _insert_textbox(page1, year_rect, visa_type, fontsize=8)
+        _insert_textbox(
+            page1,
+            fitz.Rect(64, 504, 575, 525),
+            f"{school_name} - {school_address} - {school_contact}",
+            fontsize=8,
+        )
+        _insert_textbox(page1, fitz.Rect(64, 553, 575, 571), program_director, fontsize=8)
 
         years_present = _years_in_us(arrival_date)
         if years_present > 5:
-            _mark_checkbox(page1, fitz.Point(523, 622))
+            _mark_checkbox(page1, fitz.Point(504, 622))
         else:
-            _mark_checkbox(page1, fitz.Point(559, 622))
-
-        if _coerce_text(inputs.get("changed_status")).lower() in {"yes", "true"}:
-            _mark_checkbox(page1, fitz.Point(523, 682))
-        else:
-            _mark_checkbox(page1, fitz.Point(559, 682))
+            _mark_checkbox(page1, fitz.Point(540, 622))
 
         if _coerce_text(inputs.get("applied_for_residency")).lower() in {"yes", "true"}:
-            _mark_checkbox(page1, fitz.Point(523, 732))
+            _mark_checkbox(page1, fitz.Point(504, 681))
         else:
-            _mark_checkbox(page1, fitz.Point(559, 732))
+            _mark_checkbox(page1, fitz.Point(540, 681))
 
         _append_machine_readable_summary(doc, inputs)
         return doc.tobytes()

@@ -28,9 +28,14 @@ def test_generate_form_8843_pdf():
     assert pdf_bytes[:4] == b"%PDF"
 
     doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    page_one = doc[0]
+    page_one_text = page_one.get_text("text")
     text = "\n".join(page.get_text("text") for page in doc)
+    assert "Jessica" in page_one_text
+    assert "F-1" in page_one_text
+    assert "China" in page_one_text
+    assert "340" in page_one_text
     assert "Jessica Chen" in text
     assert "Columbia University" in text
     assert "China" in text
     assert "340" in text
-
