@@ -24,6 +24,7 @@ from rubric.models import (
     CoverageGap,
 )
 from rubric.case_ids import build_case_id, parse_case_id, validate_case_id
+from rubric.hints import build_field_reference_table, gather_rule_fields
 
 
 def test_case_spec_roundtrip_to_dict():
@@ -132,3 +133,55 @@ def test_build_case_id_rejects_hyphen_in_track():
 def test_build_case_id_rejects_hyphen_in_rule_id():
     with pytest.raises(ValueError, match="'-'"):
         build_case_id(slice="A", track="stem_opt", rule_id="some-rule", polarity="pos")
+
+
+def test_gather_rule_fields_from_sample_yaml(tmp_path):
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "fake.yaml").write_text("""
+version: "0.1.0"
+rules:
+  - id: sample_rule
+    track: fake
+    type: logic
+    conditions:
+      - field: stage
+        operator: eq
+        value: opt
+        source: answers
+      - field: employer_name
+        operator: mismatch
+        source: comparison
+    severity: warning
+    finding:
+      title: fake
+      action: fake
+      consequence: fake
+""")
+    fields = gather_rule_fields(rules_dir)
+    assert "stage" in fields
+    assert "employer_name" in fields
+    assert len(fields) == 2
+
+
+def test_build_field_reference_table_includes_known_fields(tmp_path):
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "stem_opt.yaml").write_text("""
+version: "0.1.0"
+rules:
+  - id: r1
+    track: stem_opt
+    type: logic
+    conditions:
+      - field: stage
+        operator: eq
+        value: stem_opt
+        source: answers
+    severity: info
+    finding: {title: x, action: x, consequence: x}
+""")
+    table = build_field_reference_table(rules_dir)
+    assert "stage" in table
+    assert "tax_residency_status" in table  # derivation input always included
+    assert "is_nra" in table                  # always documented as derived
