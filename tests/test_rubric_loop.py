@@ -668,3 +668,149 @@ def test_judge_prompt_template_exists_and_has_placeholders():
     for placeholder in ["{case_fixture_json}", "{derived_is_nra}", "{findings_json}",
                         "{engine_error_or_none}", "{slice}", "{filtered_criteria_yaml}"]:
         assert placeholder in tpl, f"missing placeholder {placeholder}"
+
+
+from rubric.generate import (
+    generate_missing,
+    render_generator_prompt,
+    detect_pii_shaped_strings,
+)
+
+
+def test_render_generator_prompt_substitutes_all_placeholders(tmp_path):
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "stem_opt.yaml").write_text("""
+version: "0.1.0"
+rules:
+  - id: sample
+    track: stem_opt
+    type: logic
+    conditions: []
+    severity: info
+    finding: {title: T, action: A, consequence: C}
+""")
+    spec = CaseSpec(
+        case_id="A-stem_opt-sample-pos",
+        slice="A",
+        track="stem_opt",
+        target_rule_id="sample",
+        target_rule_snapshot={"id": "sample", "conditions": []},
+        probe_intent="engine MUST fire sample",
+        gen_strategy="llm",
+    )
+    rendered = render_generator_prompt(spec, rules_dir=rules_dir)
+    # All placeholders replaced
+    assert "{rule_yaml_snapshot}" not in rendered
+    assert "{probe_intent}" not in rendered
+    assert "sample" in rendered
+    assert "engine MUST fire sample" in rendered
+
+
+def test_detect_pii_shaped_strings_finds_ssn_pattern():
+    cases = detect_pii_shaped_strings({"answers": {"note": "SSN: 123-45-6789"}})
+    assert any("ssn" in c.lower() for c in cases)
+
+
+def test_detect_pii_shaped_strings_finds_a_number_pattern():
+    cases = detect_pii_shaped_strings({"extraction_a": {"alien_number": "A123456789"}})
+    assert any("a-number" in c.lower() or "alien" in c.lower() for c in cases)
+
+
+def test_detect_pii_shaped_strings_clean_case_returns_empty():
+    cases = detect_pii_shaped_strings({
+        "answers": {"stage": "stem_opt", "employer": "Frogworks LLC"},
+    })
+    assert cases == []
+
+
+def test_generate_missing_skips_existing_fixtures(tmp_path, monkeypatch):
+    """If a fixture already exists on disk, generate_missing must not call codex."""
+    fixture_dir = tmp_path / "rubric_fixtures"
+    fixture_dir.mkdir()
+
+    spec = CaseSpec(
+        case_id="A-stem_opt-sample-pos",
+        slice="A",
+        track="stem_opt",
+        target_rule_id="sample",
+        target_rule_snapshot={"id": "sample"},
+        probe_intent="test",
+        gen_strategy="llm",
+    )
+
+    (fixture_dir / "A-stem_opt-sample-pos.json").write_text(json.dumps({
+        "case_id": "A-stem_opt-sample-pos", "slice": "A", "track": "stem_opt",
+        "target_rule_id": "sample", "probe_intent": "test",
+        "generated_by": "hand", "generated_at": "2026-04-10T00:00:00Z",
+        "generator_prompt_hash": None, "flavor_hint": None,
+        "input": {"answers": {}, "extraction_a": {}, "extraction_b": {}, "comparisons": {}},
+        "expected": {"must_fire_rule_ids": [], "must_not_fire_rule_ids": [],
+                     "expected_nra": "no", "expected_track": "stem_opt", "notes": ""},
+    }))
+
+    def fail_if_called(**kwargs):
+        raise AssertionError("codex should not have been called")
+
+    monkeypatch.setattr("rubric.generate.call_codex", fail_if_called)
+    new_count, skip_count, warnings = generate_missing(
+        [spec], fixture_dir=fixture_dir, rules_dir=tmp_path / "rules",
+    )
+    assert new_count == 0
+    assert skip_count == 1
+
+
+def test_generate_missing_writes_new_fixture(tmp_path, monkeypatch):
+    fixture_dir = tmp_path / "rubric_fixtures"
+    fixture_dir.mkdir()
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "stem_opt.yaml").write_text("version: 0.1.0\nrules: []\n")
+
+    spec = CaseSpec(
+        case_id="A-stem_opt-sample-pos",
+        slice="A",
+        track="stem_opt",
+        target_rule_id="sample",
+        target_rule_snapshot={"id": "sample", "conditions": []},
+        probe_intent="test",
+        gen_strategy="llm",
+    )
+
+    fake_output = {
+        "input": {
+            "answers": {"stage": "stem_opt", "years_in_us": 3},
+            "extraction_a": {},
+            "extraction_b": {},
+            "comparisons": {},
+        },
+        "expected": {
+            "must_fire_rule_ids": ["sample"],
+            "must_not_fire_rule_ids": [],
+            "expected_nra": "yes",
+            "expected_track": "stem_opt",
+            "notes": "",
+        },
+        "flavor_hint": "playful",
+    }
+
+    def fake_call(**kwargs):
+        return CodexCallResult(
+            text=json.dumps(fake_output),
+            parsed=fake_output,
+            tokens_in=10,
+            tokens_out=5,
+            latency_ms=0,
+            raw_events=[],
+            attempts=1,
+        )
+
+    monkeypatch.setattr("rubric.generate.call_codex", fake_call)
+    new_count, skip_count, warnings = generate_missing(
+        [spec], fixture_dir=fixture_dir, rules_dir=rules_dir,
+    )
+    assert new_count == 1
+    assert skip_count == 0
+    written = json.loads((fixture_dir / "A-stem_opt-sample-pos.json").read_text())
+    assert written["input"]["answers"]["stage"] == "stem_opt"
+    assert written["generated_by"].startswith("codex-cli")
