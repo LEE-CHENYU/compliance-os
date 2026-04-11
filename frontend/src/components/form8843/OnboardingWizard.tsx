@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent, type KeyboardEvent } from "react";
 
 
 export type Form8843WizardState = {
@@ -172,8 +172,42 @@ export default function OnboardingWizard({
     [form],
   );
 
+  function advanceStep() {
+    setStepIndex((current) => Math.min(STEPS.length - 1, current + 1));
+  }
+
+  function handleWizardSubmit(event: FormEvent<HTMLFormElement>) {
+    if (!isLastStep) {
+      event.preventDefault();
+      if (stepComplete) {
+        advanceStep();
+      }
+      return;
+    }
+    if (!canSubmit || submitting) {
+      event.preventDefault();
+      return;
+    }
+    void onSubmit(event);
+  }
+
+  function handleWizardKeyDown(event: KeyboardEvent<HTMLFormElement>) {
+    if (event.key !== "Enter") {
+      return;
+    }
+    if (event.target instanceof HTMLButtonElement) {
+      return;
+    }
+    event.preventDefault();
+    if (!isLastStep) {
+      if (stepComplete) {
+        advanceStep();
+      }
+    }
+  }
+
   return (
-    <form onSubmit={onSubmit} className="space-y-8">
+    <form onSubmit={handleWizardSubmit} onKeyDown={handleWizardKeyDown} className="space-y-8">
       <div className="flex items-center gap-2">
         {STEPS.map((currentStep, index) => (
           <button
@@ -311,7 +345,7 @@ export default function OnboardingWizard({
             <button
               type="button"
               disabled={!stepComplete}
-              onClick={() => setStepIndex((current) => Math.min(STEPS.length - 1, current + 1))}
+              onClick={advanceStep}
               className={`rounded-full px-6 py-3 text-[14px] font-semibold transition ${
                 stepComplete
                   ? "bg-[#5b8dee] text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] hover:bg-[#4f82de]"
