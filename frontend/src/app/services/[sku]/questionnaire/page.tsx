@@ -118,7 +118,7 @@ export default function MarketplaceQuestionnairePage() {
         questionnaire_response_id: result.questionnaire_response_id,
         chosen_mode: selectedMode,
       });
-      router.push(`/account/orders/${order.order_id}`);
+      router.push(`/account/orders/${order.order_id}${!order.intake_complete ? "?task=intake" : ""}`);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Could not create order");
       setCreatingOrder(false);

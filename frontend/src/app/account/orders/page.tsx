@@ -43,6 +43,58 @@ function displayProductSummary(order: MarketplaceOrder): string {
   return order.product.public_headline || order.product.headline || order.product.public_description || order.product.description;
 }
 
+function orderPrimaryAction(order: MarketplaceOrder): { label: string; href: string } {
+  if (order.product_sku === "student_tax_1040nr") {
+    if (!order.intake_complete) {
+      return { label: "Continue tax intake", href: `/account/orders/${order.order_id}?task=intake` };
+    }
+    if (!order.result_ready) {
+      return { label: "Generate tax package", href: `/account/orders/${order.order_id}` };
+    }
+    return { label: "Review tax package", href: `/account/orders/${order.order_id}` };
+  }
+  if (order.product_sku === "h1b_doc_check") {
+    if (!order.intake_complete) {
+      return { label: "Continue document intake", href: `/account/orders/${order.order_id}?task=intake` };
+    }
+    if (!order.result_ready) {
+      return { label: "Run document review", href: `/account/orders/${order.order_id}` };
+    }
+    return { label: "Review H-1B findings", href: `/account/orders/${order.order_id}` };
+  }
+  if (order.product_sku === "fbar_check") {
+    if (!order.intake_complete) {
+      return { label: "Continue FBAR intake", href: `/account/orders/${order.order_id}?task=intake` };
+    }
+    if (!order.result_ready) {
+      return { label: "Run FBAR check", href: `/account/orders/${order.order_id}` };
+    }
+    return { label: "Review FBAR guidance", href: `/account/orders/${order.order_id}` };
+  }
+  if (order.product_sku === "election_83b") {
+    if (!order.intake_complete) {
+      return { label: "Continue 83(b) intake", href: `/account/orders/${order.order_id}?task=intake` };
+    }
+    if (!order.result_ready) {
+      return { label: "Generate 83(b) packet", href: `/account/orders/${order.order_id}` };
+    }
+    return { label: "Review 83(b) packet", href: `/account/orders/${order.order_id}` };
+  }
+  if (order.product_sku === "opt_execution" || order.product_sku === "opt_advisory") {
+    if (!order.intake_complete) {
+      return { label: "Continue OPT intake", href: `/account/orders/${order.order_id}?task=intake` };
+    }
+    if (!order.agreement_signed) {
+      return { label: "Review agreement", href: `/account/orders/${order.order_id}` };
+    }
+    return { label: "Review filing status", href: `/account/orders/${order.order_id}` };
+  }
+  if (order.product_sku === "form_8843_free") {
+    return { label: "Review filing checklist", href: `/account/orders/${order.order_id}` };
+  }
+  return { label: "Open workspace", href: `/account/orders/${order.order_id}` };
+}
+
 export default function AccountOrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<MarketplaceOrder[]>([]);
@@ -151,11 +203,13 @@ export default function AccountOrdersPage() {
 
         {!!orders.length ? (
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
-            {orders.map((order) => (
-              <article
-                key={order.order_id}
-                className="rounded-[28px] border border-[#dbe5f2] bg-white/88 p-6 shadow-[0_18px_60px_rgba(61,84,128,0.08)]"
-              >
+            {orders.map((order) => {
+              const primaryAction = orderPrimaryAction(order);
+              return (
+                <article
+                  key={order.order_id}
+                  className="rounded-[28px] border border-[#dbe5f2] bg-white/88 p-6 shadow-[0_18px_60px_rgba(61,84,128,0.08)]"
+                >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">
@@ -201,10 +255,10 @@ export default function AccountOrdersPage() {
 
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
-                    href={`/account/orders/${order.order_id}`}
+                    href={primaryAction.href}
                     className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a]"
                   >
-                    Open order
+                    {primaryAction.label}
                   </Link>
                   {order.product.path ? (
                     <Link
@@ -215,8 +269,9 @@ export default function AccountOrdersPage() {
                     </Link>
                   ) : null}
                 </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         ) : null}
       </div>

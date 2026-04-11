@@ -48,6 +48,10 @@ function ctaCopy(product: MarketplaceProduct): string {
   return publicLabel || "Start service";
 }
 
+function orderHref(orderId: string, options: { needsIntake: boolean }): string {
+  return options.needsIntake ? `/account/orders/${orderId}?task=intake` : `/account/orders/${orderId}`;
+}
+
 
 export default function ServiceDetailPage() {
   const router = useRouter();
@@ -111,7 +115,7 @@ export default function ServiceDetailPage() {
     setError(null);
     try {
       const order = await createMarketplaceOrder(currentProduct.sku);
-      router.push(`/account/orders/${order.order_id}`);
+      router.push(orderHref(order.order_id, { needsIntake: !order.intake_complete }));
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Could not start this service");
       setStarting(false);
@@ -147,7 +151,7 @@ export default function ServiceDetailPage() {
     setError(null);
     createMarketplaceOrder(product.sku)
       .then((order) => {
-        router.push(`/account/orders/${order.order_id}`);
+        router.push(orderHref(order.order_id, { needsIntake: !order.intake_complete }));
       })
       .catch((nextError) => {
         setError(nextError instanceof Error ? nextError.message : "Could not start this service");

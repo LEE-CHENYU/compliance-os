@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import FilingChecklistCard from "@/components/form8843/FilingChecklistCard";
@@ -125,6 +125,77 @@ function displayProductSummary(order: MarketplaceOrder): string {
   return order.product.public_headline || order.product.headline || order.product.public_description || order.product.description;
 }
 
+function orderNeedsIntakeFocus(order: MarketplaceOrder): boolean {
+  return ["student_tax_1040nr", "h1b_doc_check", "fbar_check", "election_83b", "opt_execution", "opt_advisory"].includes(order.product_sku)
+    && !order.intake_complete;
+}
+
+function orderPrimaryTaskLabel(order: MarketplaceOrder): string {
+  if (order.product_sku === "student_tax_1040nr") {
+    if (!order.intake_complete) return "Continue tax intake";
+    if (!order.result_ready) return "Generate tax package";
+    return "Review tax package";
+  }
+  if (order.product_sku === "h1b_doc_check") {
+    if (!order.intake_complete) return "Continue document intake";
+    if (!order.result_ready) return "Run document review";
+    return "Review H-1B findings";
+  }
+  if (order.product_sku === "fbar_check") {
+    if (!order.intake_complete) return "Continue FBAR intake";
+    if (!order.result_ready) return "Run FBAR check";
+    return "Review FBAR guidance";
+  }
+  if (order.product_sku === "election_83b") {
+    if (!order.intake_complete) return "Continue 83(b) intake";
+    if (!order.result_ready) return "Generate 83(b) packet";
+    return "Review 83(b) packet";
+  }
+  if (order.product_sku === "opt_execution" || order.product_sku === "opt_advisory") {
+    if (!order.intake_complete) return "Continue OPT intake";
+    if (!order.agreement_signed) return "Review agreement";
+    return "Review filing status";
+  }
+  if (order.product_sku === "form_8843_free") {
+    return order.mailing_status === "mailed" ? "Review filing record" : "Review filing checklist";
+  }
+  return "Open workspace";
+}
+
+function intakeBannerContent(order: MarketplaceOrder): { title: string; body: string } | null {
+  if (order.product_sku === "student_tax_1040nr" && !order.intake_complete) {
+    return {
+      title: "Step 1: complete your tax intake",
+      body: "Start here. Add your visa history, day counts, and income details so Guardian can prepare the nonresident tax package.",
+    };
+  }
+  if (order.product_sku === "h1b_doc_check" && !order.intake_complete) {
+    return {
+      title: "Step 1: upload your H-1B packet",
+      body: "Start here. Add the documents you already have so Guardian can run the packet review.",
+    };
+  }
+  if (order.product_sku === "fbar_check" && !order.intake_complete) {
+    return {
+      title: "Step 1: complete your FBAR intake",
+      body: "Start here. Add your account details so Guardian can check whether the filing threshold is met.",
+    };
+  }
+  if (order.product_sku === "election_83b" && !order.intake_complete) {
+    return {
+      title: "Step 1: complete your 83(b) intake",
+      body: "Start here. Add the grant details Guardian needs to generate the election packet and deadline guidance.",
+    };
+  }
+  if ((order.product_sku === "opt_execution" || order.product_sku === "opt_advisory") && !order.intake_complete) {
+    return {
+      title: "Step 1: complete your OPT intake",
+      body: "Start here. Add the filing details and supporting documents so the case can move to the agreement step.",
+    };
+  }
+  return null;
+}
+
 function asText(value: unknown): string {
   if (value === null || value === undefined) {
     return "";
@@ -220,6 +291,7 @@ function toForm8843Order(order: MarketplaceOrder | null): Form8843OrderResponse 
 
 export default function AccountOrderDetailPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const params = useParams<{ id: string }>();
   const orderId = typeof params?.id === "string" ? params.id : "";
   const [order, setOrder] = useState<MarketplaceOrder | null>(null);
@@ -235,6 +307,8 @@ export default function AccountOrderDetailPage() {
   const [studentTaxForm, setStudentTaxForm] = useState<StudentTaxFormState>(() => createInitialStudentTaxForm());
   const [optIntakeForm, setOptIntakeForm] = useState<OptIntakeFormState>(() => createInitialOptIntakeForm());
   const autoPrefillAttemptedRef = useRef<string | null>(null);
+  const autoFocusIntakeRef = useRef<string | null>(null);
+  const intakeSectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!orderId) {
@@ -272,6 +346,26 @@ export default function AccountOrderDetailPage() {
       cancelled = true;
     };
   }, [orderId, router]);
+
+  useEffect(() => {
+    if (!order) {
+      return;
+    }
+    const task = searchParams.get("task");
+    const shouldFocus = task === "intake" || (order.product_sku === "student_tax_1040nr" && order.status === "draft" && !order.intake_complete);
+    if (!shouldFocus || !orderNeedsIntakeFocus(order)) {
+      return;
+    }
+    const focusKey = `${order.order_id}:${task || "default"}`;
+    if (autoFocusIntakeRef.current === focusKey) {
+      return;
+    }
+    autoFocusIntakeRef.current = focusKey;
+    window.requestAnimationFrame(() => {
+      intakeSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      intakeSectionRef.current?.focus({ preventScroll: true });
+    });
+  }, [order, searchParams]);
 
   const form8843Order = toForm8843Order(order);
   const result = order?.result ?? null;
@@ -709,7 +803,7 @@ export default function AccountOrderDetailPage() {
 
     if (order.result_ready) {
       return (
-        <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+        <section ref={intakeSectionRef} tabIndex={-1} className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
           <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Intake</div>
           <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Input already captured</h2>
           <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
@@ -720,13 +814,19 @@ export default function AccountOrderDetailPage() {
     }
 
     return (
-      <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
+      <section ref={intakeSectionRef} tabIndex={-1} className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Intake</div>
-            <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Provide the inputs for this order</h2>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">
+              {order.product_sku === "student_tax_1040nr" ? "Step 1" : "Intake"}
+            </div>
+            <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">
+              {order.product_sku === "student_tax_1040nr" ? "Complete your tax intake" : "Provide the inputs for this workflow"}
+            </h2>
             <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
-              Guardian keeps the intake inside this workspace so the order page acts as the operating surface, not just a receipt.
+              {order.product_sku === "student_tax_1040nr"
+                ? "Add the nonresident tax details Guardian needs so the 1040-NR package can be prepared."
+                : "Guardian keeps the intake inside this workspace so the page acts as the operating surface, not just a receipt."}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -1491,10 +1591,34 @@ export default function AccountOrderDetailPage() {
                 <div className="rounded-3xl border border-[#dbe5f2] bg-[#f8fbff] px-5 py-4 text-right">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Status</div>
                   <div className="mt-1 text-[18px] font-semibold capitalize text-[#1a2942]">
-                    {formatLabel(order.status)}
+                    {orderPrimaryTaskLabel(order)}
                   </div>
                 </div>
               </div>
+
+              {intakeBannerContent(order) ? (
+                <div className="mt-6 flex flex-wrap items-start justify-between gap-4 rounded-[28px] bg-[#0f1728] px-6 py-5 text-white shadow-[0_18px_50px_rgba(15,23,40,0.2)]">
+                  <div className="max-w-3xl">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8ca2cc]">Next step</div>
+                    <h2 className="mt-2 text-[26px] font-bold tracking-tight">
+                      {intakeBannerContent(order)?.title}
+                    </h2>
+                    <p className="mt-3 text-[15px] leading-7 text-[#cad6ec]">
+                      {intakeBannerContent(order)?.body}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      intakeSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      intakeSectionRef.current?.focus({ preventScroll: true });
+                    }}
+                    className="inline-flex rounded-full bg-white px-5 py-3 text-[14px] font-semibold text-[#10203d] transition hover:bg-[#eef4ff]"
+                  >
+                    {orderPrimaryTaskLabel(order)}
+                  </button>
+                </div>
+              ) : null}
 
               <div className="mt-6 grid gap-4 md:grid-cols-4">
                 <div className="rounded-2xl border border-[#dbe5f2] bg-[#fbfdff] p-4">
