@@ -25,6 +25,18 @@ from rubric.models import (
 )
 from rubric.case_ids import build_case_id, parse_case_id, validate_case_id
 from rubric.hints import build_field_reference_table, gather_rule_fields
+from rubric.io import (
+    PROJECT_ROOT,
+    FIXTURE_DIR,
+    GOLDENS_DIR,
+    EVAL_CACHE_DIR,
+    JUDGE_CACHE_DIR,
+    sha256_of_obj,
+    sha256_of_text,
+    save_json,
+    load_json,
+    ensure_dirs,
+)
 
 
 def test_case_spec_roundtrip_to_dict():
@@ -185,3 +197,29 @@ rules:
     assert "stage" in table
     assert "tax_residency_status" in table  # derivation input always included
     assert "is_nra" in table                  # always documented as derived
+
+
+def test_sha256_of_obj_is_stable():
+    obj = {"b": 2, "a": 1}
+    assert sha256_of_obj(obj) == sha256_of_obj({"a": 1, "b": 2})  # key order independent
+
+
+def test_sha256_of_text_matches_expected():
+    assert sha256_of_text("hello") == (
+        "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+    )
+
+
+def test_save_and_load_json_roundtrip(tmp_path):
+    path = tmp_path / "sub" / "file.json"
+    payload = {"hello": "world", "n": 42}
+    save_json(path, payload)
+    assert path.exists()
+    assert load_json(path) == payload
+
+
+def test_ensure_dirs_creates_missing_paths(tmp_path):
+    p = tmp_path / "a" / "b" / "c"
+    ensure_dirs(p)
+    assert p.is_dir()
+    ensure_dirs(p)  # idempotent
