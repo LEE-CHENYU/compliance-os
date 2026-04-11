@@ -182,7 +182,7 @@ def review_case(
                 order.user.email,
                 full_name=order.user.full_name or order.user.email,
                 product_name=order.product.name if order.product is not None else order.product_sku,
-                reason=payload.notes or "Attorney review requested Advisory Mode before filing.",
+                reason=payload.notes or "Attorney review requested strategy review before filing.",
                 credit_cents=19900,
             )
             _record_notification_status(result_data, "upgrade_flag_email", email_response)

@@ -280,15 +280,15 @@ def record_review(
     elif decision == "flag_upgrade":
         order.status = "flagged"
         next_action = "offer_advisory_upgrade"
-        result_data["summary"] = "Attorney review flagged this case for Advisory Mode before filing."
+        result_data["summary"] = "Attorney review found issues that should be handled in strategy review before filing."
         result_data["next_steps"] = [
-            "Review the attorney note for the complexity that blocked the execution lane.",
-            "Continue into OPT Advisory Mode so the attorney can resolve the strategy issues before filing.",
+            "Review the attorney note for the issues that need closer review.",
+            "Continue into OPT Strategy Review so the attorney can resolve those issues before filing.",
         ]
         result_data["upgrade_offer"] = {
             "target_sku": "opt_advisory",
             "credit_cents": 19900,
-            "reason": notes or "Attorney review identified issues that need advisory handling before filing.",
+            "reason": notes or "Attorney review identified issues that need strategy review before filing.",
             "accepted_order_id": None,
         }
     else:

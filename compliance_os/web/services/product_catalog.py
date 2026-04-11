@@ -77,7 +77,9 @@ def serialize_product(config: dict[str, Any]) -> dict[str, Any]:
     return {
         "sku": config["sku"],
         "name": config.get("name", config["sku"]),
+        "public_name": config.get("public_name"),
         "description": config.get("description", ""),
+        "public_description": config.get("public_description"),
         "price_cents": int(config.get("price_cents", 0) or 0),
         "tier": config.get("tier", "tier_0"),
         "requires_attorney": bool(config.get("requires_attorney", False)),
@@ -87,7 +89,10 @@ def serialize_product(config: dict[str, Any]) -> dict[str, Any]:
         "filing_method": config.get("filing_method"),
         "fulfillment_mode": config.get("fulfillment_mode"),
         "headline": config.get("headline"),
+        "public_headline": config.get("public_headline"),
         "highlights": list(config.get("highlights") or []),
+        "public_highlights": list(config.get("public_highlights") or []),
         "cta_label": config.get("cta_label"),
+        "public_cta_label": config.get("public_cta_label"),
         "path": config.get("path"),
     }

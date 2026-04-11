@@ -192,13 +192,13 @@ def send_upgrade_flag_email(
 ) -> dict[str, str]:
     return _send_email(
         to_email=to_email,
-        subject=f"Action needed: {product_name} needs Advisory Mode",
+        subject=f"Action needed: {product_name} needs strategy review",
         html_body=(
             f"<p>Hi {html.escape(full_name or to_email)},</p>"
-            f"<p>Your <strong>{html.escape(product_name)}</strong> order was flagged for Advisory Mode before filing.</p>"
+            f"<p>Your <strong>{html.escape(product_name)}</strong> order was flagged for strategy review before filing.</p>"
             f"<p><strong>Why:</strong> {html.escape(reason)}</p>"
-            f"<p>Guardian recorded a ${credit_cents / 100:,.0f} execution credit on the upgrade recommendation. "
-            "Open the order in Guardian to continue into the advisory lane.</p>"
+            f"<p>Guardian recorded a ${credit_cents / 100:,.0f} filing-support credit on the upgrade recommendation. "
+            "Open the order in Guardian to continue.</p>"
         ),
     )
 

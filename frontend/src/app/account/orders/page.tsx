@@ -35,6 +35,14 @@ function formatPrice(cents: number): string {
   }).format(cents / 100);
 }
 
+function displayProductName(order: MarketplaceOrder): string {
+  return order.product.public_name || order.product.name;
+}
+
+function displayProductSummary(order: MarketplaceOrder): string {
+  return order.product.public_headline || order.product.headline || order.product.public_description || order.product.description;
+}
+
 export default function AccountOrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<MarketplaceOrder[]>([]);
@@ -154,10 +162,10 @@ export default function AccountOrdersPage() {
                       {order.product.category || "Marketplace"}
                     </div>
                     <h2 className="mt-2 text-[24px] font-bold tracking-tight text-[#0d1424]">
-                      {order.product.name}
+                      {displayProductName(order)}
                     </h2>
                     <p className="mt-3 text-[14px] leading-6 text-[#556480]">
-                      {order.product.headline || order.product.description}
+                      {displayProductSummary(order)}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] px-4 py-3 text-right">
@@ -203,7 +211,7 @@ export default function AccountOrdersPage() {
                       href={order.product.path}
                       className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
                     >
-                      {order.product.cta_label || "View service"}
+                      {order.product.public_cta_label || order.product.cta_label || "View service"}
                     </Link>
                   ) : null}
                 </div>

@@ -1,6 +1,6 @@
 service: opt_execution
 title: "Let's find the right OPT service"
-description: "This helps Guardian recommend Execution Mode ($199) or Advisory Mode ($499)."
+description: "Answer a few questions so Guardian can route you to the right level of OPT support."
 sections:
   - id: situation
     title: "Your situation"

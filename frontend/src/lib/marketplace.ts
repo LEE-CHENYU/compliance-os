@@ -34,7 +34,9 @@ export interface Form8843Request {
 export interface MarketplaceProduct {
   sku: string;
   name: string;
+  public_name?: string | null;
   description: string;
+  public_description?: string | null;
   price_cents: number;
   tier: string;
   requires_attorney: boolean;
@@ -44,8 +46,11 @@ export interface MarketplaceProduct {
   filing_method: string | null;
   fulfillment_mode: string | null;
   headline: string | null;
+  public_headline?: string | null;
   highlights: string[];
+  public_highlights?: string[];
   cta_label: string | null;
+  public_cta_label?: string | null;
   path: string | null;
 }
 

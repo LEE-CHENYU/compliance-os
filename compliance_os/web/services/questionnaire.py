@@ -99,7 +99,7 @@ def evaluate(
 
     if missing_required_items or complexity_flags:
         advisory_parts = missing_required_items + complexity_flags
-        advisory_reason = "Guardian recommends Advisory Mode because of: " + "; ".join(advisory_parts)
+        advisory_reason = "Guardian recommends starting with strategy review because of: " + "; ".join(advisory_parts)
         return QuestionnaireEvaluation(
             recommendation="advisory",
             advisory_reason=advisory_reason,
@@ -111,7 +111,7 @@ def evaluate(
     return QuestionnaireEvaluation(
         recommendation="execution",
         advisory_reason=None,
-        execution_reason="Guardian recommends Execution Mode because the required OPT readiness items are covered and no complexity flags were selected.",
+        execution_reason="Guardian recommends filing support because the core OPT readiness items are covered and no additional review flags were selected.",
         missing_required_items=[],
         complexity_flags=[],
     )

@@ -23,6 +23,7 @@ const LIVE_WORKFLOW_SKUS = new Set([
 ]);
 
 function ctaCopy(product: MarketplaceProduct): string {
+  const publicLabel = product.public_cta_label || product.cta_label;
   if (product.sku === "form_8843_free") {
     return "Generate Form 8843";
   }
@@ -42,9 +43,9 @@ function ctaCopy(product: MarketplaceProduct): string {
     return "Start 83(b) packet";
   }
   if (product.sku === "opt_execution" || product.sku === "opt_advisory") {
-    return "Start OPT questionnaire";
+    return publicLabel || "Start OPT questionnaire";
   }
-  return product.cta_label || "Start service";
+  return publicLabel || "Start service";
 }
 
 
@@ -177,11 +178,15 @@ export default function ServiceDetailPage() {
   const price = product.price_cents === 0 ? "Free" : `$${(product.price_cents / 100).toFixed(0)}`;
   const isLiveWorkflow = LIVE_WORKFLOW_SKUS.has(product.sku);
   const canStart = product.active && isLiveWorkflow;
+  const displayName = product.public_name || product.name;
+  const displayHeadline = product.public_headline || product.headline;
+  const displayDescription = product.public_description || product.description;
+  const displayHighlights = product.public_highlights?.length ? product.public_highlights : product.highlights;
   const asideTitle = !product.active
-    ? "Configured but not launched yet"
+    ? "Coming soon"
     : isLiveWorkflow
-      ? "Live workflow available now"
-      : "Catalog entry is live, workflow is next";
+      ? "Ready to start"
+      : "Available soon";
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#edf3f9_0%,#f7faff_100%)] px-6 py-12">
@@ -197,10 +202,10 @@ export default function ServiceDetailPage() {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
-                {(product.category || "service").replace(/_/g, " ")} · {product.tier.replace(/_/g, ".")}
+                {(product.category || "service").replace(/_/g, " ")}
               </div>
-              <h1 className="mt-3 text-[42px] font-extrabold tracking-tight text-[#0d1424]">{product.name}</h1>
-              {product.headline ? <p className="mt-4 max-w-3xl text-[18px] leading-8 text-[#435774]">{product.headline}</p> : null}
+              <h1 className="mt-3 text-[42px] font-extrabold tracking-tight text-[#0d1424]">{displayName}</h1>
+              {displayHeadline ? <p className="mt-4 max-w-3xl text-[18px] leading-8 text-[#435774]">{displayHeadline}</p> : null}
             </div>
             <div className="rounded-[24px] border border-[#dbe5f2] bg-[#f8fbff] px-5 py-4 text-right">
               <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Price</div>
@@ -210,16 +215,11 @@ export default function ServiceDetailPage() {
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr,0.9fr]">
             <div>
-              <p className="text-[15px] leading-7 text-[#5f6f88]">{product.description}</p>
+              <p className="text-[15px] leading-7 text-[#5f6f88]">{displayDescription}</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {product.filing_method ? (
                   <span className="rounded-full border border-[#dbe5f2] bg-white px-3 py-1.5 text-[12px] font-medium text-[#55708f]">
                     Filing: {product.filing_method}
-                  </span>
-                ) : null}
-                {product.fulfillment_mode ? (
-                  <span className="rounded-full border border-[#dbe5f2] bg-white px-3 py-1.5 text-[12px] font-medium text-[#55708f]">
-                    Mode: {product.fulfillment_mode}
                   </span>
                 ) : null}
               </div>
@@ -227,7 +227,7 @@ export default function ServiceDetailPage() {
               <div className="mt-8 rounded-[24px] border border-[#dbe5f2] bg-[#fbfdff] p-5">
                 <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">What this product is for</div>
                 <ul className="mt-4 space-y-3">
-                  {product.highlights.map((highlight) => (
+                  {displayHighlights.map((highlight) => (
                     <li key={highlight} className="flex gap-3 text-[14px] leading-6 text-[#435774]">
                       <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#5b8dee]" />
                       <span>{highlight}</span>
@@ -244,12 +244,12 @@ export default function ServiceDetailPage() {
               <div className="mt-3 text-[24px] font-bold">{asideTitle}</div>
               <p className="mt-4 text-[14px] leading-7 text-[#cad6ec]">
                 {!product.active
-                  ? "This SKU is intentionally visible in the config-backed catalog so the storefront and roadmap stay aligned before checkout goes live."
+                  ? "This service is listed now, but it will open after the remaining operational checks are complete."
                   : product.requires_questionnaire
-                    ? "This product starts with a qualifying checklist, then routes the user into the attorney-backed workflow instead of dropping directly into a generic order."
+                    ? "Start with a short checklist so Guardian can route you to the right level of support."
                     : isLiveWorkflow
-                      ? "This product can create an order right now, collect intake inside the account workspace, and run the current self-serve processing flow."
-                    : "This service is still represented in the catalog, but the product workflow is intentionally held until the earlier checkout slice lands."}
+                      ? "You can start this service now and continue the workflow in your dashboard."
+                      : "This service is listed, but it is not available to start yet."}
               </p>
               {canStart ? (
                 <button

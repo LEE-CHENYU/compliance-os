@@ -184,7 +184,7 @@ export default function MarketplaceQuestionnairePage() {
             {config?.sections.map((section) => (
               <section key={section.id} className="rounded-[26px] border border-[#dbe5f2] bg-[#fbfdff] p-6">
                 <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7384a0]">
-                  {section.required_for_execution === "all_unchecked" ? "Must remain clear for execution" : "Required for execution"}
+                  {section.required_for_execution === "all_unchecked" ? "Should be clear before filing" : "Needed for streamlined filing"}
                 </div>
                 <h2 className="mt-2 text-[24px] font-bold tracking-tight text-[#0d1424]">{section.title}</h2>
                 <div className="mt-5 space-y-4">
@@ -218,9 +218,11 @@ export default function MarketplaceQuestionnairePage() {
             </button>
           ) : (
             <section className="mt-8 rounded-[28px] border border-[#dbe5f2] bg-[#0f1728] p-6 text-white">
-              <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8ca2cc]">Recommendation</div>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8ca2cc]">Recommended plan</div>
               <h2 className="mt-3 text-[28px] font-bold">
-                {result.recommendation === "execution" ? "Execution Mode is recommended" : "Advisory Mode is recommended"}
+                {result.recommendation === "execution"
+                  ? "You can continue with filing support"
+                  : "You should start with strategy review"}
               </h2>
               <p className="mt-4 max-w-3xl text-[15px] leading-7 text-[#cad6ec]">
                 {result.execution_reason || result.advisory_reason}
@@ -236,7 +238,7 @@ export default function MarketplaceQuestionnairePage() {
                       : "border-white/20 bg-transparent text-white"
                   }`}
                 >
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-70">Execution Mode</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-70">Filing support</div>
                   <div className="mt-2 text-[22px] font-bold">$199</div>
                   <p className="mt-3 text-[14px] leading-6 opacity-90">
                     For straightforward OPT cases where the attorney can verify, file, and confirm receipt.
@@ -251,7 +253,7 @@ export default function MarketplaceQuestionnairePage() {
                       : "border-white/20 bg-transparent text-white"
                   }`}
                 >
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-70">Advisory Mode</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-70">Strategy review</div>
                   <div className="mt-2 text-[22px] font-bold">$499</div>
                   <p className="mt-3 text-[14px] leading-6 opacity-90">
                     For cases with complexity flags, timing questions, or facts that should be reviewed strategically.
@@ -266,7 +268,7 @@ export default function MarketplaceQuestionnairePage() {
                   disabled={!selectedMode || creatingOrder}
                   className="inline-flex rounded-full bg-[#5b8dee] px-6 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#7ea7ef]"
                 >
-                  {creatingOrder ? "Creating order..." : `Continue with ${selectedMode === "advisory" ? "Advisory" : "Execution"} Mode`}
+                  {creatingOrder ? "Creating order..." : `Continue with ${selectedMode === "advisory" ? "strategy review" : "filing support"}`}
                 </button>
                 <button
                   type="button"

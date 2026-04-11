@@ -117,6 +117,14 @@ function formatLabel(value: string): string {
   return value.replace(/_/g, " ");
 }
 
+function displayProductName(order: MarketplaceOrder): string {
+  return order.product.public_name || order.product.name;
+}
+
+function displayProductSummary(order: MarketplaceOrder): string {
+  return order.product.public_headline || order.product.headline || order.product.public_description || order.product.description;
+}
+
 function asText(value: unknown): string {
   if (value === null || value === undefined) {
     return "";
@@ -618,10 +626,10 @@ export default function AccountOrderDetailPage() {
     setActionNote(null);
     try {
       const response = await acceptMarketplaceUpgrade(order.order_id);
-      applyOrder(response.original_order, "Advisory upgrade created. Continue in the new advisory order.");
+      applyOrder(response.original_order, "Your upgraded order is ready. Continue in the new strategy review workspace.");
       router.push(`/account/orders/${response.upgraded_order.order_id}`);
     } catch (nextError) {
-      setActionError(nextError instanceof Error ? nextError.message : "Could not continue into advisory mode");
+      setActionError(nextError instanceof Error ? nextError.message : "Could not continue into strategy review");
     } finally {
       setBusyAction(null);
     }
@@ -1348,7 +1356,7 @@ export default function AccountOrderDetailPage() {
             <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">OPT intake</div>
             <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#0d1424]">Prepare the attorney review packet</h2>
             <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
-              Upload the core OPT documents and add the intended start date so the attorney has a clean execution packet before filing.
+              Upload the core OPT documents and add the intended start date so the attorney has a complete filing packet before review.
             </p>
           </div>
           {!order.intake_complete ? (
@@ -1475,10 +1483,10 @@ export default function AccountOrderDetailPage() {
                     {order.product.category || "Marketplace order"}
                   </div>
                   <h1 className="mt-3 text-[34px] font-bold tracking-tight text-[#0d1424]">
-                    {order.product.name}
+                    {displayProductName(order)}
                   </h1>
                   <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
-                    {order.product.headline || order.product.description}
+                    {displayProductSummary(order)}
                   </p>
                 </div>
                 <div className="rounded-3xl border border-[#dbe5f2] bg-[#f8fbff] px-5 py-4 text-right">
@@ -1544,11 +1552,11 @@ export default function AccountOrderDetailPage() {
               </div>
             ) : null}
 
-            {!!order.product.highlights.length ? (
+            {!!(order.product.public_highlights?.length || order.product.highlights.length) ? (
               <section className="mt-6 rounded-[28px] border border-[#dbe5f2] bg-white/82 p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Included</div>
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
-                  {order.product.highlights.map((highlight) => (
+                  {(order.product.public_highlights?.length ? order.product.public_highlights : order.product.highlights).map((highlight) => (
                     <div
                       key={highlight}
                       className="rounded-2xl border border-[#e4edf7] bg-[#fbfdff] px-4 py-3 text-[14px] text-[#435774]"
@@ -1656,7 +1664,7 @@ export default function AccountOrderDetailPage() {
                 <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#556480]">
                   {order.attorney_assignment?.attorney?.full_name
                     ? `${order.attorney_assignment.attorney.full_name} is assigned to this case.`
-                    : "An attorney will be assigned as part of the execution workflow."}
+                    : "An attorney will be assigned as part of this filing workflow."}
                 </p>
                 {order.attorney_assignment?.attorney ? (
                   <div className="mt-4 rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] px-5 py-4 text-[14px] leading-6 text-[#435774]">
@@ -1669,19 +1677,19 @@ export default function AccountOrderDetailPage() {
             {isOptSku && result?.upgrade_offer ? (
               <section className="mt-6 rounded-[28px] border border-[#f0d6cf] bg-[#fff7f4] p-6 shadow-[0_18px_48px_rgba(128,84,61,0.08)]">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#a56b52]">Upgrade path</div>
-                <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#532d20]">Attorney requested Advisory Mode</h2>
+                <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#532d20]">Attorney requested strategy review</h2>
                 <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#7d5649]">
                   {result.upgrade_offer.reason}
                 </p>
                 <div className="mt-4 rounded-[22px] border border-[#efd4cc] bg-white/80 px-5 py-4 text-[14px] leading-7 text-[#6b473c]">
-                  Guardian is carrying forward a {formatMoney(result.upgrade_offer.credit_cents / 100)} execution credit into the advisory order.
+                  Guardian is carrying forward a {formatMoney(result.upgrade_offer.credit_cents / 100)} filing-support credit into the upgraded order.
                 </div>
                 {result.upgrade_offer.accepted_order_id ? (
                   <Link
                     href={`/account/orders/${result.upgrade_offer.accepted_order_id}`}
                     className="mt-5 inline-flex rounded-full bg-[#532d20] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#432419]"
                   >
-                    Open advisory order
+                    Open upgraded order
                   </Link>
                 ) : (
                   <button
@@ -1690,7 +1698,7 @@ export default function AccountOrderDetailPage() {
                     disabled={busyAction === "upgrade"}
                     className="mt-5 inline-flex rounded-full bg-[#532d20] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#432419] disabled:cursor-not-allowed disabled:bg-[#b08d82]"
                   >
-                    {busyAction === "upgrade" ? "Creating advisory order..." : "Continue into advisory mode"}
+                    {busyAction === "upgrade" ? "Creating upgraded order..." : "Continue with strategy review"}
                   </button>
                 )}
               </section>

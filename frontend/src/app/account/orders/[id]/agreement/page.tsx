@@ -129,7 +129,7 @@ export default function OrderAgreementPage() {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">Limited scope agreement</div>
-              <h1 className="mt-3 text-[38px] font-extrabold tracking-tight text-[#0d1424]">{order.product.name}</h1>
+              <h1 className="mt-3 text-[38px] font-extrabold tracking-tight text-[#0d1424]">{order.product.public_name || order.product.name}</h1>
               <p className="mt-4 max-w-3xl text-[16px] leading-7 text-[#556480]">
                 Review the engagement carefully. The signature field only unlocks after you reach the bottom of the agreement text.
               </p>

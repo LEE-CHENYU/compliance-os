@@ -62,7 +62,9 @@ def _product_payload(sku: str) -> dict[str, Any]:
         return {
             "sku": sku,
             "name": sku,
+            "public_name": None,
             "description": "",
+            "public_description": None,
             "price_cents": 0,
             "tier": "tier_0",
             "requires_attorney": False,
@@ -72,8 +74,11 @@ def _product_payload(sku: str) -> dict[str, Any]:
             "filing_method": None,
             "fulfillment_mode": None,
             "headline": None,
+            "public_headline": None,
             "highlights": [],
+            "public_highlights": [],
             "cta_label": None,
+            "public_cta_label": None,
             "path": f"/services/{sku}",
         }
     return serialize_product(config)
@@ -225,12 +230,19 @@ def _attention_state(order: OrderRow) -> str:
 
 def _serialize_order_card(order: OrderRow) -> dict[str, Any]:
     product = _product_payload(order.product_sku)
-    summary = str((order.result_data or {}).get("summary") or product.get("headline") or product.get("description") or "").strip()
+    summary = str(
+        (order.result_data or {}).get("summary")
+        or product.get("public_headline")
+        or product.get("headline")
+        or product.get("public_description")
+        or product.get("description")
+        or ""
+    ).strip()
     days = _days_until(order.filing_deadline)
     return {
         "order_id": order.id,
         "product_sku": order.product_sku,
-        "product_name": product["name"],
+        "product_name": product.get("public_name") or product["name"],
         "product": product,
         "status": order.status,
         "status_label": _order_status_label(order.status),
@@ -254,7 +266,8 @@ def _deadline_title(order: OrderRow) -> str:
         return "FBAR filing deadline"
     if order.product_sku == "election_83b":
         return "83(b) election deadline"
-    return f"{_product_payload(order.product_sku)['name']} deadline"
+    product = _product_payload(order.product_sku)
+    return f"{product.get('public_name') or product['name']} deadline"
 
 
 def _serialize_service_deadline(order: OrderRow) -> dict[str, Any] | None:
@@ -279,12 +292,12 @@ def _serialize_recommendation(sku: str, *, reason: str, priority: int) -> dict[s
     product = _product_payload(sku)
     return {
         "sku": sku,
-        "name": product["name"],
+        "name": product.get("public_name") or product["name"],
         "reason": reason,
         "priority": priority,
         "product": product,
         "href": product.get("path") or f"/services/{sku}",
-        "cta_label": product.get("cta_label") or ("Generate for free" if product.get("price_cents") == 0 else "Start service"),
+        "cta_label": product.get("public_cta_label") or product.get("cta_label") or ("Generate for free" if product.get("price_cents") == 0 else "Start service"),
     }
 
 

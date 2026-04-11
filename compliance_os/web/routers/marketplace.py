@@ -260,7 +260,9 @@ def _fallback_product(order: OrderRow) -> dict[str, Any]:
         {
             "sku": order.product_sku,
             "name": row.name if row is not None else order.product_sku,
+            "public_name": None,
             "description": row.description if row is not None and row.description else "",
+            "public_description": None,
             "price_cents": row.price_cents if row is not None else order.amount_cents,
             "tier": row.tier if row is not None else "tier_0",
             "requires_attorney": row.requires_attorney if row is not None else False,
@@ -270,8 +272,11 @@ def _fallback_product(order: OrderRow) -> dict[str, Any]:
             "filing_method": None,
             "fulfillment_mode": None,
             "headline": None,
+            "public_headline": None,
             "highlights": [],
+            "public_highlights": [],
             "cta_label": None,
+            "public_cta_label": None,
             "path": None,
         }
     )

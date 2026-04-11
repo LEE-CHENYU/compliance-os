@@ -20,7 +20,7 @@ products:
 
   - sku: form_8843_mailing_service
     name: "Form 8843 Mailing Service"
-    description: "Guardian prints and mails your completed Form 8843 packet once signature and fulfillment ops are enabled."
+    description: "Guardian can print and mail your completed Form 8843 packet once the mailing service is available."
     price_cents: 1900
     tier: tier_0_5_fulfillment
     requires_attorney: false
@@ -29,11 +29,11 @@ products:
     category: tax
     filing_method: "mail fulfillment beta"
     fulfillment_mode: "ops-assisted"
-    headline: "Optional clerical fulfillment once the mailing beta is enabled"
+    headline: "Optional print-and-mail help once the mailing service opens"
     highlights:
       - "Print and mail assistance"
       - "Tracking proof returned to the user"
-      - "Gated behind signature and ops validation"
+      - "Launching after mailing operations are ready"
     cta_label: "Join mailing waitlist"
     path: "/form-8843"
 
@@ -52,7 +52,7 @@ products:
     highlights:
       - "Package-oriented workflow instead of standalone Form 8843"
       - "Treaty-aware review path"
-      - "Natural next step after the free wedge"
+      - "Built for students with U.S. income"
     cta_label: "Start student tax package"
     path: "/services/student_tax_1040nr"
 
@@ -115,7 +115,9 @@ products:
 
   - sku: opt_execution
     name: "OPT Application — Execution Mode"
+    public_name: "OPT Filing Support"
     description: "For self-directed users: Guardian qualifies the case, an attorney reviews it, and the filing is tracked through completion."
+    public_description: "For straightforward OPT cases where you want an attorney-reviewed filing process from intake through filing."
     price_cents: 19900
     tier: tier_1a_execution
     requires_attorney: true
@@ -125,16 +127,24 @@ products:
     filing_method: "attorney filing"
     fulfillment_mode: "execution mode"
     headline: "For straightforward OPT cases where the user can gather the documents and the attorney can execute the filing"
+    public_headline: "For straightforward OPT cases that are ready to move toward filing"
     highlights:
       - "Questionnaire routes the user to execution or advisory"
       - "Limited-scope agreement captured before attorney review"
       - "Attorney dashboard tracks sign-off and filing confirmation"
+    public_highlights:
+      - "Starts with a short eligibility and readiness checklist"
+      - "Includes agreement review before attorney handling begins"
+      - "Tracks review and filing updates in your dashboard"
     cta_label: "Start OPT questionnaire"
+    public_cta_label: "Check my OPT case"
     path: "/services/opt_execution"
 
   - sku: opt_advisory
     name: "OPT Application — Advisory Mode"
+    public_name: "OPT Strategy Review"
     description: "For users with complexity flags or uncertainty who need a strategy-first attorney workflow before filing."
+    public_description: "For OPT cases with timing, eligibility, or history questions that need attorney review before filing."
     price_cents: 49900
     tier: tier_1b_advisory
     requires_attorney: true
@@ -144,9 +154,15 @@ products:
     filing_method: "attorney consultation + filing"
     fulfillment_mode: "advisory mode"
     headline: "For OPT cases with eligibility, timing, or history questions that should not be forced through an execution lane"
+    public_headline: "For OPT cases that need strategy review before filing"
     highlights:
       - "Same qualifying questionnaire as execution mode"
       - "Complexity flags route the user toward the higher-touch lane"
       - "Guardian keeps the upgrade path visible instead of hiding it inside chat"
+    public_highlights:
+      - "Starts with the same short OPT checklist"
+      - "Built for cases that need closer attorney review"
+      - "Keeps next steps visible in your dashboard"
     cta_label: "Start OPT questionnaire"
+    public_cta_label: "Check my OPT case"
     path: "/services/opt_advisory"
