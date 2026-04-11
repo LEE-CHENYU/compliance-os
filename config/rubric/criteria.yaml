@@ -1,0 +1,119 @@
+version: "0.1.0"
+
+dimensions:
+  - id: categorization
+    description: "Did the engine assign the right track and derive the right fields before rules fired?"
+  - id: findings
+    description: "Did the rules fire correctly given the inputs?"
+  - id: rule_quality
+    description: "Is the fired rule's text actionable and internally consistent?"
+  - id: operator_behavior
+    description: "Does the engine handle edge-case operator inputs per Condition.evaluate contract?"
+
+criteria:
+  - id: track_selection_correct
+    dimension: categorization
+    applies_to: [A, B, C, D, E]
+    description: |
+      The case's declared `track` must match the rule file the engine would
+      select based on routers/review.py track-routing logic. If expected_track
+      is set, the engine's loaded YAML file must match it.
+
+  - id: nra_derivation_correct
+    dimension: categorization
+    applies_to: [A, B, D]
+    description: |
+      The derived is_nra field must match expected_nra and must follow the
+      four-branch priority order in rule_engine._derive_nra:
+      (1) explicit tax_residency_status wins,
+      (2) else F-1 exempt stages with years_in_us < 6 → yes,
+      (3) else h1b/i140 → no,
+      (4) else owner_residency == "outside_us" → yes,
+      (5) default → no.
+
+  - id: positive_case_fires_target_rule
+    dimension: findings
+    applies_to: [A]
+    description: |
+      Engine output MUST contain at least one finding with rule_id ==
+      target_rule_id. Absence is a hard fail.
+
+  - id: negative_case_does_not_fire_target_rule
+    dimension: findings
+    applies_to: [B]
+    description: |
+      Engine output MUST NOT contain any finding with rule_id ==
+      target_rule_id. Presence is a hard fail.
+
+  - id: no_unrelated_false_positives
+    dimension: findings
+    applies_to: [A, B]
+    description: |
+      Findings other than the target rule are allowed only if they logically
+      follow from the case inputs. A finding that fires on a field the case
+      never set (or set to a placeholder value) should be flagged. The judge
+      should cross-check each non-target finding against the case input.
+
+  - id: severity_matches_case_gravity
+    dimension: findings
+    applies_to: [A]
+    description: |
+      A fired finding's severity should match the gravity described in the
+      probe intent. A status-threatening probe should not fire at severity
+      'info'. A mild probe should not fire at 'critical' unless the rule
+      explicitly specifies it.
+
+  - id: expected_must_not_fire_respected
+    dimension: findings
+    applies_to: [A, B, C, D, E]
+    description: |
+      Any rule_id listed in expected.must_not_fire_rule_ids that appears in
+      findings is an automatic subscore of 0.0. Hard fail.
+
+  - id: rule_text_actionable
+    dimension: rule_quality
+    applies_to: [A]
+    description: |
+      For each fired finding, the `action` text should be a concrete step
+      the user can take. Vague actions ("consult an attorney" with no
+      specificity) should be flagged but not failed outright.
+
+  - id: rule_conditions_non_contradictory
+    dimension: rule_quality
+    applies_to: [A]
+    description: |
+      The target rule's conditions should not be mutually exclusive. If the
+      slice-A generator produced a valid case satisfying all conditions,
+      this criterion passes.
+
+  - id: findings_free_of_cross_rule_contradictions
+    dimension: rule_quality
+    applies_to: [A, B]
+    description: |
+      If the findings list contains two rules whose action texts directly
+      contradict each other, flag it. This catches the advisory_fbar vs
+      foreign_accounts_fbar_risk overlap pattern.
+
+  - id: operator_behavior_correct
+    dimension: operator_behavior
+    applies_to: [C]
+    description: |
+      For slice-C operator stress cases, engine behavior on null/boundary/
+      wrong-type inputs should match the documented contract in
+      rule_engine.Condition.evaluate. Expected behavior is encoded in the
+      golden fixture's `expected` field.
+
+scoring:
+  dimension_weights:
+    categorization: 1.0
+    findings: 2.0
+    rule_quality: 1.0
+    operator_behavior: 1.0
+
+  pass_threshold: 0.90
+  partial_threshold: 0.60
+
+  hard_fail_criteria:
+    - positive_case_fires_target_rule
+    - negative_case_does_not_fire_target_rule
+    - expected_must_not_fire_respected

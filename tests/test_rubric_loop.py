@@ -5,6 +5,8 @@ import json
 import sys
 from pathlib import Path
 
+import yaml
+
 # Make scripts/ importable so `from rubric import ...` works in tests
 _SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 if str(_SCRIPTS) not in sys.path:
@@ -885,3 +887,34 @@ def test_fixture_record_from_dict_tolerates_extra_keys():
     assert record.case_id == "A-stem_opt-failing-pos"
     # last_error was dropped (not stored on the dataclass)
     assert not hasattr(record, "last_error")
+
+
+def test_criteria_yaml_loads_and_filters_by_slice():
+    from rubric.io import CONFIG_RUBRIC_DIR
+    criteria_path = CONFIG_RUBRIC_DIR / "criteria.yaml"
+    data = yaml.safe_load(criteria_path.read_text())
+    assert data["version"] == "0.1.0"
+    assert len(data["criteria"]) == 11
+
+    # Verify filtering works — slice A should include positive_case_fires_target_rule
+    a_criteria = [c for c in data["criteria"] if "A" in c["applies_to"]]
+    a_ids = {c["id"] for c in a_criteria}
+    assert "positive_case_fires_target_rule" in a_ids
+    assert "negative_case_does_not_fire_target_rule" not in a_ids  # B only
+
+    # Slice C should include operator_behavior_correct
+    c_ids = {c["id"] for c in data["criteria"] if "C" in c["applies_to"]}
+    assert "operator_behavior_correct" in c_ids
+
+
+def test_rubric_version_file_exists():
+    from rubric.io import CONFIG_RUBRIC_DIR
+    assert (CONFIG_RUBRIC_DIR / "rubric_version.txt").read_text().strip() == "0.1.0"
+
+
+def test_all_hard_fail_criteria_exist_in_criteria_list():
+    from rubric.io import CONFIG_RUBRIC_DIR
+    data = yaml.safe_load((CONFIG_RUBRIC_DIR / "criteria.yaml").read_text())
+    all_ids = {c["id"] for c in data["criteria"]}
+    for hfc in data["scoring"]["hard_fail_criteria"]:
+        assert hfc in all_ids, f"hard_fail_criterion {hfc} not in criteria list"
