@@ -100,15 +100,20 @@ def build_manifest(rules_dir: Path, goldens_dir: Path) -> list[CaseSpec]:
                 probe_intent=build_positive_intent(rule),
                 gen_strategy="llm",
             ))
-            cases.append(CaseSpec(
-                case_id=build_case_id(slice="B", track=track, rule_id=rule_id, polarity="neg"),
-                slice="B",
-                track=track,
-                target_rule_id=rule_id,
-                target_rule_snapshot=rule,
-                probe_intent=build_negative_intent(rule),
-                gen_strategy="llm",
-            ))
+            # Slice B (negative near-miss) only makes sense for rules with
+            # conditions. Rules with `conditions: []` fire unconditionally on
+            # every case in their track, so asking for a case that does NOT
+            # fire them is structurally impossible. Skip slice B for those.
+            if rule.get("conditions"):
+                cases.append(CaseSpec(
+                    case_id=build_case_id(slice="B", track=track, rule_id=rule_id, polarity="neg"),
+                    slice="B",
+                    track=track,
+                    target_rule_id=rule_id,
+                    target_rule_snapshot=rule,
+                    probe_intent=build_negative_intent(rule),
+                    gen_strategy="llm",
+                ))
 
     # Slices C / D / E — static goldens
     if goldens_dir.exists():

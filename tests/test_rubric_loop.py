@@ -1438,3 +1438,46 @@ def test_claude_batch_generate_writes_sentinel_on_error(tmp_path):
     assert "invalid_request" in warnings[0]
     sentinel = json.loads((fixture_dir / "A-stem_opt-boom-pos.json").read_text())
     assert sentinel["last_error"]["kind"] == "invalid_request"
+
+
+def test_discover_skips_slice_b_for_unconditional_rules(tmp_path):
+    """Rules with `conditions: []` are unconditional — fire on every case in
+    their track. Slice B (negative near-miss) is structurally impossible for
+    them. build_manifest() should only produce slice A, not slice B."""
+    rules_dir = tmp_path / "rules"
+    goldens_dir = tmp_path / "goldens"
+    goldens_dir.mkdir(parents=True)
+    rules_dir.mkdir()
+    (rules_dir / "sample.yaml").write_text("""
+version: "0.1.0"
+rules:
+  - id: conditional_rule
+    track: sample
+    type: logic
+    conditions:
+      - field: stage
+        operator: eq
+        value: opt
+        source: answers
+    severity: warning
+    finding: {title: T, action: A, consequence: C}
+  - id: unconditional_rule
+    track: sample
+    type: advisory
+    conditions: []
+    severity: info
+    finding: {title: T, action: A, consequence: C}
+""")
+    cases = build_manifest(rules_dir, goldens_dir)
+    case_ids = {c.case_id for c in cases}
+
+    # conditional_rule gets both A and B
+    assert "A-sample-conditional_rule-pos" in case_ids
+    assert "B-sample-conditional_rule-neg" in case_ids
+
+    # unconditional_rule gets only A, NOT B
+    assert "A-sample-unconditional_rule-pos" in case_ids
+    assert "B-sample-unconditional_rule-neg" not in case_ids
+
+    # Total: 3 slice-A+B cases (2 for conditional, 1 for unconditional)
+    assert len([c for c in cases if c.gen_strategy == "llm"]) == 3
