@@ -123,7 +123,7 @@ const STEPS: StepDefinition[] = [
   {
     eyebrow: "Step 3",
     title: "Which school or program should appear on the form?",
-    body: "Guardian uses this to fill the school/program lines on the IRS form.",
+    body: "These details appear on the school and program lines of the IRS form.",
     isValid: (form) => Boolean(form.school_name.trim()),
   },
   {
@@ -135,7 +135,7 @@ const STEPS: StepDefinition[] = [
   {
     eyebrow: "Step 5",
     title: "How many days were you present in the U.S.?",
-    body: "Guardian uses these counts to complete the substantial presence section.",
+    body: "These counts help complete the substantial presence section.",
     isValid: (form) => (
       form.days_present_current.trim() !== ""
       && form.days_present_year_1_ago.trim() !== ""
@@ -292,9 +292,9 @@ export default function OnboardingWizard({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-4 border-t border-[#ebf0f7] pt-6 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 border-t border-[#ebf0f7] pt-6 md:flex-row md:items-center md:justify-between">
         <div className="text-[13px] leading-6 text-[#70819c]">
-          Guardian will generate the PDF immediately. The delivery screen will then show the right filing path for this form.
+          Your PDF will be generated right away. The next screen will show the filing instructions for your situation.
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
           {stepIndex > 0 ? (

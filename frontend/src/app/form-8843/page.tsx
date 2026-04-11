@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import OnboardingWizard, { type Form8843WizardState } from "@/components/form8843/OnboardingWizard";
@@ -78,6 +79,15 @@ export default function Form8843Page() {
 
     try {
       const response = await generateForm8843(payload);
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(
+          "guardian_form_8843_onboarding",
+          JSON.stringify({
+            orderId: response.order_id,
+            email: payload.email,
+          }),
+        );
+      }
       router.push(`/form-8843/success?orderId=${encodeURIComponent(response.order_id)}`);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Could not generate Form 8843");
@@ -97,18 +107,26 @@ export default function Form8843Page() {
             ← Back
           </button>
           <div className="rounded-full border border-[#dce6f3] bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7c95] shadow-[0_8px_24px_rgba(42,64,102,0.08)]">
-            Free IRS workflow
+            Free filing tool
           </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.05fr,0.95fr]">
           <section className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
             <div className="mb-10 max-w-2xl">
-              <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">Public Form 8843</div>
-              <h1 className="mt-3 text-[40px] font-extrabold tracking-tight text-[#0d1424]">Generate your 2025 Form 8843 and finish the filing path</h1>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">Free Form 8843</div>
+              <h1 className="mt-3 text-[40px] font-extrabold tracking-tight text-[#0d1424]">Generate your Form 8843 and get clear filing instructions</h1>
               <p className="mt-4 max-w-xl text-[16px] leading-7 text-[#556480]">
-                Guardian now handles both sides of the job: the PDF itself and the filing instructions you need after download.
+                Answer a few questions, download the completed PDF, and see exactly how to file it. No account is required to get started.
               </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/login?next=/dashboard"
+                  className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
+                >
+                  Already use Guardian? Sign in
+                </Link>
+              </div>
             </div>
 
             <OnboardingWizard
@@ -122,19 +140,19 @@ export default function Form8843Page() {
 
           <aside className="rounded-[32px] border border-white/70 bg-[#f8fbff]/78 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
             <div className="rounded-[28px] bg-[#0f1728] p-6 text-white shadow-[0_22px_50px_rgba(9,18,36,0.24)]">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8ca2cc]">What ships in this slice</div>
-              <div className="mt-3 text-[26px] font-bold leading-tight">Public intake, PDF generation, filing checklist, reminder scaffolding.</div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8ca2cc]">What you get</div>
+              <div className="mt-3 text-[26px] font-bold leading-tight">A completed Form 8843, clear filing steps, and an easy way to keep track of it in Guardian.</div>
               <p className="mt-4 text-[14px] leading-7 text-[#c9d5eb]">
-                The point is not just to generate the form. The point is to help the user actually finish the filing step instead of getting stranded with a PDF.
+                This is built to help you finish the filing, not just download a PDF and figure the rest out yourself.
               </p>
             </div>
 
             <div className="mt-6 space-y-4">
               {[
-                ["1", "Collect the minimum facts needed to complete the 2025 IRS form."],
-                ["2", "Create a marketplace user and zero-dollar order in the new tables."],
-                ["3", "Generate the PDF against the IRS template and persist a download URL."],
-                ["4", "Return mailing instructions and reminder state so the delivery screen can drive completion."],
+                ["1", "Answer only the details needed to prepare the form."],
+                ["2", "Download a completed PDF that is ready to print and sign."],
+                ["3", "See whether to mail it directly or include it with your tax return package."],
+                ["4", "Optionally save it in Guardian so you can track whether you already mailed it."],
               ].map(([step, copy]) => (
                 <div key={step} className="flex gap-4 rounded-2xl border border-[#dbe5f2] bg-white/82 p-4 shadow-[0_10px_30px_rgba(61,84,128,0.05)]">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#edf4ff] text-[14px] font-bold text-[#315aa5]">
@@ -146,9 +164,9 @@ export default function Form8843Page() {
             </div>
 
             <div className="mt-6 rounded-[24px] border border-dashed border-[#c9d7eb] bg-white/70 p-5">
-              <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">Filing reality</div>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">Important</div>
               <p className="mt-3 text-[14px] leading-6 text-[#5f6f88]">
-                Form 8843 by itself cannot be e-filed. The success page will tell the user whether to mail it directly to the IRS or include it with a tax-return package, and it can track whether the user actually mailed it.
+                Form 8843 by itself cannot be e-filed. The next screen will show the correct filing path and give you the mailing steps if they apply.
               </p>
             </div>
           </aside>
