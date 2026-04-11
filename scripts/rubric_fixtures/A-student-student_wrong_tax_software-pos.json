@@ -1,0 +1,31 @@
+{
+  "case_id": "A-student-student_wrong_tax_software-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "student_wrong_tax_software"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "F-1 student reported using TurboTax which does not support 1040-NR; engine must fire student_wrong_tax_software."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "3a2c179523899689fdee0dd372624b020e48b1c9d6f4fc2809d02d983d54c69a",
+  "input": {
+    "answers": {
+      "has_employment": "yes",
+      "income_reporting": "turbotax",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'student_wrong_tax_software'. All of these conditions must be satisfied simultaneously:\n  - answers.income_reporting in ['turbotax', 'hr_block']\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "student_wrong_tax_software",
+  "track": "student"
+}

@@ -1,0 +1,32 @@
+{
+  "case_id": "A-h1b_doc_check-h1b_missing_registration_packet-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [
+      "h1b_missing_registration_packet"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "User confirmed registration packet is missing; engine must fire h1b_missing_registration_packet completeness check."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "df6d7b45949071a841d085994458a60e057391ecab45f06df39130a9f06d25ce",
+  "input": {
+    "answers": {
+      "employer_name": "Acme Innovations LLC",
+      "missing_registration_packet": true,
+      "petition_status": "approved",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_missing_registration_packet'. All of these conditions must be satisfied simultaneously:\n  - answers.missing_registration_packet eq True\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_missing_registration_packet",
+  "track": "h1b_doc_check"
+}

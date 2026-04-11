@@ -1,0 +1,40 @@
+{
+  "case_id": "B-stem_opt-h1b_employer_change-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_employer_change"
+    ],
+    "notes": "Stage is h1b but employer_changed is no, so rule h1b_employer_change must not fire despite being on H-1B status."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "4e0d4c8597ee0bb1cb638f0ac600d480fc211d737067a6bd76ab31bbeebcc3fd",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "has_employment": "yes",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics Corp",
+      "end_date": "2026-01-14",
+      "job_title": "Software Engineer",
+      "start_date": "2023-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Corp",
+      "job_title": "Software Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_employer_change', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.employer_changed eq yes\n  - answers.stage eq h1b\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_employer_change",
+  "track": "stem_opt"
+}

@@ -1,0 +1,41 @@
+{
+  "case_id": "B-stem_opt-employer_change_unreported-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "employer_change_unreported"
+    ],
+    "notes": "Student is on STEM OPT but has not changed employers (employer_changed=no), so rule should not fire despite matching stage condition."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "b65b46e027b9a5aa5e40727d31ecd6cc306c734aa31cbff19425748d7758acfa",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "duties": "Develop and train ML models for autonomous systems",
+      "employer_name": "Acme Robotics Inc",
+      "end_date": "2026-06-01",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2023-06-01"
+    },
+    "extraction_b": {
+      "employer_name": "Acme Robotics Inc",
+      "job_title": "Machine Learning Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'employer_change_unreported', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.employer_changed eq yes\n  - answers.stage in ['stem_opt', 'opt']\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "employer_change_unreported",
+  "track": "stem_opt"
+}

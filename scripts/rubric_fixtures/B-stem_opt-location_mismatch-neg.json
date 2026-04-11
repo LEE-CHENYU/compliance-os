@@ -1,0 +1,43 @@
+{
+  "case_id": "B-stem_opt-location_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "location_mismatch"
+    ],
+    "notes": "Work location matches between I-983 and employment letter so location_mismatch must not fire despite all context suggesting STEM OPT compliance review."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "dfd737f013b436b1dd70059f3e3bbfa47a8f3fe2487f929dda30982d21507766",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "work_location": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "end_date": "2027-02-28",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-03-01",
+      "work_location": "1800 Quantum Plaza, Austin, TX 78701"
+    },
+    "extraction_b": {
+      "job_title": "Machine Learning Engineer",
+      "work_location": "1800 Quantum Plaza, Austin, TX 78701"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'location_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.work_location mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "location_mismatch",
+  "track": "stem_opt"
+}

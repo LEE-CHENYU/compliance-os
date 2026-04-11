@@ -1,0 +1,40 @@
+{
+  "case_id": "A-h1b_doc_check-h1b_signatory_payment_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [
+      "h1b_signatory_payment_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Payment cardholder name differs from H-1B registration receipt signatory name, triggering the mismatch rule."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "7f74d6f8666e2d1b985d643cd876caf6ec0d2bf1165b94705ff17f3e9550b3ca",
+  "input": {
+    "answers": {
+      "employer_name": "Acme Robotics Inc",
+      "petition_status": "approved",
+      "stage": "h1b"
+    },
+    "comparisons": {
+      "h1b_registration_receipt_signatory_name": {
+        "confidence": 0.88,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "h1b_registration_receipt_signatory_name": "Alice Chen",
+      "registration_number": "H1B2024XYZ789"
+    },
+    "extraction_b": {
+      "h1b_registration_invoice_petitioner_name": "Acme Robotics Inc"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_signatory_payment_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.h1b_registration_receipt_signatory_name mismatch None\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_signatory_payment_mismatch",
+  "track": "h1b_doc_check"
+}

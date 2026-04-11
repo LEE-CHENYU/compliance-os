@@ -1,0 +1,39 @@
+{
+  "case_id": "B-data_room-resume_passport_name_mismatch-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "resume_passport_name_mismatch"
+    ],
+    "notes": "Resume and passport candidate names match exactly; rule requires mismatch so it must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "0d1c4fae5270bc18afd55c97a90476c141dbb96ff4a7ea8c918d735cee72696b",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "h1b",
+      "years_in_us": 4
+    },
+    "comparisons": {
+      "resume_passport_candidate_name": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "resume_passport_candidate_name": "Alexandra Chen"
+    },
+    "extraction_b": {
+      "resume_passport_candidate_name": "Alexandra Chen"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'resume_passport_name_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.resume_passport_candidate_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "resume_passport_name_mismatch",
+  "track": "data_room"
+}

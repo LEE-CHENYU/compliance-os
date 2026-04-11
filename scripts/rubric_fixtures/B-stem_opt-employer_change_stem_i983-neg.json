@@ -1,0 +1,51 @@
+{
+  "case_id": "B-stem_opt-employer_change_stem_i983-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "employer_change_stem_i983"
+    ],
+    "notes": "Student is on STEM OPT but has NOT changed employers (employer_changed=no), so rule should not fire despite stage=stem_opt being satisfied."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "23eb16be5ecda49c825c73dad092bf33295c9215161344fc5fb4ab48c9fd2769",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "full_time",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "employer_name": {
+        "confidence": 1.0,
+        "status": "match"
+      },
+      "job_title": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "compensation": "95000",
+      "duties": "Develop and deploy neural network models for automated systems",
+      "employer_name": "Quantum Dynamics Inc",
+      "end_date": "2026-07-31",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2023-08-01"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Inc",
+      "job_title": "Machine Learning Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'employer_change_stem_i983', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.employer_changed eq yes\n  - answers.stage eq stem_opt\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "employer_change_stem_i983",
+  "track": "stem_opt"
+}

@@ -1,0 +1,39 @@
+{
+  "case_id": "A-stem_opt-i983_evaluation_due-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "i983_evaluation_due"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Start date is more than 12 months ago and stage is stem_opt, so 12-month I-983 self-evaluation is due."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "632cffc0a44d64c761c0fd8e769bfd339d9a9d92b6c7279d0697673305557813",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "full_time",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "compensation": "85000",
+      "employer_name": "Acme Technology Labs",
+      "end_date": "2025-11-09",
+      "full_time": "yes",
+      "job_title": "Software Engineer",
+      "start_date": "2022-11-10"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'i983_evaluation_due'. All of these conditions must be satisfied simultaneously:\n  - extraction_a.start_date lt 12_months_ago\n  - answers.stage eq stem_opt\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "i983_evaluation_due",
+  "track": "stem_opt"
+}

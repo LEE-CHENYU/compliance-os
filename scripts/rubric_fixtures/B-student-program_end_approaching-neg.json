@@ -1,0 +1,31 @@
+{
+  "case_id": "B-student-program_end_approaching-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "program_end_approaching"
+    ],
+    "notes": "Program end date is 65 days away, just outside the 60-day threshold, so rule must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "90357ffd680614d408efbe74bccdb747a5edcdaddafe230b0383db4a728f6769",
+  "input": {
+    "answers": {
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2025-09-15"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'program_end_approaching', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - extraction_a.end_date lt 60_days_from_now\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "program_end_approaching",
+  "track": "student"
+}

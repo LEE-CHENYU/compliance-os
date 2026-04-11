@@ -1,0 +1,32 @@
+{
+  "case_id": "A-stem_opt-h1b_unemployment-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "h1b_unemployment"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "H-1B holder between jobs triggers unemployment rule; is_nra=no because h1b stage always yields resident status."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "310769dde5c8e3639a29029c62951aeeed4f5f40d6f56c52cdcf05fe0e0106ea",
+  "input": {
+    "answers": {
+      "employer_changed": "yes",
+      "employment_status": "between_jobs",
+      "has_employment": "no",
+      "stage": "h1b",
+      "years_in_us": 4
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_unemployment'. All of these conditions must be satisfied simultaneously:\n  - answers.employment_status in ['not_employed', 'between_jobs']\n  - answers.stage eq h1b\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_unemployment",
+  "track": "stem_opt"
+}

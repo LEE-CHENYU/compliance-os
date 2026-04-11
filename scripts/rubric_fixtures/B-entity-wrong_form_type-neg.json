@@ -1,0 +1,38 @@
+{
+  "case_id": "B-entity-wrong_form_type-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "wrong_form_type"
+    ],
+    "notes": "Owner is US citizen/PR filing 1040, which satisfies residency condition; rule requires owner_residency neq us_citizen_or_pr, so wrong_form_type must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "3201bd706428486b87d02ffb3d18c1e66b99c0694a4ef14c6c73476b35c92ab3",
+  "input": {
+    "answers": {
+      "entity_type": "s_corp",
+      "form_5472_present": "False",
+      "owner_residency": "us_citizen_or_pr",
+      "separate_bank_account": "yes"
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "schedules_present": [
+        "schedule_c",
+        "schedule_e"
+      ]
+    },
+    "extraction_b": {
+      "form_type": "1040"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'wrong_form_type', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.owner_residency neq us_citizen_or_pr\n  - extraction_b.form_type eq 1040\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "wrong_form_type",
+  "track": "entity"
+}

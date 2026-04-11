@@ -1,0 +1,29 @@
+{
+  "case_id": "A-student-advisory_address_update-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "advisory_address_update"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Rule has no conditions and always fires; minimal context provided for F-1 student."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:46Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "318a41860d37491a690870b21ef2d23e08d1a2b45621b75f299f846c83781df1",
+  "input": {
+    "answers": {
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'advisory_address_update'. All of these conditions must be satisfied simultaneously:\n  (no conditions \u2014 rule always fires)\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "advisory_address_update",
+  "track": "student"
+}

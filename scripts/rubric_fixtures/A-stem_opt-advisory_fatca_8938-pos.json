@@ -1,0 +1,31 @@
+{
+  "case_id": "A-stem_opt-advisory_fatca_8938-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "advisory_fatca_8938"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "H1B visa holder is not an NRA (is_nra=no), satisfying the neq yes condition; advisory_fatca_8938 must fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "14e9cd4d8e917fe2399d0a3f39a263c98bf8cbe0601b8918b6ceaf8b300b7100",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_foreign_accounts": "yes",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'advisory_fatca_8938'. All of these conditions must be satisfied simultaneously:\n  - answers.is_nra neq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "advisory_fatca_8938",
+  "track": "stem_opt"
+}

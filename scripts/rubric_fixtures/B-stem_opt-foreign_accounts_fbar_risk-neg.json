@@ -1,0 +1,31 @@
+{
+  "case_id": "B-stem_opt-foreign_accounts_fbar_risk-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "foreign_accounts_fbar_risk"
+    ],
+    "notes": "User has foreign accounts but is_nra derives to yes (nonresident status), breaking the second condition (is_nra neq yes), so rule does not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "4abfdd638902f6e18d9a48fc64b3b266b04fa99042b2a06bd0898b0ea4942f7e",
+  "input": {
+    "answers": {
+      "has_foreign_accounts": "yes",
+      "stage": "stem_opt",
+      "tax_residency_status": "nonresident",
+      "years_in_us": 3
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'foreign_accounts_fbar_risk', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.has_foreign_accounts eq yes\n  - answers.is_nra neq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "foreign_accounts_fbar_risk",
+  "track": "stem_opt"
+}

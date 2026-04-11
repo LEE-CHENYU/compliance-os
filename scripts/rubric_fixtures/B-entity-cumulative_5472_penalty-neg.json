@@ -1,0 +1,30 @@
+{
+  "case_id": "B-entity-cumulative_5472_penalty-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "cumulative_5472_penalty"
+    ],
+    "notes": "Entity is 3+ years old SMLLC but owner is US citizen/PR, so owner_residency condition fails and rule does not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "b691747a880c6a566a6f6bc35217d3f8ab08a6ffd5e67bbcd661834f56c00bea",
+  "input": {
+    "answers": {
+      "entity_type": "smllc",
+      "formation_age": "3_plus_years",
+      "owner_residency": "us_citizen_or_pr"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'cumulative_5472_penalty', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.formation_age eq 3_plus_years\n  - answers.owner_residency neq us_citizen_or_pr\n  - answers.entity_type eq smllc\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "cumulative_5472_penalty",
+  "track": "entity"
+}

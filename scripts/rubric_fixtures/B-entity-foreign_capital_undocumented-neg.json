@@ -1,0 +1,31 @@
+{
+  "case_id": "B-entity-foreign_capital_undocumented-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "foreign_capital_undocumented"
+    ],
+    "notes": "Foreign capital transfer is 'no', so rule foreign_capital_undocumented must not fire despite entity context suggesting potential foreign ownership."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "24cde4555cb602da385c9035f71f650163d7af0c8015e22fbac3457d0d60032f",
+  "input": {
+    "answers": {
+      "entity_type": "LLC",
+      "foreign_capital_transfer": "no",
+      "owner_residency": "non_resident",
+      "separate_bank_account": "yes"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'foreign_capital_undocumented', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.foreign_capital_transfer eq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "foreign_capital_undocumented",
+  "track": "entity"
+}

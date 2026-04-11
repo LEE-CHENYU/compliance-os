@@ -1,0 +1,31 @@
+{
+  "case_id": "A-stem_opt-unemployment_risk-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "unemployment_risk"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Student is on STEM OPT and between jobs, satisfying both conditions for unemployment_risk rule to fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "d7847200acde24f573cb1ed7656bcecab9ce509ca6c5074fab263450d0581155",
+  "input": {
+    "answers": {
+      "employer_changed": "yes",
+      "employment_status": "between_jobs",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'unemployment_risk'. All of these conditions must be satisfied simultaneously:\n  - answers.employment_status in ['not_employed', 'between_jobs']\n  - answers.stage in ['stem_opt', 'opt']\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "unemployment_risk",
+  "track": "stem_opt"
+}

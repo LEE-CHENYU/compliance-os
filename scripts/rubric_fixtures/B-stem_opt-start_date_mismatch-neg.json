@@ -1,0 +1,43 @@
+{
+  "case_id": "B-stem_opt-start_date_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "start_date_mismatch"
+    ],
+    "notes": "Start dates match exactly between I-983 and employment letter, so start_date_mismatch must not fire despite all structural conditions being present."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "ae12656f424f126dcc40fa9a7fc7ae43ef6ae05d1bed89f91f0ad9ce0325af82",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "start_date": {
+        "confidence": 1.0,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "TechFlow Systems Inc",
+      "end_date": "2027-02-28",
+      "job_title": "Software Engineer",
+      "start_date": "2024-03-01"
+    },
+    "extraction_b": {
+      "employer_name": "TechFlow Systems Inc",
+      "start_date": "2024-03-01"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'start_date_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.start_date mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "start_date_mismatch",
+  "track": "stem_opt"
+}

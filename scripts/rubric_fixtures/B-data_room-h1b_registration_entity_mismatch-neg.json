@@ -1,0 +1,37 @@
+{
+  "case_id": "B-data_room-h1b_registration_entity_mismatch-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_registration_entity_mismatch"
+    ],
+    "notes": "The H-1B registration employer and G-28 client entity names match exactly, so the mismatch condition is not satisfied and the rule must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "9383431c992d8ac418f9cb0747b8b756b438424192c0b422e42e7ef51701cd87",
+  "input": {
+    "answers": {
+      "employer_name": "Quantum Dynamics LLC",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "h1b_registration_g28_entity_name": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "h1b_registration_g28_entity_name": "Quantum Dynamics LLC"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_registration_entity_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.h1b_registration_g28_entity_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_registration_entity_mismatch",
+  "track": "data_room"
+}

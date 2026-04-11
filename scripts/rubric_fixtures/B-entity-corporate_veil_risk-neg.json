@@ -1,0 +1,30 @@
+{
+  "case_id": "B-entity-corporate_veil_risk-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "corporate_veil_risk"
+    ],
+    "notes": "Entity has a separate bank account (value is 'yes' not 'no'), so corporate_veil_risk must not fire despite being on entity track."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "688ed7a49b3c274bcd51321aa890907e69b0cecfbe6b59e57b360bd5deae9457",
+  "input": {
+    "answers": {
+      "entity_type": "LLC",
+      "owner_residency": "nonresident",
+      "separate_bank_account": "yes"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'corporate_veil_risk', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.separate_bank_account eq no\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "corporate_veil_risk",
+  "track": "entity"
+}

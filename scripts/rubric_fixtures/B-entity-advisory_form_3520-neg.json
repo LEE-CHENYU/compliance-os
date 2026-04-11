@@ -1,0 +1,32 @@
+{
+  "case_id": "B-entity-advisory_form_3520-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "advisory_form_3520"
+    ],
+    "notes": "Entity did receive foreign gifts but answered 'no' to foreign_capital_transfer, so advisory_form_3520 must not fire despite otherwise fitting the profile."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "a456c13b6516bd170fec2cb03067b85437fc492ae63cbc7c0443a1999d3bc99f",
+  "input": {
+    "answers": {
+      "entity_type": "LLC",
+      "foreign_capital_transfer": "no",
+      "has_foreign_accounts": "yes",
+      "owner_residency": "nonresident",
+      "received_foreign_gifts": "yes"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'advisory_form_3520', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.foreign_capital_transfer eq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "advisory_form_3520",
+  "track": "entity"
+}

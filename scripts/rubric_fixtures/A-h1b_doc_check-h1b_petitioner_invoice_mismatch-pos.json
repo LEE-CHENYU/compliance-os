@@ -1,0 +1,39 @@
+{
+  "case_id": "A-h1b_doc_check-h1b_petitioner_invoice_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [
+      "h1b_petitioner_invoice_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Invoice petitioner name mismatches the H-1B registration petitioner name, triggering the warning that the wrong entity may be prepared for filing."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "81bc19cea19aa2867992b6501be02d57b2e7fe4be4f725f4908e2d47e64c388a",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "h1b_registration_invoice_petitioner_name": {
+        "confidence": 0.88,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "registration_number": "H1B2024XYZ789"
+    },
+    "extraction_b": {
+      "employer_name": "TechVision Innovations LLC"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_petitioner_invoice_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.h1b_registration_invoice_petitioner_name mismatch None\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_petitioner_invoice_mismatch",
+  "track": "h1b_doc_check"
+}

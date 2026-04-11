@@ -1,0 +1,40 @@
+{
+  "case_id": "A-stem_opt-i140_employer_change_portability-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "i140_employer_change_portability"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Candidate at I-140 stage changed employers, triggering portability rule; is_nra=no from branch 3 (i140 stage)."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "8cc9b59031c3678f39d9fef123b10af02c517ccc98da1325c3c7d68d9d0594eb",
+  "input": {
+    "answers": {
+      "employer_changed": "yes",
+      "employer_name": "Acme Technologies Inc",
+      "employment_status": "full_time",
+      "has_employment": "yes",
+      "stage": "i140",
+      "years_in_us": 7
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2025-03-01",
+      "job_title": "Software Architect",
+      "start_date": "2022-03-01"
+    },
+    "extraction_b": {
+      "employer_name": "Beta Systems LLC",
+      "job_title": "Software Architect"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'i140_employer_change_portability'. All of these conditions must be satisfied simultaneously:\n  - answers.employer_changed eq yes\n  - answers.stage eq i140\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "i140_employer_change_portability",
+  "track": "stem_opt"
+}

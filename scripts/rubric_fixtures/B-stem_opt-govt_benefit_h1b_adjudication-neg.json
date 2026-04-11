@@ -1,0 +1,35 @@
+{
+  "case_id": "B-stem_opt-govt_benefit_h1b_adjudication-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "govt_benefit_h1b_adjudication"
+    ],
+    "notes": "Candidate is in h1b stage (satisfies stage condition) but has_govt_health_plan is 'no' (breaks first condition), so rule should not fire despite being structurally close."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "ba4e117ce9ac03c651c6a849476292236b3158519c226f1b3fc7146f7517b2ad",
+  "input": {
+    "answers": {
+      "compensation": 95000,
+      "employer_name": "Apex Innovations LLC",
+      "employment_status": "employed",
+      "has_govt_health_plan": "no",
+      "job_title": "Data Scientist",
+      "stage": "h1b",
+      "start_date": "2023-10-01",
+      "years_in_us": 7
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'govt_benefit_h1b_adjudication', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.has_govt_health_plan eq yes\n  - answers.stage in ['h1b', 'i140']\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "govt_benefit_h1b_adjudication",
+  "track": "stem_opt"
+}

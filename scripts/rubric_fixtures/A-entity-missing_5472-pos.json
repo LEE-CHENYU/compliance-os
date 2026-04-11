@@ -1,0 +1,31 @@
+{
+  "case_id": "A-entity-missing_5472-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [
+      "missing_5472"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Foreign-owned SMLLC missing Form 5472 triggers warning; is_nra=yes derived from owner_residency=nonresident_alien."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "26a1030c6a73428068eb04188999068af17c39213b44326da84d85b793fbe1d2",
+  "input": {
+    "answers": {
+      "entity_type": "smllc",
+      "owner_residency": "nonresident_alien"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {
+      "form_5472_present": "False"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'missing_5472'. All of these conditions must be satisfied simultaneously:\n  - answers.owner_residency neq us_citizen_or_pr\n  - answers.entity_type eq smllc\n  - extraction_b.form_5472_present eq False\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "missing_5472",
+  "track": "entity"
+}

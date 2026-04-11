@@ -1,0 +1,44 @@
+{
+  "case_id": "A-data_room-form_1042s_tax_return_year_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "form_1042s_tax_return_year_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Form 1042-S tax year does not match the tax return year; engine must fire form_1042s_tax_return_year_mismatch."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "70fe000e8556564f60d6f4b6d8183b3042c80b208122d443d59672ddea45babc",
+  "input": {
+    "answers": {
+      "employment_status": "part_time",
+      "has_employment": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "1042s_tax_return_tax_year": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "form_type": "1042s",
+      "income_reporting": "nonresident",
+      "tax_software_used": "TurboTax"
+    },
+    "extraction_b": {
+      "compensation": "18000",
+      "employer_name": "Stellar Research Labs Inc",
+      "job_title": "Research Assistant"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'form_1042s_tax_return_year_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.1042s_tax_return_tax_year mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "form_1042s_tax_return_year_mismatch",
+  "track": "data_room"
+}

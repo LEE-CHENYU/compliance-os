@@ -1,0 +1,39 @@
+{
+  "case_id": "B-data_room-i94_class_of_admission_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "i94_class_of_admission_mismatch"
+    ],
+    "notes": "I-94 and I-20 class of admission match perfectly, so the rule requiring a mismatch is not satisfied."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "7bb7f479c9d655ce82600a3fbcc94125b3344a8c8a5bcfd7b36560b79327dea6",
+  "input": {
+    "answers": {
+      "has_employment": "no",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "i94_i20_class_of_admission": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "cpt_application_i20_student_name": "Elena Fitzgerald"
+    },
+    "extraction_b": {
+      "visa_type": "F-1"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'i94_class_of_admission_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.i94_i20_class_of_admission mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "i94_class_of_admission_mismatch",
+  "track": "data_room"
+}

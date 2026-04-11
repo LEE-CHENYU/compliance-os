@@ -1,0 +1,41 @@
+{
+  "case_id": "A-data_room-cpt_application_i20_student_name_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "cpt_application_i20_student_name_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "CPT application student name mismatches I-20 student name; engine must fire cpt_application_i20_student_name_mismatch. is_nra=yes from f1_student stage with years<6."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "c3e00467f0cf6b12c7a0ff8b0563f5bdbd065824269b444ee2717b4826efa96f",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "cpt_application_i20_student_name": {
+        "confidence": 0.89,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "form_type": "I-20",
+      "visa_type": "F-1"
+    },
+    "extraction_b": {
+      "form_type": "CPT Application"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'cpt_application_i20_student_name_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.cpt_application_i20_student_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "cpt_application_i20_student_name_mismatch",
+  "track": "data_room"
+}

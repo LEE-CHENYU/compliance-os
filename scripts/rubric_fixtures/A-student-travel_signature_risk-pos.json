@@ -1,0 +1,30 @@
+{
+  "case_id": "A-student-travel_signature_risk-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "travel_signature_risk"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "F-1 student planning international travel triggers travel signature warning; is_nra=yes from branch 2 (f1_student + years<6)."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "49e6f2ee1c07d294e5aabc719268a26e6febcbedab457bd992ea787ee4a1e04f",
+  "input": {
+    "answers": {
+      "planning_travel": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'travel_signature_risk'. All of these conditions must be satisfied simultaneously:\n  - answers.planning_travel eq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "travel_signature_risk",
+  "track": "student"
+}

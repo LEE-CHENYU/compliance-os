@@ -1,0 +1,32 @@
+{
+  "case_id": "A-stem_opt-foreign_accounts_fbar_risk-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "foreign_accounts_fbar_risk"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "STEM OPT student with 2 years in US (is_nra=yes) reports foreign accounts; neq condition satisfied so rule fires with FBAR warning."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "f5293982fb6bc7add5e3a265675d6ff78861668d8b5ad4315e4ef00e0f0a11fb",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "has_foreign_accounts": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'foreign_accounts_fbar_risk'. All of these conditions must be satisfied simultaneously:\n  - answers.has_foreign_accounts eq yes\n  - answers.is_nra neq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "foreign_accounts_fbar_risk",
+  "track": "stem_opt"
+}

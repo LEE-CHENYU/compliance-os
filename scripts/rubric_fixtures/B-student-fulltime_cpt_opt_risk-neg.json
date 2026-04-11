@@ -1,0 +1,41 @@
+{
+  "case_id": "B-student-fulltime_cpt_opt_risk-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "fulltime_cpt_opt_risk"
+    ],
+    "notes": "Student has exactly 11 months of full-time CPT, which does not exceed the 12-month threshold (gt 11 is false), so the rule must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "1087c46368ee9481ef42b5049f24a8cf2751cf718df339d7dd9cb5902093f2c0",
+  "input": {
+    "answers": {
+      "cpt_fulltime_months": 11,
+      "employer_changed": "no",
+      "employment_status": "authorized",
+      "has_cpt_authorization": "yes",
+      "has_employment": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "cpt_application_i20_student_name": "Jordan Kim",
+      "end_date": "2023-12-15",
+      "start_date": "2023-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "TechFlow Analytics Inc",
+      "job_title": "Software Engineering Intern"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'fulltime_cpt_opt_risk', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.cpt_fulltime_months gt 11\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "fulltime_cpt_opt_risk",
+  "track": "student"
+}

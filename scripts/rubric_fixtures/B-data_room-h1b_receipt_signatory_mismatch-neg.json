@@ -1,0 +1,39 @@
+{
+  "case_id": "B-data_room-h1b_receipt_signatory_mismatch-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_receipt_signatory_mismatch"
+    ],
+    "notes": "H-1B registration signatory and payment receipt cardholder match; rule requires mismatch operator to fire, so it must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "076ba25612fcc424a0d5140992b8fe1e8b6ef467017f35978f69d61e75010c22",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "h1b",
+      "years_in_us": 7
+    },
+    "comparisons": {
+      "h1b_registration_receipt_signatory_name": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "h1b_registration_receipt_signatory_name": "Alexandra Chen"
+    },
+    "extraction_b": {
+      "h1b_registration_receipt_signatory_name": "Alexandra Chen"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_receipt_signatory_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.h1b_registration_receipt_signatory_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_receipt_signatory_mismatch",
+  "track": "data_room"
+}

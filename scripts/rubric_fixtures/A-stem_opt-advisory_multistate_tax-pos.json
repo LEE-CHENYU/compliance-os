@@ -1,0 +1,45 @@
+{
+  "case_id": "A-stem_opt-advisory_multistate_tax-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "advisory_multistate_tax"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Work location mismatch detected between I-983 (NY) and employment letter (CA), triggering multistate tax advisory; is_nra=yes from branch 2 (stem_opt + years<6)."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "fb47db9783dd604ff8efedd96de67ac17ce47d62ea206e89bec5585e2961a12c",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "work_location": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics Corp",
+      "end_date": "2027-01-14",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-15",
+      "work_location": "New York, NY"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Corp",
+      "work_location": "San Francisco, CA"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'advisory_multistate_tax'. All of these conditions must be satisfied simultaneously:\n  - comparison.work_location mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "advisory_multistate_tax",
+  "track": "stem_opt"
+}

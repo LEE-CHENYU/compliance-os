@@ -1,0 +1,42 @@
+{
+  "case_id": "B-stem_opt-employer_name_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "employer_name_mismatch"
+    ],
+    "notes": "Employer names match exactly between I-983 and E-Verify; the single comparison condition is not satisfied so rule must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "03f59260bc285cecbe93bd9d6464c782f5c42df0c4e7cd4f6284bb4f06372e0c",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "employer_name": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Stellar Dynamics Inc.",
+      "end_date": "2027-01-09",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-10"
+    },
+    "extraction_b": {
+      "employer_name": "Stellar Dynamics Inc."
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'employer_name_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.employer_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "employer_name_mismatch",
+  "track": "stem_opt"
+}

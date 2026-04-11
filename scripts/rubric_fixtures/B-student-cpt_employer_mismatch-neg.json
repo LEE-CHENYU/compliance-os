@@ -1,0 +1,45 @@
+{
+  "case_id": "B-student-cpt_employer_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "cpt_employer_mismatch"
+    ],
+    "notes": "CPT employer on I-20 matches employment letter perfectly; rule must NOT fire despite student being on CPT with employment."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "69b647139818823f0e0327592efe476db1b47149e0b0470a8053a171d669922a",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "has_employment": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "employer_name": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Stellar Robotics Inc",
+      "end_date": "2024-12-15",
+      "job_title": "Machine Learning Intern",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Stellar Robotics Inc",
+      "job_title": "Machine Learning Intern"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'cpt_employer_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.employer_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "cpt_employer_mismatch",
+  "track": "student"
+}

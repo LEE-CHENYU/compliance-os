@@ -1,0 +1,31 @@
+{
+  "case_id": "B-student-advisory_tax_filing_student-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "advisory_tax_filing_student"
+    ],
+    "notes": "H-1B stage means track student rules do not apply; advisory_tax_filing_student targets F-1 students specifically and should not fire for H-1B holders."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:46Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "8d591f6eefa5299dcf2ae3eea2d573b03d004ebcc0907036d11fad00f3eed672",
+  "input": {
+    "answers": {
+      "employment_status": "employed",
+      "has_employment": "yes",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'advisory_tax_filing_student', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  (no conditions)\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "advisory_tax_filing_student",
+  "track": "student"
+}

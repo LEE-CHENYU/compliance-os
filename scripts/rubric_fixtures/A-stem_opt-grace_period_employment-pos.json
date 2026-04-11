@@ -1,0 +1,36 @@
+{
+  "case_id": "A-stem_opt-grace_period_employment-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "grace_period_employment"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "OPT end_date is in the past and stage is opt (not stem_opt), triggering grace period employment prohibition."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "74a04252fa7ff7cd3837b48a3f29ea6fd0c536611392471ccbe1fb91bd14fbca",
+  "input": {
+    "answers": {
+      "employment_status": "working",
+      "has_employment": "yes",
+      "stage": "opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "employer_name": "Acme Analytics Corp",
+      "end_date": "2024-11-30",
+      "job_title": "Data Analyst",
+      "start_date": "2023-12-01"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'grace_period_employment'. All of these conditions must be satisfied simultaneously:\n  - extraction_a.end_date lt today\n  - answers.stage neq stem_opt\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "grace_period_employment",
+  "track": "stem_opt"
+}

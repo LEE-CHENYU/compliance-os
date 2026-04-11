@@ -1,0 +1,39 @@
+{
+  "case_id": "A-data_room-employment_letter_i9_name_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "employment_letter_i9_name_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Employment letter and Form I-9 show different employee names triggering critical identity inconsistency finding."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "4f1473960e11b7004da081ef1746d54573415c2a3176dc8ed28347f78505f2f4",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_employment": "yes",
+      "stage": "h1b"
+    },
+    "comparisons": {
+      "employment_letter_i9_employee_name": {
+        "confidence": 0.88,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employment_letter_i9_employee_name": "Alexandra Morgan Chen"
+    },
+    "extraction_b": {
+      "employment_letter_i9_employee_name": "Alexandra M. Chen-Rodriguez"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'employment_letter_i9_name_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.employment_letter_i9_employee_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "employment_letter_i9_name_mismatch",
+  "track": "data_room"
+}

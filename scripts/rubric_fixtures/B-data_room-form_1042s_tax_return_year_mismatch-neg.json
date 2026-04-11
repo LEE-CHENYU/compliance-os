@@ -1,0 +1,44 @@
+{
+  "case_id": "B-data_room-form_1042s_tax_return_year_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "form_1042s_tax_return_year_mismatch"
+    ],
+    "notes": "1042-S and tax return tax years match perfectly, so the mismatch condition is not satisfied and the rule must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "ef313869b2ef5a56dcc6e4f97dc2b8728063a6b3ad75e1ba3e5bb702ece389eb",
+  "input": {
+    "answers": {
+      "employment_status": "part_time",
+      "has_employment": "yes",
+      "income_reporting": "1042s",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "1042s_tax_return_tax_year": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "compensation": "8500.00",
+      "employer_name": "Oakridge University Library",
+      "form_type": "1042s"
+    },
+    "extraction_b": {
+      "filed_8843": "yes",
+      "form_type": "1040NR"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'form_1042s_tax_return_year_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.1042s_tax_return_tax_year mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "form_1042s_tax_return_year_mismatch",
+  "track": "data_room"
+}

@@ -1,0 +1,36 @@
+{
+  "case_id": "B-stem_opt-grace_period_employment-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "grace_period_employment"
+    ],
+    "notes": "OPT end_date is in the past BUT stage is stem_opt, so the second condition (stage neq stem_opt) fails and the rule does not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "5d4c664ab05ebfc3856babd9da4f21e0c1c3681455e5b1bf7576d2fdbdc2e12c",
+  "input": {
+    "answers": {
+      "employment_status": "active",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "employer_name": "Acme Technologies Inc",
+      "end_date": "2023-08-15",
+      "job_title": "Software Engineer",
+      "start_date": "2022-06-01"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'grace_period_employment', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - extraction_a.end_date lt today\n  - answers.stage neq stem_opt\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "grace_period_employment",
+  "track": "stem_opt"
+}

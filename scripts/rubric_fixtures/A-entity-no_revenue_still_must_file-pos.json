@@ -1,0 +1,29 @@
+{
+  "case_id": "A-entity-no_revenue_still_must_file-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [
+      "no_revenue_still_must_file"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Foreign-owned SMLLC triggers filing requirement regardless of revenue; owner_residency is nonresident_alien (neq us_citizen_or_pr) and entity_type is smllc."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "e865ca0a59bb9e07accf63ffd7b15e5de94032baca2b2942b8c00cb11c6dc354",
+  "input": {
+    "answers": {
+      "entity_type": "smllc",
+      "owner_residency": "nonresident_alien"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'no_revenue_still_must_file'. All of these conditions must be satisfied simultaneously:\n  - answers.owner_residency neq us_citizen_or_pr\n  - answers.entity_type eq smllc\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "no_revenue_still_must_file",
+  "track": "entity"
+}

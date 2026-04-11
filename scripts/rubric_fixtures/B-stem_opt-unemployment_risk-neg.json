@@ -1,0 +1,43 @@
+{
+  "case_id": "B-stem_opt-unemployment_risk-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "unemployment_risk"
+    ],
+    "notes": "Student is on STEM OPT (satisfies stage condition) but is employed (fails employment_status condition), so unemployment_risk must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "3dd04d162ba61f6bc26cca0a07a8bfff3924c1cf30bac5c38ba84ad999b0848c",
+  "input": {
+    "answers": {
+      "employer_name": "Quantum Dynamics LLC",
+      "employment_status": "employed",
+      "full_time": "yes",
+      "has_employment": "yes",
+      "job_title": "Machine Learning Engineer",
+      "stage": "stem_opt",
+      "start_date": "2024-01-15",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics LLC",
+      "end_date": "2027-01-14",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employment_letter_paystub_employer_name": "Quantum Dynamics LLC",
+      "job_title": "Machine Learning Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'unemployment_risk', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.employment_status in ['not_employed', 'between_jobs']\n  - answers.stage in ['stem_opt', 'opt']\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "unemployment_risk",
+  "track": "stem_opt"
+}

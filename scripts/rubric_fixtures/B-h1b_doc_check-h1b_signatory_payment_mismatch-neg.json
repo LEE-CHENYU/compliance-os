@@ -1,0 +1,40 @@
+{
+  "case_id": "B-h1b_doc_check-h1b_signatory_payment_mismatch-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_signatory_payment_mismatch"
+    ],
+    "notes": "The comparison status is 'match' not 'mismatch', so the rule should not fire even though the field is present and populated."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "0045bd4d892d2cfc028eacbe18e948d4eca25d98e11c9eb62679c8adabf8d43b",
+  "input": {
+    "answers": {
+      "employer_name": "Acme Innovations LLC",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "h1b_registration_receipt_signatory_name": {
+        "confidence": 0.95,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "h1b_registration_receipt_signatory_name": "Jordan Kim",
+      "registration_number": "ABC9876543210"
+    },
+    "extraction_b": {
+      "h1b_registration_invoice_petitioner_name": "Acme Innovations LLC"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_signatory_payment_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.h1b_registration_receipt_signatory_name mismatch None\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_signatory_payment_mismatch",
+  "track": "h1b_doc_check"
+}

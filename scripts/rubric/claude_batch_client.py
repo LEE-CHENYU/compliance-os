@@ -57,6 +57,35 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def _normalize_subscores(obj) -> dict:
+    """Normalize the judge's `subscores` field to dict-of-dimension shape.
+
+    The rubric spec says `subscores` should be a dict like
+    {"categorization": {...}, "findings": {...}}, but Opus 4.6 has been
+    observed returning a list of dimension objects instead:
+    [{"dimension": "categorization", ...}, {"dimension": "findings", ...}].
+
+    Both are valid interpretations of the prompt; this helper folds either
+    shape into the spec's canonical dict form so downstream aggregation can
+    always call .items() safely.
+    """
+    if isinstance(obj, dict):
+        return obj
+    if isinstance(obj, list):
+        out: dict = {}
+        for entry in obj:
+            if not isinstance(entry, dict):
+                continue
+            dim = entry.get("dimension")
+            if not dim:
+                continue
+            # Strip the "dimension" key from the body; keep score/criteria_applied/note
+            body = {k: v for k, v in entry.items() if k != "dimension"}
+            out[dim] = body
+        return out
+    return {}
+
+
 def _extract_json_from_text(text: str) -> dict:
     """Parse JSON out of a model response, handling common wrappers.
 
@@ -419,7 +448,7 @@ def batch_judge(
                     judged_at=_now_iso(),
                     judged_by=f"claude-batch/{JUDGE_MODEL}",
                     verdict=parsed.get("verdict", "unrunnable"),
-                    subscores=parsed.get("subscores", {}),
+                    subscores=_normalize_subscores(parsed.get("subscores", {})),
                     flags=parsed.get("flags", []),
                     raw_judge_output=text,
                 )

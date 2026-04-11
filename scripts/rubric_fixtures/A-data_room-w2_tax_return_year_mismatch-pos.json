@@ -1,0 +1,42 @@
+{
+  "case_id": "A-data_room-w2_tax_return_year_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "w2_tax_return_year_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "W-2 form tax year does not match the tax return year in the data room, triggering the comparison mismatch rule."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "49f4b0431c280d8294bb327c1c6e2885b01f9b61b875b83ad57aada90f83d54f",
+  "input": {
+    "answers": {
+      "employment_status": "full_time",
+      "has_employment": "yes",
+      "stage": "h1b",
+      "years_in_us": 8
+    },
+    "comparisons": {
+      "w2_tax_return_tax_year": {
+        "confidence": 0.98,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "compensation": 125000,
+      "employer_name": "Acme Technology Solutions Inc",
+      "job_title": "Software Engineer"
+    },
+    "extraction_b": {
+      "employer_name": "Acme Technology Solutions Inc"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'w2_tax_return_year_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.w2_tax_return_tax_year mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "w2_tax_return_year_mismatch",
+  "track": "data_room"
+}

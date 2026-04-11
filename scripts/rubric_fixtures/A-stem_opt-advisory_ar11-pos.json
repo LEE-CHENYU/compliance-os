@@ -1,0 +1,44 @@
+{
+  "case_id": "A-stem_opt-advisory_ar11-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "advisory_ar11"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Work location mismatch between documents triggers AR-11 advisory; is_nra=yes from stem_opt stage with 2 years in US."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "05337db41b1ea58272e5032bf02ad27b0cfc8c1cef9d8c92e09ad37595ed588b",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "planning_travel": "no",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "work_location": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics LLC",
+      "end_date": "2027-01-14",
+      "start_date": "2024-01-15",
+      "work_location": "456 Innovation Blvd, Austin, TX 78701"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics LLC",
+      "work_location": "123 Tech Park Dr, San Francisco, CA 94102"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'advisory_ar11'. All of these conditions must be satisfied simultaneously:\n  - comparison.work_location mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "advisory_ar11",
+  "track": "stem_opt"
+}

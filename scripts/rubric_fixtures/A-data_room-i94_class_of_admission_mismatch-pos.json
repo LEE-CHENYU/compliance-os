@@ -1,0 +1,41 @@
+{
+  "case_id": "A-data_room-i94_class_of_admission_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "i94_class_of_admission_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "I-94 and I-20 show mismatched class of admission values, triggering critical finding for status-history inconsistency; is_nra=yes from f1_student stage with years_in_us=2."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "9134dcf09eef68da8cdbcc5644fcd41a4ca75b5339983c3570981156cbf350b9",
+  "input": {
+    "answers": {
+      "has_employment": "no",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "i94_i20_class_of_admission": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "form_type": "I-94",
+      "visa_type": "F-1"
+    },
+    "extraction_b": {
+      "form_type": "I-20",
+      "visa_type": "F-1"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'i94_class_of_admission_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.i94_i20_class_of_admission mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "i94_class_of_admission_mismatch",
+  "track": "data_room"
+}

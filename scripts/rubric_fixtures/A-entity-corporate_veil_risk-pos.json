@@ -1,0 +1,30 @@
+{
+  "case_id": "A-entity-corporate_veil_risk-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [
+      "corporate_veil_risk"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Entity has no separate business bank account, triggering corporate veil risk warning."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "3c50dbc4d56666fbeb05b1a8fd2020022529230731a197bd31453c2b94915961",
+  "input": {
+    "answers": {
+      "entity_type": "LLC",
+      "formation_age": "18",
+      "separate_bank_account": "no"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'corporate_veil_risk'. All of these conditions must be satisfied simultaneously:\n  - answers.separate_bank_account eq no\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "corporate_veil_risk",
+  "track": "entity"
+}

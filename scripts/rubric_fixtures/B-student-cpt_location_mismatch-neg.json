@@ -1,0 +1,44 @@
+{
+  "case_id": "B-student-cpt_location_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "cpt_location_mismatch"
+    ],
+    "notes": "Work locations match exactly between I-20 and employment letter, so cpt_location_mismatch must not fire despite all other CPT context being present."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "7becd070719786d1514f94b3aaaefdb5410bd819169b8ac2c9d76c0f2fbd7681",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "work_location": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "TechStart Labs Inc",
+      "end_date": "2024-12-15",
+      "start_date": "2024-01-15",
+      "work_location": "123 Innovation Drive, Austin, TX 78701"
+    },
+    "extraction_b": {
+      "employer_name": "TechStart Labs Inc",
+      "work_location": "123 Innovation Drive, Austin, TX 78701"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'cpt_location_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.work_location mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "cpt_location_mismatch",
+  "track": "student"
+}

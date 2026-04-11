@@ -1,0 +1,30 @@
+{
+  "case_id": "A-student-advisory_maintain_fulltime-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "advisory_maintain_fulltime"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Rule has no conditions and always fires to remind F-1 students about full-time enrollment requirements."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "a435205487e71482234d2c3299b22a6685968e384cdcc58552bbd4c068cfb3fc",
+  "input": {
+    "answers": {
+      "has_employment": "no",
+      "stage": "f1_student",
+      "years_in_us": 1
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'advisory_maintain_fulltime'. All of these conditions must be satisfied simultaneously:\n  (no conditions \u2014 rule always fires)\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "advisory_maintain_fulltime",
+  "track": "student"
+}

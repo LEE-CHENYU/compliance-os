@@ -1,0 +1,41 @@
+{
+  "case_id": "A-data_room-h1b_registration_entity_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "h1b_registration_entity_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "H-1B registration lists Nimbus Technologies Inc. but G-28 attorney form lists CloudCore Systems LLC as client entity; engine must fire h1b_registration_entity_mismatch."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "d0e4ef4d508adcb45875925c254fad5ab31d331b7650c155f401877ebcf57304",
+  "input": {
+    "answers": {
+      "employer_name": "Nimbus Technologies Inc.",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "h1b_registration_g28_entity_name": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Nimbus Technologies Inc.",
+      "petition_status": "approved",
+      "registration_number": "REG-2024-XY8901"
+    },
+    "extraction_b": {
+      "employer_name": "CloudCore Systems LLC"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_registration_entity_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.h1b_registration_g28_entity_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_registration_entity_mismatch",
+  "track": "data_room"
+}

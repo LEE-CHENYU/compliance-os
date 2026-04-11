@@ -1,0 +1,31 @@
+{
+  "case_id": "A-entity-nra_scorp_invalid-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [
+      "nra_scorp_invalid"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "H-1B visa holder (NRA) owns an S-Corp filing 1120-S; both conditions satisfied so rule must fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "b91b2932aa731326abeb55ab8eba2557d534023647e45a0d65fb86344134b44b",
+  "input": {
+    "answers": {
+      "entity_type": "s_corp",
+      "owner_residency": "h1b_visa_holder"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {
+      "form_type": "1120-S"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'nra_scorp_invalid'. All of these conditions must be satisfied simultaneously:\n  - answers.owner_residency neq us_citizen_or_pr\n  - extraction_b.form_type eq 1120-S\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "nra_scorp_invalid",
+  "track": "entity"
+}

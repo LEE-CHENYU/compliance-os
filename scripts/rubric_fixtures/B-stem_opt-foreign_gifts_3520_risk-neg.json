@@ -1,0 +1,39 @@
+{
+  "case_id": "B-stem_opt-foreign_gifts_3520_risk-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "foreign_gifts_3520_risk"
+    ],
+    "notes": "Received foreign gifts but is_nra=yes (stem_opt + 2 years), so second condition (is_nra neq yes) fails and rule does not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "50fd898b72b00120c32c0d39da6b448d17ca089a1bb3b9fe5bf8708b47c272ff",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "has_employment": "yes",
+      "received_foreign_gifts": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2027-01-14",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Robotics Inc"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'foreign_gifts_3520_risk', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.received_foreign_gifts eq yes\n  - answers.is_nra neq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "foreign_gifts_3520_risk",
+  "track": "stem_opt"
+}

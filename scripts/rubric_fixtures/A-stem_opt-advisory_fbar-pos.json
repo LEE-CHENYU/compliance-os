@@ -1,0 +1,36 @@
+{
+  "case_id": "A-stem_opt-advisory_fbar-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "advisory_fbar"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "STEM OPT student with 7 years in US derives is_nra=no (\u22656 years), satisfying advisory_fbar condition (is_nra neq yes)."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "dcae6138c913d705bf8a47215802df27708c651d3edfc378d1a4b7d38c257e66",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 7
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2026-05-31",
+      "start_date": "2023-06-01"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Inc"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'advisory_fbar'. All of these conditions must be satisfied simultaneously:\n  - answers.is_nra neq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "advisory_fbar",
+  "track": "stem_opt"
+}

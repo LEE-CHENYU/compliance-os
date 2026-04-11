@@ -1,0 +1,37 @@
+{
+  "case_id": "B-h1b_doc_check-h1b_missing_registration_packet-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_missing_registration_packet"
+    ],
+    "notes": "Registration packet is present (missing_registration_packet=false), so rule must not fire despite being in h1b_doc_check track."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "d313b060f419bc83c76b2271b61e08503f603572a32459d82c9a592ab32dfeb1",
+  "input": {
+    "answers": {
+      "employer_name": "Acme Software Technologies Inc",
+      "job_title": "Software Engineer",
+      "missing_registration_packet": false,
+      "petition_status": "approved",
+      "registration_number": "H1B2024123456",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "h1b_registration_invoice_petitioner_name": "Acme Software Technologies Inc",
+      "h1b_registration_receipt_signatory_name": "Jane Smith"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_missing_registration_packet', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.missing_registration_packet eq True\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_missing_registration_packet",
+  "track": "h1b_doc_check"
+}

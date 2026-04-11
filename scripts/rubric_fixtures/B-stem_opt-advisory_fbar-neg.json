@@ -1,0 +1,40 @@
+{
+  "case_id": "B-stem_opt-advisory_fbar-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "advisory_fbar"
+    ],
+    "notes": "Rule requires is_nra neq yes, but derivation yields is_nra=yes (stem_opt stage + 2 years < 6), so the condition fails and advisory_fbar must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "35b2a348a6ce0e4647294ed3d5c05879f3039ef27a00c781234898ffa372f43b",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "full_time",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "compensation": "95000",
+      "end_date": "2027-01-09",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-10"
+    },
+    "extraction_b": {
+      "employer_name": "Neural Dynamics Corp",
+      "job_title": "Machine Learning Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'advisory_fbar', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.is_nra neq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "advisory_fbar",
+  "track": "stem_opt"
+}

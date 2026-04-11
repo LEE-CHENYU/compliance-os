@@ -1,0 +1,43 @@
+{
+  "case_id": "B-data_room-w2_tax_return_year_mismatch-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "w2_tax_return_year_mismatch"
+    ],
+    "notes": "W-2 and tax return both show matching 2023 tax year; rule requires mismatch to fire but comparison shows match."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "3644c3f3c3b5b070e5fe07d794c109c35b5cc004db0dcbdc6ee36ccbff75af4a",
+  "input": {
+    "answers": {
+      "employment_status": "full_time",
+      "has_employment": "yes",
+      "stage": "h1b",
+      "years_in_us": 7
+    },
+    "comparisons": {
+      "w2_tax_return_tax_year": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "compensation": "95000",
+      "employer_name": "Acme Corporation",
+      "form_type": "W-2"
+    },
+    "extraction_b": {
+      "form_type": "1040",
+      "tax_software_used": "TurboTax"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'w2_tax_return_year_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.w2_tax_return_tax_year mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "w2_tax_return_year_mismatch",
+  "track": "data_room"
+}

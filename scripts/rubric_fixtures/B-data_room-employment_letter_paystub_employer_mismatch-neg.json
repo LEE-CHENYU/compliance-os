@@ -1,0 +1,39 @@
+{
+  "case_id": "B-data_room-employment_letter_paystub_employer_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "employment_letter_paystub_employer_mismatch"
+    ],
+    "notes": "Employment letter and paystub show matching employer names; rule requires mismatch status to fire, so this case must not trigger the warning."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "73829b35cfd79c6c84a7fb2c7d0db2c92f4e9f1877808ee66d0f53c963673a03",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "employment_letter_paystub_employer_name": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Acme Technologies Inc"
+    },
+    "extraction_b": {
+      "employer_name": "Acme Technologies Inc"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'employment_letter_paystub_employer_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.employment_letter_paystub_employer_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "employment_letter_paystub_employer_mismatch",
+  "track": "data_room"
+}

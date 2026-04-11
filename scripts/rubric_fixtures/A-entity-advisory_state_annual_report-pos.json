@@ -1,0 +1,30 @@
+{
+  "case_id": "A-entity-advisory_state_annual_report-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [
+      "advisory_state_annual_report"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Advisory rule with no conditions always fires for entity track; is_nra=yes derived from owner_residency=nonresident."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "d579a759790305e19d272ed346e01240a3806750bd74f55147bc71dc38e735c1",
+  "input": {
+    "answers": {
+      "entity_type": "LLC",
+      "formation_age": 18,
+      "owner_residency": "nonresident"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'advisory_state_annual_report'. All of these conditions must be satisfied simultaneously:\n  (no conditions \u2014 rule always fires)\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "advisory_state_annual_report",
+  "track": "entity"
+}

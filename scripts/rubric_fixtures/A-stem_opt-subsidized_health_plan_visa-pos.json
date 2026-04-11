@@ -1,0 +1,32 @@
+{
+  "case_id": "A-stem_opt-subsidized_health_plan_visa-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "subsidized_health_plan_visa"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Candidate on STEM OPT enrolled in government-subsidized health plan triggers financial self-sufficiency warning; is_nra=yes from branch 2 (stem_opt + years<6)."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "6d572140041df612d206eadb27382bca4eb3a565fdd7ff81d9367c7c012babb8",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "has_govt_health_plan": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'subsidized_health_plan_visa'. All of these conditions must be satisfied simultaneously:\n  - answers.has_govt_health_plan eq yes\n  - answers.stage in ['opt', 'stem_opt', 'h1b']\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "subsidized_health_plan_visa",
+  "track": "stem_opt"
+}
