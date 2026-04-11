@@ -39,6 +39,8 @@ from rubric.io import (
 )
 from rubric.evaluate import evaluate_case, load_eval_cache
 from rubric.models import FixtureRecord
+from rubric.codex_client import call_codex, CodexCallError as CcError
+from rubric.codex_client import _extract_token_counts
 
 
 def test_case_spec_roundtrip_to_dict():
@@ -493,3 +495,139 @@ def test_evaluate_case_handles_unknown_track(tmp_path):
 
 def test_load_eval_cache_returns_none_for_missing(tmp_path):
     assert load_eval_cache("nonexistent", tmp_path) is None
+
+
+class _FakeProc:
+    def __init__(self, stdout="", stderr="", returncode=0):
+        self.stdout = stdout
+        self.stderr = stderr
+        self.returncode = returncode
+
+
+def _make_schema(tmp_path: Path) -> Path:
+    schema_path = tmp_path / "schema.json"
+    schema_path.write_text(json.dumps({
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "required": ["verdict"],
+        "properties": {"verdict": {"type": "string"}},
+    }))
+    return schema_path
+
+
+def test_call_codex_success_path(monkeypatch, tmp_path):
+    schema_path = _make_schema(tmp_path)
+    expected_output = {"verdict": "pass"}
+
+    def fake_run(cmd, input=None, text=None, capture_output=None, timeout=None):
+        # Simulate codex writing to --output-last-message
+        out_file = cmd[cmd.index("--output-last-message") + 1]
+        Path(out_file).write_text(json.dumps(expected_output))
+        return _FakeProc(stdout='{"type":"usage","input_tokens":10,"output_tokens":5}\n')
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    result = call_codex(prompt="hi", schema_path=schema_path)
+    assert result.parsed == {"verdict": "pass"}
+    assert result.tokens_in == 10
+    assert result.tokens_out == 5
+
+
+def test_call_codex_retries_on_parse_failure(monkeypatch, tmp_path):
+    schema_path = _make_schema(tmp_path)
+    call_count = {"n": 0}
+
+    def fake_run(cmd, input=None, text=None, capture_output=None, timeout=None):
+        out_file = cmd[cmd.index("--output-last-message") + 1]
+        call_count["n"] += 1
+        if call_count["n"] == 1:
+            Path(out_file).write_text("not valid json at all")
+        else:
+            Path(out_file).write_text(json.dumps({"verdict": "pass"}))
+        return _FakeProc(stdout="")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    result = call_codex(prompt="hi", schema_path=schema_path)
+    assert result.parsed == {"verdict": "pass"}
+    assert result.attempts == 2
+
+
+def test_call_codex_retries_on_schema_violation(monkeypatch, tmp_path):
+    schema_path = _make_schema(tmp_path)
+    call_count = {"n": 0}
+
+    def fake_run(cmd, input=None, text=None, capture_output=None, timeout=None):
+        out_file = cmd[cmd.index("--output-last-message") + 1]
+        call_count["n"] += 1
+        if call_count["n"] == 1:
+            Path(out_file).write_text(json.dumps({"wrong_key": "oops"}))
+        else:
+            Path(out_file).write_text(json.dumps({"verdict": "pass"}))
+        return _FakeProc(stdout="")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    result = call_codex(prompt="hi", schema_path=schema_path)
+    assert result.parsed == {"verdict": "pass"}
+    assert result.attempts == 2
+
+
+def test_call_codex_raises_after_exhausting_retries(monkeypatch, tmp_path):
+    schema_path = _make_schema(tmp_path)
+
+    def fake_run(cmd, input=None, text=None, capture_output=None, timeout=None):
+        out_file = cmd[cmd.index("--output-last-message") + 1]
+        Path(out_file).write_text("not json")
+        return _FakeProc(stdout="")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    with pytest.raises(CcError) as exc_info:
+        call_codex(prompt="hi", schema_path=schema_path, max_retries=1)
+    assert exc_info.value.kind == "parse_failure"
+
+
+def test_call_codex_falls_back_on_unsupported_model(monkeypatch, tmp_path):
+    schema_path = _make_schema(tmp_path)
+    calls = []
+
+    def fake_run(cmd, input=None, text=None, capture_output=None, timeout=None):
+        model_idx = cmd.index("--model") + 1
+        model = cmd[model_idx]
+        calls.append(model)
+        out_file = cmd[cmd.index("--output-last-message") + 1]
+        if model == "gpt-5.4":
+            return _FakeProc(stdout="model is not supported", returncode=1)
+        else:
+            Path(out_file).write_text(json.dumps({"verdict": "pass"}))
+            return _FakeProc(stdout="")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    result = call_codex(
+        prompt="hi",
+        schema_path=schema_path,
+        model="gpt-5.4",
+        fallback_model="gpt-5.4-mini",
+    )
+    assert calls == ["gpt-5.4", "gpt-5.4-mini"]
+    assert result.parsed == {"verdict": "pass"}
+
+
+def test_call_codex_fails_fast_on_subprocess_error_not_model(monkeypatch, tmp_path):
+    schema_path = _make_schema(tmp_path)
+
+    def fake_run(cmd, input=None, text=None, capture_output=None, timeout=None):
+        return _FakeProc(stdout="", stderr="permission denied", returncode=2)
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    with pytest.raises(CcError) as exc_info:
+        call_codex(prompt="hi", schema_path=schema_path, fallback_model=None)
+    assert exc_info.value.kind == "subprocess_failure"
+
+
+def test_extract_token_counts_parses_last_usage_event():
+    events = [
+        {"type": "start"},
+        {"type": "usage", "input_tokens": 111, "output_tokens": 222},
+        {"type": "end"},
+    ]
+    tin, tout = _extract_token_counts(events)
+    assert tin == 111
+    assert tout == 222
