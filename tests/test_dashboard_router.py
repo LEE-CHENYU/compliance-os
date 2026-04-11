@@ -11,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 import compliance_os.web.routers.dashboard as dashboard_mod
+import compliance_os.web.routers.form8843 as form8843_mod
 from compliance_os.web.app import app
 from compliance_os.web.models.database import get_session
 from compliance_os.web.models.tables_v2 import (
@@ -1386,3 +1387,119 @@ def test_dashboard_timeline_i983_evaluation_prompts_follow_active_stem_chains_on
     deadline_dates = {item["date"] for item in payload["deadlines"] if item["title"] == "I-983 12-month evaluation due"}
     assert "2026-03-17" in deadline_dates
     assert "2025-01-23" not in deadline_dates
+
+
+def test_dashboard_timeline_recommends_form_8843_for_current_student(client):
+    register = client.post("/api/auth/register", json={"email": "dashboard-student-service@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        session.add(
+            CheckRow(
+                track="student",
+                status="reviewed",
+                user_id=user_id,
+                answers={"stage": "pre_completion"},
+            )
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    body = timeline_resp.json()
+
+    recommendations = body["service_summary"]["recommended_services"]
+    skus = [item["sku"] for item in recommendations]
+    assert "form_8843_free" in skus
+    form_8843 = next(item for item in recommendations if item["sku"] == "form_8843_free")
+    assert form_8843["href"] == "/form-8843"
+    assert "student" in form_8843["reason"].lower()
+
+
+def test_dashboard_timeline_surfaces_active_service_orders_and_service_deadlines(client, monkeypatch, tmp_path):
+    monkeypatch.setattr(form8843_mod, "FORM_8843_OUTPUT_DIR", tmp_path)
+    monkeypatch.setattr(
+        form8843_mod,
+        "send_form_8843_welcome",
+        lambda *args, **kwargs: {"status": "skipped"},
+    )
+
+    register = client.post("/api/auth/register", json={"email": "dashboard-service-order@example.com", "password": "secure123"})
+    token = register.json()["token"]
+
+    generate = client.post(
+        "/api/form8843/generate",
+        json={
+            "email": "dashboard-service-order@example.com",
+            "full_name": "Dashboard Order",
+            "visa_type": "F-1",
+            "school_name": "Columbia University",
+            "country_citizenship": "China",
+            "days_present_current": 340,
+            "days_present_year_1_ago": 280,
+            "days_present_year_2_ago": 0,
+        },
+    )
+    assert generate.status_code == 200
+    order_id = generate.json()["order_id"]
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    body = timeline_resp.json()
+
+    active_orders = body["service_summary"]["active_orders"]
+    assert any(order["order_id"] == order_id for order in active_orders)
+    active_order = next(order for order in active_orders if order["order_id"] == order_id)
+    assert active_order["product_sku"] == "form_8843_free"
+    assert active_order["href"] == f"/account/orders/{order_id}"
+    assert active_order["next_action"] == "Print, sign, and mail your Form 8843."
+
+    deadline_titles = {deadline["title"] for deadline in body["deadlines"]}
+    assert "Form 8843 mailing deadline" in deadline_titles
+
+    recommendation_skus = {item["sku"] for item in body["service_summary"]["recommended_services"]}
+    assert "form_8843_free" not in recommendation_skus
+
+
+def test_dashboard_service_center_collapses_duplicate_reusable_drafts(client):
+    register = client.post("/api/auth/register", json={"email": "dashboard-draft-collapse@example.com", "password": "secure123"})
+    token = register.json()["token"]
+
+    first = client.post(
+        "/api/marketplace/orders",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"sku": "student_tax_1040nr"},
+    )
+    assert first.status_code == 200
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        from compliance_os.web.models.marketplace import MarketplaceUserRow, OrderRow
+
+        marketplace_user = session.query(MarketplaceUserRow).filter(MarketplaceUserRow.email == "dashboard-draft-collapse@example.com").one()
+        session.add(
+            OrderRow(
+                user_id=marketplace_user.id,
+                product_sku="student_tax_1040nr",
+                status="draft",
+                amount_cents=2900,
+                delivery_method="download_only",
+                mailing_status="not_required",
+                intake_data={"full_name": "Duplicate Draft"},
+                result_data=None,
+            )
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    body = timeline_resp.json()
+
+    active_orders = [order for order in body["service_summary"]["active_orders"] if order["product_sku"] == "student_tax_1040nr"]
+    assert len(active_orders) == 1

@@ -28,6 +28,7 @@ from compliance_os.web.services.document_store import (
     register_uploaded_document,
     serialize_duplicate_document,
 )
+from compliance_os.web.services.dashboard_marketplace import build_dashboard_service_summary
 from compliance_os.web.services.ingestion_detector import (
     DetectedIssue,
     detect_upload_issues,
@@ -166,6 +167,27 @@ def _resolve_doc_type_for_upload_file(
         temp_path.unlink(missing_ok=True)
 
 
+def _merge_deadlines(
+    base: list[dict[str, Any]],
+    extra: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    merged: list[dict[str, Any]] = []
+    seen: set[tuple[str, str, str, str]] = set()
+    for item in [*base, *extra]:
+        key = (
+            str(item.get("title") or ""),
+            str(item.get("date") or ""),
+            str(item.get("category") or ""),
+            str(item.get("order_id") or ""),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        merged.append(item)
+    merged.sort(key=lambda item: (int(item.get("days") or 0), str(item.get("title") or "")))
+    return merged
+
+
 @router.get("/timeline")
 def get_timeline(
     authorization: str = Header(None),
@@ -174,6 +196,12 @@ def get_timeline(
     user = _get_user(authorization, db)
     sync_user_subject_chains(user.id, db)
     payload = build_timeline(user.id, db)
+    service_summary = build_dashboard_service_summary(user=user, timeline_payload=payload, db=db)
+    payload["service_summary"] = service_summary
+    payload["deadlines"] = _merge_deadlines(
+        list(payload.get("deadlines") or []),
+        list(service_summary.get("service_deadlines") or []),
+    )
     db.commit()
     return payload
 

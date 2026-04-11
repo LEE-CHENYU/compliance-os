@@ -137,6 +137,57 @@ interface TimelineData {
   upload_prompts: UploadPrompt[];
   key_facts: { label: string; value: string }[];
   deadlines: { title: string; date: string; days: number; category: string; severity: string; action: string }[];
+  service_summary?: DashboardServiceSummary;
+}
+
+interface DashboardServiceProduct {
+  sku: string;
+  name: string;
+  description: string;
+  price_cents: number;
+  category: string | null;
+  headline: string | null;
+  cta_label: string | null;
+  path: string | null;
+}
+
+interface DashboardServiceOrder {
+  order_id: string;
+  product_sku: string;
+  product_name: string;
+  product: DashboardServiceProduct;
+  status: string;
+  status_label: string;
+  attention_state: "urgent" | "active" | "complete";
+  summary: string;
+  next_action: string;
+  filing_deadline: string | null;
+  deadline_days: number | null;
+  mailing_status: string;
+  href: string;
+  cta_label: string;
+}
+
+interface DashboardServiceRecommendation {
+  sku: string;
+  name: string;
+  reason: string;
+  priority: number;
+  product: DashboardServiceProduct;
+  href: string;
+  cta_label: string;
+}
+
+interface DashboardServiceSummary {
+  active_orders: DashboardServiceOrder[];
+  recent_completed: DashboardServiceOrder[];
+  recommended_services: DashboardServiceRecommendation[];
+  service_deadlines: { title: string; date: string; days: number; category: string; severity: string; action: string }[];
+  stats: {
+    active_orders: number;
+    recent_completed: number;
+    recommended_services: number;
+  };
 }
 
 interface UploadDuplicateCandidate {
@@ -351,6 +402,12 @@ function buildVoiceContextMessage(
   const documentLines = documents.slice(0, 8)
     .map((document) => `${document.filename} (${document.doc_type}, ${document.category})`)
     .join("\n");
+  const serviceOrders = (timeline?.service_summary?.active_orders || []).slice(0, 4)
+    .map((order) => `${order.product_name} | ${order.status_label} | ${order.next_action}`)
+    .join("\n");
+  const serviceRecommendations = (timeline?.service_summary?.recommended_services || []).slice(0, 4)
+    .map((service) => `${service.name} — ${service.reason}`)
+    .join("\n");
 
   return [
     VOICE_CONVERSATION_STARTER,
@@ -359,6 +416,8 @@ function buildVoiceContextMessage(
     deadlines ? `Deadlines:\n${deadlines}` : "Deadlines: none available.",
     advisories ? `Potential risks:\n${advisories}` : "Potential risks: none available.",
     integrityIssues ? `Data gaps:\n${integrityIssues}` : "Data gaps: none available.",
+    serviceOrders ? `Active services:\n${serviceOrders}` : "Active services: none available.",
+    serviceRecommendations ? `Suggested services:\n${serviceRecommendations}` : "Suggested services: none available.",
     keyFacts ? `Key facts:\n${keyFacts}` : "Key facts: none available.",
     documentLines ? `Documents on file:\n${documentLines}` : "Documents on file: none available.",
   ].join("\n\n");
@@ -600,7 +659,12 @@ export default function DashboardPage() {
       fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
     ]);
-    if (docs.length === 0 && (!tl.events || tl.events.length <= 1)) {
+    const hasServiceContent = Boolean(
+      tl.service_summary?.active_orders?.length
+      || tl.service_summary?.recent_completed?.length
+      || tl.service_summary?.recommended_services?.length,
+    );
+    if (docs.length === 0 && (!tl.events || tl.events.length <= 1) && !hasServiceContent) {
       router.push("/check");
       return;
     }
@@ -1495,6 +1559,147 @@ export default function DashboardPage() {
     filing: "bg-gradient-to-br from-emerald-400 to-emerald-500",
   };
 
+  const serviceSummary = timeline?.service_summary;
+  const activeServiceOrders = serviceSummary?.active_orders ?? [];
+  const recommendedServices = serviceSummary?.recommended_services ?? [];
+  const recentCompletedServices = serviceSummary?.recent_completed ?? [];
+  const hasActiveServiceOrders = activeServiceOrders.length > 0;
+  const hasServiceRecommendations = recommendedServices.length > 0;
+  const hasRecentDeliverables = recentCompletedServices.length > 0;
+  const hasServiceCenterContent = hasActiveServiceOrders || hasServiceRecommendations || hasRecentDeliverables;
+  const activeServicePreview = activeServiceOrders.slice(0, 2);
+  const recommendedServicePreview = recommendedServices.slice(0, 2);
+  const recentCompletedPreview = recentCompletedServices.slice(0, 1);
+
+  const renderServiceCenter = ({ mobile = false }: { mobile?: boolean } = {}) => (
+    <section
+      id={mobile ? undefined : "service-center"}
+      className={`overflow-hidden rounded-[24px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.82),rgba(240,246,255,0.94))] backdrop-blur-xl shadow-[0_10px_30px_rgba(91,141,238,0.08)] ${
+        mobile ? "mb-6 md:hidden" : "mt-2"
+      }`}
+    >
+      <div className={`${mobile ? "p-5" : "p-4"}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5]">Service Center</div>
+            <div className={`mt-2 font-bold leading-tight text-[#0d1424] ${mobile ? "text-[18px]" : "text-[16px]"}`}>
+              Service work stays in view
+            </div>
+            <p className={`mt-2 text-[#556480] ${mobile ? "text-[13px] leading-6" : "text-[12px] leading-5"}`}>
+              Active filings, draft workspaces, and the next service to start live alongside your dashboard summary.
+            </p>
+          </div>
+          <div className="rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold text-[#5b8dee]">
+            {hasActiveServiceOrders ? `${activeServiceOrders.length} active` : hasServiceRecommendations ? `${recommendedServices.length} next` : "Ready"}
+          </div>
+        </div>
+
+        {hasActiveServiceOrders ? (
+          <div className="mt-4 space-y-3">
+            {activeServicePreview.map((order) => {
+              const urgent = order.attention_state === "urgent";
+              return (
+                <button
+                  key={order.order_id}
+                  type="button"
+                  onClick={() => router.push(order.href)}
+                  className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left shadow-[0_8px_18px_rgba(61,84,128,0.05)] transition hover:bg-white"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
+                        {(order.product.category || "service").replace(/_/g, " ")}
+                      </div>
+                      <div className="mt-1 text-[13px] font-semibold leading-5 text-[#0d1424]">{order.product_name}</div>
+                    </div>
+                    <span className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold ${urgent ? "border-[#f1dfb3] bg-[#fff7ea] text-[#8d6216]" : "border-[#dbe5f2] bg-[#f8fbff] text-[#3a5a8c]"}`}>
+                      {order.status_label}
+                    </span>
+                  </div>
+                  <div className="mt-2 text-[12px] leading-5 text-[#556480]">{order.next_action}</div>
+                  {order.filing_deadline ? (
+                    <div className="mt-2 text-[11px] text-[#6b7d96]">
+                      Deadline {order.filing_deadline}
+                      {order.deadline_days != null
+                        ? ` · ${order.deadline_days >= 0 ? `${order.deadline_days}d left` : `${Math.abs(order.deadline_days)}d overdue`}`
+                        : ""}
+                    </div>
+                  ) : null}
+                </button>
+              );
+            })}
+            {activeServiceOrders.length > activeServicePreview.length ? (
+              <div className="text-[11px] text-[#7b8ba5]">
+                +{activeServiceOrders.length - activeServicePreview.length} more active service{activeServiceOrders.length - activeServicePreview.length === 1 ? "" : "s"} in your orders list.
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {!hasActiveServiceOrders && hasServiceRecommendations ? (
+          <div className="mt-4 space-y-3">
+            {recommendedServicePreview.map((service) => (
+              <button
+                key={service.sku}
+                type="button"
+                onClick={() => router.push(service.href)}
+                className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left transition hover:bg-white"
+              >
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
+                  {(service.product.category || "service").replace(/_/g, " ")}
+                </div>
+                <div className="mt-1 text-[13px] font-semibold leading-5 text-[#0d1424]">{service.name}</div>
+                <div className="mt-2 text-[12px] leading-5 text-[#556480]">{service.reason}</div>
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {!hasActiveServiceOrders && !hasServiceRecommendations && hasRecentDeliverables ? (
+          <div className="mt-4 space-y-3">
+            {recentCompletedPreview.map((order) => (
+              <button
+                key={order.order_id}
+                type="button"
+                onClick={() => router.push(order.href)}
+                className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left transition hover:bg-white"
+              >
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
+                  {(order.product.category || "service").replace(/_/g, " ")}
+                </div>
+                <div className="mt-1 text-[13px] font-semibold leading-5 text-[#0d1424]">{order.product_name}</div>
+                <div className="mt-2 text-[12px] leading-5 text-[#556480]">{order.summary || "Result ready."}</div>
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {!hasServiceCenterContent ? (
+          <div className="mt-4 rounded-[18px] border border-dashed border-[#dbe5f2] bg-white/72 px-4 py-3 text-[12px] leading-5 text-[#556480]">
+            Start a filing or review from the service catalog, and it will stay visible here across dashboard views.
+          </div>
+        ) : null}
+
+        <div className={`mt-4 grid gap-2 ${mobile ? "sm:grid-cols-2" : ""}`}>
+          <button
+            type="button"
+            onClick={() => router.push("/account/orders")}
+            className="inline-flex items-center justify-center rounded-full border border-blue-100/50 bg-white/85 px-4 py-2 text-[12px] font-semibold text-[#3a5a8c] transition hover:bg-white"
+          >
+            Open orders
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/services")}
+            className="inline-flex items-center justify-center rounded-full bg-[#5b8dee] px-4 py-2 text-[12px] font-semibold text-white shadow-[0_10px_20px_rgba(91,141,238,0.18)] transition hover:bg-[#4f82de]"
+          >
+            Browse services
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+
   return (
     <div className="min-h-screen">
       {/* Nav */}
@@ -1619,7 +1824,7 @@ export default function DashboardPage() {
 
       <div className="flex flex-col md:flex-row pt-14">
         {/* Sidebar — hidden on mobile, shown on md+ */}
-        <div className="hidden md:block w-64 flex-shrink-0 p-5 bg-white/30 backdrop-blur-xl border-r border-white/50 min-h-screen">
+        <div className="hidden md:flex md:flex-col w-64 flex-shrink-0 p-5 bg-white/30 backdrop-blur-xl border-r border-white/50 min-h-screen">
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Views</div>
             <button onClick={() => setView("timeline")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "timeline" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Timeline</button>
@@ -1663,6 +1868,8 @@ export default function DashboardPage() {
               <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-[#5b8dee]">{timeline?.advisories.length || 0}</span>
             </div>
           </div>
+
+          {renderServiceCenter()}
         </div>
 
         {/* Main */}
@@ -1809,6 +2016,8 @@ export default function DashboardPage() {
               </button>
             ))}
           </div>
+
+          {renderServiceCenter({ mobile: true })}
 
           {/* Documents View */}
           {view === "documents" && (
