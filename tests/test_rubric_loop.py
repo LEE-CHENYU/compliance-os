@@ -43,6 +43,12 @@ from rubric.evaluate import evaluate_case, load_eval_cache
 from rubric.models import FixtureRecord
 from rubric.codex_client import call_codex, CodexCallError as CcError
 from rubric.codex_client import _extract_token_counts
+from rubric.judge import (
+    judge_case,
+    compute_judge_cache_key,
+    filter_criteria_for_slice,
+    render_judge_prompt,
+)
 
 
 def test_case_spec_roundtrip_to_dict():
@@ -918,3 +924,104 @@ def test_all_hard_fail_criteria_exist_in_criteria_list():
     all_ids = {c["id"] for c in data["criteria"]}
     for hfc in data["scoring"]["hard_fail_criteria"]:
         assert hfc in all_ids, f"hard_fail_criterion {hfc} not in criteria list"
+
+
+def test_filter_criteria_for_slice_a_includes_correct_subset():
+    criteria = [
+        {"id": "c1", "applies_to": ["A", "B"], "description": "x"},
+        {"id": "c2", "applies_to": ["C"], "description": "y"},
+        {"id": "c3", "applies_to": ["A"], "description": "z"},
+    ]
+    filtered = filter_criteria_for_slice(criteria, "A")
+    ids = {c["id"] for c in filtered}
+    assert ids == {"c1", "c3"}
+
+
+def test_compute_judge_cache_key_stable_across_equal_inputs():
+    input_hash = "a" * 64
+    findings_hash = "b" * 64
+    rubric_version = "0.1.0"
+    prompt_hash = "c" * 64
+    k1 = compute_judge_cache_key(input_hash, findings_hash, rubric_version, prompt_hash)
+    k2 = compute_judge_cache_key(input_hash, findings_hash, rubric_version, prompt_hash)
+    assert k1 == k2
+
+
+def test_compute_judge_cache_key_changes_on_rubric_version_bump():
+    args = ("a" * 64, "b" * 64, "0.1.0", "c" * 64)
+    k1 = compute_judge_cache_key(*args)
+    k2 = compute_judge_cache_key("a" * 64, "b" * 64, "0.2.0", "c" * 64)
+    assert k1 != k2
+
+
+def test_judge_case_uses_cache_on_second_call(tmp_path, monkeypatch):
+    fixture = _make_fixture(
+        case_id="A-stem_opt-test-pos",
+        track="stem_opt",
+        input_={"answers": {"stage": "stem_opt", "years_in_us": 3},
+                "extraction_a": {}, "extraction_b": {},
+                "comparisons": {"job_title": {"status": "mismatch", "confidence": 0.9}}},
+        expected={"must_fire_rule_ids": ["job_title_mismatch"], "must_not_fire_rule_ids": [],
+                  "expected_nra": "yes", "expected_track": "stem_opt", "notes": ""},
+    )
+    eval_record = evaluate_case(fixture, cache_dir=tmp_path / "eval")
+
+    call_count = {"n": 0}
+
+    def fake_call(**kwargs):
+        call_count["n"] += 1
+        return CodexCallResult(
+            text=json.dumps({
+                "verdict": "pass",
+                "subscores": {
+                    "categorization": {"score": 1.0, "criteria_applied": ["track_selection_correct"], "note": "ok"},
+                    "findings": {"score": 1.0, "criteria_applied": ["positive_case_fires_target_rule"], "note": "ok"},
+                },
+                "flags": [],
+            }),
+            parsed={
+                "verdict": "pass",
+                "subscores": {
+                    "categorization": {"score": 1.0, "criteria_applied": ["track_selection_correct"], "note": "ok"},
+                    "findings": {"score": 1.0, "criteria_applied": ["positive_case_fires_target_rule"], "note": "ok"},
+                },
+                "flags": [],
+            },
+            tokens_in=10, tokens_out=5, latency_ms=0, raw_events=[], attempts=1,
+        )
+
+    monkeypatch.setattr("rubric.judge.call_codex", fake_call)
+
+    record1 = judge_case(fixture, eval_record, cache_dir=tmp_path / "judge")
+    assert record1.verdict == "pass"
+    assert call_count["n"] == 1
+
+    record2 = judge_case(fixture, eval_record, cache_dir=tmp_path / "judge")
+    assert record2.verdict == "pass"
+    assert call_count["n"] == 1  # cache hit, no second call
+
+
+def test_render_judge_prompt_substitutes_all_placeholders(tmp_path):
+    fixture = _make_fixture(
+        case_id="A-stem_opt-test-pos",
+        track="stem_opt",
+        input_={"answers": {"stage": "stem_opt"}, "extraction_a": {}, "extraction_b": {}, "comparisons": {}},
+        expected={"must_fire_rule_ids": [], "must_not_fire_rule_ids": [],
+                  "expected_nra": "yes", "expected_track": "stem_opt", "notes": ""},
+    )
+    eval_record = EvalRecord(
+        case_id="A-stem_opt-test-pos",
+        engine_version="1.0.0",
+        rule_file_path="config/rules/stem_opt.yaml",
+        rule_file_hash="abc",
+        input_hash="def",
+        evaluated_at="2026-04-10T00:00:00Z",
+        derived={"is_nra": "yes"},
+        findings=[{"rule_id": "job_title_mismatch", "severity": "warning", "category": "comparison",
+                   "title": "t", "action": "a", "consequence": "c", "immigration_impact": True}],
+    )
+    prompt = render_judge_prompt(fixture, eval_record)
+    assert "{case_fixture_json}" not in prompt
+    assert "{findings_json}" not in prompt
+    assert "job_title_mismatch" in prompt
+    assert "is_nra: yes" in prompt
