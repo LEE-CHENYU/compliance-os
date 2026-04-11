@@ -1353,7 +1353,7 @@ def test_claude_batch_generate_submits_and_parses(tmp_path):
     fake_client.messages.batches.retrieve.side_effect = fake_retrieve_results
 
     fake_succeeded_result = MagicMock()
-    fake_succeeded_result.custom_id = "gen-A-stem_opt-sample-pos"
+    fake_succeeded_result.custom_id = "g0"
     fake_succeeded_result.result.type = "succeeded"
     fake_msg = MagicMock()
     fake_msg.content = [MagicMock(type="text", text=json.dumps({
@@ -1424,7 +1424,7 @@ def test_claude_batch_generate_writes_sentinel_on_error(tmp_path):
     fake_client.messages.batches.retrieve.return_value = MagicMock(processing_status="ended")
 
     fake_error_result = MagicMock()
-    fake_error_result.custom_id = "gen-A-stem_opt-boom-pos"
+    fake_error_result.custom_id = "g0"
     fake_error_result.result.type = "errored"
     fake_error_result.result.error.type = "invalid_request"
     fake_error_result.result.error.message = "bad request"

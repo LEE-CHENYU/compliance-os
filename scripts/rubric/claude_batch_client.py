@@ -57,11 +57,89 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def _build_generator_request(spec: CaseSpec, rules_dir: Path) -> Request:
-    """Build a Request for a single generator case. No caching in v0."""
+def _extract_json_from_text(text: str) -> dict:
+    """Parse JSON out of a model response, handling common wrappers.
+
+    Handles:
+      * pure JSON
+      * JSON inside ```json ... ``` fences or plain ``` fences
+      * JSON with leading/trailing prose by finding the first balanced { ... }
+
+    Raises json.JSONDecodeError if nothing parseable is found. The error's
+    doc field contains a preview of the input for diagnosis.
+    """
+    if not text:
+        raise json.JSONDecodeError("empty response", "", 0)
+
+    stripped = text.strip()
+
+    # Strip markdown code fences if present
+    if stripped.startswith("```"):
+        first_newline = stripped.find("\n")
+        if first_newline >= 0:
+            stripped = stripped[first_newline + 1:]
+        if stripped.rstrip().endswith("```"):
+            stripped = stripped.rstrip()[:-3].rstrip()
+
+    # Try direct parse first
+    try:
+        return json.loads(stripped)
+    except json.JSONDecodeError:
+        pass
+
+    # Fall back: scan for the first balanced top-level { ... }
+    start = stripped.find("{")
+    if start < 0:
+        raise json.JSONDecodeError(
+            "no JSON object found in response",
+            stripped[:200],
+            0,
+        )
+    depth = 0
+    in_string = False
+    escape = False
+    for i in range(start, len(stripped)):
+        c = stripped[i]
+        if escape:
+            escape = False
+            continue
+        if c == "\\":
+            escape = True
+            continue
+        if c == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+            if depth == 0:
+                try:
+                    return json.loads(stripped[start:i + 1])
+                except json.JSONDecodeError:
+                    break
+
+    raise json.JSONDecodeError(
+        f"could not extract valid JSON (preview: {stripped[:200]!r})",
+        stripped[:200],
+        0,
+    )
+
+
+def _build_generator_request(
+    spec: CaseSpec, rules_dir: Path, *, custom_id: str
+) -> Request:
+    """Build a Request for a single generator case. No caching in v0.
+
+    custom_id is a short numeric handle (e.g. "g0", "g1", ...) because
+    Anthropic's batch API enforces a 64-char limit that's easy to overflow
+    when prefixing a human-readable case_id.
+    """
     prompt = render_generator_prompt(spec, rules_dir=rules_dir)
     return Request(
-        custom_id=f"gen-{spec.case_id}",
+        custom_id=custom_id,
         params=MessageCreateParamsNonStreaming(
             model=GENERATOR_MODEL,
             max_tokens=4096,
@@ -70,11 +148,16 @@ def _build_generator_request(spec: CaseSpec, rules_dir: Path) -> Request:
     )
 
 
-def _build_judge_request(fixture: FixtureRecord, eval_record: EvalRecord) -> Request:
-    """Build a Request for a single judge case with Opus adaptive thinking."""
+def _build_judge_request(
+    fixture: FixtureRecord, eval_record: EvalRecord, *, custom_id: str
+) -> Request:
+    """Build a Request for a single judge case with Opus adaptive thinking.
+
+    custom_id must be short (<=64 chars); use "j0", "j1", ... handles.
+    """
     prompt = render_judge_prompt(fixture, eval_record)
     return Request(
-        custom_id=f"judge-{fixture.case_id}",
+        custom_id=custom_id,
         params=MessageCreateParamsNonStreaming(
             model=JUDGE_MODEL,
             max_tokens=8192,
@@ -171,8 +254,12 @@ def batch_generate(
     if not to_run:
         return 0, skip_count, []
 
-    requests = [_build_generator_request(spec, rules_dir) for spec in to_run]
-    spec_by_custom_id = {f"gen-{spec.case_id}": spec for spec in to_run}
+    requests = []
+    spec_by_custom_id: dict[str, CaseSpec] = {}
+    for i, spec in enumerate(to_run):
+        custom_id = f"g{i}"
+        spec_by_custom_id[custom_id] = spec
+        requests.append(_build_generator_request(spec, rules_dir, custom_id=custom_id))
 
     message_batch = client.messages.batches.create(requests=requests)
     _poll_until_ended(client, message_batch.id)
@@ -201,14 +288,18 @@ def batch_generate(
         text = next((b.text for b in msg.content if b.type == "text"), "")
 
         try:
-            parsed = json.loads(text)
+            parsed = _extract_json_from_text(text)
         except json.JSONDecodeError as e:
             warnings.append(
-                f"generator produced non-JSON output for {spec.case_id}: {e}"
+                f"generator produced non-JSON output for {spec.case_id}: {e.msg}"
             )
             save_json(
                 target_path,
-                _make_sentinel_fixture(spec, None, error_msg=str(e)),
+                _make_sentinel_fixture(
+                    spec,
+                    None,
+                    error_msg=f"{e.msg} | raw preview: {text[:300]!r}",
+                ),
             )
             continue
 
@@ -256,14 +347,14 @@ def batch_judge(
     if not cases_to_judge:
         return {}
 
-    requests = [
-        _build_judge_request(fixture, eval_record)
-        for fixture, eval_record in cases_to_judge
-    ]
-    case_by_custom_id = {
-        f"judge-{fixture.case_id}": (fixture, eval_record)
-        for fixture, eval_record in cases_to_judge
-    }
+    requests = []
+    case_by_custom_id: dict[str, tuple[FixtureRecord, EvalRecord]] = {}
+    for i, (fixture, eval_record) in enumerate(cases_to_judge):
+        custom_id = f"j{i}"
+        case_by_custom_id[custom_id] = (fixture, eval_record)
+        requests.append(
+            _build_judge_request(fixture, eval_record, custom_id=custom_id)
+        )
 
     rubric_version = _rubric_version()
 
@@ -307,7 +398,7 @@ def batch_judge(
             msg = result.result.message
             text = next((b.text for b in msg.content if b.type == "text"), "")
             try:
-                parsed = json.loads(text)
+                parsed = _extract_json_from_text(text)
             except json.JSONDecodeError as e:
                 record = JudgeRecord(
                     cache_key=cache_key,
@@ -317,7 +408,7 @@ def batch_judge(
                     judged_by=f"claude-batch/{JUDGE_MODEL}",
                     verdict="unrunnable",
                     subscores={},
-                    flags=[f"judge_parse_error:{e}"],
+                    flags=[f"judge_parse_error:{e.msg}"],
                     raw_judge_output=text[:500],
                 )
             else:
