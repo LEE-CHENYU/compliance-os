@@ -348,6 +348,25 @@ async function parseResponse<T>(response: Response): Promise<T> {
   return body as T;
 }
 
+async function ensurePdfBlob(response: Response, fallbackMessage: string): Promise<Blob> {
+  const blob = await response.blob();
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  const header = new TextDecoder("ascii").decode(bytes.slice(0, 5));
+  if (!header.startsWith("%PDF-")) {
+    throw new Error(fallbackMessage);
+  }
+  return new Blob([bytes], { type: "application/pdf" });
+}
+
+function triggerBrowserDownload(blob: Blob, filename: string): void {
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = filename;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
 export async function generateForm8843(payload: Form8843Request): Promise<Form8843GenerateResponse> {
   const response = await fetch(`${API}/form8843/generate`, {
     method: "POST",
@@ -610,13 +629,8 @@ export async function downloadForm8843Pdf(orderId: string): Promise<void> {
     throw new Error(body?.detail || "Could not download Form 8843");
   }
 
-  const blob = await response.blob();
-  const objectUrl = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = objectUrl;
-  link.download = `Form_8843_${orderId}.pdf`;
-  link.click();
-  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+  const blob = await ensurePdfBlob(response, "The exported Form 8843 file was not a valid PDF");
+  triggerBrowserDownload(blob, `Form_8843_${orderId}.pdf`);
 }
 
 export function resolveForm8843PdfUrl(pdfUrl: string | null): string | null {
@@ -653,11 +667,9 @@ export async function downloadMarketplaceArtifact(url: string, filename: string)
     throw new Error(body?.detail || "Could not download artifact");
   }
 
-  const blob = await response.blob();
-  const objectUrl = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = objectUrl;
-  link.download = filename;
-  link.click();
-  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+  const isPdf = filename.toLowerCase().endsWith(".pdf");
+  const blob = isPdf
+    ? await ensurePdfBlob(response, "The exported file was expected to be a PDF, but the download was not valid")
+    : await response.blob();
+  triggerBrowserDownload(blob, filename);
 }
