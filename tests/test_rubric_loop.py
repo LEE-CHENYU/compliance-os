@@ -587,11 +587,13 @@ def test_call_codex_raises_after_exhausting_retries(monkeypatch, tmp_path):
 def test_call_codex_falls_back_on_unsupported_model(monkeypatch, tmp_path):
     schema_path = _make_schema(tmp_path)
     calls = []
+    timeouts = []
 
     def fake_run(cmd, input=None, text=None, capture_output=None, timeout=None):
         model_idx = cmd.index("--model") + 1
         model = cmd[model_idx]
         calls.append(model)
+        timeouts.append(timeout)
         out_file = cmd[cmd.index("--output-last-message") + 1]
         if model == "gpt-5.4":
             return _FakeProc(stdout="model is not supported", returncode=1)
@@ -605,8 +607,10 @@ def test_call_codex_falls_back_on_unsupported_model(monkeypatch, tmp_path):
         schema_path=schema_path,
         model="gpt-5.4",
         fallback_model="gpt-5.4-mini",
+        timeout_s=42,
     )
     assert calls == ["gpt-5.4", "gpt-5.4-mini"]
+    assert timeouts == [42, 42]  # timeout_s preserved through recursive fallback
     assert result.parsed == {"verdict": "pass"}
 
 

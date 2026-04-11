@@ -56,100 +56,103 @@ def call_codex(
         ) as tmp:
             output_path = Path(tmp.name)
 
-        cmd = [
-            "codex", "exec",
-            "-c", f'model_reasoning_effort="{reasoning_effort}"',
-            "--model", model,
-            "--sandbox", "read-only",
-            "--skip-git-repo-check",
-            "--ephemeral",
-            "--output-schema", str(schema_path),
-            "--output-last-message", str(output_path),
-            "--json",
-            "--cd", str(SCRATCH_WORKSPACE),
-            "-",
-        ]
-
         try:
-            proc = subprocess.run(
-                cmd,
-                input=prompt,
-                text=True,
-                capture_output=True,
-                timeout=timeout_s,
-            )
-        except subprocess.TimeoutExpired:
-            last_error = CodexCallError(
-                kind="timeout",
-                message=f"codex exec timed out after {timeout_s}s",
-                attempts=attempt,
-            )
-            continue
+            cmd = [
+                "codex", "exec",
+                "-c", f'model_reasoning_effort="{reasoning_effort}"',
+                "--model", model,
+                "--sandbox", "read-only",
+                "--skip-git-repo-check",
+                "--ephemeral",
+                "--output-schema", str(schema_path),
+                "--output-last-message", str(output_path),
+                "--json",
+                "--cd", str(SCRATCH_WORKSPACE),
+                "-",
+            ]
 
-        if proc.returncode != 0:
-            combined = (proc.stdout or "") + (proc.stderr or "")
-            if (
-                fallback_model
-                and fallback_model != model
-                and "model is not supported" in combined.lower()
-            ):
-                return call_codex(
-                    prompt=prompt,
-                    schema_path=schema_path,
-                    model=fallback_model,
-                    reasoning_effort=reasoning_effort,
-                    timeout_s=timeout_s,
-                    max_retries=max_retries,
-                    fallback_model=None,  # prevent recursion
+            try:
+                proc = subprocess.run(
+                    cmd,
+                    input=prompt,
+                    text=True,
+                    capture_output=True,
+                    timeout=timeout_s,
                 )
-            raise CodexCallError(
-                kind="subprocess_failure",
-                message=f"codex exec returned {proc.returncode}",
-                stderr=combined,
+            except subprocess.TimeoutExpired:
+                last_error = CodexCallError(
+                    kind="timeout",
+                    message=f"codex exec timed out after {timeout_s}s",
+                    attempts=attempt,
+                )
+                continue
+
+            if proc.returncode != 0:
+                combined = (proc.stdout or "") + (proc.stderr or "")
+                if (
+                    fallback_model
+                    and fallback_model != model
+                    and "model is not supported" in combined.lower()
+                ):
+                    return call_codex(
+                        prompt=prompt,
+                        schema_path=schema_path,
+                        model=fallback_model,
+                        reasoning_effort=reasoning_effort,
+                        timeout_s=timeout_s,
+                        max_retries=max_retries,
+                        fallback_model=None,  # prevent recursion
+                    )
+                raise CodexCallError(
+                    kind="subprocess_failure",
+                    message=f"codex exec returned {proc.returncode}",
+                    stderr=combined,
+                    attempts=attempt,
+                )
+
+            raw = output_path.read_text().strip()
+            try:
+                parsed = json.loads(raw)
+            except json.JSONDecodeError as e:
+                last_error = CodexCallError(
+                    kind="parse_failure",
+                    message=f"output was not valid JSON: {e}",
+                    stderr=raw[:500],
+                    attempts=attempt,
+                )
+                continue
+
+            schema = json.loads(schema_path.read_text())
+            validator = Draft202012Validator(schema)
+            try:
+                validator.validate(parsed)
+            except ValidationError as e:
+                last_error = CodexCallError(
+                    kind="schema_violation",
+                    message=f"output violates schema: {e.message}",
+                    stderr=raw[:500],
+                    attempts=attempt,
+                )
+                continue
+
+            events = [
+                json.loads(line)
+                for line in (proc.stdout or "").splitlines()
+                if line.strip()
+            ]
+            tokens_in, tokens_out = _extract_token_counts(events)
+
+            return CodexCallResult(
+                text=raw,
+                parsed=parsed,
+                tokens_in=tokens_in,
+                tokens_out=tokens_out,
+                latency_ms=0,    # parsed from events in a follow-up pass; OK to 0-init
+                raw_events=events,
                 attempts=attempt,
             )
-
-        raw = output_path.read_text().strip()
-        try:
-            parsed = json.loads(raw)
-        except json.JSONDecodeError as e:
-            last_error = CodexCallError(
-                kind="parse_failure",
-                message=f"output was not valid JSON: {e}",
-                stderr=raw[:500],
-                attempts=attempt,
-            )
-            continue
-
-        schema = json.loads(schema_path.read_text())
-        validator = Draft202012Validator(schema)
-        try:
-            validator.validate(parsed)
-        except ValidationError as e:
-            last_error = CodexCallError(
-                kind="schema_violation",
-                message=f"output violates schema: {e.message}",
-                stderr=raw[:500],
-                attempts=attempt,
-            )
-            continue
-
-        events = [
-            json.loads(line)
-            for line in (proc.stdout or "").splitlines()
-            if line.strip()
-        ]
-        tokens_in, tokens_out = _extract_token_counts(events)
-
-        return CodexCallResult(
-            text=raw,
-            parsed=parsed,
-            tokens_in=tokens_in,
-            tokens_out=tokens_out,
-            latency_ms=0,    # parsed from events in a follow-up pass; OK to 0-init
-            raw_events=events,
-            attempts=attempt,
-        )
+        finally:
+            output_path.unlink(missing_ok=True)
 
     assert last_error is not None
     raise last_error
