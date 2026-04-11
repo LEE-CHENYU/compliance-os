@@ -23,10 +23,21 @@ def _create_order(client, headers: dict[str, str], sku: str) -> str:
     return body["order_id"]
 
 
+def _disable_marketplace_delivery_email(monkeypatch) -> None:
+    import compliance_os.web.routers.marketplace as marketplace_mod
+
+    monkeypatch.setattr(
+        marketplace_mod,
+        "send_marketplace_delivery_email",
+        lambda *args, **kwargs: {"status": "skipped"},
+    )
+
+
 def test_h1b_doc_check_flow(client, monkeypatch, tmp_path):
     import compliance_os.web.services.h1b_doc_check as h1b_mod
 
     monkeypatch.setattr(h1b_mod, "H1B_DOC_CHECK_DIR", tmp_path / "h1b")
+    _disable_marketplace_delivery_email(monkeypatch)
 
     headers = _auth_headers(client, "h1b-orders@example.com")
     order_id = _create_order(client, headers, "h1b_doc_check")
@@ -107,6 +118,7 @@ def test_fbar_check_flow(client, monkeypatch, tmp_path):
     import compliance_os.web.services.fbar_check as fbar_mod
 
     monkeypatch.setattr(fbar_mod, "FBAR_CHECK_DIR", tmp_path / "fbar")
+    _disable_marketplace_delivery_email(monkeypatch)
 
     headers = _auth_headers(client, "fbar-orders@example.com")
     order_id = _create_order(client, headers, "fbar_check")
@@ -160,6 +172,7 @@ def test_83b_election_flow(client, monkeypatch, tmp_path):
     import compliance_os.web.services.election_83b as election_mod
 
     monkeypatch.setattr(election_mod, "ELECTION_83B_DIR", tmp_path / "83b")
+    _disable_marketplace_delivery_email(monkeypatch)
 
     headers = _auth_headers(client, "83b-orders@example.com")
     order_id = _create_order(client, headers, "election_83b")
@@ -222,3 +235,58 @@ def test_83b_election_flow(client, monkeypatch, tmp_path):
         assert any(sequence.sequence_name.startswith("election_83b_deadline:") for sequence in sequences)
     finally:
         session.close()
+
+
+def test_student_tax_1040nr_flow(client, monkeypatch, tmp_path):
+    import compliance_os.web.services.student_tax_check as student_tax_mod
+
+    monkeypatch.setattr(student_tax_mod, "STUDENT_TAX_DIR", tmp_path / "student-tax")
+    _disable_marketplace_delivery_email(monkeypatch)
+
+    headers = _auth_headers(client, "student-tax-orders@example.com")
+    order_id = _create_order(client, headers, "student_tax_1040nr")
+
+    intake_response = client.post(
+        f"/api/marketplace/orders/{order_id}/intake",
+        headers={**headers, "Content-Type": "application/json"},
+        json={
+            "tax_year": 2025,
+            "full_name": "Jessica Chen",
+            "visa_type": "F-1",
+            "school_name": "Columbia University",
+            "country_citizenship": "China",
+            "arrival_date": "2023-08-18",
+            "days_present_current": 320,
+            "days_present_year_1_ago": 280,
+            "days_present_year_2_ago": 0,
+            "wage_income_usd": 24000,
+            "federal_withholding_usd": 1800,
+            "state_withholding_usd": 450,
+            "claim_treaty_benefit": True,
+            "treaty_country": "China",
+            "treaty_article": "Article 20(c)",
+        },
+    )
+    assert intake_response.status_code == 200
+    assert intake_response.json()["status"] == "intake_complete"
+
+    process_response = client.post(
+        f"/api/marketplace/orders/{order_id}/process",
+        headers=headers,
+    )
+    assert process_response.status_code == 200
+    process_body = process_response.json()
+    assert process_body["status"] == "completed"
+    assert process_body["filing_deadline"] == "2026-04-15"
+
+    result_response = client.get(
+        f"/api/marketplace/orders/{order_id}/result",
+        headers=headers,
+    )
+    assert result_response.status_code == 200
+    result = result_response.json()
+    assert result["filing_deadline"] == "2026-04-15"
+    assert result["total_income_usd"] == 24000
+    assert len(result["artifacts"]) >= 2
+    assert any("1040-NR" in artifact["label"] for artifact in result["artifacts"])
+    assert result["notification_statuses"]["delivery_email"]["status"] == "skipped"

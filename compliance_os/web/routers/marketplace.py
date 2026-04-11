@@ -33,6 +33,10 @@ from compliance_os.web.services.attorney_workflow import (
 )
 from compliance_os.web.services.auth_service import get_bearer_payload
 from compliance_os.web.services.election_83b import process_election_83b
+from compliance_os.web.services.email_service import (
+    send_attorney_assignment_email,
+    send_marketplace_delivery_email,
+)
 from compliance_os.web.services.fbar_check import process_fbar_check
 from compliance_os.web.services.h1b_doc_check import (
     H1B_FILE_FIELDS,
@@ -54,6 +58,7 @@ from compliance_os.web.services.questionnaire import (
     normalize_questionnaire_responses,
     serialize_questionnaire_config,
 )
+from compliance_os.web.services.student_tax_check import process_student_tax_check
 
 
 router = APIRouter(prefix="/api/marketplace", tags=["marketplace"])
@@ -94,6 +99,16 @@ class AgreementSignRequest(BaseModel):
 class MarkMailedRequest(BaseModel):
     mailed_at: str | None = None
     tracking_number: str | None = None
+
+
+def _record_notification_status(
+    result_data: dict[str, Any],
+    key: str,
+    response: dict[str, str],
+) -> None:
+    statuses = dict(result_data.get("notification_statuses") or {})
+    statuses[key] = response
+    result_data["notification_statuses"] = statuses
 
 
 def _serialize_artifacts(order: OrderRow, result_data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -142,6 +157,11 @@ def _serialize_result_payload(order: OrderRow) -> dict[str, Any]:
         "receipt_number": result_data.get("receipt_number"),
         "filing_confirmation": result_data.get("filing_confirmation"),
         "filed_at": result_data.get("filed_at"),
+        "total_income_usd": result_data.get("total_income_usd"),
+        "treaty_country": result_data.get("treaty_country"),
+        "claim_treaty_benefit": result_data.get("claim_treaty_benefit"),
+        "upgrade_offer": result_data.get("upgrade_offer"),
+        "notification_statuses": result_data.get("notification_statuses"),
     }
 
 
@@ -354,6 +374,22 @@ def _validate_json_intake(order: OrderRow, payload: dict[str, Any]) -> None:
         accounts = payload.get("accounts") or []
         if not accounts:
             raise HTTPException(status_code=400, detail="At least one foreign account is required")
+        return
+    if order.product_sku == "student_tax_1040nr":
+        required_fields = {
+            "tax_year",
+            "full_name",
+            "visa_type",
+            "school_name",
+            "country_citizenship",
+            "arrival_date",
+            "days_present_current",
+            "days_present_year_1_ago",
+            "days_present_year_2_ago",
+        }
+        missing = [field for field in required_fields if payload.get(field) in (None, "")]
+        if missing:
+            raise HTTPException(status_code=400, detail=f"Missing required fields: {', '.join(sorted(missing))}")
         return
     if order.product_sku == "election_83b":
         required_fields = {
@@ -596,6 +632,18 @@ def sign_order_agreement(
     assignment = assign_attorney_to_order(order, db)
     order.status = "attorney_review"
     order.updated_at = _now()
+    result_data = dict(order.result_data or {})
+    _record_notification_status(
+        result_data,
+        "attorney_assignment_email",
+        send_attorney_assignment_email(
+            attorney.email,
+            attorney_name=attorney.full_name,
+            client_name=marketplace_user.full_name or marketplace_user.email,
+            product_name=order.product.name if order.product is not None else order.product_sku,
+        ),
+    )
+    order.result_data = result_data
     db.commit()
     db.refresh(order)
     db.refresh(agreement)
@@ -705,6 +753,24 @@ def process_order(
         result_data = process_h1b_doc_check(order.id, order.intake_data or {})
         order.delivery_method = "download_only"
         order.mailing_status = "not_required"
+    elif order.product_sku == "student_tax_1040nr":
+        result_data = process_student_tax_check(order.id, order.intake_data or {})
+        order.delivery_method = "tax_return_package"
+        order.mailing_status = "not_required"
+        _set_deadline_from_iso(order, result_data.get("filing_deadline"))
+        if order.filing_deadline is not None:
+            next_send_at = datetime.combine(
+                max(order.filing_deadline - timedelta(days=14), date.today()),
+                time(hour=9, minute=0),
+                tzinfo=timezone.utc,
+            )
+            _ensure_email_sequence(
+                db,
+                order.user_id,
+                f"student_tax_1040nr_deadline:{order.id}",
+                next_send_at=next_send_at,
+                completed=False,
+            )
     elif order.product_sku == "fbar_check":
         result_data = process_fbar_check(order.id, order.intake_data or {})
         order.delivery_method = "efile"
@@ -731,6 +797,18 @@ def process_order(
     else:
         raise HTTPException(status_code=400, detail="Processing is not implemented for this product yet")
 
+    _record_notification_status(
+        result_data,
+        "delivery_email",
+        send_marketplace_delivery_email(
+            marketplace_user.email,
+            full_name=marketplace_user.full_name or marketplace_user.email,
+            product_name=order.product.name if order.product is not None else order.product_sku,
+            summary=str(result_data.get("summary") or "Your result is ready."),
+            next_steps=[str(step) for step in result_data.get("next_steps") or []],
+            filing_deadline=order.filing_deadline.isoformat() if order.filing_deadline is not None else None,
+        ),
+    )
     order.result_data = result_data
     order.status = "completed"
     order.completed_at = _now()
@@ -806,3 +884,65 @@ def mark_order_mailed(
     db.commit()
     db.refresh(order)
     return _serialize_order(order, include_result=True)
+
+
+@router.post("/orders/{order_id}/accept-upgrade")
+def accept_order_upgrade(
+    order_id: str,
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+) -> dict[str, Any]:
+    _, marketplace_user = _require_marketplace_account(authorization, db)
+    order = _get_owned_order(order_id, marketplace_user, db)
+    if order.product_sku != "opt_execution":
+        raise HTTPException(status_code=400, detail="Only OPT Execution orders can be upgraded here")
+
+    result_data = dict(order.result_data or {})
+    upgrade_offer = dict(result_data.get("upgrade_offer") or {})
+    if order.status != "flagged" or not upgrade_offer:
+        raise HTTPException(status_code=400, detail="No upgrade offer is available for this order")
+
+    accepted_order_id = str(upgrade_offer.get("accepted_order_id") or "").strip()
+    if accepted_order_id:
+        upgraded_order = db.get(OrderRow, accepted_order_id)
+        if upgraded_order is None:
+            raise HTTPException(status_code=404, detail="Previously accepted advisory order was not found")
+        return {
+            "accepted": True,
+            "original_order": _serialize_order(order, include_result=True),
+            "upgraded_order": _serialize_order(upgraded_order, include_result=True),
+        }
+
+    advisory_product = db.get(ProductRow, "opt_advisory")
+    if advisory_product is None or not advisory_product.active:
+        raise HTTPException(status_code=400, detail="OPT Advisory is not available")
+
+    intake_data = dict(order.intake_data or {})
+    intake_data["chosen_mode"] = "advisory"
+
+    upgraded_order = OrderRow(
+        user_id=marketplace_user.id,
+        product_sku=advisory_product.sku,
+        status="agreement_pending",
+        amount_cents=advisory_product.price_cents,
+        delivery_method="attorney_filing",
+        mailing_status="not_required",
+        intake_data=intake_data,
+    )
+    db.add(upgraded_order)
+    db.flush()
+
+    upgrade_offer["accepted_order_id"] = upgraded_order.id
+    upgrade_offer["accepted_at"] = _now().isoformat()
+    result_data["upgrade_offer"] = upgrade_offer
+    order.result_data = result_data
+    order.updated_at = _now()
+
+    db.commit()
+    db.refresh(order)
+    db.refresh(upgraded_order)
+    return {
+        "accepted": True,
+        "original_order": _serialize_order(order, include_result=True),
+        "upgraded_order": _serialize_order(upgraded_order, include_result=True),
+    }

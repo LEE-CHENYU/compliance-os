@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
@@ -12,7 +11,7 @@ from sqlalchemy.orm import Session
 from compliance_os.web.models.auth import UserRow
 from compliance_os.web.models.database import get_session
 from compliance_os.web.models.marketplace import AttorneyAssignmentRow, AttorneyRow, OrderRow
-from compliance_os.web.routers.marketplace import _serialize_order
+from compliance_os.web.routers.marketplace import _record_notification_status, _serialize_order
 from compliance_os.web.services.attorney_workflow import (
     latest_agreement,
     latest_assignment,
@@ -23,13 +22,14 @@ from compliance_os.web.services.attorney_workflow import (
     serialize_attorney,
 )
 from compliance_os.web.services.auth_service import get_bearer_payload
+from compliance_os.web.services.email_service import (
+    send_attorney_decision_email,
+    send_filing_confirmation_email,
+    send_upgrade_flag_email,
+)
 
 
 router = APIRouter(prefix="/api/attorney", tags=["attorney"])
-
-
-def _now() -> datetime:
-    return datetime.now(timezone.utc)
 
 
 class ReviewRequest(BaseModel):
@@ -175,6 +175,27 @@ def review_case(
         decision=payload.decision,
         notes=payload.notes,
     )
+    result_data = dict(order.result_data or {})
+    if order.user is not None:
+        if payload.decision == "flag_upgrade":
+            email_response = send_upgrade_flag_email(
+                order.user.email,
+                full_name=order.user.full_name or order.user.email,
+                product_name=order.product.name if order.product is not None else order.product_sku,
+                reason=payload.notes or "Attorney review requested Advisory Mode before filing.",
+                credit_cents=19900,
+            )
+            _record_notification_status(result_data, "upgrade_flag_email", email_response)
+        else:
+            email_response = send_attorney_decision_email(
+                order.user.email,
+                full_name=order.user.full_name or order.user.email,
+                product_name=order.product.name if order.product is not None else order.product_sku,
+                decision=payload.decision,
+                notes=payload.notes,
+            )
+            _record_notification_status(result_data, "attorney_review_email", email_response)
+        order.result_data = result_data
     db.commit()
     db.refresh(order)
     db.refresh(assignment)
@@ -205,7 +226,22 @@ def file_case(
         receipt_number=payload.receipt_number,
         filing_confirmation=payload.filing_confirmation,
     )
+    result_data = dict(order.result_data or {})
+    if order.user is not None:
+        _record_notification_status(
+            result_data,
+            "filing_confirmation_email",
+            send_filing_confirmation_email(
+                order.user.email,
+                full_name=order.user.full_name or order.user.email,
+                product_name=order.product.name if order.product is not None else order.product_sku,
+                receipt_number=payload.receipt_number,
+                filing_confirmation=payload.filing_confirmation,
+            ),
+        )
+        order.result_data = result_data
     db.commit()
+    db.refresh(order)
     return {
         "filed_at": result["filed_at"],
         "receipt_number": result["receipt_number"],
@@ -223,16 +259,34 @@ def flag_upgrade(
     _, attorney = _require_attorney_account(authorization, db)
     order, assignment = _owned_assignment(order_id, attorney, db)
 
-    order.status = "flagged"
-    order.updated_at = _now()
-    assignment.decision = "flag_upgrade"
-    assignment.attorney_notes = "\n\n".join(filter(None, [payload.flag_reason, payload.notes]))
-    assignment.reviewed_at = _now()
-    assignment.completed_at = _now()
+    result = record_review(
+        order,
+        assignment,
+        checklist_responses=assignment.checklist_responses or {},
+        decision="flag_upgrade",
+        notes="\n\n".join(filter(None, [payload.flag_reason, payload.notes])),
+    )
+    result_data = dict(order.result_data or {})
+    if order.user is not None:
+        _record_notification_status(
+            result_data,
+            "upgrade_flag_email",
+            send_upgrade_flag_email(
+                order.user.email,
+                full_name=order.user.full_name or order.user.email,
+                product_name=order.product.name if order.product is not None else order.product_sku,
+                reason=payload.flag_reason,
+                credit_cents=19900,
+            ),
+        )
+        order.result_data = result_data
     db.commit()
+    db.refresh(order)
+    db.refresh(assignment)
     return {
         "flagged": True,
-        "user_notified": False,
+        "user_notified": bool((order.result_data or {}).get("notification_statuses", {}).get("upgrade_flag_email")),
+        "next_action": result["next_action"],
         "order": _serialize_order(order, include_result=True),
         "assignment": serialize_assignment(assignment),
     }

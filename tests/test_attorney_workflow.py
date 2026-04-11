@@ -17,23 +17,23 @@ def _user_headers(client, email: str) -> dict[str, str]:
 def _attorney_headers(email: str = "attorney@example.com") -> dict[str, str]:
     session = database._SessionLocal()
     try:
-      user = UserRow(email=email, password_hash=hash_password("secure123"), role="attorney")
-      session.add(user)
-      session.flush()
-      session.add(
-          AttorneyRow(
-              full_name="Casey Counsel",
-              email=email,
-              bar_state="NY",
-              bar_number="A1234567",
-              active=True,
-              bar_verified=True,
-          )
-      )
-      session.commit()
-      return {"Authorization": f"Bearer {create_token(user.id, user.email)}"}
+        user = UserRow(email=email, password_hash=hash_password("secure123"), role="attorney")
+        session.add(user)
+        session.flush()
+        session.add(
+            AttorneyRow(
+                full_name="Casey Counsel",
+                email=email,
+                bar_state="NY",
+                bar_number="A1234567",
+                active=True,
+                bar_verified=True,
+            )
+        )
+        session.commit()
+        return {"Authorization": f"Bearer {create_token(user.id, user.email)}"}
     finally:
-      session.close()
+        session.close()
 
 
 def _opt_responses() -> list[dict[str, object]]:
@@ -52,10 +52,33 @@ def _opt_responses() -> list[dict[str, object]]:
     ]
 
 
-def test_opt_execution_questionnaire_and_attorney_flow(client):
-    user_headers = _user_headers(client, "opt-user@example.com")
-    attorney_headers = _attorney_headers()
+def _disable_attorney_emails(monkeypatch) -> None:
+    import compliance_os.web.routers.attorney as attorney_mod
+    import compliance_os.web.routers.marketplace as marketplace_mod
 
+    monkeypatch.setattr(
+        marketplace_mod,
+        "send_attorney_assignment_email",
+        lambda *args, **kwargs: {"status": "skipped"},
+    )
+    monkeypatch.setattr(
+        attorney_mod,
+        "send_attorney_decision_email",
+        lambda *args, **kwargs: {"status": "skipped"},
+    )
+    monkeypatch.setattr(
+        attorney_mod,
+        "send_upgrade_flag_email",
+        lambda *args, **kwargs: {"status": "skipped"},
+    )
+    monkeypatch.setattr(
+        attorney_mod,
+        "send_filing_confirmation_email",
+        lambda *args, **kwargs: {"status": "skipped"},
+    )
+
+
+def _create_opt_execution_order(client, user_headers: dict[str, str]) -> str:
     questionnaire_response = client.post(
         "/api/marketplace/products/opt_execution/questionnaire",
         headers=user_headers,
@@ -115,6 +138,18 @@ def test_opt_execution_questionnaire_and_attorney_flow(client):
     sign_body = sign_response.json()
     assert sign_body["order"]["status"] == "attorney_review"
     assert sign_body["attorney_assignment"]["decision"] == "pending"
+    return order_id
+
+
+def test_opt_execution_questionnaire_and_attorney_flow(client, monkeypatch, tmp_path):
+    import compliance_os.web.services.attorney_workflow as workflow_mod
+
+    monkeypatch.setattr(workflow_mod, "ATTORNEY_ARTIFACT_DIR", tmp_path / "attorney")
+    _disable_attorney_emails(monkeypatch)
+
+    user_headers = _user_headers(client, "opt-user@example.com")
+    attorney_headers = _attorney_headers()
+    order_id = _create_opt_execution_order(client, user_headers)
 
     dashboard_response = client.get("/api/attorney/dashboard", headers=attorney_headers)
     assert dashboard_response.status_code == 200
@@ -148,6 +183,9 @@ def test_opt_execution_questionnaire_and_attorney_flow(client):
     )
     assert review_response.status_code == 200
     assert review_response.json()["next_action"] == "ready_to_file"
+    review_body = review_response.json()
+    assert review_body["order"]["result"]["artifacts"]
+    assert review_body["order"]["result"]["notification_statuses"]["attorney_review_email"]["status"] == "skipped"
 
     file_response = client.post(
         f"/api/attorney/cases/{order_id}/file",
@@ -159,6 +197,7 @@ def test_opt_execution_questionnaire_and_attorney_flow(client):
     )
     assert file_response.status_code == 200
     assert file_response.json()["receipt_number"] == "IOE1234567890"
+    assert file_response.json()["order"]["result"]["notification_statuses"]["filing_confirmation_email"]["status"] == "skipped"
 
     updated_order_response = client.get(
         f"/api/marketplace/orders/{order_id}",
@@ -168,3 +207,49 @@ def test_opt_execution_questionnaire_and_attorney_flow(client):
     updated_order = updated_order_response.json()
     assert updated_order["status"] == "completed"
     assert updated_order["result"]["summary"]
+    assert any("G-28" in artifact["label"] for artifact in updated_order["result"]["artifacts"])
+    assert any("filing confirmation" in artifact["label"].lower() for artifact in updated_order["result"]["artifacts"])
+
+
+def test_opt_execution_flag_upgrade_creates_advisory_order(client, monkeypatch, tmp_path):
+    import compliance_os.web.services.attorney_workflow as workflow_mod
+
+    monkeypatch.setattr(workflow_mod, "ATTORNEY_ARTIFACT_DIR", tmp_path / "attorney")
+    _disable_attorney_emails(monkeypatch)
+
+    user_headers = _user_headers(client, "opt-flagged@example.com")
+    attorney_headers = _attorney_headers("flag-attorney@example.com")
+    order_id = _create_opt_execution_order(client, user_headers)
+
+    review_response = client.post(
+        f"/api/attorney/cases/{order_id}/review",
+        headers=attorney_headers,
+        json={
+            "decision": "flag_upgrade",
+            "notes": "Prior status history needs legal strategy review before filing.",
+            "checklist_responses": {
+                "passport_match": True,
+                "i20_valid": True,
+                "employment_plan": True,
+                "timing_ok": False,
+            },
+        },
+    )
+    assert review_response.status_code == 200
+    review_body = review_response.json()
+    assert review_body["next_action"] == "offer_advisory_upgrade"
+    assert review_body["order"]["status"] == "flagged"
+    assert review_body["order"]["result"]["upgrade_offer"]["target_sku"] == "opt_advisory"
+    assert review_body["order"]["result"]["notification_statuses"]["upgrade_flag_email"]["status"] == "skipped"
+
+    accept_response = client.post(
+        f"/api/marketplace/orders/{order_id}/accept-upgrade",
+        headers=user_headers,
+    )
+    assert accept_response.status_code == 200
+    accept_body = accept_response.json()
+    assert accept_body["accepted"] is True
+    assert accept_body["upgraded_order"]["product_sku"] == "opt_advisory"
+    assert accept_body["upgraded_order"]["status"] == "agreement_pending"
+    assert accept_body["upgraded_order"]["intake_complete"] is True
+    assert accept_body["original_order"]["result"]["upgrade_offer"]["accepted_order_id"] == accept_body["upgraded_order"]["order_id"]
