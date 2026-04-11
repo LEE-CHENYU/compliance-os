@@ -101,3 +101,80 @@ def test_marketplace_orders_endpoints(client, monkeypatch, tmp_path):
 def test_marketplace_orders_require_auth(client):
     response = client.get("/api/marketplace/orders")
     assert response.status_code == 401
+
+
+def test_marketplace_reuses_existing_in_progress_order_for_same_service(client):
+    signup = client.post("/api/auth/signup", json={"email": "reuse-order@example.com", "password": "secure123"})
+    assert signup.status_code == 200
+    token = signup.json()["token"]
+
+    first = client.post(
+        "/api/marketplace/orders",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"sku": "student_tax_1040nr"},
+    )
+    assert first.status_code == 200
+    first_body = first.json()
+
+    second = client.post(
+        "/api/marketplace/orders",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"sku": "student_tax_1040nr"},
+    )
+    assert second.status_code == 200
+    second_body = second.json()
+
+    assert second_body["order_id"] == first_body["order_id"]
+
+    list_response = client.get(
+        "/api/marketplace/orders",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert list_response.status_code == 200
+    orders = [order for order in list_response.json()["orders"] if order["product_sku"] == "student_tax_1040nr"]
+    assert len(orders) == 1
+
+
+def test_marketplace_orders_list_hides_older_duplicate_drafts(client):
+    from compliance_os.web.models import database
+    from compliance_os.web.models.marketplace import MarketplaceUserRow, OrderRow
+
+    signup = client.post("/api/auth/signup", json={"email": "reuse-visible-order@example.com", "password": "secure123"})
+    assert signup.status_code == 200
+    token = signup.json()["token"]
+
+    first = client.post(
+        "/api/marketplace/orders",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"sku": "student_tax_1040nr"},
+    )
+    assert first.status_code == 200
+
+    session = database._SessionLocal()
+    try:
+        marketplace_user = session.query(MarketplaceUserRow).filter(
+            MarketplaceUserRow.email == "reuse-visible-order@example.com"
+        ).one()
+        session.add(
+            OrderRow(
+                user_id=marketplace_user.id,
+                product_sku="student_tax_1040nr",
+                status="draft",
+                amount_cents=2900,
+                delivery_method="download_only",
+                mailing_status="not_required",
+                intake_data={"full_name": "Visible Duplicate"},
+                result_data=None,
+            )
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    list_response = client.get(
+        "/api/marketplace/orders",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert list_response.status_code == 200
+    orders = [order for order in list_response.json()["orders"] if order["product_sku"] == "student_tax_1040nr"]
+    assert len(orders) == 1

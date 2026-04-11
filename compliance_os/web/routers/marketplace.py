@@ -47,6 +47,7 @@ from compliance_os.web.services.mailing_service import (
     build_form_8843_filing_context,
     serialize_filing_context,
 )
+from compliance_os.web.services.marketplace_prefill import build_marketplace_prefill
 from compliance_os.web.services.product_catalog import (
     get_product_config,
     list_product_configs,
@@ -69,6 +70,15 @@ OPT_EXECUTION_FILE_FIELDS = {
     "i20_file": "i20_opt_recommendation",
     "photo_file": "passport_photo",
     "employment_plan_file": "employment_plan",
+}
+REUSABLE_ORDER_STATUSES = {
+    "draft",
+    "intake_complete",
+    "agreement_pending",
+    "attorney_review",
+    "ready_to_file",
+    "flagged",
+    "processing",
 }
 
 
@@ -165,6 +175,39 @@ def _serialize_result_payload(order: OrderRow) -> dict[str, Any]:
     }
 
 
+def _serialize_intake_preview(order: OrderRow) -> dict[str, Any] | None:
+    intake_data = order.intake_data or {}
+    if not intake_data:
+        return None
+    if order.product_sku == "h1b_doc_check":
+        return {
+            "documents": [
+                {
+                    "doc_type": document.get("doc_type"),
+                    "filename": document.get("filename"),
+                    "source_document_id": document.get("source_document_id"),
+                    "source_doc_type": document.get("source_doc_type"),
+                }
+                for document in intake_data.get("documents") or []
+                if isinstance(document, dict)
+            ]
+        }
+    if order.product_sku in {"opt_execution", "opt_advisory"}:
+        client_intake = dict(intake_data.get("client_intake") or {})
+        client_intake["documents"] = [
+            {
+                "doc_type": document.get("doc_type"),
+                "filename": document.get("filename"),
+                "source_document_id": document.get("source_document_id"),
+                "source_doc_type": document.get("source_doc_type"),
+            }
+            for document in client_intake.get("documents") or []
+            if isinstance(document, dict)
+        ]
+        return {"client_intake": client_intake}
+    return intake_data
+
+
 def _ensure_marketplace_user(user: UserRow, db: Session) -> MarketplaceUserRow:
     marketplace_user = (
         db.query(MarketplaceUserRow)
@@ -256,6 +299,57 @@ def _questionnaire_service_sku(product_sku: str) -> str:
     return product_sku
 
 
+def _resume_existing_order(
+    *,
+    marketplace_user: MarketplaceUserRow,
+    product: ProductRow,
+    questionnaire_response_id: str | None,
+    chosen_mode: str | None,
+    db: Session,
+) -> OrderRow | None:
+    orders = (
+        db.query(OrderRow)
+        .filter(
+            OrderRow.user_id == marketplace_user.id,
+            OrderRow.product_sku == product.sku,
+        )
+        .order_by(OrderRow.updated_at.desc(), OrderRow.created_at.desc())
+        .all()
+    )
+    for order in orders:
+        if order.status not in REUSABLE_ORDER_STATUSES:
+            continue
+        if order.completed_at is not None or order.result_data:
+            continue
+        intake_data = order.intake_data or {}
+        if product.requires_questionnaire:
+            existing_mode = intake_data.get("chosen_mode")
+            if chosen_mode and existing_mode and existing_mode != chosen_mode:
+                continue
+            existing_response_id = intake_data.get("questionnaire_response_id")
+            if questionnaire_response_id and existing_response_id and existing_response_id != questionnaire_response_id:
+                continue
+        return order
+    return None
+
+
+def _collapse_duplicate_reusable_orders(orders: list[OrderRow]) -> list[OrderRow]:
+    collapsed: list[OrderRow] = []
+    seen_reusable_skus: set[str] = set()
+    for order in orders:
+        is_reusable = (
+            order.status in REUSABLE_ORDER_STATUSES
+            and order.completed_at is None
+            and not (order.result_data or {})
+        )
+        if is_reusable:
+            if order.product_sku in seen_reusable_skus:
+                continue
+            seen_reusable_skus.add(order.product_sku)
+        collapsed.append(order)
+    return collapsed
+
+
 def _serialize_agreement(order: OrderRow) -> dict[str, Any] | None:
     agreement = latest_agreement(order)
     if agreement is None:
@@ -301,6 +395,7 @@ def _serialize_order(order: OrderRow, *, include_result: bool = False) -> dict[s
         "artifacts": _serialize_artifacts(order, result_data),
         "questionnaire_response_id": intake_data.get("questionnaire_response_id"),
         "chosen_mode": intake_data.get("chosen_mode"),
+        "intake_preview": _serialize_intake_preview(order),
         "agreement_signed": latest_agreement(order) is not None,
         "agreement": _serialize_agreement(order),
         "attorney_assignment": serialize_assignment(assignment),
@@ -367,6 +462,60 @@ def _set_deadline_from_iso(order: OrderRow, value: str | None) -> None:
     if not value:
         return
     order.filing_deadline = datetime.strptime(value, "%Y-%m-%d").date()
+
+
+def _is_json_intake_complete(order: OrderRow, intake_data: dict[str, Any]) -> bool:
+    if order.product_sku == "student_tax_1040nr":
+        required_fields = {
+            "tax_year",
+            "full_name",
+            "visa_type",
+            "school_name",
+            "country_citizenship",
+            "arrival_date",
+            "days_present_current",
+            "days_present_year_1_ago",
+            "days_present_year_2_ago",
+        }
+        return all(intake_data.get(field) not in (None, "") for field in required_fields)
+    if order.product_sku == "fbar_check":
+        accounts = intake_data.get("accounts") or []
+        if not intake_data.get("owner_name") or not intake_data.get("tax_year") or not accounts:
+            return False
+        return all(
+            account.get("institution_name") not in (None, "")
+            and account.get("country") not in (None, "")
+            and account.get("account_type") not in (None, "")
+            and account.get("account_number_last4") not in (None, "")
+            and account.get("max_balance_usd") not in (None, "")
+            for account in accounts
+            if isinstance(account, dict)
+        )
+    if order.product_sku == "election_83b":
+        required_fields = {
+            "taxpayer_name",
+            "taxpayer_address",
+            "company_name",
+            "property_description",
+            "grant_date",
+            "share_count",
+            "fair_market_value_per_share",
+            "exercise_price_per_share",
+            "vesting_schedule",
+        }
+        return all(intake_data.get(field) not in (None, "") for field in required_fields)
+    return bool(intake_data)
+
+
+def _apply_order_status_from_intake(order: OrderRow, intake_data: dict[str, Any]) -> None:
+    if order.product_sku == "h1b_doc_check":
+        order.status = "intake_complete" if (intake_data.get("documents") or []) else "draft"
+        return
+    if order.product_sku in {"opt_execution", "opt_advisory"}:
+        client_intake = intake_data.get("client_intake") or {}
+        order.status = "intake_complete" if client_intake and latest_agreement(order) is None else "attorney_review" if client_intake else "agreement_pending"
+        return
+    order.status = "intake_complete" if _is_json_intake_complete(order, intake_data) else "draft"
 
 
 def _validate_json_intake(order: OrderRow, payload: dict[str, Any]) -> None:
@@ -499,6 +648,16 @@ def create_order(
     if not product.active:
         raise HTTPException(status_code=400, detail="This product is not active yet")
 
+    reusable_order = _resume_existing_order(
+        marketplace_user=marketplace_user,
+        product=product,
+        questionnaire_response_id=payload.questionnaire_response_id,
+        chosen_mode=payload.chosen_mode,
+        db=db,
+    )
+    if reusable_order is not None:
+        return _serialize_order(reusable_order, include_result=True)
+
     intake_data: dict[str, Any] | None = None
     status = "draft"
     delivery_method = "download_only"
@@ -555,9 +714,10 @@ def list_orders(
     orders = (
         db.query(OrderRow)
         .filter(OrderRow.user_id == marketplace_user.id)
-        .order_by(OrderRow.created_at.desc())
+        .order_by(OrderRow.updated_at.desc(), OrderRow.created_at.desc())
         .all()
     )
+    orders = _collapse_duplicate_reusable_orders(orders)
     return {"orders": [_serialize_order(order) for order in orders]}
 
 
@@ -724,14 +884,47 @@ async def save_order_intake(
         _validate_json_intake(order, intake_data)
 
     order.intake_data = intake_data
-    if order.product_sku in {"opt_execution", "opt_advisory"}:
-        order.status = "intake_complete" if latest_agreement(order) is None else "attorney_review"
-    else:
-        order.status = "intake_complete"
+    _apply_order_status_from_intake(order, intake_data)
     order.updated_at = _now()
     db.commit()
     db.refresh(order)
     return _serialize_order(order)
+
+
+@router.post("/orders/{order_id}/pull-extracted-info")
+def pull_extracted_info_into_order(
+    order_id: str,
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+) -> dict[str, Any]:
+    user, marketplace_user = _require_marketplace_account(authorization, db)
+    order = _get_owned_order(order_id, marketplace_user, db)
+
+    prefill = build_marketplace_prefill(
+        user_id=user.id,
+        product_sku=order.product_sku,
+        existing_intake=order.intake_data or {},
+        db=db,
+    )
+    applied_intake = dict(prefill.get("applied_intake") or {})
+    if not applied_intake and not prefill.get("source_documents"):
+        raise HTTPException(status_code=404, detail="No extracted data was found for this order")
+
+    order.intake_data = applied_intake
+    _apply_order_status_from_intake(order, applied_intake)
+    order.updated_at = _now()
+    db.commit()
+    db.refresh(order)
+    return {
+        "order": _serialize_order(order, include_result=True),
+        "prefill": {
+            "coverage": prefill.get("coverage"),
+            "summary": prefill.get("summary"),
+            "applied_field_names": list(prefill.get("applied_field_names") or []),
+            "missing_fields": list(prefill.get("missing_fields") or []),
+            "source_documents": list(prefill.get("source_documents") or []),
+        },
+    }
 
 
 @router.post("/orders/{order_id}/process")

@@ -112,9 +112,17 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
 
     for document in documents:
         doc_type = str(document["doc_type"])
-        path = Path(str(document["path"]))
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        fields = extract_h1b_document_fields(doc_type, text)
+        provided_fields = document.get("fields")
+        if isinstance(provided_fields, dict) and provided_fields:
+            fields = {
+                str(field_name): value
+                for field_name, value in provided_fields.items()
+                if value not in (None, "")
+            }
+        else:
+            path = Path(str(document["path"]))
+            text = path.read_text(encoding="utf-8", errors="ignore")
+            fields = extract_h1b_document_fields(doc_type, text)
         extracted[doc_type] = fields
         document_summary.append(
             {

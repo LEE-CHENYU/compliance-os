@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from compliance_os.web.models import database
+from compliance_os.web.models.auth import UserRow
+from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, ExtractedFieldRow
 
 
 def _auth_headers(client, email: str) -> dict[str, str]:
@@ -31,6 +33,50 @@ def _disable_marketplace_delivery_email(monkeypatch) -> None:
         "send_marketplace_delivery_email",
         lambda *args, **kwargs: {"status": "skipped"},
     )
+
+
+def _seed_extracted_document(
+    *,
+    email: str,
+    doc_type: str,
+    filename: str,
+    fields: dict[str, str],
+    tmp_path,
+) -> None:
+    session = database._SessionLocal()
+    try:
+        user = session.query(UserRow).filter(UserRow.email == email).one()
+        check = CheckRow(track="stem_opt", status="saved", user_id=user.id, answers={})
+        session.add(check)
+        session.flush()
+
+        file_path = tmp_path / filename
+        file_path.write_text("seed", encoding="utf-8")
+        document = DocumentRow(
+            check_id=check.id,
+            doc_type=doc_type,
+            filename=filename,
+            file_path=str(file_path),
+            file_size=file_path.stat().st_size,
+            mime_type="text/plain",
+            is_active=True,
+        )
+        session.add(document)
+        session.flush()
+
+        for field_name, field_value in fields.items():
+            session.add(
+                ExtractedFieldRow(
+                    document_id=document.id,
+                    field_name=field_name,
+                    field_value=str(field_value),
+                    confidence=0.99,
+                    raw_text=str(field_value),
+                )
+            )
+        session.commit()
+    finally:
+        session.close()
 
 
 def test_h1b_doc_check_flow(client, monkeypatch, tmp_path):
@@ -290,3 +336,115 @@ def test_student_tax_1040nr_flow(client, monkeypatch, tmp_path):
     assert len(result["artifacts"]) >= 2
     assert any("1040-NR" in artifact["label"] for artifact in result["artifacts"])
     assert result["notification_statuses"]["delivery_email"]["status"] == "skipped"
+
+
+def test_student_tax_prefill_pulls_extracted_fields(client, monkeypatch, tmp_path):
+    _disable_marketplace_delivery_email(monkeypatch)
+
+    email = "student-tax-prefill@example.com"
+    headers = _auth_headers(client, email)
+    _seed_extracted_document(
+        email=email,
+        doc_type="passport",
+        filename="passport.txt",
+        fields={
+            "full_name": "Jessica Chen",
+            "country_of_issue": "China",
+        },
+        tmp_path=tmp_path,
+    )
+    _seed_extracted_document(
+        email=email,
+        doc_type="i20",
+        filename="i20.txt",
+        fields={
+            "student_name": "Jessica Chen",
+            "school_name": "Columbia University",
+        },
+        tmp_path=tmp_path,
+    )
+    _seed_extracted_document(
+        email=email,
+        doc_type="i94",
+        filename="i94.txt",
+        fields={
+            "most_recent_entry_date": "2023-08-18",
+            "class_of_admission": "F-1",
+        },
+        tmp_path=tmp_path,
+    )
+    _seed_extracted_document(
+        email=email,
+        doc_type="w2",
+        filename="w2.txt",
+        fields={
+            "tax_year": "2025",
+            "wages_tips_other_compensation": "24000",
+            "federal_income_tax_withheld": "1800",
+        },
+        tmp_path=tmp_path,
+    )
+
+    order_id = _create_order(client, headers, "student_tax_1040nr")
+    response = client.post(
+        f"/api/marketplace/orders/{order_id}/pull-extracted-info",
+        headers=headers,
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["prefill"]["coverage"] == "partial"
+    assert body["order"]["status"] == "draft"
+    preview = body["order"]["intake_preview"]
+    assert preview["full_name"] == "Jessica Chen"
+    assert preview["school_name"] == "Columbia University"
+    assert preview["tax_year"] == 2025
+    assert len(body["prefill"]["source_documents"]) >= 3
+
+
+def test_h1b_prefill_allows_processing_without_manual_upload(client, monkeypatch, tmp_path):
+    import compliance_os.web.services.h1b_doc_check as h1b_mod
+
+    monkeypatch.setattr(h1b_mod, "H1B_DOC_CHECK_DIR", tmp_path / "h1b")
+    _disable_marketplace_delivery_email(monkeypatch)
+
+    email = "h1b-prefill@example.com"
+    headers = _auth_headers(client, email)
+    _seed_extracted_document(
+        email=email,
+        doc_type="h1b_registration",
+        filename="registration.txt",
+        fields={
+            "registration_number": "ABC123456789",
+            "employer_name": "Acme Labs Inc.",
+            "authorized_individual_name": "Jane Founder",
+            "authorized_individual_title": "CEO",
+        },
+        tmp_path=tmp_path,
+    )
+    _seed_extracted_document(
+        email=email,
+        doc_type="h1b_g28",
+        filename="g28.txt",
+        fields={
+            "representative_name": "Xinzi Chen",
+            "client_entity_name": "Different Entity LLC",
+        },
+        tmp_path=tmp_path,
+    )
+
+    order_id = _create_order(client, headers, "h1b_doc_check")
+    prefill_response = client.post(
+        f"/api/marketplace/orders/{order_id}/pull-extracted-info",
+        headers=headers,
+    )
+    assert prefill_response.status_code == 200
+    assert prefill_response.json()["order"]["status"] == "intake_complete"
+
+    process_response = client.post(
+        f"/api/marketplace/orders/{order_id}/process",
+        headers=headers,
+    )
+    assert process_response.status_code == 200
+    result = process_response.json()["result"]
+    assert result["document_summary"]
+    assert any("entity" in finding["title"].lower() for finding in result["findings"])

@@ -78,9 +78,24 @@ export default function AccountOrdersPage() {
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f5f8fd_0%,#eef4fb_100%)] px-6 py-10">
       <div className="mx-auto max-w-6xl">
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/84 px-4 py-2 text-[13px] font-semibold text-[#40536f] shadow-[0_10px_24px_rgba(61,84,128,0.06)] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
+          >
+            &larr; Back to dashboard
+          </Link>
+          <Link
+            href="/services"
+            className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/70 px-4 py-2 text-[13px] font-semibold text-[#5b76a2] transition hover:border-[#c4d4ea] hover:text-[#243958]"
+          >
+            Browse services
+          </Link>
+        </div>
+
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#70819e]">Account</div>
+            <div className="mt-6 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#70819e]">Account</div>
             <h1 className="mt-3 text-[38px] font-bold tracking-tight text-[#0d1424]">Orders</h1>
             <p className="mt-3 max-w-2xl text-[15px] leading-7 text-[#556480]">
               Use this page to reopen completed filings, keep track of mailing status, and return to any service you already started.

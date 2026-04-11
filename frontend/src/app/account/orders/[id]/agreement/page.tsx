@@ -110,12 +110,20 @@ export default function OrderAgreementPage() {
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#edf3f9_0%,#f7faff_100%)] px-6 py-12">
       <div className="mx-auto max-w-5xl">
-        <Link
-          href={`/account/orders/${orderId}`}
-          className="inline-flex rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur hover:text-[#1a2036]"
-        >
-          ← Back to order
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="inline-flex rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-medium text-[#40536f] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur hover:text-[#1a2036]"
+          >
+            ← Back to dashboard
+          </Link>
+          <Link
+            href={`/account/orders/${orderId}`}
+            className="inline-flex rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur hover:text-[#1a2036]"
+          >
+            Back to order
+          </Link>
+        </div>
 
         <section className="mt-6 rounded-[32px] border border-white/80 bg-white/84 p-8 shadow-[0_28px_80px_rgba(61,84,128,0.08)] md:p-10">
           <div className="flex flex-wrap items-start justify-between gap-4">

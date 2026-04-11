@@ -49,6 +49,13 @@ export interface MarketplaceProduct {
   path: string | null;
 }
 
+export interface MarketplaceSourceDocument {
+  document_id: string;
+  doc_type: string;
+  filename: string;
+  uploaded_at: string | null;
+}
+
 export interface MarketplaceArtifact {
   label: string;
   filename: string;
@@ -229,6 +236,7 @@ export interface MarketplaceOrder {
   result_ready: boolean;
   questionnaire_response_id?: string | null;
   chosen_mode?: string | null;
+  intake_preview?: Record<string, unknown> | null;
   agreement_signed?: boolean;
   agreement?: MarketplaceAgreement | null;
   attorney_assignment?: MarketplaceAttorneyAssignment | null;
@@ -247,6 +255,17 @@ export interface MarketplaceUpgradeAcceptResponse {
   accepted: boolean;
   original_order: MarketplaceOrder;
   upgraded_order: MarketplaceOrder;
+}
+
+export interface MarketplacePrefillResponse {
+  order: MarketplaceOrder;
+  prefill: {
+    coverage: string;
+    summary: string;
+    applied_field_names: string[];
+    missing_fields: string[];
+    source_documents: MarketplaceSourceDocument[];
+  };
 }
 
 export interface Form8843GenerateResponse extends Form8843OrderResponse {
@@ -431,6 +450,14 @@ export async function processMarketplaceOrder(orderId: string): Promise<Marketpl
     headers: authHeaders(),
   });
   return parseResponse<MarketplaceOrder>(response);
+}
+
+export async function pullMarketplaceOrderPrefill(orderId: string): Promise<MarketplacePrefillResponse> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/pull-extracted-info`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+  return parseResponse<MarketplacePrefillResponse>(response);
 }
 
 export async function acceptMarketplaceUpgrade(orderId: string): Promise<MarketplaceUpgradeAcceptResponse> {

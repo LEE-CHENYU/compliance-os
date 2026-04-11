@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import FilingChecklistCard from "@/components/form8843/FilingChecklistCard";
 import { isLoggedIn } from "@/lib/auth";
@@ -12,6 +12,7 @@ import {
   getMarketplaceOrder,
   markMarketplaceOrderMailed,
   processMarketplaceOrder,
+  pullMarketplaceOrderPrefill,
   resolveForm8843PdfUrl,
   saveMarketplaceOrderFileIntake,
   saveMarketplaceOrderJsonIntake,
@@ -116,6 +117,13 @@ function formatLabel(value: string): string {
   return value.replace(/_/g, " ");
 }
 
+function asText(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+  return String(value);
+}
+
 function createEmptyFbarAccount(): FbarAccountForm {
   return {
     institution_name: "",
@@ -211,13 +219,14 @@ export default function AccountOrderDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionNote, setActionNote] = useState<string | null>(null);
-  const [busyAction, setBusyAction] = useState<"save" | "process" | "mail" | "upgrade" | null>(null);
+  const [busyAction, setBusyAction] = useState<"save" | "process" | "mail" | "upgrade" | "prefill" | null>(null);
   const [trackingNumber, setTrackingNumber] = useState("");
   const [h1bFiles, setH1bFiles] = useState<Record<string, File | null>>({});
   const [fbarForm, setFbarForm] = useState<FbarFormState>(() => createInitialFbarForm());
   const [election83BForm, setElection83BForm] = useState<Election83BFormState>(() => createInitial83BForm());
   const [studentTaxForm, setStudentTaxForm] = useState<StudentTaxFormState>(() => createInitialStudentTaxForm());
   const [optIntakeForm, setOptIntakeForm] = useState<OptIntakeFormState>(() => createInitialOptIntakeForm());
+  const autoPrefillAttemptedRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!orderId) {
@@ -235,6 +244,7 @@ export default function AccountOrderDetailPage() {
     getMarketplaceOrder(orderId)
       .then((nextOrder) => {
         if (!cancelled) {
+          hydrateFromOrder(nextOrder);
           setOrder(nextOrder);
           setTrackingNumber(nextOrder.tracking_number ?? "");
         }
@@ -261,7 +271,90 @@ export default function AccountOrderDetailPage() {
   const isSlice3Sku = order ? ["student_tax_1040nr", "h1b_doc_check", "fbar_check", "election_83b"].includes(order.product_sku) : false;
   const isOptSku = order ? ["opt_execution", "opt_advisory"].includes(order.product_sku) : false;
 
+  function hydrateFromOrder(nextOrder: MarketplaceOrder) {
+    const preview = nextOrder.intake_preview ?? null;
+    if (!preview || typeof preview !== "object") {
+      return;
+    }
+
+    if (nextOrder.product_sku === "fbar_check") {
+      const data = preview as Record<string, unknown>;
+      const accounts = Array.isArray(data.accounts)
+        ? data.accounts.map((account) => {
+          const row = account as Record<string, unknown>;
+          return {
+            institution_name: asText(row.institution_name),
+            country: asText(row.country),
+            account_type: asText(row.account_type),
+            max_balance_usd: asText(row.max_balance_usd),
+            account_number_last4: asText(row.account_number_last4),
+          };
+        })
+        : [createEmptyFbarAccount()];
+      setFbarForm({
+        tax_year: asText(data.tax_year) || createInitialFbarForm().tax_year,
+        owner_name: asText(data.owner_name),
+        accounts: accounts.length ? accounts : [createEmptyFbarAccount()],
+      });
+      return;
+    }
+
+    if (nextOrder.product_sku === "student_tax_1040nr") {
+      const data = preview as Record<string, unknown>;
+      setStudentTaxForm({
+        tax_year: asText(data.tax_year) || createInitialStudentTaxForm().tax_year,
+        full_name: asText(data.full_name),
+        visa_type: asText(data.visa_type) || "F-1",
+        school_name: asText(data.school_name),
+        country_citizenship: asText(data.country_citizenship),
+        arrival_date: asText(data.arrival_date),
+        days_present_current: asText(data.days_present_current),
+        days_present_year_1_ago: asText(data.days_present_year_1_ago),
+        days_present_year_2_ago: asText(data.days_present_year_2_ago),
+        wage_income_usd: asText(data.wage_income_usd),
+        scholarship_income_usd: asText(data.scholarship_income_usd),
+        other_income_usd: asText(data.other_income_usd),
+        federal_withholding_usd: asText(data.federal_withholding_usd),
+        state_withholding_usd: asText(data.state_withholding_usd),
+        claim_treaty_benefit: Boolean(data.claim_treaty_benefit),
+        treaty_country: asText(data.treaty_country),
+        treaty_article: asText(data.treaty_article),
+        used_resident_software: Boolean(data.used_resident_software),
+      });
+      return;
+    }
+
+    if (nextOrder.product_sku === "election_83b") {
+      const data = preview as Record<string, unknown>;
+      setElection83BForm({
+        taxpayer_name: asText(data.taxpayer_name),
+        taxpayer_address: asText(data.taxpayer_address),
+        company_name: asText(data.company_name),
+        property_description: asText(data.property_description) || "Restricted common stock",
+        grant_date: asText(data.grant_date),
+        share_count: asText(data.share_count),
+        fair_market_value_per_share: asText(data.fair_market_value_per_share),
+        exercise_price_per_share: asText(data.exercise_price_per_share),
+        vesting_schedule: asText(data.vesting_schedule),
+      });
+      return;
+    }
+
+    if (nextOrder.product_sku === "opt_execution" || nextOrder.product_sku === "opt_advisory") {
+      const clientIntake = (preview as Record<string, unknown>).client_intake as Record<string, unknown> | undefined;
+      if (!clientIntake) {
+        return;
+      }
+      setOptIntakeForm((current) => ({
+        ...current,
+        desired_start_date: asText(clientIntake.desired_start_date),
+        employment_plan_text: asText(clientIntake.employment_plan_text),
+      }));
+    }
+  }
+
   function applyOrder(nextOrder: MarketplaceOrder, note: string) {
+    hydrateFromOrder(nextOrder);
     setOrder(nextOrder);
     setTrackingNumber(nextOrder.tracking_number ?? "");
     setActionError(null);
@@ -534,6 +627,71 @@ export default function AccountOrderDetailPage() {
     }
   }
 
+  async function handlePullPrefill() {
+    if (!order) {
+      return;
+    }
+
+    setBusyAction("prefill");
+    setActionError(null);
+    setActionNote(null);
+    try {
+      const response = await pullMarketplaceOrderPrefill(order.order_id);
+      applyOrder(response.order, response.prefill.summary);
+    } catch (nextError) {
+      setActionError(nextError instanceof Error ? nextError.message : "Could not pull extracted data into this order");
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  useEffect(() => {
+    if (!order || order.result_ready || order.intake_preview || !(isSlice3Sku || isOptSku)) {
+      return;
+    }
+    if (autoPrefillAttemptedRef.current === order.order_id) {
+      return;
+    }
+    autoPrefillAttemptedRef.current = order.order_id;
+    pullMarketplaceOrderPrefill(order.order_id)
+      .then((response) => {
+        hydrateFromOrder(response.order);
+        setOrder(response.order);
+        setTrackingNumber(response.order.tracking_number ?? "");
+        setActionError(null);
+        setActionNote(response.prefill.summary);
+      })
+      .catch(() => {
+        // Silent miss: not every user will have data-room documents for every service.
+      });
+  }, [isOptSku, isSlice3Sku, order]);
+
+  function renderPrefilledDocuments(documents: unknown, tone: "neutral" | "accent" = "neutral") {
+    if (!Array.isArray(documents) || !documents.length) {
+      return null;
+    }
+    const borderClass = tone === "accent" ? "border-[#d7e4f7] bg-[#f8fbff]" : "border-[#e4edf7] bg-[#fbfdff]";
+    return (
+      <div className={`mt-5 rounded-[22px] border ${borderClass} p-4`}>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Attached from data room</div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {documents.map((document, index) => {
+            const row = (document || {}) as Record<string, unknown>;
+            const label = `${formatLabel(asText(row.doc_type) || "document")} · ${asText(row.filename) || `Document ${index + 1}`}`;
+            return (
+              <span
+                key={`${asText(row.source_document_id) || index}-${label}`}
+                className="rounded-full border border-[#dbe5f2] bg-white px-3 py-1.5 text-[12px] font-medium text-[#546781]"
+              >
+                {label}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   function renderIntakeSection() {
     if (!order || order.product_sku === "form_8843_free" || !isSlice3Sku) {
       return null;
@@ -564,15 +722,29 @@ export default function AccountOrderDetailPage() {
               Guardian keeps the intake inside this workspace so the order page acts as the operating surface, not just a receipt.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => void handleSaveIntake()}
-            disabled={busyAction === "save"}
-            className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
-          >
-            {busyAction === "save" ? "Saving intake..." : "Save intake"}
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => void handlePullPrefill()}
+              disabled={busyAction === "prefill"}
+              className="inline-flex rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b] disabled:cursor-not-allowed disabled:text-[#98a5ba]"
+            >
+              {busyAction === "prefill" ? "Pulling from data room..." : "Pull from data room"}
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleSaveIntake()}
+              disabled={busyAction === "save"}
+              className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
+            >
+              {busyAction === "save" ? "Saving intake..." : "Save intake"}
+            </button>
+          </div>
         </div>
+
+        {order.product_sku === "h1b_doc_check"
+          ? renderPrefilledDocuments((order.intake_preview as Record<string, unknown> | null)?.documents)
+          : null}
 
         {order.product_sku === "h1b_doc_check" ? (
           <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -1180,20 +1352,35 @@ export default function AccountOrderDetailPage() {
             </p>
           </div>
           {!order.intake_complete ? (
-            <button
-              type="button"
-              onClick={() => void handleSaveIntake()}
-              disabled={busyAction === "save"}
-              className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
-            >
-              {busyAction === "save" ? "Saving intake..." : "Save intake"}
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => void handlePullPrefill()}
+                disabled={busyAction === "prefill"}
+                className="inline-flex rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b] disabled:cursor-not-allowed disabled:text-[#98a5ba]"
+              >
+                {busyAction === "prefill" ? "Pulling from data room..." : "Pull from data room"}
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleSaveIntake()}
+                disabled={busyAction === "save"}
+                className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
+              >
+                {busyAction === "save" ? "Saving intake..." : "Save intake"}
+              </button>
+            </div>
           ) : (
             <div className="rounded-full border border-[#cfe7d3] bg-[#f3fbf4] px-4 py-2 text-[13px] font-semibold text-[#326247]">
               Intake captured
             </div>
           )}
         </div>
+
+        {renderPrefilledDocuments(
+          (((order.intake_preview as Record<string, unknown> | null)?.client_intake as Record<string, unknown> | undefined)?.documents),
+          "accent",
+        )}
 
         {!order.intake_complete ? (
           <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -1252,12 +1439,20 @@ export default function AccountOrderDetailPage() {
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f5f8fd_0%,#eef4fb_100%)] px-6 py-10">
       <div className="mx-auto max-w-5xl">
-        <Link
-          href="/account/orders"
-          className="inline-flex items-center text-[14px] font-semibold text-[#5b76a2] transition hover:text-[#243958]"
-        >
-          &larr; Back to orders
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/84 px-4 py-2 text-[13px] font-semibold text-[#40536f] shadow-[0_10px_24px_rgba(61,84,128,0.06)] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
+          >
+            &larr; Back to dashboard
+          </Link>
+          <Link
+            href="/account/orders"
+            className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/70 px-4 py-2 text-[13px] font-semibold text-[#5b76a2] transition hover:border-[#c4d4ea] hover:text-[#243958]"
+          >
+            Back to orders
+          </Link>
+        </div>
 
         {loading ? (
           <div className="mt-6 rounded-[32px] border border-[#dbe5f2] bg-white/82 px-6 py-8 text-[15px] text-[#6e7f9a] shadow-[0_22px_70px_rgba(61,84,128,0.08)]">
