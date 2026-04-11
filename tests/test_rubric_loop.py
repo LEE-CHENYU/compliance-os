@@ -296,7 +296,7 @@ def test_discover_loads_static_goldens(tmp_path):
     assert golden_cases[0].fixture_content is not None
 
 
-def test_discover_raises_coverage_gap_when_rule_missing(tmp_path):
+def test_discover_auto_expands_manifest_when_rules_added(tmp_path):
     """If a rule YAML has a rule that has NO entry in the discover function's
     output (impossible today but a guard for future refactors), CoverageGap fires."""
     rules_dir = tmp_path / "rules"
@@ -343,6 +343,17 @@ rules:
     assert "sample_rule_b" in rule_ids_in_manifest
 
 
+def test_enforce_coverage_raises_when_rule_unseen(tmp_path):
+    """_enforce_coverage must raise CoverageGap when rules_dir contains a rule
+    that has no covering case in the passed-in cases list."""
+    from rubric.discover import _enforce_coverage
+    rules_dir = tmp_path / "rules"
+    _write_sample_rules(rules_dir)  # writes sample_rule_a to stem_opt.yaml
+    # Pass an empty cases list — sample_rule_a is in rules_dir but nothing covers it
+    with pytest.raises(CoverageGap, match="sample_rule_a"):
+        _enforce_coverage(rules_dir, cases=[])
+
+
 def test_positive_intent_mentions_rule_id():
     rule = {
         "id": "job_title_mismatch",
@@ -365,3 +376,20 @@ def test_negative_intent_describes_near_miss():
     intent = build_negative_intent(rule)
     assert "NOT" in intent or "not fire" in intent.lower()
     assert "job_title_mismatch" in intent
+
+
+def test_positive_intent_preserves_condition_order():
+    """Multi-condition rules must serialize in the order they appear in the YAML."""
+    rule = {
+        "id": "multi_cond_rule",
+        "conditions": [
+            {"source": "answers", "field": "a", "operator": "eq", "value": 1},
+            {"source": "comparison", "field": "b", "operator": "mismatch"},
+            {"source": "answers", "field": "c", "operator": "in", "value": [1, 2, 3]},
+        ],
+    }
+    intent = build_positive_intent(rule)
+    a_pos = intent.index("answers.a")
+    b_pos = intent.index("comparison.b")
+    c_pos = intent.index("answers.c")
+    assert a_pos < b_pos < c_pos

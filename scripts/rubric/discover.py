@@ -63,6 +63,17 @@ def _all_rule_ids(rules_dir: Path) -> set[str]:
     return ids
 
 
+def _enforce_coverage(rules_dir: Path, cases: list[CaseSpec]) -> None:
+    """Enforce CoverageGap invariant: every rule in rules_dir must have ≥1 case.
+
+    Re-reads YAMLs as a source-of-truth check independent of case construction.
+    """
+    seen = {c.target_rule_id for c in cases if c.target_rule_id}
+    missing = _all_rule_ids(rules_dir) - seen
+    if missing:
+        raise CoverageGap(f"rules with no covering case: {sorted(missing)}")
+
+
 def build_manifest(rules_dir: Path, goldens_dir: Path) -> list[CaseSpec]:
     """Return the full case manifest for one run.
 
@@ -102,23 +113,21 @@ def build_manifest(rules_dir: Path, goldens_dir: Path) -> list[CaseSpec]:
     # Slices C / D / E — static goldens
     if goldens_dir.exists():
         for golden_file in sorted(goldens_dir.glob("*.json")):
-            spec = json.loads(golden_file.read_text())
-            cases.append(CaseSpec(
-                case_id=spec["case_id"],
-                slice=spec["slice"],
-                track=spec.get("track", ""),
-                target_rule_id=spec.get("target_rule_id"),
-                target_rule_snapshot=None,
-                probe_intent=spec.get("probe_intent", ""),
-                gen_strategy="golden",
-                fixture_content=spec,
-                flavor_hint=spec.get("flavor_hint"),
-            ))
+            try:
+                spec = json.loads(golden_file.read_text())
+                cases.append(CaseSpec(
+                    case_id=spec["case_id"],
+                    slice=spec["slice"],
+                    track=spec.get("track", ""),
+                    target_rule_id=spec.get("target_rule_id"),
+                    target_rule_snapshot=None,
+                    probe_intent=spec.get("probe_intent", ""),
+                    gen_strategy="golden",
+                    fixture_content=spec,
+                    flavor_hint=spec.get("flavor_hint"),
+                ))
+            except (KeyError, json.JSONDecodeError) as e:
+                raise ValueError(f"malformed golden {golden_file}: {e}") from e
 
-    # Coverage gap invariant
-    seen = {c.target_rule_id for c in cases if c.target_rule_id}
-    missing = _all_rule_ids(rules_dir) - seen
-    if missing:
-        raise CoverageGap(f"rules with no covering case: {sorted(missing)}")
-
+    _enforce_coverage(rules_dir, cases)
     return cases
