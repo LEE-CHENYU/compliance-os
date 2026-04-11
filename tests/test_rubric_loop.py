@@ -37,7 +37,9 @@ def test_case_spec_roundtrip_to_dict():
     d = spec.to_dict()
     assert d["case_id"] == "A-stem_opt-job_title_mismatch-pos"
     assert d["slice"] == "A"
-    restored = CaseSpec.from_dict(d)
+    # Roundtrip through JSON — this is what hitting disk looks like.
+    # Catches field types that can't survive JSON serialization.
+    restored = CaseSpec.from_dict(json.loads(json.dumps(d)))
     assert restored == spec
 
 
@@ -59,3 +61,14 @@ def test_codex_call_error_carries_kind():
     err = CodexCallError(kind="timeout", message="took too long")
     assert err.kind == "timeout"
     assert "took too long" in str(err)
+
+
+def test_codex_call_error_pickles():
+    import pickle
+    err = CodexCallError(kind="timeout", message="took too long", stderr="boom", attempts=3)
+    loaded = pickle.loads(pickle.dumps(err))
+    assert loaded.kind == "timeout"
+    assert loaded.message == "took too long"
+    assert loaded.stderr == "boom"
+    assert loaded.attempts == 3
+    assert str(loaded) == "took too long"

@@ -143,11 +143,14 @@ class CodexCallResult:
 class CodexCallError(Exception):
     """Raised when `codex exec` cannot produce a valid result after retries."""
     def __init__(self, kind: str, message: str, stderr: str = "", attempts: int = 1):
-        super().__init__(message)
-        self.kind = kind                 # "timeout"|"parse_failure"|"schema_violation"|"subprocess_failure"
+        super().__init__(kind, message, stderr, attempts)
+        self.kind = kind
         self.message = message
         self.stderr = stderr
         self.attempts = attempts
+
+    def __str__(self) -> str:
+        return self.message
 
 
 class CoverageGap(Exception):
