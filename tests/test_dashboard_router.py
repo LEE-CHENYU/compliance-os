@@ -1417,7 +1417,37 @@ def test_dashboard_timeline_recommends_form_8843_for_current_student(client):
     assert "form_8843_free" in skus
     form_8843 = next(item for item in recommendations if item["sku"] == "form_8843_free")
     assert form_8843["href"] == "/form-8843"
-    assert "student" in form_8843["reason"].lower()
+    assert "opt" in form_8843["reason"].lower() or "f-1" in form_8843["reason"].lower()
+
+
+def test_dashboard_timeline_recommends_form_8843_for_f1_founder_on_entity_track(client):
+    register = client.post("/api/auth/register", json={"email": "dashboard-founder-8843@example.com", "password": "secure123"})
+    token = register.json()["token"]
+    user_id = register.json()["user_id"]
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        session.add(
+            CheckRow(
+                track="entity",
+                status="reviewed",
+                user_id=user_id,
+                answers={
+                    "owner_residency": "on_visa",
+                    "visa_type": "f1_opt_stem",
+                },
+            )
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    timeline_resp = client.get("/api/dashboard/timeline", headers={"Authorization": f"Bearer {token}"})
+    assert timeline_resp.status_code == 200
+    recommendations = timeline_resp.json()["service_summary"]["recommended_services"]
+
+    form_8843 = next(item for item in recommendations if item["sku"] == "form_8843_free")
+    assert "running a company" in form_8843["reason"].lower()
 
 
 def test_dashboard_timeline_surfaces_active_service_orders_and_service_deadlines(client, monkeypatch, tmp_path):

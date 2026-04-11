@@ -14,8 +14,8 @@ from compliance_os.web.services.product_catalog import get_product_config, seria
 from compliance_os.web.services.timeline_builder import canonical_documents_for_checks
 
 
-_F1_STUDENT_STAGES = {"pre_completion", "opt", "stem_opt"}
-_CURRENT_STUDENT_DOC_TYPES = {
+_FORM_8843_EXEMPT_STAGES = {"pre_completion", "opt", "stem_opt"}
+_FORM_8843_STATUS_DOC_TYPES = {
     "i20",
     "i20_opt_recommendation",
     "enrollment_verification",
@@ -96,15 +96,34 @@ def _days_until(deadline: date | None) -> int | None:
     return (deadline - date.today()).days
 
 
-def _is_current_student(checks: list[CheckRow], docs: list[DocumentRow]) -> bool:
+def _years_in_us_value(raw: Any) -> int | None:
+    if raw in (None, ""):
+        return None
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _is_form_8843_candidate(checks: list[CheckRow], docs: list[DocumentRow]) -> bool:
     for check in checks:
         answers = check.answers or {}
         stage = str(answers.get("stage") or "").strip().lower()
-        if check.track in {"student", "stem_opt"} or stage in _F1_STUDENT_STAGES:
+        years_in_us = _years_in_us_value(answers.get("years_in_us"))
+
+        if check.track == "student":
+            return True
+        if check.track == "stem_opt" and stage in _FORM_8843_EXEMPT_STAGES and (years_in_us is None or years_in_us < 6):
+            return True
+        if (
+            check.track == "entity"
+            and str(answers.get("owner_residency") or "").strip().lower() == "on_visa"
+            and str(answers.get("visa_type") or "").strip().lower() == "f1_opt_stem"
+        ):
             return True
 
     for doc in docs:
-        if doc.doc_type in _CURRENT_STUDENT_DOC_TYPES:
+        if doc.doc_type in _FORM_8843_STATUS_DOC_TYPES:
             return True
         if doc.doc_type == "i94":
             for field in doc.extracted_fields:
@@ -310,23 +329,23 @@ def _recommended_services(
 ) -> list[dict[str, Any]]:
     existing_skus = {order.product_sku for order in orders}
     text_blob = _timeline_text_blob(timeline_payload)
-    current_student = _is_current_student(checks, docs)
+    form_8843_candidate = _is_form_8843_candidate(checks, docs)
     recommendations: list[dict[str, Any]] = []
 
-    if current_student and "form_8843_free" not in existing_skus and "student_tax_1040nr" not in existing_skus:
+    if form_8843_candidate and "form_8843_free" not in existing_skus and "student_tax_1040nr" not in existing_skus:
         recommendations.append(
             _serialize_recommendation(
                 "form_8843_free",
-                reason="You look like a current F-1 or student-status user from your dashboard records. Form 8843 is an annual requirement worth handling explicitly.",
+                reason="Your dashboard looks like an F-1, OPT, STEM OPT, or similar exempt-visitor case. Form 8843 is often required annually even when you are already working or running a company.",
                 priority=100,
             )
         )
 
-    if current_student and _has_income_signal(docs) and "student_tax_1040nr" not in existing_skus:
+    if form_8843_candidate and _has_income_signal(docs) and "student_tax_1040nr" not in existing_skus:
         recommendations.append(
             _serialize_recommendation(
                 "student_tax_1040nr",
-                reason="Your data room already includes student-status evidence plus income documents, so the 1040-NR package is the more complete tax workflow.",
+                reason="Your data room shows nonresident-status signals plus income documents, so the 1040-NR package is the more complete tax workflow.",
                 priority=110,
             )
         )
