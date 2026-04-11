@@ -635,3 +635,36 @@ def test_extract_token_counts_parses_last_usage_event():
     tin, tout = _extract_token_counts(events)
     assert tin == 111
     assert tout == 222
+
+
+def test_generator_schema_is_valid_json_schema():
+    from jsonschema import Draft202012Validator
+    from rubric.io import PROJECT_ROOT
+    schema_path = PROJECT_ROOT / "scripts" / "rubric" / "schemas" / "generator-output.schema.json"
+    schema = json.loads(schema_path.read_text())
+    Draft202012Validator.check_schema(schema)  # raises if invalid
+
+
+def test_judge_schema_is_valid_json_schema():
+    from jsonschema import Draft202012Validator
+    from rubric.io import PROJECT_ROOT
+    schema_path = PROJECT_ROOT / "scripts" / "rubric" / "schemas" / "judge-output.schema.json"
+    schema = json.loads(schema_path.read_text())
+    Draft202012Validator.check_schema(schema)
+
+
+def test_generator_prompt_template_exists_and_has_placeholders():
+    from rubric.io import PROJECT_ROOT
+    tpl = (PROJECT_ROOT / "scripts" / "rubric" / "prompts" / "generator.md").read_text()
+    for placeholder in ["{rule_yaml_snapshot}", "{probe_intent}", "{case_id}",
+                        "{slice}", "{track}", "{target_rule_id}",
+                        "{field_reference_table}"]:
+        assert placeholder in tpl, f"missing placeholder {placeholder}"
+
+
+def test_judge_prompt_template_exists_and_has_placeholders():
+    from rubric.io import PROJECT_ROOT
+    tpl = (PROJECT_ROOT / "scripts" / "rubric" / "prompts" / "judge.md").read_text()
+    for placeholder in ["{case_fixture_json}", "{derived_is_nra}", "{findings_json}",
+                        "{engine_error_or_none}", "{slice}", "{filtered_criteria_yaml}"]:
+        assert placeholder in tpl, f"missing placeholder {placeholder}"

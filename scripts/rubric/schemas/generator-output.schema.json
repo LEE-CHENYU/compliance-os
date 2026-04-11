@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["input", "expected", "flavor_hint"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["answers", "extraction_a", "extraction_b", "comparisons"],
+      "additionalProperties": false,
+      "properties": {
+        "answers":      {"type": "object"},
+        "extraction_a": {"type": "object"},
+        "extraction_b": {"type": "object"},
+        "comparisons":  {"type": "object"}
+      }
+    },
+    "expected": {
+      "type": "object",
+      "required": ["must_fire_rule_ids", "must_not_fire_rule_ids", "expected_nra", "expected_track"],
+      "properties": {
+        "must_fire_rule_ids":     {"type": "array", "items": {"type": "string"}},
+        "must_not_fire_rule_ids": {"type": "array", "items": {"type": "string"}},
+        "expected_nra":           {"enum": ["yes", "no"]},
+        "expected_track":         {"enum": ["stem_opt", "student", "entity", "data_room", "h1b_doc_check"]},
+        "notes":                  {"type": "string"}
+      }
+    },
+    "flavor_hint": {"type": ["string", "null"]}
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["verdict", "subscores"],
+  "additionalProperties": false,
+  "properties": {
+    "verdict": {"enum": ["pass", "partial", "fail", "unrunnable"]},
+    "subscores": {
+      "type": "object",
+      "patternProperties": {
+        "^(categorization|findings|rule_quality|operator_behavior)$": {
+          "type": "object",
+          "required": ["score", "criteria_applied", "note"],
+          "properties": {
+            "score":            {"type": "number", "minimum": 0, "maximum": 1},
+            "criteria_applied": {"type": "array", "items": {"type": "string"}},
+            "note":             {"type": "string"}
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "flags": {"type": "array", "items": {"type": "string"}}
+  }
+}
