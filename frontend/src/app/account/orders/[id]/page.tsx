@@ -8,12 +8,12 @@ import FilingChecklistCard from "@/components/form8843/FilingChecklistCard";
 import { isLoggedIn } from "@/lib/auth";
 import {
   acceptMarketplaceUpgrade,
+  downloadForm8843Pdf,
   downloadMarketplaceArtifact,
   getMarketplaceOrder,
   markMarketplaceOrderMailed,
   processMarketplaceOrder,
   pullMarketplaceOrderPrefill,
-  resolveForm8843PdfUrl,
   saveMarketplaceOrderFileIntake,
   saveMarketplaceOrderJsonIntake,
   type Form8843OrderResponse,
@@ -274,7 +274,6 @@ export default function AccountOrderDetailPage() {
   }, [orderId, router]);
 
   const form8843Order = toForm8843Order(order);
-  const pdfUrl = resolveForm8843PdfUrl(order?.pdf_url ?? null);
   const result = order?.result ?? null;
   const isSlice3Sku = order ? ["student_tax_1040nr", "h1b_doc_check", "fbar_check", "election_83b"].includes(order.product_sku) : false;
   const isOptSku = order ? ["opt_execution", "opt_advisory"].includes(order.product_sku) : false;
@@ -1519,15 +1518,18 @@ export default function AccountOrderDetailPage() {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                {pdfUrl ? (
-                  <a
-                    href={pdfUrl}
-                    target="_blank"
-                    rel="noreferrer"
+                {order?.pdf_url ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void downloadForm8843Pdf(order.order_id).catch((nextError) => {
+                        setError(nextError instanceof Error ? nextError.message : "Could not download the PDF");
+                      });
+                    }}
                     className="inline-flex items-center justify-center rounded-full bg-[#5b8dee] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de]"
                   >
                     Download PDF
-                  </a>
+                  </button>
                 ) : null}
                 {order.product.path ? (
                   <Link

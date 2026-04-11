@@ -601,6 +601,24 @@ export async function getForm8843MailingKit(orderId: string): Promise<Form8843Ma
   return parseResponse<Form8843MailingKitResponse>(response);
 }
 
+export async function downloadForm8843Pdf(orderId: string): Promise<void> {
+  const response = await fetch(`${API}/form8843/orders/${encodeURIComponent(orderId)}/pdf`, {
+    headers: authHeaders(),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.detail || "Could not download Form 8843");
+  }
+
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = `Form_8843_${orderId}.pdf`;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
 export function resolveForm8843PdfUrl(pdfUrl: string | null): string | null {
   if (!pdfUrl) {
     return null;

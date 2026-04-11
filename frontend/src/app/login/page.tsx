@@ -55,7 +55,7 @@ function LoginPage() {
 
   async function handleGoogleSignIn() {
     try {
-      const url = await getGoogleAuthUrl();
+      const url = await getGoogleAuthUrl(nextPath);
       window.location.href = url;
     } catch {
       setError("Google sign-in is not configured yet");

@@ -86,6 +86,15 @@ def _guardian_api_url(request: Request) -> str:
     return _request_origin(request)
 
 
+def _safe_next_path(next_path: str | None) -> str | None:
+    if not next_path:
+        return None
+    value = next_path.strip()
+    if not value.startswith("/") or value.startswith("//"):
+        return None
+    return value
+
+
 def _serialize_openclaw_token_info(row) -> OpenClawTokenInfo | None:
     if row is None:
         return None
@@ -240,11 +249,12 @@ class GoogleTokenRequest(BaseModel):
 
 
 @router.get("/google/url")
-def google_auth_url(request: Request):
+def google_auth_url(request: Request, next: str | None = None):
     """Return the Google OAuth authorization URL."""
     client_id = _google_client_id()
     if not client_id:
         raise HTTPException(500, "Google OAuth not configured. Set GOOGLE_CLIENT_ID env var.")
+    next_path = _safe_next_path(next)
     params = {
         "client_id": client_id,
         "redirect_uri": _google_redirect_uri(request),
@@ -253,11 +263,18 @@ def google_auth_url(request: Request):
         "access_type": "offline",
         "prompt": "consent",
     }
+    if next_path:
+        params["state"] = next_path
     return {"url": f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"}
 
 
 @router.get("/google/callback")
-def google_callback(code: str, request: Request, db: Session = Depends(get_session)):
+def google_callback(
+    code: str,
+    request: Request,
+    state: str | None = None,
+    db: Session = Depends(get_session),
+):
     """Handle Google OAuth callback — exchange code for token, create/login user."""
     import httpx
 
@@ -310,9 +327,16 @@ def google_callback(code: str, request: Request, db: Session = Depends(get_sessi
     token = create_token(user.id, user.email)
 
     # Redirect to frontend with token in URL fragment
-    return RedirectResponse(
-        url=f"{_frontend_url(request)}/login?token={token}&email={email}&user_id={user.id}&role={user.role}",
-    )
+    query = {
+        "token": token,
+        "email": email,
+        "user_id": user.id,
+        "role": user.role,
+    }
+    next_path = _safe_next_path(state)
+    if next_path:
+        query["next"] = next_path
+    return RedirectResponse(url=f"{_frontend_url(request)}/login?{urlencode(query)}")
 
 
 @router.post("/google/token", response_model=AuthResponse)

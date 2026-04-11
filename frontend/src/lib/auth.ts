@@ -133,8 +133,12 @@ export async function login(email: string, password: string): Promise<AuthUser> 
   return data;
 }
 
-export async function getGoogleAuthUrl(): Promise<string> {
-  const resp = await fetch(`${API}/google/url`);
+export async function getGoogleAuthUrl(nextPath?: string): Promise<string> {
+  const url = new URL(`${API}/google/url`, typeof window !== "undefined" ? window.location.origin : "http://localhost");
+  if (nextPath) {
+    url.searchParams.set("next", nextPath);
+  }
+  const resp = await fetch(url.toString());
   const data = await resp.json();
   return data.url;
 }

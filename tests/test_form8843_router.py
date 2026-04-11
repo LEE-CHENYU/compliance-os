@@ -6,6 +6,12 @@ import compliance_os.web.routers.form8843 as form8843_mod
 from compliance_os.web.models import database
 
 
+def _auth_token(client, email: str) -> str:
+    response = client.post("/api/auth/register", json={"email": email, "password": "secure123"})
+    assert response.status_code == 200
+    return response.json()["token"]
+
+
 def test_form8843_generate_endpoint(client, monkeypatch, tmp_path):
     monkeypatch.setattr(form8843_mod, "FORM_8843_OUTPUT_DIR", tmp_path)
     monkeypatch.setattr(
@@ -41,9 +47,18 @@ def test_form8843_generate_endpoint(client, monkeypatch, tmp_path):
     assert "Austin, TX 73301-0215" in body["filing_instructions"]["address_block"]
 
     pdf_response = client.get(body["pdf_url"])
+    assert pdf_response.status_code == 401
+
+    token = _auth_token(client, "test@example.com")
+    pdf_response = client.get(body["pdf_url"], headers={"Authorization": f"Bearer {token}"})
     assert pdf_response.status_code == 200
     assert pdf_response.headers["content-type"] == "application/pdf"
     assert pdf_response.content[:4] == b"%PDF"
+
+    wrong_token = _auth_token(client, "other@example.com")
+    wrong_pdf_response = client.get(body["pdf_url"], headers={"Authorization": f"Bearer {wrong_token}"})
+    assert wrong_pdf_response.status_code == 403
+    assert "same email used for this form" in wrong_pdf_response.json()["detail"]
 
     order_response = client.get(f"/api/form8843/orders/{body['order_id']}")
     assert order_response.status_code == 200

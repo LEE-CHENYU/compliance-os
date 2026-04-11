@@ -5,11 +5,12 @@ from __future__ import annotations
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from compliance_os.web.models.auth import UserRow
 from compliance_os.web.models.database import DATA_DIR, get_session
 from compliance_os.web.models.marketplace import (
     EmailSequenceRow,
@@ -17,6 +18,7 @@ from compliance_os.web.models.marketplace import (
     OrderRow,
     ProductRow,
 )
+from compliance_os.web.services.auth_service import get_bearer_payload
 from compliance_os.web.services.email_service import send_form_8843_welcome
 from compliance_os.web.services.form_8843 import generate_form_8843
 from compliance_os.web.services.mailing_service import (
@@ -336,10 +338,24 @@ def get_mailing_kit(order_id: str, db: Session = Depends(get_session)) -> dict[s
 
 
 @router.get("/orders/{order_id}/pdf")
-def download_pdf(order_id: str, db: Session = Depends(get_session)) -> FileResponse:
+def download_pdf(
+    order_id: str,
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+) -> FileResponse:
+    payload = get_bearer_payload(authorization, db)
+    auth_user = db.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
+    if auth_user is None:
+        raise HTTPException(status_code=401, detail="User not found")
+
     order = db.get(OrderRow, order_id)
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
+    if order.user is None or order.user.email.strip().lower() != auth_user.email.strip().lower():
+        raise HTTPException(
+            status_code=403,
+            detail="Sign in with the same email used for this form to download the PDF",
+        )
 
     result_data = order.result_data or {}
     pdf_path = Path(result_data.get("pdf_path", ""))

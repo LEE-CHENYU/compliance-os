@@ -1,17 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import FilingChecklistCard from "@/components/form8843/FilingChecklistCard";
-import { getUser, login, register, type AuthUser } from "@/lib/auth";
-import { getForm8843Order, resolveForm8843PdfUrl, type Form8843OrderResponse } from "@/lib/marketplace";
-
+import { getUser, type AuthUser } from "@/lib/auth";
+import { downloadForm8843Pdf, getForm8843Order, type Form8843OrderResponse } from "@/lib/marketplace";
 
 const ONBOARDING_STORAGE_KEY = "guardian_form_8843_onboarding";
-
-type AuthMode = "register" | "login";
+const ONBOARDING_PROMPT_DISMISS_PREFIX = "guardian_form_8843_prompt_dismissed";
 
 function formatStatus(value: string | null | undefined): string {
   if (!value) {
@@ -29,14 +27,17 @@ function matchesEmail(user: AuthUser | null, email: string): boolean {
 
 export default function SuccessContent({ orderId }: { orderId: string }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const autoDownloadHandledRef = useRef(false);
+
   const [order, setOrder] = useState<Form8843OrderResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
-  const [authMode, setAuthMode] = useState<AuthMode>("register");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [authLoading, setAuthLoading] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [submittedEmail, setSubmittedEmail] = useState("");
+  const [freshCompletion, setFreshCompletion] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [showOnboardingPrompt, setShowOnboardingPrompt] = useState(false);
 
   useEffect(() => {
     setCurrentUser(getUser());
@@ -70,6 +71,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
     if (typeof window === "undefined") {
       return;
     }
+
     const raw = window.sessionStorage.getItem(ONBOARDING_STORAGE_KEY);
     if (!raw) {
       return;
@@ -77,267 +79,223 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
 
     try {
       const parsed = JSON.parse(raw) as { orderId?: string; email?: string };
-      if (parsed.orderId === orderId && parsed.email && !email) {
-        setEmail(parsed.email);
+      if (parsed.orderId === orderId) {
+        setFreshCompletion(true);
+        if (parsed.email) {
+          setSubmittedEmail(parsed.email);
+        }
       }
     } catch {
       window.sessionStorage.removeItem(ONBOARDING_STORAGE_KEY);
     }
-  }, [orderId, email]);
+  }, [orderId]);
 
-  const pdfUrl = resolveForm8843PdfUrl(order?.pdf_url || null);
-  const dashboardHref = "/dashboard?source=form8843";
-  const sameAccountEmail = matchesEmail(currentUser, email);
-  const needsOnboarding = !currentUser || !sameAccountEmail;
-
-  const onboardingCopy = useMemo(() => {
-    if (!currentUser) {
-      return "Use the same email from this form if you want to save this filing in Guardian and keep track of the mailing step.";
-    }
-    if (!sameAccountEmail && email) {
-      return `This form was prepared with ${email}. Sign in or create an account with that address if you want it saved in the right Guardian account.`;
-    }
-    return "This filing is ready to view in Guardian.";
-  }, [currentUser, email, sameAccountEmail]);
-
-  async function handleAuthSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (authLoading) {
+  useEffect(() => {
+    if (typeof window === "undefined" || !currentUser || !freshCompletion) {
+      setShowOnboardingPrompt(false);
       return;
     }
 
-    setAuthLoading(true);
-    setAuthError(null);
-    try {
-      const user = authMode === "register"
-        ? await register(email.trim(), password)
-        : await login(email.trim(), password);
-      setCurrentUser(user);
-      if (typeof window !== "undefined") {
-        window.sessionStorage.removeItem(ONBOARDING_STORAGE_KEY);
-      }
-      router.push(dashboardHref);
-    } catch (nextError) {
-      setAuthError(nextError instanceof Error ? nextError.message : "Could not continue");
-    } finally {
-      setAuthLoading(false);
+    const dismissed = window.sessionStorage.getItem(`${ONBOARDING_PROMPT_DISMISS_PREFIX}:${orderId}`);
+    setShowOnboardingPrompt(dismissed !== "1");
+  }, [currentUser, freshCompletion, orderId]);
+
+  const dashboardHref = "/dashboard?source=form8843";
+  const sameAccountEmail = matchesEmail(currentUser, submittedEmail);
+  const shouldSwitchAccount = Boolean(currentUser && submittedEmail && !sameAccountEmail);
+  const downloadRedirectHref = `/login?next=${encodeURIComponent(`/form-8843/success?orderId=${encodeURIComponent(orderId)}&download=1`)}`;
+  const canDownload = Boolean(order?.pdf_url);
+  const pendingDownload = searchParams.get("download") === "1";
+
+  function dismissOnboardingPrompt() {
+    setShowOnboardingPrompt(false);
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(`${ONBOARDING_PROMPT_DISMISS_PREFIX}:${orderId}`, "1");
     }
   }
 
+  const handleDownload = useCallback(async (fromRedirect = false) => {
+    if (!orderId || !canDownload) {
+      return;
+    }
+
+    setDownloadError(null);
+
+    if (!currentUser || shouldSwitchAccount) {
+      if (!fromRedirect) {
+        router.push(downloadRedirectHref);
+      }
+      return;
+    }
+
+    setDownloadLoading(true);
+    try {
+      await downloadForm8843Pdf(orderId);
+    } catch (nextError) {
+      setDownloadError(nextError instanceof Error ? nextError.message : "Could not download the PDF");
+    } finally {
+      setDownloadLoading(false);
+    }
+  }, [canDownload, currentUser, downloadRedirectHref, orderId, router, shouldSwitchAccount]);
+
+  useEffect(() => {
+    if (!pendingDownload || !currentUser || autoDownloadHandledRef.current) {
+      return;
+    }
+
+    autoDownloadHandledRef.current = true;
+    const cleanUrl = `/form-8843/success?orderId=${encodeURIComponent(orderId)}`;
+
+    if (shouldSwitchAccount) {
+      setDownloadError(
+        submittedEmail
+          ? `Sign in with ${submittedEmail} to download this PDF.`
+          : "Sign in with the same email used for this form to download the PDF.",
+      );
+      router.replace(cleanUrl);
+      return;
+    }
+
+    void handleDownload(true);
+    router.replace(cleanUrl);
+  }, [currentUser, handleDownload, orderId, pendingDownload, router, shouldSwitchAccount, submittedEmail]);
+
+  const introCopy = currentUser
+    ? "Download the PDF, follow the filing checklist, and keep the filing visible in Guardian if you want reminders later."
+    : "Sign in to download the PDF, then follow the filing checklist and keep the filing visible in Guardian if you want reminders later.";
+
+  const downloadButtonLabel = downloadLoading
+    ? "Downloading..."
+    : !currentUser
+      ? "Sign in to download PDF"
+      : shouldSwitchAccount
+        ? "Switch account to download"
+        : "Download PDF";
+
   return (
-    <div className="mx-auto max-w-5xl rounded-[32px] border border-white/80 bg-white/82 p-8 shadow-[0_28px_80px_rgba(61,84,128,0.08)] backdrop-blur md:p-12">
-      <div className="mb-6 inline-flex rounded-full border border-[#dce6f3] bg-[#eef5ff] px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#5f78a8]">
-        Form 8843 ready
-      </div>
-      <h1 className="text-[34px] font-extrabold tracking-tight text-[#0d1424]">Your form is ready. The next step is getting it filed and tracked.</h1>
-      <p className="mt-4 max-w-3xl text-[16px] leading-7 text-[#556480]">
-        Download the PDF, follow the filing checklist, and if you want a saved record and reminders, keep this filing in Guardian.
-      </p>
+    <>
+      <div className="mx-auto max-w-5xl rounded-[32px] border border-white/80 bg-white/82 p-8 shadow-[0_28px_80px_rgba(61,84,128,0.08)] backdrop-blur md:p-12">
+        <div className="mb-6 inline-flex rounded-full border border-[#dce6f3] bg-[#eef5ff] px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#5f78a8]">
+          Form 8843 ready
+        </div>
+        <h1 className="text-[34px] font-extrabold tracking-tight text-[#0d1424]">Your form is ready. The next step is getting it filed and tracked.</h1>
+        <p className="mt-4 max-w-3xl text-[16px] leading-7 text-[#556480]">
+          {introCopy}
+        </p>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] p-4">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Order</div>
-          <div className="mt-2 break-all text-[14px] font-medium text-[#1a2942]">{orderId || "Not provided"}</div>
+        <div className="mt-8 grid gap-4 md:grid-cols-4">
+          <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] p-4">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Order</div>
+            <div className="mt-2 break-all text-[14px] font-medium text-[#1a2942]">{orderId || "Not provided"}</div>
+          </div>
+          <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] p-4">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Status</div>
+            <div className="mt-2 text-[14px] font-medium text-[#1a2942]">{formatStatus(order?.status || (error ? "Unavailable" : "Loading"))}</div>
+          </div>
+          <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] p-4">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Mailing state</div>
+            <div className="mt-2 text-[14px] font-medium text-[#1a2942]">{formatStatus(order?.mailing_status || "Loading")}</div>
+          </div>
+          <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] p-4">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Email status</div>
+            <div className="mt-2 text-[14px] font-medium text-[#1a2942]">{formatStatus(order?.email_status || "Pending or skipped")}</div>
+          </div>
         </div>
-        <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] p-4">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Status</div>
-          <div className="mt-2 text-[14px] font-medium text-[#1a2942]">{formatStatus(order?.status || (error ? "Unavailable" : "Loading"))}</div>
-        </div>
-        <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] p-4">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Mailing state</div>
-          <div className="mt-2 text-[14px] font-medium text-[#1a2942]">{formatStatus(order?.mailing_status || "Loading")}</div>
-        </div>
-        <div className="rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] p-4">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Email status</div>
-          <div className="mt-2 text-[14px] font-medium text-[#1a2942]">{formatStatus(order?.email_status || "Pending or skipped")}</div>
-        </div>
-      </div>
 
-      {error ? (
-        <div className="mt-8 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
-          {error}
-        </div>
-      ) : null}
+        {error ? (
+          <div className="mt-8 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
+            {error}
+          </div>
+        ) : null}
 
-      <div className="mt-8 flex flex-col gap-3 md:flex-row">
-        <a
-          href={pdfUrl || "#"}
-          target="_blank"
-          rel="noreferrer"
-          className={`inline-flex items-center justify-center rounded-full px-6 py-3 text-[15px] font-semibold transition ${
-            pdfUrl
-              ? "bg-[#5b8dee] text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] hover:bg-[#4f82de]"
-              : "pointer-events-none bg-[#d9e3f0] text-[#90a0bb]"
-          }`}
-        >
-          Download PDF
-        </a>
-        <Link
-          href="/form-8843"
-          className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-6 py-3 text-[15px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
-        >
-          Start another draft
-        </Link>
-        {needsOnboarding ? (
+        {downloadError ? (
+          <div className="mt-6 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
+            {downloadError}
+          </div>
+        ) : null}
+
+        {shouldSwitchAccount && submittedEmail ? (
+          <div className="mt-6 rounded-2xl border border-[#f1e3b4] bg-[#fff9eb] px-4 py-3 text-[14px] leading-6 text-[#775a13]">
+            This form was prepared with {submittedEmail}. Sign in with that email to download the PDF and keep it in the right Guardian account.
+          </div>
+        ) : null}
+
+        <div className="mt-8 flex flex-col gap-3 md:flex-row">
           <button
             type="button"
             onClick={() => {
-              document.getElementById("save-in-dashboard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              void handleDownload();
             }}
-            className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-6 py-3 text-[15px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
+            disabled={!canDownload || downloadLoading}
+            className={`inline-flex items-center justify-center rounded-full px-6 py-3 text-[15px] font-semibold transition ${
+              canDownload && !downloadLoading
+                ? "bg-[#5b8dee] text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] hover:bg-[#4f82de]"
+                : "cursor-not-allowed bg-[#d9e3f0] text-[#90a0bb]"
+            }`}
           >
-            Save in Guardian
+            {downloadButtonLabel}
           </button>
-        ) : (
           <Link
-            href={dashboardHref}
+            href="/form-8843"
             className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-6 py-3 text-[15px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
           >
-            Open dashboard
+            Start another draft
           </Link>
-        )}
-      </div>
-
-      {order ? <FilingChecklistCard order={order} onOrderChange={setOrder} /> : null}
-
-      <section
-        id="save-in-dashboard"
-        className="mt-8 rounded-[28px] border border-[#dbe5f2] bg-[#fbfdff] p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)]"
-      >
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="max-w-3xl">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">Next step</div>
-            <h2 className="mt-2 text-[28px] font-bold tracking-tight text-[#0d1424]">
-              {needsOnboarding ? "Save this filing in Guardian" : "This filing is ready in Guardian"}
-            </h2>
-            <p className="mt-3 text-[15px] leading-7 text-[#556480]">{onboardingCopy}</p>
-          </div>
-          <div className="rounded-2xl border border-[#dbe5f2] bg-white px-4 py-3 text-right shadow-[0_10px_26px_rgba(61,84,128,0.05)]">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Why save it</div>
-            <div className="mt-2 max-w-[200px] text-[14px] leading-6 text-[#1a2942]">
-              Keep the form, the filing status, and the next reminder in one place.
-            </div>
-          </div>
-        </div>
-
-        {needsOnboarding ? (
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1.05fr,0.95fr]">
-            <form onSubmit={handleAuthSubmit} className="rounded-[24px] border border-[#dbe5f2] bg-white p-5">
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthMode("register");
-                    setAuthError(null);
-                  }}
-                  className={`rounded-full px-4 py-2 text-[13px] font-semibold transition ${
-                    authMode === "register"
-                      ? "bg-[#0f1728] text-white"
-                      : "border border-[#dbe5f2] bg-[#fbfdff] text-[#40536f]"
-                  }`}
-                >
-                  Create account
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthMode("login");
-                    setAuthError(null);
-                  }}
-                  className={`rounded-full px-4 py-2 text-[13px] font-semibold transition ${
-                    authMode === "login"
-                      ? "bg-[#0f1728] text-white"
-                      : "border border-[#dbe5f2] bg-[#fbfdff] text-[#40536f]"
-                  }`}
-                >
-                  Sign in
-                </button>
-              </div>
-
-              {currentUser && !sameAccountEmail ? (
-                <div className="mt-4 rounded-2xl border border-[#f1e3b4] bg-[#fff9eb] px-4 py-3 text-[13px] leading-6 text-[#775a13]">
-                  You are currently signed in as {currentUser.email}. Use {email || "the same email from this form"} if you want this filing saved in the right account.
-                </div>
-              ) : null}
-
-              {authError ? (
-                <div className="mt-4 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
-                  {authError}
-                </div>
-              ) : null}
-
-              <div className="mt-4 grid gap-4">
-                <label className="block">
-                  <div className="mb-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">Email</div>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    required
-                    className="w-full rounded-2xl border border-[#dbe5f2] bg-[#fbfdff] px-4 py-3 text-[15px] text-[#0d1424] shadow-[0_8px_28px_rgba(61,84,128,0.04)] outline-none transition focus:border-[#5b8dee] focus:ring-4 focus:ring-[#5b8dee]/10"
-                    placeholder="you@example.com"
-                  />
-                </label>
-                <label className="block">
-                  <div className="mb-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">Password</div>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    required
-                    minLength={6}
-                    className="w-full rounded-2xl border border-[#dbe5f2] bg-[#fbfdff] px-4 py-3 text-[15px] text-[#0d1424] shadow-[0_8px_28px_rgba(61,84,128,0.04)] outline-none transition focus:border-[#5b8dee] focus:ring-4 focus:ring-[#5b8dee]/10"
-                    placeholder={authMode === "register" ? "Create a password" : "Your password"}
-                  />
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                disabled={authLoading}
-                className="mt-5 inline-flex items-center justify-center rounded-full bg-[#5b8dee] px-6 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#9dbcf4]"
-              >
-                {authLoading
-                  ? "Opening Guardian..."
-                  : authMode === "register"
-                    ? "Create account and continue"
-                    : "Sign in and continue"}
-              </button>
-            </form>
-
-            <div className="rounded-[24px] border border-[#dbe5f2] bg-white p-5">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">What this helps with</div>
-              <div className="mt-4 space-y-3">
-                {[
-                  "Keep this Form 8843 saved in one place instead of losing it in downloads.",
-                  "Track whether you already mailed it and stop reminders once it is done.",
-                  "Get the next relevant tax or immigration tasks based on your documents.",
-                ].map((item) => (
-                  <div key={item} className="flex gap-3 text-[14px] leading-6 text-[#435774]">
-                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#5b8dee]" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="mt-6 flex flex-wrap gap-3">
+          {currentUser ? (
             <Link
               href={dashboardHref}
-              className="inline-flex items-center justify-center rounded-full bg-[#5b8dee] px-6 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de]"
+              className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-6 py-3 text-[15px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
             >
               Open dashboard
             </Link>
-            <Link
-              href="/account/orders"
-              className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-6 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
+          ) : null}
+        </div>
+
+        {!currentUser ? (
+          <div className="mt-4 text-[13px] leading-6 text-[#6d7c95]">
+            Use the same email from this form when you sign in if you want the filing saved in the right Guardian account.
+          </div>
+        ) : null}
+
+        {order ? <FilingChecklistCard order={order} onOrderChange={setOrder} /> : null}
+      </div>
+
+      {showOnboardingPrompt ? (
+        <div className="fixed bottom-4 left-4 right-4 z-40 max-w-sm rounded-[24px] border border-[#dbe5f2] bg-white/96 p-5 shadow-[0_24px_60px_rgba(31,49,87,0.18)] backdrop-blur md:bottom-6 md:left-6 md:right-auto">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">Next step</div>
+              <h2 className="mt-2 text-[20px] font-bold tracking-tight text-[#0d1424]">Set up your Guardian check</h2>
+            </div>
+            <button
+              type="button"
+              onClick={dismissOnboardingPrompt}
+              className="rounded-full border border-[#dbe5f2] px-3 py-1 text-[12px] font-semibold text-[#6d7c95] transition hover:text-[#0d1424]"
             >
-              View saved orders
+              Dismiss
+            </button>
+          </div>
+          <p className="mt-3 text-[14px] leading-6 text-[#556480]">
+            Tell Guardian whether you are studying, working on OPT or STEM OPT, or running a company so the dashboard can surface the right document checks and deadlines next.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href="/check?source=form8843"
+              onClick={dismissOnboardingPrompt}
+              className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#1b2741]"
+            >
+              Continue onboarding
+            </Link>
+            <Link
+              href={dashboardHref}
+              onClick={dismissOnboardingPrompt}
+              className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-5 py-2.5 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
+            >
+              Go to dashboard
             </Link>
           </div>
-        )}
-      </section>
-    </div>
+        </div>
+      ) : null}
+    </>
   );
 }

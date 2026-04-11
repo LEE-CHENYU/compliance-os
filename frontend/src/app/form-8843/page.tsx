@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState, type FormEvent } from "react";
 
 import OnboardingWizard, { type Form8843WizardState } from "@/components/form8843/OnboardingWizard";
+import { getUser } from "@/lib/auth";
 import { generateForm8843, type Form8843Request } from "@/lib/marketplace";
 
 
@@ -38,6 +39,11 @@ export default function Form8843Page() {
   const [form, setForm] = useState<Form8843WizardState>(INITIAL_STATE);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setIsSignedIn(Boolean(getUser()));
+  }, []);
 
   function setField<K extends keyof Form8843WizardState>(key: K, value: Form8843WizardState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -107,7 +113,7 @@ export default function Form8843Page() {
             ← Back
           </button>
           <div className="rounded-full border border-[#dce6f3] bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7c95] shadow-[0_8px_24px_rgba(42,64,102,0.08)]">
-            Free filing tool
+            Form 8843 free filing
           </div>
         </div>
 
@@ -119,14 +125,16 @@ export default function Form8843Page() {
               <p className="mt-4 max-w-xl text-[16px] leading-7 text-[#556480]">
                 Answer a few questions, download the completed PDF, and see exactly how to file it. No account is required to get started.
               </p>
-              <div className="mt-5 flex flex-wrap gap-3">
-                <Link
-                  href="/login?next=/dashboard"
-                  className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
-                >
-                  Already use Guardian? Sign in
-                </Link>
-              </div>
+              {isSignedIn === false ? (
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link
+                    href="/login?next=/dashboard"
+                    className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
+                  >
+                    Already use Guardian? Sign in
+                  </Link>
+                </div>
+              ) : null}
             </div>
 
             <OnboardingWizard

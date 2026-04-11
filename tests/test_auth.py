@@ -134,6 +134,17 @@ def test_google_auth_url_uses_request_origin_when_redirect_uri_not_configured(cl
     assert query["redirect_uri"] == ["https://guardiancompliance.app/api/auth/google/callback"]
 
 
+def test_google_auth_url_includes_safe_next_path_in_state(client, monkeypatch):
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client-id")
+    monkeypatch.delenv("GOOGLE_REDIRECT_URI", raising=False)
+
+    resp = client.get("/api/auth/google/url?next=/form-8843/success%3ForderId%3Dabc%26download%3D1")
+
+    assert resp.status_code == 200
+    query = parse_qs(urlparse(resp.json()["url"]).query)
+    assert query["state"] == ["/form-8843/success?orderId=abc&download=1"]
+
+
 def test_google_callback_redirects_to_request_origin_when_frontend_url_not_configured(client, monkeypatch):
     monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client-id")
     monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "test-client-secret")
@@ -167,7 +178,7 @@ def test_google_callback_redirects_to_request_origin_when_frontend_url_not_confi
     assert resp.status_code in (302, 307)
     location = resp.headers["location"]
     assert location.startswith("https://guardiancompliance.app/login?token=")
-    assert "email=oauth@example.com" in location
+    assert "email=oauth%40example.com" in location
 
 
 def test_google_callback_redirects_to_local_frontend_when_running_locally(client, monkeypatch):
@@ -194,6 +205,34 @@ def test_google_callback_redirects_to_local_frontend_when_running_locally(client
 
     assert resp.status_code in (302, 307)
     assert resp.headers["location"].startswith("http://localhost:3000/login?token=")
+
+
+def test_google_callback_preserves_safe_next_path(client, monkeypatch):
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client-id")
+    monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "test-client-secret")
+    monkeypatch.delenv("GOOGLE_REDIRECT_URI", raising=False)
+    monkeypatch.delenv("FRONTEND_URL", raising=False)
+
+    import httpx
+    import jwt
+
+    monkeypatch.setattr(
+        httpx,
+        "post",
+        lambda url, data: SimpleNamespace(status_code=200, json=lambda: {"id_token": "fake-id-token"}),
+    )
+    monkeypatch.setattr(jwt, "decode", lambda token, options: {"email": "next-path@example.com"})
+
+    resp = client.get(
+        "/api/auth/google/callback?code=test-code&state=/form-8843/success%3ForderId%3Dabc%26download%3D1",
+        headers={"host": "localhost:8000"},
+        follow_redirects=False,
+    )
+
+    assert resp.status_code in (302, 307)
+    location = urlparse(resp.headers["location"])
+    query = parse_qs(location.query)
+    assert query["next"] == ["/form-8843/success?orderId=abc&download=1"]
 
 
 def test_openclaw_connection_issues_scoped_token(client):
