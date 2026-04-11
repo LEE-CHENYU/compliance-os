@@ -814,3 +814,74 @@ def test_generate_missing_writes_new_fixture(tmp_path, monkeypatch):
     written = json.loads((fixture_dir / "A-stem_opt-sample-pos.json").read_text())
     assert written["input"]["answers"]["stage"] == "stem_opt"
     assert written["generated_by"].startswith("codex-cli")
+
+
+def test_generate_missing_writes_sentinel_on_codex_error(tmp_path, monkeypatch):
+    """When call_codex raises, generate_missing writes a sentinel fixture
+    with a last_error block and records a warning, so subsequent runs skip
+    the failed case unless explicitly regenerated."""
+    fixture_dir = tmp_path / "rubric_fixtures"
+    fixture_dir.mkdir()
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "stem_opt.yaml").write_text("version: 0.1.0\nrules: []\n")
+
+    spec = CaseSpec(
+        case_id="A-stem_opt-failing-pos",
+        slice="A",
+        track="stem_opt",
+        target_rule_id="failing",
+        target_rule_snapshot={"id": "failing", "conditions": []},
+        probe_intent="engine must fire failing",
+        gen_strategy="llm",
+    )
+
+    from rubric.models import CodexCallError
+
+    def boom(**kwargs):
+        raise CodexCallError(
+            kind="schema_violation",
+            message="output violates schema: missing required field 'expected'",
+        )
+
+    monkeypatch.setattr("rubric.generate.call_codex", boom)
+    new_count, skip_count, warnings = generate_missing(
+        [spec], fixture_dir=fixture_dir, rules_dir=rules_dir,
+    )
+
+    # Sentinel write path: nothing counted as new or skip, one warning, sentinel on disk
+    assert new_count == 0
+    assert skip_count == 0
+    assert len(warnings) == 1
+    assert "schema_violation" in warnings[0]
+    assert "A-stem_opt-failing-pos" in warnings[0]
+
+    written = json.loads((fixture_dir / "A-stem_opt-failing-pos.json").read_text())
+    assert written["last_error"]["kind"] == "schema_violation"
+    assert "GENERATION FAILED" in written["expected"]["notes"]
+    assert written["generated_by"].startswith("codex-cli")
+
+
+def test_fixture_record_from_dict_tolerates_extra_keys():
+    """FixtureRecord.from_dict must silently drop unknown keys so sentinel
+    fixtures (with `last_error`) can be loaded without crashing."""
+    from rubric.models import FixtureRecord
+    d = {
+        "case_id": "A-stem_opt-failing-pos",
+        "slice": "A",
+        "track": "stem_opt",
+        "target_rule_id": "failing",
+        "probe_intent": "x",
+        "generated_by": "codex-cli/gpt-5.4",
+        "generated_at": "2026-04-10T00:00:00Z",
+        "generator_prompt_hash": "abc",
+        "flavor_hint": None,
+        "input": {"answers": {}, "extraction_a": {}, "extraction_b": {}, "comparisons": {}},
+        "expected": {"must_fire_rule_ids": [], "must_not_fire_rule_ids": [],
+                     "expected_nra": "no", "expected_track": "stem_opt", "notes": ""},
+        "last_error": {"kind": "schema_violation", "message": "bad"},  # extra key
+    }
+    record = FixtureRecord.from_dict(d)
+    assert record.case_id == "A-stem_opt-failing-pos"
+    # last_error was dropped (not stored on the dataclass)
+    assert not hasattr(record, "last_error")

@@ -1,7 +1,7 @@
 """Dataclasses shared across the rubric loop phases."""
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, fields, asdict
 from typing import Any
 
 
@@ -46,7 +46,10 @@ class FixtureRecord:
 
     @classmethod
     def from_dict(cls, d: dict) -> FixtureRecord:
-        return cls(**d)
+        # Tolerate extra keys (e.g., sentinel fixtures that carry a `last_error`
+        # diagnostic block). Unknown keys are silently dropped.
+        known = {f.name for f in fields(cls)}
+        return cls(**{k: v for k, v in d.items() if k in known})
 
 
 @dataclass
