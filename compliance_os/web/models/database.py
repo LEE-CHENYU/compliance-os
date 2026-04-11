@@ -245,7 +245,7 @@ def _ensure_marketplace_columns(engine: Engine) -> None:
                 SET filing_deadline = COALESCE(
                     filing_deadline,
                     CASE
-                        WHEN product_sku = 'form_8843_free' THEN '2026-06-15'
+                        WHEN product_sku = 'form_8843_free' THEN CAST('2026-06-15' AS DATE)
                         ELSE NULL
                     END
                 )
