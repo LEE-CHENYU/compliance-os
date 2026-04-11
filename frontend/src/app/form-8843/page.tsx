@@ -6,6 +6,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import OnboardingWizard, { type Form8843WizardState } from "@/components/form8843/OnboardingWizard";
 import { getUser } from "@/lib/auth";
+import { FORM8843_ONBOARDING_STORAGE_KEY } from "@/lib/form8843-handoff";
 import { generateForm8843, type Form8843Request } from "@/lib/marketplace";
 
 
@@ -88,11 +89,18 @@ export default function Form8843Page() {
     try {
       const response = await generateForm8843(payload);
       if (typeof window !== "undefined") {
+        const existingUser = getUser();
         window.sessionStorage.setItem(
-          "guardian_form_8843_onboarding",
+          FORM8843_ONBOARDING_STORAGE_KEY,
           JSON.stringify({
             orderId: response.order_id,
             email: payload.email,
+            visa_type: payload.visa_type,
+            current_nonimmigrant_status: payload.current_nonimmigrant_status,
+            arrival_date: payload.arrival_date,
+            country_citizenship: payload.country_citizenship,
+            school_name: payload.school_name,
+            guided_handoff: !Boolean(existingUser),
           }),
         );
       }

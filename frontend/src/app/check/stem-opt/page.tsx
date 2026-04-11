@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
+import { deriveYearsInUs, inferStemOptStage, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 const STAGES = [
   { value: "pre_completion", label: "CPT (Pre-completion)", sub: "Curricular Practical Training while enrolled" },
@@ -49,6 +50,40 @@ export default function StemOptStage() {
   const [petitionStatus, setPetitionStatus] = useState<string | null>(null);
   const [taxSoftware, setTaxSoftware] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [prefillContext, setPrefillContext] = useState<Record<string, string>>({});
+  const [form8843PrefillNote, setForm8843PrefillNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const source = new URLSearchParams(window.location.search).get("source");
+    if (source !== "form8843") {
+      return;
+    }
+    const handoff = readForm8843OnboardingHandoff();
+    if (!handoff) {
+      return;
+    }
+
+    const inferredStage = inferStemOptStage(handoff);
+    const inferredYears = deriveYearsInUs(handoff.arrival_date);
+    if (inferredStage) {
+      setStage((current) => current || inferredStage);
+    }
+    if (inferredYears) {
+      setYears((current) => (current === "" ? Number(inferredYears) : current));
+    }
+    setPrefillContext({
+      source_form_8843: "yes",
+      visa_type: handoff.visa_type || "",
+      current_nonimmigrant_status: handoff.current_nonimmigrant_status || "",
+      arrival_date: handoff.arrival_date || "",
+      country_citizenship: handoff.country_citizenship || "",
+      school_name: handoff.school_name || "",
+    });
+    setForm8843PrefillNote("We carried over your visa, arrival date, citizenship, and years in the U.S. from Form 8843.");
+  }, []);
 
   const showEmployerChanged = stage && ["stem_opt", "opt", "h1b", "i140"].includes(stage);
   const showPetitionStatus = stage && ["h1b", "i140"].includes(stage);
@@ -66,6 +101,7 @@ export default function StemOptStage() {
       employer_changed: employerChanged,
       petition_status: petitionStatus,
       tax_software_used: taxSoftware,
+      ...prefillContext,
     });
     router.push(`/check/stem-opt/upload?id=${check.id}`);
   }
@@ -111,6 +147,12 @@ export default function StemOptStage() {
         <p className="text-[15px] text-[#556480] mb-8">
           This helps us know which risks to check for.
         </p>
+
+        {form8843PrefillNote ? (
+          <div className="mb-8 rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] px-4 py-3 text-[14px] leading-6 text-[#556480]">
+            {form8843PrefillNote}
+          </div>
+        ) : null}
 
         {/* Q1: Stage */}
         <div className="mb-8">

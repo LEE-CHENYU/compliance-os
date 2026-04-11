@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
+import { readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 const STUDENT_STATUS = [
   { value: "enrolled_cpt", label: "Enrolled with CPT", sub: "Currently working on Curricular Practical Training" },
@@ -36,8 +37,32 @@ export default function StudentIntake() {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [form8843PrefillNote, setForm8843PrefillNote] = useState<string | null>(null);
 
   const set = (key: string, value: string) => setAnswers((a) => ({ ...a, [key]: value }));
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const source = new URLSearchParams(window.location.search).get("source");
+    if (source !== "form8843") {
+      return;
+    }
+    const handoff = readForm8843OnboardingHandoff();
+    if (!handoff) {
+      return;
+    }
+    setAnswers((current) => ({
+      ...current,
+      source_form_8843: "yes",
+      visa_type: handoff.visa_type || current.visa_type || "",
+      arrival_date: handoff.arrival_date || current.arrival_date || "",
+      country_citizenship: handoff.country_citizenship || current.country_citizenship || "",
+      school_name: handoff.school_name || current.school_name || "",
+    }));
+    setForm8843PrefillNote("We carried over your visa, arrival date, citizenship, and school from Form 8843.");
+  }, []);
 
   const showCptQuestions = answers.student_status === "enrolled_cpt";
   const showIncomeQuestion = showCptQuestions || answers.student_status === "between_semesters";
@@ -94,9 +119,9 @@ export default function StudentIntake() {
     router.push(`/check/student/upload?id=${check.id}`);
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-lg py-20">
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <div className="w-full max-w-lg py-20">
         <button onClick={() => router.push("/check")} className="text-sm text-[#7b8ba5] mb-8 hover:text-[#1a2036]">
           &larr; Back
         </button>
@@ -107,6 +132,12 @@ export default function StudentIntake() {
         <p className="text-[15px] text-[#556480] mb-8">
           We&apos;ll check your I-20, CPT authorization, and travel readiness.
         </p>
+
+        {form8843PrefillNote ? (
+          <div className="mb-8 rounded-2xl border border-[#dbe5f2] bg-[#f8fbff] px-4 py-3 text-[14px] leading-6 text-[#556480]">
+            {form8843PrefillNote}
+          </div>
+        ) : null}
 
         <ChipSelect label="What&apos;s your current situation?" options={STUDENT_STATUS} field="student_status" />
 

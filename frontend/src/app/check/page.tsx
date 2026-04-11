@@ -1,9 +1,26 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+import { inferForm8843CheckPath, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 export default function CheckSelect() {
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const source = new URLSearchParams(window.location.search).get("source");
+    if (source !== "form8843") {
+      return;
+    }
+    const nextPath = inferForm8843CheckPath(readForm8843OnboardingHandoff());
+    if (nextPath) {
+      router.replace(`${nextPath}?source=form8843`);
+    }
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6">

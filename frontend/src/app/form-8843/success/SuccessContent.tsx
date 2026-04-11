@@ -6,9 +6,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import FilingChecklistCard from "@/components/form8843/FilingChecklistCard";
 import { getUser, type AuthUser } from "@/lib/auth";
+import {
+  buildForm8843CheckHref,
+  type Form8843OnboardingHandoff,
+  readForm8843OnboardingHandoff,
+} from "@/lib/form8843-handoff";
 import { downloadForm8843Pdf, getForm8843Order, type Form8843OrderResponse } from "@/lib/marketplace";
 
-const ONBOARDING_STORAGE_KEY = "guardian_form_8843_onboarding";
 const ONBOARDING_PROMPT_DISMISS_PREFIX = "guardian_form_8843_prompt_dismissed";
 
 function formatStatus(value: string | null | undefined): string {
@@ -34,7 +38,10 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState("");
+  const [handoffData, setHandoffData] = useState<Form8843OnboardingHandoff | null>(null);
   const [freshCompletion, setFreshCompletion] = useState(false);
+  const [guidedHandoff, setGuidedHandoff] = useState(false);
+  const [downloadCompleted, setDownloadCompleted] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [showOnboardingPrompt, setShowOnboardingPrompt] = useState(false);
@@ -72,40 +79,40 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
       return;
     }
 
-    const raw = window.sessionStorage.getItem(ONBOARDING_STORAGE_KEY);
-    if (!raw) {
+    const parsed = readForm8843OnboardingHandoff();
+    if (!parsed) {
       return;
     }
 
-    try {
-      const parsed = JSON.parse(raw) as { orderId?: string; email?: string };
-      if (parsed.orderId === orderId) {
-        setFreshCompletion(true);
-        if (parsed.email) {
-          setSubmittedEmail(parsed.email);
-        }
+    if (parsed.orderId === orderId) {
+      setHandoffData(parsed);
+      setFreshCompletion(true);
+      setGuidedHandoff(Boolean(parsed.guided_handoff));
+      if (parsed.email) {
+        setSubmittedEmail(parsed.email);
       }
-    } catch {
-      window.sessionStorage.removeItem(ONBOARDING_STORAGE_KEY);
     }
   }, [orderId]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || currentUser || !freshCompletion) {
+    if (typeof window === "undefined" || !freshCompletion || !guidedHandoff) {
       setShowOnboardingPrompt(false);
       return;
     }
 
     const dismissed = window.sessionStorage.getItem(`${ONBOARDING_PROMPT_DISMISS_PREFIX}:${orderId}`);
     setShowOnboardingPrompt(dismissed !== "1");
-  }, [currentUser, freshCompletion, orderId]);
+  }, [freshCompletion, guidedHandoff, orderId]);
 
   const dashboardHref = "/dashboard?source=form8843";
   const sameAccountEmail = matchesEmail(currentUser, submittedEmail);
   const shouldSwitchAccount = Boolean(currentUser && submittedEmail && !sameAccountEmail);
   const downloadRedirectHref = `/login?next=${encodeURIComponent(`/form-8843/success?orderId=${encodeURIComponent(orderId)}&download=1`)}`;
+  const successReturnHref = `/login?next=${encodeURIComponent(`/form-8843/success?orderId=${encodeURIComponent(orderId)}&download=1`)}`;
   const canDownload = Boolean(order?.pdf_url);
   const pendingDownload = searchParams.get("download") === "1";
+  const onboardingHref = buildForm8843CheckHref(handoffData);
+  const showDownloadStep = !currentUser || shouldSwitchAccount || !downloadCompleted;
 
   function dismissOnboardingPrompt() {
     setShowOnboardingPrompt(false);
@@ -131,6 +138,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
     setDownloadLoading(true);
     try {
       await downloadForm8843Pdf(orderId);
+      setDownloadCompleted(true);
     } catch (nextError) {
       setDownloadError(nextError instanceof Error ? nextError.message : "Could not download the PDF");
     } finally {
@@ -241,7 +249,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
           >
             Start another draft
           </Link>
-          {currentUser ? (
+          {currentUser && !guidedHandoff ? (
             <Link
               href={dashboardHref}
               className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-6 py-3 text-[15px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
@@ -265,7 +273,9 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">Next step</div>
-              <h2 className="mt-2 text-[20px] font-bold tracking-tight text-[#0d1424]">Set up your Guardian check</h2>
+              <h2 className="mt-2 text-[20px] font-bold tracking-tight text-[#0d1424]">
+                {showDownloadStep ? "Sign in to download and save this" : "Continue your Guardian check"}
+              </h2>
             </div>
             <button
               type="button"
@@ -276,23 +286,27 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
             </button>
           </div>
           <p className="mt-3 text-[14px] leading-6 text-[#556480]">
-            Tell Guardian whether you are studying, working on OPT or STEM OPT, or running a company so the dashboard can surface the right document checks and deadlines next.
+            {showDownloadStep
+              ? "Use the same email from this form so Guardian can download the PDF into the right account, keep track of whether you mailed it, and guide you to the next checks."
+              : "We will take you into the most likely check flow next and carry over the Form 8843 context we already know."}
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Link
-              href="/check?source=form8843"
-              onClick={dismissOnboardingPrompt}
-              className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#1b2741]"
-            >
-              Continue onboarding
-            </Link>
-            <Link
-              href={dashboardHref}
-              onClick={dismissOnboardingPrompt}
-              className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-5 py-2.5 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
-            >
-              Go to dashboard
-            </Link>
+            {showDownloadStep ? (
+              <Link
+                href={successReturnHref}
+                className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#1b2741]"
+              >
+                {shouldSwitchAccount ? "Switch account to download" : "Create account or sign in"}
+              </Link>
+            ) : (
+              <Link
+                href={onboardingHref}
+                onClick={dismissOnboardingPrompt}
+                className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#1b2741]"
+              >
+                Continue onboarding
+              </Link>
+            )}
           </div>
         </div>
       ) : null}
