@@ -1,6 +1,6 @@
 # Compliance OS Memory
 
-Last updated: 2026-04-06
+Last updated: 2026-04-10
 
 This file is implementation-specific working memory for the repo. It should stay short, factual, and revision-friendly. Use `docs/product_master.md` for the durable product definition.
 
@@ -52,6 +52,16 @@ This file is implementation-specific working memory for the repo. It should stay
 
 ## Decisions From This Session
 
+- Local homepage rendering issue on `localhost:3000` was traced to corrupted `next dev` assets, not to a landing-page code regression.
+- Failure signature to remember:
+  - `Cannot find module './948.js'` from `frontend/.next/server/webpack-runtime.js`
+  - `500` responses for core `/_next/static/...` assets
+  - homepage partially renders because server HTML arrives but styled-jsx / client assets do not
+- Reliable fix:
+  - stop `next dev`
+  - remove `frontend/.next`
+  - restart `npm run dev`
+- If local dev looks broken but deployed and `next start` look correct, treat it as a dev-runtime/cache issue first.
 - Create a master product doc and a separate repo memory file.
 - Treat the current repo as a live MVP workbench, not yet a complete multi-tenant product.
 - Narrow the day-to-day operating surface to four canonical artifacts:
