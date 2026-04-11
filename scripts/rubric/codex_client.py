@@ -57,6 +57,13 @@ def call_codex(
             output_path = Path(tmp.name)
 
         try:
+            # Note: --output-schema is intentionally NOT passed. OpenAI's
+            # structured-output mode requires `additionalProperties: false` on
+            # every nested object, which conflicts with our dynamic-field
+            # design (answers/extraction_*/comparisons are open-ended dicts
+            # keyed by field name). We rely on (1) the prompt telling the
+            # model to match the schema and (2) local `jsonschema` validation
+            # below, with retries on violation, to enforce the contract.
             cmd = [
                 "codex", "exec",
                 "-c", f'model_reasoning_effort="{reasoning_effort}"',
@@ -64,7 +71,6 @@ def call_codex(
                 "--sandbox", "read-only",
                 "--skip-git-repo-check",
                 "--ephemeral",
-                "--output-schema", str(schema_path),
                 "--output-last-message", str(output_path),
                 "--json",
                 "--cd", str(SCRATCH_WORKSPACE),
