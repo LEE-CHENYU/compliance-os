@@ -1,0 +1,27 @@
+{
+  "case_id": "D-nra-branch3-h1b",
+  "slice": "D",
+  "track": "stem_opt",
+  "target_rule_id": null,
+  "probe_intent": "Probe _derive_nra branch 3: stage='h1b' with no explicit tax_residency_status returns 'no' because H-1B holders are almost always tax residents.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "h1b",
+      "years_in_us": 3
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "notes": "H-1B is not in _F1_EXEMPT_STAGES so branch 2 is skipped; the h1b/i140 branch returns 'no'."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "case_id": "E-edge-missing-stage",
+  "slice": "E",
+  "track": "stem_opt",
+  "target_rule_id": null,
+  "probe_intent": "Probe that when answers omits the 'stage' key entirely, _derive_nra falls through to the default 'no' (stage='' matches no branch).",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "years_in_us": 3
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "notes": "No stage in answers -> stage='' -> neither F-1 exempt nor h1b/i140 branches match -> default 'no'."
+  }
+}

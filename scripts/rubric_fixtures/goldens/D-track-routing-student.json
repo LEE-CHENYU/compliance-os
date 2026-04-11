@@ -1,0 +1,28 @@
+{
+  "case_id": "D-track-routing-student",
+  "slice": "D",
+  "track": "student",
+  "target_rule_id": "travel_signature_risk",
+  "probe_intent": "Probe track routing for the student track using a simple rule (travel_signature_risk) that fires when planning_travel='yes'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "f1_student",
+      "years_in_us": 2,
+      "planning_travel": "yes"
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["travel_signature_risk"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "notes": "planning_travel == 'yes' triggers travel_signature_risk under the student track."
+  }
+}

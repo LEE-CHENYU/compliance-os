@@ -1,0 +1,29 @@
+{
+  "case_id": "E-edge-numeric-prefix-field",
+  "slice": "E",
+  "track": "data_room",
+  "target_rule_id": "form_1042s_tax_return_year_mismatch",
+  "probe_intent": "Probe that field names starting with a digit (1042s_tax_return_tax_year) resolve correctly. The rule must fire when the comparison status is 'mismatch'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {},
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {
+      "1042s_tax_return_tax_year": {
+        "status": "mismatch",
+        "confidence": 0.85
+      }
+    }
+  },
+  "expected": {
+    "must_fire_rule_ids": ["form_1042s_tax_return_year_mismatch"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "notes": "Digit-prefixed comparison field resolves via ctx.comparisons.get and the mismatch operator fires."
+  }
+}

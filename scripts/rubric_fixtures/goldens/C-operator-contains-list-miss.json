@@ -1,0 +1,30 @@
+{
+  "case_id": "C-operator-contains-list-miss",
+  "slice": "C",
+  "track": "entity",
+  "target_rule_id": "schedule_c_on_opt",
+  "probe_intent": "Probe the `contains` operator when actual is a list that does NOT contain the target value. schedule_c_on_opt must NOT fire because schedules_present omits 'schedule_c'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "visa_type": "f1_opt_stem",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "extraction_a": {},
+    "extraction_b": {
+      "schedules_present": ["schedule_b", "schedule_d"]
+    },
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": ["schedule_c_on_opt"],
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "notes": "contains on a list that lacks the value returns False and the rule stays quiet."
+  }
+}

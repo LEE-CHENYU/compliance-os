@@ -1,0 +1,24 @@
+{
+  "case_id": "C-operator-missing-none",
+  "slice": "C",
+  "track": "h1b_doc_check",
+  "target_rule_id": "h1b_missing_registration_number",
+  "probe_intent": "Probe the `missing` operator when the target field is absent from answers entirely. Rule h1b_missing_registration_number should fire because registration_number is None.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {},
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["h1b_missing_registration_number"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "notes": "missing operator returns True on absent / None actual values."
+  }
+}

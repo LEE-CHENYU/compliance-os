@@ -1238,3 +1238,22 @@ def test_meta_broken_rule_is_flagged_as_fail(tmp_path, monkeypatch):
     assert judge_record.verdict == "fail"
     assert "positive_case_fires_target_rule" in judge_record.subscores["findings"]["criteria_applied"]
     assert "contradictory-rule-conditions" in judge_record.flags
+
+
+def test_all_five_slices_have_goldens():
+    """Smoke test that every slice C/D/E has at least 3 goldens."""
+    from rubric.io import GOLDENS_DIR
+    by_slice: dict = {}
+    for f in GOLDENS_DIR.glob("*.json"):
+        first_char = f.name[0]
+        by_slice.setdefault(first_char, 0)
+        by_slice[first_char] += 1
+    assert by_slice.get("C", 0) >= 3, "need at least 3 slice-C goldens"
+    assert by_slice.get("D", 0) >= 3, "need at least 3 slice-D goldens"
+    assert by_slice.get("E", 0) >= 3, "need at least 3 slice-E goldens"
+
+
+def test_goldens_total_at_least_40():
+    from rubric.io import GOLDENS_DIR
+    count = len(list(GOLDENS_DIR.glob("*.json")))
+    assert count >= 40, f"expected >=40 static goldens, got {count}"

@@ -1,0 +1,28 @@
+{
+  "case_id": "D-track-routing-stem-opt",
+  "slice": "D",
+  "track": "stem_opt",
+  "target_rule_id": "unemployment_risk",
+  "probe_intent": "Probe track routing for the stem_opt track using unemployment_risk, which fires when employment_status in ['not_employed','between_jobs'] AND stage in ['stem_opt','opt'].",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "employment_status": "not_employed",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["unemployment_risk"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "Both conditions for unemployment_risk hold on the stem_opt track."
+  }
+}

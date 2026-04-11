@@ -1,0 +1,32 @@
+{
+  "case_id": "E-edge-trigger-chat-context",
+  "slice": "E",
+  "track": "stem_opt",
+  "target_rule_id": "employer_name_mismatch",
+  "probe_intent": "Represent the trigger site at compliance_os/web/routers/chat.py:438 that invokes engine.evaluate() when building chat context. Mirrors a realistic payload: stem_opt user with an employer_name mismatch.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 3
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {
+      "employer_name": {
+        "status": "mismatch",
+        "confidence": 0.92
+      }
+    }
+  },
+  "expected": {
+    "must_fire_rule_ids": ["employer_name_mismatch"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "Stand-in for the chat-context trigger path: a stem_opt user with an employer_name mismatch at critical severity."
+  }
+}

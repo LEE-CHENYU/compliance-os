@@ -1,0 +1,29 @@
+{
+  "case_id": "C-operator-neq-literal",
+  "slice": "C",
+  "track": "entity",
+  "target_rule_id": "nra_scorp_invalid",
+  "probe_intent": "Probe the `neq` operator against a literal value. nra_scorp_invalid fires when owner_residency != 'us_citizen_or_pr' AND form_type == '1120-S'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "owner_residency": "outside_us",
+      "entity_type": "s_corp"
+    },
+    "extraction_a": {},
+    "extraction_b": {
+      "form_type": "1120-S"
+    },
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["nra_scorp_invalid"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "notes": "outside_us != us_citizen_or_pr so neq is True; form_type eq 1120-S so both conditions hold and the rule fires."
+  }
+}
