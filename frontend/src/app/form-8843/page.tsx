@@ -28,7 +28,7 @@ const INITIAL_STATE: Form8843WizardState = {
   days_present_current: "",
   days_present_year_1_ago: "0",
   days_present_year_2_ago: "0",
-  days_excludable_current: "0",
+  days_excludable_current: "",
   changed_status: false,
   applied_for_residency: false,
   filing_with_tax_return: false,
@@ -77,7 +77,9 @@ export default function Form8843Page() {
       days_present_current: Number(form.days_present_current || 0),
       days_present_year_1_ago: Number(form.days_present_year_1_ago || 0),
       days_present_year_2_ago: Number(form.days_present_year_2_ago || 0),
-      days_excludable_current: Number(form.days_excludable_current || 0),
+      days_excludable_current: form.days_excludable_current.trim() === ""
+        ? undefined
+        : Number(form.days_excludable_current),
       changed_status: form.changed_status,
       applied_for_residency: form.applied_for_residency,
       filing_with_tax_return: form.filing_with_tax_return,

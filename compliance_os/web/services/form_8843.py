@@ -38,10 +38,52 @@ def _parse_date(value: object) -> date | None:
     return None
 
 
+def _normalize_visa_code(value: object) -> str:
+    text = _coerce_text(value).upper()
+    if not text:
+        return ""
+    return text.split()[0]
+
+
 def _years_in_us(arrival_date: date | None, tax_year: int = 2025) -> int:
     if arrival_date is None:
         return 0
     return max(0, tax_year - arrival_date.year + 1)
+
+
+def _is_standard_student_exempt_case(inputs: dict[str, object], *, tax_year: int = 2025) -> bool:
+    visa_code = _normalize_visa_code(inputs.get("visa_type") or inputs.get("current_nonimmigrant_status"))
+    if visa_code not in {"F-1", "J-1", "M-1", "Q-1", "F", "J", "M", "Q"}:
+        return False
+    if bool(inputs.get("changed_status")) or bool(inputs.get("applied_for_residency")):
+        return False
+    arrival_date = _parse_date(inputs.get("arrival_date"))
+    years_in_us = _years_in_us(arrival_date, tax_year=tax_year)
+    return 0 < years_in_us <= 5
+
+
+def _resolve_days_excludable_current(inputs: dict[str, object], *, tax_year: int = 2025) -> int:
+    raw_value = inputs.get("days_excludable_current")
+    if raw_value not in {None, ""}:
+        try:
+            explicit_value = int(raw_value)
+        except (TypeError, ValueError):
+            explicit_value = 0
+        if explicit_value > 0:
+            return explicit_value
+        if explicit_value == 0 and not _is_standard_student_exempt_case(inputs, tax_year=tax_year):
+            return 0
+
+    try:
+        days_present_current = int(inputs.get("days_present_current") or 0)
+    except (TypeError, ValueError):
+        days_present_current = 0
+
+    if days_present_current <= 0:
+        return 0
+    if _is_standard_student_exempt_case(inputs, tax_year=tax_year):
+        return days_present_current
+    return 0
 
 
 def _insert_textbox(page: fitz.Page, rect: fitz.Rect, text: object, *, fontsize: float = 9.0, align: int = 0) -> None:
@@ -124,6 +166,7 @@ def generate_form_8843(inputs: dict[str, object]) -> bytes:
         school_contact = _coerce_text(inputs.get("school_contact")) or "On file"
         program_director = _coerce_text(inputs.get("program_director")) or "On file"
         passport_number = _coerce_text(inputs.get("passport_number"))
+        days_excludable_current = _resolve_days_excludable_current(inputs)
 
         _insert_text(page1, (38, 118), first_name, fontsize=9)
         _insert_text(page1, (251, 118), last_name, fontsize=9)
@@ -148,7 +191,7 @@ def generate_form_8843(inputs: dict[str, object]) -> bytes:
         _insert_text(page1, (96, 287), inputs.get("days_present_current"), fontsize=8)
         _insert_text(page1, (182, 287), inputs.get("days_present_year_1_ago"), fontsize=8)
         _insert_text(page1, (268, 287), inputs.get("days_present_year_2_ago"), fontsize=8)
-        _insert_text(page1, (392, 299), inputs.get("days_excludable_current") or 0, fontsize=8)
+        _insert_text(page1, (392, 299), days_excludable_current, fontsize=8)
 
         _insert_textbox(
             page1,

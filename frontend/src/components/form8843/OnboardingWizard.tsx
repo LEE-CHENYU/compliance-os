@@ -284,7 +284,13 @@ export default function OnboardingWizard({
               <Field label="2025" type="number" value={form.days_present_current} onChange={(value) => setField("days_present_current", value)} placeholder="340" required />
               <Field label="2024" type="number" value={form.days_present_year_1_ago} onChange={(value) => setField("days_present_year_1_ago", value)} placeholder="280" required />
               <Field label="2023" type="number" value={form.days_present_year_2_ago} onChange={(value) => setField("days_present_year_2_ago", value)} placeholder="0" required />
-              <Field label="Excludable days" type="number" value={form.days_excludable_current} onChange={(value) => setField("days_excludable_current", value)} placeholder="0" />
+              <Field
+                label="Excludable days"
+                type="number"
+                value={form.days_excludable_current}
+                onChange={(value) => setField("days_excludable_current", value)}
+                placeholder="Usually the same as 2025 days if you were exempt all year"
+              />
             </div>
           ) : null}
 

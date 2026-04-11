@@ -5,6 +5,36 @@ from __future__ import annotations
 import fitz
 
 
+def test_defaults_excludable_days_for_standard_f1_student_case():
+    from compliance_os.web.services.form_8843 import _resolve_days_excludable_current
+
+    assert _resolve_days_excludable_current(
+        {
+            "visa_type": "F-1",
+            "arrival_date": "2023-10-22",
+            "days_present_current": 365,
+            "days_excludable_current": None,
+            "changed_status": False,
+            "applied_for_residency": False,
+        }
+    ) == 365
+
+
+def test_preserves_explicit_excludable_days_override():
+    from compliance_os.web.services.form_8843 import _resolve_days_excludable_current
+
+    assert _resolve_days_excludable_current(
+        {
+            "visa_type": "F-1",
+            "arrival_date": "2023-10-22",
+            "days_present_current": 365,
+            "days_excludable_current": 120,
+            "changed_status": False,
+            "applied_for_residency": False,
+        }
+    ) == 120
+
+
 def test_generate_form_8843_pdf():
     from compliance_os.web.services.form_8843 import generate_form_8843
 

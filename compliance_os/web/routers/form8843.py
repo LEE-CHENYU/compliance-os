@@ -68,7 +68,7 @@ class Form8843Request(BaseModel):
     days_present_current: int
     days_present_year_1_ago: int = 0
     days_present_year_2_ago: int = 0
-    days_excludable_current: int = 0
+    days_excludable_current: int | None = None
     changed_status: bool = False
     applied_for_residency: bool = False
     filing_with_tax_return: bool = False
