@@ -3,7 +3,7 @@
  */
 
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
-  ? "http://localhost:8000/api/auth"
+  ? "http://127.0.0.1:8000/api/auth"
   : "/api/auth";
 
 export interface AuthUser {

@@ -3,7 +3,7 @@
 import { authHeaders } from "@/lib/auth";
 
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
-  ? "http://localhost:8000/api"
+  ? "http://127.0.0.1:8000/api"
   : "/api";
 
 export interface Form8843Request {

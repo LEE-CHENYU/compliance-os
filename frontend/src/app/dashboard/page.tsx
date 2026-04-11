@@ -236,13 +236,13 @@ interface ProcessingIndicatorState {
 }
 
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
-  ? "http://localhost:8000/api/dashboard"
+  ? "http://127.0.0.1:8000/api/dashboard"
   : "/api/dashboard";
 const FORM_FILL_API = typeof window !== "undefined" && window.location.hostname === "localhost"
-  ? "http://localhost:8000/api/form-fill"
+  ? "http://127.0.0.1:8000/api/form-fill"
   : "/api/form-fill";
 const AUTH_API = typeof window !== "undefined" && window.location.hostname === "localhost"
-  ? "http://localhost:8000/api/auth"
+  ? "http://127.0.0.1:8000/api/auth"
   : "/api/auth";
 
 const DASHBOARD_ACCEPT = ".pdf,.png,.jpg,.jpeg,.csv,.txt,.docx";
@@ -722,7 +722,7 @@ export default function DashboardPage() {
 
   const dashboardPromptApi = `${API}/integrity/respond`;
   const chatApi = typeof window !== "undefined" && window.location.hostname === "localhost"
-    ? "http://localhost:8000/api/chat"
+    ? "http://127.0.0.1:8000/api/chat"
     : "/api/chat";
 
   const loadOpenClawConnection = useCallback(async () => {
