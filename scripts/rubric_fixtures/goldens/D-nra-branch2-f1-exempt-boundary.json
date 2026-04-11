@@ -1,0 +1,27 @@
+{
+  "case_id": "D-nra-branch2-f1-exempt-boundary",
+  "slice": "D",
+  "track": "stem_opt",
+  "target_rule_id": null,
+  "probe_intent": "Probe rule_engine._derive_nra branch 2 boundary: years_in_us < 6 on an F-1 exempt stage yields is_nra='yes'; years_in_us >= 6 yields 'no'. This case sits exactly at year 5.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 5
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "years_in_us=5 is still < 6, so branch 2 fires and is_nra=yes"
+  }
+}

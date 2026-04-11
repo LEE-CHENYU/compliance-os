@@ -393,3 +393,16 @@ def test_positive_intent_preserves_condition_order():
     b_pos = intent.index("comparison.b")
     c_pos = intent.index("answers.c")
     assert a_pos < b_pos < c_pos
+
+
+def test_discover_loads_real_goldens_from_repo():
+    """Smoke-test that the real goldens dir loads cleanly."""
+    from rubric.io import GOLDENS_DIR, CONFIG_RULES_DIR
+    if not GOLDENS_DIR.exists() or not any(GOLDENS_DIR.glob("*.json")):
+        pytest.skip("no goldens yet")
+    cases = build_manifest(CONFIG_RULES_DIR, GOLDENS_DIR)
+    golden_cases = [c for c in cases if c.gen_strategy == "golden"]
+    assert len(golden_cases) >= 6, f"expected ≥6 seed goldens, got {len(golden_cases)}"
+    golden_ids = {c.case_id for c in golden_cases}
+    assert "C-operator-contains-scalar" in golden_ids
+    assert "E-edge-false-string-gotcha" in golden_ids

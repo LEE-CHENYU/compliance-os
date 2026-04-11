@@ -1,0 +1,29 @@
+{
+  "case_id": "E-edge-empty-context",
+  "slice": "E",
+  "track": "stem_opt",
+  "target_rule_id": null,
+  "probe_intent": "Probe engine behavior on a completely empty EvaluationContext. No answers, no extractions, no comparisons. Most rules should remain quiet; any rule that fires on empty input is suspect. Advisories with empty `conditions: []` MAY still fire (they're unconditional by design).",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {},
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "job_title_mismatch",
+      "employer_name_mismatch",
+      "unemployment_risk",
+      "form_8843_missing"
+    ],
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "notes": "Empty context: most rules quiet; unconditional advisories may still fire."
+  }
+}

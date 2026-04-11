@@ -1,0 +1,29 @@
+{
+  "case_id": "E-edge-false-string-gotcha",
+  "slice": "E",
+  "track": "entity",
+  "target_rule_id": "missing_5472",
+  "probe_intent": "Probe the known entity.yaml type gotcha: rule `missing_5472` has `value: \"False\"` (string, not bool). The engine uses strict `eq`, so this case must supply the literal STRING \"False\" for form_5472_present to trigger the rule. If the engine ever relaxes its comparison or if form_5472_present arrives as a bool, this case will fail — which is the point.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "owner_residency": "outside_us",
+      "entity_type": "smllc"
+    },
+    "extraction_a": {},
+    "extraction_b": {
+      "form_5472_present": "False"
+    },
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["missing_5472"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "notes": "String 'False' (not bool) is required to match the rule's eq comparison."
+  }
+}
