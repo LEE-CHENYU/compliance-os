@@ -1025,3 +1025,86 @@ def test_render_judge_prompt_substitutes_all_placeholders(tmp_path):
     assert "{findings_json}" not in prompt
     assert "job_title_mismatch" in prompt
     assert "is_nra: yes" in prompt
+
+
+from rubric.aggregate import (
+    assemble_scorecard,
+    compute_totals,
+    classify_verdict_from_subscores,
+)
+
+
+def test_classify_verdict_pass_at_threshold():
+    subscores = {
+        "categorization": {"score": 0.95, "criteria_applied": ["track_selection_correct"], "note": ""},
+        "findings": {"score": 0.95, "criteria_applied": ["positive_case_fires_target_rule"], "note": ""},
+    }
+    weights = {"categorization": 1.0, "findings": 2.0}
+    hard_fail = []
+    verdict = classify_verdict_from_subscores(subscores, weights, hard_fail, pass_t=0.90, partial_t=0.60)
+    assert verdict == "pass"
+
+
+def test_classify_verdict_fail_on_hard_fail_criterion():
+    subscores = {
+        "findings": {"score": 0.0, "criteria_applied": ["positive_case_fires_target_rule"], "note": ""},
+    }
+    weights = {"findings": 2.0}
+    hard_fail = ["positive_case_fires_target_rule"]
+    verdict = classify_verdict_from_subscores(subscores, weights, hard_fail, pass_t=0.90, partial_t=0.60)
+    assert verdict == "fail"
+
+
+def test_classify_verdict_partial_range():
+    subscores = {
+        "findings": {"score": 0.70, "criteria_applied": [], "note": ""},
+    }
+    weights = {"findings": 1.0}
+    verdict = classify_verdict_from_subscores(subscores, weights, [], pass_t=0.90, partial_t=0.60)
+    assert verdict == "partial"
+
+
+def test_compute_totals_counts_verdicts():
+    judge_records = [
+        JudgeRecord(cache_key="1", cache_key_inputs={}, case_id="c1", judged_at="",
+                    judged_by="", verdict="pass", subscores={}),
+        JudgeRecord(cache_key="2", cache_key_inputs={}, case_id="c2", judged_at="",
+                    judged_by="", verdict="pass", subscores={}),
+        JudgeRecord(cache_key="3", cache_key_inputs={}, case_id="c3", judged_at="",
+                    judged_by="", verdict="fail", subscores={}),
+    ]
+    totals = compute_totals(judge_records)
+    assert totals["pass"] == 2
+    assert totals["fail"] == 1
+    assert totals["cases"] == 3
+
+
+def test_assemble_scorecard_produces_complete_dict(tmp_path):
+    cases = [CaseSpec(
+        case_id="A-stem_opt-test-pos", slice="A", track="stem_opt",
+        target_rule_id="test", probe_intent="", gen_strategy="llm",
+    )]
+    eval_records = {"A-stem_opt-test-pos": EvalRecord(
+        case_id="A-stem_opt-test-pos", engine_version="1.0.0",
+        rule_file_path="x", rule_file_hash="y", input_hash="z",
+        evaluated_at="2026-04-10T00:00:00Z", derived={"is_nra": "yes"},
+        findings=[],
+    )}
+    judge_records = {"A-stem_opt-test-pos": JudgeRecord(
+        cache_key="k", cache_key_inputs={}, case_id="A-stem_opt-test-pos",
+        judged_at="2026-04-10T00:00:00Z", judged_by="codex", verdict="pass",
+        subscores={"findings": {"score": 1.0, "criteria_applied": [], "note": ""}},
+    )}
+    telemetry = CallTelemetry(generator_calls=1, judge_calls=1)
+    sc = assemble_scorecard(
+        cases=cases,
+        eval_records=eval_records,
+        judge_records=judge_records,
+        telemetry=telemetry,
+        warnings=[],
+        prior_scorecard=None,
+    )
+    assert sc.totals["cases"] == 1
+    assert sc.totals["pass"] == 1
+    assert sc.by_track["stem_opt"]["pass"] == 1
+    assert sc.by_slice["A"]["pass"] == 1
