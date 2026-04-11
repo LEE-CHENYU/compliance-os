@@ -23,6 +23,7 @@ from rubric.models import (
     CodexCallError,
     CoverageGap,
 )
+from rubric.case_ids import build_case_id, parse_case_id, validate_case_id
 
 
 def test_case_spec_roundtrip_to_dict():
@@ -72,3 +73,42 @@ def test_codex_call_error_pickles():
     assert loaded.stderr == "boom"
     assert loaded.attempts == 3
     assert str(loaded) == "took too long"
+
+
+def test_build_case_id_format():
+    cid = build_case_id(slice="A", track="stem_opt", rule_id="job_title_mismatch", polarity="pos")
+    assert cid == "A-stem_opt-job_title_mismatch-pos"
+
+
+def test_parse_case_id_roundtrip():
+    cid = "B-entity-missing_5472-neg"
+    parsed = parse_case_id(cid)
+    assert parsed == {
+        "slice": "B",
+        "track": "entity",
+        "rule_id": "missing_5472",
+        "polarity": "neg",
+    }
+
+
+def test_parse_case_id_handles_rule_ids_with_underscores():
+    # Rule IDs frequently contain underscores — parse must not split on them
+    cid = "A-stem_opt-employer_change_stem_i983-pos"
+    parsed = parse_case_id(cid)
+    assert parsed["rule_id"] == "employer_change_stem_i983"
+
+
+def test_validate_case_id_accepts_goldens():
+    # Goldens have free-form IDs like "C-operator-contains-scalar"
+    validate_case_id("C-operator-contains-scalar")
+    validate_case_id("E-edge-false-string-gotcha")
+
+
+def test_validate_case_id_rejects_bad_slice():
+    with pytest.raises(ValueError, match="slice"):
+        validate_case_id("Z-stem_opt-job_title_mismatch-pos")
+
+
+def test_validate_case_id_rejects_empty():
+    with pytest.raises(ValueError):
+        validate_case_id("")
