@@ -1,0 +1,44 @@
+{
+  "case_id": "B-stem_opt-job_title_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "job_title_mismatch"
+    ],
+    "notes": "The I-983 and employment letter use slightly different surface forms for the role title, but comparison.job_title is marked match, so job_title_mismatch must not fire; is_nra=yes from stem_opt with years_in_us under 6."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T10:29:30Z",
+  "generated_by": "codex-cli/gpt-5.4",
+  "generator_prompt_hash": "bb9dbbe1c9a24547a28f8ca648abe5b7c0043b438c6067c36643e683d9430fc6",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "stem_opt",
+      "years_in_us": 4
+    },
+    "comparisons": {
+      "job_title": {
+        "confidence": 0.77,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Brass Lantern Robotics LLC",
+      "end_date": "2027-06-30",
+      "job_title": "Autonomy Validation Engineer",
+      "start_date": "2025-07-01",
+      "work_location": "Harbor Point Lab, Solstice City"
+    },
+    "extraction_b": {
+      "employer_name": "Brass Lantern Robotics LLC",
+      "job_title": "Autonomous Systems Validation Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'job_title_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.job_title mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "job_title_mismatch",
+  "track": "stem_opt"
+}

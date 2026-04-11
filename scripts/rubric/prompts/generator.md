@@ -51,7 +51,59 @@ These are the ONLY fields the engine can read. Any other fields you set will be 
 
 ## Your output
 
-Produce a JSON object satisfying the output schema. The `input` object maps 1:1 to rule_engine.EvaluationContext. The `expected` object states what the engine should do.
+Produce a JSON object with EXACTLY this top-level shape. Copy the structure below — do not flatten, do not rename keys, do not add top-level keys.
+
+```json
+{
+  "input": {
+    "answers": {},
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": ""
+  },
+  "flavor_hint": null
+}
+```
+
+**Critical shape rules:**
+- `input` has EXACTLY 4 sub-keys: `answers`, `extraction_a`, `extraction_b`, `comparisons`. All 4 must be present (use `{}` if nothing goes in them). `comparisons` is plural with an 's'.
+- Put user-entered answers under `input.answers` (stage, years_in_us, employment_status, employer_changed, etc.).
+- Put document-extracted fields under `input.extraction_a` (typically doc A: I-983, I-20, tax return body) or `input.extraction_b` (typically doc B: employment letter, employer name).
+- Put cross-document comparison results under `input.comparisons` as `{"field_name": {"status": "mismatch"|"match"|"needs_review", "confidence": 0.0-1.0}}`.
+- `expected` has EXACTLY 5 sub-keys: `must_fire_rule_ids`, `must_not_fire_rule_ids`, `expected_nra`, `expected_track`, `notes`. All must be present. `expected_nra` is `"yes"` or `"no"` (compute using the derivation reminders above). `expected_track` is the same as the track constraint. `notes` is a one-sentence explanation.
+- `flavor_hint` is `null` by default.
+
+## Example for a comparison rule
+
+For `job_title_mismatch` (slice A, positive — engine MUST fire), a valid output is:
+
+```json
+{
+  "input": {
+    "answers": {"stage": "stem_opt", "years_in_us": 3, "employer_changed": "no"},
+    "extraction_a": {"job_title": "Senior Platform Engineer", "start_date": "2024-06-15", "end_date": "2027-06-14"},
+    "extraction_b": {"job_title": "Staff Engineer"},
+    "comparisons": {"job_title": {"status": "mismatch", "confidence": 0.92}}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["job_title_mismatch"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "I-983 and employment letter disagree on job title; engine should fire job_title_mismatch. is_nra=yes from branch 2 (stem_opt + years<6)."
+  },
+  "flavor_hint": null
+}
+```
+
+## Slice-specific requirements
 
 For slice A: expected.must_fire_rule_ids MUST include "{target_rule_id}".
-For slice B: expected.must_not_fire_rule_ids MUST include "{target_rule_id}", and the case must be adversarially close — something a naive reader would think SHOULD fire the rule.
+For slice B: expected.must_not_fire_rule_ids MUST include "{target_rule_id}", and the case must be adversarially close — something a naive reader would think SHOULD fire the rule. Satisfy MOST of the rule's conditions but break exactly ONE.

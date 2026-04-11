@@ -1,0 +1,38 @@
+{
+  "case_id": "A-stem_opt-job_title_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "job_title_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "The I-983 job title and the employment letter job title do not match, so the engine should fire job_title_mismatch; is_nra=yes because the student is in stem_opt and has been in the U.S. for fewer than 6 years."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T10:28:25Z",
+  "generated_by": "codex-cli/gpt-5.4",
+  "generator_prompt_hash": "425cfab8f12607b514f72e79902d1fc51ca06cd2bb573d7697652e3620879385",
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "job_title": {
+        "confidence": 0.96,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "job_title": "Quantum Orchard Systems Analyst"
+    },
+    "extraction_b": {
+      "job_title": "Autonomous Greenhouse Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'job_title_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.job_title mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "job_title_mismatch",
+  "track": "stem_opt"
+}

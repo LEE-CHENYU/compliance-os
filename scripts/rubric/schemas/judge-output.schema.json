@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "required": ["verdict", "subscores"],
-  "additionalProperties": false,
   "properties": {
     "verdict": {"enum": ["pass", "partial", "fail", "unrunnable"]},
     "subscores": {
@@ -17,8 +16,7 @@
             "note":             {"type": "string"}
           }
         }
-      },
-      "additionalProperties": false
+      }
     },
     "flags": {"type": "array", "items": {"type": "string"}}
   }
