@@ -184,22 +184,25 @@ def _repair_v2_document_lineage(conn) -> None:
             )
 
 
-def _ensure_marketplace_columns(engine: Engine) -> None:
-    """Add newly introduced SQLite columns for marketplace orders."""
-    if engine.dialect.name != "sqlite":
-        return
+def _column_ddl(engine: Engine, sqlite_ddl: str, postgres_ddl: str) -> str:
+    if engine.dialect.name == "postgresql":
+        return postgres_ddl
+    return sqlite_ddl
 
+
+def _ensure_marketplace_columns(engine: Engine) -> None:
+    """Backfill newly introduced marketplace order columns for existing databases."""
     inspector = inspect(engine)
     if "mp_orders" not in inspector.get_table_names():
         return
 
     existing = {col["name"] for col in inspector.get_columns("mp_orders")}
     wanted = {
-        "delivery_method": "TEXT DEFAULT 'download_only'",
-        "filing_deadline": "DATE",
-        "mailing_status": "TEXT DEFAULT 'not_required'",
-        "mailed_at": "DATETIME",
-        "tracking_number": "TEXT",
+        "delivery_method": _column_ddl(engine, "TEXT DEFAULT 'download_only'", "TEXT DEFAULT 'download_only'"),
+        "filing_deadline": _column_ddl(engine, "DATE", "DATE"),
+        "mailing_status": _column_ddl(engine, "TEXT DEFAULT 'not_required'", "TEXT DEFAULT 'not_required'"),
+        "mailed_at": _column_ddl(engine, "DATETIME", "TIMESTAMP WITH TIME ZONE"),
+        "tracking_number": _column_ddl(engine, "TEXT", "TEXT"),
     }
 
     with engine.begin() as conn:
@@ -252,17 +255,14 @@ def _ensure_marketplace_columns(engine: Engine) -> None:
 
 
 def _ensure_auth_columns(engine: Engine) -> None:
-    """Add newly introduced SQLite columns for auth users."""
-    if engine.dialect.name != "sqlite":
-        return
-
+    """Backfill newly introduced auth columns for existing databases."""
     inspector = inspect(engine)
     if "users" not in inspector.get_table_names():
         return
 
     existing = {col["name"] for col in inspector.get_columns("users")}
     wanted = {
-        "role": "TEXT DEFAULT 'user'",
+        "role": _column_ddl(engine, "TEXT DEFAULT 'user'", "TEXT DEFAULT 'user'"),
     }
 
     with engine.begin() as conn:
