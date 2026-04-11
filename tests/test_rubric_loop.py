@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -1108,3 +1109,26 @@ def test_assemble_scorecard_produces_complete_dict(tmp_path):
     assert sc.totals["pass"] == 1
     assert sc.by_track["stem_opt"]["pass"] == 1
     assert sc.by_slice["A"]["pass"] == 1
+
+
+def test_rubric_loop_cli_help():
+    proc = subprocess.run(
+        ["python", "scripts/rubric_loop.py", "--help"],
+        capture_output=True, text=True,
+    )
+    assert proc.returncode == 0
+    assert "--phases" in proc.stdout
+    assert "--only" in proc.stdout
+    assert "--regen" in proc.stdout
+    assert "--slice" in proc.stdout
+
+
+def test_rubric_loop_discover_only_runs(tmp_path):
+    """Discover phase should succeed against the real repo rules/goldens."""
+    proc = subprocess.run(
+        ["python", "scripts/rubric_loop.py", "--phases", "discover"],
+        capture_output=True, text=True,
+    )
+    # Should exit 0 (discovery works) regardless of generator/judge state
+    assert proc.returncode == 0, f"stderr: {proc.stderr}"
+    assert "manifest" in (proc.stdout + proc.stderr).lower()
