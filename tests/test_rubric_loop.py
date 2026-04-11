@@ -112,3 +112,23 @@ def test_validate_case_id_rejects_bad_slice():
 def test_validate_case_id_rejects_empty():
     with pytest.raises(ValueError):
         validate_case_id("")
+
+
+def test_build_case_id_rejects_empty_track():
+    with pytest.raises(ValueError, match="track"):
+        build_case_id(slice="A", track="", rule_id="some_rule", polarity="pos")
+
+
+def test_build_case_id_rejects_empty_rule_id():
+    with pytest.raises(ValueError, match="rule_id"):
+        build_case_id(slice="A", track="stem_opt", rule_id="", polarity="pos")
+
+
+def test_build_case_id_rejects_hyphen_in_track():
+    with pytest.raises(ValueError, match="'-'"):
+        build_case_id(slice="A", track="stem-opt", rule_id="some_rule", polarity="pos")
+
+
+def test_build_case_id_rejects_hyphen_in_rule_id():
+    with pytest.raises(ValueError, match="'-'"):
+        build_case_id(slice="A", track="stem_opt", rule_id="some-rule", polarity="pos")

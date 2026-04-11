@@ -18,14 +18,28 @@ def build_case_id(*, slice: str, track: str, rule_id: str, polarity: str) -> str
         raise ValueError(f"build_case_id only supports slice A/B, got {slice!r}")
     if polarity not in VALID_POLARITIES:
         raise ValueError(f"polarity must be 'pos' or 'neg', got {polarity!r}")
+    if not track:
+        raise ValueError(f"track must be non-empty, got {track!r}")
+    if not rule_id:
+        raise ValueError(f"rule_id must be non-empty, got {rule_id!r}")
+    if "-" in track:
+        raise ValueError(
+            f"track must not contain '-' (case ID parser would split it), got {track!r}"
+        )
+    if "-" in rule_id:
+        raise ValueError(
+            f"rule_id must not contain '-' (case ID parser would split it), got {rule_id!r}"
+        )
     return f"{slice}-{track}-{rule_id}-{polarity}"
 
 
 def parse_case_id(case_id: str) -> dict:
     """Parse a slice-A/B case ID into its components.
 
-    Rule IDs may contain underscores, so we split on the first and last hyphen
-    (slice + track + polarity are fixed-shape), leaving the middle as rule_id.
+    Splits on every hyphen and treats parts[0]=slice, parts[1]=track,
+    parts[-1]=polarity, and parts[2:-1] rejoined as rule_id. This is safe
+    only if track and rule_id are hyphen-free — build_case_id enforces
+    that invariant at the write site.
     """
     parts = case_id.split("-")
     if len(parts) < 4:
