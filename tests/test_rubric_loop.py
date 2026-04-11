@@ -37,6 +37,8 @@ from rubric.io import (
     load_json,
     ensure_dirs,
 )
+from rubric.evaluate import evaluate_case, load_eval_cache
+from rubric.models import FixtureRecord
 
 
 def test_case_spec_roundtrip_to_dict():
@@ -406,3 +408,88 @@ def test_discover_loads_real_goldens_from_repo():
     golden_ids = {c.case_id for c in golden_cases}
     assert "C-operator-contains-scalar" in golden_ids
     assert "E-edge-false-string-gotcha" in golden_ids
+
+
+def _make_fixture(case_id: str, track: str, input_: dict, expected: dict) -> FixtureRecord:
+    return FixtureRecord(
+        case_id=case_id,
+        slice=case_id[0],
+        track=track,
+        target_rule_id=None,
+        probe_intent="test",
+        generated_by="hand",
+        generated_at="2026-04-10T00:00:00Z",
+        generator_prompt_hash=None,
+        flavor_hint=None,
+        input=input_,
+        expected=expected,
+    )
+
+
+def test_evaluate_case_fires_job_title_mismatch(tmp_path):
+    """Feed a fixture that should fire job_title_mismatch, verify the engine agrees."""
+    fixture = _make_fixture(
+        case_id="A-stem_opt-job_title_mismatch-pos",
+        track="stem_opt",
+        input_={
+            "answers": {"stage": "stem_opt", "years_in_us": 3},
+            "extraction_a": {},
+            "extraction_b": {},
+            "comparisons": {"job_title": {"status": "mismatch", "confidence": 0.3}},
+        },
+        expected={
+            "must_fire_rule_ids": ["job_title_mismatch"],
+            "must_not_fire_rule_ids": [],
+            "expected_nra": "yes",
+            "expected_track": "stem_opt",
+            "notes": "",
+        },
+    )
+    cache_dir = tmp_path / "eval_cache"
+    record = evaluate_case(fixture, cache_dir=cache_dir)
+    rule_ids = [f["rule_id"] for f in record.findings]
+    assert "job_title_mismatch" in rule_ids
+    assert record.derived["is_nra"] == "yes"
+    assert record.engine_error is None
+    # Cache was written
+    assert (cache_dir / "A-stem_opt-job_title_mismatch-pos.json").exists()
+
+
+def test_evaluate_case_captures_derived_is_nra(tmp_path):
+    fixture = _make_fixture(
+        case_id="D-nra-branch1-explicit",
+        track="stem_opt",
+        input_={
+            "answers": {"stage": "stem_opt", "years_in_us": 3, "tax_residency_status": "Resident alien"},
+            "extraction_a": {},
+            "extraction_b": {},
+            "comparisons": {},
+        },
+        expected={
+            "must_fire_rule_ids": [],
+            "must_not_fire_rule_ids": [],
+            "expected_nra": "no",
+            "expected_track": "stem_opt",
+            "notes": "",
+        },
+    )
+    record = evaluate_case(fixture, cache_dir=tmp_path / "eval_cache")
+    assert record.derived["is_nra"] == "no"  # branch-1 override
+
+
+def test_evaluate_case_handles_unknown_track(tmp_path):
+    """If the track has no rule file, engine_error is set and we don't crash."""
+    fixture = _make_fixture(
+        case_id="A-nonexistent_track-fake-pos",
+        track="nonexistent_track",
+        input_={"answers": {}, "extraction_a": {}, "extraction_b": {}, "comparisons": {}},
+        expected={"must_fire_rule_ids": [], "must_not_fire_rule_ids": [],
+                  "expected_nra": "no", "expected_track": "nonexistent_track", "notes": ""},
+    )
+    record = evaluate_case(fixture, cache_dir=tmp_path / "eval_cache")
+    assert record.engine_error is not None
+    assert "nonexistent_track" in record.engine_error
+
+
+def test_load_eval_cache_returns_none_for_missing(tmp_path):
+    assert load_eval_cache("nonexistent", tmp_path) is None
