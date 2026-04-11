@@ -14,6 +14,7 @@ import {
 
 const LIVE_WORKFLOW_SKUS = new Set([
   "form_8843_free",
+  "student_tax_1040nr",
   "h1b_doc_check",
   "fbar_check",
   "election_83b",
@@ -30,6 +31,9 @@ function ctaCopy(product: MarketplaceProduct): string {
   }
   if (product.sku === "h1b_doc_check") {
     return "Start document review";
+  }
+  if (product.sku === "student_tax_1040nr") {
+    return "Start student tax package";
   }
   if (product.sku === "fbar_check") {
     return "Start FBAR check";

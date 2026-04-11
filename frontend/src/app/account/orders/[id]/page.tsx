@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import FilingChecklistCard from "@/components/form8843/FilingChecklistCard";
 import { isLoggedIn } from "@/lib/auth";
 import {
+  acceptMarketplaceUpgrade,
   downloadMarketplaceArtifact,
   getMarketplaceOrder,
   markMarketplaceOrderMailed,
@@ -53,6 +54,27 @@ type Election83BFormState = {
   fair_market_value_per_share: string;
   exercise_price_per_share: string;
   vesting_schedule: string;
+};
+
+type StudentTaxFormState = {
+  tax_year: string;
+  full_name: string;
+  visa_type: string;
+  school_name: string;
+  country_citizenship: string;
+  arrival_date: string;
+  days_present_current: string;
+  days_present_year_1_ago: string;
+  days_present_year_2_ago: string;
+  wage_income_usd: string;
+  scholarship_income_usd: string;
+  other_income_usd: string;
+  federal_withholding_usd: string;
+  state_withholding_usd: string;
+  claim_treaty_benefit: boolean;
+  treaty_country: string;
+  treaty_article: string;
+  used_resident_software: boolean;
 };
 
 type OptIntakeFormState = {
@@ -126,6 +148,29 @@ function createInitial83BForm(): Election83BFormState {
   };
 }
 
+function createInitialStudentTaxForm(): StudentTaxFormState {
+  return {
+    tax_year: String(new Date().getFullYear() - 1),
+    full_name: "",
+    visa_type: "F-1",
+    school_name: "",
+    country_citizenship: "",
+    arrival_date: "",
+    days_present_current: "",
+    days_present_year_1_ago: "",
+    days_present_year_2_ago: "",
+    wage_income_usd: "",
+    scholarship_income_usd: "",
+    other_income_usd: "",
+    federal_withholding_usd: "",
+    state_withholding_usd: "",
+    claim_treaty_benefit: false,
+    treaty_country: "",
+    treaty_article: "",
+    used_resident_software: false,
+  };
+}
+
 function createInitialOptIntakeForm(): OptIntakeFormState {
   return {
     desired_start_date: "",
@@ -166,11 +211,12 @@ export default function AccountOrderDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionNote, setActionNote] = useState<string | null>(null);
-  const [busyAction, setBusyAction] = useState<"save" | "process" | "mail" | null>(null);
+  const [busyAction, setBusyAction] = useState<"save" | "process" | "mail" | "upgrade" | null>(null);
   const [trackingNumber, setTrackingNumber] = useState("");
   const [h1bFiles, setH1bFiles] = useState<Record<string, File | null>>({});
   const [fbarForm, setFbarForm] = useState<FbarFormState>(() => createInitialFbarForm());
   const [election83BForm, setElection83BForm] = useState<Election83BFormState>(() => createInitial83BForm());
+  const [studentTaxForm, setStudentTaxForm] = useState<StudentTaxFormState>(() => createInitialStudentTaxForm());
   const [optIntakeForm, setOptIntakeForm] = useState<OptIntakeFormState>(() => createInitialOptIntakeForm());
 
   useEffect(() => {
@@ -212,7 +258,7 @@ export default function AccountOrderDetailPage() {
   const form8843Order = toForm8843Order(order);
   const pdfUrl = resolveForm8843PdfUrl(order?.pdf_url ?? null);
   const result = order?.result ?? null;
-  const isSlice3Sku = order ? ["h1b_doc_check", "fbar_check", "election_83b"].includes(order.product_sku) : false;
+  const isSlice3Sku = order ? ["student_tax_1040nr", "h1b_doc_check", "fbar_check", "election_83b"].includes(order.product_sku) : false;
   const isOptSku = order ? ["opt_execution", "opt_advisory"].includes(order.product_sku) : false;
 
   function applyOrder(nextOrder: MarketplaceOrder, note: string) {
@@ -302,6 +348,62 @@ export default function AccountOrderDetailPage() {
           accounts,
         });
         applyOrder(nextOrder, "FBAR intake saved. Run the compliance check to generate the result.");
+        return;
+      }
+
+      if (order.product_sku === "student_tax_1040nr") {
+        const requiredValues = [
+          studentTaxForm.tax_year,
+          studentTaxForm.full_name,
+          studentTaxForm.visa_type,
+          studentTaxForm.school_name,
+          studentTaxForm.country_citizenship,
+          studentTaxForm.arrival_date,
+          studentTaxForm.days_present_current,
+          studentTaxForm.days_present_year_1_ago,
+          studentTaxForm.days_present_year_2_ago,
+        ];
+        if (requiredValues.some((value) => !String(value).trim())) {
+          throw new Error("Complete the required student tax fields before saving intake.");
+        }
+
+        const taxYear = Number(studentTaxForm.tax_year);
+        const daysPresentCurrent = Number(studentTaxForm.days_present_current);
+        const daysPresentYear1Ago = Number(studentTaxForm.days_present_year_1_ago);
+        const daysPresentYear2Ago = Number(studentTaxForm.days_present_year_2_ago);
+        const wageIncome = Number(studentTaxForm.wage_income_usd || "0");
+        const scholarshipIncome = Number(studentTaxForm.scholarship_income_usd || "0");
+        const otherIncome = Number(studentTaxForm.other_income_usd || "0");
+        const federalWithholding = Number(studentTaxForm.federal_withholding_usd || "0");
+        const stateWithholding = Number(studentTaxForm.state_withholding_usd || "0");
+        if (
+          [taxYear, daysPresentCurrent, daysPresentYear1Ago, daysPresentYear2Ago, wageIncome, scholarshipIncome, otherIncome, federalWithholding, stateWithholding]
+            .some((value) => !Number.isFinite(value))
+        ) {
+          throw new Error("Use valid numbers for the student tax year, day counts, income, and withholding fields.");
+        }
+
+        const nextOrder = await saveMarketplaceOrderJsonIntake(order.order_id, {
+          tax_year: taxYear,
+          full_name: studentTaxForm.full_name.trim(),
+          visa_type: studentTaxForm.visa_type.trim(),
+          school_name: studentTaxForm.school_name.trim(),
+          country_citizenship: studentTaxForm.country_citizenship.trim(),
+          arrival_date: studentTaxForm.arrival_date,
+          days_present_current: daysPresentCurrent,
+          days_present_year_1_ago: daysPresentYear1Ago,
+          days_present_year_2_ago: daysPresentYear2Ago,
+          wage_income_usd: wageIncome,
+          scholarship_income_usd: scholarshipIncome,
+          other_income_usd: otherIncome,
+          federal_withholding_usd: federalWithholding,
+          state_withholding_usd: stateWithholding,
+          claim_treaty_benefit: studentTaxForm.claim_treaty_benefit,
+          treaty_country: studentTaxForm.treaty_country.trim() || null,
+          treaty_article: studentTaxForm.treaty_article.trim() || null,
+          used_resident_software: studentTaxForm.used_resident_software,
+        });
+        applyOrder(nextOrder, "Student tax intake saved. Run the package prep to generate the filing materials.");
         return;
       }
 
@@ -413,6 +515,25 @@ export default function AccountOrderDetailPage() {
     }
   }
 
+  async function handleAcceptUpgrade() {
+    if (!order) {
+      return;
+    }
+
+    setBusyAction("upgrade");
+    setActionError(null);
+    setActionNote(null);
+    try {
+      const response = await acceptMarketplaceUpgrade(order.order_id);
+      applyOrder(response.original_order, "Advisory upgrade created. Continue in the new advisory order.");
+      router.push(`/account/orders/${response.upgraded_order.order_id}`);
+    } catch (nextError) {
+      setActionError(nextError instanceof Error ? nextError.message : "Could not continue into advisory mode");
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
   function renderIntakeSection() {
     if (!order || order.product_sku === "form_8843_free" || !isSlice3Sku) {
       return null;
@@ -475,6 +596,194 @@ export default function AccountOrderDetailPage() {
                 </div>
               </label>
             ))}
+          </div>
+        ) : null}
+
+        {order.product_sku === "student_tax_1040nr" ? (
+          <div className="mt-6 space-y-5">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Tax year</div>
+                <input
+                  value={studentTaxForm.tax_year}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, tax_year: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="2025"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Full name</div>
+                <input
+                  value={studentTaxForm.full_name}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, full_name: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="Jessica Chen"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Visa type</div>
+                <input
+                  value={studentTaxForm.visa_type}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, visa_type: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="F-1"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4 md:col-span-2">
+                <div className={labelClassName}>School name</div>
+                <input
+                  value={studentTaxForm.school_name}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, school_name: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="Columbia University"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Citizenship</div>
+                <input
+                  value={studentTaxForm.country_citizenship}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, country_citizenship: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="China"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Arrival date</div>
+                <input
+                  type="date"
+                  value={studentTaxForm.arrival_date}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, arrival_date: event.target.value }))}
+                  className={inputClassName}
+                />
+              </label>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Days present this year</div>
+                <input
+                  value={studentTaxForm.days_present_current}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, days_present_current: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="320"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Days present one year ago</div>
+                <input
+                  value={studentTaxForm.days_present_year_1_ago}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, days_present_year_1_ago: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="280"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Days present two years ago</div>
+                <input
+                  value={studentTaxForm.days_present_year_2_ago}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, days_present_year_2_ago: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="0"
+                />
+              </label>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Wage income (USD)</div>
+                <input
+                  value={studentTaxForm.wage_income_usd}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, wage_income_usd: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="24000"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Scholarship income (USD)</div>
+                <input
+                  value={studentTaxForm.scholarship_income_usd}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, scholarship_income_usd: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="0"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Other income (USD)</div>
+                <input
+                  value={studentTaxForm.other_income_usd}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, other_income_usd: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="0"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Federal withholding (USD)</div>
+                <input
+                  value={studentTaxForm.federal_withholding_usd}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, federal_withholding_usd: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="1800"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>State withholding (USD)</div>
+                <input
+                  value={studentTaxForm.state_withholding_usd}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, state_withholding_usd: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="450"
+                />
+              </label>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={studentTaxForm.claim_treaty_benefit}
+                    onChange={(event) => setStudentTaxForm((current) => ({ ...current, claim_treaty_benefit: event.target.checked }))}
+                    className="h-4 w-4 rounded border-[#bfd1e9]"
+                  />
+                  <div className={labelClassName}>Claim treaty benefit</div>
+                </div>
+                <div className="mt-3 text-[13px] leading-6 text-[#6e7f9a]">
+                  Turn this on if you expect treaty-based wage or scholarship treatment and want Guardian to flag the review step.
+                </div>
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={studentTaxForm.used_resident_software}
+                    onChange={(event) => setStudentTaxForm((current) => ({ ...current, used_resident_software: event.target.checked }))}
+                    className="h-4 w-4 rounded border-[#bfd1e9]"
+                  />
+                  <div className={labelClassName}>Used resident-return software</div>
+                </div>
+                <div className="mt-3 text-[13px] leading-6 text-[#6e7f9a]">
+                  Guardian will flag this if you may have been routed toward Form 1040 instead of 1040-NR.
+                </div>
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Treaty country</div>
+                <input
+                  value={studentTaxForm.treaty_country}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, treaty_country: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="China"
+                />
+              </label>
+              <label className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className={labelClassName}>Treaty article</div>
+                <input
+                  value={studentTaxForm.treaty_article}
+                  onChange={(event) => setStudentTaxForm((current) => ({ ...current, treaty_article: event.target.value }))}
+                  className={inputClassName}
+                  placeholder="Article 20(c)"
+                />
+              </label>
+            </div>
           </div>
         ) : null}
 
@@ -691,12 +1000,18 @@ export default function AccountOrderDetailPage() {
           </div>
         ) : null}
 
-        {(typeof result.aggregate_max_balance_usd === "number" || typeof result.requires_fbar === "boolean" || result.filing_deadline) ? (
-          <div className="mt-5 grid gap-4 md:grid-cols-3">
+        {(typeof result.aggregate_max_balance_usd === "number" || typeof result.total_income_usd === "number" || typeof result.requires_fbar === "boolean" || result.filing_deadline) ? (
+          <div className="mt-5 grid gap-4 md:grid-cols-4">
             {typeof result.aggregate_max_balance_usd === "number" ? (
               <div className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Aggregate balance</div>
                 <div className="mt-2 text-[22px] font-bold text-[#13213b]">{formatMoney(result.aggregate_max_balance_usd)}</div>
+              </div>
+            ) : null}
+            {typeof result.total_income_usd === "number" ? (
+              <div className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Income reviewed</div>
+                <div className="mt-2 text-[22px] font-bold text-[#13213b]">{formatMoney(result.total_income_usd)}</div>
               </div>
             ) : null}
             {typeof result.requires_fbar === "boolean" ? (
@@ -1153,6 +1468,36 @@ export default function AccountOrderDetailPage() {
                     {order.attorney_assignment.attorney.full_name} · {order.attorney_assignment.attorney.bar_state || "State pending"} · {order.attorney_assignment.attorney.bar_number || "Bar number pending"}
                   </div>
                 ) : null}
+              </section>
+            ) : null}
+
+            {isOptSku && result?.upgrade_offer ? (
+              <section className="mt-6 rounded-[28px] border border-[#f0d6cf] bg-[#fff7f4] p-6 shadow-[0_18px_48px_rgba(128,84,61,0.08)]">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#a56b52]">Upgrade path</div>
+                <h2 className="mt-3 text-[24px] font-bold tracking-tight text-[#532d20]">Attorney requested Advisory Mode</h2>
+                <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#7d5649]">
+                  {result.upgrade_offer.reason}
+                </p>
+                <div className="mt-4 rounded-[22px] border border-[#efd4cc] bg-white/80 px-5 py-4 text-[14px] leading-7 text-[#6b473c]">
+                  Guardian is carrying forward a {formatMoney(result.upgrade_offer.credit_cents / 100)} execution credit into the advisory order.
+                </div>
+                {result.upgrade_offer.accepted_order_id ? (
+                  <Link
+                    href={`/account/orders/${result.upgrade_offer.accepted_order_id}`}
+                    className="mt-5 inline-flex rounded-full bg-[#532d20] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#432419]"
+                  >
+                    Open advisory order
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void handleAcceptUpgrade()}
+                    disabled={busyAction === "upgrade"}
+                    className="mt-5 inline-flex rounded-full bg-[#532d20] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#432419] disabled:cursor-not-allowed disabled:bg-[#b08d82]"
+                  >
+                    {busyAction === "upgrade" ? "Creating advisory order..." : "Continue into advisory mode"}
+                  </button>
+                )}
               </section>
             ) : null}
 

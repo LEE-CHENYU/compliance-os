@@ -87,6 +87,14 @@ export interface MarketplaceMailingInstructions {
   steps: string[];
 }
 
+export interface MarketplaceUpgradeOffer {
+  target_sku: string;
+  credit_cents: number;
+  reason: string;
+  accepted_order_id?: string | null;
+  accepted_at?: string | null;
+}
+
 export interface MarketplaceAgreement {
   agreement_id: string;
   signed_at: string | null;
@@ -162,6 +170,11 @@ export interface MarketplaceResultPayload {
   receipt_number?: string | null;
   filing_confirmation?: string | null;
   filed_at?: string | null;
+  total_income_usd?: number | null;
+  treaty_country?: string | null;
+  claim_treaty_benefit?: boolean;
+  upgrade_offer?: MarketplaceUpgradeOffer | null;
+  notification_statuses?: Record<string, { status: string; reason?: string; id?: string }> | null;
 }
 
 export interface Form8843FilingInstructions {
@@ -228,6 +241,12 @@ export interface MarketplaceOrder {
   filing_instructions?: Form8843FilingInstructions;
   mailing_service_available?: boolean;
   result?: MarketplaceResultPayload;
+}
+
+export interface MarketplaceUpgradeAcceptResponse {
+  accepted: boolean;
+  original_order: MarketplaceOrder;
+  upgraded_order: MarketplaceOrder;
 }
 
 export interface Form8843GenerateResponse extends Form8843OrderResponse {
@@ -412,6 +431,14 @@ export async function processMarketplaceOrder(orderId: string): Promise<Marketpl
     headers: authHeaders(),
   });
   return parseResponse<MarketplaceOrder>(response);
+}
+
+export async function acceptMarketplaceUpgrade(orderId: string): Promise<MarketplaceUpgradeAcceptResponse> {
+  const response = await fetch(`${API}/marketplace/orders/${encodeURIComponent(orderId)}/accept-upgrade`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+  return parseResponse<MarketplaceUpgradeAcceptResponse>(response);
 }
 
 export async function getMarketplaceOrderResult(orderId: string): Promise<MarketplaceResultPayload> {
