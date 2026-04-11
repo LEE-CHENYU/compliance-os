@@ -1132,3 +1132,109 @@ def test_rubric_loop_discover_only_runs(tmp_path):
     # Should exit 0 (discovery works) regardless of generator/judge state
     assert proc.returncode == 0, f"stderr: {proc.stderr}"
     assert "manifest" in (proc.stdout + proc.stderr).lower()
+
+
+def test_meta_broken_rule_is_flagged_as_fail(tmp_path, monkeypatch):
+    """The highest-value single test: if a rule is contradictory, the loop must
+    detect that slice-A positive cases can't fire it and mark them fail.
+
+    If this test ever passes without the fail being recorded, the rubric loop
+    is silently broken and should not be trusted.
+    """
+    broken_rules_src = Path(__file__).parent / "fixtures" / "broken_rules.yaml"
+    rules_dir = tmp_path / "rules"
+    rules_dir.mkdir()
+    (rules_dir / "broken_rules.yaml").write_text(broken_rules_src.read_text())
+    goldens_dir = tmp_path / "goldens"
+    goldens_dir.mkdir()
+
+    # Build manifest — should have A+B for impossible_rule
+    manifest = build_manifest(rules_dir, goldens_dir)
+    assert len(manifest) == 2
+    a_case = next(c for c in manifest if c.slice == "A")
+    b_case = next(c for c in manifest if c.slice == "B")
+
+    # Fake generator: produces a syntactically valid case that can't satisfy
+    # the impossible conditions (stage can only have one value at a time).
+    def fake_gen_call(**kwargs):
+        return CodexCallResult(
+            text=json.dumps({
+                "input": {
+                    "answers": {"stage": "f1_student"},
+                    "extraction_a": {}, "extraction_b": {}, "comparisons": {},
+                },
+                "expected": {
+                    "must_fire_rule_ids": ["impossible_rule"],
+                    "must_not_fire_rule_ids": [],
+                    "expected_nra": "yes",
+                    "expected_track": "stem_opt",
+                    "notes": "generator attempted but cannot satisfy mutually exclusive conditions",
+                },
+                "flavor_hint": None,
+            }),
+            parsed={
+                "input": {
+                    "answers": {"stage": "f1_student"},
+                    "extraction_a": {}, "extraction_b": {}, "comparisons": {},
+                },
+                "expected": {
+                    "must_fire_rule_ids": ["impossible_rule"],
+                    "must_not_fire_rule_ids": [],
+                    "expected_nra": "yes",
+                    "expected_track": "stem_opt",
+                    "notes": "",
+                },
+                "flavor_hint": None,
+            },
+            tokens_in=5, tokens_out=5, latency_ms=0, raw_events=[], attempts=1,
+        )
+
+    monkeypatch.setattr("rubric.generate.call_codex", fake_gen_call)
+    fixture_dir = tmp_path / "rubric_fixtures"
+    generate_missing([a_case], fixture_dir=fixture_dir, rules_dir=rules_dir)
+
+    # Phase 2: run the real engine on the fake fixture
+    fixture = FixtureRecord.from_dict(
+        json.loads((fixture_dir / f"{a_case.case_id}.json").read_text())
+    )
+    # Monkeypatch CONFIG_RULES_DIR so evaluate looks in tmp_path/rules
+    monkeypatch.setattr("rubric.evaluate.CONFIG_RULES_DIR", rules_dir)
+    eval_record = evaluate_case(fixture, cache_dir=tmp_path / "eval_cache")
+    # Engine must return no findings — the rule is impossible
+    assert not any(f["rule_id"] == "impossible_rule" for f in eval_record.findings)
+
+    # Phase 3: simulate a judge that applies the hard-fail rule correctly
+    def fake_judge_call(**kwargs):
+        return CodexCallResult(
+            text=json.dumps({
+                "verdict": "fail",
+                "subscores": {
+                    "findings": {
+                        "score": 0.0,
+                        "criteria_applied": ["positive_case_fires_target_rule"],
+                        "note": "impossible_rule did not fire; its conditions are mutually exclusive (stage cannot be both f1_student and h1b)",
+                    },
+                },
+                "flags": ["contradictory-rule-conditions"],
+            }),
+            parsed={
+                "verdict": "fail",
+                "subscores": {
+                    "findings": {
+                        "score": 0.0,
+                        "criteria_applied": ["positive_case_fires_target_rule"],
+                        "note": "impossible_rule did not fire",
+                    },
+                },
+                "flags": ["contradictory-rule-conditions"],
+            },
+            tokens_in=5, tokens_out=5, latency_ms=0, raw_events=[], attempts=1,
+        )
+
+    monkeypatch.setattr("rubric.judge.call_codex", fake_judge_call)
+    judge_record = judge_case(fixture, eval_record, cache_dir=tmp_path / "judge_cache")
+
+    # The meta-assertion: fail verdict + hard-fail criterion cited
+    assert judge_record.verdict == "fail"
+    assert "positive_case_fires_target_rule" in judge_record.subscores["findings"]["criteria_applied"]
+    assert "contradictory-rule-conditions" in judge_record.flags

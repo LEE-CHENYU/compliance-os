@@ -1,0 +1,29 @@
+version: "0.1.0"
+
+# This rule file exists solely for the meta-test in test_rubric_loop.py.
+# The rule `impossible_rule` has mutually-exclusive conditions: stage cannot
+# simultaneously be 'f1_student' AND 'h1b'. No case can ever satisfy both, so
+# the engine will never fire this rule. The rubric loop's slice-A positive
+# case for impossible_rule MUST be marked fail with the hard-fail criterion
+# positive_case_fires_target_rule. If this test ever passes without that
+# failure, the rubric loop is silently broken.
+
+rules:
+  - id: impossible_rule
+    track: broken_rules
+    type: logic
+    conditions:
+      - field: stage
+        operator: eq
+        value: f1_student
+        source: answers
+      - field: stage
+        operator: eq
+        value: h1b
+        source: answers
+    severity: warning
+    finding:
+      title: "impossible to fire"
+      action: "this rule will never fire"
+      consequence: "for meta-testing only"
+      immigration_impact: false
