@@ -1,0 +1,31 @@
+{
+  "case_id": "A-h1b_doc_check-h1b_window_closed-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [
+      "h1b_window_closed"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "H-1B petition filing window is closed, triggering critical timing alert."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "1037164fff95da3333b37d78331d6647692c7dc434888a63adea642aec35ad15",
+  "input": {
+    "answers": {
+      "employer_name": "Acme Innovations LLC",
+      "petition_status": "lottery_selected",
+      "petition_window_closed": true,
+      "stage": "h1b"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_window_closed'. All of these conditions must be satisfied simultaneously:\n  - answers.petition_window_closed eq True\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_window_closed",
+  "track": "h1b_doc_check"
+}

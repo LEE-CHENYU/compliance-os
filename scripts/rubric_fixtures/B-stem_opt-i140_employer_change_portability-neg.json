@@ -1,0 +1,35 @@
+{
+  "case_id": "B-stem_opt-i140_employer_change_portability-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "i140_employer_change_portability"
+    ],
+    "notes": "Stage is i140 but employer_changed is 'no' instead of 'yes', so the portability rule must not fire despite being at the I-140 stage."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "b8dd8384f5aa559a16df06dcae76d872f57841705b8c46c314952c2fae9faaa9",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employer_name": "Quantum Dynamics Inc",
+      "employment_status": "active",
+      "has_employment": "yes",
+      "job_title": "Senior Software Architect",
+      "petition_status": "approved",
+      "stage": "i140",
+      "years_in_us": 7
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'i140_employer_change_portability', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.employer_changed eq yes\n  - answers.stage eq i140\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "i140_employer_change_portability",
+  "track": "stem_opt"
+}

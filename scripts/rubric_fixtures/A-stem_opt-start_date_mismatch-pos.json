@@ -1,0 +1,44 @@
+{
+  "case_id": "A-stem_opt-start_date_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "start_date_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "I-983 shows start_date 2024-03-01 but employment letter shows 2024-03-15; comparison flagged mismatch so engine must fire start_date_mismatch."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "4f1f85986103b67920b5d2487089199d575f9dfb89bb71554ac1ee49ce4850f4",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "start_date": {
+        "confidence": 0.98,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "NeuralTech Systems Inc",
+      "end_date": "2027-02-28",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-03-01"
+    },
+    "extraction_b": {
+      "employer_name": "NeuralTech Systems Inc",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-03-15"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'start_date_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.start_date mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "start_date_mismatch",
+  "track": "stem_opt"
+}

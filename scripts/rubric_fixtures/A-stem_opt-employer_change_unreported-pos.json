@@ -1,0 +1,46 @@
+{
+  "case_id": "A-stem_opt-employer_change_unreported-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "employer_change_unreported"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Student on STEM OPT changed employers but has not reported it; rule must fire to warn about DSO notification and I-983 filing requirements."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "1104eadd951911d5cebf010f2dd2d354777506d9b151d13ac5f0fda22cf9086f",
+  "input": {
+    "answers": {
+      "employer_changed": "yes",
+      "employment_status": "active",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "employer_name": {
+        "confidence": 0.98,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Apex Innovations LLC",
+      "end_date": "2026-01-14",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Zenith Analytics Corp",
+      "employment_letter_paystub_employer_name": "Zenith Analytics Corp",
+      "job_title": "Machine Learning Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'employer_change_unreported'. All of these conditions must be satisfied simultaneously:\n  - answers.employer_changed eq yes\n  - answers.stage in ['stem_opt', 'opt']\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "employer_change_unreported",
+  "track": "stem_opt"
+}

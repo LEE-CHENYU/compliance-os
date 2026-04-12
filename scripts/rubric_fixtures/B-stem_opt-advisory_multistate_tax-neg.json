@@ -1,0 +1,47 @@
+{
+  "case_id": "B-stem_opt-advisory_multistate_tax-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "advisory_multistate_tax"
+    ],
+    "notes": "Work location matches between documents (California in both), so the mismatch condition is not satisfied and advisory_multistate_tax must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "032ca82e94dc2d41e96bc62852e702f70de7268f8fa399740d472687a34720b7",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "full_time",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "work_location": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics Inc",
+      "end_date": "2026-01-14",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-15",
+      "work_location": "California"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Inc",
+      "job_title": "Machine Learning Engineer",
+      "work_location": "California"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'advisory_multistate_tax', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.work_location mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "advisory_multistate_tax",
+  "track": "stem_opt"
+}

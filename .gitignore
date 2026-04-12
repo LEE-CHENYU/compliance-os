@@ -47,3 +47,9 @@ logs/
 
 # Git worktrees
 .worktrees/
+
+# Rubric loop
+scripts/rubric_cache/
+out/rubric-loop-*.json
+out/rubric-loop-*.md
+/tmp/rubric-loop-workspace/

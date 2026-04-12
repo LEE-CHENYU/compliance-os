@@ -1,0 +1,40 @@
+{
+  "case_id": "A-data_room-i9_everify_name_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "i9_everify_name_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Form I-9 employee name mismatches E-Verify name per comparison result; rule i9_everify_name_mismatch must fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "b064298c300765fdf40a95c4245f87fed5c16da11b56d9fff891273e98e257d6",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "h1b",
+      "years_in_us": 4
+    },
+    "comparisons": {
+      "i9_everify_employee_name": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics LLC",
+      "start_date": "2023-01-10"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics LLC"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'i9_everify_name_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.i9_everify_employee_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "i9_everify_name_mismatch",
+  "track": "data_room"
+}

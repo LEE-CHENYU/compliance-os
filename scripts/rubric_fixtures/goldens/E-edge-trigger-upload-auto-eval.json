@@ -1,0 +1,32 @@
+{
+  "case_id": "E-edge-trigger-upload-auto-eval",
+  "slice": "E",
+  "track": "stem_opt",
+  "target_rule_id": "job_title_mismatch",
+  "probe_intent": "Represent the trigger site at compliance_os/web/routers/dashboard.py:528 that calls engine.evaluate() automatically on upload. Mirrors a realistic mismatch payload after a cross-check.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {
+      "job_title": {
+        "status": "mismatch",
+        "confidence": 0.88
+      }
+    }
+  },
+  "expected": {
+    "must_fire_rule_ids": ["job_title_mismatch"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "Stand-in for the upload-auto-eval trigger path: a stem_opt user with a freshly cross-checked job_title mismatch."
+  }
+}

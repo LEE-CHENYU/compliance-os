@@ -1,0 +1,38 @@
+{
+  "case_id": "A-stem_opt-form_8843_missing-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "form_8843_missing"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Student on STEM OPT with 3 years in US did not file Form 8843, triggering the info-level reminder."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "56e84eaa5be02a708e926af05a3e67892945a1d5193dabf63d2bff545d8e4cb1",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "filed_8843": "no",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 3
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2026-08-31",
+      "job_title": "Software Development Engineer",
+      "start_date": "2023-09-01"
+    },
+    "extraction_b": {
+      "employer_name": "Acme Tech Solutions"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'form_8843_missing'. All of these conditions must be satisfied simultaneously:\n  - answers.filed_8843 eq no\n  - answers.years_in_us lt 6\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "form_8843_missing",
+  "track": "stem_opt"
+}

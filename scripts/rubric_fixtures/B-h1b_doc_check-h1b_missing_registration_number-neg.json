@@ -1,0 +1,30 @@
+{
+  "case_id": "B-h1b_doc_check-h1b_missing_registration_number-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_missing_registration_number"
+    ],
+    "notes": "Registration number is present (ZYX9876543210), so the missing operator is not satisfied and the rule does not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "890c5a2285080d09b1d536eece973e781797ad23d99152ae0e3eee38ed151ce8",
+  "input": {
+    "answers": {
+      "petition_status": "approved",
+      "registration_number": "ZYX9876543210",
+      "stage": "h1b"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_missing_registration_number', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.registration_number missing None\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_missing_registration_number",
+  "track": "h1b_doc_check"
+}

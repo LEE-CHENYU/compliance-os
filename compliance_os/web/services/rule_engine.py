@@ -35,10 +35,18 @@ def _derive_nra(answers: dict[str, Any]) -> str:
     3. ``owner_residency`` (entity track).
     4. Default to ``"no"`` (assume tax resident when unknown).
     """
-    # 1. Explicit residency declaration
+    # 1. Explicit residency declaration — normalize common variants
     tax_res = answers.get("tax_residency_status")
-    if tax_res:
-        return "yes" if tax_res == "Nonresident alien" else "no"
+    if isinstance(tax_res, str) and tax_res.strip():
+        norm = tax_res.strip().lower()
+        # Accept common variants: "nonresident alien", "nonresident",
+        # "non-resident alien", "non-resident", "nra"
+        if norm in {"nonresident alien", "nonresident", "non-resident alien", "non-resident", "nra"}:
+            return "yes"
+        if norm in {"resident alien", "resident"}:
+            return "no"
+        # Unknown value — fall through to heuristics below instead of
+        # silently returning "no"
 
     # 2. Immigration stage heuristic
     stage = answers.get("stage", "")
@@ -51,9 +59,24 @@ def _derive_nra(answers: dict[str, Any]) -> str:
     if stage in ("h1b", "i140"):
         return "no"
 
-    # 3. Entity track fallback
-    if answers.get("owner_residency") == "outside_us":
-        return "yes"
+    # 3. Entity track fallback — normalize common NRA-owner variants.
+    # Accept both the canonical "outside_us" (physically outside the US) and
+    # non-resident-alien variants the generator commonly produces.
+    owner = answers.get("owner_residency")
+    if isinstance(owner, str) and owner.strip():
+        owner_norm = owner.strip().lower().replace("-", "_").replace(" ", "_")
+        if owner_norm in {
+            "outside_us",
+            "nonresident",
+            "non_resident",
+            "nonresident_alien",
+            "non_resident_alien",
+            "nra",
+        }:
+            return "yes"
+        # Unknown values fall through to the default "no" — we don't map
+        # "us_citizen_or_pr" here because it's already the "not yes" case
+        # and treating it specially would swallow genuine unknowns.
 
     return "no"
 
@@ -144,6 +167,11 @@ class Condition:
         return None
 
     def _compare_gt(self, actual: Any, today: date) -> bool:
+        # If actual is a comparison dict with a numeric confidence field,
+        # compare against that. This lets rules like duties_low_relevance
+        # use `lt 0.6` on a comparison-source field whose value is a dict.
+        if isinstance(actual, dict) and isinstance(actual.get("confidence"), (int, float)):
+            actual = actual["confidence"]
         if isinstance(actual, (int, float)) and isinstance(self.value, (int, float)):
             return actual > self.value
         parsed = self._parse_date(actual)
@@ -152,6 +180,9 @@ class Condition:
         return False
 
     def _compare_lt(self, actual: Any, today: date) -> bool:
+        # Same confidence-extraction shortcut as _compare_gt.
+        if isinstance(actual, dict) and isinstance(actual.get("confidence"), (int, float)):
+            actual = actual["confidence"]
         if isinstance(actual, (int, float)) and isinstance(self.value, (int, float)):
             return actual < self.value
         parsed = self._parse_date(actual)

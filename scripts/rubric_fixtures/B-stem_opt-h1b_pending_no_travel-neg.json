@@ -1,0 +1,33 @@
+{
+  "case_id": "B-stem_opt-h1b_pending_no_travel-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_pending_no_travel"
+    ],
+    "notes": "H-1B petition is approved (not pending), so h1b_pending_no_travel must not fire despite stage being h1b and user planning travel."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "05e68592e358bd14f3f8356da1a0cfc7487b7a73fdaf5311c357c16ef231a22e",
+  "input": {
+    "answers": {
+      "employer_name": "Acme Tech Solutions",
+      "employment_status": "employed",
+      "petition_status": "approved",
+      "planning_travel": "yes",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_pending_no_travel', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.petition_status eq pending\n  - answers.stage eq h1b\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_pending_no_travel",
+  "track": "stem_opt"
+}

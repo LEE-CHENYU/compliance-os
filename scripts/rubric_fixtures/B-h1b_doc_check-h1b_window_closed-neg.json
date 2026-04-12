@@ -1,0 +1,33 @@
+{
+  "case_id": "B-h1b_doc_check-h1b_window_closed-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_window_closed"
+    ],
+    "notes": "petition_window_closed is false instead of true, so h1b_window_closed must not fire despite being on h1b track."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "a402a16ee82e7c3e0839822ecd76fbc35ad09b4df04479dced3625c54bef9cf7",
+  "input": {
+    "answers": {
+      "employer_name": "Acme Innovations LLC",
+      "job_title": "Software Engineer",
+      "petition_window_closed": false,
+      "stage": "h1b",
+      "start_date": "2024-04-01",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_window_closed', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.petition_window_closed eq True\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_window_closed",
+  "track": "h1b_doc_check"
+}

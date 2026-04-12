@@ -1,0 +1,42 @@
+{
+  "case_id": "A-stem_opt-location_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "location_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Work location on I-983 (Austin, TX) does not match employment letter (San Jose, CA); engine must fire location_mismatch."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "6346b61707843c4c64d43aa2796f1be20cec48e151ce9b48a1d4691912d139f4",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "work_location": {
+        "confidence": 0.98,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "end_date": "2027-01-14",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-15",
+      "work_location": "1234 Innovation Drive, Austin, TX 78701"
+    },
+    "extraction_b": {
+      "work_location": "5678 Technology Boulevard, San Jose, CA 95110"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'location_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.work_location mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "location_mismatch",
+  "track": "stem_opt"
+}

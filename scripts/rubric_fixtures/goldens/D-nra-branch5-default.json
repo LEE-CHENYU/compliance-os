@@ -1,0 +1,24 @@
+{
+  "case_id": "D-nra-branch5-default",
+  "slice": "D",
+  "track": "stem_opt",
+  "target_rule_id": null,
+  "probe_intent": "Probe _derive_nra default branch: no explicit tax_residency, no exempt stage, no owner_residency -> returns 'no'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {},
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "notes": "All branches 1-3 miss so the default 'no' is returned."
+  }
+}

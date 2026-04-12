@@ -1,0 +1,29 @@
+{
+  "case_id": "C-operator-lt-date-future",
+  "slice": "C",
+  "track": "stem_opt",
+  "target_rule_id": "i983_evaluation_due",
+  "probe_intent": "Probe the `lt` operator with a date value `12_months_ago` against a `start_date` that is less than 12 months ago. i983_evaluation_due must NOT fire.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "extraction_a": {
+      "start_date": "2026-01-01"
+    },
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": ["i983_evaluation_due"],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "2026-01-01 is less than 12 months before 2026-04-10, so lt 12_months_ago is False and the rule stays quiet."
+  }
+}

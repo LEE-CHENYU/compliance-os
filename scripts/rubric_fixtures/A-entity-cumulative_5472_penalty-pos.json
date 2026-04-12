@@ -1,0 +1,31 @@
+{
+  "case_id": "A-entity-cumulative_5472_penalty-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "expected_track_corrected": "entity",
+    "must_fire_rule_ids": [
+      "cumulative_5472_penalty"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "SMLLC owned by nonresident alien formed 3+ years ago triggers cumulative Form 5472 penalty warning; is_nra=yes derived from owner_residency=nonresident_alien."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "1c770d907e070b7990c64c040ebac368cfeb2b64d131424258956df4b1cb7201",
+  "input": {
+    "answers": {
+      "entity_type": "smllc",
+      "formation_age": "3_plus_years",
+      "owner_residency": "nonresident_alien"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'cumulative_5472_penalty'. All of these conditions must be satisfied simultaneously:\n  - answers.formation_age eq 3_plus_years\n  - answers.owner_residency neq us_citizen_or_pr\n  - answers.entity_type eq smllc\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "cumulative_5472_penalty",
+  "track": "entity"
+}

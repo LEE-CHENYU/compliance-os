@@ -1,0 +1,27 @@
+{
+  "case_id": "C-operator-eq-none",
+  "slice": "C",
+  "track": "stem_opt",
+  "target_rule_id": "employer_change_unreported",
+  "probe_intent": "Probe the `eq` operator when the resolved actual is None. Rule employer_change_unreported must NOT fire because employer_changed is absent (None eq 'yes' is False).",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "opt",
+      "years_in_us": 2
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": ["employer_change_unreported"],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "eq on a missing field resolves to (None == 'yes') which is False, so the rule stays quiet."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "case_id": "B-stem_opt-advisory_fatca_8938-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "advisory_fatca_8938"
+    ],
+    "notes": "Rule requires is_nra neq yes but candidate has is_nra=yes, so advisory_fatca_8938 must not fire despite being on stem_opt track."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "d9d31b99232ff5b449eeaa23374d861702795da27711782a161888d34c228ee4",
+  "input": {
+    "answers": {
+      "is_nra": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 3
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'advisory_fatca_8938', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.is_nra neq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "advisory_fatca_8938",
+  "track": "stem_opt"
+}

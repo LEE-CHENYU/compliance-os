@@ -1,0 +1,27 @@
+{
+  "case_id": "E-edge-trigger-marketplace-h1b",
+  "slice": "E",
+  "track": "h1b_doc_check",
+  "target_rule_id": "h1b_missing_registration_packet",
+  "probe_intent": "Represent the marketplace trigger at compliance_os/web/services/h1b_doc_check.py:182 that calls engine.evaluate() on the h1b_doc_check track. Mirrors a realistic missing-packet payload.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "missing_registration_packet": true,
+      "registration_number": "REG00042"
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["h1b_missing_registration_packet"],
+    "must_not_fire_rule_ids": ["h1b_missing_registration_number"],
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "notes": "Stand-in for the h1b_doc_check marketplace trigger path: registration packet missing flag set while number is present."
+  }
+}

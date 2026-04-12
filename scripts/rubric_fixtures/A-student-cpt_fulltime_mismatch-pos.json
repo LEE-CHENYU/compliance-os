@@ -1,0 +1,47 @@
+{
+  "case_id": "A-student-cpt_fulltime_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "cpt_fulltime_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "CPT authorization documents show full-time=yes while employment letter shows full-time=no, triggering full_time mismatch rule."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "3b37490c605497602a9f002ef0bf0121faeea68b1206b98f92343e6bc64ba7ba",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "has_employment": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "full_time": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Acme Robotics Lab",
+      "end_date": "2024-12-15",
+      "full_time": "yes",
+      "job_title": "Research Assistant",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Acme Robotics Lab",
+      "full_time": "no",
+      "job_title": "Research Assistant"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'cpt_fulltime_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.full_time mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "cpt_fulltime_mismatch",
+  "track": "student"
+}

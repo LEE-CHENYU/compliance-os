@@ -1,0 +1,28 @@
+{
+  "case_id": "E-edge-h1b-pending-no-travel",
+  "slice": "E",
+  "track": "stem_opt",
+  "target_rule_id": "h1b_pending_no_travel",
+  "probe_intent": "Probe the stem_opt.h1b_pending_no_travel rule which fires when petition_status='pending' AND stage='h1b'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "petition_status": "pending",
+      "stage": "h1b",
+      "years_in_us": 4
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["h1b_pending_no_travel"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "notes": "Both conditions (pending petition on H-1B) match so h1b_pending_no_travel fires."
+  }
+}

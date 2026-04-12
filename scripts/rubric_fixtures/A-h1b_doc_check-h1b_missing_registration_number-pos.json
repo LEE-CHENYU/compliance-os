@@ -1,0 +1,26 @@
+{
+  "case_id": "A-h1b_doc_check-h1b_missing_registration_number-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [
+      "h1b_missing_registration_number"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Registration number is missing from answers, triggering the h1b_missing_registration_number rule."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "2f3967e0817f7b86d9e743454a0b6105564f16c6ba22d56ac2c53b0c51074beb",
+  "input": {
+    "answers": {},
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_missing_registration_number'. All of these conditions must be satisfied simultaneously:\n  - answers.registration_number missing None\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_missing_registration_number",
+  "track": "h1b_doc_check"
+}

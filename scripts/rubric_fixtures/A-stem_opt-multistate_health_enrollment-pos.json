@@ -1,0 +1,32 @@
+{
+  "case_id": "A-stem_opt-multistate_health_enrollment-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "multistate_health_enrollment"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Applicant enrolled in health plans in multiple states; engine must fire multistate_health_enrollment warning for residency consistency review."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "2ae7ab5e3feab51b42c4e34ec843cf4b7cb36d388c8e08f8bccaa7bd54b9160b",
+  "input": {
+    "answers": {
+      "employer_name": "Quantum Dynamics LLC",
+      "employment_status": "employed",
+      "has_multistate_health": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'multistate_health_enrollment'. All of these conditions must be satisfied simultaneously:\n  - answers.has_multistate_health eq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "multistate_health_enrollment",
+  "track": "stem_opt"
+}

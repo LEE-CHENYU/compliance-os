@@ -1,0 +1,35 @@
+{
+  "case_id": "B-stem_opt-h1b_unemployment-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "h1b_unemployment"
+    ],
+    "notes": "H-1B holder is currently employed, so employment_status does not match the required not_employed or between_jobs values; rule h1b_unemployment must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "2eb4e653256dbac41ed07564ee4aa06b13d868c834a19df1a36dbf82291bad04",
+  "input": {
+    "answers": {
+      "compensation": "95000",
+      "employer_name": "Acme Tech Solutions Inc",
+      "employment_status": "employed",
+      "full_time": "yes",
+      "job_title": "Software Engineer",
+      "stage": "h1b",
+      "start_date": "2023-01-15",
+      "years_in_us": 7
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'h1b_unemployment', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.employment_status in ['not_employed', 'between_jobs']\n  - answers.stage eq h1b\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "h1b_unemployment",
+  "track": "stem_opt"
+}

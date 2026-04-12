@@ -1,0 +1,36 @@
+{
+  "case_id": "B-stem_opt-i983_evaluation_due-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "i983_evaluation_due"
+    ],
+    "notes": "Start date is over 12 months ago but stage is opt not stem_opt, so second condition fails and rule must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "7a344bb9c75dd627948171b1c1db4247bd49acd03755172df34f8f83c77522fc",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "stage": "opt",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "compensation": "68000",
+      "employer_name": "Vertex Analytics Inc",
+      "job_title": "Data Analyst",
+      "start_date": "2023-01-15"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'i983_evaluation_due', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - extraction_a.start_date lt 12_months_ago\n  - answers.stage eq stem_opt\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "i983_evaluation_due",
+  "track": "stem_opt"
+}

@@ -1,0 +1,37 @@
+{
+  "case_id": "B-student-student_wrong_tax_software-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "student_wrong_tax_software"
+    ],
+    "notes": "F-1 student with on-campus employment used Sprintax (not TurboTax or H&R Block), so rule does not fire despite student track context."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "2aad0b02675a1342c2791b353ddb14f0894d5ffd9c583beaf961006af56b8960",
+  "input": {
+    "answers": {
+      "employment_status": "oncampus",
+      "has_employment": "yes",
+      "income_reporting": "sprintax",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "form_type": "1040-NR",
+      "w2_tax_return_tax_year": "2023"
+    },
+    "extraction_b": {
+      "employer_name": "University Dining Services"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'student_wrong_tax_software', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.income_reporting in ['turbotax', 'hr_block']\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "student_wrong_tax_software",
+  "track": "student"
+}

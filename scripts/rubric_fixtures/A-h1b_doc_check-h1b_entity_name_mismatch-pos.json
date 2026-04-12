@@ -1,0 +1,40 @@
+{
+  "case_id": "A-h1b_doc_check-h1b_entity_name_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "must_fire_rule_ids": [
+      "h1b_entity_name_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "H-1B registration shows 'Quantum Dynamics LLC' but G-28 shows 'Quantum Dynamics Corporation', triggering entity name mismatch rule."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "4480b7f880f79773ee1cf6f7712dbe5cc220b047f98ce65ad4450bf4107907ac",
+  "input": {
+    "answers": {
+      "employer_name": "Quantum Dynamics LLC",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "h1b_registration_g28_entity_name": {
+        "confidence": 0.88,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics LLC",
+      "registration_number": "REG2024XYZ789"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Corporation"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_entity_name_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.h1b_registration_g28_entity_name mismatch None\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_entity_name_mismatch",
+  "track": "h1b_doc_check"
+}

@@ -1,0 +1,29 @@
+{
+  "case_id": "C-operator-gt-malformed-date",
+  "slice": "C",
+  "track": "stem_opt",
+  "target_rule_id": "grace_period_employment",
+  "probe_intent": "Probe that the `lt` / `gt` operators in rule_engine.Condition.evaluate handle malformed date strings by returning False (via _parse_date returning None), not raising. The grace_period_employment rule must NOT fire when end_date is gibberish.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 3
+    },
+    "extraction_a": {
+      "end_date": "not-a-real-date"
+    },
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": ["grace_period_employment"],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "Malformed date on lt/gt must return False, not raise."
+  }
+}

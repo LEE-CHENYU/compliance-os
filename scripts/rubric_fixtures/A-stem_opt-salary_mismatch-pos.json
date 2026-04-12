@@ -1,0 +1,46 @@
+{
+  "case_id": "A-stem_opt-salary_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "salary_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "I-983 shows $85,000 compensation while employment letter shows $92,000; comparison flagged mismatch so salary_mismatch rule must fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "b52af7276bc73962458620ce73c0f975e62078b9cdc83866297f67412851c83e",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "compensation": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "compensation": "$85,000 annually",
+      "employer_name": "Quantum Dynamics Inc",
+      "end_date": "2027-01-14",
+      "job_title": "Data Scientist",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "compensation": "$92,000 per year",
+      "employer_name": "Quantum Dynamics Inc",
+      "job_title": "Data Scientist"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'salary_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.compensation mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "salary_mismatch",
+  "track": "stem_opt"
+}

@@ -1,0 +1,39 @@
+{
+  "case_id": "A-data_room-employment_letter_paystub_employer_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "employment_letter_paystub_employer_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Employment letter shows Global Innovations LLC while paystub shows TriNet HR Corporation (likely PEO); engine must fire employment_letter_paystub_employer_mismatch."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "4c3f47257bee7c7f7d3beb86abdd27d4186f31468954e415c05c11d1f43d87f3",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "employment_letter_paystub_employer_name": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Global Innovations LLC"
+    },
+    "extraction_b": {
+      "employer_name": "TriNet HR Corporation"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'employment_letter_paystub_employer_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.employment_letter_paystub_employer_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "employment_letter_paystub_employer_mismatch",
+  "track": "data_room"
+}

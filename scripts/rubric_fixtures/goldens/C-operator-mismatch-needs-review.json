@@ -1,0 +1,32 @@
+{
+  "case_id": "C-operator-mismatch-needs-review",
+  "slice": "C",
+  "track": "stem_opt",
+  "target_rule_id": "job_title_mismatch",
+  "probe_intent": "Probe that the `mismatch` operator treats status 'needs_review' like 'mismatch'. job_title_mismatch must fire when job_title comparison has status 'needs_review'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {
+      "job_title": {
+        "status": "needs_review",
+        "confidence": 0.6
+      }
+    }
+  },
+  "expected": {
+    "must_fire_rule_ids": ["job_title_mismatch"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "mismatch operator checks status in ('mismatch','needs_review') so needs_review fires the rule."
+  }
+}

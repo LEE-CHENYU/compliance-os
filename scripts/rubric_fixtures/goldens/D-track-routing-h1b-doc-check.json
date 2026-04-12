@@ -1,0 +1,27 @@
+{
+  "case_id": "D-track-routing-h1b-doc-check",
+  "slice": "D",
+  "track": "h1b_doc_check",
+  "target_rule_id": "h1b_window_closed",
+  "probe_intent": "Probe track routing for the h1b_doc_check track using h1b_window_closed, which fires when petition_window_closed=true.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "petition_window_closed": true,
+      "registration_number": "ABC12345"
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["h1b_window_closed"],
+    "must_not_fire_rule_ids": ["h1b_missing_registration_number"],
+    "expected_nra": "no",
+    "expected_track": "h1b_doc_check",
+    "notes": "petition_window_closed=true triggers h1b_window_closed on the h1b_doc_check track."
+  }
+}

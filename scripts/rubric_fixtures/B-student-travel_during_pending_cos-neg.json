@@ -1,0 +1,32 @@
+{
+  "case_id": "B-student-travel_during_pending_cos-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "travel_during_pending_cos"
+    ],
+    "notes": "Student has pending change of status but is not planning travel, so rule must not fire despite satisfying the pending_status_change condition."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "2fe037c51c531c3b32da3a478445b0aea217caf6e52388988933fc4538d3f1cb",
+  "input": {
+    "answers": {
+      "pending_status_change": "yes",
+      "planning_travel": "no",
+      "stage": "f1_student",
+      "visa_type": "F-1",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'travel_during_pending_cos', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.planning_travel eq yes\n  - answers.pending_status_change eq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "travel_during_pending_cos",
+  "track": "student"
+}

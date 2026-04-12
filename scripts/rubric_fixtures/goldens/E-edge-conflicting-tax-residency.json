@@ -1,0 +1,28 @@
+{
+  "case_id": "E-edge-conflicting-tax-residency",
+  "slice": "E",
+  "track": "stem_opt",
+  "target_rule_id": null,
+  "probe_intent": "Probe that an explicit tax_residency_status='Nonresident alien' wins over a contradictory stage='h1b'. Branch 1 of _derive_nra takes precedence.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "h1b",
+      "years_in_us": 5,
+      "tax_residency_status": "Nonresident alien"
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "Explicit tax_residency_status beats the h1b heuristic that would normally return 'no'."
+  }
+}

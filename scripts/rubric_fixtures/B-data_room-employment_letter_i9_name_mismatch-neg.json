@@ -1,0 +1,40 @@
+{
+  "case_id": "B-data_room-employment_letter_i9_name_mismatch-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "employment_letter_i9_name_mismatch"
+    ],
+    "notes": "Employee name matches between employment letter and I-9, so the rule must not fire despite this being a data room compliance case."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "7738a3ee31a70d38f7265513679867b34ca486ac5cd99ca37c59e8e2e24c4192",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "stage": "h1b"
+    },
+    "comparisons": {
+      "employment_letter_i9_employee_name": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Acme Innovations LLC",
+      "start_date": "2023-04-01"
+    },
+    "extraction_b": {
+      "employer_name": "Acme Innovations LLC"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'employment_letter_i9_name_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.employment_letter_i9_employee_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "employment_letter_i9_name_mismatch",
+  "track": "data_room"
+}

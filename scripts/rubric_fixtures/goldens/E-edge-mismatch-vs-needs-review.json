@@ -1,0 +1,29 @@
+{
+  "case_id": "E-edge-mismatch-vs-needs-review",
+  "slice": "E",
+  "track": "data_room",
+  "target_rule_id": "i94_class_of_admission_mismatch",
+  "probe_intent": "Probe that the `mismatch` operator treats status 'needs_review' like 'mismatch'. i94_class_of_admission_mismatch must fire when status is 'needs_review'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {},
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {
+      "i94_i20_class_of_admission": {
+        "status": "needs_review",
+        "confidence": 0.7
+      }
+    }
+  },
+  "expected": {
+    "must_fire_rule_ids": ["i94_class_of_admission_mismatch"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "notes": "The mismatch operator's allowlist includes 'needs_review', so the rule fires."
+  }
+}

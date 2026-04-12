@@ -1,0 +1,31 @@
+{
+  "case_id": "A-entity-wrong_form_type-pos",
+  "expected": {
+    "expected_is_nra": "yes",
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [
+      "wrong_form_type"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Entity owner is nonresident alien but filed Form 1040 instead of 1040-NR; engine must fire wrong_form_type."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "5eaf3ca19144e83a67faca39889883d3baaa15913b464f91eddec919ec2b1d25",
+  "input": {
+    "answers": {
+      "owner_residency": "nonresident_alien"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {
+      "form_type": "1040"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'wrong_form_type'. All of these conditions must be satisfied simultaneously:\n  - answers.owner_residency neq us_citizen_or_pr\n  - extraction_b.form_type eq 1040\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "wrong_form_type",
+  "track": "entity"
+}

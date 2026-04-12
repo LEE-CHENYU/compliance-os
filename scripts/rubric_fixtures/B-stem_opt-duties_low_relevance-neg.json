@@ -1,0 +1,44 @@
+{
+  "case_id": "B-stem_opt-duties_low_relevance-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "duties_low_relevance"
+    ],
+    "notes": "Duties confidence is 0.65, which is NOT less than 0.6, so duties_low_relevance must not fire despite being adversarially close to the threshold."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "a4fdedcf88a9e772befdfa1a29c2f6500091886eceb87dcb4d3f10bcc0960e30",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "full_time",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "duties": {
+        "confidence": 0.65,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Analytics Corp",
+      "end_date": "2026-01-09",
+      "job_title": "Data Analyst",
+      "start_date": "2024-01-10"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Analytics Corp",
+      "job_title": "Data Analyst"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'duties_low_relevance', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.duties lt 0.6\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "duties_low_relevance",
+  "track": "stem_opt"
+}

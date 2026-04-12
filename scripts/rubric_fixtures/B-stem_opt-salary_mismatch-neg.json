@@ -1,0 +1,44 @@
+{
+  "case_id": "B-stem_opt-salary_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "salary_mismatch"
+    ],
+    "notes": "Compensation matches between I-983 and employment letter so salary_mismatch should not fire despite structural similarity to positive cases."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "251b5426fd9330bfe8d45a6bf2685dc788c1c80b2e5a1e81e6633690f11fb720",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "compensation": {
+        "confidence": 0.95,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "compensation": "$95,000 annually",
+      "end_date": "2027-01-09",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-10"
+    },
+    "extraction_b": {
+      "compensation": "$95,000 per year",
+      "job_title": "Machine Learning Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'salary_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.compensation mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "salary_mismatch",
+  "track": "stem_opt"
+}

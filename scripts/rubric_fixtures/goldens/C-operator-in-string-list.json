@@ -1,0 +1,28 @@
+{
+  "case_id": "C-operator-in-string-list",
+  "slice": "C",
+  "track": "stem_opt",
+  "target_rule_id": "unemployment_risk",
+  "probe_intent": "Probe the `in` operator with a matching string against a list of strings. unemployment_risk fires when employment_status is 'between_jobs' and stage is 'opt'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "employment_status": "between_jobs",
+      "stage": "opt",
+      "years_in_us": 2
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["unemployment_risk"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "'between_jobs' in ['not_employed','between_jobs'] and 'opt' in ['stem_opt','opt'] so both conditions match."
+  }
+}

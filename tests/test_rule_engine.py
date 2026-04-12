@@ -251,3 +251,115 @@ def test_data_room_rules_load_and_fire():
     rule_ids = [f.rule_id for f in findings]
 
     assert "passport_ead_birthdate_mismatch" in rule_ids
+
+
+def test_derive_nra_accepts_lowercase_nonresident_variants():
+    """_derive_nra should accept common case/format variants of nonresident alien."""
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    for variant in ["nonresident", "Nonresident Alien", "NONRESIDENT ALIEN",
+                    "non-resident alien", "  nra  ", "Nonresident alien"]:
+        ctx = EvaluationContext(
+            answers={"tax_residency_status": variant, "stage": "h1b"},
+            extraction_a={}, extraction_b={}, comparisons={},
+        )
+        assert ctx.answers["is_nra"] == "yes", f"variant {variant!r} should yield is_nra=yes"
+
+
+def test_derive_nra_accepts_resident_variants():
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    for variant in ["Resident alien", "resident", "RESIDENT ALIEN"]:
+        ctx = EvaluationContext(
+            answers={"tax_residency_status": variant, "stage": "stem_opt", "years_in_us": 2},
+            extraction_a={}, extraction_b={}, comparisons={},
+        )
+        assert ctx.answers["is_nra"] == "no", f"variant {variant!r} should yield is_nra=no"
+
+
+def test_derive_nra_unknown_value_falls_through_to_heuristics():
+    """Unknown tax_residency_status should not default to 'no' — it should
+    fall through to stage-based heuristics (branch 2+)."""
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    # Unknown string + stem_opt stage + years < 6 → should use branch 2, yielding yes
+    ctx = EvaluationContext(
+        answers={"tax_residency_status": "somewhere-in-between", "stage": "stem_opt", "years_in_us": 2},
+        extraction_a={}, extraction_b={}, comparisons={},
+    )
+    assert ctx.answers["is_nra"] == "yes", \
+        "unknown tax_residency_status should fall through to branch 2, not default to 'no'"
+
+
+def test_duties_low_relevance_fires_on_low_confidence():
+    """The duties_low_relevance rule should fire when a comparison dict has
+    confidence below the threshold. Regression test for the engine bug where
+    lt/gt couldn't compare numeric thresholds against dict-shaped comparisons."""
+    from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine
+    engine = RuleEngine.from_yaml("config/rules/stem_opt.yaml")
+    ctx = EvaluationContext(
+        answers={"stage": "stem_opt", "years_in_us": 3},
+        extraction_a={}, extraction_b={},
+        comparisons={"duties": {"status": "mismatch", "confidence": 0.42}},
+    )
+    findings = engine.evaluate(ctx)
+    rule_ids = [f.rule_id for f in findings]
+    assert "duties_low_relevance" in rule_ids, \
+        f"duties_low_relevance should fire with confidence=0.42 < 0.6; got fired={rule_ids}"
+
+
+def test_duties_low_relevance_does_not_fire_on_high_confidence():
+    """Companion test: duties_low_relevance should NOT fire when confidence >= 0.6."""
+    from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine
+    engine = RuleEngine.from_yaml("config/rules/stem_opt.yaml")
+    ctx = EvaluationContext(
+        answers={"stage": "stem_opt", "years_in_us": 3},
+        extraction_a={}, extraction_b={},
+        comparisons={"duties": {"status": "match", "confidence": 0.85}},
+    )
+    findings = engine.evaluate(ctx)
+    rule_ids = [f.rule_id for f in findings]
+    assert "duties_low_relevance" not in rule_ids, \
+        f"duties_low_relevance should NOT fire with confidence=0.85 > 0.6; got fired={rule_ids}"
+
+
+def test_derive_nra_accepts_owner_residency_nonresident_variants():
+    """_derive_nra branch 4 should accept common non-resident-alien variants
+    of owner_residency, not just the literal 'outside_us'."""
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    for variant in [
+        "outside_us",
+        "nonresident",
+        "non_resident",
+        "non-resident",
+        "nonresident_alien",
+        "non-resident alien",
+        "NONRESIDENT_ALIEN",
+        "  nra  ",
+        "NRA",
+    ]:
+        ctx = EvaluationContext(
+            answers={"owner_residency": variant},
+            extraction_a={}, extraction_b={}, comparisons={},
+        )
+        assert ctx.answers["is_nra"] == "yes", (
+            f"owner_residency={variant!r} should yield is_nra=yes"
+        )
+
+
+def test_derive_nra_us_citizen_or_pr_still_returns_no():
+    """Regression: us_citizen_or_pr must still yield is_nra=no (default)."""
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    ctx = EvaluationContext(
+        answers={"owner_residency": "us_citizen_or_pr"},
+        extraction_a={}, extraction_b={}, comparisons={},
+    )
+    assert ctx.answers["is_nra"] == "no"
+
+
+def test_derive_nra_unknown_owner_residency_falls_through_to_default():
+    """Unknown owner_residency values should fall through to default 'no',
+    not accidentally get mapped to 'yes'."""
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    ctx = EvaluationContext(
+        answers={"owner_residency": "somewhere-unclassified"},
+        extraction_a={}, extraction_b={}, comparisons={},
+    )
+    assert ctx.answers["is_nra"] == "no"

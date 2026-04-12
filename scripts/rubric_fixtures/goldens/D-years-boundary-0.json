@@ -1,0 +1,27 @@
+{
+  "case_id": "D-years-boundary-0",
+  "slice": "D",
+  "track": "student",
+  "target_rule_id": null,
+  "probe_intent": "Probe _derive_nra branch 2 lower boundary at years_in_us=0 on an F-1 exempt stage. 0 < 6, so is_nra='yes'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "f1_student",
+      "years_in_us": 0
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "notes": "years_in_us == 0 is < 6, so branch 2 returns 'yes'."
+  }
+}

@@ -118,8 +118,8 @@ rules:
         value: "today"
         source: extraction_a
       - field: stage
-        operator: neq
-        value: "stem_opt"
+        operator: in
+        value: ["opt", "f1_student", "pre_completion"]
         source: answers
     severity: critical
     finding:

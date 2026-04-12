@@ -1,0 +1,32 @@
+{
+  "case_id": "C-operator-mismatch-match-status",
+  "slice": "C",
+  "track": "stem_opt",
+  "target_rule_id": "job_title_mismatch",
+  "probe_intent": "Probe that the `mismatch` operator returns False for status 'match'. job_title_mismatch must NOT fire when the comparison status is 'match'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {
+      "job_title": {
+        "status": "match",
+        "confidence": 0.95
+      }
+    }
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": ["job_title_mismatch"],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "mismatch operator only triggers on status in ('mismatch','needs_review'); 'match' leaves the rule quiet."
+  }
+}

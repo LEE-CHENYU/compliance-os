@@ -1,0 +1,35 @@
+{
+  "case_id": "B-stem_opt-multistate_health_enrollment-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "multistate_health_enrollment"
+    ],
+    "notes": "User answered 'no' to has_multistate_health so the rule's only condition is not satisfied and it must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "fc9591e07bc0a6094a68488b7430d907d0bc5ab8baade1456f8aa0e6c6fb7a9d",
+  "input": {
+    "answers": {
+      "employer_name": "Quantum Dynamics LLC",
+      "employment_status": "employed",
+      "full_time": "yes",
+      "has_multistate_health": "no",
+      "job_title": "Machine Learning Engineer",
+      "stage": "stem_opt",
+      "start_date": "2023-09-01",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'multistate_health_enrollment', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.has_multistate_health eq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "multistate_health_enrollment",
+  "track": "stem_opt"
+}

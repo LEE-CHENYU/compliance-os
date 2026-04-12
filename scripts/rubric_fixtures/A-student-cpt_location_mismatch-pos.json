@@ -1,0 +1,44 @@
+{
+  "case_id": "A-student-cpt_location_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "cpt_location_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "I-20 shows Boston, MA but actual work location is Cambridge, MA; engine should fire cpt_location_mismatch."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "29534d1d323d9408ee55d5caee9ab91920e933ab64fb35a6cdf3482c99d40258",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "work_location": {
+        "confidence": 0.88,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics Corp",
+      "end_date": "2024-12-31",
+      "start_date": "2024-01-15",
+      "work_location": "Boston, MA"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Corp",
+      "work_location": "Cambridge, MA"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'cpt_location_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.work_location mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "cpt_location_mismatch",
+  "track": "student"
+}

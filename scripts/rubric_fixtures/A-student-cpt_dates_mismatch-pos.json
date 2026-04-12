@@ -1,0 +1,47 @@
+{
+  "case_id": "A-student-cpt_dates_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "cpt_dates_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "CPT I-20 authorization shows start date 2024-01-15 but employment letter shows 2024-02-01, triggering date mismatch rule."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "35fd63f52184992f5602c3a7c4caff1b23fa0a246227dea6c34dcc8a319d3612",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "has_employment": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "start_date": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Stellar Innovations Inc",
+      "end_date": "2024-05-15",
+      "job_title": "Data Analytics Intern",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Stellar Innovations Inc",
+      "end_date": "2024-05-15",
+      "job_title": "Data Analytics Intern",
+      "start_date": "2024-02-01"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'cpt_dates_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.start_date mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "cpt_dates_mismatch",
+  "track": "student"
+}

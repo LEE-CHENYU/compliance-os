@@ -1,0 +1,33 @@
+{
+  "case_id": "B-student-student_subsidized_health_plan-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "student_subsidized_health_plan"
+    ],
+    "notes": "F-1 student answered 'no' to government health plan enrollment, so rule student_subsidized_health_plan must not fire despite being on F-1 track.",
+    "slice": "B"
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "2ce6d4daa125f823e452224025ca8bae4ecc3da3ae5fa4865b4541936a174431",
+  "input": {
+    "answers": {
+      "filed_8843": "yes",
+      "has_employment": "no",
+      "has_govt_health_plan": "no",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'student_subsidized_health_plan', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.has_govt_health_plan eq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "student_subsidized_health_plan",
+  "track": "student"
+}

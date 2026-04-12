@@ -1,0 +1,39 @@
+{
+  "case_id": "A-data_room-h1b_receipt_signatory_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "h1b_receipt_signatory_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "H-1B registration receipt signatory Jordan Smith does not match payment receipt cardholder Alex Chen; is_nra=no from h1b stage."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "daece0c3a731ddc67b8e3aa1dd92aa6b1603462520e55444c69c04a2d50c8454",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "h1b_registration_receipt_signatory_name": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "h1b_registration_receipt_signatory_name": "Jordan Smith"
+    },
+    "extraction_b": {
+      "h1b_registration_receipt_signatory_name": "Alex Chen"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_receipt_signatory_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.h1b_registration_receipt_signatory_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_receipt_signatory_mismatch",
+  "track": "data_room"
+}

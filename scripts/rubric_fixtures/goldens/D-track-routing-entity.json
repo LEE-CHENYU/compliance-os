@@ -1,0 +1,28 @@
+{
+  "case_id": "D-track-routing-entity",
+  "slice": "D",
+  "track": "entity",
+  "target_rule_id": "corporate_veil_risk",
+  "probe_intent": "Probe track routing for the entity track using corporate_veil_risk which fires when separate_bank_account='no'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "separate_bank_account": "no",
+      "entity_type": "smllc",
+      "owner_residency": "us_citizen_or_pr"
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["corporate_veil_risk"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "entity",
+    "notes": "separate_bank_account='no' is the sole condition, so corporate_veil_risk fires on the entity track."
+  }
+}

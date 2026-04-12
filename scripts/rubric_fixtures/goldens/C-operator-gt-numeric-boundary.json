@@ -1,0 +1,28 @@
+{
+  "case_id": "C-operator-gt-numeric-boundary",
+  "slice": "C",
+  "track": "student",
+  "target_rule_id": "fulltime_cpt_opt_risk",
+  "probe_intent": "Probe the `gt` operator on numeric values. fulltime_cpt_opt_risk fires when cpt_fulltime_months > 11. This case sets it to 12, so the rule must fire.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "f1_student",
+      "years_in_us": 2,
+      "cpt_fulltime_months": 12
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": ["fulltime_cpt_opt_risk"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "notes": "12 > 11 so gt returns True and fulltime_cpt_opt_risk fires."
+  }
+}

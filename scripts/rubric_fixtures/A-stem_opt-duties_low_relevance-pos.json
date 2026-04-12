@@ -1,0 +1,45 @@
+{
+  "case_id": "A-stem_opt-duties_low_relevance-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "duties_low_relevance"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Duties comparison score of 0.42 is below 0.6 threshold, triggering duties_low_relevance warning; is_nra=yes from stem_opt stage with 2 years in US."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "0226b3acc3f56a6c7ec3c007f26f587bdf2c4f2608d218e0b6150c08a6c0dd16",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "active",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "duties": {
+        "confidence": 0.42,
+        "status": "needs_review"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Retail Solutions",
+      "end_date": "2026-01-14",
+      "job_title": "Administrative Assistant",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Retail Solutions",
+      "job_title": "Administrative Assistant"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'duties_low_relevance'. All of these conditions must be satisfied simultaneously:\n  - comparison.duties lt 0.6\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "duties_low_relevance",
+  "track": "stem_opt"
+}

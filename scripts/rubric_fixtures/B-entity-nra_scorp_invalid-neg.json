@@ -1,0 +1,33 @@
+{
+  "case_id": "B-entity-nra_scorp_invalid-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "nra_scorp_invalid"
+    ],
+    "notes": "Owner is a US citizen filing 1120-S, breaking the first condition (owner_residency neq us_citizen_or_pr), so rule must not fire despite form_type match."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "752fd6abf7df129772f66608658efb5f41313dd10f2b39ca2240044e64659193",
+  "input": {
+    "answers": {
+      "entity_type": "s_corp",
+      "formation_age": "2_years",
+      "owner_residency": "us_citizen_or_pr",
+      "separate_bank_account": "yes"
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {
+      "form_type": "1120-S"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'nra_scorp_invalid', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.owner_residency neq us_citizen_or_pr\n  - extraction_b.form_type eq 1120-S\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "nra_scorp_invalid",
+  "track": "entity"
+}

@@ -1,0 +1,30 @@
+{
+  "case_id": "A-stem_opt-h1b_pending_no_travel-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "h1b_pending_no_travel"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "H-1B change of status is pending, triggering travel warning to avoid petition abandonment."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "7948371941a54ae9e02e0f22b961f3425462f201270d62b15b1639b8f1430ea0",
+  "input": {
+    "answers": {
+      "petition_status": "pending",
+      "stage": "h1b",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'h1b_pending_no_travel'. All of these conditions must be satisfied simultaneously:\n  - answers.petition_status eq pending\n  - answers.stage eq h1b\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "h1b_pending_no_travel",
+  "track": "stem_opt"
+}

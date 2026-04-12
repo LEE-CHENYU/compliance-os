@@ -1,0 +1,41 @@
+{
+  "case_id": "B-entity-schedule_c_on_opt-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "entity",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "schedule_c_on_opt"
+    ],
+    "notes": "Schedule C is present but visa_type is h1b not f1_opt_stem so rule must not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:42Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "01da3968ed0fcf70846b8850e0364a233281190014b227982fe0dc6958719293",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_employment": "yes",
+      "stage": "h1b",
+      "visa_type": "h1b",
+      "years_in_us": 4
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2026-01-14",
+      "job_title": "Software Engineer",
+      "start_date": "2023-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Acme Tech Solutions LLC",
+      "schedules_present": [
+        "schedule_c"
+      ]
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'schedule_c_on_opt', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - extraction_b.schedules_present contains schedule_c\n  - answers.visa_type eq f1_opt_stem\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "schedule_c_on_opt",
+  "track": "entity"
+}

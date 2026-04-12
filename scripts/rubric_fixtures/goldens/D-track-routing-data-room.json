@@ -1,0 +1,29 @@
+{
+  "case_id": "D-track-routing-data-room",
+  "slice": "D",
+  "track": "data_room",
+  "target_rule_id": "i9_everify_name_mismatch",
+  "probe_intent": "Probe track routing for the data_room track using i9_everify_name_mismatch, which fires on comparison.status='mismatch' for i9_everify_employee_name.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {},
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {
+      "i9_everify_employee_name": {
+        "status": "mismatch",
+        "confidence": 0.9
+      }
+    }
+  },
+  "expected": {
+    "must_fire_rule_ids": ["i9_everify_name_mismatch"],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "notes": "Comparison status 'mismatch' triggers i9_everify_name_mismatch on the data_room track."
+  }
+}

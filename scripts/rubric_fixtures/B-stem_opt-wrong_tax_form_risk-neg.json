@@ -1,0 +1,40 @@
+{
+  "case_id": "B-stem_opt-wrong_tax_form_risk-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "wrong_tax_form_risk"
+    ],
+    "notes": "User has been in US for 7 years, exceeding the 6-year threshold for NRA status, so wrong_tax_form_risk does not fire despite using TurboTax."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "d05cdf356d2173b27fdb9d2b025db96d54a166266e55dd610e116dfaa825a0de",
+  "input": {
+    "answers": {
+      "employment_status": "employed",
+      "has_employment": "yes",
+      "stage": "stem_opt",
+      "tax_software_used": "turbotax",
+      "years_in_us": 7
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics LLC",
+      "end_date": "2026-01-14",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2023-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics LLC",
+      "job_title": "Machine Learning Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'wrong_tax_form_risk', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - answers.tax_software_used in ['turbotax', 'hr_block', 'freetaxusa']\n  - answers.years_in_us lt 6\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "wrong_tax_form_risk",
+  "track": "stem_opt"
+}

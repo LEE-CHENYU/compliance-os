@@ -1,0 +1,43 @@
+{
+  "case_id": "B-data_room-i9_everify_first_day_mismatch-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "i9_everify_first_day_mismatch"
+    ],
+    "notes": "I-9 and E-Verify first day of employment match perfectly, so the mismatch condition is not satisfied and the rule does not fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "1a44c1d37b3a23397fc9af8b6dce58cd58a0914a27b0785c15fd9cacf2b63ff3",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_employment": "yes",
+      "stage": "h1b",
+      "years_in_us": 4
+    },
+    "comparisons": {
+      "i9_everify_first_day_of_employment": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "i9_everify_employee_name": "Marcus Chen",
+      "i9_everify_first_day_of_employment": "2023-07-10",
+      "start_date": "2023-07-10"
+    },
+    "extraction_b": {
+      "employment_letter_i9_employee_name": "Marcus Chen",
+      "job_title": "Data Analytics Engineer"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'i9_everify_first_day_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.i9_everify_first_day_of_employment mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "i9_everify_first_day_mismatch",
+  "track": "data_room"
+}

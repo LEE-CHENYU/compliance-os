@@ -1,0 +1,31 @@
+{
+  "case_id": "A-student-program_end_approaching-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "program_end_approaching"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "I-20 program end date is 45 days from now, which is less than 60 days, so program_end_approaching must fire."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "692b66df0271b16a2d0b39e1b04003ee6e3c21e77ad1884f45ce7c73db6c8de0",
+  "input": {
+    "answers": {
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2025-03-15"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'program_end_approaching'. All of these conditions must be satisfied simultaneously:\n  - extraction_a.end_date lt 60_days_from_now\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "program_end_approaching",
+  "track": "student"
+}

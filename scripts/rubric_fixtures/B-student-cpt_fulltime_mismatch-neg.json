@@ -1,0 +1,47 @@
+{
+  "case_id": "B-student-cpt_fulltime_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "cpt_fulltime_mismatch"
+    ],
+    "notes": "Both documents report full-time status consistently so comparison status is match not mismatch; rule should not fire despite CPT context being present."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "1556abb5b8161aa1c884e259b2bef968617c68107279b033a9218e06e1d896b3",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "has_employment": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "full_time": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Acme Research Labs",
+      "end_date": "2024-12-15",
+      "full_time": "yes",
+      "job_title": "Research Assistant",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "Acme Research Labs",
+      "full_time": "yes",
+      "job_title": "Research Assistant"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'cpt_fulltime_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.full_time mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "cpt_fulltime_mismatch",
+  "track": "student"
+}

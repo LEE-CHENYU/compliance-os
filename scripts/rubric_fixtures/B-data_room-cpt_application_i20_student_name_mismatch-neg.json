@@ -1,0 +1,40 @@
+{
+  "case_id": "B-data_room-cpt_application_i20_student_name_mismatch-neg",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "cpt_application_i20_student_name_mismatch"
+    ],
+    "notes": "CPT application and I-20 both show identical student name, so comparison status is match not mismatch, preventing the rule from firing."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "ee9d5c3ced7d60186750ec8b935ad8c6f04cd863bdf92b4e5389a367805437eb",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "cpt_application_i20_student_name": {
+        "confidence": 0.98,
+        "status": "match"
+      }
+    },
+    "extraction_a": {
+      "cpt_application_i20_student_name": "Alexandra Chen"
+    },
+    "extraction_b": {
+      "cpt_application_i20_student_name": "Alexandra Chen"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'cpt_application_i20_student_name_mismatch', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  - comparison.cpt_application_i20_student_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "cpt_application_i20_student_name_mismatch",
+  "track": "data_room"
+}

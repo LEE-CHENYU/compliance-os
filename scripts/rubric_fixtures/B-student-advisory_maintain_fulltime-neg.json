@@ -1,0 +1,37 @@
+{
+  "case_id": "B-student-advisory_maintain_fulltime-neg",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "student",
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [
+      "advisory_maintain_fulltime"
+    ],
+    "notes": "Subject is on H-1B status (not student track), so the student full-time enrollment advisory does not apply despite structural similarity to a student case."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "a8eb9dd9e05d2fe02b3b34ffe33cde735ed7666f7578185333a3d72fbe6001bb",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "stage": "h1b",
+      "years_in_us": 8
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2026-03-31",
+      "start_date": "2020-04-01",
+      "visa_type": "H-1B"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Inc"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine must NOT fire rule 'advisory_maintain_fulltime', but that structurally resembles a case that WOULD fire it. Produce a case where ONE of the rule's conditions is deliberately not satisfied while the others are. Rule conditions:\n  (no conditions)\nNo real PII or real-looking government identifiers.",
+  "slice": "B",
+  "target_rule_id": "advisory_maintain_fulltime",
+  "track": "student"
+}

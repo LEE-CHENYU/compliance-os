@@ -1,0 +1,28 @@
+{
+  "case_id": "D-nra-branch1-explicit",
+  "slice": "D",
+  "track": "stem_opt",
+  "target_rule_id": null,
+  "probe_intent": "Probe rule_engine._derive_nra branch 1: explicit tax_residency_status wins over stage/years heuristics. A user on STEM OPT within 5 years who explicitly declares 'Resident alien' must have is_nra='no', overriding the branch-2 heuristic that would otherwise yield 'yes'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "stem_opt",
+      "years_in_us": 3,
+      "tax_residency_status": "Resident alien"
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "notes": "tax_residency_status = Resident alien explicitly overrides the F-1 exempt heuristic"
+  }
+}

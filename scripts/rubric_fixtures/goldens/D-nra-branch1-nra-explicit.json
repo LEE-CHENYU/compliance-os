@@ -1,0 +1,28 @@
+{
+  "case_id": "D-nra-branch1-nra-explicit",
+  "slice": "D",
+  "track": "stem_opt",
+  "target_rule_id": null,
+  "probe_intent": "Probe _derive_nra branch 1: explicit tax_residency_status='Nonresident alien' overrides stage='h1b' which would normally yield 'no'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "h1b",
+      "years_in_us": 3,
+      "tax_residency_status": "Nonresident alien"
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "notes": "Branch 1 (explicit tax_residency_status) wins over the h1b heuristic branch."
+  }
+}

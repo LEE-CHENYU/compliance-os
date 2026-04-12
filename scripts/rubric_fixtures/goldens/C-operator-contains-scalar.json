@@ -1,0 +1,30 @@
+{
+  "case_id": "C-operator-contains-scalar",
+  "slice": "C",
+  "track": "entity",
+  "target_rule_id": "schedule_c_on_opt",
+  "probe_intent": "Probe that the `contains` operator in rule_engine.Condition.evaluate returns False when actual value is a scalar instead of a list. The schedule_c_on_opt rule must NOT fire because schedules_present is a string, not a list containing 'schedule_c'.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "opt",
+      "years_in_us": 3,
+      "visa_type": "f1_opt_stem"
+    },
+    "extraction_a": {},
+    "extraction_b": {
+      "schedules_present": "schedule_c"
+    },
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [],
+    "must_not_fire_rule_ids": ["schedule_c_on_opt"],
+    "expected_nra": "yes",
+    "expected_track": "entity",
+    "notes": "contains-operator on scalar must return False, not raise. schedule_c_on_opt stays quiet."
+  }
+}

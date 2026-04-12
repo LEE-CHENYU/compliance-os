@@ -1,0 +1,39 @@
+{
+  "case_id": "A-data_room-resume_passport_name_mismatch-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "data_room",
+    "must_fire_rule_ids": [
+      "resume_passport_name_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Resume shows preferred name 'Alexandra Kim' while passport shows legal name 'Alex J. Kim'; comparison status is mismatch so rule fires."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:41Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "9c5a4018fa93ba4f93b11c3d03878c248a590fecc0f5bbf4d8b540f954b7865d",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "h1b",
+      "years_in_us": 4
+    },
+    "comparisons": {
+      "resume_passport_candidate_name": {
+        "confidence": 0.87,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "resume_passport_candidate_name": "Alexandra Kim"
+    },
+    "extraction_b": {
+      "resume_passport_candidate_name": "Alex J. Kim"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'resume_passport_name_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.resume_passport_candidate_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "resume_passport_name_mismatch",
+  "track": "data_room"
+}

@@ -1,0 +1,35 @@
+{
+  "case_id": "A-stem_opt-foreign_gifts_3520_risk-pos",
+  "expected": {
+    "expected_nra": "no",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "foreign_gifts_3520_risk"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "Student received foreign gifts and is_nra derives to 'no' (stem_opt with 7 years means substantial presence test passed), satisfying both conditions to fire foreign_gifts_3520_risk."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:44Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "36f06a6d825d9e9f80bb2de3a96fcf4ce762044f67794ea05f4c3b6fa883e38e",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "employment_status": "employed",
+      "received_foreign_gifts": "yes",
+      "stage": "stem_opt",
+      "years_in_us": 7
+    },
+    "comparisons": {},
+    "extraction_a": {
+      "end_date": "2027-01-14",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'foreign_gifts_3520_risk'. All of these conditions must be satisfied simultaneously:\n  - answers.received_foreign_gifts eq yes\n  - answers.is_nra neq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "foreign_gifts_3520_risk",
+  "track": "stem_opt"
+}

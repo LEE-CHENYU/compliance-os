@@ -1,0 +1,45 @@
+{
+  "case_id": "A-student-cpt_employer_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "cpt_employer_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "CPT I-20 lists Acme Technologies Inc but employment letter shows BrightWave Solutions LLC; employer_name comparison mismatch triggers cpt_employer_mismatch rule."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "3794f93be6a89a6ac7a3244ab1af727a5111eebb4c2ddb1aa06fc697cc44973c",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "has_cpt_authorization": "yes",
+      "has_employment": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "employer_name": {
+        "confidence": 0.95,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Acme Technologies Inc",
+      "end_date": "2024-12-15",
+      "job_title": "Software Engineer Intern",
+      "start_date": "2024-01-15"
+    },
+    "extraction_b": {
+      "employer_name": "BrightWave Solutions LLC",
+      "job_title": "Software Engineer Intern"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'cpt_employer_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.employer_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "cpt_employer_mismatch",
+  "track": "student"
+}

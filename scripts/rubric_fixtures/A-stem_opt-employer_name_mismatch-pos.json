@@ -1,0 +1,42 @@
+{
+  "case_id": "A-stem_opt-employer_name_mismatch-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "stem_opt",
+    "must_fire_rule_ids": [
+      "employer_name_mismatch"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "I-983 lists 'Quantum Dynamics Corporation' while E-Verify shows 'Quantum Dynamics Corp'; comparison status is mismatch, triggering employer_name_mismatch rule."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:43Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "7d9508ff88ced54ea3f813cd54469c2a58a169e49bcca08d05dfd06f47bd43a2",
+  "input": {
+    "answers": {
+      "employer_changed": "no",
+      "stage": "stem_opt",
+      "years_in_us": 2
+    },
+    "comparisons": {
+      "employer_name": {
+        "confidence": 0.88,
+        "status": "mismatch"
+      }
+    },
+    "extraction_a": {
+      "employer_name": "Quantum Dynamics Corporation",
+      "end_date": "2027-01-09",
+      "job_title": "Machine Learning Engineer",
+      "start_date": "2024-01-10"
+    },
+    "extraction_b": {
+      "employer_name": "Quantum Dynamics Corp"
+    }
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'employer_name_mismatch'. All of these conditions must be satisfied simultaneously:\n  - comparison.employer_name mismatch\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "employer_name_mismatch",
+  "track": "stem_opt"
+}

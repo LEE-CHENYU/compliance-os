@@ -1,0 +1,31 @@
+{
+  "case_id": "E-edge-empty-conditions-advisory",
+  "slice": "E",
+  "track": "student",
+  "target_rule_id": "advisory_maintain_fulltime",
+  "probe_intent": "Probe that rules with `conditions: []` are unconditional. advisory_maintain_fulltime must always fire on the student track because `all(...)` over an empty iterable is True.",
+  "generated_by": "hand",
+  "generated_at": "2026-04-10T00:00:00Z",
+  "generator_prompt_hash": null,
+  "flavor_hint": null,
+  "input": {
+    "answers": {
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "extraction_a": {},
+    "extraction_b": {},
+    "comparisons": {}
+  },
+  "expected": {
+    "must_fire_rule_ids": [
+      "advisory_maintain_fulltime",
+      "advisory_tax_filing_student",
+      "advisory_address_update"
+    ],
+    "must_not_fire_rule_ids": [],
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "notes": "All three student advisories have empty conditions so they always fire regardless of input."
+  }
+}

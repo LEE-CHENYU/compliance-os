@@ -1,0 +1,30 @@
+{
+  "case_id": "A-student-student_subsidized_health_plan-pos",
+  "expected": {
+    "expected_nra": "yes",
+    "expected_track": "student",
+    "must_fire_rule_ids": [
+      "student_subsidized_health_plan"
+    ],
+    "must_not_fire_rule_ids": [],
+    "notes": "F-1 student enrolled in government-subsidized health plan triggers critical finding regarding benefit eligibility error."
+  },
+  "flavor_hint": null,
+  "generated_at": "2026-04-11T21:03:45Z",
+  "generated_by": "claude-batch/claude-sonnet-4-5",
+  "generator_prompt_hash": "de47a6d071b5b41d65b6180f0a01e7f6b592a154a44a4c811aa2548d213c2fd8",
+  "input": {
+    "answers": {
+      "has_govt_health_plan": "yes",
+      "stage": "f1_student",
+      "years_in_us": 2
+    },
+    "comparisons": {},
+    "extraction_a": {},
+    "extraction_b": {}
+  },
+  "probe_intent": "Generate a synthetic case where the engine MUST fire rule 'student_subsidized_health_plan'. All of these conditions must be satisfied simultaneously:\n  - answers.has_govt_health_plan eq yes\nNo real PII or real-looking government identifiers.",
+  "slice": "A",
+  "target_rule_id": "student_subsidized_health_plan",
+  "track": "student"
+}
