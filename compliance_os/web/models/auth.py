@@ -1,12 +1,13 @@
 """User model and auth schemas."""
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.orm import relationship
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from compliance_os.web.models.tables_v2 import Base
 
@@ -17,6 +18,16 @@ def _uuid() -> str:
 
 def _now() -> datetime:
     return datetime.now(timezone.utc)
+
+
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+def _validate_email(value: str) -> str:
+    normalized = value.strip().lower()
+    if not EMAIL_PATTERN.match(normalized):
+        raise ValueError("Enter a valid email address")
+    return normalized
 
 
 class UserRow(Base):
@@ -54,10 +65,20 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
 
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, value: str) -> str:
+        return _validate_email(value)
+
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, value: str) -> str:
+        return _validate_email(value)
 
 
 class AuthResponse(BaseModel):

@@ -53,6 +53,12 @@ def test_register_duplicate(client):
     assert resp.status_code == 409
 
 
+def test_register_rejects_invalid_email(client):
+    resp = client.post("/api/auth/register", json={"email": "not-an-email", "password": "pass123"})
+    assert resp.status_code == 422
+    assert "valid email address" in resp.text
+
+
 def test_login_success(client):
     client.post("/api/auth/register", json={"email": "login@example.com", "password": "pass123"})
     resp = client.post("/api/auth/login", json={"email": "login@example.com", "password": "pass123"})
