@@ -59,9 +59,24 @@ def _derive_nra(answers: dict[str, Any]) -> str:
     if stage in ("h1b", "i140"):
         return "no"
 
-    # 3. Entity track fallback
-    if answers.get("owner_residency") == "outside_us":
-        return "yes"
+    # 3. Entity track fallback — normalize common NRA-owner variants.
+    # Accept both the canonical "outside_us" (physically outside the US) and
+    # non-resident-alien variants the generator commonly produces.
+    owner = answers.get("owner_residency")
+    if isinstance(owner, str) and owner.strip():
+        owner_norm = owner.strip().lower().replace("-", "_").replace(" ", "_")
+        if owner_norm in {
+            "outside_us",
+            "nonresident",
+            "non_resident",
+            "nonresident_alien",
+            "non_resident_alien",
+            "nra",
+        }:
+            return "yes"
+        # Unknown values fall through to the default "no" — we don't map
+        # "us_citizen_or_pr" here because it's already the "not yes" case
+        # and treating it specially would swallow genuine unknowns.
 
     return "no"
 

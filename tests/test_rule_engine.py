@@ -318,3 +318,48 @@ def test_duties_low_relevance_does_not_fire_on_high_confidence():
     rule_ids = [f.rule_id for f in findings]
     assert "duties_low_relevance" not in rule_ids, \
         f"duties_low_relevance should NOT fire with confidence=0.85 > 0.6; got fired={rule_ids}"
+
+
+def test_derive_nra_accepts_owner_residency_nonresident_variants():
+    """_derive_nra branch 4 should accept common non-resident-alien variants
+    of owner_residency, not just the literal 'outside_us'."""
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    for variant in [
+        "outside_us",
+        "nonresident",
+        "non_resident",
+        "non-resident",
+        "nonresident_alien",
+        "non-resident alien",
+        "NONRESIDENT_ALIEN",
+        "  nra  ",
+        "NRA",
+    ]:
+        ctx = EvaluationContext(
+            answers={"owner_residency": variant},
+            extraction_a={}, extraction_b={}, comparisons={},
+        )
+        assert ctx.answers["is_nra"] == "yes", (
+            f"owner_residency={variant!r} should yield is_nra=yes"
+        )
+
+
+def test_derive_nra_us_citizen_or_pr_still_returns_no():
+    """Regression: us_citizen_or_pr must still yield is_nra=no (default)."""
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    ctx = EvaluationContext(
+        answers={"owner_residency": "us_citizen_or_pr"},
+        extraction_a={}, extraction_b={}, comparisons={},
+    )
+    assert ctx.answers["is_nra"] == "no"
+
+
+def test_derive_nra_unknown_owner_residency_falls_through_to_default():
+    """Unknown owner_residency values should fall through to default 'no',
+    not accidentally get mapped to 'yes'."""
+    from compliance_os.web.services.rule_engine import EvaluationContext
+    ctx = EvaluationContext(
+        answers={"owner_residency": "somewhere-unclassified"},
+        extraction_a={}, extraction_b={}, comparisons={},
+    )
+    assert ctx.answers["is_nra"] == "no"
