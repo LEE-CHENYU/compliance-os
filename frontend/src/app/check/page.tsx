@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import { trackForm8843FunnelEvent } from "@/lib/analytics";
 import { inferForm8843CheckPath, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 export default function CheckSelect() {
@@ -18,8 +19,16 @@ export default function CheckSelect() {
     }
     const nextPath = inferForm8843CheckPath(readForm8843OnboardingHandoff());
     if (nextPath) {
+      trackForm8843FunnelEvent("form_8843_gtm_check_path_inferred", {
+        onboarding_path: nextPath,
+        redirect_mode: "generic_check_router",
+      });
       router.replace(`${nextPath}?source=form8843`);
+      return;
     }
+    trackForm8843FunnelEvent("form_8843_gtm_check_path_ambiguous", {
+      redirect_mode: "generic_check_router",
+    });
   }, [router]);
 
   return (

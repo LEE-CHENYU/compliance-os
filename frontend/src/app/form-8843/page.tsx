@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import OnboardingWizard, { type Form8843WizardState } from "@/components/form8843/OnboardingWizard";
 import { getUser } from "@/lib/auth";
+import { trackForm8843FunnelEvent } from "@/lib/analytics";
 import { FORM8843_ONBOARDING_STORAGE_KEY } from "@/lib/form8843-handoff";
 import { generateForm8843, type Form8843Request } from "@/lib/marketplace";
 
@@ -40,9 +41,18 @@ export default function Form8843Page() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
+  const landingTrackedRef = useRef(false);
 
   useEffect(() => {
-    setIsSignedIn(Boolean(getUser()));
+    const signedIn = Boolean(getUser());
+    setIsSignedIn(signedIn);
+
+    if (!landingTrackedRef.current) {
+      landingTrackedRef.current = true;
+      trackForm8843FunnelEvent("form_8843_gtm_landing_viewed", {
+        signed_in: signedIn,
+      });
+    }
   }, []);
 
   function setField<K extends keyof Form8843WizardState>(key: K, value: Form8843WizardState[K]) {
@@ -86,8 +96,14 @@ export default function Form8843Page() {
 
     try {
       const response = await generateForm8843(payload);
+      const existingUser = typeof window !== "undefined" ? getUser() : null;
+      trackForm8843FunnelEvent("form_8843_gtm_generate_succeeded", {
+        order_id: response.order_id,
+        signed_in: Boolean(existingUser),
+        filing_mode: payload.filing_with_tax_return ? "with_tax_return" : "standalone",
+        visa_type: payload.visa_type.trim().toUpperCase() || "unknown",
+      });
       if (typeof window !== "undefined") {
-        const existingUser = getUser();
         window.sessionStorage.setItem(
           FORM8843_ONBOARDING_STORAGE_KEY,
           JSON.stringify({
@@ -103,6 +119,11 @@ export default function Form8843Page() {
       }
       router.push(`/form-8843/success?orderId=${encodeURIComponent(response.order_id)}`);
     } catch (nextError) {
+      trackForm8843FunnelEvent("form_8843_gtm_generate_failed", {
+        filing_mode: payload.filing_with_tax_return ? "with_tax_return" : "standalone",
+        visa_type: payload.visa_type.trim().toUpperCase() || "unknown",
+        error_message: nextError instanceof Error ? nextError.message : "Could not generate Form 8843",
+      });
       setError(nextError instanceof Error ? nextError.message : "Could not generate Form 8843");
       setSubmitting(false);
     }

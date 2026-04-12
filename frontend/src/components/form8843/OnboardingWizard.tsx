@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+
+import { slugifyAnalyticsLabel, trackForm8843FunnelEvent } from "@/lib/analytics";
 
 
 export type Form8843WizardState = {
@@ -164,6 +166,7 @@ export default function OnboardingWizard({
 }) {
   const [stepIndex, setStepIndex] = useState(0);
   const submitIntentRef = useRef(false);
+  const lastTrackedStepRef = useRef<number | null>(null);
   const step = STEPS[stepIndex];
   const stepComplete = step.isValid(form);
   const isLastStep = stepIndex === STEPS.length - 1;
@@ -172,8 +175,24 @@ export default function OnboardingWizard({
     [form],
   );
 
-  function advanceStep() {
+  useEffect(() => {
+    if (lastTrackedStepRef.current === stepIndex) {
+      return;
+    }
+    lastTrackedStepRef.current = stepIndex;
+    trackForm8843FunnelEvent("form_8843_gtm_step_viewed", {
+      step_index: stepIndex + 1,
+      step_name: slugifyAnalyticsLabel(step.title),
+    });
+  }, [step.title, stepIndex]);
+
+  function advanceStep(source: "continue_button" | "enter_key" = "continue_button") {
     submitIntentRef.current = false;
+    trackForm8843FunnelEvent("form_8843_gtm_step_completed", {
+      step_index: stepIndex + 1,
+      step_name: slugifyAnalyticsLabel(step.title),
+      action_source: source,
+    });
     setStepIndex((current) => Math.min(STEPS.length - 1, current + 1));
   }
 
@@ -181,7 +200,7 @@ export default function OnboardingWizard({
     if (!isLastStep) {
       event.preventDefault();
       if (stepComplete) {
-        advanceStep();
+        advanceStep("continue_button");
       }
       return;
     }
@@ -194,6 +213,12 @@ export default function OnboardingWizard({
       return;
     }
     submitIntentRef.current = false;
+    trackForm8843FunnelEvent("form_8843_gtm_generate_submitted", {
+      step_index: stepIndex + 1,
+      step_name: slugifyAnalyticsLabel(step.title),
+      filing_mode: form.filing_with_tax_return ? "with_tax_return" : "standalone",
+      visa_type: form.visa_type.trim().toUpperCase() || "unknown",
+    });
     void onSubmit(event);
   }
 
@@ -207,7 +232,7 @@ export default function OnboardingWizard({
     event.preventDefault();
     if (!isLastStep) {
       if (stepComplete) {
-        advanceStep();
+        advanceStep("enter_key");
       }
     }
   }
@@ -356,7 +381,7 @@ export default function OnboardingWizard({
             <button
               type="button"
               disabled={!stepComplete}
-              onClick={advanceStep}
+              onClick={() => advanceStep("continue_button")}
               className={`rounded-full px-6 py-3 text-[14px] font-semibold transition ${
                 stepComplete
                   ? "bg-[#5b8dee] text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] hover:bg-[#4f82de]"

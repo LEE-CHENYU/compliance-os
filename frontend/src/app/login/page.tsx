@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { login, register, getGoogleAuthUrl, handleGoogleCallback } from "@/lib/auth";
+import { isForm8843GtmNextPath, trackForm8843FunnelEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,18 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const authViewTrackedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isForm8843GtmNextPath(nextPath) || authViewTrackedRef.current) {
+      return;
+    }
+    authViewTrackedRef.current = true;
+    trackForm8843FunnelEvent("form_8843_gtm_auth_viewed", {
+      auth_mode: isRegister ? "register" : "signin",
+      next_path: nextPath,
+    });
+  }, [isRegister, nextPath]);
 
   // Handle Google OAuth callback
   useEffect(() => {
@@ -30,6 +43,12 @@ function LoginPage() {
     if (token) {
       const user = handleGoogleCallback(params);
       if (user) {
+        if (isForm8843GtmNextPath(nextPath)) {
+          trackForm8843FunnelEvent("form_8843_gtm_auth_succeeded", {
+            auth_mode: "google",
+            next_path: nextPath,
+          });
+        }
         router.push(nextPath);
       }
     }
@@ -39,14 +58,36 @@ function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
+    if (isForm8843GtmNextPath(nextPath)) {
+      trackForm8843FunnelEvent("form_8843_gtm_auth_submitted", {
+        auth_mode: isRegister ? "register" : "signin",
+        auth_method: "password",
+        next_path: nextPath,
+      });
+    }
     try {
       if (isRegister) {
         await register(email, password);
       } else {
         await login(email, password);
       }
+      if (isForm8843GtmNextPath(nextPath)) {
+        trackForm8843FunnelEvent("form_8843_gtm_auth_succeeded", {
+          auth_mode: isRegister ? "register" : "signin",
+          auth_method: "password",
+          next_path: nextPath,
+        });
+      }
       router.push(nextPath);
     } catch (err: unknown) {
+      if (isForm8843GtmNextPath(nextPath)) {
+        trackForm8843FunnelEvent("form_8843_gtm_auth_failed", {
+          auth_mode: isRegister ? "register" : "signin",
+          auth_method: "password",
+          next_path: nextPath,
+          error_message: err instanceof Error ? err.message : "Something went wrong",
+        });
+      }
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
@@ -55,6 +96,13 @@ function LoginPage() {
 
   async function handleGoogleSignIn() {
     try {
+      if (isForm8843GtmNextPath(nextPath)) {
+        trackForm8843FunnelEvent("form_8843_gtm_auth_submitted", {
+          auth_mode: isRegister ? "register" : "signin",
+          auth_method: "google",
+          next_path: nextPath,
+        });
+      }
       const url = await getGoogleAuthUrl(nextPath);
       window.location.href = url;
     } catch {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
+import { trackForm8843FunnelEvent } from "@/lib/analytics";
 import { readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 const STUDENT_STATUS = [
@@ -62,6 +63,10 @@ export default function StudentIntake() {
       school_name: handoff.school_name || current.school_name || "",
     }));
     setForm8843PrefillNote("We carried over your visa, arrival date, citizenship, and school from Form 8843.");
+    trackForm8843FunnelEvent("form_8843_gtm_check_intake_viewed", {
+      check_track: "student",
+      source_route: "student_intake",
+    });
   }, []);
 
   const showCptQuestions = answers.student_status === "enrolled_cpt";
@@ -116,6 +121,13 @@ export default function StudentIntake() {
       ...answers,
       has_employment: answers.student_status === "enrolled_cpt" ? "yes" : "no",
     });
+    if (answers.source_form_8843 === "yes") {
+      trackForm8843FunnelEvent("form_8843_gtm_check_created", {
+        check_id: check.id,
+        check_track: "student",
+        student_status: answers.student_status || "unknown",
+      });
+    }
     router.push(`/check/student/upload?id=${check.id}`);
   }
 

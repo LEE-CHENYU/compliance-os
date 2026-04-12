@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import FilingChecklistCard from "@/components/form8843/FilingChecklistCard";
 import { getUser, type AuthUser } from "@/lib/auth";
+import { trackForm8843FunnelEvent } from "@/lib/analytics";
 import {
   buildForm8843CheckHref,
   type Form8843OnboardingHandoff,
@@ -33,10 +34,14 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const autoDownloadHandledRef = useRef(false);
+  const successViewTrackedRef = useRef(false);
+  const signinPromptTrackedRef = useRef(false);
+  const onboardingPromptTrackedRef = useRef(false);
 
   const [order, setOrder] = useState<Form8843OrderResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [authResolved, setAuthResolved] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
   const [handoffData, setHandoffData] = useState<Form8843OnboardingHandoff | null>(null);
   const [freshCompletion, setFreshCompletion] = useState(false);
@@ -48,6 +53,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
 
   useEffect(() => {
     setCurrentUser(getUser());
+    setAuthResolved(true);
   }, []);
 
   useEffect(() => {
@@ -95,14 +101,25 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
   }, [orderId]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !freshCompletion || !guidedHandoff) {
+    if (!authResolved || successViewTrackedRef.current) {
+      return;
+    }
+    successViewTrackedRef.current = true;
+    trackForm8843FunnelEvent("form_8843_gtm_success_viewed", {
+      order_id: orderId,
+      signed_in: Boolean(currentUser),
+    });
+  }, [authResolved, currentUser, orderId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !authResolved || !freshCompletion || !guidedHandoff) {
       setShowOnboardingPrompt(false);
       return;
     }
 
     const dismissed = window.sessionStorage.getItem(`${ONBOARDING_PROMPT_DISMISS_PREFIX}:${orderId}`);
     setShowOnboardingPrompt(dismissed !== "1");
-  }, [freshCompletion, guidedHandoff, orderId]);
+  }, [authResolved, freshCompletion, guidedHandoff, orderId]);
 
   const dashboardHref = "/dashboard?source=form8843";
   const sameAccountEmail = matchesEmail(currentUser, submittedEmail);
@@ -113,6 +130,34 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
   const pendingDownload = searchParams.get("download") === "1";
   const onboardingHref = buildForm8843CheckHref(handoffData);
   const showDownloadStep = !currentUser || shouldSwitchAccount || !downloadCompleted;
+
+  useEffect(() => {
+    if (!authResolved || !showOnboardingPrompt) {
+      return;
+    }
+
+    if (showDownloadStep) {
+      if (signinPromptTrackedRef.current) {
+        return;
+      }
+      signinPromptTrackedRef.current = true;
+      trackForm8843FunnelEvent("form_8843_gtm_signin_prompt_viewed", {
+        order_id: orderId,
+        signed_in: Boolean(currentUser),
+        requires_account_switch: shouldSwitchAccount,
+      });
+      return;
+    }
+
+    if (onboardingPromptTrackedRef.current) {
+      return;
+    }
+    onboardingPromptTrackedRef.current = true;
+    trackForm8843FunnelEvent("form_8843_gtm_onboarding_prompt_viewed", {
+      order_id: orderId,
+      onboarding_path: onboardingHref,
+    });
+  }, [authResolved, currentUser, onboardingHref, orderId, shouldSwitchAccount, showDownloadStep, showOnboardingPrompt]);
 
   function dismissOnboardingPrompt() {
     setShowOnboardingPrompt(false);
@@ -130,21 +175,39 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
 
     if (!currentUser || shouldSwitchAccount) {
       if (!fromRedirect) {
+        trackForm8843FunnelEvent("form_8843_gtm_signin_cta_clicked", {
+          order_id: orderId,
+          entrypoint: "download_button",
+          requires_account_switch: shouldSwitchAccount,
+        });
         router.push(downloadRedirectHref);
       }
       return;
     }
 
+    trackForm8843FunnelEvent("form_8843_gtm_download_started", {
+      order_id: orderId,
+      mode: pendingDownload ? "post_auth_return" : "direct",
+    });
     setDownloadLoading(true);
     try {
       await downloadForm8843Pdf(orderId);
       setDownloadCompleted(true);
+      trackForm8843FunnelEvent("form_8843_gtm_download_completed", {
+        order_id: orderId,
+        mode: pendingDownload ? "post_auth_return" : "direct",
+      });
     } catch (nextError) {
+      trackForm8843FunnelEvent("form_8843_gtm_download_failed", {
+        order_id: orderId,
+        mode: pendingDownload ? "post_auth_return" : "direct",
+        error_message: nextError instanceof Error ? nextError.message : "Could not download the PDF",
+      });
       setDownloadError(nextError instanceof Error ? nextError.message : "Could not download the PDF");
     } finally {
       setDownloadLoading(false);
     }
-  }, [canDownload, currentUser, downloadRedirectHref, orderId, router, shouldSwitchAccount]);
+  }, [canDownload, currentUser, downloadRedirectHref, orderId, pendingDownload, router, shouldSwitchAccount]);
 
   useEffect(() => {
     if (!pendingDownload || !currentUser || autoDownloadHandledRef.current) {
@@ -294,6 +357,13 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
             {showDownloadStep ? (
               <Link
                 href={successReturnHref}
+                onClick={() => {
+                  trackForm8843FunnelEvent("form_8843_gtm_signin_cta_clicked", {
+                    order_id: orderId,
+                    entrypoint: "guided_prompt",
+                    requires_account_switch: shouldSwitchAccount,
+                  });
+                }}
                 className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#1b2741]"
               >
                 {shouldSwitchAccount ? "Switch account to download" : "Create account or sign in"}
@@ -301,7 +371,17 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
             ) : (
               <Link
                 href={onboardingHref}
-                onClick={dismissOnboardingPrompt}
+                onClick={() => {
+                  trackForm8843FunnelEvent("form_8843_gtm_onboarding_cta_clicked", {
+                    order_id: orderId,
+                    onboarding_path: onboardingHref,
+                  });
+                  trackForm8843FunnelEvent("form_8843_gtm_check_path_inferred", {
+                    order_id: orderId,
+                    onboarding_path: onboardingHref,
+                  });
+                  dismissOnboardingPrompt();
+                }}
                 className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#1b2741]"
               >
                 Continue onboarding

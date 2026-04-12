@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument, getCheck } from "@/lib/api-v2";
+import { trackForm8843FunnelEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -24,11 +25,14 @@ function StudentUpload() {
   const params = useSearchParams();
   const checkId = params.get("id") || "";
   const [slots, setSlots] = useState<UploadSlot[]>([]);
+  const [isForm8843Flow, setIsForm8843Flow] = useState(false);
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const uploadViewTrackedRef = useRef(false);
 
   useEffect(() => {
     if (!checkId) return;
     getCheck(checkId).then((check) => {
+      const fromForm8843 = check.answers?.source_form_8843 === "yes";
       const hasCpt = check.answers?.student_status === "enrolled_cpt";
       const s: UploadSlot[] = [
         { docType: "i20", label: "I-20", sub: "Your most recent I-20 — we\u2019ll check your program dates, CPT authorization, and travel signature", required: true, file: null, uploading: false, uploaded: false },
@@ -38,16 +42,34 @@ function StudentUpload() {
       }
       s.push({ docType: "i94", label: "I-94", sub: "Most recent arrival record — download from i94.cbp.dhs.gov", required: false, file: null, uploading: false, uploaded: false });
       setSlots(s);
+      setIsForm8843Flow(fromForm8843);
+      if (fromForm8843 && !uploadViewTrackedRef.current) {
+        uploadViewTrackedRef.current = true;
+        trackForm8843FunnelEvent("form_8843_gtm_upload_viewed", {
+          check_id: check.id,
+          check_track: "student",
+          required_document_count: s.filter((slot) => slot.required).length,
+        });
+      }
     });
   }, [checkId]);
 
   const requiredUploaded = slots.filter((s) => s.required).every((s) => s.uploaded);
 
   const handleFile = useCallback(async (index: number, file: File) => {
+    const slot = slots[index];
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, file, uploading: true } : s));
-    await uploadDocument(checkId, file, slots[index].docType);
+    await uploadDocument(checkId, file, slot.docType);
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: true } : s));
-  }, [checkId, slots]);
+    if (isForm8843Flow) {
+      trackForm8843FunnelEvent("form_8843_gtm_document_uploaded", {
+        check_id: checkId,
+        check_track: "student",
+        doc_type: slot.docType,
+        required: slot.required,
+      });
+    }
+  }, [checkId, isForm8843Flow, slots]);
 
   if (!slots.length) return <div className="min-h-screen flex items-center justify-center text-[#8e9ab5]">Loading...</div>;
 
@@ -91,7 +113,15 @@ function StudentUpload() {
 
         <div className="px-4 py-3 rounded-xl bg-white/40 backdrop-blur border border-white/60 text-xs text-[#556480] mb-8">Your documents are stored securely and used only for compliance checking.</div>
 
-        <button onClick={() => router.push(`/check/student/review?id=${checkId}`)} disabled={!requiredUploaded}
+        <button onClick={() => {
+          if (isForm8843Flow) {
+            trackForm8843FunnelEvent("form_8843_gtm_review_continued", {
+              check_id: checkId,
+              check_track: "student",
+            });
+          }
+          router.push(`/check/student/review?id=${checkId}`);
+        }} disabled={!requiredUploaded}
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all ${requiredUploaded ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)]" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
           Continue to review
         </button>

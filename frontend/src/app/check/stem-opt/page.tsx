@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
+import { trackForm8843FunnelEvent } from "@/lib/analytics";
 import { deriveYearsInUs, inferStemOptStage, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 const STAGES = [
@@ -83,6 +84,11 @@ export default function StemOptStage() {
       school_name: handoff.school_name || "",
     });
     setForm8843PrefillNote("We carried over your visa, arrival date, citizenship, and years in the U.S. from Form 8843.");
+    trackForm8843FunnelEvent("form_8843_gtm_check_intake_viewed", {
+      check_track: "stem_opt",
+      source_route: "stem_opt_intake",
+      inferred_stage: inferredStage || "unknown",
+    });
   }, []);
 
   const showEmployerChanged = stage && ["stem_opt", "opt", "h1b", "i140"].includes(stage);
@@ -103,6 +109,13 @@ export default function StemOptStage() {
       tax_software_used: taxSoftware,
       ...prefillContext,
     });
+    if (prefillContext.source_form_8843 === "yes") {
+      trackForm8843FunnelEvent("form_8843_gtm_check_created", {
+        check_id: check.id,
+        check_track: "stem_opt",
+        stage: stage || "unknown",
+      });
+    }
     router.push(`/check/stem-opt/upload?id=${check.id}`);
   }
 

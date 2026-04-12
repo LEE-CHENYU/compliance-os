@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument, getCheck } from "@/lib/api-v2";
+import { trackForm8843FunnelEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -67,25 +68,49 @@ function StemOptUpload() {
 
   const [slots, setSlots] = useState<UploadSlot[]>([]);
   const [stage, setStage] = useState<string>("");
+  const [isForm8843Flow, setIsForm8843Flow] = useState(false);
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const uploadViewTrackedRef = useRef(false);
 
   // Load the check to get the stage, then set appropriate slots
   useEffect(() => {
     if (!checkId) return;
     getCheck(checkId).then((check) => {
       const s = check.answers?.stage as string || "not_sure";
+      const fromForm8843 = check.answers?.source_form_8843 === "yes";
+      const configuredSlots = STAGE_SLOTS[s] || STAGE_SLOTS.not_sure;
       setStage(s);
-      setSlots(STAGE_SLOTS[s] || STAGE_SLOTS.not_sure);
+      setSlots(configuredSlots);
+      setIsForm8843Flow(fromForm8843);
+      if (fromForm8843 && !uploadViewTrackedRef.current) {
+        uploadViewTrackedRef.current = true;
+        trackForm8843FunnelEvent("form_8843_gtm_upload_viewed", {
+          check_id: check.id,
+          check_track: "stem_opt",
+          stage: s,
+          required_document_count: configuredSlots.filter((slot) => slot.required).length,
+        });
+      }
     });
   }, [checkId]);
 
   const requiredUploaded = slots.filter((s) => s.required).every((s) => s.uploaded);
 
   const handleFile = useCallback(async (index: number, file: File) => {
+    const slot = slots[index];
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, file, uploading: true } : s));
-    await uploadDocument(checkId, file, slots[index].docType);
+    await uploadDocument(checkId, file, slot.docType);
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: true } : s));
-  }, [checkId, slots]);
+    if (isForm8843Flow) {
+      trackForm8843FunnelEvent("form_8843_gtm_document_uploaded", {
+        check_id: checkId,
+        check_track: "stem_opt",
+        stage,
+        doc_type: slot.docType,
+        required: slot.required,
+      });
+    }
+  }, [checkId, isForm8843Flow, slots, stage]);
 
   const STAGE_LABELS: Record<string, string> = {
     stem_opt: "STEM OPT",
@@ -218,7 +243,16 @@ function StemOptUpload() {
         </div>
 
         <button
-          onClick={() => router.push(`/check/stem-opt/review?id=${checkId}`)}
+          onClick={() => {
+            if (isForm8843Flow) {
+              trackForm8843FunnelEvent("form_8843_gtm_review_continued", {
+                check_id: checkId,
+                check_track: "stem_opt",
+                stage,
+              });
+            }
+            router.push(`/check/stem-opt/review?id=${checkId}`);
+          }}
           disabled={!requiredUploaded}
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all ${
             requiredUploaded
