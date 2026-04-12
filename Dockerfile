@@ -31,6 +31,7 @@ RUN pip install --no-cache-dir \
 # Copy application code
 COPY compliance_os/ ./compliance_os/
 COPY config/ ./config/
+COPY templates/ ./templates/
 
 # Copy built frontend
 COPY --from=frontend-build /app/frontend/.next ./frontend/.next
