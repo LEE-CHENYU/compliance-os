@@ -17,6 +17,7 @@
     "answers": {
       "employer_name": "Acme Robotics Inc",
       "petition_status": "approved",
+      "registration_number": "H1B2024XYZ789",
       "stage": "h1b"
     },
     "comparisons": {
