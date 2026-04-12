@@ -5,7 +5,6 @@ import { useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "r
 
 export type Form8843WizardState = {
   full_name: string;
-  email: string;
   visa_type: string;
   school_name: string;
   school_address: string;
@@ -112,7 +111,7 @@ const STEPS: StepDefinition[] = [
     eyebrow: "Step 1",
     title: "Who should this form be prepared for?",
     body: "Start with the person who will sign and mail the form.",
-    isValid: (form) => Boolean(form.full_name.trim() && form.email.trim()),
+    isValid: (form) => Boolean(form.full_name.trim()),
   },
   {
     eyebrow: "Step 2",
@@ -240,9 +239,8 @@ export default function OnboardingWizard({
 
         <div className="mt-6">
           {stepIndex === 0 ? (
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-5 md:grid-cols-1">
               <Field label="Full name" value={form.full_name} onChange={(value) => setField("full_name", value)} placeholder="Jessica Chen" required />
-              <Field label="Email" type="email" value={form.email} onChange={(value) => setField("email", value)} placeholder="jessica@example.com" required />
             </div>
           ) : null}
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import date, datetime, timezone
 from pathlib import Path
+import uuid
 
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from fastapi.responses import FileResponse
@@ -50,7 +51,7 @@ def _now() -> datetime:
 
 
 class Form8843Request(BaseModel):
-    email: str
+    email: str | None = None
     full_name: str
     visa_type: str
     school_name: str
@@ -80,6 +81,18 @@ class MarkMailedRequest(BaseModel):
 
 
 def _get_or_create_user(db: Session, req: Form8843Request) -> MarketplaceUserRow:
+    if not req.email:
+        user = MarketplaceUserRow(
+            email=f"anon-form8843-{uuid.uuid4()}@guardian.local",
+            full_name=req.full_name,
+            source="form_8843_guest",
+            locale="en",
+            role="user",
+        )
+        db.add(user)
+        db.flush()
+        return user
+
     user = db.query(MarketplaceUserRow).filter(MarketplaceUserRow.email == req.email).first()
     if user is not None:
         if not user.full_name and req.full_name:
@@ -140,6 +153,30 @@ def _ensure_email_sequence(
             completed=completed,
         )
     )
+
+
+def _is_guest_form_8843_user(user: MarketplaceUserRow | None) -> bool:
+    return bool(user and user.source == "form_8843_guest")
+
+
+def _get_or_create_marketplace_user_for_auth(auth_user: UserRow, db: Session) -> MarketplaceUserRow:
+    marketplace_user = (
+        db.query(MarketplaceUserRow)
+        .filter(MarketplaceUserRow.email == auth_user.email)
+        .first()
+    )
+    if marketplace_user is not None:
+        marketplace_user.role = auth_user.role or marketplace_user.role or "user"
+        return marketplace_user
+
+    marketplace_user = MarketplaceUserRow(
+        email=auth_user.email,
+        source="direct",
+        role=auth_user.role or "user",
+    )
+    db.add(marketplace_user)
+    db.flush()
+    return marketplace_user
 
 
 def _ensure_reminder_sequences(
@@ -252,21 +289,26 @@ def generate(req: Form8843Request, db: Session = Depends(get_session)) -> dict[s
     pdf_path = FORM_8843_OUTPUT_DIR / f"{order.id}.pdf"
     pdf_path.write_bytes(pdf_bytes)
 
-    email_result = send_form_8843_welcome(req.email, req.full_name, pdf_bytes, filing_context)
-    _ensure_reminder_sequences(db, user_id=user.id, order_id=order.id, filing_context=filing_context)
+    if req.email:
+        email_result = send_form_8843_welcome(req.email, req.full_name, pdf_bytes, filing_context)
+        _ensure_reminder_sequences(db, user_id=user.id, order_id=order.id, filing_context=filing_context)
+        email_status = email_result.get("status", "unknown")
+    else:
+        email_status = "claim_required"
 
     order.status = "completed"
     order.completed_at = _now()
     order.result_data = {
         "pdf_path": str(pdf_path),
         "pdf_url": f"/api/form8843/orders/{order.id}/pdf",
-        "email_status": email_result.get("status", "unknown"),
+        "email_status": email_status,
         "filing_context": serialize_filing_context(filing_context),
     }
     db.commit()
 
     response = _serialize_order(order)
-    response["user_id"] = user.id
+    if req.email:
+        response["user_id"] = user.id
     return response
 
 
@@ -351,6 +393,22 @@ def download_pdf(
     order = db.get(OrderRow, order_id)
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
+    if _is_guest_form_8843_user(order.user):
+        marketplace_user = _get_or_create_marketplace_user_for_auth(auth_user, db)
+        order.user_id = marketplace_user.id
+        order.updated_at = _now()
+        result_data = dict(order.result_data or {})
+        result_data["email_status"] = "claimed"
+        order.result_data = result_data
+        filing_context = _filing_context_from_order(order)
+        _ensure_reminder_sequences(
+            db,
+            user_id=marketplace_user.id,
+            order_id=order.id,
+            filing_context=filing_context,
+        )
+        db.commit()
+        db.refresh(order)
     if order.user is None or order.user.email.strip().lower() != auth_user.email.strip().lower():
         raise HTTPException(
             status_code=403,

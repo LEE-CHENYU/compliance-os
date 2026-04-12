@@ -12,7 +12,6 @@ import { generateForm8843, type Form8843Request } from "@/lib/marketplace";
 
 const INITIAL_STATE: Form8843WizardState = {
   full_name: "",
-  email: "",
   visa_type: "F-1",
   school_name: "",
   school_address: "",
@@ -60,7 +59,6 @@ export default function Form8843Page() {
     setError(null);
 
     const payload: Form8843Request = {
-      email: form.email.trim(),
       full_name: form.full_name.trim(),
       visa_type: form.visa_type.trim(),
       school_name: form.school_name.trim(),
@@ -94,7 +92,6 @@ export default function Form8843Page() {
           FORM8843_ONBOARDING_STORAGE_KEY,
           JSON.stringify({
             orderId: response.order_id,
-            email: payload.email,
             visa_type: payload.visa_type,
             current_nonimmigrant_status: payload.current_nonimmigrant_status,
             arrival_date: payload.arrival_date,
@@ -133,7 +130,7 @@ export default function Form8843Page() {
               <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">Free Form 8843</div>
               <h1 className="mt-3 text-[40px] font-extrabold tracking-tight text-[#0d1424]">Generate your Form 8843 and get clear filing instructions</h1>
               <p className="mt-4 max-w-xl text-[16px] leading-7 text-[#556480]">
-                Answer a few questions, download the completed PDF, and see exactly how to file it. No account is required to get started.
+                Answer a few questions, generate the completed PDF, and see exactly how to file it. You can create an account later if you want Guardian to save and track it.
               </p>
               {isSignedIn === false ? (
                 <div className="mt-5 flex flex-wrap gap-3">

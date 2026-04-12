@@ -261,7 +261,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
 
         {!currentUser ? (
           <div className="mt-4 text-[13px] leading-6 text-[#6d7c95]">
-            Use the same email from this form when you sign in if you want the filing saved in the right Guardian account.
+            Sign in or create an account if you want Guardian to save this filing, track whether you mailed it, and guide you to the next checks.
           </div>
         ) : null}
 
@@ -287,7 +287,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
           </div>
           <p className="mt-3 text-[14px] leading-6 text-[#556480]">
             {showDownloadStep
-              ? "Use the same email from this form so Guardian can download the PDF into the right account, keep track of whether you mailed it, and guide you to the next checks."
+              ? "Create an account or sign in so Guardian can save the PDF, keep track of whether you mailed it, and guide you to the next checks."
               : "We will take you into the most likely check flow next and carry over the Form 8843 context we already know."}
           </p>
           <div className="mt-4 flex flex-wrap gap-3">

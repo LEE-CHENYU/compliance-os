@@ -7,7 +7,7 @@ const API = typeof window !== "undefined" && window.location.hostname === "local
   : "/api";
 
 export interface Form8843Request {
-  email: string;
+  email?: string;
   full_name: string;
   visa_type: string;
   school_name: string;
