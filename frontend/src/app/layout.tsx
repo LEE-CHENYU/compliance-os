@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import Script from "next/script";
 
 import MixpanelIdentitySync from "@/components/analytics/MixpanelIdentitySync";
@@ -7,7 +6,6 @@ import MixpanelIdentitySync from "@/components/analytics/MixpanelIdentitySync";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 
-const inter = Inter({ subsets: ["latin"] });
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN?.trim();
 const MIXPANEL_BOOTSTRAP = MIXPANEL_TOKEN ? `
   (function(e){
@@ -62,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
       </head>
-      <body className={`${inter.className} min-h-screen bg-[#e8eff6] dark:bg-[#121620] transition-colors duration-300`}>
+      <body className="min-h-screen bg-[#e8eff6] dark:bg-[#121620] transition-colors duration-300">
         <ThemeProvider>
           {enableMixpanel && <MixpanelIdentitySync />}
           {children}
