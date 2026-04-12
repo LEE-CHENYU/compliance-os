@@ -1,25 +1,25 @@
 {
   "case_id": "A-stem_opt-foreign_accounts_fbar_risk-pos",
   "expected": {
-    "expected_nra": "yes",
+    "expected_nra": "no",
     "expected_track": "stem_opt",
     "must_fire_rule_ids": [
       "foreign_accounts_fbar_risk"
     ],
     "must_not_fire_rule_ids": [],
-    "notes": "STEM OPT student with 2 years in US (is_nra=yes) reports foreign accounts; neq condition satisfied so rule fires with FBAR warning."
+    "notes": "Hand-corrected fixture. The original LLM-generated case used stage=stem_opt+years=2 which forces is_nra=yes via branch 2, but the rule requires is_nra neq yes — a self-contradictory probe. Fixed by explicit tax_residency_status='Resident alien' which overrides the stage heuristic (branch 1 > branch 2), yielding is_nra=no. With has_foreign_accounts=yes and is_nra!=yes both satisfied, the rule fires."
   },
   "flavor_hint": null,
-  "generated_at": "2026-04-11T21:03:44Z",
-  "generated_by": "claude-batch/claude-sonnet-4-5",
-  "generator_prompt_hash": "f5293982fb6bc7add5e3a265675d6ff78861668d8b5ad4315e4ef00e0f0a11fb",
+  "generated_at": "2026-04-11T21:30:00Z",
+  "generated_by": "hand",
+  "generator_prompt_hash": null,
   "input": {
     "answers": {
-      "employer_changed": "no",
-      "employment_status": "employed",
       "has_foreign_accounts": "yes",
+      "tax_residency_status": "Resident alien",
       "stage": "stem_opt",
-      "years_in_us": 2
+      "years_in_us": 3,
+      "employment_status": "employed"
     },
     "comparisons": {},
     "extraction_a": {},

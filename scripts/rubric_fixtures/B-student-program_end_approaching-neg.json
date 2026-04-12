@@ -7,12 +7,12 @@
     "must_not_fire_rule_ids": [
       "program_end_approaching"
     ],
-    "notes": "Program end date is 65 days away, just outside the 60-day threshold, so rule must not fire."
+    "notes": "Hand-corrected fixture. Original LLM case used end_date='2025-09-15' assuming a mid-2025 runtime, but actual runtime is 2026+ so the date was in the past and the rule fired unexpectedly. Fixed by using an end_date two years in the future, well outside the 60-day threshold. The rule will not fire regardless of when this case is evaluated."
   },
   "flavor_hint": null,
-  "generated_at": "2026-04-11T21:03:45Z",
-  "generated_by": "claude-batch/claude-sonnet-4-5",
-  "generator_prompt_hash": "90357ffd680614d408efbe74bccdb747a5edcdaddafe230b0383db4a728f6769",
+  "generated_at": "2026-04-11T21:30:00Z",
+  "generated_by": "hand",
+  "generator_prompt_hash": null,
   "input": {
     "answers": {
       "stage": "f1_student",
@@ -20,7 +20,7 @@
     },
     "comparisons": {},
     "extraction_a": {
-      "end_date": "2025-09-15"
+      "end_date": "2028-06-30"
     },
     "extraction_b": {}
   },
