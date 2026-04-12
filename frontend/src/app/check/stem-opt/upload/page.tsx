@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument, getCheck } from "@/lib/api-v2";
-import { trackForm8843FunnelEvent } from "@/lib/analytics";
+import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +82,12 @@ function StemOptUpload() {
       setStage(s);
       setSlots(configuredSlots);
       setIsForm8843Flow(fromForm8843);
+      trackOnboardingEvent("onboarding_upload_viewed", {
+        check_id: check.id,
+        check_track: "stem_opt",
+        stage: s,
+        required_document_count: configuredSlots.filter((slot) => slot.required).length,
+      });
       if (fromForm8843 && !uploadViewTrackedRef.current) {
         uploadViewTrackedRef.current = true;
         trackForm8843FunnelEvent("form_8843_gtm_upload_viewed", {
@@ -101,6 +107,13 @@ function StemOptUpload() {
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, file, uploading: true } : s));
     await uploadDocument(checkId, file, slot.docType);
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: true } : s));
+    trackOnboardingEvent("onboarding_document_uploaded", {
+      check_id: checkId,
+      check_track: "stem_opt",
+      stage,
+      doc_type: slot.docType,
+      required: slot.required,
+    });
     if (isForm8843Flow) {
       trackForm8843FunnelEvent("form_8843_gtm_document_uploaded", {
         check_id: checkId,
@@ -244,6 +257,12 @@ function StemOptUpload() {
 
         <button
           onClick={() => {
+            trackOnboardingEvent("onboarding_review_phase_viewed", {
+              check_id: checkId,
+              check_track: "stem_opt",
+              stage,
+              phase: "review_continue_clicked",
+            });
             if (isForm8843Flow) {
               trackForm8843FunnelEvent("form_8843_gtm_review_continued", {
                 check_id: checkId,

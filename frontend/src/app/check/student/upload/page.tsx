@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument, getCheck } from "@/lib/api-v2";
-import { trackForm8843FunnelEvent } from "@/lib/analytics";
+import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +43,11 @@ function StudentUpload() {
       s.push({ docType: "i94", label: "I-94", sub: "Most recent arrival record — download from i94.cbp.dhs.gov", required: false, file: null, uploading: false, uploaded: false });
       setSlots(s);
       setIsForm8843Flow(fromForm8843);
+      trackOnboardingEvent("onboarding_upload_viewed", {
+        check_id: check.id,
+        check_track: "student",
+        required_document_count: s.filter((slot) => slot.required).length,
+      });
       if (fromForm8843 && !uploadViewTrackedRef.current) {
         uploadViewTrackedRef.current = true;
         trackForm8843FunnelEvent("form_8843_gtm_upload_viewed", {
@@ -61,6 +66,12 @@ function StudentUpload() {
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, file, uploading: true } : s));
     await uploadDocument(checkId, file, slot.docType);
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: true } : s));
+    trackOnboardingEvent("onboarding_document_uploaded", {
+      check_id: checkId,
+      check_track: "student",
+      doc_type: slot.docType,
+      required: slot.required,
+    });
     if (isForm8843Flow) {
       trackForm8843FunnelEvent("form_8843_gtm_document_uploaded", {
         check_id: checkId,
@@ -114,6 +125,11 @@ function StudentUpload() {
         <div className="px-4 py-3 rounded-xl bg-white/40 backdrop-blur border border-white/60 text-xs text-[#556480] mb-8">Your documents are stored securely and used only for compliance checking.</div>
 
         <button onClick={() => {
+          trackOnboardingEvent("onboarding_review_phase_viewed", {
+            check_id: checkId,
+            check_track: "student",
+            phase: "review_continue_clicked",
+          });
           if (isForm8843Flow) {
             trackForm8843FunnelEvent("form_8843_gtm_review_continued", {
               check_id: checkId,

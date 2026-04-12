@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   triggerExtraction,
@@ -15,6 +15,7 @@ import {
 } from "@/lib/api-v2";
 import AuthModal from "@/components/auth/AuthModal";
 import { useRouter } from "next/navigation";
+import { trackOnboardingEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,20 @@ function ReviewFlow() {
   const [followups, setFollowups] = useState<Followup[]>([]);
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const phaseTrackedRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    const key = `${checkId}:${phase}`;
+    if (!checkId || phaseTrackedRef.current.has(key)) {
+      return;
+    }
+    phaseTrackedRef.current.add(key);
+    trackOnboardingEvent("onboarding_review_phase_viewed", {
+      check_id: checkId,
+      check_track: "student",
+      phase,
+    });
+  }, [checkId, phase]);
 
   // Phase 1: Extract → Compare → Generate followups
   useEffect(() => {
@@ -175,6 +190,12 @@ function FollowupView({
   async function handleAnswer(fup: Followup, answer: string) {
     const updated = await answerFollowup(checkId, fup.id, answer);
     setFollowups(followups.map((f) => (f.id === fup.id ? updated : f)));
+    trackOnboardingEvent("onboarding_followup_answered", {
+      check_id: checkId,
+      check_track: "student",
+      question_key: fup.question_key,
+      answer,
+    });
   }
 
   async function handleDone() {
@@ -241,12 +262,26 @@ function FollowupView({
 function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
   const router = useRouter();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const viewedRef = useRef(false);
   const { comparisons, findings, advisories } = snapshot;
   const issues = findings.filter((f) => f.severity !== "info");
   const goods = comparisons.filter((c) => c.status === "match");
 
   const startDate = snapshot.extractions?.i983?.find((f) => f.field_name === "start_date")?.field_value;
   const endDate = snapshot.extractions?.i983?.find((f) => f.field_name === "end_date")?.field_value;
+
+  useEffect(() => {
+    if (viewedRef.current) {
+      return;
+    }
+    viewedRef.current = true;
+    trackOnboardingEvent("onboarding_results_viewed", {
+      check_id: snapshot.check.id,
+      check_track: snapshot.check.track,
+      issue_count: issues.length,
+      advisory_count: advisories.length,
+    });
+  }, [advisories.length, issues.length, snapshot.check.id, snapshot.check.track]);
 
   return (
     <div className="min-h-screen px-6 py-20 max-w-3xl mx-auto">
@@ -368,7 +403,13 @@ function SnapshotView({ snapshot }: { snapshot: Snapshot }) {
       {/* Save CTA */}
       <div className="text-center pt-8">
         <button
-          onClick={() => setShowAuthModal(true)}
+          onClick={() => {
+            trackOnboardingEvent("onboarding_save_clicked", {
+              check_id: snapshot.check.id,
+              check_track: snapshot.check.track,
+            });
+            setShowAuthModal(true);
+          }}
           className="px-10 py-4 rounded-2xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
         >
           Save to my data room

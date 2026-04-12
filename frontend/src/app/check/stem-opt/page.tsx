@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
-import { trackForm8843FunnelEvent } from "@/lib/analytics";
+import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 import { deriveYearsInUs, inferStemOptStage, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 const STAGES = [
@@ -53,6 +53,12 @@ export default function StemOptStage() {
   const [loading, setLoading] = useState(false);
   const [prefillContext, setPrefillContext] = useState<Record<string, string>>({});
   const [form8843PrefillNote, setForm8843PrefillNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    trackOnboardingEvent("onboarding_intake_viewed", {
+      check_track: "stem_opt",
+    });
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -108,6 +114,11 @@ export default function StemOptStage() {
       petition_status: petitionStatus,
       tax_software_used: taxSoftware,
       ...prefillContext,
+    });
+    trackOnboardingEvent("onboarding_check_created", {
+      check_id: check.id,
+      check_track: "stem_opt",
+      stage: stage || "unknown",
     });
     if (prefillContext.source_form_8843 === "yes") {
       trackForm8843FunnelEvent("form_8843_gtm_check_created", {

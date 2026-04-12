@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
-import { trackForm8843FunnelEvent } from "@/lib/analytics";
+import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 import { readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 const STUDENT_STATUS = [
@@ -41,6 +41,12 @@ export default function StudentIntake() {
   const [form8843PrefillNote, setForm8843PrefillNote] = useState<string | null>(null);
 
   const set = (key: string, value: string) => setAnswers((a) => ({ ...a, [key]: value }));
+
+  useEffect(() => {
+    trackOnboardingEvent("onboarding_intake_viewed", {
+      check_track: "student",
+    });
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -120,6 +126,11 @@ export default function StudentIntake() {
     const check = await createCheck("student", {
       ...answers,
       has_employment: answers.student_status === "enrolled_cpt" ? "yes" : "no",
+    });
+    trackOnboardingEvent("onboarding_check_created", {
+      check_id: check.id,
+      check_track: "student",
+      student_status: answers.student_status || "unknown",
     });
     if (answers.source_form_8843 === "yes") {
       trackForm8843FunnelEvent("form_8843_gtm_check_created", {

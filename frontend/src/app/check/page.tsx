@@ -1,13 +1,30 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-import { trackForm8843FunnelEvent } from "@/lib/analytics";
+import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 import { inferForm8843CheckPath, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
 
 export default function CheckSelect() {
   const router = useRouter();
+  const viewedRef = useRef(false);
+
+  useEffect(() => {
+    if (viewedRef.current) {
+      return;
+    }
+    viewedRef.current = true;
+    trackOnboardingEvent("onboarding_track_select_viewed");
+  }, []);
+
+  function handleTrackSelect(track: "stem_opt" | "entity" | "student", href: string) {
+    trackOnboardingEvent("onboarding_track_selected", {
+      check_track: track,
+      entry_route: "/check",
+    });
+    router.push(href);
+  }
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -47,7 +64,7 @@ export default function CheckSelect() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <button
-            onClick={() => router.push("/check/stem-opt")}
+            onClick={() => handleTrackSelect("stem_opt", "/check/stem-opt")}
             className="text-left bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 p-7 shadow-[0_4px_24px_rgba(91,141,238,0.06)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.1)] hover:-translate-y-1 hover:border-blue-200/30 transition-all"
           >
             <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-lg font-extrabold text-[#5b8dee] mb-5">A</div>
@@ -66,7 +83,7 @@ export default function CheckSelect() {
           </button>
 
           <button
-            onClick={() => router.push("/check/entity")}
+            onClick={() => handleTrackSelect("entity", "/check/entity")}
             className="text-left bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 p-7 shadow-[0_4px_24px_rgba(91,141,238,0.06)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.1)] hover:-translate-y-1 hover:border-blue-200/30 transition-all"
           >
             <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-lg font-extrabold text-[#5b8dee] mb-5">B</div>
@@ -85,7 +102,7 @@ export default function CheckSelect() {
           </button>
 
           <button
-            onClick={() => router.push("/check/student")}
+            onClick={() => handleTrackSelect("student", "/check/student")}
             className="text-left bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 p-7 shadow-[0_4px_24px_rgba(91,141,238,0.06)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.1)] hover:-translate-y-1 hover:border-blue-200/30 transition-all"
           >
             <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-lg font-extrabold text-[#5b8dee] mb-5">C</div>

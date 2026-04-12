@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useCallback, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { uploadDocument } from "@/lib/api-v2";
+import { getCheck, uploadDocument } from "@/lib/api-v2";
+import { trackOnboardingEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -23,12 +24,31 @@ function EntityUpload() {
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
 
+  useEffect(() => {
+    if (!checkId) {
+      return;
+    }
+    getCheck(checkId).then((check) => {
+      trackOnboardingEvent("onboarding_upload_viewed", {
+        check_id: check.id,
+        check_track: "entity",
+        required_document_count: 1,
+      });
+    });
+  }, [checkId]);
+
   const handleFile = useCallback(async (f: File) => {
     setFile(f);
     setUploading(true);
     await uploadDocument(checkId, f, "tax_return");
     setUploading(false);
     setUploaded(true);
+    trackOnboardingEvent("onboarding_document_uploaded", {
+      check_id: checkId,
+      check_track: "entity",
+      doc_type: "tax_return",
+      required: true,
+    });
   }, [checkId]);
 
   return (
@@ -86,7 +106,14 @@ function EntityUpload() {
         </div>
 
         <button
-          onClick={() => router.push(`/check/entity/review?id=${checkId}`)}
+          onClick={() => {
+            trackOnboardingEvent("onboarding_review_phase_viewed", {
+              check_id: checkId,
+              check_track: "entity",
+              phase: "review_continue_clicked",
+            });
+            router.push(`/check/entity/review?id=${checkId}`);
+          }}
           disabled={!uploaded}
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all ${
             uploaded

@@ -31,6 +31,18 @@ type Form8843FunnelEvent =
   | "form_8843_gtm_document_uploaded"
   | "form_8843_gtm_review_continued";
 
+type OnboardingEvent =
+  | "onboarding_track_select_viewed"
+  | "onboarding_track_selected"
+  | "onboarding_intake_viewed"
+  | "onboarding_check_created"
+  | "onboarding_upload_viewed"
+  | "onboarding_document_uploaded"
+  | "onboarding_review_phase_viewed"
+  | "onboarding_followup_answered"
+  | "onboarding_results_viewed"
+  | "onboarding_save_clicked";
+
 type MixpanelWindow = Window & {
   mixpanel?: MixpanelClient;
 };
@@ -74,6 +86,16 @@ export function trackForm8843FunnelEvent(
   trackMixpanelEvent(event, {
     funnel: "form_8843_gtm",
     source: "form8843",
+    ...properties,
+  });
+}
+
+export function trackOnboardingEvent(
+  event: OnboardingEvent,
+  properties: Record<string, unknown> = {},
+) {
+  trackMixpanelEvent(event, {
+    funnel: "check_onboarding",
     ...properties,
   });
 }

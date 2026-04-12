@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
+import { trackOnboardingEvent } from "@/lib/analytics";
 
 const ENTITY_TYPES = [
   { value: "smllc", label: "Single-member LLC" },
@@ -59,6 +60,12 @@ export default function EntityInfo() {
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    trackOnboardingEvent("onboarding_intake_viewed", {
+      check_track: "entity",
+    });
+  }, []);
+
   const set = (key: string, value: string) => setAnswers((a) => ({ ...a, [key]: value }));
 
   const showVisa = answers.owner_residency === "on_visa";
@@ -76,6 +83,11 @@ export default function EntityInfo() {
     if (!canContinue) return;
     setLoading(true);
     const check = await createCheck("entity", answers);
+    trackOnboardingEvent("onboarding_check_created", {
+      check_id: check.id,
+      check_track: "entity",
+      entity_type: answers.entity_type || "unknown",
+    });
     router.push(`/check/entity/upload?id=${check.id}`);
   }
 
