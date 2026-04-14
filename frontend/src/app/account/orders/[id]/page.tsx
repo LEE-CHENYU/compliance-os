@@ -302,6 +302,7 @@ export default function AccountOrderDetailPage() {
   const [busyAction, setBusyAction] = useState<"save" | "process" | "mail" | "upgrade" | "prefill" | null>(null);
   const [trackingNumber, setTrackingNumber] = useState("");
   const [h1bFiles, setH1bFiles] = useState<Record<string, File | null>>({});
+  const [h1bReplaceSlots, setH1bReplaceSlots] = useState<Set<string>>(new Set());
   const [fbarForm, setFbarForm] = useState<FbarFormState>(() => createInitialFbarForm());
   const [election83BForm, setElection83BForm] = useState<Election83BFormState>(() => createInitial83BForm());
   const [studentTaxForm, setStudentTaxForm] = useState<StudentTaxFormState>(() => createInitialStudentTaxForm());
@@ -484,6 +485,9 @@ export default function AccountOrderDetailPage() {
 
     try {
       if (order.product_sku === "h1b_doc_check") {
+        const prefilledDocs = (order.intake_preview as Record<string, unknown> | null)?.documents;
+        const hasPrefilled = Array.isArray(prefilledDocs) && prefilledDocs.length > 0;
+
         const formData = new FormData();
         let count = 0;
         for (const field of H1B_FILE_INPUTS) {
@@ -494,11 +498,15 @@ export default function AccountOrderDetailPage() {
           formData.append(field.name, file);
           count += 1;
         }
-        if (!count) {
+        if (!count && !hasPrefilled) {
           throw new Error("Upload at least one H-1B packet document before saving intake.");
         }
-        const nextOrder = await saveMarketplaceOrderFileIntake(order.order_id, formData);
-        applyOrder(nextOrder, "Documents saved. Run the review when you are ready.");
+        if (count > 0) {
+          const nextOrder = await saveMarketplaceOrderFileIntake(order.order_id, formData);
+          applyOrder(nextOrder, "Documents saved. Run the review when you are ready.");
+        } else {
+          setActionNote("Documents already attached from your data room. Run the review when you are ready.");
+        }
         return;
       }
 
@@ -855,26 +863,57 @@ export default function AccountOrderDetailPage() {
 
         {order.product_sku === "h1b_doc_check" ? (
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {H1B_FILE_INPUTS.map((field) => (
-              <label
-                key={field.name}
-                className="rounded-[22px] border border-[#dbe5f2] bg-[#fbfdff] p-4"
-              >
-                <div className={labelClassName}>{field.label}</div>
-                <input
-                  type="file"
-                  accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
-                  className={`${inputClassName} file:mr-4 file:rounded-full file:border-0 file:bg-[#eef4ff] file:px-4 file:py-2 file:text-[13px] file:font-semibold file:text-[#355694]`}
-                  onChange={(event) => {
-                    const file = event.target.files?.[0] ?? null;
-                    setH1bFiles((current) => ({ ...current, [field.name]: file }));
-                  }}
-                />
-                <div className="mt-2 text-[13px] text-[#6e7f9a]">
-                  {h1bFiles[field.name]?.name || "No file selected"}
+            {H1B_FILE_INPUTS.map((field) => {
+              const prefilledDocs = (order.intake_preview as Record<string, unknown> | null)?.documents;
+              const docType = field.name.replace(/_file$/, "");
+              const matched = Array.isArray(prefilledDocs)
+                ? (prefilledDocs as Array<Record<string, unknown>>).find((d) => d.doc_type === docType)
+                : null;
+              const hasNewFile = !!h1bFiles[field.name];
+              const wantsReplace = h1bReplaceSlots.has(field.name);
+              const showPrefilled = !!matched && !wantsReplace && !hasNewFile;
+
+              return (
+                <div
+                  key={field.name}
+                  className={`rounded-[22px] border p-4 ${showPrefilled ? "border-[#c2dcc9] bg-[#f6faf7]" : "border-[#dbe5f2] bg-[#fbfdff]"}`}
+                >
+                  <div className={labelClassName}>{field.label}</div>
+                  {showPrefilled ? (
+                    <div className="mt-2">
+                      <div className="flex items-center gap-2 text-[14px] text-[#1a6847]">
+                        <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="font-medium">{String(matched.filename || `Document`)}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="mt-2 text-[12px] text-[#6b82a6] underline hover:text-[#2b4775]"
+                        onClick={() => setH1bReplaceSlots((prev) => new Set(prev).add(field.name))}
+                      >
+                        Replace with a different file
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <input
+                        type="file"
+                        accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
+                        className={`${inputClassName} file:mr-4 file:rounded-full file:border-0 file:bg-[#eef4ff] file:px-4 file:py-2 file:text-[13px] file:font-semibold file:text-[#355694]`}
+                        onChange={(event) => {
+                          const file = event.target.files?.[0] ?? null;
+                          setH1bFiles((current) => ({ ...current, [field.name]: file }));
+                        }}
+                      />
+                      <div className="mt-2 text-[13px] text-[#6e7f9a]">
+                        {h1bFiles[field.name]?.name || "No file selected"}
+                      </div>
+                    </>
+                  )}
                 </div>
-              </label>
-            ))}
+              );
+            })}
           </div>
         ) : null}
 
