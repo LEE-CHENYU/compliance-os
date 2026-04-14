@@ -18,7 +18,111 @@ Guardian is an AI-powered compliance document cross-checker for immigrants. It s
 
 **Wedge product:** Free Form 8843 generator for international students — lead magnet that captures users 7+ years before they become high-LTV founders.
 
-**Revenue model:** SaaS subscription for doc checking + flat-fee service packages that include attorney/CPA review (Boundless blueprint — client pays Guardian, Guardian subcontracts licensed professionals).
+**Revenue model:** Software-leveraged professional services. AI + non-credentialed staff do 90% of the work; one bar-licensed attorney (immigration) and one Enrolled Agent (tax) sign off on 10%. Client pays Guardian a flat fee; Guardian pays professionals a small subcontractor fee; Guardian keeps 60-80% margin. All professionals can be China-based at 60-70% below US cost.
+
+---
+
+## 0. Core Business Model: Software-Leveraged Professional Services
+
+Guardian is NOT a pure SaaS play. It's a **software-leveraged professional services business** — software + AI does 90% of the work, one credentialed professional signs off on 10%, and Guardian captures the spread.
+
+### How It Works
+
+```
+Client pays Guardian $X (flat fee per service)
+         ↓
+Guardian's AI + non-credentialed staff (90%):
+  - Intake, document collection, form pre-filling
+  - AI checks, cross-domain consistency scan
+  - Draft preparation, PDF generation
+  - Client communication, deadline management
+         ↓
+Credentialed professional (10%):
+  - Reviews AI output
+  - Makes judgment calls
+  - Signs off (G-28 for immigration, preparer signature for tax)
+  - Files with USCIS / IRS
+         ↓
+Guardian pays professional flat subcontractor fee ($Y)
+         ↓
+Guardian keeps: $X minus $Y (target: 60-80% gross margin)
+```
+
+### Two Verticals, One Model
+
+| | Immigration | Tax |
+|---|---|---|
+| **Required credential** | US bar-licensed attorney (any state) | Enrolled Agent (EA) |
+| **Why not CPA?** | N/A | EA has identical IRS representation rights, cheaper, federally licensed (no state issues), faster to credential (3 exams vs multi-year CPA) |
+| **License scope** | Federal (immigration law) | Federal (IRS) |
+| **Can be China-based?** | Yes | Yes |
+| **Hire cost (China)** | $20-40K/year | $30-50K/year |
+| **What they supervise** | Paralegals + AI | PTIN holders + AI |
+| **Fee-sharing rules** | Strict (ABA 5.4 — no referral fees, must use subcontractor model) | Flexible (AICPA 503 — referral fees OK with disclosure) |
+| **Limited scope allowed?** | Yes (ABA 1.2(c)) | Yes (Circular 230) |
+| **Execution vs Advisory split?** | Yes | Yes |
+
+### The Team at Steady State
+
+```
+GUARDIAN PROFESSIONAL STAFF (all part-time to start, all China-based)
+
+Immigration:
+  1 US bar-licensed attorney (LLM + NY bar)     ~$20-40K/year
+  
+Tax:
+  1 Enrolled Agent                                ~$30-50K/year
+
+Operations:
+  1-2 non-credentialed staff (paralegal-type)    ~$15-25K/year each
+  Handle intake, doc prep, form filling
+  Work under attorney + EA supervision
+
+Total team cost: ~$80-140K/year
+Revenue capacity: $500K+ (software-leveraged)
+```
+
+### Why This Model Wins
+
+1. **Margin:** Traditional law firm pays attorneys $150-500/hour with 30-40% margin. Guardian pays flat subcontractor fees with 60-80% margin because AI does 90% of the work.
+2. **Scale:** One attorney can review 200+ Execution Mode cases per month (15-20 min each). Traditional model: ~40 cases/month at 8 billable hours/day.
+3. **Price to client:** Guardian charges $299 for what a law firm charges $2,500. 85% discount enabled by AI leverage.
+4. **Geographic arbitrage:** China-based professionals at 60-70% below US cost, fully legal for federal practice.
+5. **Cross-domain moat:** No competitor has both an attorney AND an EA checking documents together. The inconsistency-catching feature requires both.
+
+### Revenue Model by Tier
+
+```
+Tier 0  (pure software, no professional):    100% margin, $29-99/order
+Tier 0.5 (clerical fulfillment):              ~60% margin, $19/order
+Tier 1A (Execution Mode):                     65-75% margin, $199-399/order
+Tier 1B (Advisory Mode):                      55-65% margin, $499-799/order
+Tier 2  (Boundless assigned):                 55-65% margin, $999-1,999/order
+Tier 3  (Panel specialist):                   50-60% margin, $3,500-6,000/order
+Tier 4  (Premium cross-domain):               50-60% margin, $2,000-15,000/order
+```
+
+### Unit Economics Example
+
+```
+1,000 USERS/MONTH AT STEADY STATE
+
+                  Volume   Revenue    Prof Cost   Margin
+Tier 0 (free)      500      $0         $0          lead gen
+Tier 0 (paid)      200      $10,000    $0          $10,000
+Tier 1A Execution  150      $44,850    $15,000     $29,850
+Tier 1B Advisory    50      $34,950    $15,000     $19,950
+Tier 2 Boundless    20      $29,980    $12,000     $17,980
+Tier 3 Panel         5      $25,000    $10,000     $15,000
+Tier 4 Premium       2      $10,000     $4,000      $6,000
+
+TOTAL/MONTH        927     $154,780    $56,000     $98,780
+ANNUAL RUN RATE              $1.86M     $672K       $1.19M
+Professional staff cost (annual):              ~$120K
+Net margin after staff:                        ~$1.07M (57%)
+```
+
+This is a **$1.8M ARR business with 57% net margin**, run by a team of 5 professionals (all China-based) + software.
 
 ---
 
