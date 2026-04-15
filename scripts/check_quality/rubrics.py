@@ -116,5 +116,39 @@ ALL_RUBRICS: dict[str, Rubric] = {
 }
 
 
-def get_rubric(service: str) -> Rubric:
-    return ALL_RUBRICS[service]
+# Adversarial variants — same services, but dimensions role-play a skeptical
+# adjudicator/examiner looking for reasons to reject a filing or assess a
+# penalty. Different failure mode from the standard "is this helpful for
+# the user" framing. Bumps the version so cache entries don't collide.
+
+ADVERSARIAL_DIMENSIONS: list[tuple[str, str]] = [
+    ("rejection_risk", "If the user follows this output verbatim, what are the concrete, named grounds (statute / reg / form instruction / adjudicator standard) on which USCIS/IRS/FinCEN could reject their filing or issue an RFE? Flag anything that sets the user up for a rejection."),
+    ("penalty_exposure", "Does the output leave the user exposed to penalties that a careful practitioner would warn about — filing penalties, accuracy-related penalties, failure-to-file, willful vs non-willful distinctions? Flag missing warnings, not just wrong ones."),
+    ("audit_trigger_signals", "Does the output guide the user toward choices that look like audit triggers — inconsistent entity names, wrong form version, zero withholding without estimated-tax payments, aggressive treaty positions without support? Name specific flags."),
+    ("documentation_gap", "Adjudicators work from paper. Does the output instruct the user to keep the specific documents an adjudicator would demand if they audited — signed/dated copies, proofs of mailing, Form 1042-S copies, certified IDs for W-7, corporate records for 83(b) spread? Flag missing documentation requirements."),
+    ("edge_regulatory_traps", "Are there quieter regulatory trapdoors this output walks the user into — Substantial Presence Test crossover, dual-status year, community-property-state treatment, state residency inconsistencies, AR-11 obligation, ITIN document-return timelines? Flag what an adjudicator would catch that the output doesn't."),
+]
+
+
+def _adversarialize(rubric: Rubric) -> Rubric:
+    return Rubric(
+        service=rubric.service,
+        version=f"{rubric.version}-adv1",
+        context=(
+            rubric.context
+            + " You are now evaluating from the perspective of a skeptical USCIS/IRS/FinCEN adjudicator "
+            "or examiner whose job is to find reasons to reject filings, assess penalties, or open audits. "
+            "You are not grading whether the output helps the user — you are asking whether following this "
+            "output will expose the user to rejection, penalty, or enforcement risk."
+        ),
+        dimensions=ADVERSARIAL_DIMENSIONS,
+    )
+
+
+ADVERSARIAL_RUBRICS: dict[str, Rubric] = {
+    service: _adversarialize(rubric) for service, rubric in ALL_RUBRICS.items()
+}
+
+
+def get_rubric(service: str, *, adversarial: bool = False) -> Rubric:
+    return (ADVERSARIAL_RUBRICS if adversarial else ALL_RUBRICS)[service]

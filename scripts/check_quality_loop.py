@@ -102,6 +102,12 @@ def main() -> None:
     parser.add_argument("service", nargs="?", help="Filter to one service (h1b_doc_check, fbar_check, ...)")
     parser.add_argument("--force", action="store_true", help="Bypass cache")
     parser.add_argument(
+        "--mode",
+        choices=["standard", "adversarial", "both"],
+        default="standard",
+        help="Which rubric(s) to run. 'both' runs each scenario under standard + adversarial rubrics.",
+    )
+    parser.add_argument(
         "--output",
         default=str(ROOT / "out" / "check-quality-report.md"),
         help="Where to write the markdown scorecard",
@@ -119,28 +125,37 @@ def main() -> None:
     verdicts: list[JudgeVerdict] = []
     total_in = total_out = 0
 
-    print(f"Running {len(scenarios)} scenarios...")
+    rubric_modes: list[tuple[str, bool]] = []
+    if args.mode in ("standard", "both"):
+        rubric_modes.append(("standard", False))
+    if args.mode in ("adversarial", "both"):
+        rubric_modes.append(("adversarial", True))
+
+    print(f"Running {len(scenarios)} scenarios × {len(rubric_modes)} rubric(s)...")
     for scenario in scenarios:
         judge_intake, service_output = _run_service(scenario)
         cleaned_output = _strip_noisy_fields(service_output)
-        rubric = get_rubric(scenario.service)
-        print(f"  - {scenario.case_id}... ", end="", flush=True)
-        verdict = judge_case(
-            scenario_id=scenario.case_id,
-            service=scenario.service,
-            scenario_label=scenario.label,
-            scenario_description=scenario.description,
-            intake=judge_intake,
-            service_output=cleaned_output,
-            rubric=rubric,
-            client=client,
-            force=args.force,
-        )
-        verdicts.append(verdict)
-        total_in += verdict.tokens_in
-        total_out += verdict.tokens_out
-        cache_tag = " (cached)" if verdict.cached else ""
-        print(f"{verdict.overall}{cache_tag}")
+        for mode_label, is_adversarial in rubric_modes:
+            rubric = get_rubric(scenario.service, adversarial=is_adversarial)
+            variant_case_id = f"{scenario.case_id}__{mode_label}"
+            variant_label = f"{scenario.label} [{mode_label}]"
+            print(f"  - {variant_case_id}... ", end="", flush=True)
+            verdict = judge_case(
+                scenario_id=variant_case_id,
+                service=scenario.service,
+                scenario_label=variant_label,
+                scenario_description=scenario.description,
+                intake=judge_intake,
+                service_output=cleaned_output,
+                rubric=rubric,
+                client=client,
+                force=args.force,
+            )
+            verdicts.append(verdict)
+            total_in += verdict.tokens_in
+            total_out += verdict.tokens_out
+            cache_tag = " (cached)" if verdict.cached else ""
+            print(f"{verdict.overall}{cache_tag}")
 
     scorecard = Scorecard(verdicts=verdicts, total_tokens_in=total_in, total_tokens_out=total_out)
     markdown = render_markdown(scorecard)

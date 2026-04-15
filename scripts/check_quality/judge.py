@@ -201,7 +201,7 @@ def judge_case(
 
     with client.messages.stream(
         model=JUDGE_MODEL,
-        max_tokens=4096,
+        max_tokens=16384,  # adaptive thinking eats into this budget — keep headroom
         system=SYSTEM_PROMPT,
         thinking={"type": "adaptive"},
         messages=[{"role": "user", "content": user_prompt}],

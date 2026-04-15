@@ -352,10 +352,249 @@ def election_83b_scenarios() -> list[Scenario]:
     ]
 
 
+def h1b_diversity_scenarios() -> list[Scenario]:
+    """H-1B shapes not covered by the original set."""
+    return [
+        Scenario(
+            service="h1b_doc_check",
+            label="partial_4_of_5",
+            today=date(2026, 4, 1),
+            description="4 of 5 documents uploaded (status summary missing). Should not produce noise findings for the missing doc, and cross-checks for uploaded docs should run.",
+            intake={
+                "_docs": [
+                    ("h1b_registration", {
+                        "registration_number": "H1B-2026-PART-004",
+                        "employer_name": "Nova Systems Corp",
+                        "authorized_individual_name": "Sarah Kim",
+                    }),
+                    ("h1b_g28", {
+                        "client_entity_name": "Nova Systems Corp",
+                        "client_name": "Arjun Sharma",
+                    }),
+                    ("h1b_filing_invoice", {
+                        "petitioner_name": "Nova Systems Corp",
+                        "beneficiary_name": "Arjun Sharma",
+                        "total_due_amount": "$3460",
+                    }),
+                    ("h1b_filing_fee_receipt", {
+                        "cardholder_name": "Sarah Kim",
+                        "amount": "$3460",
+                    }),
+                ],
+            },
+        ),
+        Scenario(
+            service="h1b_doc_check",
+            label="amendment_employer_change",
+            today=date(2026, 4, 1),
+            description="Amendment filing where the beneficiary changed employers after H-1B approval. Invoice names the NEW employer; the original registration document was from the previous employer. Tricky cross-check case.",
+            intake={
+                "_docs": [
+                    ("h1b_registration", {
+                        "registration_number": "H1B-2024-OLD-777",
+                        "employer_name": "Legacy Tech Inc",
+                        "authorized_individual_name": "Bob Previous",
+                    }),
+                    ("h1b_status_summary", {
+                        "status_title": "Amended",
+                        "petition_filing_window_end_date": "2028-06-30",
+                        "employment_start_date": "2026-05-01",
+                    }),
+                    ("h1b_g28", {
+                        "client_entity_name": "NewCo Robotics Inc",
+                        "client_name": "Carlos Rivera",
+                    }),
+                    ("h1b_filing_invoice", {
+                        "petitioner_name": "NewCo Robotics Inc",
+                        "beneficiary_name": "Carlos Rivera",
+                        "total_due_amount": "$4660",
+                    }),
+                    ("h1b_filing_fee_receipt", {
+                        "cardholder_name": "Dana NewEmployer",
+                        "amount": "$4660",
+                    }),
+                ],
+            },
+        ),
+        Scenario(
+            service="h1b_doc_check",
+            label="amount_off_by_ten",
+            today=date(2026, 4, 1),
+            description="Invoice and receipt differ by $10 ($2780 vs $2790) — within rounding error but technically different. Severity / tone needs to match reality (probably a data-entry typo, not a rejection trigger).",
+            intake={
+                "_docs": [
+                    ("h1b_registration", {
+                        "registration_number": "H1B-2026-ROUND-1",
+                        "employer_name": "Round Numbers Inc",
+                        "authorized_individual_name": "Alice Payer",
+                    }),
+                    ("h1b_g28", {
+                        "client_entity_name": "Round Numbers Inc",
+                        "client_name": "Lee Beneficiary",
+                    }),
+                    ("h1b_filing_invoice", {
+                        "petitioner_name": "Round Numbers Inc",
+                        "beneficiary_name": "Lee Beneficiary",
+                        "total_due_amount": "$2780",
+                    }),
+                    ("h1b_filing_fee_receipt", {
+                        "cardholder_name": "Alice Payer",
+                        "amount": "$2790",
+                    }),
+                ],
+            },
+        ),
+    ]
+
+
+def fbar_diversity_scenarios() -> list[Scenario]:
+    return [
+        Scenario(
+            service="fbar_check",
+            label="fatca_overlap",
+            description="Aggregate $125,000 — well above FBAR $10K threshold AND above single-filer Form 8938 $50K threshold. Report should distinguish FBAR (FinCEN) from Form 8938 (IRS) since both are triggered.",
+            intake={
+                "tax_year": 2024,
+                "accounts": [
+                    {"institution_name": "HSBC HK", "country": "HK", "account_type": "savings",
+                     "account_number_last4": "1111", "max_balance_usd": 75000},
+                    {"institution_name": "Mizuho JP", "country": "JP", "account_type": "checking",
+                     "account_number_last4": "2222", "max_balance_usd": 50000},
+                ],
+            },
+        ),
+        Scenario(
+            service="fbar_check",
+            label="foreign_currency_balances",
+            description="Three accounts in local currency: €4,000, ¥1,200,000, £3,500. User provides USD-converted balances. Output should address the currency-conversion requirement without implying the user's conversions are authoritative.",
+            intake={
+                "tax_year": 2024,
+                "accounts": [
+                    {"institution_name": "Deutsche Bank", "country": "DE", "account_type": "savings",
+                     "account_number_last4": "3001", "max_balance_usd": 4300},
+                    {"institution_name": "Mizuho", "country": "JP", "account_type": "checking",
+                     "account_number_last4": "3002", "max_balance_usd": 7900},
+                    {"institution_name": "Barclays", "country": "GB", "account_type": "savings",
+                     "account_number_last4": "3003", "max_balance_usd": 4400},
+                ],
+            },
+        ),
+    ]
+
+
+def student_tax_diversity_scenarios() -> list[Scenario]:
+    return [
+        Scenario(
+            service="student_tax_1040nr",
+            label="j1_research_scholar",
+            description="J-1 research scholar (not F-1 student) from Germany, $45K stipend, first year in US. Different visa mechanics — J-1 scholars are exempt from SPT for 2 years (not 5 like F-1). Treaty: Germany-US has student-limited exemptions.",
+            intake={
+                "tax_year": 2024,
+                "full_name": "Hans Weber",
+                "visa_type": "J-1",
+                "school_name": "Caltech",
+                "country_citizenship": "Germany",
+                "country_passport": "Germany",
+                "passport_number": "D99887766",
+                "arrival_date": "2024-09-01",
+                "taxpayer_id_number": "",
+                "wage_income_usd": 45000,
+                "federal_withholding_usd": 5000,
+                "state_withholding_usd": 2000,
+            },
+        ),
+        Scenario(
+            service="student_tax_1040nr",
+            label="f1_year_six_potentially_resident",
+            description="Chinese F-1 who arrived in 2019 — now in year 6, past the 5-year exempt period. May be a RESIDENT for tax purposes under SPT, which would invalidate 1040-NR. Output should at minimum flag this timing issue.",
+            intake={
+                "tax_year": 2024,
+                "full_name": "Yi Chen",
+                "visa_type": "F-1",
+                "school_name": "UC Berkeley",
+                "country_citizenship": "China",
+                "country_passport": "China",
+                "passport_number": "E55443322",
+                "arrival_date": "2019-08-20",
+                "days_present_current": 365,
+                "days_present_year_1_ago": 365,
+                "days_present_year_2_ago": 365,
+                "taxpayer_id_number": "987-65-1234",
+                "wage_income_usd": 35000,
+                "federal_withholding_usd": 3500,
+                "state_withholding_usd": 1200,
+            },
+        ),
+        Scenario(
+            service="student_tax_1040nr",
+            label="scholarship_only_no_wages",
+            description="Taiwanese F-1 with $22K scholarship, zero wages. Scholarships for room/board are taxable but tuition is not — needs nuanced handling. Not a Form 8843-only case because income exists.",
+            intake={
+                "tax_year": 2024,
+                "full_name": "Ming Huang",
+                "visa_type": "F-1",
+                "school_name": "Princeton",
+                "country_citizenship": "Taiwan",
+                "country_passport": "Taiwan",
+                "passport_number": "T12300099",
+                "arrival_date": "2023-08-15",
+                "taxpayer_id_number": "111-22-3333",
+                "wage_income_usd": 0,
+                "scholarship_income_usd": 22000,
+                "federal_withholding_usd": 0,
+            },
+        ),
+    ]
+
+
+def election_83b_diversity_scenarios() -> list[Scenario]:
+    today = date(2026, 4, 1)
+    return [
+        Scenario(
+            service="election_83b",
+            label="high_spread_early_exercise",
+            today=today,
+            description="Early-exercised ISOs after a Series B: exercise price $0.50, FMV $3.50 per share, 40,000 shares. Taxable spread is $120,000 — large tax bill at filing. Output should surface the spread amount AND flag the immediate tax-due risk.",
+            intake={
+                "grant_date": (today - timedelta(days=12)).isoformat(),
+                "taxpayer_name": "Morgan Engineer",
+                "taxpayer_address": "1 Valencia St, San Francisco, CA 94110",
+                "company_name": "ScaleUp Corp",
+                "property_description": "40,000 shares of common stock from early-exercised ISOs",
+                "share_count": 40000,
+                "fair_market_value_per_share": 3.50,
+                "exercise_price_per_share": 0.50,
+                "vesting_schedule": "4 years, 1-year cliff already met, monthly thereafter",
+            },
+        ),
+        Scenario(
+            service="election_83b",
+            label="address_new_jersey",
+            today=today,
+            description="New Jersey address — should map to Kansas City service center. Tests state mapping coverage.",
+            intake={
+                "grant_date": (today - timedelta(days=3)).isoformat(),
+                "taxpayer_name": "NJ Founder",
+                "taxpayer_address": "100 Commerce Way, Hoboken, NJ 07030",
+                "company_name": "Jersey Startup Inc",
+                "property_description": "20,000 shares of restricted common stock",
+                "share_count": 20000,
+                "fair_market_value_per_share": 0.01,
+                "exercise_price_per_share": 0.01,
+                "vesting_schedule": "4 years, 1-year cliff",
+            },
+        ),
+    ]
+
+
 def all_scenarios() -> list[Scenario]:
     return (
         h1b_scenarios()
         + fbar_scenarios()
         + student_tax_scenarios()
         + election_83b_scenarios()
+        + h1b_diversity_scenarios()
+        + fbar_diversity_scenarios()
+        + student_tax_diversity_scenarios()
+        + election_83b_diversity_scenarios()
     )
