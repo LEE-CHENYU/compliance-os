@@ -12,6 +12,7 @@ from typing import Any
 from compliance_os.web.models.database import DATA_DIR
 from compliance_os.web.services.comparator import compare_fields
 from compliance_os.web.services.pdf_builder import build_text_pdf
+from compliance_os.web.services.pdf_reader import extract_first_page
 from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine
 
 
@@ -84,6 +85,16 @@ def extract_h1b_document_fields(doc_type: str, text: str) -> dict[str, Any]:
     }
 
 
+def _read_document_text(path: Path) -> str:
+    """Read a document's text. Uses pdfreader for PDFs, read_text for everything else."""
+    if path.suffix.lower() == ".pdf":
+        return extract_first_page(str(path))
+    try:
+        return path.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return ""
+
+
 def save_uploaded_document(order_id: str, filename: str, content: bytes) -> Path:
     order_dir = H1B_DOC_CHECK_DIR / order_id / "uploads"
     order_dir.mkdir(parents=True, exist_ok=True)
@@ -121,7 +132,7 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
             }
         else:
             path = Path(str(document["path"]))
-            text = path.read_text(encoding="utf-8", errors="ignore")
+            text = _read_document_text(path)
             fields = extract_h1b_document_fields(doc_type, text)
         extracted[doc_type] = fields
         document_summary.append(

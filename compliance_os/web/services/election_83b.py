@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -13,13 +14,70 @@ from compliance_os.web.services.pdf_builder import build_text_pdf
 ELECTION_83B_DIR = DATA_DIR / "marketplace" / "election_83b"
 
 
+# Simplified state → IRS service center mapping for 83(b) elections.
+# 83(b) goes to the service center where the taxpayer files Form 1040.
+# Source: IRS "Where to File Paper Tax Returns" (2024), individual filers.
+_STATE_TO_SERVICE_CENTER: dict[str, str] = {
+    # Austin, TX (no-payment address for 1040 from these states)
+    **dict.fromkeys(["FL", "LA", "MS", "TX"], "austin"),
+    # Kansas City, MO
+    **dict.fromkeys(
+        ["AR", "CT", "DE", "IL", "IN", "MA", "MD", "ME", "MI", "MN", "NH",
+         "NJ", "NY", "OH", "PA", "RI", "VT", "WI", "WV"],
+        "kansas_city",
+    ),
+    # Ogden, UT
+    **dict.fromkeys(
+        ["AK", "AZ", "CA", "CO", "HI", "ID", "IA", "KS", "MO", "MT", "NE",
+         "NV", "NM", "ND", "OK", "OR", "SD", "UT", "WA", "WY"],
+        "ogden",
+    ),
+    # Austin, TX (Southeast cluster as of 2024)
+    **dict.fromkeys(["AL", "GA", "KY", "NC", "SC", "TN", "VA", "DC"], "austin"),
+}
+
+_SERVICE_CENTER_ADDRESSES: dict[str, tuple[str, str]] = {
+    "austin": (
+        "Internal Revenue Service",
+        "Austin, TX 73301-0002",
+    ),
+    "kansas_city": (
+        "Internal Revenue Service",
+        "Kansas City, MO 64999-0002",
+    ),
+    "ogden": (
+        "Internal Revenue Service",
+        "Ogden, UT 84201-0002",
+    ),
+}
+
+_STATE_ABBREV_RE = re.compile(r"\b([A-Z]{2})\s+\d{5}")
+
+
 def _parse_date(value: str) -> date:
     return datetime.strptime(value, "%Y-%m-%d").date()
 
 
-def process_election_83b(order_id: str, intake_data: dict[str, Any]) -> dict[str, Any]:
+def _infer_service_center(taxpayer_address: str) -> tuple[str | None, tuple[str, str] | None]:
+    match = _STATE_ABBREV_RE.search(taxpayer_address.upper())
+    if not match:
+        return None, None
+    state = match.group(1)
+    center_key = _STATE_TO_SERVICE_CENTER.get(state)
+    if not center_key:
+        return state, None
+    return state, _SERVICE_CENTER_ADDRESSES[center_key]
+
+
+def process_election_83b(
+    order_id: str,
+    intake_data: dict[str, Any],
+    *,
+    today: date | None = None,
+) -> dict[str, Any]:
     grant_date = _parse_date(str(intake_data["grant_date"]))
     filing_deadline = grant_date + timedelta(days=30)
+    reference_day = today or date.today()
 
     taxpayer_name = str(intake_data["taxpayer_name"])
     taxpayer_address = str(intake_data["taxpayer_address"])
@@ -30,16 +88,48 @@ def process_election_83b(order_id: str, intake_data: dict[str, Any]) -> dict[str
     exercise_price = float(intake_data["exercise_price_per_share"])
     vesting_schedule = str(intake_data["vesting_schedule"])
 
-    summary = (
-        f"Your 83(b) election packet is ready. Based on a grant date of {grant_date.isoformat()}, "
-        f"the election must be mailed no later than {filing_deadline.isoformat()}."
-    )
-    next_steps = [
-        "Print the election letter and cover sheet.",
-        "Sign the election letter before mailing it.",
-        "Use USPS Certified Mail or an equivalent tracked service so you can prove the mailing date.",
-        "Keep a complete signed copy for your records and your tax preparer.",
-    ]
+    grant_in_future = grant_date > reference_day
+    deadline_passed = filing_deadline < reference_day
+    days_past_deadline = (reference_day - filing_deadline).days if deadline_passed else 0
+
+    if grant_in_future:
+        summary = (
+            f"The grant date you entered ({grant_date.isoformat()}) is in the future. "
+            f"Confirm the grant date with your employer before mailing anything — an 83(b) election can only be filed for a grant that has actually occurred."
+        )
+        verdict = "block"
+    elif deadline_passed:
+        summary = (
+            f"URGENT: the 30-day deadline for this 83(b) election has already passed. "
+            f"The grant date was {grant_date.isoformat()} and the deadline was {filing_deadline.isoformat()} "
+            f"({days_past_deadline} day{'s' if days_past_deadline != 1 else ''} ago). "
+            f"A late 83(b) election is generally invalid and cannot be cured, but speak with a tax advisor before filing anything."
+        )
+        verdict = "block"
+    else:
+        days_remaining = (filing_deadline - reference_day).days
+        summary = (
+            f"Your 83(b) election packet is ready. Based on a grant date of {grant_date.isoformat()}, "
+            f"the election must be mailed no later than {filing_deadline.isoformat()} "
+            f"({days_remaining} day{'s' if days_remaining != 1 else ''} from today)."
+        )
+        verdict = "pass"
+
+    if deadline_passed or grant_in_future:
+        next_steps = [
+            "Do not mail this packet before speaking with a tax advisor.",
+            "Bring the grant documents, vesting schedule, and this summary to the advisor.",
+            "If an 83(b) election is no longer viable, discuss alternative tax planning such as Section 83(i) or voluntary recognition.",
+        ]
+    else:
+        next_steps = [
+            "Print the election letter and cover sheet.",
+            "Sign the election letter before mailing it.",
+            "Use USPS Certified Mail or an equivalent tracked service so you can prove the mailing date.",
+            "Keep a complete signed copy for your records and your tax preparer.",
+        ]
+
+    state, service_center = _infer_service_center(taxpayer_address)
 
     election_lines = [
         taxpayer_name,
@@ -64,11 +154,24 @@ def process_election_83b(order_id: str, intake_data: dict[str, Any]) -> dict[str
         "",
         "Checklist",
         *[f"- {step}" for step in next_steps],
-        "",
-        "Important",
-        "- Guardian does not yet infer your exact IRS service center address for 83(b) elections.",
-        "- Confirm the IRS address that corresponds to the federal return you will file.",
     ]
+
+    if service_center:
+        cover_lines.extend([
+            "",
+            f"IRS service center (based on your address in {state})",
+            service_center[0],
+            service_center[1],
+            "This is the address the IRS publishes for individual paper returns filed from your state.",
+            "Confirm the current address on irs.gov/filing before mailing — the IRS updates these periodically.",
+        ])
+    else:
+        cover_lines.extend([
+            "",
+            "IRS service center",
+            "Guardian could not infer your IRS service center from the address you entered.",
+            "Look up the correct center at irs.gov/filing/where-to-file-paper-tax-returns before mailing.",
+        ])
 
     artifacts_dir = ELECTION_83B_DIR / order_id / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -77,13 +180,27 @@ def process_election_83b(order_id: str, intake_data: dict[str, Any]) -> dict[str
     election_path.write_bytes(build_text_pdf("83(b) Election Letter", election_lines))
     cover_path.write_bytes(build_text_pdf("83(b) Election Mailing Cover Sheet", cover_lines))
 
+    if verdict == "block" and deadline_passed:
+        mailing_headline = f"Deadline passed {days_past_deadline} day{'s' if days_past_deadline != 1 else ''} ago"
+        mailing_summary = "Do not mail this packet without an advisor reviewing whether a late 83(b) election has any remaining path."
+    elif verdict == "block" and grant_in_future:
+        mailing_headline = "Confirm the grant date first"
+        mailing_summary = "The grant date you entered is in the future. Do not mail anything until the grant has actually occurred."
+    else:
+        mailing_headline = "Mail your 83(b) election with proof"
+        mailing_summary = "The IRS must receive evidence that the election was mailed within 30 days of the grant date."
+
     return {
         "summary": summary,
+        "verdict": verdict,
+        "deadline_passed": deadline_passed,
+        "days_past_deadline": days_past_deadline if deadline_passed else 0,
+        "grant_in_future": grant_in_future,
         "filing_deadline": filing_deadline.isoformat(),
         "next_steps": next_steps,
         "mailing_instructions": {
-            "headline": "Mail your 83(b) election with proof",
-            "summary": "The IRS must receive evidence that the election was mailed within 30 days of the grant date.",
+            "headline": mailing_headline,
+            "summary": mailing_summary,
             "steps": next_steps,
         },
         "artifacts": [

@@ -195,19 +195,28 @@ def run_h1b_mismatch() -> None:
         print(f"  {c.get('field')}: status={c.get('status')} ({c.get('value_a')!r} vs {c.get('value_b')!r})")
 
 
-def run_h1b_real_pdf_simulation() -> None:
-    """Simulate what happens if a user uploads an actual PDF (binary bytes)."""
-    banner("H-1B Doc Check — uploaded real PDF (binary) — KNOWN BUG SCENARIO")
+def run_h1b_real_pdf() -> None:
+    """Upload an actual PDF — should now use PyMuPDF to extract text."""
+    banner("H-1B Doc Check — real PDF upload (after fix, should extract fields)")
     order_id = "test-h1b-pdf"
-    # Minimal binary that looks like a PDF header — process_h1b_doc_check will read_text it
-    pdf_bytes = b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\nfake binary content with Acme Robotics Inc embedded\n%%EOF"
+    # Build a real PDF using the same builder the service uses for reports.
+    from compliance_os.web.services.pdf_builder import build_text_pdf
+    pdf_bytes = build_text_pdf(
+        "H-1B Registration Notice",
+        [
+            "Registration Number: H1B-2026-REAL-001",
+            "Employer Name: PDF Corp Inc",
+            "Employer EIN: 98-7654321",
+            "Authorized Individual Name: Carlos Reyes",
+            "Authorized Individual Title: General Counsel",
+        ],
+    )
     path = save_uploaded_document(order_id, "registration.pdf", pdf_bytes)
     documents = [{"doc_type": "h1b_registration", "filename": "registration.pdf", "path": str(path)}]
     result = process_h1b_doc_check(order_id, {"documents": documents})
     print(f"summary: {result['summary']}")
-    print("Extraction from binary PDF:")
+    print("Extraction from real PDF:")
     print("  " + json.dumps(result["document_summary"][0]["fields"], indent=2).replace("\n", "\n  "))
-    print(">>> NOTE: process_h1b_doc_check does path.read_text() not extract_first_page() — real PDFs yield no extracted fields.")
 
 
 # ---------- FBAR ----------
@@ -361,12 +370,12 @@ def run_83b_normal() -> None:
 
 
 def run_83b_already_late() -> None:
-    banner("83(b) Election — grant 45 days ago (deadline already passed!)")
+    banner("83(b) Election — grant 45 days ago (deadline passed — should block + warn)")
     grant = (date.today() - timedelta(days=45)).isoformat()
     result = process_election_83b("test-83b-late", {
         "grant_date": grant,
         "taxpayer_name": "Late Person",
-        "taxpayer_address": "1 Late St, SF, CA",
+        "taxpayer_address": "1 Late St, Palo Alto, CA 94301",
         "company_name": "Late Co",
         "property_description": "1000 shares",
         "share_count": 1000,
@@ -374,9 +383,57 @@ def run_83b_already_late() -> None:
         "exercise_price_per_share": 0.01,
         "vesting_schedule": "4 years",
     })
+    print(f"verdict: {result.get('verdict')}")
+    print(f"deadline_passed: {result.get('deadline_passed')}")
+    print(f"days_past_deadline: {result.get('days_past_deadline')}")
     print(f"summary: {result['summary']}")
-    print(f"deadline: {result['filing_deadline']}")
-    print(f">>> NOTE: deadline is {result['filing_deadline']}. Today is {date.today().isoformat()}. The packet does NOT warn that the 30-day window has passed!")
+    print(f"mailing headline: {result['mailing_instructions']['headline']}")
+
+
+def run_83b_future_grant() -> None:
+    banner("83(b) Election — grant date in the future (should block)")
+    grant = (date.today() + timedelta(days=10)).isoformat()
+    result = process_election_83b("test-83b-future", {
+        "grant_date": grant,
+        "taxpayer_name": "Premature Filer",
+        "taxpayer_address": "1 Early St, Austin, TX 78701",
+        "company_name": "Early Co",
+        "property_description": "500 shares",
+        "share_count": 500,
+        "fair_market_value_per_share": 0.01,
+        "exercise_price_per_share": 0.01,
+        "vesting_schedule": "4 years",
+    })
+    print(f"verdict: {result.get('verdict')}")
+    print(f"grant_in_future: {result.get('grant_in_future')}")
+    print(f"summary: {result['summary']}")
+
+
+def run_83b_service_center() -> None:
+    banner("83(b) Election — service-center inference from taxpayer address")
+    grant = (date.today() - timedelta(days=5)).isoformat()
+    base = {
+        "grant_date": grant,
+        "taxpayer_name": "Test User",
+        "company_name": "Co",
+        "property_description": "100 shares",
+        "share_count": 100,
+        "fair_market_value_per_share": 0.01,
+        "exercise_price_per_share": 0.01,
+        "vesting_schedule": "4 years",
+    }
+    cases = [
+        ("CA (Ogden)", "1 Market St, Palo Alto, CA 94301"),
+        ("NY (Kansas City)", "1 Broadway, New York, NY 10004"),
+        ("TX (Austin)", "1 Congress Ave, Austin, TX 78701"),
+        ("No state (fallback)", "some address without a state"),
+    ]
+    for label, addr in cases:
+        result = process_election_83b(f"test-83b-sc-{label}", {**base, "taxpayer_address": addr})
+        # Re-read the cover sheet to show the inferred center
+        from pathlib import Path as _P
+        # Just inspect the summary/mailing_instructions
+        print(f"{label}: mailing headline = {result['mailing_instructions']['headline']}")
 
 
 # ---------- Run everything ----------
@@ -384,7 +441,7 @@ def run_83b_already_late() -> None:
 if __name__ == "__main__":
     run_h1b_clean()
     run_h1b_mismatch()
-    run_h1b_real_pdf_simulation()
+    run_h1b_real_pdf()
     run_fbar_below_threshold()
     run_fbar_above_threshold()
     run_fbar_edge_exactly_10k()
@@ -394,4 +451,6 @@ if __name__ == "__main__":
     run_student_tax_treaty_no_country()
     run_83b_normal()
     run_83b_already_late()
+    run_83b_future_grant()
+    run_83b_service_center()
     print(f"\n{SEPARATOR}\nDone. Synthetic test artifacts in {H1B_DOC_CHECK_DIR.parent}\n{SEPARATOR}")
