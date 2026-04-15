@@ -10,6 +10,7 @@ import ModeBar, { ChatMode } from "@/components/chat/ModeBar";
 import FormFillerUpload from "@/components/chat/FormFillerUpload";
 import FormPreviewCard, { FieldProposal } from "@/components/chat/FormPreviewCard";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import { useTheme } from "@/lib/theme";
 
 interface TimelineEvent {
   date: string;
@@ -273,7 +274,9 @@ function resolveGuardianVoiceId(value?: string) {
 const GUARDIAN_VOICE_MODEL = resolveGuardianVoiceModel(process.env.NEXT_PUBLIC_GUARDIAN_VOICE_MODEL);
 const GUARDIAN_VOICE_ID = resolveGuardianVoiceId(process.env.NEXT_PUBLIC_GUARDIAN_VOICE_ID);
 
-const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
+type CategoryPalette = { bg: string; text: string; border: string; label: string };
+
+const CATEGORY_COLORS: Record<string, CategoryPalette> = {
   student_status: { bg: "rgba(6,182,212,0.1)", text: "#0891b2", border: "rgba(6,182,212,0.12)", label: "Student Status" },
   immigration: { bg: "rgba(99,102,241,0.1)", text: "#4f46e5", border: "rgba(99,102,241,0.12)", label: "Immigration" },
   work_auth: { bg: "rgba(245,158,11,0.1)", text: "#d97706", border: "rgba(245,158,11,0.12)", label: "Employment" },
@@ -283,6 +286,20 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   business: { bg: "rgba(124,58,237,0.1)", text: "#7c3aed", border: "rgba(124,58,237,0.12)", label: "Business" },
   personal: { bg: "rgba(236,72,153,0.1)", text: "#db2777", border: "rgba(236,72,153,0.12)", label: "Personal" },
   other: { bg: "rgba(107,114,128,0.1)", text: "#6b7280", border: "rgba(107,114,128,0.12)", label: "Other" },
+};
+
+// Softer, lower-saturation variants for dark mode. Same hue, brighter text for
+// legibility against dark bg, and a slightly more visible bg tint.
+const CATEGORY_COLORS_DARK: Record<string, CategoryPalette> = {
+  student_status: { bg: "rgba(6,182,212,0.16)", text: "#67e8f9", border: "rgba(6,182,212,0.25)", label: "Student Status" },
+  immigration: { bg: "rgba(99,102,241,0.16)", text: "#a5b4fc", border: "rgba(99,102,241,0.25)", label: "Immigration" },
+  work_auth: { bg: "rgba(245,158,11,0.16)", text: "#fcd34d", border: "rgba(245,158,11,0.25)", label: "Employment" },
+  employment: { bg: "rgba(245,158,11,0.16)", text: "#fcd34d", border: "rgba(245,158,11,0.25)", label: "Employment" },
+  tax: { bg: "rgba(16,185,129,0.16)", text: "#6ee7b7", border: "rgba(16,185,129,0.25)", label: "Tax" },
+  entity: { bg: "rgba(124,58,237,0.16)", text: "#c4b5fd", border: "rgba(124,58,237,0.25)", label: "Business" },
+  business: { bg: "rgba(124,58,237,0.16)", text: "#c4b5fd", border: "rgba(124,58,237,0.25)", label: "Business" },
+  personal: { bg: "rgba(236,72,153,0.16)", text: "#f9a8d4", border: "rgba(236,72,153,0.25)", label: "Personal" },
+  other: { bg: "rgba(107,114,128,0.18)", text: "#9ca3af", border: "rgba(107,114,128,0.28)", label: "Other" },
 };
 
 function clampProgress(progress: number): number {
@@ -567,6 +584,8 @@ async function collectDroppedFiles(dataTransfer: DataTransfer): Promise<Selected
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const categoryPalette = theme === "dark" ? CATEGORY_COLORS_DARK : CATEGORY_COLORS;
   const [timeline, setTimeline] = useState<TimelineData | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -691,7 +710,7 @@ export default function DashboardPage() {
       compact?: boolean;
     },
   ) => {
-    const colors = CATEGORY_COLORS[doc.category] || CATEGORY_COLORS.immigration;
+    const colors = categoryPalette[doc.category] || categoryPalette.immigration;
     const compact = options?.compact ?? false;
     return (
       <button
@@ -702,10 +721,10 @@ export default function DashboardPage() {
             console.error(error);
           });
         }}
-        className={`flex items-center gap-2 rounded-xl border text-left font-medium text-[#3d6bc5] shadow-sm transition-all hover:bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#5b8dee]/35 ${
+        className={`flex items-center gap-2 rounded-xl border text-left font-medium text-[#3d6bc5] dark:text-[#8aa8e0] shadow-sm transition-all hover:bg-white/80 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#5b8dee]/35 ${
           compact
-            ? "px-2.5 py-1.5 text-[11px] bg-white/70 border-white/70"
-            : "px-3 py-2 text-[12px] bg-white/55 backdrop-blur border-white/60"
+            ? "px-2.5 py-1.5 text-[11px] bg-white/70 dark:bg-white/5 border-white/70 dark:border-white/10"
+            : "px-3 py-2 text-[12px] bg-white/55 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10"
         }`}
       >
         <span>📄</span>
@@ -718,7 +737,7 @@ export default function DashboardPage() {
         </span>
       </button>
     );
-  }, [openDashboardDocument]);
+  }, [openDashboardDocument, categoryPalette]);
 
   const dashboardPromptApi = `${API}/integrity/respond`;
   const chatApi = typeof window !== "undefined" && window.location.hostname === "localhost"
@@ -1722,7 +1741,7 @@ export default function DashboardPage() {
                 setTokenCopied(false);
                 setOpenClawError(null);
               }}
-              className="px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-[#556480] hover:bg-white/60 transition-all border border-transparent hover:border-blue-100/30"
+              className="px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-[#556480] dark:text-[#8e9ab5] hover:bg-white/60 dark:hover:bg-white/5 transition-all border border-transparent hover:border-blue-100/30 dark:hover:border-white/10"
             >
               Connect to OpenClaw
             </button>
@@ -1810,13 +1829,13 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
-          <button onClick={() => setShowUploadPanel(true)} className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs md:text-sm font-semibold">
+          <button onClick={() => setShowUploadPanel(true)} className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] dark:from-[#3a5a9c] dark:to-[#2d4578] text-white text-xs md:text-sm font-semibold">
             {processingIndicator && (
               <span className="inline-flex h-2.5 w-2.5 rounded-full border border-white/70 border-t-transparent animate-spin" />
             )}
             + Upload document
           </button>
-          <button onClick={() => { logout(); router.push("/"); }} className="text-xs md:text-sm text-[#7b8ba5]">
+          <button onClick={() => { logout(); router.push("/"); }} className="text-xs md:text-sm text-[#7b8ba5] dark:text-[#8e9ab5]">
             Sign out
           </button>
         </div>
@@ -1844,7 +1863,7 @@ export default function DashboardPage() {
             {["student_status", "immigration", "employment", "tax", "business", "personal", "other"].map((cat) => {
               const count = documents.filter((d) => (d.category || "other") === cat).length;
               if (count === 0) return null;
-              const colors = CATEGORY_COLORS[cat] || CATEGORY_COLORS.other;
+              const colors = categoryPalette[cat] || categoryPalette.other;
               return (
                 <div key={cat} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480]">
                   <span className="w-2 h-2 rounded-full" style={{ background: colors.text }} />
@@ -1914,15 +1933,15 @@ export default function DashboardPage() {
                     aria-label={voiceActive ? "Stop live voice" : "Start live voice"}
                     className={`inline-flex items-center gap-3 rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
                       voiceActive
-                        ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_12px_28px_rgba(91,141,238,0.2)]"
-                        : "border border-blue-100/50 bg-white/85 text-[#3a5a8c] hover:bg-white"
+                        ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] dark:from-[#3a5a9c] dark:to-[#2d4578] text-white shadow-[0_12px_28px_rgba(91,141,238,0.2)]"
+                        : "border border-blue-100/50 dark:border-white/10 bg-white/85 dark:bg-white/5 text-[#3a5a8c] dark:text-[#8aa8e0] hover:bg-white dark:hover:bg-white/10"
                     } disabled:cursor-not-allowed disabled:opacity-50`}
                   >
                     <span className={`inline-flex h-10 w-10 items-center justify-center rounded-full ${
-                      voiceActive ? "bg-white/18" : "bg-[#5b8dee]/8"
+                      voiceActive ? "bg-white/18" : "bg-[#5b8dee]/8 dark:bg-[#5b8dee]/15"
                     }`}>
                       <span className={`block h-4 w-4 rounded-full ${
-                        voiceActive ? "bg-white" : "bg-[#5b8dee]"
+                        voiceActive ? "bg-white" : "bg-[#5b8dee] dark:bg-[#8aa8e0]"
                       }`} />
                     </span>
                     {!voiceReady
