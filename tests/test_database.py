@@ -78,6 +78,8 @@ def test_create_engine_and_tables_uses_pool_pre_ping_for_postgres(monkeypatch):
         lambda engine: None,
     )
     monkeypatch.setattr(database_mod, "_ensure_v2_columns", lambda engine: None)
+    monkeypatch.setattr(database_mod, "_ensure_marketplace_columns", lambda engine: None)
+    monkeypatch.setattr(database_mod, "_ensure_auth_columns", lambda engine: None)
 
     def fake_create_engine(url, **kwargs):
         captured["url"] = url

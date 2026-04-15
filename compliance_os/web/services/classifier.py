@@ -72,7 +72,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
         r"continued[_ -]?enrollment",
     ],
     "identity_document": [r"identification[_ -]?page", r"identity[_ -]?document", r"national[_ -]?id", r"mom[_ -]?id"],
-    "immigration_reference": [r"guide", r"instructions?", r"samplefilled", r"(?:^|[^a-z0-9])sample(?:[^a-z0-9]|$)", r"template", r"攻略", r"i[_-]?983[_ -]?sample", r"i[_-]?983[_-]?template", r"i[_-]?983[_ -]?guide"],
+    "immigration_reference": [r"guide", r"instructions?", r"samplefilled", r"(?:^|[^a-z0-9])sample(?:[^a-z0-9]|$)", r"攻略", r"i[_-]?983[_ -]?sample", r"i[_-]?983[_-]?template", r"i[_-]?983[_ -]?guide"],
     "insurance_card": [r"medi[_ -]?card", r"insurance[_ -]?card"],
     "insurance_record": [r"insurance[_ -]?record"],
     "language_test_certificate": [r"jlpt", r"ielts", r"雅思", r"toefl"],
