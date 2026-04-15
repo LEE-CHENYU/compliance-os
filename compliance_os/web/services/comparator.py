@@ -1,9 +1,19 @@
-"""Field comparison engine — exact, fuzzy, numeric, semantic."""
+"""Field comparison engine — exact, fuzzy, entity, numeric."""
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from rapidfuzz import fuzz
+
+
+# Legal entity suffixes that imply a specific entity type. A different
+# suffix signals a different legal entity even if the base name matches.
+_ENTITY_SUFFIX_PATTERN = re.compile(
+    r"\b(inc|incorporated|llc|l\.l\.c\.|corp|corporation|co|company|ltd|limited|lp|l\.p\.|llp|l\.l\.p\.|pllc|plc|gmbh|sa|ag|pty|pte)\b",
+    re.IGNORECASE,
+)
+_PUNCT_PATTERN = re.compile(r"[.,;]+")
 
 
 @dataclass
@@ -36,6 +46,8 @@ def compare_fields(
         return _exact(field_name, a, b)
     if match_type == "fuzzy":
         return _fuzzy(field_name, a, b)
+    if match_type == "entity":
+        return _entity(field_name, a, b)
     if match_type == "numeric":
         return _numeric(field_name, a, b)
     return ComparisonResult(
@@ -53,6 +65,43 @@ def _fuzzy(name: str, a: str, b: str) -> ComparisonResult:
     ratio = fuzz.token_sort_ratio(a.lower(), b.lower()) / 100.0
     status = "match" if ratio >= 0.85 else "mismatch"
     return ComparisonResult(name, a, b, "fuzzy", status, ratio)
+
+
+def _entity_suffix(text: str) -> str | None:
+    """Return the normalized entity suffix if any, else None."""
+    match = _ENTITY_SUFFIX_PATTERN.search(text)
+    if not match:
+        return None
+    return match.group(1).lower().replace(".", "")
+
+
+def _strip_entity_suffix(text: str) -> str:
+    stripped = _ENTITY_SUFFIX_PATTERN.sub("", text)
+    stripped = _PUNCT_PATTERN.sub("", stripped)
+    return " ".join(stripped.split())
+
+
+def _entity(name: str, a: str, b: str) -> ComparisonResult:
+    """Compare legal entity names. Flag suffix mismatches (Inc vs LLC) as mismatches."""
+    suffix_a = _entity_suffix(a)
+    suffix_b = _entity_suffix(b)
+    base_a = _strip_entity_suffix(a).lower()
+    base_b = _strip_entity_suffix(b).lower()
+    base_ratio = fuzz.token_sort_ratio(base_a, base_b) / 100.0
+
+    if suffix_a and suffix_b and suffix_a != suffix_b:
+        return ComparisonResult(
+            name, a, b, "entity", "mismatch", base_ratio,
+            f"Base names match ({base_ratio:.0%}) but entity types differ: {suffix_a} vs {suffix_b}",
+        )
+
+    status = "match" if base_ratio >= 0.92 else "mismatch"
+    detail = None
+    if status == "mismatch":
+        detail = f"Base names differ ({base_ratio:.0%})"
+    elif suffix_a != suffix_b:
+        detail = f"Entity suffix present on only one side: {suffix_a or suffix_b}"
+    return ComparisonResult(name, a, b, "entity", status, base_ratio, detail)
 
 
 def _numeric(name: str, a: str, b: str) -> ComparisonResult:

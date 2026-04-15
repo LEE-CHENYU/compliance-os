@@ -192,7 +192,8 @@ def run_h1b_mismatch() -> None:
     dump_findings(result["findings"])
     print("\nComparisons:")
     for c in result["comparisons"]:
-        print(f"  {c.get('field')}: status={c.get('status')} ({c.get('value_a')!r} vs {c.get('value_b')!r})")
+        detail = c.get("detail") or ""
+        print(f"  {c.get('field_name')}: status={c.get('status')} ({c.get('value_a')!r} vs {c.get('value_b')!r}) {detail}")
 
 
 def run_h1b_real_pdf() -> None:

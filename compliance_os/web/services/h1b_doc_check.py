@@ -155,13 +155,13 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
             "h1b_registration_g28_entity_name",
             registration.get("employer_name"),
             g28.get("client_entity_name"),
-            "fuzzy",
+            "entity",
         ),
         (
             "h1b_registration_invoice_petitioner_name",
             registration.get("employer_name"),
             invoice.get("petitioner_name"),
-            "fuzzy",
+            "entity",
         ),
         (
             "h1b_registration_receipt_signatory_name",
