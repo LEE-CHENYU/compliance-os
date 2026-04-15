@@ -30,18 +30,24 @@ def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, 
             f"Your reported aggregate maximum balance was ${aggregate:,.2f}, which is above the $10,000 threshold."
         )
         next_steps = [
-            "Use the BSA E-Filing System to submit FinCEN Form 114 online.",
-            "Review each foreign account one more time before filing to confirm the maximum balance and account numbers.",
-            f"File by {due_date.isoformat()} and keep the confirmation page for your records.",
+            "Use the BSA E-Filing System (bsaefiling.fincen.treas.gov) to submit FinCEN Form 114 online.",
+            "List every foreign account, not just those individually over $10,000 — the threshold is on the aggregate maximum balance.",
+            "Convert foreign-currency balances to USD using the Treasury Reporting Rates of Exchange for the last day of the year (fiscal.treasury.gov/reports-statements/treasury-reporting-rates-exchange).",
+            "Review each account's maximum balance and account number before filing.",
+            f"File by {due_date.isoformat()} (automatic extension from April 15) and keep the BSA confirmation page.",
+            "Non-filing penalties can reach ~$16K/year (non-willful) or the greater of ~$129K or 50% of balance (willful).",
+            "FBAR (FinCEN 114) is filed with FinCEN, not the IRS. It is separate from FATCA Form 8938, which has a higher threshold and is attached to the 1040 return.",
         ]
     else:
         summary = (
             f"Based on the accounts entered, your aggregate maximum balance for tax year {tax_year} was "
-            f"${aggregate:,.2f}, which does not trigger an FBAR filing requirement."
+            f"${aggregate:,.2f}, which is below the $10,000 threshold — no FBAR filing is required."
         )
         next_steps = [
+            "No filing action needed for this tax year based on the balances you entered.",
             "Keep a record of the balances you used in case the account mix changes later.",
-            "Re-check the aggregate maximum balance if you open new foreign accounts during the year.",
+            "Re-check the aggregate maximum balance if you open new foreign accounts or receive deposits during the year.",
+            "FBAR (FinCEN 114) is separate from FATCA Form 8938, which has a higher threshold and different filing channel.",
         ]
 
     packet_lines = [
@@ -66,21 +72,29 @@ def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, 
 
     artifacts_dir = FBAR_CHECK_DIR / order_id / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
-    packet_path = artifacts_dir / "fbar-draft-packet.pdf"
-    packet_path.write_bytes(build_text_pdf("FBAR Compliance Check", packet_lines, subtitle=f"Tax year {tax_year}"))
+
+    if requires_fbar:
+        packet_path = artifacts_dir / "fbar-draft-packet.pdf"
+        packet_path.write_bytes(build_text_pdf("FBAR Compliance Check", packet_lines, subtitle=f"Tax year {tax_year}"))
+        artifacts = [{"label": "Download FBAR draft packet", "filename": packet_path.name, "path": str(packet_path)}]
+    else:
+        # No filing required → don't generate a "draft packet" that contradicts
+        # the no-filing conclusion. Produce a short summary instead.
+        summary_path = artifacts_dir / "fbar-review-summary.pdf"
+        summary_path.write_bytes(build_text_pdf(
+            "FBAR Review Summary — no filing required",
+            packet_lines,
+            subtitle=f"Tax year {tax_year}",
+        ))
+        artifacts = [{"label": "Download FBAR review summary", "filename": summary_path.name, "path": str(summary_path)}]
 
     return {
         "summary": summary,
         "requires_fbar": requires_fbar,
         "aggregate_max_balance_usd": aggregate,
-        "filing_deadline": due_date.isoformat(),
+        # Only expose a filing deadline when a filing is actually required.
+        "filing_deadline": due_date.isoformat() if requires_fbar else None,
         "next_steps": next_steps,
         "accounts": accounts,
-        "artifacts": [
-            {
-                "label": "Download FBAR draft packet",
-                "filename": packet_path.name,
-                "path": str(packet_path),
-            }
-        ],
+        "artifacts": artifacts,
     }

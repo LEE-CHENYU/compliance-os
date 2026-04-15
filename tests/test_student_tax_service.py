@@ -46,8 +46,19 @@ def _rule_ids(findings) -> set[str]:
 
 # --- clean / happy-path ---
 
-def test_clean_case_zero_findings():
+def test_clean_case_only_suggests_treaty():
+    """Default intake is a Chinese F-1 with $25K wages — the China treaty
+    auto-suggestion rightly fires as an informational nudge. Other rules
+    should stay silent."""
     result = student_tax_mod.process_student_tax_check("clean", _intake())
+    rule_ids = _rule_ids(result["findings"])
+    assert rule_ids == {"student_tax_china_treaty_eligible"}
+
+
+def test_clean_case_non_treaty_country_fires_no_findings():
+    """A Brazilian F-1 student with wages has no auto-treaty and clean intake → 0 findings."""
+    intake = _intake(country_citizenship="Brazil", country_passport="Brazil")
+    result = student_tax_mod.process_student_tax_check("clean-brazil", intake)
     assert result["finding_count"] == 0
 
 
@@ -280,8 +291,60 @@ def test_total_income_usd_returned_in_result():
 
 
 def test_summary_mentions_finding_count():
-    result = student_tax_mod.process_student_tax_check("count", _intake(used_resident_software=True))
-    assert "1 issue" in result["summary"] or "1 issues" in result["summary"]
+    # Brazil avoids the auto-treaty nudge so only the resident-software (critical) finding fires
+    intake = _intake(country_citizenship="Brazil", country_passport="Brazil", used_resident_software=True)
+    result = student_tax_mod.process_student_tax_check("count", intake)
+    # Critical present → summary uses the blocker framing
+    assert "1 blocking issue" in result["summary"]
+    assert "1 total finding" in result["summary"]
+
+
+def test_summary_uses_clean_framing_when_no_blockers():
+    # Brazilian F-1 student, no resident software, no blockers → clean framing
+    intake = _intake(country_citizenship="Brazil", country_passport="Brazil")
+    result = student_tax_mod.process_student_tax_check("clean-count", intake)
+    assert "is ready" in result["summary"]
+
+
+# --- rule: country treaty auto-suggestion (batch 4) ---
+
+def test_rule_china_treaty_eligible_fires():
+    result = student_tax_mod.process_student_tax_check("china-treaty", _intake(country_citizenship="China"))
+    assert "student_tax_china_treaty_eligible" in _rule_ids(result["findings"])
+
+
+def test_rule_china_treaty_does_not_fire_when_user_already_claims():
+    intake = _intake(
+        country_citizenship="China",
+        claim_treaty_benefit=True,
+        treaty_country="China",
+        treaty_article="20(c)",
+        has_1042s=True,
+    )
+    result = student_tax_mod.process_student_tax_check("china-claimed", intake)
+    assert "student_tax_china_treaty_eligible" not in _rule_ids(result["findings"])
+
+
+def test_rule_india_treaty_eligible_fires():
+    intake = _intake(country_citizenship="India", country_passport="India")
+    result = student_tax_mod.process_student_tax_check("india-treaty", intake)
+    assert "student_tax_india_treaty_eligible" in _rule_ids(result["findings"])
+
+
+def test_rule_country_treaty_does_not_fire_for_other_countries():
+    result = student_tax_mod.process_student_tax_check("france", _intake(country_citizenship="France"))
+    assert "student_tax_china_treaty_eligible" not in _rule_ids(result["findings"])
+    assert "student_tax_india_treaty_eligible" not in _rule_ids(result["findings"])
+
+
+def test_rule_country_treaty_does_not_fire_without_wages():
+    intake = _intake(
+        country_citizenship="China",
+        wage_income_usd=0,
+        scholarship_income_usd=5000,
+    )
+    result = student_tax_mod.process_student_tax_check("china-scholarship-only", intake)
+    assert "student_tax_china_treaty_eligible" not in _rule_ids(result["findings"])
 
 
 # --- combinations ---

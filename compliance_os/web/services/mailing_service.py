@@ -42,12 +42,26 @@ def _mailing_service_enabled() -> bool:
     return _truthy(os.environ.get("ENABLE_FORM_8843_MAILING_SERVICE"))
 
 
+def _resolve_tax_year(inputs: Mapping[str, object]) -> int:
+    """Tax year from inputs, falling back to the module default."""
+    value = inputs.get("tax_year")
+    if value is None:
+        return FORM_8843_TAX_YEAR
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return FORM_8843_TAX_YEAR
+
+
 def build_form_8843_filing_context(inputs: Mapping[str, object]) -> dict[str, object]:
     """Return the filing guidance for a Form 8843 order."""
     filing_with_tax_return = _truthy(inputs.get("filing_with_tax_return")) or _truthy(inputs.get("has_us_income"))
+    tax_year = _resolve_tax_year(inputs)
+    tax_package_deadline = date(tax_year + 1, 4, 15)
+    standalone_deadline = date(tax_year + 1, 6, 15)
 
     if filing_with_tax_return:
-        deadline = FORM_8843_TAX_PACKAGE_DEADLINE
+        deadline = tax_package_deadline
         steps = [
             "Download the generated Form 8843 and keep it with your Form 1040-NR package.",
             "Sign and date the return package where required before filing.",
@@ -72,7 +86,7 @@ def build_form_8843_filing_context(inputs: Mapping[str, object]) -> dict[str, ob
             "mailing_service_note": "White-glove mailing does not apply when the form should be filed with a tax return package.",
         }
 
-    deadline = FORM_8843_STANDALONE_DEADLINE
+    deadline = standalone_deadline
     steps = [
         "Print the PDF on standard paper.",
         "Sign and date the form before mailing it.",

@@ -68,6 +68,12 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
     state_of_residence = str(intake_data.get("state_of_residence") or "").strip().upper()
     state_of_employer = str(intake_data.get("state_of_employer") or "").strip().upper()
 
+    full_name = str(intake_data.get("full_name") or "").strip()
+    visa_type = str(intake_data.get("visa_type") or "F-1").strip() or "F-1"
+    school_name = str(intake_data.get("school_name") or "").strip()
+    country_citizenship = str(intake_data.get("country_citizenship") or "").strip()
+    country_citizenship_key = country_citizenship.lower()
+
     findings: list[dict[str, Any]] = []
     if total_income <= 0:
         findings.append(
@@ -84,9 +90,9 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
             _finding(
                 rule_id="student_tax_resident_software",
                 severity="critical",
-                title="Resident-return software may route you to Form 1040 instead of 1040-NR",
-                action="Double-check that your preparer or software is using the nonresident return path before filing.",
-                consequence="Filing Form 1040 instead of 1040-NR can create residency-status mistakes and amendment work later.",
+                title="Resident-return software cannot file Form 1040-NR",
+                action="Stop using resident-return software (TurboTax, H&R Block, FreeTaxUSA) for this return. Use a nonresident-specific preparer — Sprintax and GLACIER Tax Prep are the common ones for F-1/J-1 filers — or work with a CPA who files 1040-NR.",
+                consequence="Filing Form 1040 instead of 1040-NR can create residency-status mistakes that trigger IRS notices, require amendment, and may surface during H-1B or green card adjudication.",
             )
         )
     if claim_treaty_benefit and not treaty_country:
@@ -100,23 +106,27 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
             )
         )
     if wage_income > 0 and federal_withholding <= 0:
+        # Estimate ballpark federal liability: roughly 10-12% on wages under $50K
+        # for a nonresident, ignoring treaty. Use 10% as a conservative floor.
+        est_liability = int(wage_income * 0.10)
+        severity = "warning" if wage_income >= 10000 else "info"
         findings.append(
             _finding(
                 rule_id="student_tax_no_withholding",
-                severity="info",
-                title="No federal withholding entered for wage income",
-                action="Check your W-2 or payroll records to confirm whether withholding is truly zero.",
-                consequence="Missing withholding data can distort the draft payment/refund expectation in the package summary.",
+                severity=severity,
+                title="No federal withholding on wage income — you likely owe tax",
+                action=f"Confirm with your W-2 whether withholding is truly zero. If it is, budget for roughly ${est_liability:,}+ in federal tax owed with your return. Consider filing Form 1040-ES for the current year to avoid underpayment penalties.",
+                consequence="Zero withholding on significant wages usually means a tax balance due at filing plus potential underpayment/estimated-tax penalties.",
             )
         )
     if total_income > 0 and not taxpayer_id_present:
         findings.append(
             _finding(
                 rule_id="student_tax_missing_taxpayer_id",
-                severity="warning",
-                title="No SSN or ITIN entered",
-                action="A 1040-NR return requires an SSN or ITIN on the return. If you do not have one, file Form W-7 to request an ITIN alongside the return.",
-                consequence="A return filed without a valid SSN/ITIN will be rejected by the IRS.",
+                severity="critical",
+                title="No SSN or ITIN — return will be rejected without one",
+                action="Obtain an SSN (if work-authorized) or file Form W-7 to request an ITIN. The W-7 must be filed with the paper 1040-NR return along with original or certified-copy identity documents (passport + visa). This is a filing blocker — do not submit the return without a valid TIN.",
+                consequence="The IRS will reject any 1040-NR filed without a valid SSN or ITIN.",
             )
         )
     if claim_treaty_benefit and not has_1042s:
@@ -129,6 +139,32 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
                 consequence="A treaty claim without a 1042-S is often challenged and can delay processing.",
             )
         )
+    # Country-specific treaty auto-suggestions (flagged for users who haven't
+    # claimed a benefit they're likely eligible for). Do not auto-apply — the
+    # user should make an informed election.
+    is_f1_or_j1 = visa_type.upper().replace(" ", "").startswith(("F-1", "F1", "J-1", "J1"))
+    if (not claim_treaty_benefit) and is_f1_or_j1 and wage_income > 0:
+        if country_citizenship_key == "china":
+            findings.append(
+                _finding(
+                    rule_id="student_tax_china_treaty_eligible",
+                    severity="info",
+                    title="China-US treaty Article 20(c) may reduce your taxable wages",
+                    action="If you're a Chinese national on F-1/J-1 and earned student-type income, Article 20(c) typically exempts up to $5,000/yr. Confirm eligibility and whether your payer issued a Form 1042-S before claiming.",
+                    consequence=f"Not claiming an applicable treaty benefit on ${wage_income:,.0f} of wages can cost several hundred dollars of federal tax.",
+                )
+            )
+        elif country_citizenship_key == "india":
+            findings.append(
+                _finding(
+                    rule_id="student_tax_india_treaty_eligible",
+                    severity="info",
+                    title="India-US treaty may let you claim the standard deduction",
+                    action="The India-US income tax treaty uniquely lets Indian students on F-1 claim the standard deduction on 1040-NR (other nationalities generally cannot). Confirm with a nonresident-aware preparer before relying on this.",
+                    consequence=f"Missing the standard deduction on ${wage_income:,.0f} of wages can cost ~$1,000+ of federal tax.",
+                )
+            )
+
     if state_of_residence and state_of_employer and state_of_residence != state_of_employer:
         findings.append(
             _finding(
@@ -140,12 +176,8 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
             )
         )
 
-    full_name = str(intake_data.get("full_name") or "").strip()
-    visa_type = str(intake_data.get("visa_type") or "F-1").strip() or "F-1"
-    school_name = str(intake_data.get("school_name") or "").strip()
-    country_citizenship = str(intake_data.get("country_citizenship") or "").strip()
-
     form_8843_inputs = {
+        "tax_year": tax_year,
         "full_name": full_name,
         "visa_type": visa_type,
         "school_name": school_name,
@@ -248,18 +280,36 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
             }
         )
 
-    summary = (
-        f"Your student tax package for tax year {tax_year} is ready. "
-        f"Guardian prepared the Form 8843 attachment, a 1040-NR package summary, and "
-        f"flagged {len(findings)} issue{'s' if len(findings) != 1 else ''} worth checking before filing."
-    )
-    next_steps = [
+    critical_count = sum(1 for f in findings if f["severity"] == "critical")
+    has_blockers = critical_count > 0
+    if has_blockers:
+        summary = (
+            f"Your student tax package for tax year {tax_year} has been prepared, but Guardian found "
+            f"{critical_count} blocking issue{'s' if critical_count != 1 else ''} that must be resolved before you file. "
+            f"{len(findings)} total finding{'s' if len(findings) != 1 else ''} — resolve the critical ones first."
+        )
+    else:
+        summary = (
+            f"Your student tax package for tax year {tax_year} is ready. "
+            f"Guardian prepared the Form 8843 attachment, a 1040-NR package summary, and "
+            f"flagged {len(findings)} issue{'s' if len(findings) != 1 else ''} worth checking before filing."
+        )
+
+    next_steps = []
+    if has_blockers:
+        next_steps.append(
+            "Resolve the critical findings above before filing. Do not submit the return until every blocker is addressed."
+        )
+    next_steps.extend([
         "Review the 1040-NR package summary against your W-2, 1042-S, and payroll records.",
-        "Complete the 1040-NR return using the same numbers reflected in the package summary.",
+        "Prepare the 1040-NR using nonresident-aware software (Sprintax or GLACIER Tax Prep) or a CPA familiar with nonresident filings — standard consumer software (TurboTax, H&R Block, FreeTaxUSA) cannot produce a valid 1040-NR.",
         f"File the return package by {deadline.isoformat()} and attach Form 8843.",
-    ]
+    ])
     if claim_treaty_benefit:
-        next_steps.insert(2, "Confirm the treaty article and support before claiming treaty benefits in the return package.")
+        next_steps.insert(
+            -1,
+            "Claim the treaty benefit explicitly on the return, reference the article, and attach Form 8833 if a treaty-based position requires disclosure."
+        )
 
     return {
         "summary": summary,

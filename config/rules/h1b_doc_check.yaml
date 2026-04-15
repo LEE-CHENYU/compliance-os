@@ -13,6 +13,7 @@ rules:
       title: "Registration document missing"
       action: "Upload the H-1B registration record before relying on the packet review."
       consequence: "Without the registration document, Guardian cannot verify the employer identity or registration number."
+      immigration_impact: true
 
   - id: h1b_missing_registration_number
     track: h1b_doc_check
@@ -39,22 +40,24 @@ rules:
         value:
     finding:
       title: "Entity names do not align across the registration and G-28"
-      action: "Make sure the same petitioner legal name appears in both the USCIS registration and the G-28."
-      consequence: "A petitioner-name mismatch can force a costly rework before filing."
+      action: "Make sure the same petitioner legal name — including Inc/LLC/Corp suffix — appears in both the USCIS registration and the G-28."
+      consequence: "USCIS rejects petitions where documents name different legal entities. Inc vs LLC is a common rejection trigger."
+      immigration_impact: true
 
   - id: h1b_petitioner_invoice_mismatch
     track: h1b_doc_check
     type: inconsistency
-    severity: warning
+    severity: critical
     conditions:
       - source: comparison
         field: h1b_registration_invoice_petitioner_name
         operator: mismatch
         value:
     finding:
-      title: "Invoice petitioner name does not match the registration"
-      action: "Confirm the billing record is tied to the same petitioner listed in the registration."
-      consequence: "Billing mismatches can indicate the wrong entity is being prepared for filing."
+      title: "Petitioner name mismatch between registration and invoice"
+      action: "Confirm the exact legal entity name filing the petition and obtain a corrected invoice so every document names the same entity (including the Inc/LLC/Corp suffix). This must be resolved before submitting the packet."
+      consequence: "USCIS will reject a petition whose documents name different legal entities — including Inc vs LLC — regardless of whether the base name matches."
+      immigration_impact: true
 
   - id: h1b_signatory_payment_mismatch
     track: h1b_doc_check
@@ -97,3 +100,4 @@ rules:
       title: "The petition filing window appears to be closed"
       action: "Confirm the filing calendar immediately and do not assume the packet is still timely."
       consequence: "A missed H-1B filing window can stop the petition from moving forward."
+      immigration_impact: true

@@ -412,22 +412,31 @@ def test_summary_mentions_uploaded_over_expected():
     assert "5 of 5" in result["summary"]
 
 
-def test_comparisons_with_missing_side_flagged_needs_review():
-    order = "needs-review"
+def test_comparisons_skipped_when_one_side_missing():
+    """Phantom-finding regression: previously we emitted a comparison with
+    status=needs_review when a whole document wasn't uploaded, and the rule
+    engine's 'mismatch' operator treats needs_review as a trigger. We now
+    skip the comparison entirely so no phantom finding fires."""
+    order = "needs-review-skip"
     docs = [
         _text_doc("h1b_registration", order,
             registration_number="R1", employer_name="Acme Inc",
             authorized_individual_name="Alice"),
-        # No g28, no invoice, no receipt — comparisons involving those should be needs_review
         _text_doc("h1b_status_summary", order,
             status_title="Selected",
             petition_filing_window_end_date="2030-06-30"),
     ]
     result = h1b_mod.process_h1b_doc_check(order, {"documents": docs},
                                            today=date(2026, 4, 1))
-    # verdict=incomplete because only 2 docs; still, comparisons are populated
-    nr_comparisons = [c for c in result["comparisons"] if c["status"] == "needs_review"]
-    assert nr_comparisons
+    # No phantom entries — comparisons list only contains checks with both sides
+    for comparison in result["comparisons"]:
+        assert comparison["status"] != "needs_review", (
+            f"Unexpected phantom comparison: {comparison}"
+        )
+    # Also: no entity-mismatch rule should fire against a document that's absent
+    from_engine = {f["rule_id"] for f in result["findings"]}
+    assert "h1b_entity_name_mismatch" not in from_engine
+    assert "h1b_petitioner_invoice_mismatch" not in from_engine
 
 
 # =======================

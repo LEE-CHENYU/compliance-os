@@ -76,7 +76,8 @@ def test_missing_accounts_key_aggregates_to_zero():
 
 
 def test_missing_tax_year_defaults_to_prior_year():
-    result = fbar_mod.process_fbar_check("o8", {"accounts": [_account(5000)]})
+    # Trigger the required branch so filing_deadline is populated
+    result = fbar_mod.process_fbar_check("o8", {"accounts": [_account(15000)]})
     expected_year = date.today().year - 1
     assert result["filing_deadline"] == f"{expected_year + 1}-10-15"
 
@@ -101,13 +102,19 @@ def test_empty_string_max_balance_treated_as_zero():
 
 def test_deadline_is_oct_15_of_following_year():
     """Post-FinCEN-2017, FBAR deadline is April 15 auto-extended to Oct 15."""
-    result = fbar_mod.process_fbar_check("o11", {"tax_year": 2024, "accounts": [_account(1)]})
+    result = fbar_mod.process_fbar_check("o11", {"tax_year": 2024, "accounts": [_account(11000)]})
     assert result["filing_deadline"] == "2025-10-15"
 
 
 def test_deadline_for_old_year():
-    result = fbar_mod.process_fbar_check("o12", {"tax_year": 2019, "accounts": [_account(1)]})
+    result = fbar_mod.process_fbar_check("o12", {"tax_year": 2019, "accounts": [_account(15000)]})
     assert result["filing_deadline"] == "2020-10-15"
+
+
+def test_deadline_omitted_when_filing_not_required():
+    """No filing needed → no deadline surfaced. Avoids implying action on a no-file user."""
+    result = fbar_mod.process_fbar_check("no-filing", {"tax_year": 2024, "accounts": [_account(5000)]})
+    assert result["filing_deadline"] is None
 
 
 # --- output shape ---
@@ -142,5 +149,24 @@ def test_summary_formats_aggregate_with_two_decimals():
 def test_next_steps_differ_between_required_and_not():
     required = fbar_mod.process_fbar_check("o16", {"tax_year": 2024, "accounts": [_account(15000)]})
     not_required = fbar_mod.process_fbar_check("o17", {"tax_year": 2024, "accounts": [_account(5000)]})
-    assert any("BSA" in step or "FinCEN" in step for step in required["next_steps"])
-    assert not any("BSA" in step or "FinCEN" in step for step in not_required["next_steps"])
+    # Required branch mentions the BSA E-Filing URL / FinCEN Form 114
+    assert any("BSA" in step or "bsaefiling" in step or "FinCEN" in step for step in required["next_steps"])
+    # Not-required branch explicitly says no action needed
+    assert any("No filing action needed" in step for step in not_required["next_steps"])
+
+
+def test_not_required_next_steps_mention_fatca_disambiguation():
+    result = fbar_mod.process_fbar_check("disambig", {"tax_year": 2024, "accounts": [_account(5000)]})
+    assert any("FATCA" in step or "8938" in step for step in result["next_steps"])
+
+
+def test_required_next_steps_mention_penalties():
+    result = fbar_mod.process_fbar_check("penalties", {"tax_year": 2024, "accounts": [_account(15000)]})
+    assert any("penalt" in step.lower() or "willful" in step.lower() for step in result["next_steps"])
+
+
+def test_not_required_artifact_is_review_summary_not_draft_packet():
+    result = fbar_mod.process_fbar_check("artifact-label", {"tax_year": 2024, "accounts": [_account(5000)]})
+    labels = [a["label"] for a in result["artifacts"]]
+    assert any("review summary" in lbl.lower() for lbl in labels)
+    assert not any("draft packet" in lbl.lower() for lbl in labels)

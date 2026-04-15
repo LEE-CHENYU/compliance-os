@@ -27,6 +27,16 @@ H1B_FILE_FIELDS = {
     "h1b_filing_fee_receipt_file": "h1b_filing_fee_receipt",
 }
 
+# Plain-language labels the end user can recognize when uploading. Keep in
+# sync with H1B_FILE_FIELDS — these are user-facing.
+DOC_TYPE_LABELS: dict[str, str] = {
+    "h1b_registration": "H-1B registration record (USCIS registration confirmation for the beneficiary)",
+    "h1b_status_summary": "Status summary from the attorney or employer summarizing registration and filing window dates",
+    "h1b_g28": "Form G-28 (attorney's Notice of Entry of Appearance representing the petitioner)",
+    "h1b_filing_invoice": "Filing invoice from the attorney or vendor listing fees owed for the petition",
+    "h1b_filing_fee_receipt": "Payment receipt for the USCIS filing fee (credit-card or ACH confirmation)",
+}
+
 _DOC_PATTERNS: dict[str, dict[str, str]] = {
     "h1b_registration": {
         "registration_number": r"Registration Number:\s*(.+)",
@@ -149,33 +159,24 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
     invoice = extracted.get("h1b_filing_invoice", {})
     receipt = extracted.get("h1b_filing_fee_receipt", {})
 
-    comparisons = {}
-    for name, value_a, value_b, match_type in [
-        (
-            "h1b_registration_g28_entity_name",
-            registration.get("employer_name"),
-            g28.get("client_entity_name"),
-            "entity",
-        ),
-        (
-            "h1b_registration_invoice_petitioner_name",
-            registration.get("employer_name"),
-            invoice.get("petitioner_name"),
-            "entity",
-        ),
-        (
-            "h1b_registration_receipt_signatory_name",
-            registration.get("authorized_individual_name"),
-            receipt.get("cardholder_name"),
-            "fuzzy",
-        ),
-        (
-            "h1b_invoice_receipt_amount",
-            invoice.get("total_due_amount"),
-            receipt.get("amount"),
-            "numeric",
-        ),
-    ]:
+    # Only run comparisons where both source documents were uploaded. Running
+    # a "mismatch" rule against a None value produces needs_review which fires
+    # the same rule as an actual mismatch — that's how phantom "Entity names
+    # don't align" findings appeared against a G-28 that was never uploaded.
+    comparison_specs = [
+        ("h1b_registration_g28_entity_name",
+         registration.get("employer_name"), g28.get("client_entity_name"), "entity"),
+        ("h1b_registration_invoice_petitioner_name",
+         registration.get("employer_name"), invoice.get("petitioner_name"), "entity"),
+        ("h1b_registration_receipt_signatory_name",
+         registration.get("authorized_individual_name"), receipt.get("cardholder_name"), "fuzzy"),
+        ("h1b_invoice_receipt_amount",
+         invoice.get("total_due_amount"), receipt.get("amount"), "numeric"),
+    ]
+    comparisons: dict[str, dict[str, Any]] = {}
+    for name, value_a, value_b, match_type in comparison_specs:
+        if value_a in (None, "") or value_b in (None, ""):
+            continue
         comparison = compare_fields(name, value_a, value_b, match_type)
         comparisons[name] = asdict(comparison)
 
@@ -227,10 +228,14 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
     if verdict == "incomplete":
         summary = (
             f"Only {len(documents)} of {len(expected_doc_types)} expected H-1B packet documents were uploaded. "
-            f"Upload the remaining documents ({', '.join(missing_doc_types)}) and re-run the check — "
-            f"cross-checks are unreliable on partial packets."
+            f"Upload the remaining documents ("
+            + ", ".join(DOC_TYPE_LABELS.get(dt, dt) for dt in missing_doc_types)
+            + ") and re-run the check — cross-checks are unreliable on partial packets."
         )
-        next_steps = [f"Upload the {dt} document" for dt in missing_doc_types]
+        next_steps = [
+            f"Upload the {DOC_TYPE_LABELS.get(dt, dt)}"
+            for dt in missing_doc_types
+        ]
     else:
         summary = (
             f"Guardian reviewed {len(documents)} of {len(expected_doc_types)} H-1B packet documents and found "
@@ -239,7 +244,11 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
         )
         next_steps = [finding["action"] for finding in findings[:4]]
         if not next_steps:
-            next_steps = ["The packet looks internally consistent based on the uploaded documents."]
+            next_steps = [
+                "Packet is internally consistent. Confirm your attorney has the original signed G-28 (Notice of Entry of Appearance) on file before USCIS submission.",
+                "Verify the employer is actively enrolled in E-Verify — this is required for STEM OPT continuity cases and a frequent USCIS Request-for-Evidence (RFE) trigger on H-1B petitions.",
+                "Keep the original receipt notice and track petition status at egov.uscis.gov using the receipt number (IOE/EAC/WAC/LIN/SRC format).",
+            ]
 
     report_lines = [
         f"Verdict: {verdict_label}",
