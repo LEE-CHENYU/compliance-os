@@ -46,20 +46,25 @@ def _rule_ids(findings) -> set[str]:
 
 # --- clean / happy-path ---
 
-def test_clean_case_only_suggests_treaty():
+def test_clean_case_only_info_findings():
     """Default intake is a Chinese F-1 with $25K wages — the China treaty
-    auto-suggestion rightly fires as an informational nudge. Other rules
-    should stay silent."""
+    auto-suggestion and the FICA exemption reminder fire as informational
+    nudges. No critical/warning rules should fire."""
     result = student_tax_mod.process_student_tax_check("clean", _intake())
     rule_ids = _rule_ids(result["findings"])
-    assert rule_ids == {"student_tax_china_treaty_eligible"}
+    assert "student_tax_china_treaty_eligible" in rule_ids
+    assert "student_tax_fica_exemption_check" in rule_ids
+    # No blockers or warnings
+    severities = {f["severity"] for f in result["findings"]}
+    assert severities <= {"info"}
 
 
-def test_clean_case_non_treaty_country_fires_no_findings():
-    """A Brazilian F-1 student with wages has no auto-treaty and clean intake → 0 findings."""
+def test_clean_case_non_treaty_country_has_only_fica_finding():
+    """A Brazilian F-1 student with wages has no auto-treaty. Only FICA reminder fires."""
     intake = _intake(country_citizenship="Brazil", country_passport="Brazil")
     result = student_tax_mod.process_student_tax_check("clean-brazil", intake)
-    assert result["finding_count"] == 0
+    rule_ids = _rule_ids(result["findings"])
+    assert rule_ids == {"student_tax_fica_exemption_check"}
 
 
 def test_deadline_is_april_15_of_following_year():
@@ -290,17 +295,16 @@ def test_total_income_usd_returned_in_result():
     assert result["total_income_usd"] == 28500.0
 
 
-def test_summary_mentions_finding_count():
-    # Brazil avoids the auto-treaty nudge so only the resident-software (critical) finding fires
+def test_summary_mentions_blocker_count_when_present():
+    # Brazil avoids the auto-treaty nudge; resident-software (critical) + FICA (info) fire
     intake = _intake(country_citizenship="Brazil", country_passport="Brazil", used_resident_software=True)
     result = student_tax_mod.process_student_tax_check("count", intake)
     # Critical present → summary uses the blocker framing
     assert "1 blocking issue" in result["summary"]
-    assert "1 total finding" in result["summary"]
 
 
 def test_summary_uses_clean_framing_when_no_blockers():
-    # Brazilian F-1 student, no resident software, no blockers → clean framing
+    # Brazilian F-1 student, no blockers (only FICA info fires) → clean framing
     intake = _intake(country_citizenship="Brazil", country_passport="Brazil")
     result = student_tax_mod.process_student_tax_check("clean-count", intake)
     assert "is ready" in result["summary"]

@@ -243,6 +243,11 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
             f"and {severity_counts['info']} informational items."
         )
         next_steps = [finding["action"] for finding in findings[:4]]
+        if missing_doc_types:
+            next_steps.extend(
+                f"Upload the {DOC_TYPE_LABELS.get(dt, dt)} and re-run the check — this document was not provided."
+                for dt in missing_doc_types
+            )
         if not next_steps:
             next_steps = [
                 "Packet is internally consistent. Confirm your attorney has the original signed G-28 (Notice of Entry of Appearance) on file before USCIS submission.",

@@ -86,15 +86,15 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
             )
         )
     if used_resident_software:
-        findings.append(
-            _finding(
-                rule_id="student_tax_resident_software",
-                severity="critical",
-                title="Resident-return software cannot file Form 1040-NR",
-                action="Stop using resident-return software (TurboTax, H&R Block, FreeTaxUSA) for this return. Use a nonresident-specific preparer — Sprintax and GLACIER Tax Prep are the common ones for F-1/J-1 filers — or work with a CPA who files 1040-NR.",
-                consequence="Filing Form 1040 instead of 1040-NR can create residency-status mistakes that trigger IRS notices, require amendment, and may surface during H-1B or green card adjudication.",
-            )
+        finding = _finding(
+            rule_id="student_tax_resident_software",
+            severity="critical",
+            title="Resident-return software cannot file Form 1040-NR",
+            action="Stop using resident-return software (TurboTax, H&R Block, FreeTaxUSA) for this return. Use a nonresident-specific preparer — Sprintax and GLACIER Tax Prep are the common ones for F-1/J-1 filers — or work with a CPA who files 1040-NR.",
+            consequence="Filing Form 1040 instead of 1040-NR can create residency-status mistakes that trigger IRS notices, require amendment, and may surface during H-1B or green card adjudication.",
         )
+        finding["immigration_impact"] = True
+        findings.append(finding)
     if claim_treaty_benefit and not treaty_country:
         findings.append(
             _finding(
@@ -103,6 +103,18 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
                 title="Treaty benefit selected without a treaty country",
                 action="Confirm the treaty country and article before you rely on a treaty position in the filing package.",
                 consequence="An incomplete treaty claim weakens the filing package and can delay review by a CPA or tax preparer.",
+            )
+        )
+    if claim_treaty_benefit and treaty_country.lower() == "china" and "20" in treaty_article and wage_income > 0:
+        exempt_amount = min(5000.0, wage_income)
+        taxable_after = max(wage_income - 5000.0, 0.0)
+        findings.append(
+            _finding(
+                rule_id="student_tax_china_treaty_amount",
+                severity="info",
+                title=f"Article 20(c) reduces your taxable wages by ${exempt_amount:,.0f}",
+                action=f"Apply the $5,000 Article 20(c) exemption: ${wage_income:,.0f} of wages becomes ${taxable_after:,.0f} of treaty-taxable wages. Your Form 1042-S should reflect the exempt amount (usually income code 19 or 20).",
+                consequence="If you don't state the exempt amount explicitly on the return, the IRS may not apply the treaty benefit you're entitled to.",
             )
         )
     if wage_income > 0 and federal_withholding <= 0:
@@ -143,18 +155,30 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
     # claimed a benefit they're likely eligible for). Do not auto-apply — the
     # user should make an informed election.
     is_f1_or_j1 = visa_type.upper().replace(" ", "").startswith(("F-1", "F1", "J-1", "J1"))
+    suggested_treaty_country: str | None = None
+    suggested_treaty_article: str | None = None
     if (not claim_treaty_benefit) and is_f1_or_j1 and wage_income > 0:
         if country_citizenship_key == "china":
+            exempt = min(5000.0, wage_income)
+            taxable_after = max(wage_income - 5000.0, 0.0)
+            suggested_treaty_country = "China"
+            suggested_treaty_article = "20(c)"
             findings.append(
                 _finding(
                     rule_id="student_tax_china_treaty_eligible",
                     severity="info",
-                    title="China-US treaty Article 20(c) may reduce your taxable wages",
-                    action="If you're a Chinese national on F-1/J-1 and earned student-type income, Article 20(c) typically exempts up to $5,000/yr. Confirm eligibility and whether your payer issued a Form 1042-S before claiming.",
-                    consequence=f"Not claiming an applicable treaty benefit on ${wage_income:,.0f} of wages can cost several hundred dollars of federal tax.",
+                    title="China-US treaty Article 20(c) may reduce your taxable wages by up to $5,000",
+                    action=(
+                        f"If you're a Chinese national on F-1/J-1 and earned student-type income, Article 20(c) typically exempts up to $5,000/yr. "
+                        f"On your ${wage_income:,.0f} of wages, that reduces taxable wages from ${wage_income:,.0f} to ${taxable_after:,.0f}. "
+                        f"Confirm eligibility and whether your payer issued a Form 1042-S before claiming."
+                    ),
+                    consequence=f"Not claiming this benefit on ${exempt:,.0f} of exempt income can cost several hundred dollars of federal tax.",
                 )
             )
         elif country_citizenship_key == "india":
+            suggested_treaty_country = "India"
+            suggested_treaty_article = "Article 21(2) — standard deduction"
             findings.append(
                 _finding(
                     rule_id="student_tax_india_treaty_eligible",
@@ -165,13 +189,45 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
                 )
             )
 
+    # F-1/J-1 FICA exemption reminder — students in first 5 calendar years are
+    # generally exempt. Payroll errors are common and the refund path (Form 843)
+    # is often missed.
+    if is_f1_or_j1 and wage_income > 0:
+        findings.append(
+            _finding(
+                rule_id="student_tax_fica_exemption_check",
+                severity="info",
+                title="Confirm FICA (Social Security / Medicare) was not withheld in error",
+                action="F-1 and J-1 students in their first 5 calendar years in the US are generally exempt from FICA. Check Box 4 (SS tax) and Box 6 (Medicare tax) on your W-2. If FICA was withheld, ask your employer to refund it first; if they refuse, you can file Form 843 with Form 8316 to claim a refund from the IRS.",
+                consequence="Improperly withheld FICA on a nonresident student's wages commonly costs ~7.65% of gross wages and is recoverable but only if you claim it.",
+            )
+        )
+
     if state_of_residence and state_of_employer and state_of_residence != state_of_employer:
+        # Name-specific state forms for the most common multi-state student cases
+        _STATE_FORM_HINT = {
+            "CA": "Form 540NR (Franchise Tax Board, ftb.ca.gov)",
+            "NY": "Form IT-203 (NY DTF, tax.ny.gov)",
+            "MA": "Form 1-NR/PY (Mass DOR, mass.gov/dor)",
+            "IL": "Form IL-1040 + Schedule NR (Illinois DOR, tax.illinois.gov)",
+            "NJ": "Form NJ-1040NR (NJ Division of Taxation, nj.gov/treasury/taxation)",
+            "TX": "no state income tax",
+            "FL": "no state income tax",
+            "WA": "no state income tax",
+        }
+        res_form = _STATE_FORM_HINT.get(state_of_residence, f"{state_of_residence}'s nonresident income tax return")
+        emp_form = _STATE_FORM_HINT.get(state_of_employer, f"{state_of_employer}'s nonresident income tax return")
         findings.append(
             _finding(
                 rule_id="student_tax_multistate_income",
                 severity="info",
                 title="Employer state differs from your state of residence",
-                action=f"You may need to file part-year or nonresident state returns for both {state_of_residence} and {state_of_employer}. Check each state's nonresident filing rules.",
+                action=(
+                    f"You likely need to file in both states. Resident state ({state_of_residence}): {res_form}. "
+                    f"Employer state ({state_of_employer}): {emp_form}. If all work was physically performed in your "
+                    f"state of residence ({state_of_residence}), the employer state may have no sourcing claim — confirm "
+                    f"the physical-presence rule for {state_of_employer} before filing there."
+                ),
                 consequence="Missing state returns can lead to back-tax notices from the state revenue department.",
             )
         )
@@ -281,6 +337,8 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         )
 
     critical_count = sum(1 for f in findings if f["severity"] == "critical")
+    warning_count = sum(1 for f in findings if f["severity"] == "warning")
+    info_count = sum(1 for f in findings if f["severity"] == "info")
     has_blockers = critical_count > 0
     if has_blockers:
         summary = (
@@ -288,11 +346,23 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
             f"{critical_count} blocking issue{'s' if critical_count != 1 else ''} that must be resolved before you file. "
             f"{len(findings)} total finding{'s' if len(findings) != 1 else ''} — resolve the critical ones first."
         )
-    else:
+    elif warning_count > 0:
         summary = (
             f"Your student tax package for tax year {tax_year} is ready. "
             f"Guardian prepared the Form 8843 attachment, a 1040-NR package summary, and "
-            f"flagged {len(findings)} issue{'s' if len(findings) != 1 else ''} worth checking before filing."
+            f"flagged {warning_count} issue{'s' if warning_count != 1 else ''} worth checking before filing"
+            f"{f', plus {info_count} optimization tip' if info_count == 1 else (f', plus {info_count} optimization tips' if info_count else '')}."
+        )
+    elif info_count > 0:
+        summary = (
+            f"Your student tax package for tax year {tax_year} is ready. "
+            f"Guardian prepared the Form 8843 attachment and a 1040-NR package summary, and surfaced "
+            f"{info_count} tip{'s' if info_count != 1 else ''} that could save you money or clarify next steps."
+        )
+    else:
+        summary = (
+            f"Your student tax package for tax year {tax_year} is ready. "
+            f"Guardian prepared the Form 8843 attachment and a 1040-NR package summary. No issues flagged."
         )
 
     next_steps = []
@@ -327,5 +397,7 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         "claim_treaty_benefit": claim_treaty_benefit,
         "treaty_country": treaty_country or None,
         "treaty_article": treaty_article or None,
+        "suggested_treaty_country": suggested_treaty_country,
+        "suggested_treaty_article": suggested_treaty_article,
         "total_income_usd": total_income,
     }
