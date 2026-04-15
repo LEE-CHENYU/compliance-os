@@ -7,7 +7,6 @@ import { listMarketplaceProducts, type MarketplaceProduct } from "@/lib/marketpl
 
 
 function ProductCard({ product }: { product: MarketplaceProduct }) {
-  const price = product.price_cents === 0 ? "Free" : `$${(product.price_cents / 100).toFixed(0)}`;
   const href = product.path || `/services/${product.sku}`;
   const categoryLabel = (product.category || "service").replace(/_/g, " ");
   const name = product.public_name || product.name;
@@ -20,16 +19,11 @@ function ProductCard({ product }: { product: MarketplaceProduct }) {
     <article className={`rounded-[28px] border p-6 shadow-[0_20px_60px_rgba(61,84,128,0.06)] ${
       product.active ? "border-white/80 bg-white/88" : "border-[#dbe5f2] bg-[#f7faff]"
     }`}>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
-            {categoryLabel}
-          </div>
-          <h2 className="mt-3 text-[26px] font-bold tracking-tight text-[#0d1424]">{name}</h2>
+      <div>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
+          {categoryLabel}
         </div>
-        <div className="rounded-2xl border border-[#dbe5f2] bg-[#eef5ff] px-4 py-2 text-[14px] font-bold text-[#315aa5]">
-          {price}
-        </div>
+        <h2 className="mt-3 text-[26px] font-bold tracking-tight text-[#0d1424]">{name}</h2>
       </div>
 
       {headline ? <p className="mt-4 text-[15px] leading-7 text-[#435774]">{headline}</p> : null}

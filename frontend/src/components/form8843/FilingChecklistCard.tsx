@@ -199,7 +199,7 @@ export default function FilingChecklistCard({
               <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8ca2cc]">Optional upsell</div>
               <div className="mt-2 text-[20px] font-bold">Let Guardian handle the mailing</div>
               <p className="mt-3 text-[14px] leading-6 text-[#cad6ec]">
-                Assisted mailing is available for this order at ${(instructions.mailing_service_price_cents / 100).toFixed(0)} once the beta is enabled for your account.
+                Assisted mailing is available for this order once the beta is enabled for your account.
               </p>
             </div>
           ) : null}

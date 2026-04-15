@@ -18,14 +18,6 @@ import {
 
 export const dynamic = "force-dynamic";
 
-function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(cents / 100);
-}
-
 export default function MarketplaceQuestionnairePage() {
   const router = useRouter();
   const params = useParams<{ sku: string }>();
@@ -166,12 +158,7 @@ export default function MarketplaceQuestionnairePage() {
                 {config?.description || "Guardian uses this checklist to route the case toward the right attorney-backed workflow."}
               </p>
             </div>
-            {product ? (
-              <div className="rounded-[24px] border border-[#dbe5f2] bg-[#f8fbff] px-5 py-4 text-right">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Starting from</div>
-                <div className="mt-2 text-[26px] font-bold text-[#0d1424]">{formatPrice(product.price_cents)}</div>
-              </div>
-            ) : null}
+            {null}
           </div>
 
           {error ? (

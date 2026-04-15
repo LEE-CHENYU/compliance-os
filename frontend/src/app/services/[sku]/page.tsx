@@ -179,7 +179,6 @@ export default function ServiceDetailPage() {
     );
   }
 
-  const price = product.price_cents === 0 ? "Free" : `$${(product.price_cents / 100).toFixed(0)}`;
   const isLiveWorkflow = LIVE_WORKFLOW_SKUS.has(product.sku);
   const canStart = product.active && isLiveWorkflow;
   const displayName = product.public_name || product.name;
@@ -210,10 +209,6 @@ export default function ServiceDetailPage() {
               </div>
               <h1 className="mt-3 text-[42px] font-extrabold tracking-tight text-[#0d1424]">{displayName}</h1>
               {displayHeadline ? <p className="mt-4 max-w-3xl text-[18px] leading-8 text-[#435774]">{displayHeadline}</p> : null}
-            </div>
-            <div className="rounded-[24px] border border-[#dbe5f2] bg-[#f8fbff] px-5 py-4 text-right">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Price</div>
-              <div className="mt-2 text-[26px] font-bold text-[#0d1424]">{price}</div>
             </div>
           </div>
 

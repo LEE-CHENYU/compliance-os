@@ -25,16 +25,6 @@ function formatDate(value: string | null): string {
   });
 }
 
-function formatPrice(cents: number): string {
-  if (!cents) {
-    return "Free";
-  }
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(cents / 100);
-}
-
 function displayProductName(order: MarketplaceOrder): string {
   return order.product.public_name || order.product.name;
 }
@@ -230,14 +220,10 @@ export default function AccountOrdersPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl border border-[#e4edf7] bg-[#fbfdff] px-4 py-3">
                     <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Ordered</div>
                     <div className="mt-2 text-[14px] font-medium text-[#23344f]">{formatDate(order.created_at)}</div>
-                  </div>
-                  <div className="rounded-2xl border border-[#e4edf7] bg-[#fbfdff] px-4 py-3">
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Price</div>
-                    <div className="mt-2 text-[14px] font-medium text-[#23344f]">{formatPrice(order.amount_cents)}</div>
                   </div>
                   <div className="rounded-2xl border border-[#e4edf7] bg-[#fbfdff] px-4 py-3">
                     <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">Mailing</div>
