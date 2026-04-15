@@ -53,3 +53,6 @@ scripts/rubric_cache/
 out/rubric-loop-*.json
 out/rubric-loop-*.md
 /tmp/rubric-loop-workspace/
+
+# Check quality loop
+scripts/check_quality_cache/
