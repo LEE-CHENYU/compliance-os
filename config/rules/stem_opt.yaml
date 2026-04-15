@@ -102,6 +102,10 @@ rules:
         operator: eq
         value: "stem_opt"
         source: answers
+      - field: i983_evaluation_completed
+        operator: neq
+        value: "yes"
+        source: answers
     severity: warning
     finding:
       title: "12-month I-983 self-evaluation may be due"

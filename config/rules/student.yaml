@@ -69,6 +69,10 @@ rules:
         operator: gt
         value: 11
         source: answers
+      - field: opt_approved
+        operator: neq
+        value: "yes"
+        source: answers
     severity: critical
     finding:
       title: "12+ months of full-time CPT — OPT eligibility lost"
@@ -118,6 +122,14 @@ rules:
         operator: lt
         value: "60_days_from_now"
         source: extraction_a
+      - field: opt_application_status
+        operator: neq
+        value: "filed"
+        source: answers
+      - field: opt_application_status
+        operator: neq
+        value: "approved"
+        source: answers
     severity: warning
     finding:
       title: "Program end date is approaching"

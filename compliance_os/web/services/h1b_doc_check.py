@@ -39,48 +39,48 @@ DOC_TYPE_LABELS: dict[str, str] = {
 
 _DOC_PATTERNS: dict[str, dict[str, str]] = {
     "h1b_registration": {
-        "registration_number": r"Registration Number:\s*(.+)",
-        "employer_name": r"Employer Name:\s*(.+)",
-        "employer_ein": r"Employer EIN:\s*(.+)",
-        "authorized_individual_name": r"Authorized Individual Name:\s*(.+)",
-        "authorized_individual_title": r"Authorized Individual Title:\s*(.+)",
+        "registration_number": r"Registration Number:\s*([^\r\n]+)",
+        "employer_name": r"Employer Name:\s*([^\r\n]+)",
+        "employer_ein": r"Employer EIN:\s*([^\r\n]+)",
+        "authorized_individual_name": r"Authorized Individual Name:\s*([^\r\n]+)",
+        "authorized_individual_title": r"Authorized Individual Title:\s*([^\r\n]+)",
     },
     "h1b_status_summary": {
-        "status_title": r"Status Title:\s*(.+)",
-        "registration_window_end_date": r"Registration Window End Date:\s*(.+)",
-        "petition_filing_window_end_date": r"Petition Filing Window End Date:\s*(.+)",
-        "employment_start_date": r"Employment Start Date:\s*(.+)",
-        "law_firm_name": r"Law Firm Name:\s*(.+)",
+        "status_title": r"Status Title:\s*([^\r\n]+)",
+        "registration_window_end_date": r"Registration Window End Date:\s*([^\r\n]+)",
+        "petition_filing_window_end_date": r"Petition Filing Window End Date:\s*([^\r\n]+)",
+        "employment_start_date": r"Employment Start Date:\s*([^\r\n]+)",
+        "law_firm_name": r"Law Firm Name:\s*([^\r\n]+)",
     },
     "h1b_g28": {
-        "representative_name": r"Representative Name:\s*(.+)",
-        "law_firm_name": r"Law Firm Name:\s*(.+)",
-        "representative_email": r"Representative Email:\s*(.+)",
-        "client_name": r"Client Name:\s*(.+)",
-        "client_entity_name": r"Client Entity Name:\s*(.+)",
-        "client_email": r"Client Email:\s*(.+)",
+        "representative_name": r"Representative Name:\s*([^\r\n]+)",
+        "law_firm_name": r"Law Firm Name:\s*([^\r\n]+)",
+        "representative_email": r"Representative Email:\s*([^\r\n]+)",
+        "client_name": r"Client Name:\s*([^\r\n]+)",
+        "client_entity_name": r"Client Entity Name:\s*([^\r\n]+)",
+        "client_email": r"Client Email:\s*([^\r\n]+)",
     },
     "h1b_filing_invoice": {
-        "invoice_number": r"Invoice Number:\s*(.+)",
-        "invoice_date": r"Invoice Date:\s*(.+)",
-        "petitioner_name": r"Petitioner Name:\s*(.+)",
-        "beneficiary_name": r"Beneficiary Name:\s*(.+)",
-        "total_due_amount": r"Total Due Amount:\s*(.+)",
+        "invoice_number": r"Invoice Number:\s*([^\r\n]+)",
+        "invoice_date": r"Invoice Date:\s*([^\r\n]+)",
+        "petitioner_name": r"Petitioner Name:\s*([^\r\n]+)",
+        "beneficiary_name": r"Beneficiary Name:\s*([^\r\n]+)",
+        "total_due_amount": r"Total Due Amount:\s*([^\r\n]+)",
         # Fee breakdown — useful for comparing to actual receipts. See also
         # _derive_invoice_total_charged below, which sums these into a
         # 'total_charged' field the comparator can actually use.
-        "legal_fee_amount": r"Legal Fee(?: Amount)?:\s*(.+)",
-        "uscis_fee_amount": r"USCIS Fee(?: Amount)?:\s*(.+)",
-        "payment_status": r"Payment Status:\s*(.+)",
+        "legal_fee_amount": r"Legal Fee(?: Amount)?:\s*([^\r\n]+)",
+        "uscis_fee_amount": r"USCIS Fee(?: Amount)?:\s*([^\r\n]+)",
+        "payment_status": r"Payment Status:\s*([^\r\n]+)",
     },
     "h1b_filing_fee_receipt": {
-        "transaction_id": r"Transaction ID:\s*(.+)",
-        "transaction_date": r"Transaction Date:\s*(.+)",
-        "response_message": r"Response Message:\s*(.+)",
-        "approval_code": r"Approval Code:\s*(.+)",
-        "cardholder_name": r"Cardholder Name:\s*(.+)",
-        "amount": r"Amount:\s*(.+)",
-        "description": r"Description:\s*(.+)",
+        "transaction_id": r"Transaction ID:\s*([^\r\n]+)",
+        "transaction_date": r"Transaction Date:\s*([^\r\n]+)",
+        "response_message": r"Response Message:\s*([^\r\n]+)",
+        "approval_code": r"Approval Code:\s*([^\r\n]+)",
+        "cardholder_name": r"Cardholder Name:\s*([^\r\n]+)",
+        "amount": r"Amount:\s*([^\r\n]+)",
+        "description": r"Description:\s*([^\r\n]+)",
     },
 }
 
@@ -223,16 +223,18 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
 
     # For invoice↔receipt amount, compare what the invoice CHARGED (sum of
     # legal + USCIS fees) against the receipt's payment amount. Using
-    # 'total_due_amount' is wrong for paid invoices: a paid invoice shows 0
-    # due, which never matches the receipt, producing a meaningless mismatch.
+    # 'total_due_amount' is wrong for paid invoices — a paid invoice shows 0
+    # due, which never matches the receipt. If the invoice has no itemized
+    # fees AND its residual balance is 0 (indicating it's been paid), skip
+    # the comparison entirely — we have no meaningful invoice total to check.
     invoice_total_charged = _derive_invoice_total_charged(invoice)
-    # Fall back to total_due_amount only if we didn't find fee breakdowns —
-    # legacy invoices without itemized fees still have this field populated.
-    invoice_compare_amount = (
-        invoice_total_charged
-        if invoice_total_charged is not None
-        else _parse_money(invoice.get("total_due_amount"))
-    )
+    if invoice_total_charged is not None:
+        invoice_compare_amount: float | None = invoice_total_charged
+    else:
+        due_raw = _parse_money(invoice.get("total_due_amount"))
+        payment_status = str(invoice.get("payment_status") or "").strip().lower()
+        looks_already_paid = due_raw == 0.0 or "paid" in payment_status
+        invoice_compare_amount = None if looks_already_paid else due_raw
 
     # Only run comparisons where both source documents were uploaded. Running
     # a "mismatch" rule against a None value produces needs_review which fires

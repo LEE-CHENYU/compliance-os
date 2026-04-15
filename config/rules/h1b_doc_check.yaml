@@ -9,11 +9,34 @@ rules:
         field: missing_registration_packet
         operator: eq
         value: true
+      - source: answers
+        field: already_filed
+        operator: eq
+        value: false
     finding:
       title: "Registration document missing"
       action: "Upload the H-1B registration record before relying on the packet review."
       consequence: "Without the registration document, Guardian cannot verify the employer identity or registration number."
       immigration_impact: true
+
+  - id: h1b_missing_registration_packet_post_filing
+    track: h1b_doc_check
+    type: completeness
+    severity: info
+    conditions:
+      - source: answers
+        field: missing_registration_packet
+        operator: eq
+        value: true
+      - source: answers
+        field: already_filed
+        operator: eq
+        value: true
+    finding:
+      title: "Registration document not uploaded for this review"
+      action: "If you want Guardian to cross-check the registration against your receipt, upload the H-1B registration record. Otherwise no action required — your filing receipt indicates the petition has already been submitted."
+      consequence: "This is informational only. Guardian cannot cross-check entity/EIN/signatory against the receipt without the registration document."
+      immigration_impact: false
 
   - id: h1b_missing_registration_number
     track: h1b_doc_check

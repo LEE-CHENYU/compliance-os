@@ -59,6 +59,15 @@ def compare_fields(
     a = str(value_a).strip()
     b = str(value_b).strip()
 
+    # Post-strip empty strings behave like None: whitespace-only values are not
+    # meaningful data. Previously _exact would return match on ""=="", a
+    # "match on nothing" verdict that the rule engine then treated as valid.
+    if not a or not b:
+        return ComparisonResult(
+            field_name, value_a, value_b, match_type, "needs_review", 0.0,
+            "One or both values are empty or whitespace-only",
+        )
+
     if match_type == "exact":
         return _exact(field_name, a, b)
     if match_type == "fuzzy":

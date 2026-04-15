@@ -146,6 +146,10 @@ rules:
         operator: eq
         value: "smllc"
         source: answers
+      - field: form_5472_filed
+        operator: neq
+        value: "yes"
+        source: answers
     severity: critical
     finding:
       title: "Potential cumulative $25K/year Form 5472 penalties"

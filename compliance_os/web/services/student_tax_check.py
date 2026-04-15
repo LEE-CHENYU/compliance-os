@@ -107,8 +107,23 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
 
     findings: list[dict[str, Any]] = []
 
+    # If the user explicitly says they already filed the correct form (e.g.,
+    # switched to 1040 after SPT crossover), downgrade the crossover finding.
+    already_filed_correct_return = bool(intake_data.get("already_filed_correct_return"))
+
     # SPT crossover — fires before any other rule because it changes the form path
-    if spt_crossover_warning:
+    if spt_crossover_warning and already_filed_correct_return:
+        category = "J-1 scholar" if is_j1_scholar else "F-1/J-1 student"
+        findings.append(
+            _finding(
+                rule_id="student_tax_spt_crossover_acknowledged",
+                severity="info",
+                title=f"Noted: you crossed the {spt_exempt_years}-year {category} SPT exempt window",
+                action="You indicated you already filed the correct return for your residency status. No action required here. Keep a copy of the correct return (1040 if resident, 1040-NR if still nonresident) and any Form 8833 treaty-based disclosures.",
+                consequence="This is informational context only.",
+            )
+        )
+    elif spt_crossover_warning:
         category = "J-1 scholar" if is_j1_scholar else "F-1/J-1 student"
         exempt_label = f"{spt_exempt_years} calendar years"
         findings.append(
