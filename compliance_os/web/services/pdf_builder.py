@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
+import textwrap
 from typing import Iterable
 
 import fitz
+
+
+# Approximate width budget: 504pt text box @ 10.5pt helvetica ≈ 86 chars.
+# Leave margin for wider glyphs so full sentences don't clip.
+_WRAP_WIDTH = 80
 
 
 def _normalize_lines(lines: Iterable[str]) -> list[str]:
@@ -18,8 +24,27 @@ def _normalize_lines(lines: Iterable[str]) -> list[str]:
     return normalized
 
 
+def _wrap(line: str) -> list[str]:
+    """Soft-wrap a logical line into physical lines that fit the text box."""
+    if not line:
+        return [""]
+    wrapped = textwrap.wrap(
+        line,
+        width=_WRAP_WIDTH,
+        break_long_words=False,
+        break_on_hyphens=False,
+        replace_whitespace=False,
+    )
+    return wrapped or [line]
+
+
 def build_text_pdf(title: str, lines: Iterable[str], *, subtitle: str | None = None) -> bytes:
-    """Render a simple text-first PDF packet."""
+    """Render a simple text-first PDF packet.
+
+    Long lines are soft-wrapped so content isn't silently clipped by the
+    fixed-size text box. A single logical line can span multiple physical
+    lines in the rendered PDF.
+    """
     doc = fitz.open()
     page = doc.new_page(width=612, height=792)
 
@@ -37,20 +62,24 @@ def build_text_pdf(title: str, lines: Iterable[str], *, subtitle: str | None = N
     else:
         y += 8
 
-    for line in _normalize_lines(lines):
-        if y > 734:
-            page = new_page()
-            y = 56
-        if not line:
+    for logical_line in _normalize_lines(lines):
+        if not logical_line:
+            if y > 734:
+                page = new_page()
+                y = 56
             y += 10
             continue
-        page.insert_textbox(
-            fitz.Rect(margin_x, y, 558, y + 20),
-            line,
-            fontsize=10.5,
-            fontname="helv",
-        )
-        y += 15
+        for physical_line in _wrap(logical_line):
+            if y > 734:
+                page = new_page()
+                y = 56
+            page.insert_textbox(
+                fitz.Rect(margin_x, y, 558, y + 20),
+                physical_line,
+                fontsize=10.5,
+                fontname="helv",
+            )
+            y += 15
 
     pdf_bytes = doc.tobytes(garbage=4, deflate=True)
     doc.close()

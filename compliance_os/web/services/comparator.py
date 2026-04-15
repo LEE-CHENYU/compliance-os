@@ -9,11 +9,28 @@ from rapidfuzz import fuzz
 
 # Legal entity suffixes that imply a specific entity type. A different
 # suffix signals a different legal entity even if the base name matches.
+# We match after punctuation is stripped so "L.L.C." and "LLC" normalize alike.
 _ENTITY_SUFFIX_PATTERN = re.compile(
-    r"\b(inc|incorporated|llc|l\.l\.c\.|corp|corporation|co|company|ltd|limited|lp|l\.p\.|llp|l\.l\.p\.|pllc|plc|gmbh|sa|ag|pty|pte)\b",
+    r"\b(inc|incorporated|llc|corp|corporation|co|company|ltd|limited|lp|llp|pllc|plc|gmbh|sa|ag|pty|pte)\b",
     re.IGNORECASE,
 )
+# Collapse sequences like "L.L.C." or "L.P." (letter-period initials) into
+# letter-only form "LLC" / "LP". Run before _PUNCT_PATTERN so the resulting
+# token stays glued.
+_DOTTED_INITIALS_PATTERN = re.compile(r"(?:\b[A-Za-z]\.){2,}")
 _PUNCT_PATTERN = re.compile(r"[.,;]+")
+
+
+def _collapse_dotted_initials(text: str) -> str:
+    return _DOTTED_INITIALS_PATTERN.sub(lambda m: m.group(0).replace(".", ""), text)
+# Map variants → canonical suffix so "Ltd"/"Limited", "Inc"/"Incorporated",
+# "Corp"/"Corporation", "Co"/"Company" are treated as the same entity type.
+_SUFFIX_CANONICAL: dict[str, str] = {
+    "incorporated": "inc",
+    "corporation": "corp",
+    "company": "co",
+    "limited": "ltd",
+}
 
 
 @dataclass
@@ -67,17 +84,25 @@ def _fuzzy(name: str, a: str, b: str) -> ComparisonResult:
     return ComparisonResult(name, a, b, "fuzzy", status, ratio)
 
 
+def _normalize_for_entity(text: str) -> str:
+    """Lowercase, collapse dotted initials (L.L.C. → LLC), drop punctuation, collapse whitespace."""
+    collapsed = _collapse_dotted_initials(text.lower())
+    return " ".join(_PUNCT_PATTERN.sub(" ", collapsed).split())
+
+
 def _entity_suffix(text: str) -> str | None:
-    """Return the normalized entity suffix if any, else None."""
-    match = _ENTITY_SUFFIX_PATTERN.search(text)
+    """Return the canonical entity suffix if any, else None."""
+    normalized = _normalize_for_entity(text)
+    match = _ENTITY_SUFFIX_PATTERN.search(normalized)
     if not match:
         return None
-    return match.group(1).lower().replace(".", "")
+    raw = match.group(1).lower()
+    return _SUFFIX_CANONICAL.get(raw, raw)
 
 
 def _strip_entity_suffix(text: str) -> str:
-    stripped = _ENTITY_SUFFIX_PATTERN.sub("", text)
-    stripped = _PUNCT_PATTERN.sub("", stripped)
+    normalized = _normalize_for_entity(text)
+    stripped = _ENTITY_SUFFIX_PATTERN.sub("", normalized)
     return " ".join(stripped.split())
 
 
@@ -85,8 +110,8 @@ def _entity(name: str, a: str, b: str) -> ComparisonResult:
     """Compare legal entity names. Flag suffix mismatches (Inc vs LLC) as mismatches."""
     suffix_a = _entity_suffix(a)
     suffix_b = _entity_suffix(b)
-    base_a = _strip_entity_suffix(a).lower()
-    base_b = _strip_entity_suffix(b).lower()
+    base_a = _strip_entity_suffix(a)
+    base_b = _strip_entity_suffix(b)
     base_ratio = fuzz.token_sort_ratio(base_a, base_b) / 100.0
 
     if suffix_a and suffix_b and suffix_a != suffix_b:
