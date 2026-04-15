@@ -33,14 +33,35 @@ def test_numeric_match():
     assert r.status == "match"
 
 
-def test_numeric_within_tolerance():
+def test_numeric_near_miss_surfaces_as_needs_review():
+    """Visible-dollar diffs no longer silently swallowed — surface to rule engine."""
     r = compare_fields("compensation", "85000", "85200", "numeric")
+    assert r.status == "needs_review"
+    assert r.detail and "200" in r.detail
+
+
+def test_numeric_rounding_diff_is_match():
+    """Sub-dollar (cents-level) differences still match — rounding only."""
+    r = compare_fields("amount", "1000.00", "1000.50", "numeric")
     assert r.status == "match"
 
 
 def test_numeric_mismatch():
     r = compare_fields("compensation", "85000", "52000", "numeric")
     assert r.status == "mismatch"
+
+
+def test_numeric_exact_match():
+    r = compare_fields("amount", "2780", "2780", "numeric")
+    assert r.status == "match"
+    assert r.confidence == 1.0
+
+
+def test_numeric_ten_dollar_difference_surfaces():
+    """The H-1B amount $10 difference scenario — was silently swallowed before."""
+    r = compare_fields("h1b_invoice_receipt_amount", "$2780", "$2790", "numeric")
+    assert r.status == "needs_review"
+    assert r.detail and "$10" in r.detail
 
 
 def test_missing_value():

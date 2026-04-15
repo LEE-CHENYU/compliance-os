@@ -182,6 +182,30 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
 
     reference_day = today or date.today()
     petition_window_end = _parse_iso_date(status_summary.get("petition_filing_window_end_date"))
+
+    # Amendment / change-of-employer detection. If status_summary status_title
+    # signals "Amended" / "Transfer" / "Change of Employer", the registration
+    # may name the PRIOR employer while G-28 / invoice name the new one.
+    # Treating this as a single-employer entity-mismatch produces actively
+    # harmful advice (the Claude judge caught this).
+    status_title = str(status_summary.get("status_title") or "").lower()
+    is_amendment_or_transfer = any(
+        kw in status_title for kw in ("amend", "transfer", "change of employer", "porting")
+    )
+    if is_amendment_or_transfer:
+        # Suppress entity comparisons that would compare old vs new employer
+        comparisons.pop("h1b_registration_g28_entity_name", None)
+        comparisons.pop("h1b_registration_invoice_petitioner_name", None)
+        # Cross-check the NEW-employer documents against each other instead:
+        # G-28 client_entity_name should match invoice petitioner_name.
+        g28_entity = g28.get("client_entity_name")
+        invoice_petitioner = invoice.get("petitioner_name")
+        if g28_entity and invoice_petitioner:
+            new_employer_compare = compare_fields(
+                "h1b_g28_invoice_entity_name", g28_entity, invoice_petitioner, "entity",
+            )
+            comparisons["h1b_g28_invoice_entity_name"] = asdict(new_employer_compare)
+
     answers = {
         "registration_number": registration.get("registration_number"),
         "petition_window_closed": bool(petition_window_end and petition_window_end < reference_day.isoformat()),
@@ -189,6 +213,7 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
         "missing_g28": not g28,
         "missing_invoice": not invoice,
         "missing_receipt": not receipt,
+        "is_amendment_or_transfer": is_amendment_or_transfer,
     }
 
     findings = [asdict(finding) for finding in _engine().evaluate(EvaluationContext(
@@ -198,6 +223,31 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
         comparisons=comparisons,
         today=reference_day,
     ))]
+
+    if is_amendment_or_transfer:
+        # Inject amendment-specific context that the rule engine can't easily
+        # express (cross-cutting documentation requirements per 8 CFR §214.2(h)
+        # and AC21 portability under INA §214(n)).
+        findings.append({
+            "rule_id": "h1b_amendment_context",
+            "severity": "warning",
+            "category": "amendment",
+            "title": "Amendment / change-of-employer petition — entity-name mismatches are expected, but this packet needs amendment-specific documents",
+            "action": (
+                "Because this is an amendment/transfer, expect the original USCIS registration to name the prior employer. "
+                "An adjudicator will want: (1) a NEW or recently-certified LCA from the new employer (ETA Form 9035), "
+                "(2) the I-797 approval notice from the prior H-1B petition as proof of valid status, "
+                "(3) current I-94 record, "
+                "(4) the new employer's support / specialty-occupation letter, "
+                "(5) the new employer's own H-1B registration receipt if cap-subject. "
+                "Also confirm AC21 portability eligibility under INA §214(n) — the beneficiary can begin work for the new "
+                "employer once USCIS receives a properly-filed amendment, but only if the prior status was valid at the time."
+            ),
+            "consequence": "Without the new employer's LCA and prior-approval evidence, USCIS will RFE or deny — and any work "
+            "performed for the new employer before the amendment is properly filed may be unauthorized employment under "
+            "INA §274A.",
+            "immigration_impact": True,
+        })
 
     severity_counts = {
         severity: sum(1 for finding in findings if finding["severity"] == severity)

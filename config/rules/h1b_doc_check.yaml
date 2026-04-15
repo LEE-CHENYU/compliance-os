@@ -55,7 +55,7 @@ rules:
         value:
     finding:
       title: "Petitioner name mismatch between registration and invoice"
-      action: "Confirm the exact legal entity name filing the petition and obtain a corrected invoice so every document names the same entity (including the Inc/LLC/Corp suffix). This must be resolved before submitting the packet."
+      action: "Verify the employer's exact legal entity name against state incorporation records (Secretary of State business search) or their IRS EIN letter (CP-575). Then contact your employer's HR or the attorney who issued the invoice to have the invoice reissued with the same entity name that appears on the USCIS registration. Every H-1B document must name the same legal entity, including Inc/LLC/Corp suffix. Resolve this before submitting the packet."
       consequence: "USCIS will reject a petition whose documents name different legal entities — including Inc vs LLC — regardless of whether the base name matches."
       immigration_impact: true
 

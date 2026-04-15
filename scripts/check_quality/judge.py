@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -199,14 +200,35 @@ def judge_case(
     client = client or anthropic.Anthropic()
     user_prompt = _build_user_prompt(scenario_description, intake, service_output, rubric)
 
-    with client.messages.stream(
-        model=JUDGE_MODEL,
-        max_tokens=16384,  # adaptive thinking eats into this budget — keep headroom
-        system=SYSTEM_PROMPT,
-        thinking={"type": "adaptive"},
-        messages=[{"role": "user", "content": user_prompt}],
-    ) as stream:
-        final_message = stream.get_final_message()
+    # Retry on transient network errors — Anthropic streaming connections
+    # sometimes drop mid-response with RemoteProtocolError. Exponential backoff,
+    # 4 attempts.
+    last_err: Exception | None = None
+    for attempt in range(4):
+        try:
+            with client.messages.stream(
+                model=JUDGE_MODEL,
+                max_tokens=16384,
+                system=SYSTEM_PROMPT,
+                thinking={"type": "adaptive"},
+                messages=[{"role": "user", "content": user_prompt}],
+            ) as stream:
+                final_message = stream.get_final_message()
+            break
+        except (anthropic.APIConnectionError, anthropic.APITimeoutError, Exception) as exc:
+            # Catch broad to also handle httpx.RemoteProtocolError raised
+            # through anthropic streaming.
+            err_name = type(exc).__name__
+            if "ProtocolError" not in err_name and not isinstance(
+                exc, (anthropic.APIConnectionError, anthropic.APITimeoutError)
+            ):
+                raise  # not a retryable error
+            last_err = exc
+            sleep_for = 2 ** attempt
+            print(f"\n    [retry {attempt + 1}/4 after {err_name}, sleeping {sleep_for}s]", flush=True)
+            time.sleep(sleep_for)
+    else:
+        raise RuntimeError(f"Judge call failed after 4 attempts: {last_err}")
 
     text_blocks = [b.text for b in final_message.content if getattr(b, "type", None) == "text"]
     raw_text = "\n\n".join(text_blocks)

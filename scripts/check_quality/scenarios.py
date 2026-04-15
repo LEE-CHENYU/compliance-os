@@ -492,6 +492,7 @@ def student_tax_diversity_scenarios() -> list[Scenario]:
                 "tax_year": 2024,
                 "full_name": "Hans Weber",
                 "visa_type": "J-1",
+                "j1_category": "research scholar",
                 "school_name": "Caltech",
                 "country_citizenship": "Germany",
                 "country_passport": "Germany",

@@ -25,10 +25,23 @@ def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, 
     requires_fbar = aggregate > 10000
 
     if requires_fbar:
+        # Form 8938 (FATCA) thresholds are higher than FBAR but vary by filing
+        # status and residence:
+        #   Single/MFS in US: $50K end-of-year OR $75K at any time
+        #   MFJ in US:        $100K end-of-year OR $150K at any time
+        #   Single abroad:    $200K end-of-year OR $300K at any time
+        #   MFJ abroad:       $400K end-of-year OR $600K at any time
+        # If aggregate exceeds the lowest threshold ($50K), Form 8938 is likely
+        # also triggered — flag explicitly rather than just disambiguate.
+        also_likely_8938 = aggregate > 50000
         summary = (
             f"FinCEN filing is required for tax year {tax_year}. "
             f"Your reported aggregate maximum balance was ${aggregate:,.2f}, which is above the $10,000 threshold."
         )
+        if also_likely_8938:
+            summary += (
+                f" At ${aggregate:,.2f} you also likely meet Form 8938 (FATCA) thresholds — both filings may be required."
+            )
         next_steps = [
             "Use the BSA E-Filing System (bsaefiling.fincen.treas.gov) to submit FinCEN Form 114 online.",
             "List every foreign account, not just those individually over $10,000 — the threshold is on the aggregate maximum balance.",
@@ -36,8 +49,17 @@ def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, 
             "Review each account's maximum balance and account number before filing.",
             f"File by {due_date.isoformat()} (automatic extension from April 15) and keep the BSA confirmation page.",
             "Non-filing penalties can reach ~$16K/year (non-willful) or the greater of ~$129K or 50% of balance (willful).",
-            "FBAR (FinCEN 114) is filed with FinCEN, not the IRS. It is separate from FATCA Form 8938, which has a higher threshold and is attached to the 1040 return.",
+            "On your Form 1040, also check the Schedule B Part III box for foreign accounts (line 7a) — failure to do so is a separate notice trigger.",
         ]
+        if also_likely_8938:
+            next_steps.extend([
+                f"At ${aggregate:,.2f} aggregate, you likely also need Form 8938 (FATCA) attached to your Form 1040. Thresholds: single US filer $50K end-of-year or $75K any time; MFJ US $100K/$150K; abroad $200K/$300K (single) or $400K/$600K (MFJ). Confirm your filing-status threshold.",
+                "FBAR and Form 8938 cover overlapping but not identical accounts — both may need to be filed independently. Form 8938 penalties: $10K initial + $10K/30 days continuing (max $50K). Reasonable-cause exception requires written explanation.",
+            ])
+        else:
+            next_steps.append(
+                "FBAR (FinCEN 114) is filed with FinCEN, not the IRS. It is separate from FATCA Form 8938, which has a higher threshold and is attached to the 1040 return.",
+            )
     else:
         summary = (
             f"Based on the accounts entered, your aggregate maximum balance for tax year {tax_year} was "

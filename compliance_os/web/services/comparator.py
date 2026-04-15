@@ -130,17 +130,34 @@ def _entity(name: str, a: str, b: str) -> ComparisonResult:
 
 
 def _numeric(name: str, a: str, b: str) -> ComparisonResult:
+    """Three-way numeric comparison: exact match, near-miss (small absolute or
+    rounding diff), or mismatch. Near-miss returns status='needs_review' so the
+    rule engine can fire a soft finding rather than silently swallowing the diff.
+    """
     try:
         va = float(a.replace(",", "").replace("$", ""))
         vb = float(b.replace(",", "").replace("$", ""))
     except ValueError:
         return ComparisonResult(name, a, b, "numeric", "needs_review", 0.0, "Could not parse numbers")
 
-    if va == 0 and vb == 0:
+    if va == vb:
         return ComparisonResult(name, a, b, "numeric", "match", 1.0)
 
+    abs_diff = abs(va - vb)
     max_val = max(abs(va), abs(vb))
-    diff_pct = abs(va - vb) / max_val if max_val > 0 else 0
-    within_tolerance = diff_pct <= 0.02 or abs(va - vb) <= 500
+    diff_pct = abs_diff / max_val if max_val > 0 else 0
     confidence = max(1.0 - diff_pct, 0.0)
-    return ComparisonResult(name, a, b, "numeric", "match" if within_tolerance else "mismatch", confidence)
+
+    # Cents-level rounding (under $1): treat as match.
+    if abs_diff < 1.0:
+        return ComparisonResult(name, a, b, "numeric", "match", confidence,
+                                f"Values differ by ${abs_diff:.2f} — rounding only")
+    # Near-miss: any visible-dollar difference up to ~$500 absolute or 2% pct.
+    # Was previously silently swallowed by a $500/2% match. Now surfaces as
+    # needs_review so the rule engine fires a soft finding.
+    if abs_diff <= 500 or diff_pct <= 0.02:
+        return ComparisonResult(name, a, b, "numeric", "needs_review", confidence,
+                                f"Values differ by ${abs_diff:.2f} ({diff_pct:.1%}). "
+                                f"Verify which figure is correct before relying on either.")
+    return ComparisonResult(name, a, b, "numeric", "mismatch", confidence,
+                            f"Values differ by ${abs_diff:.2f} ({diff_pct:.1%})")

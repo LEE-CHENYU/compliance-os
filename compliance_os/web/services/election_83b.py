@@ -127,6 +127,12 @@ def process_election_83b(
             f"Your taxable spread at grant is ${taxable_spread:,.2f} (FMV minus amount paid, per share, times shares). "
             f"This is the amount you'd include in ordinary income now under the 83(b) election."
         )
+        # Detect ISO early-exercise / high-spread cases — these trigger AMT
+        # exposure that pure-restricted-stock grants don't.
+        property_lower = property_description.lower()
+        is_iso_early_exercise = any(
+            kw in property_lower for kw in ("iso", "incentive stock option", "early-exercise", "early exercised", "early-exercised")
+        )
         next_steps = [
             "Before mailing: confirm you want to proceed — an 83(b) election is irrevocable once filed. If the stock later drops in value or you don't vest, you cannot get the tax paid back.",
             "Print the election letter and cover sheet.",
@@ -137,6 +143,22 @@ def process_election_83b(
             "Note: for grants made in 2020 and later, the IRS no longer requires you to attach a copy of the election to your annual Form 1040. Mailing to the service center is sufficient.",
             spread_line,
         ]
+        if taxable_spread >= 25000:
+            # High-spread ordinary-income case — meaningful tax owed, may require estimated-tax payment
+            est_top_bracket_tax = int(taxable_spread * 0.32)  # rough top-bracket estimate
+            next_steps.append(
+                f"Material spread (${taxable_spread:,.0f}) means real tax owed in this year. At ordinary-income rates "
+                f"this could be ${est_top_bracket_tax:,}+ in federal tax. Consider Form 1040-ES (estimated tax) for the "
+                f"current year to avoid an IRC §6654 underpayment penalty, especially if your withholding doesn't cover the spread."
+            )
+        if is_iso_early_exercise:
+            next_steps.append(
+                "ISO early-exercise note: a properly-filed 83(b) election on early-exercised ISOs effectively converts the "
+                "spread into AMT preference income RATHER than ordinary income (per IRC §56(b)(3)). If FMV equals exercise "
+                "price (zero spread), no AMT impact. If there's a spread, the AMT preference can trigger Alternative Minimum "
+                "Tax — model both regular tax and AMT before assuming this election saves money. Consult a CPA familiar "
+                "with ISO/AMT mechanics."
+            )
 
     state, service_center = _infer_service_center(taxpayer_address)
 
