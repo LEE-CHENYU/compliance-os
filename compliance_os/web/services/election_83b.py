@@ -91,6 +91,10 @@ def process_election_83b(
     grant_in_future = grant_date > reference_day
     deadline_passed = filing_deadline < reference_day
     days_past_deadline = (reference_day - filing_deadline).days if deadline_passed else 0
+    # 'already_mailed' is an explicit user signal that they filed a copy and
+    # are now reviewing the record. Flips the framing of deadline_passed from
+    # 'block — do not mail' to 'informational — deadline was X days ago'.
+    already_mailed = bool(intake_data.get("already_mailed"))
 
     if grant_in_future:
         summary = (
@@ -98,12 +102,21 @@ def process_election_83b(
             f"Confirm the grant date with your employer before mailing anything — an 83(b) election can only be filed for a grant that has actually occurred."
         )
         verdict = "block"
+    elif deadline_passed and already_mailed:
+        summary = (
+            f"For reference: the 30-day deadline was {filing_deadline.isoformat()} "
+            f"({days_past_deadline} day{'s' if days_past_deadline != 1 else ''} ago). "
+            f"Since you indicated the election was already mailed, keep your Certified Mail proof and a signed copy for records. "
+            f"If the election was mailed within the 30-day window, no further action is required."
+        )
+        verdict = "pass"
     elif deadline_passed:
         summary = (
             f"URGENT: the 30-day deadline for this 83(b) election has already passed. "
             f"The grant date was {grant_date.isoformat()} and the deadline was {filing_deadline.isoformat()} "
             f"({days_past_deadline} day{'s' if days_past_deadline != 1 else ''} ago). "
-            f"A late 83(b) election is generally invalid and cannot be cured, but speak with a tax advisor before filing anything."
+            f"A late 83(b) election is generally invalid and cannot be cured, but speak with a tax advisor before filing anything. "
+            f"If you actually mailed the election within the 30-day window, re-submit intake with 'already_mailed: true' to suppress this warning."
         )
         verdict = "block"
     else:

@@ -198,6 +198,88 @@ def test_mixed_pdf_and_text_packet():
 # Verdict: pass / investigate / block / incomplete
 # =======================
 
+def test_registration_number_malformed_value_discarded():
+    """Regression: extractor used to grab literal 'H-1B#' label fragments as
+    the registration_number from table-layout PDFs. The validator now discards
+    obviously malformed matches so the rule engine correctly reports the
+    number as missing instead of acting on garbage."""
+    from compliance_os.web.services.h1b_doc_check import extract_h1b_document_fields
+    # Source PDF has the label but the value is on the next line; the greedy
+    # regex grabs 'H-1B#' instead of the real number
+    text = "Registration Number: H-1B#\nH1BR2026ABC1234567\n"
+    fields = extract_h1b_document_fields("h1b_registration", text)
+    assert "registration_number" not in fields or fields["registration_number"] != "H-1B#"
+
+
+def test_registration_number_valid_format_kept():
+    from compliance_os.web.services.h1b_doc_check import extract_h1b_document_fields
+    text = "Registration Number: H1BR2026ABC1234567\n"
+    fields = extract_h1b_document_fields("h1b_registration", text)
+    assert fields["registration_number"] == "H1BR2026ABC1234567"
+
+
+def test_invoice_amount_comparison_uses_fees_not_residual_balance():
+    """Regression: comparing 'total_due_amount' (residual balance after
+    payment) against the receipt amount always mismatched on paid invoices.
+    Now we compare sum of legal_fee_amount + uscis_fee_amount."""
+    order = "invoice-fees"
+    docs = [
+        _text_doc("h1b_registration", order,
+            registration_number="H1BR2026CLEAN123",
+            employer_name="Acme Corp",
+            authorized_individual_name="Alice"),
+        _text_doc("h1b_g28", order, client_entity_name="Acme Corp"),
+        _text_doc("h1b_filing_invoice", order,
+            petitioner_name="Acme Corp",
+            beneficiary_name="Wei Zhang",
+            total_due_amount="0"),  # paid — residual is 0
+        _text_doc("h1b_filing_fee_receipt", order,
+            cardholder_name="Alice",
+            amount="515"),
+    ]
+    # Inject legal + uscis fee amounts by adding them as raw text in invoice doc
+    from compliance_os.web.services.h1b_doc_check import save_uploaded_document
+    invoice_text = (
+        "Invoice Number: INV-2026\n"
+        "Petitioner Name: Acme Corp\n"
+        "Beneficiary Name: Wei Zhang\n"
+        "Legal Fee Amount: 300\n"
+        "USCIS Fee Amount: 215\n"
+        "Total Due Amount: 0\n"
+    )
+    docs = [d for d in docs if d["doc_type"] != "h1b_filing_invoice"]
+    path = save_uploaded_document(order, "invoice-fees.txt", invoice_text.encode("utf-8"))
+    docs.append({"doc_type": "h1b_filing_invoice", "filename": "invoice-fees.txt", "path": str(path)})
+
+    result = h1b_mod.process_h1b_doc_check(order, {"documents": docs},
+                                           today=date(2026, 4, 1))
+    # 300 + 215 = 515, receipt is 515 → match, no amount_mismatch finding
+    assert "h1b_amount_mismatch" not in _rule_ids(result)
+
+
+def test_already_filed_detection_flips_window_closed_to_info():
+    """Regression: users reviewing a successfully-filed packet saw 'window
+    closed' as a critical BLOCK verdict. With filing evidence (approval code
+    + transaction ID) the rule now fires at info severity instead."""
+    order = "already-filed-eu"
+    docs = _full_clean_packet(order)
+    # Status summary with past window
+    docs = [d for d in docs if d["doc_type"] != "h1b_status_summary"]
+    docs.append(_text_doc("h1b_status_summary", order,
+        status_title="Selected",
+        petition_filing_window_end_date="2025-06-30"))
+    result = h1b_mod.process_h1b_doc_check(order, {"documents": docs},
+                                           today=date(2026, 4, 1))
+    closed_finding = next(
+        (f for f in result["findings"] if f["rule_id"].startswith("h1b_window_closed_already")),
+        None,
+    )
+    assert closed_finding is not None
+    assert closed_finding["severity"] == "info"
+    # Should NOT be the critical variant
+    assert not any(f["rule_id"] == "h1b_window_closed_not_filed" for f in result["findings"])
+
+
 def test_verdict_pass_when_clean_packet():
     docs = _full_clean_packet("verdict-pass")
     result = h1b_mod.process_h1b_doc_check("verdict-pass", {"documents": docs},
@@ -349,16 +431,41 @@ def test_rule_amount_mismatch_warning():
     assert "h1b_amount_mismatch" in _rule_ids(result)
 
 
-def test_rule_window_closed_fires_for_past_date():
-    order = "window-closed"
+def test_rule_window_closed_already_filed_fires_info_for_past_date_with_receipt():
+    """When the receipt shows filing evidence, window-closed becomes informational."""
+    order = "window-closed-filed"
     docs = _full_clean_packet(order)
+    # Clean packet already has a receipt with approval code → filing-evidence detected.
+    # Override status to indicate window end is in the past.
     docs = [d for d in docs if d["doc_type"] != "h1b_status_summary"]
     docs.append(_text_doc("h1b_status_summary", order,
         status_title="Selected",
-        petition_filing_window_end_date="2020-06-30"))  # well in the past
+        petition_filing_window_end_date="2020-06-30"))
     result = h1b_mod.process_h1b_doc_check(order, {"documents": docs},
                                            today=date(2026, 4, 1))
-    assert "h1b_window_closed" in _rule_ids(result)
+    rule_ids = _rule_ids(result)
+    assert "h1b_window_closed_already_filed" in rule_ids
+    assert "h1b_window_closed_not_filed" not in rule_ids
+
+
+def test_rule_window_closed_not_filed_fires_critical_without_receipt():
+    """No receipt → no filing evidence → critical warning fires."""
+    order = "window-closed-unfiled"
+    docs = [
+        _text_doc("h1b_registration", order,
+            registration_number="H1BR2026ABC123",
+            employer_name="Acme Corp",
+            authorized_individual_name="Alice"),
+        _text_doc("h1b_status_summary", order,
+            status_title="Selected",
+            petition_filing_window_end_date="2020-06-30"),
+        _text_doc("h1b_g28", order, client_entity_name="Acme Corp"),
+    ]
+    result = h1b_mod.process_h1b_doc_check(order, {"documents": docs},
+                                           today=date(2026, 4, 1))
+    rule_ids = _rule_ids(result)
+    assert "h1b_window_closed_not_filed" in rule_ids
+    assert "h1b_window_closed_already_filed" not in rule_ids
 
 
 def test_rule_window_closed_does_not_fire_for_future_date():
@@ -366,7 +473,9 @@ def test_rule_window_closed_does_not_fire_for_future_date():
     docs = _full_clean_packet(order)
     result = h1b_mod.process_h1b_doc_check(order, {"documents": docs},
                                            today=date(2026, 4, 1))
-    assert "h1b_window_closed" not in _rule_ids(result)
+    rule_ids = _rule_ids(result)
+    assert "h1b_window_closed_not_filed" not in rule_ids
+    assert "h1b_window_closed_already_filed" not in rule_ids
 
 
 # =======================

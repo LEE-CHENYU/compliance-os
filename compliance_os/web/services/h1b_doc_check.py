@@ -66,6 +66,12 @@ _DOC_PATTERNS: dict[str, dict[str, str]] = {
         "petitioner_name": r"Petitioner Name:\s*(.+)",
         "beneficiary_name": r"Beneficiary Name:\s*(.+)",
         "total_due_amount": r"Total Due Amount:\s*(.+)",
+        # Fee breakdown — useful for comparing to actual receipts. See also
+        # _derive_invoice_total_charged below, which sums these into a
+        # 'total_charged' field the comparator can actually use.
+        "legal_fee_amount": r"Legal Fee(?: Amount)?:\s*(.+)",
+        "uscis_fee_amount": r"USCIS Fee(?: Amount)?:\s*(.+)",
+        "payment_status": r"Payment Status:\s*(.+)",
     },
     "h1b_filing_fee_receipt": {
         "transaction_id": r"Transaction ID:\s*(.+)",
@@ -79,6 +85,54 @@ _DOC_PATTERNS: dict[str, dict[str, str]] = {
 }
 
 
+# USCIS H-1B registration numbers have an H1B prefix and a multi-character
+# identifier. The extraction regex sometimes grabs a literal label fragment
+# like "H-1B#" from a multi-line PDF. This validator accepts reasonable
+# formats (H1B..., H1BR...) with at least 3 identifying characters after
+# the prefix, and rejects obvious garbage like "H1B#" or bare prefixes.
+_REGISTRATION_NUMBER_RE = re.compile(
+    r"^(H1BR?|H-1B)[-_]?[A-Z0-9][A-Z0-9\-_]{2,}$",
+    re.IGNORECASE,
+)
+
+
+def _looks_like_registration_number(value: str) -> bool:
+    cleaned = re.sub(r"[\s]", "", value)
+    if not _REGISTRATION_NUMBER_RE.match(cleaned):
+        return False
+    # Require at least one digit somewhere — real numbers always have them.
+    return bool(re.search(r"\d", cleaned))
+
+
+def _parse_money(value: Any) -> float | None:
+    if value is None:
+        return None
+    raw = re.sub(r"[,$\s]", "", str(value))
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _derive_invoice_total_charged(fields: dict[str, Any]) -> float | None:
+    """Compute what the invoice actually CHARGED (legal + USCIS fees), NOT the
+    residual balance. 'total_due_amount' on a paid invoice is 0 — meaningless to
+    compare against a receipt that shows the actual payment."""
+    legal = _parse_money(fields.get("legal_fee_amount"))
+    uscis = _parse_money(fields.get("uscis_fee_amount"))
+    if legal is None and uscis is None:
+        return None
+    return (legal or 0.0) + (uscis or 0.0)
+
+
+def _has_filing_evidence(fields: dict[str, Any]) -> bool:
+    """Does the receipt show the user already successfully filed?"""
+    approval = str(fields.get("approval_code") or "").strip()
+    response = str(fields.get("response_message") or "").strip().lower()
+    txn_id = str(fields.get("transaction_id") or "").strip()
+    return bool(approval) or response in {"approval", "approved", "success"} or bool(txn_id)
+
+
 def _extract_value(pattern: str, text: str) -> str | None:
     match = re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE)
     if not match:
@@ -88,11 +142,19 @@ def _extract_value(pattern: str, text: str) -> str | None:
 
 def extract_h1b_document_fields(doc_type: str, text: str) -> dict[str, Any]:
     patterns = _DOC_PATTERNS.get(doc_type, {})
-    return {
-        field: value
-        for field, pattern in patterns.items()
-        if (value := _extract_value(pattern, text))
-    }
+    fields: dict[str, Any] = {}
+    for field_name, pattern in patterns.items():
+        value = _extract_value(pattern, text)
+        if not value:
+            continue
+        # Post-extraction validation: reject obviously malformed matches so the
+        # regex doesn't silently hand rules a label fragment instead of a real
+        # value. Today we only validate registration_number; extend per field
+        # as other brittle formats surface.
+        if field_name == "registration_number" and not _looks_like_registration_number(value):
+            continue
+        fields[field_name] = value
+    return fields
 
 
 def _read_document_text(path: Path) -> str:
@@ -159,6 +221,19 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
     invoice = extracted.get("h1b_filing_invoice", {})
     receipt = extracted.get("h1b_filing_fee_receipt", {})
 
+    # For invoice↔receipt amount, compare what the invoice CHARGED (sum of
+    # legal + USCIS fees) against the receipt's payment amount. Using
+    # 'total_due_amount' is wrong for paid invoices: a paid invoice shows 0
+    # due, which never matches the receipt, producing a meaningless mismatch.
+    invoice_total_charged = _derive_invoice_total_charged(invoice)
+    # Fall back to total_due_amount only if we didn't find fee breakdowns —
+    # legacy invoices without itemized fees still have this field populated.
+    invoice_compare_amount = (
+        invoice_total_charged
+        if invoice_total_charged is not None
+        else _parse_money(invoice.get("total_due_amount"))
+    )
+
     # Only run comparisons where both source documents were uploaded. Running
     # a "mismatch" rule against a None value produces needs_review which fires
     # the same rule as an actual mismatch — that's how phantom "Entity names
@@ -171,7 +246,7 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
         ("h1b_registration_receipt_signatory_name",
          registration.get("authorized_individual_name"), receipt.get("cardholder_name"), "fuzzy"),
         ("h1b_invoice_receipt_amount",
-         invoice.get("total_due_amount"), receipt.get("amount"), "numeric"),
+         invoice_compare_amount, _parse_money(receipt.get("amount")), "numeric"),
     ]
     comparisons: dict[str, dict[str, Any]] = {}
     for name, value_a, value_b, match_type in comparison_specs:
@@ -206,9 +281,16 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
             )
             comparisons["h1b_g28_invoice_entity_name"] = asdict(new_employer_compare)
 
+    # If the receipt shows filing evidence (transaction ID + approval), the
+    # user has already filed. That flips the framing of several rules — e.g.,
+    # 'petition window closed' is a warning to BLOCK a filing when you haven't
+    # filed, but merely a timeline fact when you already did.
+    already_filed = _has_filing_evidence(receipt)
+
     answers = {
         "registration_number": registration.get("registration_number"),
         "petition_window_closed": bool(petition_window_end and petition_window_end < reference_day.isoformat()),
+        "already_filed": already_filed,
         "missing_registration_packet": not registration,
         "missing_g28": not g28,
         "missing_invoice": not invoice,

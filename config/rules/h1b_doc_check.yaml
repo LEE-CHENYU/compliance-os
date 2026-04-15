@@ -87,7 +87,7 @@ rules:
       action: "Resolve the fee discrepancy before submitting the packet."
       consequence: "Fee mismatches can delay filing if the wrong amount was paid."
 
-  - id: h1b_window_closed
+  - id: h1b_window_closed_not_filed
     track: h1b_doc_check
     type: timing
     severity: critical
@@ -96,8 +96,31 @@ rules:
         field: petition_window_closed
         operator: eq
         value: true
+      - source: answers
+        field: already_filed
+        operator: eq
+        value: false
     finding:
-      title: "The petition filing window appears to be closed"
-      action: "Confirm the filing calendar immediately and do not assume the packet is still timely."
-      consequence: "A missed H-1B filing window can stop the petition from moving forward."
+      title: "The petition filing window appears to be closed and no filing evidence was detected"
+      action: "Confirm the filing calendar and the petition status. If you have a receipt number or approval notice, upload it. Otherwise do not file — the window for this fiscal year is past."
+      consequence: "Filing after the window usually means the petition cannot be accepted for this fiscal year."
       immigration_impact: true
+
+  - id: h1b_window_closed_already_filed
+    track: h1b_doc_check
+    type: timing
+    severity: info
+    conditions:
+      - source: answers
+        field: petition_window_closed
+        operator: eq
+        value: true
+      - source: answers
+        field: already_filed
+        operator: eq
+        value: true
+    finding:
+      title: "For reference: the petition filing window for this fiscal year has closed"
+      action: "No action required — your payment receipt indicates you already filed. Keep the receipt and any I-797 approval notice for your records."
+      consequence: "This is informational context only; you filed during the open window."
+      immigration_impact: false
