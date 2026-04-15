@@ -63,12 +63,17 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
     treaty_article = str(intake_data.get("treaty_article") or "").strip()
     used_resident_software = bool(intake_data.get("used_resident_software"))
 
+    taxpayer_id_present = bool(str(intake_data.get("taxpayer_id_number") or "").strip())
+    has_1042s = bool(intake_data.get("has_1042s"))
+    state_of_residence = str(intake_data.get("state_of_residence") or "").strip().upper()
+    state_of_employer = str(intake_data.get("state_of_employer") or "").strip().upper()
+
     findings: list[dict[str, Any]] = []
     if total_income <= 0:
         findings.append(
             _finding(
                 rule_id="student_tax_zero_income",
-                severity="medium",
+                severity="warning",
                 title="Income looks like a standalone Form 8843 case",
                 action="Confirm whether you had any U.S. wages, scholarship income, or taxable payments. If income was truly zero, the free Form 8843 flow may be enough.",
                 consequence="Users with no U.S. income usually do not need a full 1040-NR package, so this order may be more than you need.",
@@ -78,7 +83,7 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         findings.append(
             _finding(
                 rule_id="student_tax_resident_software",
-                severity="high",
+                severity="critical",
                 title="Resident-return software may route you to Form 1040 instead of 1040-NR",
                 action="Double-check that your preparer or software is using the nonresident return path before filing.",
                 consequence="Filing Form 1040 instead of 1040-NR can create residency-status mistakes and amendment work later.",
@@ -88,7 +93,7 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         findings.append(
             _finding(
                 rule_id="student_tax_missing_treaty_country",
-                severity="medium",
+                severity="warning",
                 title="Treaty benefit selected without a treaty country",
                 action="Confirm the treaty country and article before you rely on a treaty position in the filing package.",
                 consequence="An incomplete treaty claim weakens the filing package and can delay review by a CPA or tax preparer.",
@@ -98,10 +103,40 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         findings.append(
             _finding(
                 rule_id="student_tax_no_withholding",
-                severity="low",
+                severity="info",
                 title="No federal withholding entered for wage income",
                 action="Check your W-2 or payroll records to confirm whether withholding is truly zero.",
                 consequence="Missing withholding data can distort the draft payment/refund expectation in the package summary.",
+            )
+        )
+    if total_income > 0 and not taxpayer_id_present:
+        findings.append(
+            _finding(
+                rule_id="student_tax_missing_taxpayer_id",
+                severity="warning",
+                title="No SSN or ITIN entered",
+                action="A 1040-NR return requires an SSN or ITIN on the return. If you do not have one, file Form W-7 to request an ITIN alongside the return.",
+                consequence="A return filed without a valid SSN/ITIN will be rejected by the IRS.",
+            )
+        )
+    if claim_treaty_benefit and not has_1042s:
+        findings.append(
+            _finding(
+                rule_id="student_tax_treaty_without_1042s",
+                severity="warning",
+                title="Treaty benefit claimed without a 1042-S",
+                action="If treaty-exempt income was paid, you should have received a Form 1042-S. Confirm with your payer before the return is filed.",
+                consequence="A treaty claim without a 1042-S is often challenged and can delay processing.",
+            )
+        )
+    if state_of_residence and state_of_employer and state_of_residence != state_of_employer:
+        findings.append(
+            _finding(
+                rule_id="student_tax_multistate_income",
+                severity="info",
+                title="Employer state differs from your state of residence",
+                action=f"You may need to file part-year or nonresident state returns for both {state_of_residence} and {state_of_employer}. Check each state's nonresident filing rules.",
+                consequence="Missing state returns can lead to back-tax notices from the state revenue department.",
             )
         )
 

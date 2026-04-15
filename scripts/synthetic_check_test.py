@@ -235,7 +235,7 @@ def run_fbar_below_threshold() -> None:
     })
     print(f"summary: {result['summary']}")
     print(f"requires_fbar: {result['requires_fbar']}")
-    print(f"aggregate: ${result['aggregate_max_balance_usd']:,}")
+    print(f"aggregate: ${result['aggregate_max_balance_usd']:,.2f}")
     print(f"deadline: {result['filing_deadline']}")
     print("Next steps:")
     for s in result["next_steps"]:
@@ -255,7 +255,7 @@ def run_fbar_above_threshold() -> None:
     })
     print(f"summary: {result['summary']}")
     print(f"requires_fbar: {result['requires_fbar']}")
-    print(f"aggregate: ${result['aggregate_max_balance_usd']:,}")
+    print(f"aggregate: ${result['aggregate_max_balance_usd']:,.2f}")
     print(f"deadline: {result['filing_deadline']}")
 
 

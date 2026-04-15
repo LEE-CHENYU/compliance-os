@@ -19,7 +19,7 @@ def _fbar_due_date(tax_year: int) -> date:
 
 def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, Any]:
     accounts = intake_data.get("accounts") or []
-    aggregate = int(sum(float(account.get("max_balance_usd") or 0) for account in accounts))
+    aggregate = round(sum(float(account.get("max_balance_usd") or 0) for account in accounts), 2)
     tax_year = int(intake_data.get("tax_year") or date.today().year - 1)
     due_date = _fbar_due_date(tax_year)
     requires_fbar = aggregate > 10000
@@ -27,7 +27,7 @@ def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, 
     if requires_fbar:
         summary = (
             f"FinCEN filing is required for tax year {tax_year}. "
-            f"Your reported aggregate maximum balance was ${aggregate:,}, which is above the $10,000 threshold."
+            f"Your reported aggregate maximum balance was ${aggregate:,.2f}, which is above the $10,000 threshold."
         )
         next_steps = [
             "Use the BSA E-Filing System to submit FinCEN Form 114 online.",
@@ -37,7 +37,7 @@ def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, 
     else:
         summary = (
             f"Based on the accounts entered, your aggregate maximum balance for tax year {tax_year} was "
-            f"${aggregate:,}, which does not trigger an FBAR filing requirement."
+            f"${aggregate:,.2f}, which does not trigger an FBAR filing requirement."
         )
         next_steps = [
             "Keep a record of the balances you used in case the account mix changes later.",

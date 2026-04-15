@@ -202,21 +202,59 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
         severity: sum(1 for finding in findings if finding["severity"] == severity)
         for severity in ("critical", "warning", "info")
     }
-    summary = (
-        f"Guardian reviewed {len(documents)} H-1B packet documents and found "
-        f"{severity_counts['critical']} critical, {severity_counts['warning']} warning, "
-        f"and {severity_counts['info']} informational items."
-    )
-    next_steps = [finding["action"] for finding in findings[:4]]
-    if not next_steps:
-        next_steps = ["The packet looks internally consistent based on the uploaded documents."]
+
+    expected_doc_types = list(H1B_FILE_FIELDS.values())
+    uploaded_doc_types = {document["doc_type"] for document in document_summary}
+    missing_doc_types = [dt for dt in expected_doc_types if dt not in uploaded_doc_types]
+    packet_complete = not missing_doc_types
+
+    if not packet_complete and len(documents) < 3:
+        verdict = "incomplete"
+    elif severity_counts["critical"] > 0:
+        verdict = "block"
+    elif severity_counts["warning"] > 0:
+        verdict = "investigate"
+    else:
+        verdict = "pass"
+
+    verdict_label = {
+        "pass": "PASS — packet looks internally consistent",
+        "investigate": "INVESTIGATE — warnings found, review before filing",
+        "block": "BLOCK — critical issues found, do not file as-is",
+        "incomplete": "INCOMPLETE — upload remaining documents before filing",
+    }[verdict]
+
+    if verdict == "incomplete":
+        summary = (
+            f"Only {len(documents)} of {len(expected_doc_types)} expected H-1B packet documents were uploaded. "
+            f"Upload the remaining documents ({', '.join(missing_doc_types)}) and re-run the check — "
+            f"cross-checks are unreliable on partial packets."
+        )
+        next_steps = [f"Upload the {dt} document" for dt in missing_doc_types]
+    else:
+        summary = (
+            f"Guardian reviewed {len(documents)} of {len(expected_doc_types)} H-1B packet documents and found "
+            f"{severity_counts['critical']} critical, {severity_counts['warning']} warning, "
+            f"and {severity_counts['info']} informational items."
+        )
+        next_steps = [finding["action"] for finding in findings[:4]]
+        if not next_steps:
+            next_steps = ["The packet looks internally consistent based on the uploaded documents."]
 
     report_lines = [
+        f"Verdict: {verdict_label}",
+        "",
+        f"Packet completeness: {len(uploaded_doc_types)} of {len(expected_doc_types)} documents uploaded",
+    ]
+    if missing_doc_types:
+        report_lines.append(f"  Missing: {', '.join(missing_doc_types)}")
+    report_lines.extend([
+        "",
         "Snapshot",
         summary,
         "",
         "Findings",
-    ]
+    ])
     for finding in findings:
         report_lines.extend(
             [
@@ -240,6 +278,9 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
 
     return {
         "summary": summary,
+        "verdict": verdict,
+        "packet_complete": packet_complete,
+        "missing_doc_types": missing_doc_types,
         "findings": findings,
         "finding_count": len(findings),
         "document_summary": document_summary,
