@@ -50,6 +50,9 @@ def _iter_files(folder: Path) -> list[Path]:
             continue
         if p.name in _IGNORE_NAMES:
             continue
+        # macOS AppleDouble resource-fork files and other dotfiles
+        if p.name.startswith("._") or p.name.startswith("."):
+            continue
         if p.suffix.lower() not in _DOC_EXTS:
             continue
         files.append(p)
