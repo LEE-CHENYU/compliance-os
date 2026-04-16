@@ -81,6 +81,15 @@ app.include_router(marketplace_router.router)
 app.include_router(attorney_router.router)
 
 
+# Mount hosted MCP endpoint (SSE transport for Claude Desktop / Codex)
+try:
+    from compliance_os.mcp_hosted import create_mcp_app
+
+    app.mount("/mcp", create_mcp_app())
+except ImportError:
+    pass  # mcp package not installed — hosted endpoint unavailable
+
+
 @app.get("/healthz")
 def healthz() -> dict:
     return {"ok": True}

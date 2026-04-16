@@ -51,9 +51,28 @@ def _is_local_api() -> bool:
 
 
 def _resolve_token() -> str:
-    """Return the configured token, or auto-generate a dev JWT for localhost."""
+    """Return the best available auth token.
+
+    Priority:
+    1. Hosted MCP client token (set by SSE/HTTP middleware per-request)
+    2. GUARDIAN_TOKEN env var (set in MCP config)
+    3. Auto-generated dev JWT (localhost only, reads from local SQLite)
+    """
+    # 1. Hosted MCP client token (per-request, from HTTP headers)
+    try:
+        from compliance_os.mcp_hosted import get_mcp_client_token
+
+        client_token = get_mcp_client_token()
+        if client_token:
+            return client_token
+    except ImportError:
+        pass
+
+    # 2. Env var
     if GUARDIAN_TOKEN:
         return GUARDIAN_TOKEN
+
+    # 3. Auto-generate for localhost
     if not _is_local_api():
         return ""
     try:
