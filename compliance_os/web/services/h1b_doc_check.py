@@ -275,7 +275,13 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
             comparisons.pop("h1b_registration_invoice_petitioner_name", None)
 
     reference_day = today or date.today()
-    petition_window_end = _parse_iso_date(status_summary.get("petition_filing_window_end_date"))
+    petition_window_end_str = _parse_iso_date(status_summary.get("petition_filing_window_end_date"))
+    petition_window_end_date: date | None = None
+    if petition_window_end_str:
+        try:
+            petition_window_end_date = date.fromisoformat(petition_window_end_str)
+        except (TypeError, ValueError):
+            pass
 
     # Amendment / change-of-employer detection. If status_summary status_title
     # signals "Amended" / "Transfer" / "Change of Employer", the registration
@@ -308,7 +314,7 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
 
     answers = {
         "registration_number": registration.get("registration_number"),
-        "petition_window_closed": bool(petition_window_end and petition_window_end < reference_day.isoformat()),
+        "petition_window_closed": bool(petition_window_end_date and petition_window_end_date < reference_day),
         "already_filed": already_filed,
         "missing_registration_packet": not registration,
         "missing_g28": not g28,

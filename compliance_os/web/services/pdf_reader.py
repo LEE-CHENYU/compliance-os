@@ -74,6 +74,9 @@ def extract_first_page(file_path: str) -> str:
             text = page.get_text()
         doc.close()
         return text
-    except Exception:
-        pass
-    return ""
+    except FileNotFoundError:
+        return ""
+    except (ValueError, RuntimeError, OSError) as exc:
+        import logging
+        logging.getLogger(__name__).warning("PDF extraction failed for %s: %s", file_path, exc)
+        return ""

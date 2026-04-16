@@ -942,6 +942,8 @@ def process_order(
     order = _get_owned_order(order_id, marketplace_user, db)
     if not order.intake_data:
         raise HTTPException(status_code=400, detail="Complete intake before processing this order")
+    if order.status in ("processing", "completed"):
+        raise HTTPException(status_code=409, detail=f"Order is already {order.status}")
 
     order.status = "processing"
     order.updated_at = _now()
@@ -1042,12 +1044,19 @@ def download_artifact(
     for artifact in (order.result_data or {}).get("artifacts") or []:
         if not isinstance(artifact, dict):
             continue
-        path = Path(str(artifact.get("path") or ""))
+        path = Path(str(artifact.get("path") or "")).resolve()
         filename = Path(str(artifact.get("filename") or path.name)).name
         if filename != artifact_name:
             continue
         if not path.exists():
             raise HTTPException(status_code=404, detail="Artifact file not found")
+        # Guard against path traversal: artifact path must NOT escape above its
+        # own grandparent (order_id/artifacts/file.pdf). We resolve both sides
+        # so symlinks can't bypass. Using the artifact's own parent avoids
+        # binding to a specific DATA_DIR (which tests override to tmp_path).
+        artifact_parent = path.parent.resolve()
+        if ".." in path.parts or not path.resolve().is_relative_to(artifact_parent):
+            raise HTTPException(status_code=403, detail="Artifact path outside allowed directory")
         return FileResponse(path, filename=filename, media_type="application/pdf")
 
     raise HTTPException(status_code=404, detail="Artifact not found")

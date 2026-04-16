@@ -338,7 +338,7 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         if is_f1_or_j1_student:
             findings.append(
                 _finding(
-                    rule_id="student_tax_fica_exemption_check",
+                    rule_id="student_tax_fica_exemption_check_student",
                     severity="info",
                     title="Confirm FICA (Social Security / Medicare) was not withheld in error",
                     action="F-1 and J-1 students in their first 5 calendar years in the US are generally exempt from FICA under IRC §3121(b)(19). Check Box 4 (SS tax) and Box 6 (Medicare tax) on your W-2. If FICA was withheld, ask your employer to refund it first; if they refuse, file Form 843 with Form 8316 to claim a refund from the IRS.",
@@ -348,7 +348,7 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         elif is_j1_scholar:
             findings.append(
                 _finding(
-                    rule_id="student_tax_fica_exemption_check",
+                    rule_id="student_tax_fica_exemption_check_scholar",
                     severity="info",
                     title="Confirm FICA was not withheld — J-1 scholar/researcher exempt window is 2 calendar years",
                     action="J-1 research scholars, teachers, and trainees are exempt from FICA only during their first 2 calendar years in the US (IRC §7701(b)(5)(D)(i) for SPT + §3121(b)(19) FICA exemption). Check Box 4 (SS tax) and Box 6 (Medicare tax) on your W-2. If FICA was withheld during the exempt period, request a refund from your employer or file Form 843 + Form 8316.",

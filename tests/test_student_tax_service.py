@@ -53,7 +53,7 @@ def test_clean_case_only_info_findings():
     result = student_tax_mod.process_student_tax_check("clean", _intake())
     rule_ids = _rule_ids(result["findings"])
     assert "student_tax_china_treaty_eligible" in rule_ids
-    assert "student_tax_fica_exemption_check" in rule_ids
+    assert "student_tax_fica_exemption_check_student" in rule_ids
     # No blockers or warnings
     severities = {f["severity"] for f in result["findings"]}
     assert severities <= {"info"}
@@ -64,7 +64,7 @@ def test_clean_case_non_treaty_country_has_only_fica_finding():
     intake = _intake(country_citizenship="Brazil", country_passport="Brazil")
     result = student_tax_mod.process_student_tax_check("clean-brazil", intake)
     rule_ids = _rule_ids(result["findings"])
-    assert rule_ids == {"student_tax_fica_exemption_check"}
+    assert rule_ids == {"student_tax_fica_exemption_check_student"}
 
 
 def test_deadline_is_april_15_of_following_year():

@@ -45,13 +45,19 @@ def _normalize_visa_code(value: object) -> str:
     return text.split()[0]
 
 
-def _years_in_us(arrival_date: date | None, tax_year: int = 2025) -> int:
+def _default_tax_year() -> int:
+    return date.today().year - 1
+
+
+def _years_in_us(arrival_date: date | None, tax_year: int | None = None) -> int:
+    tax_year = tax_year or _default_tax_year()
     if arrival_date is None:
         return 0
     return max(0, tax_year - arrival_date.year + 1)
 
 
-def _is_standard_student_exempt_case(inputs: dict[str, object], *, tax_year: int = 2025) -> bool:
+def _is_standard_student_exempt_case(inputs: dict[str, object], *, tax_year: int | None = None) -> bool:
+    tax_year = tax_year or int(inputs.get("tax_year") or _default_tax_year())
     visa_code = _normalize_visa_code(inputs.get("visa_type") or inputs.get("current_nonimmigrant_status"))
     if visa_code not in {"F-1", "J-1", "M-1", "Q-1", "F", "J", "M", "Q"}:
         return False
@@ -62,7 +68,8 @@ def _is_standard_student_exempt_case(inputs: dict[str, object], *, tax_year: int
     return 0 < years_in_us <= 5
 
 
-def _resolve_days_excludable_current(inputs: dict[str, object], *, tax_year: int = 2025) -> int:
+def _resolve_days_excludable_current(inputs: dict[str, object], *, tax_year: int | None = None) -> int:
+    tax_year = tax_year or int(inputs.get("tax_year") or _default_tax_year())
     raw_value = inputs.get("days_excludable_current")
     if raw_value not in {None, ""}:
         try:
