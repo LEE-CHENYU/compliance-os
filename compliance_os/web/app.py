@@ -23,6 +23,7 @@ from compliance_os.web.routers import form_fill as form_fill_router
 from compliance_os.web.routers import form8843 as form8843_router
 from compliance_os.web.routers import marketplace as marketplace_router
 from compliance_os.web.routers import attorney as attorney_router
+from compliance_os.web.routers import share as share_router
 
 
 @asynccontextmanager
@@ -79,6 +80,7 @@ app.include_router(form_fill_router.legacy_router)
 app.include_router(form8843_router.router)
 app.include_router(marketplace_router.router)
 app.include_router(attorney_router.router)
+app.include_router(share_router.router)
 
 
 # Mount hosted MCP endpoint (SSE transport for Claude Desktop / Codex)
