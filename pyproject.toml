@@ -51,6 +51,7 @@ agent = [
 [project.scripts]
 cos = "compliance_os.cli:main"
 data-room-batch-loop = "compliance_os.batch_loop:main"
+guardian-mcp = "compliance_os.mcp_install:main"
 
 [tool.setuptools.packages.find]
 include = ["compliance_os*"]
