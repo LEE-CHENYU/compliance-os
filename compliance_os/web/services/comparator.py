@@ -161,10 +161,12 @@ def _numeric(name: str, a: str, b: str) -> ComparisonResult:
     if abs_diff < 1.0:
         return ComparisonResult(name, a, b, "numeric", "match", confidence,
                                 f"Values differ by ${abs_diff:.2f} — rounding only")
-    # Near-miss: any visible-dollar difference up to ~$500 absolute or 2% pct.
-    # Was previously silently swallowed by a $500/2% match. Now surfaces as
-    # needs_review so the rule engine fires a soft finding.
-    if abs_diff <= 500 or diff_pct <= 0.02:
+    # Near-miss: any visible-dollar difference up to ~$200 absolute or 1% pct.
+    # Tightened from $500/2% after the Claude scan found that $100 diffs were
+    # treated identically to $400 diffs — both needs_review, same user
+    # presentation. Keeping this narrow so only "verify rounding" cases
+    # surface softly; larger diffs surface as full mismatch.
+    if abs_diff <= 200 or diff_pct <= 0.01:
         return ComparisonResult(name, a, b, "numeric", "needs_review", confidence,
                                 f"Values differ by ${abs_diff:.2f} ({diff_pct:.1%}). "
                                 f"Verify which figure is correct before relying on either.")

@@ -32,7 +32,7 @@ SCHEMAS: dict[str, dict[str, str]] = {
     "account_security_setup": {
         "platform_name": "Platform or account system shown in the setup screen",
         "setup_step": "Current setup step or screen title",
-        "account_identifier": "Visible account email, username, or masked identifier if shown",
+        "account_identifier": "Primary visible account identifier — prefer email if shown, otherwise username, otherwise masked ID. Return exactly one value, not multiple",
         "setup_date": "Date shown on the setup screen (YYYY-MM-DD) if visible",
     },
     "articles_of_organization": {
@@ -492,7 +492,7 @@ SCHEMAS: dict[str, dict[str, str]] = {
     },
     "recovery_codes": {
         "provider_name": "Provider or system issuing the recovery codes",
-        "account_identifier": "Account email, username, or identifier if visible",
+        "account_identifier": "Primary account identifier — prefer email if shown, otherwise username, otherwise masked ID. Return exactly one value",
         "code_count": "Number of recovery codes shown if visible",
     },
     "residence_certificate": {

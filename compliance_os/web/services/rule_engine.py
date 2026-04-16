@@ -107,7 +107,7 @@ class Condition:
         actual = self._resolve(ctx)
 
         if self.operator == "mismatch":
-            if actual is None:
+            if actual is None or not isinstance(actual, dict):
                 return False
             return actual.get("status") in ("mismatch", "needs_review")
 

@@ -257,6 +257,23 @@ def process_h1b_doc_check(order_id: str, intake_data: dict[str, Any], *, today: 
         comparison = compare_fields(name, value_a, value_b, match_type)
         comparisons[name] = asdict(comparison)
 
+    # PEO / staffing detection: if invoice.petitioner differs from
+    # registration.employer BUT matches g28.client_entity, the petitioner on
+    # the invoice is likely the PEO/staffing company that filed on behalf of
+    # the end-client employer. Suppress the mismatch and emit a softer context
+    # finding instead of a false-positive critical.
+    invoice_petitioner = invoice.get("petitioner_name")
+    g28_entity = g28.get("client_entity_name")
+    reg_employer = registration.get("employer_name")
+    inv_reg_comparison = comparisons.get("h1b_registration_invoice_petitioner_name", {})
+    if (
+        inv_reg_comparison.get("status") in ("mismatch", "needs_review")
+        and invoice_petitioner and g28_entity and reg_employer
+    ):
+        g28_vs_invoice = compare_fields("_peo_check", invoice_petitioner, g28_entity, "entity")
+        if g28_vs_invoice.status == "match":
+            comparisons.pop("h1b_registration_invoice_petitioner_name", None)
+
     reference_day = today or date.today()
     petition_window_end = _parse_iso_date(status_summary.get("petition_filing_window_end_date"))
 

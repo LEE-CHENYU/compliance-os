@@ -19,10 +19,28 @@ def _fbar_due_date(tax_year: int) -> date:
 
 def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, Any]:
     accounts = intake_data.get("accounts") or []
+    missing_balance_accounts = [
+        a for a in accounts if a.get("max_balance_usd") in (None, "")
+    ]
     aggregate = round(sum(float(account.get("max_balance_usd") or 0) for account in accounts), 2)
     tax_year = int(intake_data.get("tax_year") or date.today().year - 1)
     due_date = _fbar_due_date(tax_year)
     requires_fbar = aggregate > 10000
+
+    # Warn if any account is missing its max balance — the aggregate may be
+    # understated, which could flip the filing determination from "not required"
+    # to "required."
+    missing_balance_warning: str | None = None
+    if missing_balance_accounts:
+        missing_names = [
+            str(a.get("institution_name") or f"Account #{i + 1}")
+            for i, a in enumerate(accounts) if a.get("max_balance_usd") in (None, "")
+        ]
+        missing_balance_warning = (
+            f"WARNING: {len(missing_balance_accounts)} account(s) have no max balance entered "
+            f"({', '.join(missing_names)}). Their balance was treated as $0 in the aggregate. "
+            f"If these accounts held any value, the actual aggregate may be higher — verify before relying on this result."
+        )
 
     if requires_fbar:
         # Form 8938 (FATCA) thresholds are higher than FBAR but vary by filing
@@ -110,9 +128,14 @@ def process_fbar_check(order_id: str, intake_data: dict[str, Any]) -> dict[str, 
         ))
         artifacts = [{"label": "Download FBAR review summary", "filename": summary_path.name, "path": str(summary_path)}]
 
+    if missing_balance_warning:
+        summary += f" {missing_balance_warning}"
+        next_steps.insert(0, missing_balance_warning)
+
     return {
         "summary": summary,
         "requires_fbar": requires_fbar,
+        "missing_balance_accounts": len(missing_balance_accounts),
         "aggregate_max_balance_usd": aggregate,
         # Only expose a filing deadline when a filing is actually required.
         "filing_deadline": due_date.isoformat() if requires_fbar else None,
