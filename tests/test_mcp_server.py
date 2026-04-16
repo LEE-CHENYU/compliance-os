@@ -11,6 +11,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from compliance_os.mcp_server import (
+    batch_upload,
     classify_document,
     generate_form_8843,
     get_filing_guidance,
@@ -19,8 +20,10 @@ from compliance_os.mcp_server import (
     guardian_documents,
     guardian_risks,
     guardian_status,
+    index_documents,
     parse_document,
     run_compliance_check,
+    upload_document,
 )
 
 
@@ -250,6 +253,55 @@ class TestGmailToolsOffline:
         from compliance_os.mcp_server import gmail_read
         result = json.loads(gmail_read(message_id="abc123"))
         assert "error" in result
+
+
+class TestUploadTools:
+
+    def test_upload_missing_file(self):
+        result = json.loads(upload_document(file_path="/nonexistent/file.pdf"))
+        assert "error" in result
+
+    @patch("compliance_os.mcp_server._upload_single_file", return_value={"ok": True, "doc_type": "w2"})
+    def test_upload_success(self, mock_upload):
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+            f.write(b"%PDF-test")
+            path = f.name
+        try:
+            result = json.loads(upload_document(file_path=path))
+            assert result.get("ok") is True
+        finally:
+            os.unlink(path)
+
+    def test_batch_upload_not_a_directory(self):
+        result = json.loads(batch_upload(directory="/nonexistent/dir"))
+        assert "error" in result
+
+    def test_batch_upload_empty_directory(self):
+        with tempfile.TemporaryDirectory() as d:
+            result = json.loads(batch_upload(directory=d))
+            assert "error" in result
+            assert "No files found" in result["error"]
+
+    @patch("compliance_os.mcp_server._upload_single_file", return_value={"ok": True, "doc_type": "w2"})
+    def test_batch_upload_success(self, mock_upload):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "w2_2024.pdf").write_bytes(b"%PDF-test")
+            (Path(d) / "i20.pdf").write_bytes(b"%PDF-test")
+            (Path(d) / "notes.txt").write_text("hello")
+            (Path(d) / "photo.jpg").write_bytes(b"jpg")  # should be skipped
+            result = json.loads(batch_upload(directory=d, extensions=".pdf,.txt"))
+            assert "3 uploaded" in result["summary"]
+            assert len(result["results"]) == 3
+
+
+class TestIndexDocuments:
+
+    def test_index_missing_openai_key(self):
+        """Indexer needs OPENAI_API_KEY — graceful error when missing."""
+        with patch.dict(os.environ, {"OPENAI_API_KEY": ""}, clear=False):
+            result = json.loads(index_documents(directory="nonexistent"))
+            # Either succeeds with 0 docs or errors gracefully
+            assert "error" in result or result.get("indexed", 0) == 0
 
 
 # Import for the gmail offline tests

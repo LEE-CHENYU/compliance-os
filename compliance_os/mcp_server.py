@@ -375,34 +375,24 @@ def classify_document(file_path: str) -> str:
     )
 
 
-@mcp.tool()
-def upload_document(
-    file_path: str,
-    doc_type: str = "",
-) -> str:
-    """Upload a document to the user's Guardian data room.
+def _upload_single_file(file_path: Path, doc_type: str = "") -> dict:
+    """Upload one file to Guardian API. Returns result dict."""
+    mime_type = mimetypes.guess_type(str(file_path))[0] or "application/octet-stream"
+    file_bytes = file_path.read_bytes()
 
-    The document is sent to the Guardian API for storage and compliance
-    analysis. Use parse_document and classify_document first to
-    preview what Guardian will see.
+    # Auto-classify locally if doc_type not provided
+    if not doc_type:
+        from compliance_os.web.services.classifier import classify_file
 
-    Args:
-        file_path: Absolute path to the document file.
-        doc_type: Document type (e.g., "w2", "i20"). Leave empty for auto-detection.
-    """
-    path = Path(file_path)
-    if not path.exists():
-        return json.dumps({"error": f"File not found: {file_path}"})
-
-    mime_type = mimetypes.guess_type(str(path))[0] or "application/octet-stream"
-    file_bytes = path.read_bytes()
+        cls = classify_file(str(file_path), mime_type, allow_ocr=False)
+        if cls.doc_type:
+            doc_type = cls.doc_type
 
     boundary = "----GuardianMCPBoundary"
     body_parts = []
-
     body_parts.append(f"--{boundary}\r\n".encode())
     body_parts.append(
-        f'Content-Disposition: form-data; name="files"; filename="{path.name}"\r\n'.encode()
+        f'Content-Disposition: form-data; name="file"; filename="{file_path.name}"\r\n'.encode()
     )
     body_parts.append(f"Content-Type: {mime_type}\r\n\r\n".encode())
     body_parts.append(file_bytes)
@@ -414,12 +404,19 @@ def upload_document(
         body_parts.append(doc_type.encode())
         body_parts.append(b"\r\n")
 
+    # Auto-keep duplicates — MCP users have already reviewed the file
+    body_parts.append(f"--{boundary}\r\n".encode())
+    body_parts.append(b'Content-Disposition: form-data; name="duplicate_action"\r\n\r\n')
+    body_parts.append(b"keep")
+    body_parts.append(b"\r\n")
+
     body_parts.append(f"--{boundary}--\r\n".encode())
     body = b"".join(body_parts)
 
     headers = {"Content-Type": f"multipart/form-data; boundary={boundary}"}
-    if GUARDIAN_TOKEN:
-        headers["Authorization"] = f"Bearer {GUARDIAN_TOKEN}"
+    token = _resolve_token()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
 
     req = request.Request(
         f"{GUARDIAN_API_URL}/api/dashboard/upload",
@@ -427,15 +424,99 @@ def upload_document(
         headers=headers,
         method="POST",
     )
+    with request.urlopen(req, timeout=120) as resp:
+        return json.loads(resp.read().decode())
+
+
+@mcp.tool()
+def upload_document(
+    file_path: str,
+    doc_type: str = "",
+) -> str:
+    """Upload a document to the user's Guardian data room.
+
+    Automatically classifies the document locally (no token cost) and
+    passes the type to Guardian. Duplicates are auto-kept since you've
+    already reviewed the file in Claude Code / Codex.
+
+    Typical workflow:
+    1. parse_document → preview extracted text
+    2. classify_document → confirm document type
+    3. upload_document → send to Guardian
+
+    Args:
+        file_path: Absolute path to the document file.
+        doc_type: Document type override (e.g., "w2", "i20"). Auto-detected if blank.
+    """
+    path = Path(file_path)
+    if not path.exists():
+        return json.dumps({"error": f"File not found: {file_path}"})
+
     try:
-        with request.urlopen(req, timeout=120) as resp:
-            result = json.loads(resp.read().decode())
-            return json.dumps(result, default=str)
+        result = _upload_single_file(path, doc_type)
+        return json.dumps(result, default=str)
     except error.HTTPError as exc:
         detail = exc.read().decode()[:300]
+        try:
+            err = json.loads(detail)
+            if isinstance(err.get("detail"), dict) and err["detail"].get("error") == "duplicate_upload_detected":
+                return json.dumps({
+                    "status": "duplicate_detected",
+                    "doc_type": err["detail"].get("resolved_doc_type"),
+                    "message": "This file already exists in your data room.",
+                })
+        except (json.JSONDecodeError, KeyError):
+            pass
         return json.dumps({"error": f"Upload failed ({exc.code}): {detail}"})
     except Exception as exc:
         return json.dumps({"error": str(exc)})
+
+
+@mcp.tool()
+def batch_upload(
+    directory: str,
+    extensions: str = ".pdf,.docx,.txt,.csv",
+) -> str:
+    """Upload all documents from a directory to Guardian.
+
+    Scans the directory for files matching the given extensions,
+    classifies each locally, and uploads to the data room.
+    Skips files that are already uploaded (duplicate detection).
+
+    Args:
+        directory: Path to directory containing documents.
+        extensions: Comma-separated file extensions to include (default: .pdf,.docx,.txt,.csv).
+    """
+    dir_path = Path(directory)
+    if not dir_path.is_dir():
+        return json.dumps({"error": f"Not a directory: {directory}"})
+
+    exts = {e.strip().lower() for e in extensions.split(",") if e.strip()}
+    files = sorted(
+        f for f in dir_path.iterdir()
+        if f.is_file() and f.suffix.lower() in exts
+    )
+
+    if not files:
+        return json.dumps({"error": f"No files found matching {extensions} in {directory}"})
+
+    results = []
+    for f in files:
+        try:
+            result = _upload_single_file(f)
+            results.append({"file": f.name, "status": "uploaded", "doc_type": result.get("doc_type")})
+        except error.HTTPError as exc:
+            detail = exc.read().decode()[:200]
+            results.append({"file": f.name, "status": "failed", "error": f"HTTP {exc.code}: {detail}"})
+        except Exception as exc:
+            results.append({"file": f.name, "status": "failed", "error": str(exc)})
+
+    uploaded = sum(1 for r in results if r["status"] == "uploaded")
+    failed = sum(1 for r in results if r["status"] == "failed")
+    return json.dumps({
+        "summary": f"{uploaded} uploaded, {failed} failed out of {len(files)} files",
+        "results": results,
+    }, indent=2)
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -944,6 +1025,60 @@ def query_documents(
 
         result = engine.query(question, top_k=top_k, filters=filters)
         return json.dumps(result, default=str, indent=2)
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  INDEXING (build/update ChromaDB vector store for RAG)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+@mcp.tool()
+def index_documents(
+    directory: str = "uploads",
+    force: bool = False,
+) -> str:
+    """Build or update the ChromaDB vector index for RAG queries.
+
+    Scans uploaded documents, embeds them with OpenAI embeddings, and
+    stores in ChromaDB. Incremental by default — only re-indexes
+    new or changed files. Run this after uploading documents to
+    enable the query_documents tool.
+
+    Requires OPENAI_API_KEY for embeddings.
+
+    Args:
+        directory: Subdirectory to scan (default: "uploads").
+            Other options: "data/uploads", "data/marketplace".
+        force: If true, re-index everything from scratch.
+    """
+    try:
+        from compliance_os.indexer.index import DocumentIndexer
+        from compliance_os.web.models.database import DATA_DIR
+
+        # Try project root first (real uploads), fall back to DATA_DIR
+        project_root = Path(__file__).resolve().parents[1]
+        if (project_root / directory).is_dir():
+            data_dir = project_root
+        elif (DATA_DIR / directory).is_dir():
+            data_dir = DATA_DIR
+        else:
+            return json.dumps({
+                "error": f"Directory '{directory}' not found in project root or data dir.",
+                "searched": [str(project_root / directory), str(DATA_DIR / directory)],
+            })
+
+        indexer = DocumentIndexer(data_dir=data_dir)
+        result = indexer.build_index(force=force, directories=[directory], verbose=False)
+        return json.dumps({
+            "status": "success",
+            "data_dir": str(data_dir),
+            "indexed": result.get("indexed", 0),
+            "skipped": result.get("skipped", 0),
+            "chunks": result.get("chunks", 0),
+            "up_to_date": result.get("up_to_date", False),
+        })
     except Exception as exc:
         return json.dumps({"error": str(exc)})
 

@@ -85,14 +85,31 @@ class DocumentIndexer:
         self.manifest_path.write_text(json.dumps(manifest, indent=2))
 
     def _read_file(self, filepath: Path) -> str | None:
-        """Read file content, handling different formats."""
+        """Read file content, handling different formats.
+
+        Uses PyMuPDF for PDFs (more robust than pypdf for scanned/complex
+        documents) and python-docx for DOCX files.
+        """
         ext = filepath.suffix.lower()
         if ext == ".pdf":
             try:
-                reader = SimpleDirectoryReader(input_files=[str(filepath)])
-                docs = reader.load_data()
-                if docs:
-                    return "\n\n".join(doc.text for doc in docs if doc.text.strip())
+                import pymupdf
+
+                doc = pymupdf.open(str(filepath))
+                pages = []
+                for page in doc:
+                    text = page.get_text()
+                    if text and text.strip():
+                        pages.append(text)
+                doc.close()
+                return "\n\n".join(pages) if pages else None
+            except Exception:
+                return None
+        if ext == ".docx":
+            try:
+                from compliance_os.web.services.docx_reader import extract_text
+
+                return extract_text(str(filepath)) or None
             except Exception:
                 return None
         try:
