@@ -98,7 +98,33 @@ def _headers() -> dict[str, str]:
     return h
 
 
-def _api_get(path: str) -> dict | list:
+def _is_hosted() -> bool:
+    """Check if running inside the hosted FastAPI process."""
+    try:
+        from compliance_os.mcp_hosted import get_mcp_client_token
+
+        return bool(get_mcp_client_token())
+    except ImportError:
+        return False
+
+
+async def _api_get(path: str) -> dict | list:
+    """GET from the Guardian API — async for both hosted and standalone."""
+    if _is_hosted():
+        import httpx
+
+        from compliance_os.mcp_hosted import get_mcp_client_token
+        from compliance_os.web.app import app
+
+        token = get_mcp_client_token()
+        transport = httpx.ASGITransport(app=app)  # type: ignore[arg-type]
+        async with httpx.AsyncClient(transport=transport, base_url="http://internal") as client:
+            headers = {"Authorization": f"Bearer {token}"} if token else {}
+            resp = await client.get(path, headers=headers)
+            resp.raise_for_status()
+            return resp.json()
+
+    # Standalone: blocking HTTP (OK for stdio — runs in its own process)
     req = request.Request(f"{GUARDIAN_API_URL}{path}", headers=_headers())
     try:
         with request.urlopen(req, timeout=30) as resp:
@@ -109,7 +135,22 @@ def _api_get(path: str) -> dict | list:
         raise RuntimeError(f"Cannot reach Guardian API at {GUARDIAN_API_URL}: {exc}") from exc
 
 
-def _api_post(path: str, payload: dict) -> dict:
+async def _api_post(path: str, payload: dict) -> dict:
+    """POST to the Guardian API — async for both hosted and standalone."""
+    if _is_hosted():
+        import httpx
+
+        from compliance_os.mcp_hosted import get_mcp_client_token
+        from compliance_os.web.app import app
+
+        token = get_mcp_client_token()
+        transport = httpx.ASGITransport(app=app)  # type: ignore[arg-type]
+        async with httpx.AsyncClient(transport=transport, base_url="http://internal") as client:
+            headers = {"Authorization": f"Bearer {token}"} if token else {}
+            resp = await client.post(path, json=payload, headers=headers)
+            resp.raise_for_status()
+            return resp.json()
+
     req = request.Request(
         f"{GUARDIAN_API_URL}{path}",
         data=json.dumps(payload).encode(),
@@ -131,16 +172,16 @@ def _api_post(path: str, payload: dict) -> dict:
 
 
 @mcp.tool()
-def guardian_status() -> str:
+async def guardian_status() -> str:
     """Get full compliance overview: findings, deadlines, key facts, document count.
 
     Returns the user's compliance status including critical issues,
     warnings, active subject chains, and upcoming deadlines.
     """
     try:
-        timeline = _api_get("/api/dashboard/timeline")
-        stats = _api_get("/api/dashboard/stats")
-        chains = _api_get("/api/dashboard/chains")
+        timeline = await _api_get("/api/dashboard/timeline")
+        stats = await _api_get("/api/dashboard/stats")
+        chains = await _api_get("/api/dashboard/chains")
     except RuntimeError as exc:
         return f"Error: {exc}"
 
@@ -206,14 +247,14 @@ def guardian_status() -> str:
 
 
 @mcp.tool()
-def guardian_deadlines() -> str:
+async def guardian_deadlines() -> str:
     """Get upcoming compliance deadlines sorted by urgency.
 
     Shows overdue items first, then items due within 30 days,
     then the rest. Includes days remaining and target dates.
     """
     try:
-        timeline = _api_get("/api/dashboard/timeline")
+        timeline = await _api_get("/api/dashboard/timeline")
     except RuntimeError as exc:
         return f"Error: {exc}"
 
@@ -235,13 +276,13 @@ def guardian_deadlines() -> str:
 
 
 @mcp.tool()
-def guardian_risks() -> str:
+async def guardian_risks() -> str:
     """Get compliance findings grouped by severity (critical, warning, advisory).
 
     Each finding includes a title, description, and recommended action.
     """
     try:
-        timeline = _api_get("/api/dashboard/timeline")
+        timeline = await _api_get("/api/dashboard/timeline")
     except RuntimeError as exc:
         return f"Error: {exc}"
 
@@ -267,15 +308,15 @@ def guardian_risks() -> str:
 
 
 @mcp.tool()
-def guardian_documents() -> str:
+async def guardian_documents() -> str:
     """List all documents in the user's Guardian data room.
 
     Shows filename, document type, file size, and upload date.
     Also lists subject chains with linked document counts.
     """
     try:
-        docs = _api_get("/api/dashboard/documents")
-        chains = _api_get("/api/dashboard/chains")
+        docs = await _api_get("/api/dashboard/documents")
+        chains = await _api_get("/api/dashboard/chains")
     except RuntimeError as exc:
         return f"Error: {exc}"
 
@@ -306,7 +347,7 @@ def guardian_documents() -> str:
 
 
 @mcp.tool()
-def guardian_ask(question: str) -> str:
+async def guardian_ask(question: str) -> str:
     """Ask Guardian's AI assistant a compliance question.
 
     The assistant has full context of the user's documents, findings,
@@ -319,7 +360,7 @@ def guardian_ask(question: str) -> str:
         question: The compliance question to ask.
     """
     try:
-        result = _api_post("/api/chat", {"message": question, "history": []})
+        result = await _api_post("/api/chat", {"message": question, "history": []})
         return result.get("reply", "No response received.")
     except RuntimeError as exc:
         return f"Error: {exc}"

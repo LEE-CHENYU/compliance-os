@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+
+
+def _run(coro):
+    """Run an async tool synchronously in tests."""
+    return asyncio.get_event_loop().run_until_complete(coro)
 
 from compliance_os.mcp_server import (
     batch_upload,
@@ -152,36 +158,36 @@ class TestFormFilingTools:
 class TestContextToolsOffline:
     """Context tools call the Guardian API — test error handling when offline."""
 
-    @patch("compliance_os.mcp_server._api_get", side_effect=RuntimeError("Connection refused"))
+    @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock, side_effect=RuntimeError("Connection refused"))
     def test_status_offline(self, mock_get):
-        result = guardian_status()
+        result = _run(guardian_status())
         assert "Error" in result
 
-    @patch("compliance_os.mcp_server._api_get", side_effect=RuntimeError("Connection refused"))
+    @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock, side_effect=RuntimeError("Connection refused"))
     def test_deadlines_offline(self, mock_get):
-        result = guardian_deadlines()
+        result = _run(guardian_deadlines())
         assert "Error" in result
 
-    @patch("compliance_os.mcp_server._api_get", side_effect=RuntimeError("Connection refused"))
+    @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock, side_effect=RuntimeError("Connection refused"))
     def test_risks_offline(self, mock_get):
-        result = guardian_risks()
+        result = _run(guardian_risks())
         assert "Error" in result
 
-    @patch("compliance_os.mcp_server._api_get", side_effect=RuntimeError("Connection refused"))
+    @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock, side_effect=RuntimeError("Connection refused"))
     def test_documents_offline(self, mock_get):
-        result = guardian_documents()
+        result = _run(guardian_documents())
         assert "Error" in result
 
-    @patch("compliance_os.mcp_server._api_post", side_effect=RuntimeError("Connection refused"))
+    @patch("compliance_os.mcp_server._api_post", new_callable=AsyncMock, side_effect=RuntimeError("Connection refused"))
     def test_ask_offline(self, mock_post):
-        result = guardian_ask(question="When is my FBAR due?")
+        result = _run(guardian_ask(question="When is my FBAR due?"))
         assert "Error" in result
 
 
 class TestContextToolsMocked:
     """Test context tools with mocked API responses."""
 
-    @patch("compliance_os.mcp_server._api_get")
+    @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock)
     def test_status_full(self, mock_get):
         mock_get.side_effect = [
             {
@@ -199,14 +205,14 @@ class TestContextToolsMocked:
             {"documents": 12, "risks": 2},
             [{"chain_type": "employment", "display_name": "Google LLC", "start_date": "2024-01-15"}],
         ]
-        result = guardian_status()
+        result = _run(guardian_status())
         assert "Critical Issues" in result
         assert "I-983 overdue" in result
         assert "FBAR due soon" in result
         assert "Documents: 12" in result
         assert "Google LLC" in result
 
-    @patch("compliance_os.mcp_server._api_get")
+    @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock)
     def test_deadlines_sorted(self, mock_get):
         mock_get.return_value = {
             "deadlines": [
@@ -215,22 +221,22 @@ class TestContextToolsMocked:
                 {"title": "Tax return", "date": "2026-10-15", "days": 183},
             ],
         }
-        result = guardian_deadlines()
+        result = _run(guardian_deadlines())
         lines = result.strip().split("\n")
         assert "OVERDUE" in lines[2]
         assert "30 days" in lines[3]
         assert "183 days" in lines[4]
 
-    @patch("compliance_os.mcp_server._api_get")
+    @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock)
     def test_documents_empty(self, mock_get):
         mock_get.side_effect = [[], []]
-        result = guardian_documents()
+        result = _run(guardian_documents())
         assert "No documents" in result
 
-    @patch("compliance_os.mcp_server._api_post")
+    @patch("compliance_os.mcp_server._api_post", new_callable=AsyncMock)
     def test_ask_returns_reply(self, mock_post):
         mock_post.return_value = {"reply": "Your FBAR is due April 15, 2026."}
-        result = guardian_ask(question="When is my FBAR due?")
+        result = _run(guardian_ask(question="When is my FBAR due?"))
         assert "April 15" in result
 
 

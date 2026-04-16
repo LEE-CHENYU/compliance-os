@@ -20,15 +20,23 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 logger = logging.getLogger(__name__)
 
-# Per-request token storage — set by middleware, read by MCP tools
+# Per-request storage — set by middleware, read by MCP tools
 _mcp_client_token: contextvars.ContextVar[str] = contextvars.ContextVar(
     "mcp_client_token", default=""
+)
+_mcp_api_base: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "mcp_api_base", default=""
 )
 
 
 def get_mcp_client_token() -> str:
     """Read the auth token set by the hosted MCP middleware."""
     return _mcp_client_token.get()
+
+
+def get_mcp_api_base() -> str:
+    """Read the loopback API URL derived from the incoming request."""
+    return _mcp_api_base.get()
 
 
 class MCPAuthMiddleware:
@@ -49,9 +57,12 @@ class MCPAuthMiddleware:
 
             if token:
                 _mcp_client_token.set(token)
-            # Don't reject unauthenticated requests here — the MCP protocol
-            # sends an initial handshake before auth. The tools themselves
-            # will fail gracefully if the token is missing.
+
+            # Derive the loopback API URL so MCP tools can call
+            # the same server they're hosted on (not a hardcoded port).
+            host = headers.get(b"host", b"localhost").decode()
+            scheme = "https" if scope.get("scheme") == "https" else "http"
+            _mcp_api_base.set(f"{scheme}://{host}")
 
         await self.app(scope, receive, send)
 
@@ -66,7 +77,21 @@ def create_mcp_app() -> ASGIApp:
         GET  /mcp/sse          — SSE connection (for Claude Desktop)
         POST /mcp/messages/    — MCP message handler (for SSE clients)
     """
-    from compliance_os.mcp_server import mcp as guardian_mcp
+    import compliance_os.mcp_server as srv
 
-    sse_app = guardian_mcp.sse_app(mount_path="/mcp")
+    # When hosted, the MCP tools call the same FastAPI process via loopback.
+    # Override the API URL at module level so all tool calls target the
+    # correct server — even when running in a thread pool.
+    import os
+
+    port = os.environ.get("PORT", os.environ.get("UVICORN_PORT", "8000"))
+    hosted_url = os.environ.get(
+        "GUARDIAN_HOSTED_API_URL", f"http://127.0.0.1:{port}"
+    )
+    srv.GUARDIAN_API_URL = hosted_url
+    logger.info("Hosted MCP: API loopback URL set to %s", hosted_url)
+
+    # mount_path must NOT include the FastAPI mount prefix — FastAPI's
+    # app.mount("/mcp", ...) already handles the /mcp prefix.
+    sse_app = srv.mcp.sse_app()
     return MCPAuthMiddleware(sse_app)
