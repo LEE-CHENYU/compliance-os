@@ -1143,6 +1143,68 @@ def index_documents(
         return json.dumps({"error": str(exc)})
 
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  ACTIVE TARGET SEARCH (template-driven document scan)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+@mcp.tool()
+def h1b_active_search(
+    folder: str,
+    verbose: bool = False,
+    as_json: bool = False,
+) -> str:
+    """Scan a local folder against the H-1B case template.
+
+    Walks the folder, scores each file against the 51 slots of a complete
+    H-1B petition package (beneficiary, I-20 lineage, CPT evidence,
+    petitioner corporate docs, registration, employment history, business
+    plans), and emits a gap report: coverage by section, missing required
+    slots, lineage issues, misplaced files, and unmatched files.
+
+    Use this to validate a handpicked lawyer package, or to compare against
+    an auto-organized folder to find selection gaps.
+
+    Args:
+        folder: Absolute path to the folder to scan.
+        verbose: Include match reasons and alternate matches per slot.
+        as_json: Return structured JSON instead of formatted text.
+    """
+    try:
+        from compliance_os.case_templates import H1B_TEMPLATE, match_folder, format_report
+
+        report = match_folder(folder, H1B_TEMPLATE)
+
+        if as_json:
+            return json.dumps({
+                "template_id": report.template_id,
+                "folder": report.folder,
+                "files_scanned": report.files_scanned,
+                "coverage": report.coverage,
+                "matched": {
+                    sid: [{"file": m.file_path, "score": m.score, "reasons": m.reasons} for m in ms]
+                    for sid, ms in report.matched.items()
+                },
+                "missing_required": [
+                    {"id": s.id, "title": s.title, "section": s.section} for s in report.missing_required
+                ],
+                "missing_optional": [
+                    {"id": s.id, "title": s.title, "section": s.section} for s in report.missing_optional
+                ],
+                "unmatched_files": report.unmatched_files,
+                "misplaced": [
+                    {"file": f, "current_section": c, "expected_section": e} for f, c, e in report.misplaced
+                ],
+                "lineage_issues": report.lineage_issues,
+            }, indent=2)
+
+        return format_report(report, H1B_TEMPLATE, verbose=verbose)
+    except NotADirectoryError as exc:
+        return json.dumps({"error": str(exc)})
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
+
+
 # ─── Entry point ─────────────────────────────────────────────────
 
 if __name__ == "__main__":
