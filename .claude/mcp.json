@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "guardian": {
+      "command": "conda",
+      "args": ["run", "-n", "compliance-os", "python", "-m", "compliance_os.mcp_server"],
+      "env": {
+        "GUARDIAN_API_URL": "http://localhost:8000",
+        "GUARDIAN_TOKEN": ""
+      }
+    }
+  }
+}
