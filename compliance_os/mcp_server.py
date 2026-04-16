@@ -46,10 +46,36 @@ GUARDIAN_API_URL = os.environ.get("GUARDIAN_API_URL", "http://localhost:8000")
 GUARDIAN_TOKEN = os.environ.get("GUARDIAN_TOKEN", "")
 
 
+def _is_local_api() -> bool:
+    return any(h in GUARDIAN_API_URL for h in ("localhost", "127.0.0.1", "0.0.0.0"))
+
+
+def _resolve_token() -> str:
+    """Return the configured token, or auto-generate a dev JWT for localhost."""
+    if GUARDIAN_TOKEN:
+        return GUARDIAN_TOKEN
+    if not _is_local_api():
+        return ""
+    try:
+        from compliance_os.web.services.auth_service import create_token
+        from compliance_os.web.models.database import get_session
+        from compliance_os.web.models.auth import UserRow
+
+        db = next(get_session())
+        user = db.query(UserRow).first()
+        db.close()
+        if user:
+            return create_token(user.id, user.email)
+    except Exception:
+        pass
+    return ""
+
+
 def _headers() -> dict[str, str]:
     h = {"Content-Type": "application/json"}
-    if GUARDIAN_TOKEN:
-        h["Authorization"] = f"Bearer {GUARDIAN_TOKEN}"
+    token = _resolve_token()
+    if token:
+        h["Authorization"] = f"Bearer {token}"
     return h
 
 
