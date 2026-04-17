@@ -169,8 +169,8 @@ export default function SharePage() {
           )}
         </section>
 
-        {/* Coverage strip */}
-        <section className="grid grid-cols-7 gap-2">
+        {/* Coverage strip — 2 cols on mobile, 4 on sm, 7 on lg */}
+        <section className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
           {sections.map((s) => {
             const pct = Math.round((coverage[s.code] || 0) * 100);
             return (
