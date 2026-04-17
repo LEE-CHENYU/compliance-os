@@ -6,12 +6,14 @@ scoped to a single folder + template.
 
 from __future__ import annotations
 
+import io
 import mimetypes
+import zipfile
 from dataclasses import asdict
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 
 from compliance_os.case_templates import H1B_TEMPLATE, match_folder
 from compliance_os.case_templates.schema import Template
@@ -117,4 +119,27 @@ def get_file(token: str, slot_id: str):
         media_type=media or "application/octet-stream",
         filename=abs_path.name,
         headers={"Content-Disposition": f'inline; filename="{abs_path.name}"'},
+    )
+
+
+@router.get("/{token}/download")
+def download_all(token: str):
+    """Stream a zip of the entire case folder — for a one-click download."""
+    _payload, folder, _template = _resolve(token)
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for p in folder.rglob("*"):
+            if not p.is_file():
+                continue
+            if p.name.startswith("._") or p.name.startswith("."):
+                continue
+            arc = p.relative_to(folder)
+            zf.write(p, arcname=str(arc))
+    buf.seek(0)
+    fname = f"{folder.name}.zip"
+    return StreamingResponse(
+        buf,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{fname}"'},
     )
