@@ -78,6 +78,13 @@ def _find_brief(folder: Path) -> Path | None:
 _GENERIC_SECTION_RE = re.compile(
     r"\n={10,}\n([A-Z][^\n]{1,80})\n={10,}\n", re.M
 )
+# Looser: header (UPPERCASE line) followed by a single === bar.
+# Catches CPA-style briefs where the bar only appears under the
+# header, not above. Also subsumes H-1B style since we only look
+# below the header.
+_LOOSE_HEADER_RE = re.compile(
+    r"(?:^|\n)([A-Z][A-Z0-9 /()\-&:\u2014]{3,80})\n={10,}\n"
+)
 _LABEL_VALUE_RE = re.compile(r"^([A-Z][A-Za-z0-9 /()-]{2,40}):\s{2,}(\S[^\n]*)$", re.M)
 
 
@@ -99,21 +106,19 @@ def _parse_brief(path: Path) -> dict:
         if m:
             data["headers"][m.group(1).lower()] = m.group(2).strip()
 
-    # Try the H-1B "SECTION N: TITLE" split first.
-    parts = re.split(r"\n={10,}\n(SECTION \d+:[^\n]+)\n={10,}\n", text)
-    if len(parts) > 1:
-        for i in range(1, len(parts), 2):
-            header = parts[i].strip()
-            body = parts[i + 1].strip() if i + 1 < len(parts) else ""
-            data["sections"][header] = body
-        return data
-
-    # Fall back to generic "===\nHEADER\n===" split (CPA style).
-    parts = _GENERIC_SECTION_RE.split(text)
-    for i in range(1, len(parts), 2):
-        header = parts[i].strip()
-        body = parts[i + 1].strip() if i + 1 < len(parts) else ""
-        data["sections"][header] = body
+    # Primary: "HEADER\n===" pattern — catches both H-1B
+    # ("SECTION N: TITLE" sandwiched by ===) and CPA
+    # ("UPPERCASE HEADER" followed by === only) formats.
+    matches = list(_LOOSE_HEADER_RE.finditer(text))
+    for i, m in enumerate(matches):
+        header = m.group(1).strip()
+        start = m.end()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        # Skip the trailing "END OF ..." sentinel — no body worth
+        # extracting, and it would otherwise hold trailing trivia.
+        if header.startswith("END OF"):
+            continue
+        data["sections"][header] = text[start:end].strip()
 
     return data
 
