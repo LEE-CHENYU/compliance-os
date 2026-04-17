@@ -119,10 +119,15 @@ export default function SharePage() {
       {/* Header */}
       <header className="border-b border-blue-100/30 bg-white/80 backdrop-blur-xl sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] flex items-center justify-center text-white text-xs font-bold">G</div>
-            <span className="text-sm font-semibold text-[#0d1424]">Guardian Data Room</span>
-          </div>
+          <a href="/" className="flex items-center gap-2.5 group" aria-label="Guardian home">
+            <div style={{width:22, height:22, display:'flex', flexDirection:'column', gap:2.5, transform:'perspective(200px) rotateX(-8deg) rotateY(12deg)'}} className="group-hover:opacity-90 transition-opacity">
+              <div style={{height:4.5, background:'linear-gradient(135deg, #5b8dee, #4a74d4)', borderRadius:1, width:22, transform:'translateX(2px)'}} />
+              <div style={{height:4.5, background:'linear-gradient(135deg, #5b8dee, #4a74d4)', borderRadius:1, width:22, transform:'translateX(-1px)'}} />
+              <div style={{height:4.5, background:'linear-gradient(135deg, #5b8dee, #4a74d4)', borderRadius:1, width:22, transform:'translateX(3px)'}} />
+            </div>
+            <span className="text-sm font-bold tracking-tight text-[#0d1424]">Guardian</span>
+            <span className="text-sm text-[#8b97ad] font-normal hidden sm:inline">· Data Room</span>
+          </a>
           <div className="flex items-center gap-4">
             <a
               href={`${API_HOST}/api/share/${token}/download`}
