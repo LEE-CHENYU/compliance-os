@@ -65,34 +65,78 @@ class CaseSummary:
 
 
 def _find_brief(folder: Path) -> Path | None:
-    for name in ("00_CASE_BRIEF", "CASE_BRIEF", "case_brief"):
+    for name in (
+        "00_CASE_BRIEF", "CASE_BRIEF", "case_brief",
+        "00_CASE_SUMMARY", "CASE_SUMMARY", "case_summary",
+    ):
         matches = list(folder.glob(f"{name}*.txt"))
         if matches:
             return matches[0]
     return None
 
 
+_GENERIC_SECTION_RE = re.compile(
+    r"\n={10,}\n([A-Z][^\n]{1,80})\n={10,}\n", re.M
+)
+_LABEL_VALUE_RE = re.compile(r"^([A-Z][A-Za-z0-9 /()-]{2,40}):\s{2,}(\S[^\n]*)$", re.M)
+
+
 _HEADER_RE = re.compile(r"^(Prepared for|Prepared by|Date|Re):\s*(.+)$", re.I)
 
 
 def _parse_brief(path: Path) -> dict:
-    """Extract structured sections from the case brief text."""
+    """Extract structured sections from the case brief text.
+
+    Supports both the H-1B brief format ("SECTION N: TITLE" between ===
+    barriers) and looser formats that just use === barriers around
+    UPPERCASE headers (CPA gold-standard).
+    """
     text = path.read_text(encoding="utf-8", errors="replace")
-    data: dict = {"headers": {}, "sections": {}}
+    data: dict = {"headers": {}, "sections": {}, "raw": text}
 
     for line in text.splitlines()[:20]:
         m = _HEADER_RE.match(line.strip())
         if m:
             data["headers"][m.group(1).lower()] = m.group(2).strip()
 
-    # Split by section headers: "SECTION N: TITLE"
+    # Try the H-1B "SECTION N: TITLE" split first.
     parts = re.split(r"\n={10,}\n(SECTION \d+:[^\n]+)\n={10,}\n", text)
+    if len(parts) > 1:
+        for i in range(1, len(parts), 2):
+            header = parts[i].strip()
+            body = parts[i + 1].strip() if i + 1 < len(parts) else ""
+            data["sections"][header] = body
+        return data
+
+    # Fall back to generic "===\nHEADER\n===" split (CPA style).
+    parts = _GENERIC_SECTION_RE.split(text)
     for i in range(1, len(parts), 2):
         header = parts[i].strip()
         body = parts[i + 1].strip() if i + 1 < len(parts) else ""
         data["sections"][header] = body
 
     return data
+
+
+def _generic_key_facts(brief: dict) -> list[KeyFact]:
+    """Scan all sections for `Label:<space>Value` pairs — generic extractor."""
+    facts: list[KeyFact] = []
+    seen: set[str] = set()
+    # Preserve document order: scan sections in insertion order
+    for _header, body in brief["sections"].items():
+        for m in _LABEL_VALUE_RE.finditer(body):
+            label = m.group(1).strip()
+            value = m.group(2).strip()
+            if label.lower() in seen:
+                continue
+            # Filter out verbose values
+            if len(value) > 80:
+                value = value[:77].rstrip() + "..."
+            seen.add(label.lower())
+            facts.append(KeyFact(label, value))
+            if len(facts) >= 14:
+                return facts
+    return facts
 
 
 _PHASE_RE = re.compile(
@@ -214,7 +258,12 @@ def build_summary(
     if h.get("re"):
         summary.title = h["re"].strip() or template.name
 
+    # H-1B-specific extractors first; if they produce nothing (e.g. CPA
+    # brief has no "SECTION 1: THE PARTIES"), fall back to the generic
+    # Label: Value scanner that works for any structured brief.
     summary.key_facts = _key_facts_from_brief(brief)
+    if not summary.key_facts:
+        summary.key_facts = _generic_key_facts(brief)
     summary.timeline = _timeline_from_brief(brief)
     summary.issues = _issues_from_brief(brief)
     summary.pending_items = _pending_from_brief(brief)

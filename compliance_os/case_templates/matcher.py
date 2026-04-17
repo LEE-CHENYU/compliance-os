@@ -13,7 +13,11 @@ from compliance_os.case_templates.schema import Slot, Template
 _IGNORE_NAMES = {".DS_Store", "Thumbs.db", "desktop.ini"}
 _IGNORE_DIRS = {".git", "__pycache__", "node_modules", ".venv"}
 
-_DOC_EXTS = {".pdf", ".jpg", ".jpeg", ".png", ".heic", ".txt", ".docx", ".doc"}
+_DOC_EXTS = {
+    ".pdf", ".jpg", ".jpeg", ".png", ".heic",
+    ".txt", ".docx", ".doc",
+    ".csv", ".xlsx", ".xls",  # ledger / transaction data
+}
 
 
 @dataclass
@@ -89,7 +93,12 @@ def _score_slot(slot: Slot, path: Path) -> tuple[float, list[str]]:
             pattern_hit = True
             break
 
-    prefix_hit = bool(re.match(rf"^{re.escape(slot.id.lower())}[_\-.]", stem))
+    # Slot-id prefix: matches when stem starts with slot id and either
+    # continues with a separator or ends there exactly (e.g. slot
+    # "03_2023_w2_vcv" matches "03_2023_w2_vcv.pdf" where stem == id).
+    prefix_hit = bool(
+        re.match(rf"^{re.escape(slot.id.lower())}(?:[_\-.]|$)", stem)
+    )
 
     kw_hits = [kw for kw in slot.keywords if kw.lower() in name]
     if kw_hits:

@@ -14,7 +14,10 @@ from pathlib import Path
 
 from compliance_os.web.services.share_tokens import create_share_token
 
-_TEMPLATES = {"h1b": "h1b_petition"}
+_TEMPLATES = {
+    "h1b": "h1b_petition",
+    "cpa": "cpa_nr_entity",
+}
 
 
 def main() -> int:

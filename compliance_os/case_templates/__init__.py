@@ -7,6 +7,11 @@ misplaced, or have lineage ordering problems.
 
 from compliance_os.case_templates.schema import Slot, Template
 from compliance_os.case_templates.h1b import H1B_TEMPLATE
+from compliance_os.case_templates.cpa import CPA_TEMPLATE
 from compliance_os.case_templates.matcher import match_folder, format_report
 
-__all__ = ["Slot", "Template", "H1B_TEMPLATE", "match_folder", "format_report"]
+__all__ = [
+    "Slot", "Template",
+    "H1B_TEMPLATE", "CPA_TEMPLATE",
+    "match_folder", "format_report",
+]

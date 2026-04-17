@@ -15,7 +15,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 
-from compliance_os.case_templates import H1B_TEMPLATE, match_folder
+from compliance_os.case_templates import CPA_TEMPLATE, H1B_TEMPLATE, match_folder
 from compliance_os.case_templates.schema import Template
 from compliance_os.web.services.case_summary import build_summary
 from compliance_os.web.services.share_tokens import decode_share_token
@@ -25,6 +25,7 @@ router = APIRouter(prefix="/api/share", tags=["share"])
 
 _TEMPLATES: dict[str, Template] = {
     "h1b_petition": H1B_TEMPLATE,
+    "cpa_nr_entity": CPA_TEMPLATE,
 }
 
 
