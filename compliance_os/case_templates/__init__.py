@@ -9,9 +9,18 @@ from compliance_os.case_templates.schema import Slot, Template
 from compliance_os.case_templates.h1b import H1B_TEMPLATE
 from compliance_os.case_templates.cpa import CPA_TEMPLATE
 from compliance_os.case_templates.matcher import match_folder, format_report
+from compliance_os.case_templates.validator import (
+    TEMPLATES,
+    ValidationResult,
+    format_validation,
+    resolve_template,
+    validate,
+)
 
 __all__ = [
     "Slot", "Template",
-    "H1B_TEMPLATE", "CPA_TEMPLATE",
+    "H1B_TEMPLATE", "CPA_TEMPLATE", "TEMPLATES",
+    "ValidationResult",
     "match_folder", "format_report",
+    "validate", "format_validation", "resolve_template",
 ]

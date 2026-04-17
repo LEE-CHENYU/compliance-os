@@ -1149,35 +1149,40 @@ def index_documents(
 
 
 @mcp.tool()
-def h1b_active_search(
+def case_active_search(
+    template: str,
     folder: str,
     verbose: bool = False,
     as_json: bool = False,
 ) -> str:
-    """Scan a local folder against the H-1B case template.
+    """Scan a local folder against any registered case template.
 
-    Walks the folder, scores each file against the 51 slots of a complete
-    H-1B petition package (beneficiary, I-20 lineage, CPT evidence,
-    petitioner corporate docs, registration, employment history, business
-    plans), and emits a gap report: coverage by section, missing required
-    slots, lineage issues, misplaced files, and unmatched files.
-
-    Use this to validate a handpicked lawyer package, or to compare against
-    an auto-organized folder to find selection gaps.
+    Generic active-target search: walks the folder, scores each file
+    against the template's slots, and emits a gap report with coverage
+    by section, missing required/optional slots, lineage issues,
+    misplaced files, and unmatched extras.
 
     Args:
+        template: Template key — "h1b" (H-1B petition package),
+            "cpa" (CPA tax engagement w/ NR + disregarded entity).
         folder: Absolute path to the folder to scan.
         verbose: Include match reasons and alternate matches per slot.
         as_json: Return structured JSON instead of formatted text.
     """
     try:
-        from compliance_os.case_templates import H1B_TEMPLATE, match_folder, format_report
+        from compliance_os.case_templates import (
+            format_report,
+            match_folder,
+            resolve_template,
+        )
 
-        report = match_folder(folder, H1B_TEMPLATE)
+        tpl = resolve_template(template)
+        report = match_folder(folder, tpl)
 
         if as_json:
             return json.dumps({
                 "template_id": report.template_id,
+                "template_name": tpl.name,
                 "folder": report.folder,
                 "files_scanned": report.files_scanned,
                 "coverage": report.coverage,
@@ -1198,11 +1203,23 @@ def h1b_active_search(
                 "lineage_issues": report.lineage_issues,
             }, indent=2)
 
-        return format_report(report, H1B_TEMPLATE, verbose=verbose)
-    except NotADirectoryError as exc:
+        return format_report(report, tpl, verbose=verbose)
+    except (KeyError, NotADirectoryError) as exc:
         return json.dumps({"error": str(exc)})
     except Exception as exc:
         return json.dumps({"error": str(exc)})
+
+
+@mcp.tool()
+def h1b_active_search(folder: str, verbose: bool = False, as_json: bool = False) -> str:
+    """Shorthand for case_active_search(template='h1b', ...). See that tool."""
+    return case_active_search("h1b", folder, verbose=verbose, as_json=as_json)
+
+
+@mcp.tool()
+def cpa_active_search(folder: str, verbose: bool = False, as_json: bool = False) -> str:
+    """Shorthand for case_active_search(template='cpa', ...). See that tool."""
+    return case_active_search("cpa", folder, verbose=verbose, as_json=as_json)
 
 
 # ─── Entry point ─────────────────────────────────────────────────
