@@ -7,8 +7,6 @@
  * to cite pages with rich context.
  */
 
-import Script from "next/script";
-
 const SITE_URL = "https://guardiancompliance.app";
 
 const schema = {
@@ -113,9 +111,14 @@ const schema = {
 };
 
 export function LandingSchema() {
+  // Next.js recommends this pattern for JSON-LD in the app router.
+  // Safe here: `schema` is a hardcoded object literal, no user input.
+  const __html = JSON.stringify(schema);
   return (
-    <Script id="ld-landing" type="application/ld+json" strategy="afterInteractive">
-      {JSON.stringify(schema)}
-    </Script>
+    <script
+      type="application/ld+json"
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html }}
+    />
   );
 }
