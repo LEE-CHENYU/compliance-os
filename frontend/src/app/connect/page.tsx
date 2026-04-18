@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { authHeaders, getToken } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
+import { AppIcon } from "@/components/AppIcon";
 
 const AUTH_API =
   typeof window !== "undefined" && window.location.hostname === "localhost"
@@ -61,10 +62,10 @@ function configPath(app: AppId): string {
   }
 }
 
-const APPS: { id: AppId; label: string; icon: string }[] = [
-  { id: "claude-desktop", label: "Claude Desktop", icon: "C" },
-  { id: "claude-code", label: "Claude Code", icon: ">" },
-  { id: "codex", label: "Codex", icon: "X" },
+const APPS: { id: AppId; label: string }[] = [
+  { id: "claude-desktop", label: "Claude Desktop" },
+  { id: "claude-code", label: "Claude Code" },
+  { id: "codex", label: "Codex" },
 ];
 
 const TOOLS = [
@@ -161,9 +162,9 @@ export default function ConnectPage() {
                       : "border-blue-100/30 bg-white hover:border-blue-200/50"
                   }`}
                 >
-                  <div className={`w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center text-lg font-bold ${
-                    selectedApp === app.id ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-gray-100 text-gray-500"
-                  }`}>{app.icon}</div>
+                  <div className="flex justify-center mb-2">
+                    <AppIcon app={app.id} selected={selectedApp === app.id} />
+                  </div>
                   <div className="text-xs font-medium text-[#0d1424]">{app.label}</div>
                 </button>
               ))}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Logo } from "@/components/Logo";
+import { AppIcon } from "@/components/AppIcon";
 
 type AppId = "claude-code" | "claude-desktop" | "codex";
 
@@ -172,12 +173,13 @@ guardian-mcp install --auto`}
                   <button
                     key={a.id}
                     onClick={() => setApp(a.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    className={`flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                       app === a.id
-                        ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-sm"
+                        ? "bg-white ring-2 ring-[#5b8dee] text-[#0d1424] shadow-sm"
                         : "bg-white border border-blue-100/50 text-[#556480] hover:border-blue-200"
                     }`}
                   >
+                    <AppIcon app={a.id} selected={app === a.id} size={22} />
                     {a.label}
                   </button>
                 ))}
