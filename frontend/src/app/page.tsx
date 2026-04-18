@@ -258,8 +258,12 @@ export default function Home() {
         <div className="nav-links-desktop" style={{display:'flex',gap:32,fontSize:14,fontWeight:500,color:'#7b8ba5'}}>
           <a href="#cloud" style={{textDecoration:'none',color:'inherit'}}>What we check</a>
           <a href="#how" style={{textDecoration:'none',color:'inherit'}}>How it works</a>
+          <a href="#integrations" style={{textDecoration:'none',color:'inherit'}}>Integrations</a>
           <button onClick={() => router.push("/services")} style={{background:'transparent',border:'none',padding:0,color:'inherit',font:'inherit',cursor:'pointer'}}>
             Services
+          </button>
+          <button onClick={() => router.push("/docs/install")} style={{background:'transparent',border:'none',padding:0,color:'inherit',font:'inherit',cursor:'pointer'}}>
+            Docs
           </button>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:12}}>
@@ -502,51 +506,87 @@ export default function Home() {
         </div>
       </section>
 
-      {/* OpenClaw Integration Section */}
-      <section ref={openclawSection.ref} className={`scroll-section${openclawSection.revealed ? ' revealed' : ''}`} style={{position:'relative',zIndex:1,padding:'64px 24px',maxWidth:720,margin:'0 auto'}}>
+      {/* Integrations — chat (OpenClaw) + coding agents (MCP) */}
+      <section id="integrations" ref={openclawSection.ref} className={`scroll-section${openclawSection.revealed ? ' revealed' : ''}`} style={{position:'relative',zIndex:1,padding:'64px 24px',maxWidth:960,margin:'0 auto'}}>
         <div style={{textAlign:'center',marginBottom:40}}>
           <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 14px',borderRadius:20,background:'rgba(91,141,238,0.08)',border:'1px solid rgba(91,141,238,0.12)',marginBottom:16}}>
-            <span style={{fontSize:11,fontWeight:600,color:'#5b8dee',letterSpacing:'0.04em'}}>OPENCLAW INTEGRATION</span>
+            <span style={{fontSize:11,fontWeight:600,color:'#5b8dee',letterSpacing:'0.04em'}}>INTEGRATIONS</span>
           </div>
           <h2 style={{fontSize:28,fontWeight:800,color:'#0d1424',letterSpacing:'-0.03em',marginBottom:8}}>
-            Compliance alerts in your chat
+            Guardian, wherever you already work
           </h2>
-          <p style={{fontSize:15,color:'#556480',maxWidth:480,margin:'0 auto',lineHeight:1.6}}>
-            Get Guardian updates wherever you use OpenClaw — WhatsApp, Telegram, Discord, Slack, or any platform you already have.
+          <p style={{fontSize:15,color:'#556480',maxWidth:560,margin:'0 auto',lineHeight:1.6}}>
+            Ask Guardian questions from your chat apps, or connect it directly to your coding agent — same data room, same 23 tools, two surfaces.
           </p>
         </div>
 
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:32}} className="openclaw-grid">
-          {[
-            { cmd: '"Check my compliance status"', desc: 'See active findings, deadlines, and key facts from your data room' },
-            { cmd: '"When are my deadlines?"', desc: 'Upcoming deadlines sorted by urgency with days remaining' },
-            { cmd: '"Do I need to file FBAR?"', desc: 'Ask Guardian AI questions about your specific situation' },
-            { cmd: '"What documents have I uploaded?"', desc: 'View your data room contents from any device' },
-          ].map((item) => (
-            <div key={item.cmd} style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:14,padding:'16px 20px',border:'1px solid rgba(255,255,255,0.6)',boxShadow:'0 2px 12px rgba(0,0,0,0.03)'}}>
-              <div style={{fontSize:13,fontWeight:600,color:'#0d1424',marginBottom:6}}>{item.cmd}</div>
-              <div style={{fontSize:12,color:'#556480',lineHeight:1.5}}>{item.desc}</div>
+        <div className="integrations-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+          {/* CHAT — OpenClaw */}
+          <div style={{background:'rgba(255,255,255,0.55)',backdropFilter:'blur(18px)',borderRadius:20,padding:'28px',border:'1px solid rgba(255,255,255,0.7)',boxShadow:'0 4px 20px rgba(0,0,0,0.04)',display:'flex',flexDirection:'column'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+              <div style={{width:28,height:28,borderRadius:8,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:14,fontWeight:700}}>💬</div>
+              <div style={{fontSize:10,fontWeight:700,color:'#5b8dee',letterSpacing:'0.1em'}}>CHAT · OPENCLAW</div>
             </div>
-          ))}
+            <h3 style={{fontSize:20,fontWeight:800,color:'#0d1424',letterSpacing:'-0.02em',marginBottom:6}}>Compliance in your chat</h3>
+            <p style={{fontSize:13,color:'#556480',lineHeight:1.6,marginBottom:16}}>
+              WhatsApp, Telegram, Discord, Slack — any platform you already use via OpenClaw. Best for fast questions and alerts on the go.
+            </p>
+            <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:16,flex:1}}>
+              {[
+                '"Check my compliance status"',
+                '"When are my deadlines?"',
+                '"Do I need to file FBAR?"',
+              ].map((q) => (
+                <div key={q} style={{fontSize:12,color:'#3a5a8c',fontWeight:500,background:'rgba(91,141,238,0.06)',padding:'8px 12px',borderRadius:8}}>{q}</div>
+              ))}
+            </div>
+            <div style={{fontSize:11,color:'#8b97ad',lineHeight:1.6,paddingTop:14,borderTop:'1px solid rgba(91,141,238,0.08)'}}>
+              <code style={{background:'rgba(91,141,238,0.08)',padding:'2px 6px',borderRadius:4,fontSize:11,color:'#3a5a8c',fontWeight:500}}>openclaw skills install guardian-compliance</code>
+              <br />
+              then paste your Guardian token.
+            </div>
+          </div>
+
+          {/* CODE — MCP */}
+          <div style={{background:'rgba(255,255,255,0.55)',backdropFilter:'blur(18px)',borderRadius:20,padding:'28px',border:'1px solid rgba(255,255,255,0.7)',boxShadow:'0 4px 20px rgba(0,0,0,0.04)',display:'flex',flexDirection:'column'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+              <div style={{width:28,height:28,borderRadius:8,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:14,fontWeight:700}}>{'</>'}</div>
+              <div style={{fontSize:10,fontWeight:700,color:'#5b8dee',letterSpacing:'0.1em'}}>CODE · MCP</div>
+            </div>
+            <h3 style={{fontSize:20,fontWeight:800,color:'#0d1424',letterSpacing:'-0.02em',marginBottom:6}}>Your coding agent, compliance-aware</h3>
+            <p style={{fontSize:13,color:'#556480',lineHeight:1.6,marginBottom:16}}>
+              Claude Code, Claude Desktop, Codex CLI — Guardian as 23 MCP tools right next to your editor. Best for document triage, case templates, form filing, and Gmail.
+            </p>
+            <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:16,flex:1}}>
+              {[
+                '"Check this folder against the H-1B template"',
+                '"Generate my Form 8843"',
+                '"Search Gmail for IRS notices"',
+              ].map((q) => (
+                <div key={q} style={{fontSize:12,color:'#3a5a8c',fontWeight:500,background:'rgba(91,141,238,0.06)',padding:'8px 12px',borderRadius:8}}>{q}</div>
+              ))}
+            </div>
+            <div style={{fontSize:11,color:'#8b97ad',lineHeight:1.6,paddingTop:14,borderTop:'1px solid rgba(91,141,238,0.08)'}}>
+              Paste to your agent:
+              <br />
+              <code style={{background:'rgba(91,141,238,0.08)',padding:'2px 6px',borderRadius:4,fontSize:11,color:'#3a5a8c',fontWeight:500,display:'inline-block',marginTop:2}}>Install Guardian MCP via /AGENTS.md</code>
+            </div>
+          </div>
         </div>
 
-        <div style={{background:'rgba(255,255,255,0.4)',backdropFilter:'blur(20px)',borderRadius:16,padding:'24px 28px',border:'1px solid rgba(255,255,255,0.5)',boxShadow:'0 4px 20px rgba(0,0,0,0.04)'}}>
-          <div style={{fontSize:13,fontWeight:700,color:'#0d1424',marginBottom:12}}>Set up in 30 seconds</div>
-          <div style={{display:'flex',flexDirection:'column',gap:10}}>
-            <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
-              <div style={{width:22,height:22,borderRadius:11,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>1</div>
-              <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>
-                Install the skill: <code style={{background:'rgba(91,141,238,0.08)',padding:'2px 6px',borderRadius:4,fontSize:11,color:'#3a5a8c',fontWeight:500}}>openclaw skills install guardian-compliance</code>
-              </div>
-            </div>
-            <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
-              <div style={{width:22,height:22,borderRadius:11,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>2</div>
-              <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>Generate a scoped OpenClaw token from the dashboard (click &quot;Connect to OpenClaw&quot; in the nav bar)</div>
-            </div>
-            <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
-              <div style={{width:22,height:22,borderRadius:11,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>3</div>
-              <div style={{fontSize:13,color:'#556480',lineHeight:1.5}}>Set <code style={{background:'rgba(91,141,238,0.08)',padding:'2px 6px',borderRadius:4,fontSize:11,color:'#3a5a8c',fontWeight:500}}>GUARDIAN_TOKEN</code> in your OpenClaw skill settings</div>
-            </div>
+        {/* Unified setup CTA */}
+        <div style={{background:'rgba(255,255,255,0.4)',backdropFilter:'blur(20px)',borderRadius:16,padding:'20px 24px',border:'1px solid rgba(255,255,255,0.5)',boxShadow:'0 4px 20px rgba(0,0,0,0.04)',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,flexWrap:'wrap'}}>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:'#0d1424',marginBottom:4}}>Set up in 60 seconds</div>
+            <div style={{fontSize:12,color:'#556480',lineHeight:1.5}}>Full install instructions for both surfaces, copy-paste config for every host, plus the one-line &quot;let your agent do it&quot; flow.</div>
+          </div>
+          <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+            <button onClick={() => router.push("/docs/install")} style={{padding:'10px 18px',borderRadius:10,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:13,border:'none',cursor:'pointer',boxShadow:'0 2px 8px rgba(74,116,212,0.25)'}}>
+              Read the docs
+            </button>
+            <button onClick={() => router.push("/connect")} style={{padding:'10px 18px',borderRadius:10,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:600,fontSize:13,border:'1px solid rgba(91,141,238,0.2)',cursor:'pointer'}}>
+              Get a token
+            </button>
           </div>
         </div>
       </section>

@@ -210,7 +210,8 @@
   .penalty-section-grid {
     grid-template-columns: 1fr !important;
   }
-  .openclaw-grid {
+  .openclaw-grid,
+  .integrations-grid {
     grid-template-columns: 1fr !important;
   }
   .cases-grid {
