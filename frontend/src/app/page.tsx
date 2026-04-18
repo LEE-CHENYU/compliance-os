@@ -569,7 +569,7 @@ export default function Home() {
             <div style={{fontSize:11,color:'#8b97ad',lineHeight:1.6,paddingTop:14,borderTop:'1px solid rgba(91,141,238,0.08)'}}>
               Paste to your agent:
               <br />
-              <code style={{background:'rgba(91,141,238,0.08)',padding:'2px 6px',borderRadius:4,fontSize:11,color:'#3a5a8c',fontWeight:500,display:'inline-block',marginTop:2}}>Install Guardian MCP via /AGENTS.md</code>
+              <code style={{background:'rgba(91,141,238,0.08)',padding:'2px 6px',borderRadius:4,fontSize:11,color:'#3a5a8c',fontWeight:500,display:'inline-block',marginTop:2,wordBreak:'break-all'}}>Install Guardian MCP by following https://guardiancompliance.app/AGENTS.md</code>
             </div>
           </div>
         </div>
