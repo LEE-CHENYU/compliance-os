@@ -258,7 +258,6 @@ export default function Home() {
         <div className="nav-links-desktop" style={{display:'flex',gap:32,fontSize:14,fontWeight:500,color:'#7b8ba5'}}>
           <a href="#cloud" style={{textDecoration:'none',color:'inherit'}}>What we check</a>
           <a href="#how" style={{textDecoration:'none',color:'inherit'}}>How it works</a>
-          <a href="#integrations" style={{textDecoration:'none',color:'inherit'}}>Integrations</a>
           <button onClick={() => router.push("/services")} style={{background:'transparent',border:'none',padding:0,color:'inherit',font:'inherit',cursor:'pointer'}}>
             Services
           </button>
