@@ -19,6 +19,7 @@ from pathlib import Path
 from urllib import error, request
 
 from mcp.server.fastmcp import FastMCP
+from mcp.types import ToolAnnotations
 
 mcp = FastMCP(
     "guardian",
@@ -171,7 +172,13 @@ async def _api_post(path: str, payload: dict) -> dict:
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Guardian status",
+        readOnlyHint=True,
+        destructiveHint=False,
+    ),
+)
 async def guardian_status() -> str:
     """Get full compliance overview: findings, deadlines, key facts, document count.
 
@@ -246,7 +253,13 @@ async def guardian_status() -> str:
     return "\n".join(lines)
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Upcoming deadlines",
+        readOnlyHint=True,
+        destructiveHint=False,
+    ),
+)
 async def guardian_deadlines() -> str:
     """Get upcoming compliance deadlines sorted by urgency.
 
@@ -275,7 +288,13 @@ async def guardian_deadlines() -> str:
     return "\n".join(lines)
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Active risks",
+        readOnlyHint=True,
+        destructiveHint=False,
+    ),
+)
 async def guardian_risks() -> str:
     """Get compliance findings grouped by severity (critical, warning, advisory).
 
@@ -307,7 +326,13 @@ async def guardian_risks() -> str:
     return "\n".join(lines)
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Data-room documents",
+        readOnlyHint=True,
+        destructiveHint=False,
+    ),
+)
 async def guardian_documents() -> str:
     """List all documents in the user's Guardian data room.
 
@@ -346,7 +371,14 @@ async def guardian_documents() -> str:
     return "\n".join(lines)
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Ask Guardian",
+        readOnlyHint=True,
+        destructiveHint=False,
+        openWorldHint=True,
+    ),
+)
 async def guardian_ask(question: str) -> str:
     """Ask Guardian's AI assistant a compliance question.
 
@@ -371,7 +403,14 @@ async def guardian_ask(question: str) -> str:
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Parse document",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def parse_document(file_path: str) -> str:
     """Extract text from a PDF or DOCX document locally.
 
@@ -405,7 +444,14 @@ def parse_document(file_path: str) -> str:
     return f"Unsupported file type: {suffix}. Supported: .pdf, .docx, .txt, .csv, .json, .yaml"
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Classify document",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def classify_document(file_path: str) -> str:
     """Classify a document by type using filename patterns and text analysis.
 
@@ -488,7 +534,14 @@ def _upload_single_file(file_path: Path, doc_type: str = "") -> dict:
         return json.loads(resp.read().decode())
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Upload document to data room",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+    ),
+)
 def upload_document(
     file_path: str,
     doc_type: str = "",
@@ -532,7 +585,14 @@ def upload_document(
         return json.dumps({"error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Batch upload folder",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+    ),
+)
 def batch_upload(
     directory: str,
     extensions: str = ".pdf,.docx,.txt,.csv",
@@ -584,7 +644,14 @@ def batch_upload(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Generate Form 8843",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def generate_form_8843(
     full_name: str,
     country_citizenship: str,
@@ -654,7 +721,14 @@ def generate_form_8843(
         return json.dumps({"status": "error", "error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Run compliance check",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def run_compliance_check(
     check_type: str,
     inputs_json: str,
@@ -703,7 +777,14 @@ def run_compliance_check(
         return json.dumps({"error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Get filing guidance",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def get_filing_guidance(
     form_type: str,
     filing_with_tax_return: bool = False,
@@ -744,7 +825,14 @@ def _get_gmail_service():
     return get_service()
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Search Gmail",
+        readOnlyHint=True,
+        destructiveHint=False,
+        openWorldHint=True,
+    ),
+)
 def gmail_search(query: str, max_results: int = 10) -> str:
     """Search Gmail inbox.
 
@@ -796,7 +884,14 @@ def gmail_search(query: str, max_results: int = 10) -> str:
         return json.dumps({"error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Read Gmail message",
+        readOnlyHint=True,
+        destructiveHint=False,
+        openWorldHint=True,
+    ),
+)
 def gmail_read(message_id: str) -> str:
     """Read a Gmail message with full body and attachment metadata.
 
@@ -862,7 +957,14 @@ def gmail_read(message_id: str) -> str:
         return json.dumps({"error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Draft Gmail message",
+        readOnlyHint=False,
+        destructiveHint=False,
+        openWorldHint=True,
+    ),
+)
 def gmail_draft(
     to: str,
     subject: str,
@@ -932,7 +1034,14 @@ def gmail_draft(
         return json.dumps({"error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Send Gmail draft",
+        readOnlyHint=False,
+        destructiveHint=True,
+        openWorldHint=True,
+    ),
+)
 def gmail_send(draft_id: str) -> str:
     """Send an existing Gmail draft.
 
@@ -956,7 +1065,14 @@ def gmail_send(draft_id: str) -> str:
         return json.dumps({"error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Reply to Gmail thread",
+        readOnlyHint=False,
+        destructiveHint=True,
+        openWorldHint=True,
+    ),
+)
 def gmail_reply(message_id: str, body: str) -> str:
     """Reply to a Gmail message (stays in thread).
 
@@ -1015,7 +1131,14 @@ def gmail_reply(message_id: str, body: str) -> str:
         return json.dumps({"error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Download Gmail attachment",
+        readOnlyHint=True,
+        destructiveHint=False,
+        openWorldHint=True,
+    ),
+)
 def gmail_download_attachment(
     message_id: str,
     attachment_id: str,
@@ -1058,7 +1181,14 @@ def gmail_download_attachment(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Query documents (RAG)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        openWorldHint=True,
+    ),
+)
 def query_documents(
     question: str,
     doc_type: str = "",
@@ -1094,7 +1224,14 @@ def query_documents(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Index documents for RAG",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def index_documents(
     directory: str = "uploads",
     force: bool = False,
@@ -1148,7 +1285,14 @@ def index_documents(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Scan folder against case template",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def case_active_search(
     template: str,
     folder: str,
@@ -1210,13 +1354,27 @@ def case_active_search(
         return json.dumps({"error": str(exc)})
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="H-1B petition gap report",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def h1b_active_search(folder: str, verbose: bool = False, as_json: bool = False) -> str:
     """Shorthand for case_active_search(template='h1b', ...). See that tool."""
     return case_active_search("h1b", folder, verbose=verbose, as_json=as_json)
 
 
-@mcp.tool()
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="CPA tax-engagement gap report",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
 def cpa_active_search(folder: str, verbose: bool = False, as_json: bool = False) -> str:
     """Shorthand for case_active_search(template='cpa', ...). See that tool."""
     return case_active_search("cpa", folder, verbose=verbose, as_json=as_json)
