@@ -4,8 +4,32 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "compliance-os"
-version = "0.1.0"
-description = "Continuous compliance OS for immigrants — document vault, deadline engine, and expert routing"
+version = "1.0.0"
+description = "Guardian — compliance copilot for visas, tax, and foreign-owned entities. MCP server with 23 tools for Claude Code / Desktop / Codex."
+readme = "guardian-mcp/README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Guardian", email = "fretin13@gmail.com" },
+]
+keywords = [
+    "compliance", "immigration", "tax", "h1b", "stem-opt", "cpt", "opt",
+    "form-8843", "form-1040-nr", "fbar", "form-5472",
+    "mcp", "model-context-protocol", "claude", "codex", "anthropic",
+    "nonresident", "international-student",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Legal Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Office/Business :: Financial :: Accounting",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 requires-python = ">=3.11"
 dependencies = [
     "llama-index>=0.14",
@@ -53,6 +77,12 @@ cos = "compliance_os.cli:main"
 data-room-batch-loop = "compliance_os.batch_loop:main"
 guardian-mcp = "compliance_os.mcp_install:main"
 guardian-share = "compliance_os.cli_share:main"
+
+[project.urls]
+Homepage      = "https://guardiancompliance.app"
+Documentation = "https://guardiancompliance.app/docs/install"
+Source        = "https://github.com/LEE-CHENYU/compliance-os"
+Issues        = "https://github.com/LEE-CHENYU/compliance-os/issues"
 
 [tool.setuptools.packages.find]
 include = ["compliance_os*"]
