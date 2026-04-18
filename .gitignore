@@ -56,3 +56,4 @@ out/rubric-loop-*.md
 
 # Check quality loop
 scripts/check_quality_cache/
+.reviewer-credentials.local.txt
