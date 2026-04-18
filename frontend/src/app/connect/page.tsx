@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { authHeaders, getToken } from "@/lib/auth";
+import { Logo } from "@/components/Logo";
 
 const AUTH_API =
   typeof window !== "undefined" && window.location.hostname === "localhost"
@@ -122,10 +123,7 @@ export default function ConnectPage() {
       {/* Header */}
       <header className="border-b border-blue-100/30 bg-white/80 backdrop-blur-xl">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] flex items-center justify-center text-white text-xs font-bold">G</div>
-            <span className="text-sm font-semibold text-[#0d1424]">Guardian</span>
-          </a>
+          <Logo subtitle="Connect" />
           <a href="/dashboard" className="text-xs text-[#556480] hover:text-[#3a5a8c] transition-colors">
             Dashboard
           </a>

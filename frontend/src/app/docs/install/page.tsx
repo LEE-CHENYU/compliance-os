@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Logo } from "@/components/Logo";
 
 type AppId = "claude-code" | "claude-desktop" | "codex";
 
@@ -79,15 +80,7 @@ export default function InstallDocsPage() {
       {/* Header */}
       <header className="border-b border-blue-100/30 bg-white/80 backdrop-blur-xl sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-6 py-3 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5 group" aria-label="Guardian home">
-            <div style={{width:22, height:22, display:'flex', flexDirection:'column', gap:2.5, transform:'perspective(200px) rotateX(-8deg) rotateY(12deg)'}} className="group-hover:opacity-90 transition-opacity">
-              <div style={{height:4.5, background:'linear-gradient(135deg, #5b8dee, #4a74d4)', borderRadius:1, width:22, transform:'translateX(2px)'}} />
-              <div style={{height:4.5, background:'linear-gradient(135deg, #5b8dee, #4a74d4)', borderRadius:1, width:22, transform:'translateX(-1px)'}} />
-              <div style={{height:4.5, background:'linear-gradient(135deg, #5b8dee, #4a74d4)', borderRadius:1, width:22, transform:'translateX(3px)'}} />
-            </div>
-            <span className="text-sm font-bold tracking-tight text-[#0d1424]">Guardian</span>
-            <span className="text-sm text-[#8b97ad] font-normal hidden sm:inline">· Docs</span>
-          </a>
+          <Logo subtitle="Docs" />
           <a href="/connect" className="text-xs font-semibold text-[#3a5a8c] hover:text-[#1a2036]">Get token →</a>
         </div>
       </header>
@@ -95,12 +88,19 @@ export default function InstallDocsPage() {
       <main className="max-w-4xl mx-auto px-6 py-12 space-y-10">
         {/* Hero */}
         <section>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-[#8b97ad] mb-2">Install Guardian MCP</div>
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[#8b97ad] mb-2">Install Guardian</div>
           <h1 className="text-3xl font-bold text-[#0d1424] mb-3">Connect Guardian to your AI tools</h1>
-          <p className="text-sm text-[#556480] max-w-2xl leading-relaxed">
-            Guardian runs as an MCP server. Once connected, Claude Code, Claude Desktop, or Codex can check your compliance status, scan folders against case templates, fill forms, and search Gmail — all from the chat prompt.
+          <p className="text-sm text-[#556480] max-w-2xl leading-relaxed mb-5">
+            Guardian runs in two places — in your <strong>coding agent</strong> (Claude Code, Claude Desktop, Codex) as 23 MCP tools, and in your <strong>chat apps</strong> (WhatsApp, Telegram, Discord, Slack) via OpenClaw. Same data room, same compliance intelligence.
           </p>
+          <div className="flex gap-2 flex-wrap">
+            <a href="#mcp" className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-[#3a5a8c] font-semibold hover:bg-blue-100 transition-colors">Code · MCP (Claude / Codex)</a>
+            <a href="#chat" className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-[#3a5a8c] font-semibold hover:bg-blue-100 transition-colors">Chat · OpenClaw (WhatsApp / Telegram / ...)</a>
+          </div>
         </section>
+
+        {/* MCP anchor */}
+        <div id="mcp" className="-mt-4" />
 
         {/* Fastest path: the agent does it */}
         <section className="rounded-2xl bg-[#0d1424] text-white p-8 shadow-sm">
@@ -270,6 +270,79 @@ guardian-mcp install --auto`}
                 <div>gmail_send / reply / download_attachment</div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* ──────────────────────────────────────────────────── */}
+        {/* OpenClaw (chat) */}
+        {/* ──────────────────────────────────────────────────── */}
+        <div id="chat" className="pt-6 border-t border-blue-100/40">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[#8b97ad] mb-2">Chat · OpenClaw</div>
+          <h2 className="text-2xl font-bold text-[#0d1424] mb-3">Guardian in WhatsApp, Telegram, Discord, Slack</h2>
+          <p className="text-sm text-[#556480] leading-relaxed max-w-2xl">
+            OpenClaw is a router that exposes Guardian as a chat skill, so your clients can message in plain language from any platform they already use. Best for status checks, deadline reminders, and quick questions — no app install.
+          </p>
+        </div>
+
+        {/* Example queries */}
+        <section className="rounded-2xl bg-white/90 backdrop-blur-xl border border-blue-100/30 shadow-sm p-6">
+          <h3 className="text-sm font-semibold text-[#0d1424] mb-3">Ask naturally</h3>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {[
+              "Check my compliance status",
+              "When are my deadlines?",
+              "Do I need to file FBAR?",
+              "What documents have I uploaded?",
+              "When is my I-20 expiring?",
+              "Show me my active findings",
+            ].map((q) => (
+              <div key={q} className="text-xs text-[#3a5a8c] font-medium bg-blue-50/50 px-3 py-2 rounded-lg">&quot;{q}&quot;</div>
+            ))}
+          </div>
+        </section>
+
+        {/* Install OpenClaw */}
+        <section className="rounded-2xl bg-white/90 backdrop-blur-xl border border-blue-100/30 shadow-sm p-6">
+          <h3 className="text-sm font-semibold text-[#0d1424] mb-4">Set up in 30 seconds</h3>
+
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs font-bold flex items-center justify-center shrink-0">1</div>
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-[#0d1424] mb-1">Install OpenClaw</div>
+                <p className="text-xs text-[#556480] mb-2">If you don&apos;t have OpenClaw yet, install from <a href="https://openclaw.io" target="_blank" rel="noopener" className="text-[#3a5a8c] underline underline-offset-2 font-medium">openclaw.io</a> and link it to the chat app(s) you already use.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs font-bold flex items-center justify-center shrink-0">2</div>
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-[#0d1424] mb-1">Install the Guardian skill</div>
+                <CodeBlock code="openclaw skills install guardian-compliance" lang="bash" />
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs font-bold flex items-center justify-center shrink-0">3</div>
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-[#0d1424] mb-1">Paste your token</div>
+                <p className="text-xs text-[#556480]">
+                  Get a token from <a href="/connect" className="text-[#3a5a8c] underline underline-offset-2 font-medium">guardiancompliance.app/connect</a> (same one you&apos;d use for MCP — they&apos;re scoped identically), then paste it when OpenClaw prompts, or set it in your skill settings as <code className="bg-blue-50 text-[#3a5a8c] px-1 rounded font-mono">GUARDIAN_TOKEN</code>.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-xs font-bold flex items-center justify-center shrink-0">4</div>
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-[#0d1424] mb-1">Say hi</div>
+                <p className="text-xs text-[#556480]">Message <strong>&quot;guardian status&quot;</strong> in any chat where you&apos;ve linked OpenClaw — you should see a compliance summary within a few seconds.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 pt-4 border-t border-blue-100/40 text-[11px] text-[#8b97ad]">
+            Tokens are scoped read+write on your data room. Revoke anytime at <a href="/connect" className="text-[#3a5a8c] underline underline-offset-2">/connect</a> (hit <em>Rotate token</em>).
           </div>
         </section>
 
