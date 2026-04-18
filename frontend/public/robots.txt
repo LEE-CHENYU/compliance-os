@@ -1,0 +1,13 @@
+# Guardian — guardiancompliance.app
+# LLM/agent crawlers: https://guardiancompliance.app/llms.txt
+# Agent-install instructions: https://guardiancompliance.app/AGENTS.md
+
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /account
+Disallow: /check
+Disallow: /api/
+Disallow: /share/
+
+Sitemap: https://guardiancompliance.app/sitemap.xml

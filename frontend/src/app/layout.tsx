@@ -41,9 +41,51 @@ const MIXPANEL_BOOTSTRAP = MIXPANEL_TOKEN ? `
   });
 ` : "";
 
+const SITE_URL = "https://guardiancompliance.app";
+const SITE_NAME = "Guardian";
+const SITE_DESC =
+  "Guardian cross-checks your immigration and tax documents to find mismatches, missing forms, and deadline risks before USCIS or the IRS does. Built for F-1 / OPT / STEM OPT / H-1B workers, international students, and nonresident-alien entrepreneurs with US entities.";
+
 export const metadata: Metadata = {
-  title: "Guardian",
-  description: "Check your documents before USCIS does",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Guardian — compliance copilot for visas, tax, and entities",
+    template: "%s · Guardian",
+  },
+  description: SITE_DESC,
+  applicationName: SITE_NAME,
+  keywords: [
+    "H-1B", "STEM OPT", "CPT", "OPT", "F-1 visa", "I-983", "I-20",
+    "Form 8843", "Form 1040-NR", "FBAR", "Form 5472", "Form 1120",
+    "nonresident tax", "immigration compliance", "tax compliance",
+    "immigration attorney data room", "CPA data room",
+    "MCP server", "Model Context Protocol",
+    "Claude Code", "Claude Desktop", "Codex",
+  ],
+  authors: [{ name: "Guardian" }],
+  creator: "Guardian",
+  publisher: "Guardian",
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: "Guardian — compliance copilot for visas, tax, and entities",
+    description: SITE_DESC,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Guardian — compliance copilot for visas, tax, and entities",
+    description: SITE_DESC,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" },
+  },
+  icons: { icon: "/favicon.ico" },
+  category: "productivity",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

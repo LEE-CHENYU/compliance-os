@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, getUser, logout } from "@/lib/auth";
+import { LandingSchema } from "@/components/SchemaOrg";
 
 function useScrollReveal(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
@@ -54,6 +55,7 @@ export default function Home() {
 
   return (
     <>
+      <LandingSchema />
       <style jsx global>{`
         body {
           background:

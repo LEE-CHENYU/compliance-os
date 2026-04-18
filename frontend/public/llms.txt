@@ -1,0 +1,55 @@
+# Guardian
+
+> Compliance copilot for nonresidents, STEM OPT / H-1B workers, international students, and foreign-owned US entities. Guardian cross-checks immigration and tax documents to surface mismatches, missing forms, and deadline risks before USCIS or the IRS does.
+
+Guardian runs as a web app at guardiancompliance.app and as 23 MCP tools inside Claude Code, Claude Desktop, and Codex. It also exposes chat-based access through OpenClaw (WhatsApp, Telegram, Discord, Slack). Users upload documents to a personal data room; Guardian classifies, indexes, and validates them against template packages (H-1B petition, CPA tax engagement, more coming). Results are shareable with lawyers or CPAs via tokenized read-only links.
+
+## Install
+
+- [For AI agents — install instructions](https://guardiancompliance.app/AGENTS.md): deterministic steps for Claude Code / Codex / Cursor to self-configure the MCP server. User pastes one sentence; agent handles the rest.
+- [Install guide for humans](https://guardiancompliance.app/docs/install): glassmorphic install page with tabs for Claude Code, Claude Desktop, Codex. Covers stdio (Python install) and hosted SSE (no install).
+- [Connect page](https://guardiancompliance.app/connect): generate a scoped API token (prefix `gdn_oc_`) for MCP or OpenClaw use.
+
+## Key pages
+
+- [Landing / marketing](https://guardiancompliance.app/): value prop, what we check, how it works, integrations.
+- [Services](https://guardiancompliance.app/services): tax, immigration, and entity services marketplace (Form 8843 free, student tax, entity filings).
+- [Dashboard](https://guardiancompliance.app/dashboard): authenticated data room, compliance status, deadlines, risks.
+- [Form 8843 filing](https://guardiancompliance.app/form-8843): free Form 8843 generator with mailing kit for F-1/J-1/M-1/Q visitors.
+- [Data room share page](https://guardiancompliance.app/share/TOKEN): read-only case package for external collaborators (lawyers, CPAs) — coverage percentages, A-G section tree, inline PDF preview, download-all zip.
+
+## Case templates (active target search)
+
+Guardian scans a local folder against a template and emits a gap report (coverage, missing slots, lineage issues).
+
+- **H-1B petition** (59 slots · 7 sections A–G): beneficiary identity, full I-20 lineage, CPT academic evidence, petitioner corporate formation, registration, employment history, business plans. Template derived from the Klasko gold-standard package.
+- **CPA NR + foreign-owned entity** (27 slots · 7 sections 0–6): case summary, entity docs, tax returns by year, income documents (W-2, 1042-S, 1099-B, 1099-INT, 1098-T), compliance issues memo, capital ledger, bank / brokerage statements. Template derived from the Kaufman Rossin data room for Form 5472 + pro forma 1120 engagements.
+
+## MCP tools (23)
+
+Exposed via `case_active_search`, `h1b_active_search`, `cpa_active_search`, `guardian_status`, `guardian_deadlines`, `guardian_risks`, `guardian_documents`, `guardian_ask`, `parse_document`, `classify_document`, `upload_document`, `batch_upload`, `query_documents`, `index_documents`, `generate_form_8843`, `run_compliance_check`, `get_filing_guidance`, `gmail_search`, `gmail_read`, `gmail_draft`, `gmail_send`, `gmail_reply`, `gmail_download_attachment`.
+
+Hosted MCP endpoint: `https://guardiancompliance.app/mcp/sse` (Bearer token auth). Stdio endpoint: `python -m compliance_os.mcp_server` after `pip install "compliance-os[agent]"`.
+
+## Forms + compliance checks
+
+- Form 8843 (standalone + 1040-NR package)
+- FBAR (FinCEN 114) aggregation check
+- H-1B document cross-check
+- Form 5472 + pro forma 1120 scope check (foreign-owned disregarded entities)
+- I-983 STEM OPT training plan review
+- Student tax (1040-NR) filing readiness
+- 83(b) election timing check
+
+## Who Guardian is for
+
+- International graduate students (F-1) filing Form 8843, 1040-NR, CPT / OPT paperwork
+- STEM OPT workers needing I-983 and continuous-status checks
+- H-1B petitioners (single-beneficiary companies, startups) preparing full petition packages
+- Nonresident-alien entrepreneurs with US single-member LLCs (Form 5472 / 1120)
+- Immigration attorneys and CPAs receiving case packages from clients (via share links)
+
+## Contact
+
+- Email: fretin13@gmail.com
+- GitHub: https://github.com/LEE-CHENYU/compliance-os
