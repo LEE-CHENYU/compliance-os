@@ -144,7 +144,7 @@ export default function InstallDocsPage() {
               Open <a href="/connect" className="text-[#3a5a8c] underline underline-offset-2 font-medium">guardiancompliance.app/connect</a>, sign in, click <strong>Generate token</strong>. The token starts with <code className="bg-blue-50 text-[#3a5a8c] px-1 rounded text-[11px]">gdn_oc_</code>.
             </p>
             <p className="text-xs text-[#8b97ad]">
-              Skip this step if you're running Guardian locally on <code className="bg-blue-50 text-[#3a5a8c] px-1 rounded text-[11px]">localhost:8000</code> — an empty token auto-auths via the dev JWT flow.
+              Skip this step if you&apos;re running Guardian locally on <code className="bg-blue-50 text-[#3a5a8c] px-1 rounded text-[11px]">localhost:8000</code> — an empty token auto-auths via the dev JWT flow.
             </p>
           </div>
 
