@@ -102,16 +102,60 @@ export default function InstallDocsPage() {
         {/* MCP anchor */}
         <div id="mcp" className="-mt-4" />
 
+        {/* One-click desktop extension */}
+        <section className="rounded-2xl bg-gradient-to-br from-[#f4e7dd] to-[#faf4ee] border border-[#D97757]/20 p-8 shadow-sm">
+          <div className="flex items-start justify-between gap-6 flex-wrap">
+            <div className="flex-1 min-w-[260px]">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-[#b35d3f] mb-2">One click · Claude Desktop</div>
+              <h2 className="text-xl font-semibold mb-3 text-[#0d1424]">Download the desktop extension</h2>
+              <p className="text-sm text-[#556480] leading-relaxed mb-4">
+                Download the <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">guardian.dxt</code> file and double-click it. Claude Desktop handles the pip install, prompts you for your token, and wires up the MCP server. No terminal.
+              </p>
+              <a
+                href="/guardian.dxt"
+                download="guardian.dxt"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#D97757] text-white font-semibold text-sm shadow-sm hover:shadow-md transition-shadow"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download guardian.dxt
+              </a>
+            </div>
+            <div className="text-[11px] text-[#8b97ad] pt-7 max-w-[200px]">
+              Requires Claude Desktop 0.9+ with Extensions enabled (Settings → Extensions → Developer mode).
+            </div>
+          </div>
+        </section>
+
         {/* Fastest path: the agent does it */}
         <section className="rounded-2xl bg-[#0d1424] text-white p-8 shadow-sm">
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div className="flex-1 min-w-[260px]">
-              <div className="text-[10px] uppercase tracking-[0.18em] text-[#7ba6ff] mb-2">Fastest path · 60 seconds</div>
+              <div className="text-[10px] uppercase tracking-[0.18em] text-[#7ba6ff] mb-2">CLI path · 60 seconds</div>
               <h2 className="text-xl font-semibold mb-3">Let your agent install it</h2>
               <p className="text-sm text-[#b3c4dd] leading-relaxed mb-4">
-                Paste this one line to your Claude Code or Codex session. The agent will fetch the install instructions, configure your client, and verify the connection — no menu clicks.
+                Paste this one line to your Claude Code or Codex session. The agent fetches the install instructions, configures your client, and verifies the connection.
               </p>
               <CodeBlock code="Install Guardian MCP by following https://guardiancompliance.app/AGENTS.md" />
+              <details className="mt-5 text-sm">
+                <summary className="cursor-pointer text-[#7ba6ff] hover:text-white transition-colors">
+                  Agent&apos;s workspace blocks URL fetch?
+                </summary>
+                <div className="mt-3 pl-4 border-l-2 border-[#7ba6ff]/30 space-y-3">
+                  <p className="text-[13px] text-[#b3c4dd] leading-relaxed">
+                    Enterprise workspaces often have a domain allowlist. Paste this zero-fetch command instead — replace the token with one from <a href="/connect" className="underline underline-offset-2">/connect</a>.
+                  </p>
+                  <CodeBlock
+                    code={`pip install "compliance-os[agent]" && \\
+GUARDIAN_TOKEN="gdn_oc_YOUR_TOKEN" \\
+GUARDIAN_API_URL="https://guardiancompliance.app" \\
+guardian-mcp install --auto`}
+                    lang="bash"
+                  />
+                  <p className="text-[11px] text-[#7ba6ff]/70">
+                    Or paste the full <a href="/AGENTS.md" className="underline underline-offset-2">AGENTS.md</a> content into your chat so the agent can follow it without fetching.
+                  </p>
+                </div>
+              </details>
             </div>
             <div className="flex flex-col gap-2 text-xs text-[#7ba6ff] pt-7">
               <a href="/AGENTS.md" className="underline underline-offset-4 decoration-[#7ba6ff]/40 hover:decoration-[#7ba6ff]">Read AGENTS.md →</a>

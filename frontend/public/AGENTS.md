@@ -9,6 +9,26 @@ Guardian is a compliance copilot that exposes 23 MCP tools covering
 immigration, tax, and entity status — plus local document processing,
 form filing, and Gmail integration.
 
+## Zero-fetch fast path (copy-paste, no URL read required)
+
+If your user's workspace blocks fetching `guardiancompliance.app`, skip
+the rest of this doc and run this instead — it does everything below
+in one shell pipe. Ask the user for their Guardian token (from
+https://guardiancompliance.app/connect) and substitute it:
+
+```bash
+pip install "compliance-os[agent]" && \
+GUARDIAN_TOKEN="gdn_oc_THE_USERS_TOKEN" \
+GUARDIAN_API_URL="https://guardiancompliance.app" \
+guardian-mcp install --auto
+```
+
+Then ask the user to restart their host (fully quit + reopen Claude
+Desktop; Ctrl-C + rerun Claude Code / Codex) and call
+`guardian_status` to verify.
+
+Otherwise, follow the full flow below.
+
 ---
 
 ## 0. Detect the target app
