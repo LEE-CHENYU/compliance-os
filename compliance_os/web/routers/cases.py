@@ -18,6 +18,7 @@ from compliance_os.web.models.schemas import CaseCreate, CaseResponse, CaseListR
 from compliance_os.web.models.tables import (
     CaseRow,
     DiscoveryAnswerRow,
+    EmailThreadRow,
     ENGAGEMENT_STATUSES,
     LawyerEngagementRow,
     ProfessionalSearchRequestRow,
@@ -290,6 +291,10 @@ class EngagementCreate(BaseModel):
 class EngagementUpdate(BaseModel):
     status: str | None = None
     notes: str | None = None
+    # Allow editing the firm_emails list — needed for engagements created
+    # via "+ Add firm" (where contact info wasn't pulled from a search) so
+    # the user can add emails for Gmail sync to match against.
+    firm_emails: list[str] | None = None
 
 
 class EngagementResponse(BaseModel):
@@ -458,6 +463,8 @@ def update_engagement(
         row.status = _validate_status(body.status)
     if body.notes is not None:
         row.notes = body.notes
+    if body.firm_emails is not None:
+        row.firm_emails = [e.strip() for e in body.firm_emails if e and e.strip()]
 
     session.commit()
     session.refresh(row)
@@ -589,6 +596,51 @@ def draft_engagement_email(
         subject=subject,
         body=body,
     )
+
+
+class EmailThreadResponse(BaseModel):
+    id: str
+    gmail_thread_id: str
+    subject: str
+    last_message_at: str
+    last_message_snippet: str
+    last_message_from: str
+    last_message_direction: str  # inbound | outbound
+    message_count: int
+
+
+@router.get(
+    "/{case_id}/engagements/{engagement_id}/threads",
+    response_model=list[EmailThreadResponse],
+)
+def list_engagement_threads(
+    case_id: str,
+    engagement_id: str,
+    session: Session = Depends(get_session),
+):
+    """List email threads matched to this engagement (newest first)."""
+    row = session.get(LawyerEngagementRow, engagement_id)
+    if row is None or row.case_id != case_id:
+        raise HTTPException(status_code=404, detail="Engagement not found")
+    threads = (
+        session.query(EmailThreadRow)
+        .filter(EmailThreadRow.engagement_id == engagement_id)
+        .order_by(EmailThreadRow.last_message_at.desc())
+        .all()
+    )
+    return [
+        EmailThreadResponse(
+            id=t.id,
+            gmail_thread_id=t.gmail_thread_id,
+            subject=t.subject,
+            last_message_at=t.last_message_at.isoformat() if t.last_message_at else "",
+            last_message_snippet=t.last_message_snippet,
+            last_message_from=t.last_message_from,
+            last_message_direction=t.last_message_direction,
+            message_count=t.message_count,
+        )
+        for t in threads
+    ]
 
 
 @router.delete("/{case_id}/engagements/{engagement_id}")

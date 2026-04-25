@@ -7,6 +7,7 @@ import {
   createEngagement,
   deleteEngagement,
   disconnectGmail,
+  EmailThread,
   Engagement,
   ENGAGEMENT_STATUSES,
   EngagementStatus,
@@ -17,7 +18,9 @@ import {
   GmailStatus,
   listCaseEngagements,
   listCaseSearches,
+  listEngagementThreads,
   ProfessionalSearchSummary,
+  syncGmail,
   updateEngagement,
 } from "@/lib/api";
 
@@ -27,6 +30,10 @@ export default function CaseOverview() {
   const [caseData, setCaseData] = useState<Case | null>(null);
   const [searches, setSearches] = useState<ProfessionalSearchSummary[] | null>(null);
   const [engagements, setEngagements] = useState<Engagement[] | null>(null);
+  // Bumped after every successful Gmail sync — child components watch
+  // it to refresh their thread lists. Avoids lifting per-engagement
+  // thread state into the parent.
+  const [syncTick, setSyncTick] = useState(0);
 
   useEffect(() => {
     getCase(caseId).then(setCaseData);
@@ -41,6 +48,12 @@ export default function CaseOverview() {
   async function refreshEngagements() {
     const fresh = await listCaseEngagements(caseId).catch(() => []);
     setEngagements(fresh);
+  }
+
+  async function handleSynced() {
+    // After Gmail sync, engagement.last_activity_at may have moved; refresh.
+    await refreshEngagements();
+    setSyncTick((t) => t + 1);
   }
 
   if (!caseData) return <p className="text-stone-400">Loading...</p>;
@@ -83,9 +96,10 @@ export default function CaseOverview() {
         caseId={caseId}
         engagements={engagements}
         onChange={refreshEngagements}
+        syncTick={syncTick}
       />
 
-      <GmailConnectionSection caseId={caseId} />
+      <GmailConnectionSection caseId={caseId} onSynced={handleSynced} />
 
       <p className="text-sm text-stone-400 text-center">Review dashboard coming soon.</p>
     </div>
@@ -229,10 +243,12 @@ function EngagementsSection({
   caseId,
   engagements,
   onChange,
+  syncTick,
 }: {
   caseId: string;
   engagements: Engagement[] | null;
   onChange: () => void | Promise<void>;
+  syncTick: number;
 }) {
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState("");
@@ -312,7 +328,13 @@ function EngagementsSection({
       ) : (
         <ul className="divide-y divide-stone-100">
           {engagements.map((e) => (
-            <EngagementRow key={e.id} caseId={caseId} engagement={e} onChange={onChange} />
+            <EngagementRow
+              key={e.id}
+              caseId={caseId}
+              engagement={e}
+              onChange={onChange}
+              syncTick={syncTick}
+            />
           ))}
         </ul>
       )}
@@ -325,11 +347,38 @@ function EngagementRow({
   caseId,
   engagement,
   onChange,
+  syncTick,
 }: {
   caseId: string;
   engagement: Engagement;
   onChange: () => void | Promise<void>;
+  syncTick: number;
 }) {
+  const [threads, setThreads] = useState<EmailThread[]>([]);
+  const [emailsDraft, setEmailsDraft] = useState(engagement.firm_emails.join(", "));
+  const [editingEmails, setEditingEmails] = useState(false);
+
+  useEffect(() => {
+    listEngagementThreads(caseId, engagement.id)
+      .then(setThreads)
+      .catch(() => setThreads([]));
+  }, [caseId, engagement.id, syncTick]);
+
+  async function saveEmails() {
+    const list = emailsDraft
+      .split(/[,;\n]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    setBusy(true);
+    try {
+      await updateEngagement(caseId, engagement.id, { firm_emails: list });
+      setEditingEmails(false);
+      await onChange();
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const [notesDraft, setNotesDraft] = useState(engagement.notes || "");
   const [editingNotes, setEditingNotes] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -394,6 +443,13 @@ function EngagementRow({
 
   const canEmail = engagement.firm_emails.length > 0;
 
+  const fmtThreadDate = (iso: string) => {
+    if (!iso) return "—";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+
   return (
     <li className="py-3 space-y-2">
       <div className="flex items-center justify-between gap-3">
@@ -441,6 +497,44 @@ function EngagementRow({
         </div>
       </div>
 
+      {/* firm emails (used by Gmail sync to match threads) */}
+      {editingEmails ? (
+        <div className="flex items-center gap-2">
+          <input
+            autoFocus
+            value={emailsDraft}
+            onChange={(e) => setEmailsDraft(e.target.value)}
+            placeholder="email1@firm.com, email2@firm.com"
+            className="flex-1 rounded-md border border-stone-300 px-2 py-1 text-xs focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
+          />
+          <button
+            onClick={saveEmails}
+            disabled={busy}
+            className="rounded-md bg-stone-800 px-2 py-1 text-[11px] font-medium text-white hover:bg-stone-700"
+          >
+            Save
+          </button>
+          <button
+            onClick={() => {
+              setEditingEmails(false);
+              setEmailsDraft(engagement.firm_emails.join(", "));
+            }}
+            className="text-[11px] text-stone-500 hover:text-stone-700"
+          >
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => setEditingEmails(true)}
+          className="block text-[11px] text-stone-500 hover:text-stone-700"
+        >
+          {engagement.firm_emails.length > 0
+            ? `📧 ${engagement.firm_emails.join(", ")}`
+            : "+ add firm emails (for Gmail matching)"}
+        </button>
+      )}
+
       {editingNotes ? (
         <div className="space-y-1">
           <textarea
@@ -478,19 +572,76 @@ function EngagementRow({
           {engagement.notes || "+ add notes"}
         </button>
       )}
+
+      {threads.length > 0 && (
+        <div className="mt-2 space-y-1.5 border-l-2 border-blue-100 pl-3">
+          <div className="text-[10px] font-semibold uppercase tracking-wide text-stone-400">
+            {threads.length} email thread{threads.length === 1 ? "" : "s"}
+          </div>
+          {threads.slice(0, 5).map((t) => (
+            <div key={t.id} className="text-xs">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="font-medium text-stone-700 truncate">
+                  {t.subject || "(no subject)"}
+                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span
+                    className={`inline-block rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase ${
+                      t.last_message_direction === "inbound"
+                        ? "bg-blue-50 text-blue-600 border border-blue-200"
+                        : "bg-stone-50 text-stone-500 border border-stone-200"
+                    }`}
+                  >
+                    {t.last_message_direction === "inbound" ? "← in" : "out →"}
+                  </span>
+                  <span className="text-[10px] text-stone-400">
+                    {t.message_count > 1 && `${t.message_count} · `}
+                    {fmtThreadDate(t.last_message_at)}
+                  </span>
+                </div>
+              </div>
+              <div className="text-[11px] text-stone-500 line-clamp-1">
+                {t.last_message_snippet}
+              </div>
+            </div>
+          ))}
+          {threads.length > 5 && (
+            <div className="text-[10px] text-stone-400">
+              + {threads.length - 5} more
+            </div>
+          )}
+        </div>
+      )}
     </li>
   );
 }
 
 
-function GmailConnectionSection({ caseId }: { caseId: string }) {
+function GmailConnectionSection({
+  caseId,
+  onSynced,
+}: {
+  caseId: string;
+  onSynced: () => void | Promise<void>;
+}) {
   const [status, setStatus] = useState<GmailStatus | null>(null);
   const [busy, setBusy] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastResult, setLastResult] = useState<string | null>(null);
 
   useEffect(() => {
     getGmailStatus().then(setStatus).catch(() => setStatus({ connected: false }));
   }, []);
+
+  // On case page load, trigger a debounced sync if Gmail is connected.
+  // The backend skips if synced within the last 2 min, so this is cheap.
+  useEffect(() => {
+    if (status?.connected) {
+      void doSync(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status?.connected]);
 
   // Surface OAuth callback result (?gmail=connected | error_code) as a one-time pill.
   useEffect(() => {
@@ -499,7 +650,6 @@ function GmailConnectionSection({ caseId }: { caseId: string }) {
     const gmail = params.get("gmail");
     if (!gmail) return;
     if (gmail === "connected") {
-      // Re-fetch status; clear param so reload doesn't re-show.
       getGmailStatus().then(setStatus);
     } else {
       setError(`Gmail connection failed: ${gmail.replace(/_/g, " ")}`);
@@ -512,6 +662,32 @@ function GmailConnectionSection({ caseId }: { caseId: string }) {
       window.location.pathname + (newSearch ? `?${newSearch}` : ""),
     );
   }, []);
+
+  async function doSync(force: boolean) {
+    setSyncing(true);
+    setError(null);
+    try {
+      const result = await syncGmail(force);
+      if (result.skipped) {
+        setLastResult(`Synced recently — skipped (last: ${fmtRel(result.last_synced_at)})`);
+      } else {
+        const matched = result.threads_matched ?? 0;
+        const newish = result.threads_new ?? 0;
+        setLastResult(
+          newish > 0
+            ? `Synced — ${newish} new thread${newish === 1 ? "" : "s"}, ${matched} matched`
+            : matched > 0
+              ? `Synced — ${matched} thread${matched === 1 ? "" : "s"} updated`
+              : `Synced — no new email matches`,
+        );
+        await onSynced();
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   async function connect() {
     setBusy(true);
@@ -568,24 +744,38 @@ function GmailConnectionSection({ caseId }: { caseId: string }) {
             </p>
           )}
         </div>
-        {status.connected ? (
-          <button
-            onClick={disconnect}
-            disabled={busy}
-            className="shrink-0 rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 hover:bg-stone-50 hover:text-rose-600"
-          >
-            Disconnect
-          </button>
-        ) : (
-          <button
-            onClick={connect}
-            disabled={busy}
-            className="shrink-0 rounded-lg bg-stone-800 px-4 py-1.5 text-xs font-medium text-white hover:bg-stone-700 disabled:opacity-50"
-          >
-            {busy ? "…" : "Connect Gmail"}
-          </button>
-        )}
+        <div className="flex items-center gap-2 shrink-0">
+          {status.connected && (
+            <button
+              onClick={() => doSync(true)}
+              disabled={syncing || busy}
+              className="rounded-lg border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+            >
+              {syncing ? "Syncing…" : "Sync now"}
+            </button>
+          )}
+          {status.connected ? (
+            <button
+              onClick={disconnect}
+              disabled={busy}
+              className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 hover:bg-stone-50 hover:text-rose-600"
+            >
+              Disconnect
+            </button>
+          ) : (
+            <button
+              onClick={connect}
+              disabled={busy}
+              className="rounded-lg bg-stone-800 px-4 py-1.5 text-xs font-medium text-white hover:bg-stone-700 disabled:opacity-50"
+            >
+              {busy ? "…" : "Connect Gmail"}
+            </button>
+          )}
+        </div>
       </div>
+      {lastResult && (
+        <div className="text-[11px] text-stone-500">{lastResult}</div>
+      )}
       {error && (
         <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
           {error}
@@ -593,6 +783,20 @@ function GmailConnectionSection({ caseId }: { caseId: string }) {
       )}
     </div>
   );
+}
+
+
+function fmtRel(iso?: string | null): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const ms = Date.now() - d.getTime();
+  const min = Math.round(ms / 60000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min} min ago`;
+  const hr = Math.round(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  return d.toLocaleDateString();
 }
 
 

@@ -183,6 +183,48 @@ class LawyerEngagementRow(Base):
 
     case: Mapped["CaseRow"] = relationship(back_populates="engagements")
     search: Mapped["ProfessionalSearchRequestRow | None"] = relationship()
+    email_threads: Mapped[list["EmailThreadRow"]] = relationship(
+        back_populates="engagement",
+        cascade="all, delete-orphan",
+        order_by="EmailThreadRow.last_message_at.desc()",
+    )
+
+
+# ---- Email thread tracking (Gmail sync) ---------------------------------
+#
+# Denormalized: stores only the metadata needed for the case-page list
+# view (subject, last message preview, count, direction). Full message
+# bodies are NOT stored — users open them in Gmail via deep-link.
+#
+# `direction` is "inbound" or "outbound" based on whether the *last*
+# message was from the user (outbound) or from a firm address (inbound).
+# Auto-status-bump (Cut 5) uses this signal to move not_contacted →
+# in_discussion when an inbound reply arrives.
+
+class EmailThreadRow(Base):
+    __tablename__ = "email_threads"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id"), nullable=False
+    )
+    engagement_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("lawyer_engagements.id"), nullable=False
+    )
+    gmail_thread_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    subject: Mapped[str] = mapped_column(String(500), default="")
+    last_message_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    last_message_snippet: Mapped[str] = mapped_column(Text, default="")
+    last_message_from: Mapped[str] = mapped_column(String(320), default="")
+    last_message_direction: Mapped[str] = mapped_column(String(10), default="inbound")
+    message_count: Mapped[int] = mapped_column(Integer, default=1)
+
+    first_seen_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    engagement: Mapped["LawyerEngagementRow"] = relationship(back_populates="email_threads")
 
 
 # ---- Google OAuth tokens (Gmail integration) ----------------------------
@@ -207,3 +249,8 @@ class GoogleOAuthTokenRow(Base):
 
     granted_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    # Sync bookkeeping — when we last hit Gmail for this user. Lets us
+    # show "synced 2 min ago" and skip sync if recent (debounce).
+    last_synced_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    last_sync_error: Mapped[str | None] = mapped_column(Text, nullable=True)

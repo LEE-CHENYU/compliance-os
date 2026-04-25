@@ -519,6 +519,29 @@ def gmail_status(
     }
 
 
+@router.post("/me/gmail/sync")
+def gmail_sync(
+    force: bool = False,
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Trigger an on-demand Gmail sync for the signed-in user.
+
+    Returns counts + last_synced_at. Synchronous: blocks until Gmail
+    queries complete (~5-15s for 100 messages). The frontend can show a
+    spinner; debounced server-side so page-load triggers don't hammer.
+
+    Set `?force=true` to bypass the debounce (used by the manual button).
+    """
+    payload = get_bearer_payload(authorization, db)
+    from compliance_os.web.services.gmail_sync import sync_user_gmail, GmailSyncError
+    try:
+        result = sync_user_gmail(db, payload["user_id"], force=force)
+    except GmailSyncError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return result
+
+
 @router.post("/me/gmail/disconnect")
 def gmail_disconnect(
     authorization: str | None = Header(None),

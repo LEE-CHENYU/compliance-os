@@ -328,7 +328,7 @@ export const createEngagement = (
 export const updateEngagement = (
   caseId: string,
   engagementId: string,
-  body: { status?: EngagementStatus; notes?: string | null },
+  body: { status?: EngagementStatus; notes?: string | null; firm_emails?: string[] },
 ) =>
   request<Engagement>(`/cases/${caseId}/engagements/${engagementId}`, {
     method: "PATCH",
@@ -380,6 +380,44 @@ export async function getGmailConnectUrl(nextPath?: string): Promise<{ url: stri
     `${API_BASE}/auth/google/connect-gmail/url${params.toString() ? `?${params}` : ""}`,
     { headers },
   );
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
+  return res.json();
+}
+
+export interface EmailThread {
+  id: string;
+  gmail_thread_id: string;
+  subject: string;
+  last_message_at: string;
+  last_message_snippet: string;
+  last_message_from: string;
+  last_message_direction: "inbound" | "outbound";
+  message_count: number;
+}
+
+export const listEngagementThreads = (caseId: string, engagementId: string) =>
+  request<EmailThread[]>(`/cases/${caseId}/engagements/${engagementId}/threads`);
+
+export interface GmailSyncResult {
+  skipped?: boolean;
+  reason?: string;
+  messages_scanned?: number;
+  threads_matched?: number;
+  threads_new?: number;
+  last_synced_at: string;
+}
+
+export async function syncGmail(force = false): Promise<GmailSyncResult> {
+  const headers = _authHeaders();
+  if (!headers.Authorization) throw new Error("Sign in first to sync Gmail");
+  const params = force ? "?force=true" : "";
+  const res = await fetch(`${API_BASE}/auth/me/gmail/sync${params}`, {
+    method: "POST",
+    headers,
+  });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
     throw new Error(err.detail || res.statusText);
