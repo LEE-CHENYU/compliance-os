@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { listMyEngagements, type MyEngagement, type EngagementStatus } from "@/lib/api";
+import {
+  listMyEngagements,
+  type AttentionLabel,
+  type EngagementStatus,
+  type MyEngagement,
+} from "@/lib/api";
 
 /** "My lawyer engagements" panel for the Guardian dashboard.
  *
@@ -31,6 +36,11 @@ export default function MyEngagements() {
   // tracking yet (who'll see MySearches' empty state instead).
   if (rows.length === 0) return null;
 
+  // Backend pre-sorted by attention priority, but a small "needs your
+  // attention" header above the actionable rows lets users know why
+  // the order isn't strictly chronological.
+  const attentionCount = rows.filter((r) => r.attention_label !== null).length;
+
   return (
     <section className="mb-8 overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(234,241,251,0.92))] backdrop-blur-xl shadow-[0_10px_36px_rgba(91,141,238,0.08)]">
       <div className="p-5 md:p-7">
@@ -43,10 +53,15 @@ export default function MyEngagements() {
               Track outreach across every case in one place
             </h2>
             <p className="mt-3 text-[14px] leading-7 text-[#556480]">
-              Every firm you&rsquo;re working with, sorted by latest activity.
-              Inbound replies bump the funnel automatically when Gmail is
-              connected.
+              Every firm you&rsquo;re working with, sorted by what needs
+              attention first. Inbound replies bump the funnel automatically
+              when Gmail is connected.
             </p>
+            {attentionCount > 0 && (
+              <p className="mt-2 text-[12px] font-medium text-[#5b8dee]">
+                {attentionCount} {attentionCount === 1 ? "firm needs" : "firms need"} your attention
+              </p>
+            )}
           </div>
         </div>
 
@@ -67,10 +82,8 @@ export default function MyEngagements() {
                         {r.firm_name}
                       </span>
                       <EngagementStatusPill status={r.status} />
-                      {r.last_thread_direction === "inbound" && (
-                        <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 text-blue-700 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
-                          ← reply
-                        </span>
+                      {r.attention_label && (
+                        <AttentionBadge label={r.attention_label} />
                       )}
                     </div>
                     <div className="mt-1 text-[12px] text-[#7b8ba5]">
@@ -98,6 +111,33 @@ export default function MyEngagements() {
         </ul>
       </div>
     </section>
+  );
+}
+
+
+function AttentionBadge({ label }: { label: AttentionLabel }) {
+  // Color-code by urgency: blue = new info, amber = stale, gray = neutral.
+  const config: Record<AttentionLabel, { text: string; cls: string }> = {
+    new_reply: {
+      text: "← new reply",
+      cls: "border-blue-200 bg-blue-50 text-blue-700",
+    },
+    needs_followup: {
+      text: "needs follow-up",
+      cls: "border-amber-200 bg-amber-50 text-amber-700",
+    },
+    awaiting_response: {
+      text: "awaiting response",
+      cls: "border-stone-200 bg-stone-50 text-stone-500",
+    },
+  };
+  const { text, cls } = config[label];
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cls}`}
+    >
+      {text}
+    </span>
   );
 }
 

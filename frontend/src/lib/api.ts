@@ -452,6 +452,11 @@ export async function disconnectGmail(): Promise<{ ok: boolean }> {
 
 // --- Cross-case engagement view (dashboard) ---
 
+export type AttentionLabel =
+  | "new_reply"
+  | "needs_followup"
+  | "awaiting_response";
+
 export interface MyEngagement {
   id: string;
   case_id: string;
@@ -466,6 +471,7 @@ export interface MyEngagement {
   last_thread_at: string | null;
   last_thread_direction: "inbound" | "outbound" | null;
   last_thread_subject: string | null;
+  attention_label: AttentionLabel | null;
 }
 
 export async function listMyEngagements(): Promise<MyEngagement[]> {
