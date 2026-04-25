@@ -29,6 +29,11 @@ class CaseRow(Base):
         back_populates="case",
         order_by="ProfessionalSearchRequestRow.created_at.desc()",
     )
+    engagements: Mapped[list["LawyerEngagementRow"]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        order_by="LawyerEngagementRow.last_activity_at.desc()",
+    )
 
 
 class DiscoveryAnswerRow(Base):
@@ -126,3 +131,55 @@ class ProfessionalSearchRequestRow(Base):
     completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     case: Mapped["CaseRow | None"] = relationship(back_populates="professional_searches")
+
+
+# ---- Lawyer engagement tracking (CRM) -----------------------------------
+#
+# A `LawyerEngagementRow` represents one *firm* the user is tracking for a
+# given case. Created either:
+#   - explicitly from a search result ("Track this firm"), with `search_id`
+#     and the firm's contact info copied from `firms_data`; or
+#   - manually ("+ Add"), if the user already has a firm in mind that wasn't
+#     surfaced by any search.
+#
+# Status is the CRM funnel: not_contacted → outreach_sent → in_discussion
+# → engaged | declined. We don't enforce strict transitions — a user might
+# jump from not_contacted straight to engaged after an in-person meeting.
+#
+# `firm_emails` is forward-looking: populated from the search result so the
+# Gmail sync worker (Cut 4) can match incoming threads to engagements.
+
+ENGAGEMENT_STATUSES: tuple[str, ...] = (
+    "not_contacted",
+    "outreach_sent",
+    "in_discussion",
+    "engaged",
+    "declined",
+)
+
+
+class LawyerEngagementRow(Base):
+    __tablename__ = "lawyer_engagements"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    case_id: Mapped[str] = mapped_column(String(36), ForeignKey("cases.id"), nullable=False)
+    search_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("professional_search_requests.id"), nullable=True
+    )
+
+    firm_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    firm_emails: Mapped[list] = mapped_column(JSON, default=list)
+    firm_phone: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    firm_website: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    firm_lead_attorney: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
+    status: Mapped[str] = mapped_column(String(30), default="not_contacted")
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    last_activity_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    case: Mapped["CaseRow"] = relationship(back_populates="engagements")
+    search: Mapped["ProfessionalSearchRequestRow | None"] = relationship()

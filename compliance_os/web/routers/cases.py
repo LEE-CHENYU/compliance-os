@@ -18,6 +18,8 @@ from compliance_os.web.models.schemas import CaseCreate, CaseResponse, CaseListR
 from compliance_os.web.models.tables import (
     CaseRow,
     DiscoveryAnswerRow,
+    ENGAGEMENT_STATUSES,
+    LawyerEngagementRow,
     ProfessionalSearchRequestRow,
 )
 
@@ -257,6 +259,185 @@ def _synthesize_brief(workflow_type: str, answers: dict[str, Any]) -> str:
         "credentials over marketing claims."
     )
     return "\n".join(parts)
+
+
+# ---------------------------- engagements -----------------------------
+#
+# CRM-style tracking of lawyer outreach per case. Each engagement is one
+# firm the user is working with — created either from a search result
+# ("Track this firm") or manually for off-platform contacts. Status is
+# the funnel state; notes capture freeform user observations.
+#
+# Cuts later in this feature will populate `firm_emails` automatically
+# from search results, and the Gmail sync worker will use that list to
+# match incoming threads to engagements. For Cut 1 the schema is in
+# place but only the manual surfaces are wired.
+
+
+class EngagementCreate(BaseModel):
+    firm_name: str
+    firm_emails: list[str] = []
+    firm_phone: str | None = None
+    firm_website: str | None = None
+    firm_lead_attorney: str | None = None
+    search_id: str | None = None
+    notes: str | None = None
+    # Allow setting a non-default status at creation, e.g. "outreach_sent"
+    # when this row is created in response to the user clicking "Email firm".
+    status: str | None = None
+
+
+class EngagementUpdate(BaseModel):
+    status: str | None = None
+    notes: str | None = None
+
+
+class EngagementResponse(BaseModel):
+    id: str
+    case_id: str
+    search_id: str | None
+    firm_name: str
+    firm_emails: list[str]
+    firm_phone: str | None
+    firm_website: str | None
+    firm_lead_attorney: str | None
+    status: str
+    notes: str | None
+    created_at: str
+    last_activity_at: str
+
+
+def _serialize_engagement(row: LawyerEngagementRow) -> EngagementResponse:
+    return EngagementResponse(
+        id=row.id,
+        case_id=row.case_id,
+        search_id=row.search_id,
+        firm_name=row.firm_name,
+        firm_emails=list(row.firm_emails or []),
+        firm_phone=row.firm_phone,
+        firm_website=row.firm_website,
+        firm_lead_attorney=row.firm_lead_attorney,
+        status=row.status,
+        notes=row.notes,
+        created_at=row.created_at.isoformat() if row.created_at else "",
+        last_activity_at=row.last_activity_at.isoformat() if row.last_activity_at else "",
+    )
+
+
+def _validate_status(status: str) -> str:
+    if status not in ENGAGEMENT_STATUSES:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Invalid status '{status}'. Must be one of: "
+                + ", ".join(ENGAGEMENT_STATUSES)
+            ),
+        )
+    return status
+
+
+@router.get(
+    "/{case_id}/engagements",
+    response_model=list[EngagementResponse],
+)
+def list_engagements(case_id: str, session: Session = Depends(get_session)):
+    case = session.get(CaseRow, case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+    rows = (
+        session.query(LawyerEngagementRow)
+        .filter(LawyerEngagementRow.case_id == case_id)
+        .order_by(LawyerEngagementRow.last_activity_at.desc())
+        .all()
+    )
+    return [_serialize_engagement(r) for r in rows]
+
+
+@router.post(
+    "/{case_id}/engagements",
+    response_model=EngagementResponse,
+)
+def create_engagement(
+    case_id: str,
+    body: EngagementCreate,
+    session: Session = Depends(get_session),
+):
+    case = session.get(CaseRow, case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+    if not body.firm_name.strip():
+        raise HTTPException(status_code=400, detail="firm_name cannot be empty")
+
+    status = _validate_status(body.status) if body.status else "not_contacted"
+
+    # Soft dedupe: if an engagement for the same firm name already exists
+    # on this case, return that row instead of creating a duplicate. The
+    # most common cause is the user double-clicking "Track" — we prefer
+    # idempotent over strict.
+    existing = (
+        session.query(LawyerEngagementRow)
+        .filter(
+            LawyerEngagementRow.case_id == case_id,
+            LawyerEngagementRow.firm_name == body.firm_name.strip(),
+        )
+        .first()
+    )
+    if existing is not None:
+        return _serialize_engagement(existing)
+
+    row = LawyerEngagementRow(
+        case_id=case_id,
+        search_id=body.search_id,
+        firm_name=body.firm_name.strip(),
+        firm_emails=[e.strip() for e in body.firm_emails if e and e.strip()],
+        firm_phone=body.firm_phone,
+        firm_website=body.firm_website,
+        firm_lead_attorney=body.firm_lead_attorney,
+        status=status,
+        notes=body.notes,
+    )
+    session.add(row)
+    session.commit()
+    session.refresh(row)
+    return _serialize_engagement(row)
+
+
+@router.patch(
+    "/{case_id}/engagements/{engagement_id}",
+    response_model=EngagementResponse,
+)
+def update_engagement(
+    case_id: str,
+    engagement_id: str,
+    body: EngagementUpdate,
+    session: Session = Depends(get_session),
+):
+    row = session.get(LawyerEngagementRow, engagement_id)
+    if row is None or row.case_id != case_id:
+        raise HTTPException(status_code=404, detail="Engagement not found")
+
+    if body.status is not None:
+        row.status = _validate_status(body.status)
+    if body.notes is not None:
+        row.notes = body.notes
+
+    session.commit()
+    session.refresh(row)
+    return _serialize_engagement(row)
+
+
+@router.delete("/{case_id}/engagements/{engagement_id}")
+def delete_engagement(
+    case_id: str,
+    engagement_id: str,
+    session: Session = Depends(get_session),
+):
+    row = session.get(LawyerEngagementRow, engagement_id)
+    if row is None or row.case_id != case_id:
+        raise HTTPException(status_code=404, detail="Engagement not found")
+    session.delete(row)
+    session.commit()
+    return {"ok": True}
 
 
 @router.get("/{case_id}/draft-brief", response_model=DraftBrief)

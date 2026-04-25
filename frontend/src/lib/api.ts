@@ -272,6 +272,74 @@ export interface DraftBrief {
 export const getCaseDraftBrief = (caseId: string) =>
   request<DraftBrief>(`/cases/${caseId}/draft-brief`);
 
+// --- Lawyer engagements (CRM) ---
+
+export type EngagementStatus =
+  | "not_contacted"
+  | "outreach_sent"
+  | "in_discussion"
+  | "engaged"
+  | "declined";
+
+export const ENGAGEMENT_STATUSES: EngagementStatus[] = [
+  "not_contacted",
+  "outreach_sent",
+  "in_discussion",
+  "engaged",
+  "declined",
+];
+
+export interface Engagement {
+  id: string;
+  case_id: string;
+  search_id: string | null;
+  firm_name: string;
+  firm_emails: string[];
+  firm_phone: string | null;
+  firm_website: string | null;
+  firm_lead_attorney: string | null;
+  status: EngagementStatus;
+  notes: string | null;
+  created_at: string;
+  last_activity_at: string;
+}
+
+export const listCaseEngagements = (caseId: string) =>
+  request<Engagement[]>(`/cases/${caseId}/engagements`);
+
+export const createEngagement = (
+  caseId: string,
+  body: {
+    firm_name: string;
+    firm_emails?: string[];
+    firm_phone?: string | null;
+    firm_website?: string | null;
+    firm_lead_attorney?: string | null;
+    search_id?: string | null;
+    notes?: string | null;
+    status?: EngagementStatus;
+  },
+) =>
+  request<Engagement>(`/cases/${caseId}/engagements`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+
+export const updateEngagement = (
+  caseId: string,
+  engagementId: string,
+  body: { status?: EngagementStatus; notes?: string | null },
+) =>
+  request<Engagement>(`/cases/${caseId}/engagements/${engagementId}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+
+export const deleteEngagement = (caseId: string, engagementId: string) =>
+  request<{ ok: boolean }>(`/cases/${caseId}/engagements/${engagementId}`, {
+    method: "DELETE",
+  });
+
 export async function listMySearches(): Promise<ProfessionalSearch[]> {
   const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
   const res = await fetch(`${API_BASE}/professional-search/mine/list`, {
