@@ -17,6 +17,13 @@ class CaseRow(Base):
     __tablename__ = "cases"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    # Owner of this case. Nullable for backwards compat — pre-existing
+    # cases (created before user-scoping) and anonymous cases (created
+    # without a session) have NULL. Anonymous cases are auto-claimed
+    # when an authenticated user first accesses them via case_access.
+    user_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("users.id"), nullable=True
+    )
     workflow_type: Mapped[str] = mapped_column(String(50), default="")
     status: Mapped[str] = mapped_column(String(20), default="discovery")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

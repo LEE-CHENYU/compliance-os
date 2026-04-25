@@ -67,7 +67,25 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     _ensure_marketplace_columns(engine)
     _ensure_professional_search_columns(engine)
     _ensure_google_oauth_token_columns(engine)
+    _ensure_case_columns(engine)
     return engine
+
+
+def _ensure_case_columns(engine: Engine) -> None:
+    """Backfill user_id on the cases table for legacy DBs.
+
+    Pre-existing cases get NULL — they remain accessible (legacy compat)
+    and get auto-claimed on first authenticated access via
+    services/case_access.get_case_for_user.
+    """
+    inspector = inspect(engine)
+    if "cases" not in inspector.get_table_names():
+        return
+    existing = {col["name"] for col in inspector.get_columns("cases")}
+    if "user_id" in existing:
+        return
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE cases ADD COLUMN user_id VARCHAR(36)"))
 
 
 def _ensure_google_oauth_token_columns(engine: Engine) -> None:

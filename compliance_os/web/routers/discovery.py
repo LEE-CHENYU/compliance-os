@@ -1,6 +1,6 @@
 """Discovery intake and chat API endpoints."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.database import get_session
@@ -13,22 +13,21 @@ from compliance_os.web.models.schemas import (
     DiscoveryAnswerResponse,
     DiscoveryAnswersResponse,
 )
-from compliance_os.web.models.tables import CaseRow, ChatMessageRow, DiscoveryAnswerRow
+from compliance_os.web.models.tables import ChatMessageRow, DiscoveryAnswerRow
+from compliance_os.web.services.case_access import get_case_for_user, maybe_user_id
 from compliance_os.web.services.followup import generate_followups
 
 router = APIRouter(prefix="/api/cases/{case_id}", tags=["discovery"])
 
 
-def _get_case(case_id: str, session: Session) -> CaseRow:
-    case = session.get(CaseRow, case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail="Case not found")
-    return case
-
-
 @router.post("/discovery", response_model=DiscoveryAnswerResponse)
-def save_answer(case_id: str, body: DiscoveryAnswerCreate, session: Session = Depends(get_session)):
-    _get_case(case_id, session)
+def save_answer(
+    case_id: str,
+    body: DiscoveryAnswerCreate,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     # Upsert: replace existing answer for same step+question_key
     existing = (
         session.query(DiscoveryAnswerRow)
@@ -55,8 +54,12 @@ def save_answer(case_id: str, body: DiscoveryAnswerCreate, session: Session = De
 
 
 @router.get("/discovery", response_model=DiscoveryAnswersResponse)
-def get_answers(case_id: str, session: Session = Depends(get_session)):
-    _get_case(case_id, session)
+def get_answers(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     rows = (
         session.query(DiscoveryAnswerRow)
         .filter_by(case_id=case_id)
@@ -73,8 +76,12 @@ def get_answers(case_id: str, session: Session = Depends(get_session)):
 
 
 @router.post("/discovery/summary", response_model=CaseSummary)
-def generate_summary(case_id: str, session: Session = Depends(get_session)):
-    case = _get_case(case_id, session)
+def generate_summary(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    case = get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     rows = session.query(DiscoveryAnswerRow).filter_by(case_id=case_id).all()
     summary = {r.question_key: r.answer for r in rows}
     # Update case status
@@ -84,8 +91,13 @@ def generate_summary(case_id: str, session: Session = Depends(get_session)):
 
 
 @router.post("/chat", response_model=ChatHistoryResponse)
-def send_chat(case_id: str, body: ChatMessageCreate, session: Session = Depends(get_session)):
-    _get_case(case_id, session)
+def send_chat(
+    case_id: str,
+    body: ChatMessageCreate,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     # Save user message
     user_msg = ChatMessageRow(case_id=case_id, role="user", content=body.content)
     session.add(user_msg)
@@ -105,8 +117,12 @@ def send_chat(case_id: str, body: ChatMessageCreate, session: Session = Depends(
 
 
 @router.get("/chat", response_model=ChatHistoryResponse)
-def get_chat(case_id: str, session: Session = Depends(get_session)):
-    _get_case(case_id, session)
+def get_chat(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     messages = (
         session.query(ChatMessageRow)
         .filter_by(case_id=case_id)

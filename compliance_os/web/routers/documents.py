@@ -4,7 +4,7 @@ import os
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.database import DATA_DIR, get_session
@@ -19,6 +19,7 @@ from compliance_os.web.models.tables import (
     DiscoveryAnswerRow,
     DocumentRow as CaseDocumentRow,
 )
+from compliance_os.web.services.case_access import get_case_for_user, maybe_user_id
 from compliance_os.web.models.tables_v2 import CheckRow as V2CheckRow
 from compliance_os.web.models.tables_v2 import DocumentRow as V2DocumentRow
 from compliance_os.web.services.checklist import generate_checklist
@@ -44,11 +45,9 @@ LEGACY_UNCLASSIFIED_DOC_TYPE = "unclassified"
 router = APIRouter(prefix="/api/cases/{case_id}/documents", tags=["documents"])
 
 
-def _get_case(case_id: str, session: Session) -> CaseRow:
-    case = session.get(CaseRow, case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail="Case not found")
-    return case
+def _get_case(case_id: str, session: Session, authorization: str | None = None) -> CaseRow:
+    """User-scoped case lookup. Auto-claims legacy NULL-owner cases."""
+    return get_case_for_user(case_id, maybe_user_id(authorization, session), session)
 
 
 def _legacy_case_stage(case_id: str) -> str:
@@ -169,8 +168,12 @@ def _doc_response(d: CaseDocumentRow) -> DocumentResponse:
 
 
 @router.get("/checklist", response_model=DocumentChecklistResponse)
-def get_checklist(case_id: str, session: Session = Depends(get_session)):
-    _get_case(case_id, session)
+def get_checklist(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    _get_case(case_id, session, authorization)
     answers = session.query(DiscoveryAnswerRow).filter_by(case_id=case_id).all()
     answer_dicts = [{"question_key": a.question_key, "step": a.step, "answer": a.answer} for a in answers]
     slots = generate_checklist(answer_dicts)
@@ -187,9 +190,10 @@ async def upload_document(
     doc_type: str | None = Form(None),
     source_path: str | None = Form(None),
     slot_key: str | None = Form(None),
+    authorization: str | None = Header(None),
     session: Session = Depends(get_session),
 ):
-    case = _get_case(case_id, session)
+    case = _get_case(case_id, session, authorization)
     bridge_check = _get_or_create_v2_bridge_check(case, session)
 
     content = await file.read()
@@ -303,8 +307,12 @@ async def upload_document(
 
 
 @router.get("", response_model=DocumentListResponse)
-def list_documents(case_id: str, session: Session = Depends(get_session)):
-    _get_case(case_id, session)
+def list_documents(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    _get_case(case_id, session, authorization)
     docs = (
         session.query(CaseDocumentRow)
         .filter_by(case_id=case_id)
@@ -315,8 +323,14 @@ def list_documents(case_id: str, session: Session = Depends(get_session)):
 
 
 @router.patch("/{doc_id}", response_model=DocumentResponse)
-def update_document(case_id: str, doc_id: str, body: DocumentUpdateRequest, session: Session = Depends(get_session)):
-    _get_case(case_id, session)
+def update_document(
+    case_id: str,
+    doc_id: str,
+    body: DocumentUpdateRequest,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    _get_case(case_id, session, authorization)
     doc = session.get(CaseDocumentRow, doc_id)
     if not doc or doc.case_id != case_id:
         raise HTTPException(status_code=404, detail="Document not found")
@@ -363,8 +377,13 @@ def update_document(case_id: str, doc_id: str, body: DocumentUpdateRequest, sess
 
 
 @router.delete("/{doc_id}")
-def delete_document(case_id: str, doc_id: str, session: Session = Depends(get_session)):
-    _get_case(case_id, session)
+def delete_document(
+    case_id: str,
+    doc_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    _get_case(case_id, session, authorization)
     doc = session.get(CaseDocumentRow, doc_id)
     if not doc or doc.case_id != case_id:
         raise HTTPException(status_code=404, detail="Document not found")

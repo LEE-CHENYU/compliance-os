@@ -1,8 +1,21 @@
 const API_BASE = "/api";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  // Forward the bearer token whenever it's available — case endpoints
+  // are now soft-authed (anonymous still works, authenticated gets
+  // ownership), so this is harmless when the user isn't signed in but
+  // is required for cases scoped to their account.
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
+  const authHeader: Record<string, string> = token
+    ? { Authorization: `Bearer ${token}` }
+    : {};
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: { "Content-Type": "application/json", ...options?.headers },
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader,
+      ...options?.headers,
+    },
     ...options,
   });
   if (!res.ok) {

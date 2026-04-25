@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -23,13 +23,22 @@ from compliance_os.web.models.tables import (
     LawyerEngagementRow,
     ProfessionalSearchRequestRow,
 )
+from compliance_os.web.services.case_access import get_case_for_user, maybe_user_id
 
 router = APIRouter(prefix="/api/cases", tags=["cases"])
 
 
 @router.post("", response_model=CaseResponse)
-def create_case(body: CaseCreate, session: Session = Depends(get_session)):
-    case = CaseRow(workflow_type=body.workflow_type)
+def create_case(
+    body: CaseCreate,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    """Create a case. Authenticated callers get user_id stamped immediately;
+    anonymous callers create a NULL-owner case that auto-claims on the
+    first authenticated access (see case_access.get_case_for_user)."""
+    user_id = maybe_user_id(authorization, session)
+    case = CaseRow(workflow_type=body.workflow_type, user_id=user_id)
     session.add(case)
     session.commit()
     session.refresh(case)
@@ -43,8 +52,20 @@ def create_case(body: CaseCreate, session: Session = Depends(get_session)):
 
 
 @router.get("", response_model=CaseListResponse)
-def list_cases(session: Session = Depends(get_session)):
-    cases = session.query(CaseRow).order_by(CaseRow.created_at.desc()).all()
+def list_cases(
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    """List cases scoped to the caller. Authenticated → only their own
+    + unowned legacy. Anonymous → only unowned (since they can't prove
+    ownership of any other case)."""
+    user_id = maybe_user_id(authorization, session)
+    q = session.query(CaseRow).order_by(CaseRow.created_at.desc())
+    if user_id is not None:
+        q = q.filter((CaseRow.user_id == user_id) | (CaseRow.user_id.is_(None)))
+    else:
+        q = q.filter(CaseRow.user_id.is_(None))
+    cases = q.all()
     return CaseListResponse(cases=[
         CaseResponse(
             id=c.id, workflow_type=c.workflow_type, status=c.status,
@@ -56,10 +77,12 @@ def list_cases(session: Session = Depends(get_session)):
 
 
 @router.get("/{case_id}", response_model=CaseResponse)
-def get_case(case_id: str, session: Session = Depends(get_session)):
-    case = session.get(CaseRow, case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail="Case not found")
+def get_case(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    case = get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     return CaseResponse(
         id=case.id, workflow_type=case.workflow_type, status=case.status,
         created_at=case.created_at, updated_at=case.updated_at,
@@ -112,11 +135,13 @@ def _summarize_search(row: ProfessionalSearchRequestRow) -> ProfessionalSearchSu
     "/{case_id}/professional-searches",
     response_model=list[ProfessionalSearchSummary],
 )
-def list_case_searches(case_id: str, session: Session = Depends(get_session)):
+def list_case_searches(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
     """List every professional search attached to this case (newest first)."""
-    case = session.get(CaseRow, case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail="Case not found")
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     rows = (
         session.query(ProfessionalSearchRequestRow)
         .filter(ProfessionalSearchRequestRow.case_id == case_id)
@@ -345,10 +370,12 @@ def _validate_status(status: str) -> str:
     "/{case_id}/engagements",
     response_model=list[EngagementResponse],
 )
-def list_engagements(case_id: str, session: Session = Depends(get_session)):
-    case = session.get(CaseRow, case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail="Case not found")
+def list_engagements(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     rows = (
         session.query(LawyerEngagementRow)
         .filter(LawyerEngagementRow.case_id == case_id)
@@ -395,11 +422,10 @@ def _hydrate_from_search(
 def create_engagement(
     case_id: str,
     body: EngagementCreate,
+    authorization: str | None = Header(None),
     session: Session = Depends(get_session),
 ):
-    case = session.get(CaseRow, case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail="Case not found")
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     if not body.firm_name.strip():
         raise HTTPException(status_code=400, detail="firm_name cannot be empty")
 
@@ -453,8 +479,10 @@ def update_engagement(
     case_id: str,
     engagement_id: str,
     body: EngagementUpdate,
+    authorization: str | None = Header(None),
     session: Session = Depends(get_session),
 ):
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     row = session.get(LawyerEngagementRow, engagement_id)
     if row is None or row.case_id != case_id:
         raise HTTPException(status_code=404, detail="Engagement not found")
@@ -533,6 +561,7 @@ def _firm_why_fit(
 def draft_engagement_email(
     case_id: str,
     engagement_id: str,
+    authorization: str | None = Header(None),
     session: Session = Depends(get_session),
 ):
     """Synthesize a first-touch email for the user to send to this firm.
@@ -546,9 +575,7 @@ def draft_engagement_email(
     if row is None or row.case_id != case_id:
         raise HTTPException(status_code=404, detail="Engagement not found")
 
-    case = session.get(CaseRow, case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail="Case not found")
+    case = get_case_for_user(case_id, maybe_user_id(authorization, session), session)
 
     # Build the brief from discovery answers (same synthesis used at intake).
     answer_rows = (
@@ -616,9 +643,11 @@ class EmailThreadResponse(BaseModel):
 def list_engagement_threads(
     case_id: str,
     engagement_id: str,
+    authorization: str | None = Header(None),
     session: Session = Depends(get_session),
 ):
     """List email threads matched to this engagement (newest first)."""
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     row = session.get(LawyerEngagementRow, engagement_id)
     if row is None or row.case_id != case_id:
         raise HTTPException(status_code=404, detail="Engagement not found")
@@ -647,8 +676,10 @@ def list_engagement_threads(
 def delete_engagement(
     case_id: str,
     engagement_id: str,
+    authorization: str | None = Header(None),
     session: Session = Depends(get_session),
 ):
+    get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     row = session.get(LawyerEngagementRow, engagement_id)
     if row is None or row.case_id != case_id:
         raise HTTPException(status_code=404, detail="Engagement not found")
@@ -658,16 +689,18 @@ def delete_engagement(
 
 
 @router.get("/{case_id}/draft-brief", response_model=DraftBrief)
-def get_draft_brief(case_id: str, session: Session = Depends(get_session)):
+def get_draft_brief(
+    case_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
     """Synthesise a case brief + vertical guess from discovery answers.
 
     Used by `/find-lawyer?case_id=...` to pre-fill the intake form.
     Returns an empty-ish brief if the case has no answers — the
     frontend can still show the page; the user fills in manually.
     """
-    case = session.get(CaseRow, case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail="Case not found")
+    case = get_case_for_user(case_id, maybe_user_id(authorization, session), session)
     rows = (
         session.query(DiscoveryAnswerRow)
         .filter(DiscoveryAnswerRow.case_id == case_id)

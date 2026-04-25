@@ -25,6 +25,7 @@ import httpx
 from sqlalchemy.orm import Session
 
 from compliance_os.web.models.tables import (
+    CaseRow,
     EmailThreadRow,
     GoogleOAuthTokenRow,
     LawyerEngagementRow,
@@ -45,6 +46,19 @@ MAX_MESSAGES_PER_SYNC = 100
 DEBOUNCE = timedelta(minutes=2)
 
 EMAIL_RE = re.compile(r"[\w.+\-]+@[\w\-]+\.[\w.\-]+")
+
+# Public email-provider domains. We never use these for domain-fallback
+# matching — a stored `lawyer@gmail.com` should match exactly, not match
+# every other gmail.com sender in the user's inbox.
+PUBLIC_EMAIL_DOMAINS: frozenset[str] = frozenset({
+    "gmail.com", "googlemail.com",
+    "yahoo.com", "yahoo.co.uk", "yahoo.co.jp",
+    "hotmail.com", "outlook.com", "live.com", "msn.com",
+    "icloud.com", "me.com", "mac.com",
+    "aol.com",
+    "proton.me", "protonmail.com",
+    "qq.com", "163.com", "126.com", "sina.com",
+})
 
 
 class GmailSyncError(RuntimeError):
@@ -169,17 +183,45 @@ def sync_user_gmail(
     profile = _gmail_get(access_token, "/users/me/profile")
     user_email = (profile.get("emailAddress") or "").lower()
 
-    # Build email→engagement_id lookup across ALL engagements (cases are
-    # not user-scoped today — single-tenant model). When CaseRow.user_id
-    # lands, scope this query.
-    engagements = db.query(LawyerEngagementRow).all()
+    # Scope to engagements on cases owned by THIS user. Excludes cases
+    # with NULL user_id (anonymous/legacy) — safer default: never let
+    # one user's Gmail be matched against another user's anonymous case.
+    # Anonymous cases get claimed on first authenticated access via
+    # case_access.get_case_for_user, so this only filters out truly
+    # orphaned cases.
+    engagements = (
+        db.query(LawyerEngagementRow)
+        .join(CaseRow, LawyerEngagementRow.case_id == CaseRow.id)
+        .filter(CaseRow.user_id == user_id)
+        .all()
+    )
+
+    # Two lookups: exact-email (high precision) and domain (fallback).
+    # A firm whose intake@firm.com replies but whose stored contact is
+    # partner@firm.com still matches via the domain map. The user's own
+    # email domain is excluded — we don't want every internal thread to
+    # be matched against an engagement that happens to share our domain.
     email_to_engagement: dict[str, str] = {}
+    domain_to_engagement: dict[str, str] = {}
+    user_domain = user_email.split("@", 1)[-1] if "@" in user_email else ""
     for e in engagements:
         for em in (e.firm_emails or []):
-            if isinstance(em, str) and em.strip():
-                email_to_engagement[em.lower().strip()] = e.id
+            if not isinstance(em, str) or not em.strip():
+                continue
+            addr = em.lower().strip()
+            email_to_engagement[addr] = e.id
+            domain = addr.split("@", 1)[-1] if "@" in addr else ""
+            if (
+                domain
+                and domain != user_domain
+                and domain not in PUBLIC_EMAIL_DOMAINS
+            ):
+                # First engagement to claim a domain wins. Multiple
+                # engagements at the same firm domain is rare; if it
+                # happens, exact-email match (preferred above) handles it.
+                domain_to_engagement.setdefault(domain, e.id)
 
-    if not email_to_engagement:
+    if not email_to_engagement and not domain_to_engagement:
         token_row.last_synced_at = now
         token_row.last_sync_error = None
         db.commit()
@@ -190,6 +232,9 @@ def sync_user_gmail(
             "last_synced_at": now.isoformat(),
         }
 
+    # Query Gmail by exact addresses (higher precision than `from:@domain`
+    # which would scoop in too much for big-firm domains). Domain fallback
+    # is applied client-side during participant matching below.
     query = _build_query(list(email_to_engagement.keys()))
     try:
         list_resp = _gmail_get(
@@ -235,10 +280,22 @@ def sync_user_gmail(
                         participants.add(addr)
 
         matched_engagement_id: str | None = None
+        # Pass 1: exact email match (high confidence).
         for p in participants:
             if p in email_to_engagement:
                 matched_engagement_id = email_to_engagement[p]
                 break
+        # Pass 2: domain fallback (catches intake@/info@/secretary@ that
+        # weren't on the engagement's stored email list). Skip the user's
+        # own domain so internal threads don't accidentally match.
+        if matched_engagement_id is None:
+            for p in participants:
+                domain = p.split("@", 1)[-1] if "@" in p else ""
+                if not domain or domain == user_domain:
+                    continue
+                if domain in domain_to_engagement:
+                    matched_engagement_id = domain_to_engagement[domain]
+                    break
 
         messages_scanned += 1
         if not matched_engagement_id:
