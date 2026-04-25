@@ -126,3 +126,160 @@ export const updateDocument = (caseId: string, docId: string, update: { slot_key
 
 export const deleteDocument = (caseId: string, docId: string) =>
   request<{ ok: boolean }>(`/cases/${caseId}/documents/${docId}`, { method: "DELETE" });
+
+// --- Professional Search (lawyer / CPA / banker discovery) ---
+
+export interface ProfessionalSearch {
+  id: string;
+  status: "queued" | "running" | "complete" | "failed";
+  purpose: string;
+  vertical: string;
+  case_brief: string;
+  uploaded_notes: string | null;
+  persona_status: Record<
+    string,
+    {
+      status?: "complete" | "failed";
+      output_path?: string;
+      firm_count?: number;
+      error?: string;
+      started_at?: string;
+      finished_at?: string;
+      input_tokens?: number;
+      output_tokens?: number;
+      cache_read_tokens?: number;
+      cache_write_tokens?: number;
+    }
+  >;
+  tier_report: Array<{
+    firm: string;
+    purpose: string;
+    status: string;
+    score: number | null;
+    priority: string | null;
+    next_action: string | null;
+    next_action_date: string | null;
+    last_contact_date: string | null;
+    lowest_quote: number | null;
+    highest_quote: number | null;
+    open_risks: number;
+  }> | null;
+  error: string | null;
+  created_at: string;
+  completed_at: string | null;
+  paid_at: string | null;
+  is_paid: boolean;
+  is_claimed: boolean;
+  stripe_customer_email: string | null;
+}
+
+export async function startProfessionalSearch(params: {
+  case_brief: string;
+  purpose: string;
+  vertical?: string;
+  case_id?: string | null;
+  files?: File[];
+}): Promise<ProfessionalSearch> {
+  const fd = new FormData();
+  fd.append("case_brief", params.case_brief);
+  fd.append("purpose", params.purpose);
+  if (params.vertical) fd.append("vertical", params.vertical);
+  if (params.case_id) fd.append("case_id", params.case_id);
+  for (const f of params.files ?? []) fd.append("files", f);
+  const res = await fetch(`${API_BASE}/professional-search`, {
+    method: "POST",
+    body: fd,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
+  return res.json();
+}
+
+export const getProfessionalSearch = (id: string) =>
+  request<ProfessionalSearch>(`/professional-search/${id}`);
+
+export interface MarketplaceMatch {
+  sku: string;
+  name: string;
+  public_name: string | null;
+  description: string;
+  public_description: string | null;
+  price_cents: number;
+  headline: string | null;
+  public_headline: string | null;
+  cta_label: string | null;
+  public_cta_label: string | null;
+  path: string | null;
+  match_score: number;
+  match_reason: string;
+}
+
+export const getMarketplaceMatch = (searchId: string) =>
+  request<MarketplaceMatch[]>(`/professional-search/${searchId}/marketplace-match`);
+
+export const downloadProfessionalSearchUrl = (id: string) =>
+  `${API_BASE}/professional-search/${id}/download`;
+
+export async function startCheckout(searchId: string): Promise<{ url: string }> {
+  const res = await fetch(`${API_BASE}/professional-search/${searchId}/checkout`, {
+    method: "POST",
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
+  return res.json();
+}
+
+export async function claimSearch(searchId: string): Promise<ProfessionalSearch> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
+  const res = await fetch(`${API_BASE}/professional-search/${searchId}/claim`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
+  return res.json();
+}
+
+// --- Case ↔ professional-search integration ---
+
+export interface ProfessionalSearchSummary {
+  id: string;
+  status: "queued" | "running" | "complete" | "failed";
+  purpose: string;
+  vertical: string;
+  created_at: string;
+  completed_at: string | null;
+  paid_at: string | null;
+  firm_count: number;
+  top_firms: Array<{ name: string; confidence: number | null }>;
+}
+
+export const listCaseSearches = (caseId: string) =>
+  request<ProfessionalSearchSummary[]>(`/cases/${caseId}/professional-searches`);
+
+export interface DraftBrief {
+  brief: string;
+  suggested_vertical: string;
+  suggested_purpose: string;
+}
+
+export const getCaseDraftBrief = (caseId: string) =>
+  request<DraftBrief>(`/cases/${caseId}/draft-brief`);
+
+export async function listMySearches(): Promise<ProfessionalSearch[]> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
+  const res = await fetch(`${API_BASE}/professional-search/mine/list`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
+  return res.json();
+}

@@ -11,8 +11,13 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Install system deps + Node.js
+# WeasyPrint needs cairo, pango, and gdk-pixbuf for HTML→PDF rendering;
+# fonts-liberation gives it a serif/sans set so reports render even without
+# any user-supplied fonts.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc libffi-dev curl && \
+    gcc libffi-dev curl \
+    libpango-1.0-0 libpangoft2-1.0-0 libcairo2 libgdk-pixbuf-2.0-0 \
+    libharfbuzz0b shared-mime-info fonts-liberation && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
@@ -26,7 +31,8 @@ RUN pip install --no-cache-dir \
     fastapi uvicorn sqlalchemy python-multipart pymupdf openai \
     "psycopg[binary]" \
     python-dotenv pydantic pydantic-settings pyyaml python-dateutil \
-    rapidfuzz bcrypt pyjwt anthropic mistralai google-generativeai
+    rapidfuzz bcrypt pyjwt anthropic mistralai google-generativeai \
+    weasyprint stripe
 
 # Copy application code
 COPY compliance_os/ ./compliance_os/

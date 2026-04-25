@@ -1,0 +1,31 @@
+id: elite_boutique
+vertical: immigration_attorney
+title: "Elite boutiques — Chambers-ranked, AILA leadership"
+
+search_angle: |
+  Find boutique to mid-sized immigration firms (5–50 attorneys) with
+  strong externally-verifiable credentials. Prefer firms where
+  partners still write petitions personally and have a track record
+  of handling unusual fact patterns (founder-beneficiary, small
+  employers, related-entity petitioners).
+
+  The ideal candidate has (a) Chambers USA Immigration ranking at any
+  band, AND (b) past elected AILA leadership at national or chapter
+  level, AND (c) a published position on the specific regulatory
+  question at issue for this case.
+
+must_weight:
+  - "Chambers USA Immigration ranking (any band)"
+  - "AILA past elected leadership (National President, Chapter Chair, Committee Chair)"
+  - "AV Preeminent (Martindale-Hubbell)"
+  - "Best Lawyers in America — Business Immigration"
+  - "State Bar Certified Specialist (immigration)"
+  - "ABIL membership"
+  - "Published AAO appeals or federal-court filings"
+
+deprioritize:
+  - "AmLaw 100 mega-firms (high minimums; won't take single-petition matters)"
+  - "Volume H-1B mills with thin partner attention"
+  - "Marketing-heavy firms with no third-party rankings"
+
+target_count: 6

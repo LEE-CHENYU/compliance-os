@@ -1,0 +1,630 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  downloadProfessionalSearchUrl,
+  getMarketplaceMatch,
+  getProfessionalSearch,
+  startCheckout,
+  type MarketplaceMatch,
+  type ProfessionalSearch,
+} from "@/lib/api";
+import {
+  FIND_LAWYER_STRINGS,
+  personaLabel,
+  useLang,
+  type Lang,
+} from "@/lib/i18n";
+import LangToggle from "@/components/LangToggle";
+
+const POLL_INTERVAL_MS = 3000;
+
+function formatUSD(n: number | null | undefined): string {
+  if (n == null) return "—";
+  return `$${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+}
+
+function safeName(s: string): string {
+  return s.replace(/[^a-z0-9-_]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+}
+
+/** Download the report by fetching it and triggering a save with the right filename.
+ *  Surfaces server-side errors as inline UI instead of letting the browser
+ *  save the JSON error body as `download.json`. */
+function ReportActions({
+  searchId,
+  purpose,
+  lang,
+}: {
+  searchId: string;
+  purpose: string;
+  lang: Lang;
+}) {
+  const t = FIND_LAWYER_STRINGS[lang];
+  const [busy, setBusy] = useState<"pdf" | "html" | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function downloadAs(format: "pdf" | "html") {
+    setBusy(format);
+    setError(null);
+    try {
+      const res = await fetch(
+        `${downloadProfessionalSearchUrl(searchId)}?format=${format}`,
+      );
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error(body.detail || `HTTP ${res.status}`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `lawyer-search-${safeName(purpose)}-${searchId.slice(0, 8)}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-3">
+      {error && (
+        <span className="rounded-full border border-[#ffd6d6] bg-[#fff4f4] px-3 py-1 text-[11px] font-semibold text-[#a33a3a]">
+          {error}
+        </span>
+      )}
+      <button
+        type="button"
+        onClick={() => downloadAs("pdf")}
+        disabled={busy !== null}
+        className="inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-wait disabled:bg-[#a8bce8]"
+      >
+        <svg
+          aria-hidden="true"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        {busy === "pdf" ? (t.btnDownloadPDFBusy as string) : (t.btnDownloadPDF as string)}
+      </button>
+      <a
+        href={downloadProfessionalSearchUrl(searchId)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-[12px] font-medium text-[#40536f] underline-offset-4 hover:text-[#1a2036] hover:underline"
+      >
+        {t.btnViewWeb as string}
+      </a>
+    </div>
+  );
+}
+
+function StatusPill({ status }: { status: ProfessionalSearch["status"] }) {
+  const palette: Record<ProfessionalSearch["status"], string> = {
+    queued: "border-[#dce6f3] bg-white/80 text-[#6d7c95]",
+    running: "border-[#cfe1ff] bg-[#eaf2ff] text-[#2f5bae]",
+    complete: "border-[#cfe8d5] bg-[#eaf6ec] text-[#2f7a45]",
+    failed: "border-[#ffd6d6] bg-[#fff4f4] text-[#a33a3a]",
+  };
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] shadow-[0_8px_24px_rgba(42,64,102,0.06)] ${palette[status]}`}
+    >
+      {status}
+    </span>
+  );
+}
+
+function Paywall({
+  searchId,
+  lang,
+}: {
+  searchId: string;
+  lang: Lang;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const isZh = lang === "zh";
+
+  async function go() {
+    setBusy(true);
+    setError(null);
+    try {
+      const { url } = await startCheckout(searchId);
+      window.location.href = url;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-[#dbe5f2] bg-gradient-to-br from-white via-[#f8fbff] to-[#eaf2ff] p-5 shadow-[0_10px_30px_rgba(61,84,128,0.06)]">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="min-w-0">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5b8dee]">
+            {isZh ? "解锁完整报告" : "Unlock the full report"}
+          </div>
+          <div className="mt-1 text-[15px] font-semibold text-[#0d1424]">
+            {isZh
+              ? "PDF + 网页版报告，包含完整律所简介、可验证资质与原始资料链接"
+              : "PDF + HTML report — full firm dossiers, credentials, and verification sources"}
+          </div>
+          <div className="mt-1 text-[12px] text-[#7b8ba5]">
+            {isZh
+              ? "一次性付费 $15 美元，永久访问。下方排名表保持免费可见。"
+              : "One-time $15 USD · keep the tier table above free; pay only for the deliverable."}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={go}
+          disabled={busy}
+          className="inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-wait disabled:bg-[#a8bce8]"
+        >
+          {busy
+            ? isZh ? "正在跳转到支付…" : "Redirecting to checkout…"
+            : isZh ? "$15 解锁" : "Unlock for $15"}
+          {!busy && (
+            <svg
+              aria-hidden="true"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          )}
+        </button>
+      </div>
+      {error && (
+        <div className="mt-3 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-3 py-2 text-[12px] text-[#a33a3a]">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PersonaCard({
+  name,
+  state,
+  lang,
+}: {
+  name: string;
+  state: ProfessionalSearch["persona_status"][string];
+  lang: Lang;
+}) {
+  const t = FIND_LAWYER_STRINGS[lang];
+  const status = state?.status ?? "running";
+  const statusColors = {
+    complete: "text-[#2f7a45]",
+    failed: "text-[#a33a3a]",
+    running: "text-[#2f5bae]",
+  };
+  const dotColors = {
+    complete: "bg-[#5ab474]",
+    failed: "bg-[#d46b6b]",
+    running: "bg-[#5b8dee]",
+  };
+  const s = status as keyof typeof statusColors;
+
+  return (
+    <div className="rounded-2xl border border-[#e4edf7] bg-white/82 p-5 shadow-[0_10px_30px_rgba(61,84,128,0.05)]">
+      <div className="flex items-baseline justify-between">
+        <div className="text-[15px] font-semibold text-[#0d1424]">
+          {personaLabel(lang, name)}
+        </div>
+        <div className={`flex items-center gap-2 text-[12px] font-semibold ${statusColors[s]}`}>
+          <span
+            className={`h-2 w-2 rounded-full ${dotColors[s]} ${status === "running" ? "animate-pulse" : ""}`}
+          />
+          {status === "complete"
+            ? (t.personaFirms as (n: number) => string)(state.firm_count ?? 0)
+            : status === "failed"
+            ? (t.personaFailed as string)
+            : (t.personaSearching as string)}
+        </div>
+      </div>
+      {state?.error && (
+        <div className="mt-2 text-[12px] leading-5 text-[#a33a3a]">
+          {state.error}
+        </div>
+      )}
+      {state?.status === "complete" && (
+        <div className="mt-2 text-[11px] text-[#7b8ba5]">
+          {state.input_tokens?.toLocaleString() ?? 0} in ·{" "}
+          {state.output_tokens?.toLocaleString() ?? 0} out
+          {state.cache_read_tokens ? (
+            <>
+              {" "}
+              · <span className="text-[#2f5bae]">
+                {state.cache_read_tokens.toLocaleString()} cached
+              </span>
+            </>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function GuardianUpsell({
+  matches,
+  lang,
+}: {
+  matches: MarketplaceMatch[];
+  lang: Lang;
+}) {
+  const router = useRouter();
+  const isZh = lang === "zh";
+  if (matches.length === 0) return null;
+
+  return (
+    <section className="rounded-[32px] border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-7 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5b8dee]">
+        <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#5b8dee]" />
+        {isZh ? "或者由 Guardian 直接为您处理" : "Or have Guardian do this for you"}
+      </div>
+      <p className="mt-3 max-w-2xl text-[14px] leading-6 text-[#556480]">
+        {isZh
+          ? "您的情况符合 Guardian 提供的标准服务。固定价格、可验证流程、由我们的执业律师交付。如果您更倾向于聘用下方列出的外部律所，下方的搜索结果依然完整可用。"
+          : "Your situation matches a Guardian service we deliver in-house — fixed price, vetted attorney, no quote-shopping. If you'd rather hire one of the external firms below, the full search results are still yours."}
+      </p>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        {matches.map((m) => {
+          const name = m.public_name || m.name;
+          const headline = m.public_headline || m.headline;
+          const desc = m.public_description || m.description;
+          const cta = m.public_cta_label || m.cta_label || (isZh ? "查看服务" : "View service");
+          const price =
+            m.price_cents === 0
+              ? isZh ? "免费" : "Free"
+              : `$${(m.price_cents / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+          return (
+            <div
+              key={m.sku}
+              className="rounded-2xl border border-white/70 bg-white/82 p-5 shadow-[0_10px_30px_rgba(61,84,128,0.05)] flex flex-col"
+            >
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-[16px] font-bold text-[#0d1424]">{name}</div>
+                <div className="text-[15px] font-bold text-[#5b8dee] tabular-nums">{price}</div>
+              </div>
+              {headline && (
+                <div className="mt-1 text-[13px] font-medium text-[#40536f]">{headline}</div>
+              )}
+              {desc && (
+                <p className="mt-2 text-[12.5px] leading-5 text-[#7b8ba5] line-clamp-3">
+                  {desc}
+                </p>
+              )}
+              <div className="mt-3 text-[11px] font-medium text-[#9aa9c2] italic">
+                {m.match_reason}
+              </div>
+              <div className="mt-auto pt-4">
+                <button
+                  type="button"
+                  onClick={() => m.path && router.push(m.path)}
+                  disabled={!m.path}
+                  className="w-full rounded-full bg-[#5b8dee] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#a8bce8]"
+                >
+                  {cta} →
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          const el = document.getElementById("tier-report-anchor");
+          el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
+        className="mt-5 text-[12px] font-medium text-[#5b8dee] hover:text-[#2f5bae] underline-offset-4 hover:underline"
+      >
+        {isZh ? "或查看下方外部律所对比 ↓" : "Or compare external firms below ↓"}
+      </button>
+    </section>
+  );
+}
+
+
+function priorityStyle(priority: string | null): string {
+  switch (priority) {
+    case "critical":
+      return "border-[#ffd6d6] bg-[#fff4f4] text-[#a33a3a]";
+    case "high":
+      return "border-[#ffe3c9] bg-[#fff6ea] text-[#9c5a1c]";
+    case "medium":
+      return "border-[#cfe1ff] bg-[#eaf2ff] text-[#2f5bae]";
+    case "low":
+      return "border-[#dbe5f2] bg-white/80 text-[#6d7c95]";
+    default:
+      return "border-[#dbe5f2] bg-white/80 text-[#7b8ba5]";
+  }
+}
+
+export default function SearchStatus() {
+  const params = useParams<{ searchId: string }>();
+  const router = useRouter();
+  const { lang, setLang } = useLang();
+  const t = FIND_LAWYER_STRINGS[lang];
+  const [row, setRow] = useState<ProfessionalSearch | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [matches, setMatches] = useState<MarketplaceMatch[]>([]);
+  const stopped = useRef(false);
+
+  useEffect(() => {
+    stopped.current = false;
+    async function poll() {
+      try {
+        const data = await getProfessionalSearch(params.searchId);
+        if (stopped.current) return;
+        setRow(data);
+        if (data.status === "complete" || data.status === "failed") {
+          stopped.current = true;
+          return;
+        }
+      } catch (e) {
+        if (stopped.current) return;
+        setError(e instanceof Error ? e.message : String(e));
+      }
+      if (!stopped.current) setTimeout(poll, POLL_INTERVAL_MS);
+    }
+    poll();
+    // Marketplace match depends only on vertical+brief (set at intake),
+    // so a single fetch is enough — no need to refresh as the search runs.
+    getMarketplaceMatch(params.searchId)
+      .then(setMatches)
+      .catch(() => setMatches([]));
+    return () => {
+      stopped.current = true;
+    };
+  }, [params.searchId]);
+
+  const bgClass =
+    "min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-6 py-10";
+
+  if (error && !row) {
+    return (
+      <div className={bgClass}>
+        <div className="mx-auto max-w-3xl">
+          <div className="rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!row) {
+    return (
+      <div className={bgClass}>
+        <div className="mx-auto max-w-3xl text-[#7b8ba5]">{t.loading as string}</div>
+      </div>
+    );
+  }
+
+  const personas = Object.entries(row.persona_status);
+  const tierRows = row.tier_report ?? [];
+
+  return (
+    <div className={bgClass}>
+      <div className="mx-auto max-w-5xl space-y-6">
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => router.push("/find-lawyer")}
+            className="rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur transition hover:text-[#1a2036]"
+          >
+            {t.statusBtnNew as string}
+          </button>
+          <div className="flex items-center gap-3">
+            <LangToggle lang={lang} onChange={setLang} />
+            <StatusPill status={row.status} />
+          </div>
+        </div>
+
+        <header className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
+          <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
+            {row.vertical.replace(/_/g, " ")}
+          </div>
+          <h1 className="mt-3 text-[34px] font-extrabold leading-[1.1] tracking-tight text-[#0d1424]">
+            {row.purpose}
+          </h1>
+          <p className="mt-3 text-[14px] text-[#7b8ba5]">
+            {t.statusStarted as string} {new Date(row.created_at).toLocaleString()}
+            {row.completed_at && (
+              <>
+                {" · "}{t.statusFinished as string}{" "}
+                {new Date(row.completed_at).toLocaleString()}
+              </>
+            )}
+          </p>
+
+          {row.status === "failed" && row.error && (
+            <div className="mt-5 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
+              <div className="font-semibold">{t.statusFailed as string}</div>
+              <div className="mt-1 text-[13px]">{row.error}</div>
+            </div>
+          )}
+        </header>
+
+        <GuardianUpsell matches={matches} lang={lang} />
+
+        <section className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
+          <div className="mb-5 flex items-baseline justify-between">
+            <h2 className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
+              {t.statusAgents as string}
+            </h2>
+            {row.status === "running" && (
+              <span className="text-[12px] text-[#7b8ba5]">{t.statusPolling as string}</span>
+            )}
+          </div>
+          {personas.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-[#c9d7eb] bg-white/70 px-5 py-8 text-center">
+              <div className="text-[14px] font-semibold text-[#40536f]">
+                {row.status === "queued"
+                  ? (t.statusQueued as string)
+                  : (t.statusSpinning as string)}
+              </div>
+              <div className="mt-2 text-[12px] text-[#7b8ba5]">
+                {t.statusSpinningSub as string}
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {personas.map(([name, state]) => (
+                <PersonaCard key={name} name={name} state={state} lang={lang} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {tierRows.length > 0 && (
+          <section
+            id="tier-report-anchor"
+            className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur scroll-mt-6"
+          >
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-baseline gap-3">
+                <h2 className="text-[22px] font-bold tracking-tight text-[#0d1424]">
+                  {t.tierTitle as string}
+                </h2>
+                <span className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">
+                  {(t.tierFirms as (n: number) => string)(tierRows.length)}
+                </span>
+              </div>
+              {row.status === "complete" && row.is_paid && (
+                <ReportActions searchId={row.id} purpose={row.purpose} lang={lang} />
+              )}
+            </div>
+            <p className="text-[14px] leading-6 text-[#556480]">
+              {t.tierBlurb as string}
+            </p>
+            {row.status === "complete" && !row.is_paid && (
+              <div className="mt-4">
+                <Paywall searchId={row.id} lang={lang} />
+              </div>
+            )}
+
+            <div className="mt-6 space-y-3">
+              {tierRows.map((r, idx) => (
+                <div
+                  key={`${r.firm}-${idx}`}
+                  className="rounded-2xl border border-[#e4edf7] bg-white/82 p-5 shadow-[0_10px_30px_rgba(61,84,128,0.05)]"
+                >
+                  <div className="flex items-start gap-5">
+                    <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl border border-[#dbe5f2] bg-[#fbfdff]">
+                      <div className="text-[20px] font-extrabold leading-none text-[#0d1424]">
+                        {r.score ?? "—"}
+                      </div>
+                      <div className="mt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
+                        score
+                      </div>
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <div className="text-[17px] font-bold text-[#0d1424]">
+                          {r.firm}
+                        </div>
+                        {r.priority && (
+                          <span
+                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${priorityStyle(r.priority)}`}
+                          >
+                            {r.priority}
+                          </span>
+                        )}
+                        {r.open_risks > 0 && (
+                          <span className="inline-flex items-center rounded-full border border-[#ffd6d6] bg-[#fff4f4] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a33a3a]">
+                            {r.open_risks} {r.open_risks === 1 ? "risk" : "risks"}
+                          </span>
+                        )}
+                      </div>
+
+                      <dl className="mt-3 grid grid-cols-1 gap-x-8 gap-y-1 text-[13px] sm:grid-cols-2">
+                        <div className="flex gap-2">
+                          <dt className="text-[#7b8ba5]">{t.rowFee as string}</dt>
+                          <dd className="font-medium text-[#40536f]">
+                            {r.lowest_quote || r.highest_quote
+                              ? `${formatUSD(r.lowest_quote)} – ${formatUSD(r.highest_quote)}`
+                              : "—"}
+                          </dd>
+                        </div>
+                        <div className="flex gap-2">
+                          <dt className="text-[#7b8ba5]">{t.rowStatus as string}</dt>
+                          <dd className="font-medium text-[#40536f]">
+                            {r.status}
+                          </dd>
+                        </div>
+                        {r.next_action && (
+                          <div className="col-span-2 flex gap-2">
+                            <dt className="text-[#7b8ba5]">{t.rowNext as string}</dt>
+                            <dd className="font-medium text-[#40536f]">
+                              {r.next_action}
+                              {r.next_action_date && (
+                                <span className="text-[#7b8ba5]">
+                                  {" "}
+                                  &middot; by {r.next_action_date}
+                                </span>
+                              )}
+                            </dd>
+                          </div>
+                        )}
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-6 text-[12px] leading-5 text-[#7b8ba5]">
+              Full credential lists, quotes, sources, and contact info are in
+              the diligence database. Call the{" "}
+              <code className="rounded bg-white/80 px-1 py-0.5 text-[11px]">
+                vendor_detail
+              </code>{" "}
+              MCP tool or the vendor directory endpoint for any firm above to
+              pull the dossier.
+            </p>
+          </section>
+        )}
+
+        {row.status === "complete" && tierRows.length === 0 && (
+          <section className="rounded-[32px] border border-[#ffe3c9] bg-[#fff6ea]/80 p-6 backdrop-blur">
+            <div className="text-[14px] font-semibold text-[#9c5a1c]">
+              Search finished but no firms were ingested.
+            </div>
+            <div className="mt-1 text-[13px] text-[#a06524]">
+              Check per-agent errors above.
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}

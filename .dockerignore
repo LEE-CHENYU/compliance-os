@@ -10,9 +10,12 @@ __pycache__
 .playwright-mcp/
 .env
 data/
+output/
 uploads/
 .superpowers/
 dev_dataset/
 tests/
 docs/
 *.md
+!compliance_os/**/*.md
+!compliance_os/professional_search/personas_data/**

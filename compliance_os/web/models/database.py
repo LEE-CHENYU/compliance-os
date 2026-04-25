@@ -65,7 +65,37 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     _ensure_v2_columns(engine)
     _ensure_auth_columns(engine)
     _ensure_marketplace_columns(engine)
+    _ensure_professional_search_columns(engine)
     return engine
+
+
+def _ensure_professional_search_columns(engine: Engine) -> None:
+    """Add columns introduced after the table was first created.
+
+    Runs on both SQLite (local dev) and Postgres (prod). The JSON
+    column type used here is the dialect's native JSON when available.
+    """
+    inspector = inspect(engine)
+    if "professional_search_requests" not in inspector.get_table_names():
+        return
+
+    existing = {col["name"] for col in inspector.get_columns("professional_search_requests")}
+    is_sqlite = engine.dialect.name == "sqlite"
+    json_type = "JSON" if is_sqlite else "JSONB"
+
+    wanted = {
+        "firms_data": json_type,
+        "paid_at": "TIMESTAMP" if not is_sqlite else "DATETIME",
+        "stripe_session_id": "VARCHAR(255)",
+        "stripe_customer_email": "VARCHAR(320)",
+        "user_id": "VARCHAR(36)",
+    }
+    with engine.begin() as conn:
+        for name, ddl in wanted.items():
+            if name not in existing:
+                conn.execute(
+                    text(f"ALTER TABLE professional_search_requests ADD COLUMN {name} {ddl}")
+                )
 
 
 def _ensure_v2_columns(engine: Engine) -> None:

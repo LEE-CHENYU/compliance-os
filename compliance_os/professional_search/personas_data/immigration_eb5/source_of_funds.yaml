@@ -1,0 +1,38 @@
+id: source_of_funds
+vertical: immigration_eb5
+title: "Source-of-funds specialists (multi-step, China / India / VN origin)"
+
+search_angle: |
+  Source-of-funds (SOF) and path-of-funds documentation is the
+  single most likely point of failure in an I-526E petition,
+  especially for funds originating in mainland China, India, or
+  Vietnam where SAFE compliance, gifting structures, and multi-step
+  currency conversions are routine. Find firms with documented
+  expertise in multi-step SOF construction — gift letters, real-
+  estate proceeds, bank loans collateralized by Chinese assets,
+  inheritance, business-sale proceeds — and a track record of
+  defending their work product in RFEs and AAO appeals.
+
+  Strong signals are case-specific RFE responses (publicly summarized
+  by the firm in non-marketing contexts), federal-court wins on path-
+  of-funds doctrine, in-country offices in the investor's home
+  jurisdiction, and Mandarin / Hindi / Vietnamese-speaking partners
+  (not just paralegals).
+
+must_weight:
+  - "Documented federal-court or AAO decisions on SOF / path-of-funds"
+  - "In-country office presence (Shanghai, Beijing, Hong Kong, Mumbai, Ho Chi Minh)"
+  - "Mandarin / Hindi / Vietnamese-speaking partner-level attorneys"
+  - "Published RFE responses or case studies with redacted SOF facts"
+  - "AILA EB-5 Committee participation with SOF subcommittee involvement"
+
+also_value:
+  - "Forensic accounting partners or in-house SOF document reviewers"
+  - "Direct relationships with Chinese accounting firms for income-tax records"
+  - "Documented SAFE-compliant transfer-path expertise"
+
+deprioritize:
+  - "Firms whose SOF approach is 'we'll figure it out' without process documentation"
+  - "Firms that subcontract SOF documentation entirely to third-party consultancies without legal oversight"
+
+target_count: 5

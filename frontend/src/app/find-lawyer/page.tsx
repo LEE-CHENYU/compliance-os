@@ -1,0 +1,334 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getCaseDraftBrief, startProfessionalSearch } from "@/lib/api";
+import {
+  FIND_LAWYER_STRINGS,
+  VERTICAL_LABELS,
+  useLang,
+} from "@/lib/i18n";
+import LangToggle from "@/components/LangToggle";
+
+const VERTICAL_KEYS = [
+  "immigration_attorney",
+  "immigration_eb5",
+  "tax_attorney",
+  "corporate_attorney",
+  "cpa",
+  "bank",
+  "caa",
+] as const;
+
+const PRIMARY_BTN =
+  "rounded-full px-6 py-3 text-[14px] font-semibold transition bg-[#5b8dee] text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] hover:bg-[#4f82de]";
+const DISABLED_BTN =
+  "rounded-full px-6 py-3 text-[14px] font-semibold bg-[#d9e3f0] text-[#90a0bb]";
+const LABEL =
+  "mb-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]";
+const INPUT =
+  "w-full rounded-2xl border border-[#dbe5f2] bg-white/90 px-4 py-3 text-[15px] text-[#0d1424] shadow-[0_8px_28px_rgba(61,84,128,0.06)] outline-none transition focus:border-[#5b8dee] focus:ring-4 focus:ring-[#5b8dee]/10";
+
+export default function FindLawyer() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const caseId = searchParams.get("case_id");
+  const { lang, setLang } = useLang();
+  const t = FIND_LAWYER_STRINGS[lang];
+  const verticalsLocalized = VERTICAL_LABELS[lang];
+
+  const [caseBrief, setCaseBrief] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [vertical, setVertical] = useState("immigration_attorney");
+  const [files, setFiles] = useState<File[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [prefillState, setPrefillState] = useState<"idle" | "loading" | "ready" | "error">(
+    caseId ? "loading" : "idle",
+  );
+
+  useEffect(() => {
+    if (!caseId) return;
+    let cancelled = false;
+    setPrefillState("loading");
+    getCaseDraftBrief(caseId)
+      .then((draft) => {
+        if (cancelled) return;
+        // Only fill if the field is still untouched — never clobber a user
+        // who started typing before the pre-fill returned.
+        setCaseBrief((current) => current || draft.brief);
+        setPurpose((current) => current || draft.suggested_purpose);
+        setVertical((current) =>
+          current === "immigration_attorney" ? draft.suggested_vertical : current,
+        );
+        setPrefillState("ready");
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setPrefillState("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [caseId]);
+
+  const purposeOk = purpose.trim().length >= 4;
+  const briefOk = caseBrief.trim().length >= 40;
+  const canSubmit = purposeOk && briefOk && !submitting;
+
+  const blockers: string[] = [];
+  if (!purposeOk) blockers.push(t.blockerPurpose as string);
+  if (!briefOk) {
+    const remaining = Math.max(0, 40 - caseBrief.trim().length);
+    blockers.push((t.blockerBrief as (n: number) => string)(remaining));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const row = await startProfessionalSearch({
+        case_brief: caseBrief,
+        purpose,
+        vertical,
+        files,
+        case_id: caseId,
+      });
+      router.replace(`/find-lawyer/${row.id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setSubmitting(false);
+    }
+  }
+
+  const selectedHelper = verticalsLocalized[vertical]?.helper;
+
+  return (
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-6 py-10">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-8 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur transition hover:text-[#1a2036]"
+          >
+            {t.btnBack as string}
+          </button>
+          <div className="flex items-center gap-3">
+            <LangToggle lang={lang} onChange={setLang} />
+            <div className="rounded-full border border-[#dce6f3] bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7c95] shadow-[0_8px_24px_rgba(42,64,102,0.08)]">
+              {t.statusPagePill as string}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[1.15fr,0.85fr]">
+          <section className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
+            <div className="mb-8 max-w-xl">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
+                {t.eyebrow as string}
+              </div>
+              <h1 className="mt-3 text-[40px] font-extrabold leading-[1.05] tracking-tight text-[#0d1424]">
+                {t.pageTitle as string}
+              </h1>
+              <p className="mt-4 text-[16px] leading-7 text-[#556480]">
+                {t.pageBlurb as string}
+              </p>
+              {caseId && (
+                <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#dbe5f2] bg-[#eef4fd]/80 px-4 py-3">
+                  <div className="mt-0.5 text-[16px]">📎</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px] font-semibold text-[#0d1424]">
+                      {prefillState === "loading"
+                        ? "Pre-filling from your case…"
+                        : prefillState === "error"
+                          ? "Attached to your case"
+                          : "Pre-filled from your case"}
+                    </div>
+                    <div className="mt-0.5 text-[12px] text-[#556480]">
+                      Case <span className="font-mono">{caseId.slice(0, 8)}</span>.
+                      {prefillState === "ready" && (
+                        <> Edit anything below before submitting — the search will save back to this case.</>
+                      )}
+                      {prefillState === "error" && (
+                        <> Couldn&apos;t load your discovery answers, but the search will still attach to the case.</>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/case/${caseId}`)}
+                    className="shrink-0 rounded-full border border-white/70 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#52627d] hover:text-[#1a2036]"
+                  >
+                    Back to case
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <label className="block">
+                <div className={LABEL}>{t.fieldVertical as string}</div>
+                <select
+                  value={vertical}
+                  onChange={(e) => setVertical(e.target.value)}
+                  className={INPUT}
+                >
+                  {VERTICAL_KEYS.map((key) => (
+                    <option key={key} value={key}>
+                      {verticalsLocalized[key].label}
+                    </option>
+                  ))}
+                </select>
+                {selectedHelper && (
+                  <div className="mt-2 text-[13px] text-[#7b8ba5]">{selectedHelper}</div>
+                )}
+              </label>
+
+              <label className="block">
+                <div className={LABEL}>{t.fieldPurpose as string}</div>
+                <input
+                  type="text"
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                  placeholder={t.fieldPurposePlaceholder as string}
+                  className={INPUT}
+                />
+                <div className="mt-2 text-[13px] text-[#7b8ba5]">
+                  {t.fieldPurposeHelp as string}
+                </div>
+              </label>
+
+              <label className="block">
+                <div className={LABEL}>{t.fieldBrief as string}</div>
+                <textarea
+                  value={caseBrief}
+                  onChange={(e) => setCaseBrief(e.target.value)}
+                  rows={10}
+                  placeholder={t.fieldBriefPlaceholder as string}
+                  className={`${INPUT} font-mono leading-relaxed`}
+                />
+                <div className="mt-2 text-[13px] text-[#7b8ba5]">
+                  {t.fieldBriefHelp as string}
+                </div>
+              </label>
+
+              <div>
+                <div className={LABEL}>{t.fieldFiles as string}</div>
+                <label className="block cursor-pointer rounded-2xl border border-dashed border-[#c9d7eb] bg-white/70 px-5 py-6 text-center transition hover:border-[#5b8dee] hover:bg-white/90">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.docx,.txt,.md"
+                    onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+                    className="sr-only"
+                  />
+                  <div className="text-[14px] font-semibold text-[#40536f]">
+                    {files.length > 0
+                      ? (t.fieldFilesSelected as (n: number) => string)(files.length)
+                      : (t.fieldFilesEmpty as string)}
+                  </div>
+                  <div className="mt-1 text-[12px] text-[#7b8ba5]">
+                    {t.fieldFilesHelp as string}
+                  </div>
+                </label>
+                {files.length > 0 && (
+                  <ul className="mt-3 space-y-1 text-[13px] text-[#556480]">
+                    {files.map((f) => (
+                      <li key={f.name} className="flex justify-between">
+                        <span>{f.name}</span>
+                        <span className="text-[#7b8ba5]">
+                          {Math.round(f.size / 1024)} KB
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {error && (
+                <div className="rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
+                  {error}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between gap-4 pt-2">
+                <div className="text-[12px] leading-5 text-[#7b8ba5]">
+                  {blockers.length > 0 ? (
+                    <>
+                      <span className="font-semibold text-[#9c5a1c]">
+                        {t.blockerLead as string}
+                      </span>{" "}
+                      {blockers.join(" · ")}
+                    </>
+                  ) : (
+                    <span className="text-[#2f7a45]">{t.ready as string}</span>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className={canSubmit ? PRIMARY_BTN : DISABLED_BTN}
+                >
+                  {submitting ? (t.btnStarting as string) : (t.btnStart as string)}
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <aside className="space-y-6">
+            <div className="rounded-[32px] border border-white/70 bg-[#f8fbff]/78 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
+              <div className="rounded-[28px] bg-[#0f1728] p-6 text-white shadow-[0_22px_50px_rgba(9,18,36,0.24)]">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8ca2cc]">
+                  {t.asideHowTitle as string}
+                </div>
+                <div className="mt-3 text-[22px] font-bold leading-tight">
+                  {t.asideHowSub as string}
+                </div>
+                <p className="mt-3 text-[14px] leading-6 text-[#b8c5de]">
+                  {t.asideHowBlurb as string}
+                </p>
+              </div>
+
+              <div className="mt-6 space-y-4">
+                {[
+                  { title: t.aside01Title as string, body: t.aside01Body as string },
+                  { title: t.aside02Title as string, body: t.aside02Body as string },
+                  { title: t.aside03Title as string, body: t.aside03Body as string },
+                ].map((item, i) => (
+                  <div
+                    key={item.title}
+                    className="rounded-2xl border border-[#e4edf7] bg-white/82 p-4 shadow-[0_10px_30px_rgba(61,84,128,0.05)]"
+                  >
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-[12px] font-semibold text-[#5b8dee]">
+                        0{i + 1}
+                      </span>
+                      <span className="text-[15px] font-semibold text-[#0d1424]">
+                        {item.title}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[13px] leading-6 text-[#556480]">
+                      {item.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 rounded-[20px] border border-dashed border-[#c9d7eb] bg-white/70 p-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">
+                  {t.asideStdTitle as string}
+                </div>
+                <p className="mt-2 text-[13px] leading-6 text-[#556480]">
+                  {t.asideStdBody as string}
+                </p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,33 @@
+id: startup_founder
+vertical: immigration_attorney
+title: "Startup + founder-focused firms"
+
+search_angle: |
+  Find firms that specialize in founder-beneficiary / owner-adjacent
+  H-1B and E-2 petitions, and have published thought leadership on
+  the specific regulatory wrinkles that affect entrepreneurs —
+  particularly the 2024 H-1B Final Rule beneficiary-centric selection
+  process, related-entity multi-registration, and small-employer /
+  pre-revenue going-concern scrutiny.
+
+  The ideal candidate has explicitly written (on their own site or
+  externally) about the rule at issue for this case. Thought
+  leadership is acceptable from the firm's own site *only when it is
+  analytical and cites regulations* — not marketing fluff.
+
+must_weight:
+  - "Published analytical articles on the specific rule at issue"
+  - "Demonstrated founder / entrepreneur / startup petition track record"
+  - "Experience with small-employer (under 10 employees) petitions"
+  - "AILA membership + chapter activity (leadership preferred)"
+
+also_value:
+  - "Founder of firm was themselves an immigrant (skin-in-game signal)"
+  - "Experience with related-entity or family-controlled petitioners"
+  - "Willingness to take single-petition retainers"
+
+deprioritize:
+  - "Firms whose main business is corporate transfers / L-1 / big employers"
+  - "Firms with no public position on the specific rule at issue"
+
+target_count: 6

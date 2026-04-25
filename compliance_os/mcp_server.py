@@ -1380,6 +1380,262 @@ def cpa_active_search(folder: str, verbose: bool = False, as_json: bool = False)
     return case_active_search("cpa", folder, verbose=verbose, as_json=as_json)
 
 
+# ─── Professional search (attorneys / CPAs / bankers) ────────────
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Plan a parallel lawyer / professional search",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def lawyer_search_plan(
+    case_brief: str,
+    purpose: str,
+    vertical: str = "immigration_attorney",
+    personas: list[str] | None = None,
+    output_dir: str | None = None,
+) -> str:
+    """Build dispatch prompts for parallel sub-agent professional search.
+
+    Returns one prompt per search persona (elite boutique, startup-
+    focused, litigation-focused, ...). The caller is expected to
+    dispatch each prompt to a sub-agent (e.g. via the Task tool) in
+    parallel; each sub-agent writes a YAML to its assigned output
+    path. When all sub-agents finish, call `lawyer_search_ingest`
+    with the list of output paths to merge results into the diligence
+    SQLite DB at `data/diligence.db`.
+
+    Args:
+        case_brief: 1-3 paragraph description of the case the user is
+            hiring for (facts, regulatory wrinkles, constraints). Used
+            by every persona as context.
+        purpose: Short engagement label, e.g. "H-1B petition — 2026 cap".
+            Becomes engagements.purpose.
+        vertical: Persona directory to use (default
+            "immigration_attorney"). Available directories are under
+            `data/professional_search/personas/<vertical>/`.
+        personas: Optional subset of persona ids. If omitted, every
+            persona in the vertical is used.
+        output_dir: Optional override for where sub-agent YAMLs are
+            written (default: `output/professional_search/<YYYY-MM-DD>/`).
+
+    Returns:
+        JSON with per-persona prompts, output paths, and a hint for
+        ingest after dispatch completes.
+    """
+    try:
+        from compliance_os.professional_search.personas import build_search_plan
+        from pathlib import Path as _P
+
+        plan = build_search_plan(
+            case_brief=case_brief,
+            purpose=purpose,
+            vertical=vertical,
+            personas=personas,
+            output_dir=_P(output_dir) if output_dir else None,
+        )
+        return json.dumps(plan, indent=2)
+    except (FileNotFoundError, ValueError) as exc:
+        return json.dumps({"error": str(exc)})
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Ingest search-agent YAML into diligence DB",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def lawyer_search_ingest(yaml_paths: list[str]) -> str:
+    """Merge one or more search-agent YAMLs into the diligence DB.
+
+    Each file must match the schema described by `lawyer_search_plan`'s
+    output (firms with name, contact, credentials, fees, confidence).
+    Upserts are by vendor name (case-insensitive + first-word fuzzy),
+    so re-ingesting the same YAML is safe.
+
+    Args:
+        yaml_paths: Absolute paths to one or more YAML files produced
+            by the search sub-agents.
+
+    Returns:
+        JSON summary with new-vendor and updated counts.
+    """
+    try:
+        from compliance_os.professional_search.ingest import ingest_docs
+
+        summary = ingest_docs(yaml_paths)
+        return json.dumps(summary, indent=2)
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Attorney / vendor tier comparison",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def lawyer_tier_report(
+    vendor_type: str = "attorney",
+    as_json: bool = False,
+) -> str:
+    """Ranked tier report from the diligence DB, scored high-to-low.
+
+    Queries `v_attorney_comparison` (when vendor_type='attorney') or
+    `v_vendor_comparison` (any other vendor type). Rows are sorted by
+    engagement.score descending; open-risk count included inline.
+
+    Args:
+        vendor_type: One of attorney | bank | cpa | caa | notary |
+            insurance | registered_agent | ... (the vendor_type enum).
+        as_json: Return JSON instead of a formatted text table.
+    """
+    try:
+        from compliance_os.professional_search.db import (
+            attorney_comparison,
+            connect,
+            init_schema,
+            vendor_comparison,
+        )
+
+        init_schema()
+        with connect() as conn:
+            rows = (
+                attorney_comparison(conn)
+                if vendor_type == "attorney"
+                else vendor_comparison(conn, vendor_type=vendor_type)
+            )
+
+        if as_json:
+            return json.dumps(rows, indent=2, default=str)
+
+        if not rows:
+            return f"(no {vendor_type} engagements in diligence DB yet)"
+
+        lines = [
+            f"{vendor_type.upper()} TIER REPORT  ({len(rows)} engagements)",
+            "=" * 72,
+        ]
+        for r in rows:
+            name = r.get("firm") or r.get("vendor") or "?"
+            score = r.get("score")
+            prio = r.get("priority") or "-"
+            status = r.get("status") or "-"
+            low = r.get("lowest_quote")
+            high = r.get("highest_quote")
+            fee = (
+                f"${low:,.0f}-${high:,.0f}"
+                if low and high and low != high
+                else f"${low:,.0f}"
+                if low
+                else "-"
+            )
+            open_risks = r.get("open_risks") or 0
+            lines.append(
+                f"  [{score if score is not None else '--':>3}] "
+                f"{name[:40]:40s}  {prio:>8s}  {status:>13s}  "
+                f"fee={fee:<20s}  risks={open_risks}"
+            )
+            if r.get("next_action"):
+                lines.append(
+                    f"        next: {r['next_action']}"
+                    + (f" (by {r['next_action_date']})" if r.get("next_action_date") else "")
+                )
+        return "\n".join(lines)
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Vendor directory (phone book)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def vendor_directory(vendor_type: str | None = None, as_json: bool = False) -> str:
+    """List every vendor with primary contact, email, phone.
+
+    Args:
+        vendor_type: Optional filter by vendor_type.
+        as_json: Return JSON instead of a formatted text list.
+    """
+    try:
+        from compliance_os.professional_search.db import (
+            connect,
+            init_schema,
+            vendor_directory as vd,
+        )
+
+        init_schema()
+        with connect() as conn:
+            rows = vd(conn, vendor_type=vendor_type)
+
+        if as_json:
+            return json.dumps(rows, indent=2, default=str)
+        if not rows:
+            return "(no vendors in diligence DB yet)"
+
+        lines = [f"VENDOR DIRECTORY ({len(rows)})", "=" * 72]
+        current_type = None
+        for r in rows:
+            if r["vendor_type"] != current_type:
+                current_type = r["vendor_type"]
+                lines.append(f"\n## {current_type}")
+            loc = r.get("location") or "-"
+            contact = r.get("primary_contact") or "(no contact)"
+            email = r.get("primary_email") or "-"
+            phone = r.get("primary_phone") or "-"
+            lines.append(f"  {r['name']}  [{loc}]")
+            lines.append(f"      {contact}  |  {email}  |  {phone}")
+        return "\n".join(lines)
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Vendor dossier (contacts, engagements, quotes, risks)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def vendor_detail(name: str) -> str:
+    """Full dossier for one vendor (fuzzy name match).
+
+    Returns every contact, engagement, quote, evaluation, risk, and
+    recent interaction for the first vendor whose name contains the
+    given fragment. If multiple match, returns the candidate list.
+
+    Args:
+        name: Substring of the vendor name (case-sensitive LIKE match).
+    """
+    try:
+        from compliance_os.professional_search.db import (
+            connect,
+            init_schema,
+            vendor_detail as vdet,
+        )
+
+        init_schema()
+        with connect() as conn:
+            result = vdet(conn, name)
+        if result is None:
+            return json.dumps({"error": f"No vendor matching '{name}'"})
+        return json.dumps(result, indent=2, default=str)
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
+
+
 # ─── Entry point ─────────────────────────────────────────────────
 
 if __name__ == "__main__":

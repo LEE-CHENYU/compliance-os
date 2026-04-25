@@ -1,0 +1,34 @@
+id: litigation_contrarian
+vertical: immigration_attorney
+title: "Federal-court litigators — APA / USCIS challenges"
+
+search_angle: |
+  Find firms and solo practitioners whose primary practice is
+  challenging USCIS in federal court — APA suits, mandamus, I-140 and
+  H-1B denial challenges, and regulatory-overreach litigation. The
+  target profile is a former DOJ Office of Immigration Litigation
+  (OIL) attorney, a federal court clerk, or a named co-counsel in a
+  reported H-1B policy challenge (e.g. ITServe Alliance v. Cissna
+  lineage).
+
+  This persona is deliberately contrarian: these firms are typically
+  more expensive than boutiques and less willing to do pure
+  petition-drafting, but they are the right choice when the matter
+  may need to be defended in court or when a regulatory
+  interpretation itself is the core dispute.
+
+must_weight:
+  - "Former DOJ OIL / USCIS / federal-court clerkship background"
+  - "Named counsel in reported AAO or federal-court decision"
+  - "Documented PACER filings (counsel of record, not just appearance)"
+  - "ITServe lineage or similar H-1B regulatory challenge co-counsel"
+  - "IMMpact Litigation member / founding firm"
+
+also_value:
+  - "Published law review or bar journal articles on the doctrine"
+  - "Adjunct faculty at an ABA-accredited law school"
+
+litigation_capability_required: true
+fee_range_expected_usd: "8000–30000 per petition (not unusual); separate litigation billing"
+
+target_count: 5

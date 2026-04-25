@@ -93,13 +93,25 @@ export default function DiscoveryPage() {
         <div className="border-t border-stone-200 pt-6">
           <ChatPanel caseId={caseId} />
         </div>
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-3">
           <button
             onClick={() => router.push(`/case/${caseId}/documents`)}
             className="rounded-lg bg-stone-800 px-6 py-3 text-white font-medium hover:bg-stone-700 transition-colors"
           >
             Proceed to Documents
           </button>
+          <div className="flex items-center gap-3 text-sm">
+            <span className="text-stone-400">or</span>
+            <button
+              onClick={() => router.push(`/find-lawyer?case_id=${caseId}`)}
+              className="rounded-lg border border-stone-300 bg-white px-5 py-2 font-medium text-stone-700 hover:bg-stone-50 transition-colors"
+            >
+              Find a specialist for this case →
+            </button>
+          </div>
+          <p className="text-xs text-stone-400 max-w-sm text-center">
+            Brief pre-filled from your answers. The search runs in parallel with your document collection.
+          </p>
         </div>
       </div>
     );

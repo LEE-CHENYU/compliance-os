@@ -1,0 +1,38 @@
+id: eb5_specialist
+vertical: immigration_eb5
+title: "EB-5 boutiques and specialist practitioners"
+
+search_angle: |
+  Find firms where EB-5 is THE practice or a marquee practice — not a
+  side menu item. Strongest signals: Chambers USA / Global ranking
+  with explicit EB-5 mention, AILA EB-5 Committee elected leadership
+  (Chair / Co-Chair / Vice-Chair, not just member), IIUSA membership
+  and committee participation, EB5 Investors Magazine Top 25 attorney
+  recognition, and firm-level EB-5 statistics that are independently
+  verifiable (number of I-526 / I-829 approvals, federal-court wins
+  on path-of-funds or source-of-funds doctrines).
+
+  These firms have lived through every EB-5 reform cycle and will
+  understand the post-2022 RIA integrity period, set-aside categories,
+  redeployment mechanics, and the I-526E (vs. legacy I-526) workflow
+  without a learning curve.
+
+must_weight:
+  - "Chambers USA / Chambers Global Immigration ranking with EB-5 mention"
+  - "AILA EB-5 Committee elected leadership (Chair / Co-Chair / Vice-Chair)"
+  - "IIUSA participation (committee membership or leadership)"
+  - "EB5 Investors Magazine Top 25 / All Stars attorney recognition"
+  - "Documented federal-court decisions on EB-5 source-of-funds or path-of-funds"
+  - "Published commentary on the 2022 RIA (set-asides, integrity period, redeployment)"
+
+also_value:
+  - "Dedicated EB-5 practice group with named leads for investor-side vs RC-side"
+  - "China, India, Vietnam, Brazil intake channels (in-country offices or Mandarin/Hindi/Portuguese-speaking attorneys)"
+  - "Treatise authorship (Bender's, AILA EB-5 chapters, ABA EB-5 publications)"
+
+deprioritize:
+  - "Generalist immigration firms where EB-5 appears as one practice area among many"
+  - "Pure RC-side firms with no investor-side track record (the case is investor-side)"
+  - "Firms whose only EB-5 'credentials' are their own marketing or self-published case studies"
+
+target_count: 6

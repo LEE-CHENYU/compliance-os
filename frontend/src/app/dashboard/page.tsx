@@ -10,6 +10,7 @@ import ModeBar, { ChatMode } from "@/components/chat/ModeBar";
 import FormFillerUpload from "@/components/chat/FormFillerUpload";
 import FormPreviewCard, { FieldProposal } from "@/components/chat/FormPreviewCard";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import MySearches from "@/components/dashboard/MySearches";
 import { useTheme } from "@/lib/theme";
 
 interface TimelineEvent {
@@ -1907,6 +1908,8 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+
+          <MySearches />
 
           <section className="mb-8 overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(234,241,251,0.92))] backdrop-blur-xl shadow-[0_10px_36px_rgba(91,141,238,0.08)]">
             <div className="p-5 md:p-7">

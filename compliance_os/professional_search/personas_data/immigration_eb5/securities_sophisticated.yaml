@@ -1,0 +1,37 @@
+id: securities_sophisticated
+vertical: immigration_eb5
+title: "EB-5 firms with securities-law sophistication"
+
+search_angle: |
+  EB-5 investments are securities transactions wrapped in an
+  immigration filing. The single biggest gap between competent and
+  excellent EB-5 representation is whether the firm can read the
+  Private Placement Memorandum (PPM), evaluate escrow terms,
+  understand redeployment provisions, identify integrity-period risks
+  under the 2022 RIA, and either provide securities-law analysis
+  in-house or coordinate cleanly with outside securities counsel.
+
+  Find firms with one of three signals: (1) attorneys with
+  pre-immigration securities-practice background (corporate finance,
+  registered or private offerings, PPM drafting); (2) a sister
+  practice in securities or investment management at the same firm;
+  or (3) a documented working relationship with named outside
+  securities counsel who specialize in EB-5 / Reg D / Reg S offerings.
+
+must_weight:
+  - "Attorneys with pre-immigration securities-law background (PPMs, offering documents, registered/private offerings)"
+  - "Same-firm securities or investment-management practice group"
+  - "Documented coordination with named outside securities counsel"
+  - "Published analysis of RIA integrity-period or redeployment doctrine"
+  - "AAO or federal-court record on RC-related material-change disputes"
+
+also_value:
+  - "FINRA-registered attorneys at the firm (rare but powerful signal)"
+  - "Co-authored bar journal or law review articles on EB-5 securities issues"
+  - "Speaker history at IIUSA, EB5 Investors, or AILA national conferences on RC due diligence"
+
+deprioritize:
+  - "Firms that say they 'work with' securities counsel but cannot name the firm or attorney"
+  - "Pure immigration boutiques with no securities-side capability or named referral"
+
+target_count: 5
