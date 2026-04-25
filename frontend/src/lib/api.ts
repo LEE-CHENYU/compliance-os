@@ -340,6 +340,15 @@ export const deleteEngagement = (caseId: string, engagementId: string) =>
     method: "DELETE",
   });
 
+export interface DraftEmail {
+  to: string[];
+  subject: string;
+  body: string;
+}
+
+export const getEngagementDraftEmail = (caseId: string, engagementId: string) =>
+  request<DraftEmail>(`/cases/${caseId}/engagements/${engagementId}/draft-email`);
+
 export async function listMySearches(): Promise<ProfessionalSearch[]> {
   const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
   const res = await fetch(`${API_BASE}/professional-search/mine/list`, {

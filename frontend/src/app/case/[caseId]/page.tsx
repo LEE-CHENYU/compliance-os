@@ -10,6 +10,7 @@ import {
   ENGAGEMENT_STATUSES,
   EngagementStatus,
   getCase,
+  getEngagementDraftEmail,
   listCaseEngagements,
   listCaseSearches,
   ProfessionalSearchSummary,
@@ -359,6 +360,34 @@ function EngagementRow({
     }
   }
 
+  async function emailFirm() {
+    setBusy(true);
+    try {
+      const draft = await getEngagementDraftEmail(caseId, engagement.id);
+      // mailto: requires URI-encoded params; multiple "to" addrs joined by comma.
+      const to = draft.to.length > 0 ? draft.to.join(",") : "";
+      const url = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(
+        draft.subject,
+      )}&body=${encodeURIComponent(draft.body)}`;
+      // Open in a new tab so the page state is preserved if the mail client
+      // hijacks the navigation.
+      window.open(url, "_blank");
+      // Auto-bump status to outreach_sent on first contact (don't downgrade
+      // if user already moved further along the funnel).
+      if (engagement.status === "not_contacted") {
+        await updateEngagement(caseId, engagement.id, { status: "outreach_sent" });
+        await onChange();
+      }
+    } catch (err) {
+      console.error("draft email failed", err);
+      alert("Couldn't draft the email — see console for details.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const canEmail = engagement.firm_emails.length > 0;
+
   return (
     <li className="py-3 space-y-2">
       <div className="flex items-center justify-between gap-3">
@@ -375,6 +404,14 @@ function EngagementRow({
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <button
+            onClick={emailFirm}
+            disabled={busy || !canEmail}
+            title={canEmail ? "Open pre-filled email" : "No email on file for this firm"}
+            className="rounded-md border border-stone-300 px-2 py-1 text-xs font-medium text-stone-700 hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            ✉ Email
+          </button>
           <select
             disabled={busy}
             value={engagement.status}

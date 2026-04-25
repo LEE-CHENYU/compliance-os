@@ -353,6 +353,36 @@ def list_engagements(case_id: str, session: Session = Depends(get_session)):
     return [_serialize_engagement(r) for r in rows]
 
 
+def _hydrate_from_search(
+    session: Session, search_id: str, firm_name: str
+) -> dict[str, Any]:
+    """Pull firm contact info out of a completed search's firms_data.
+
+    Returns a dict of fields suitable for splatting into LawyerEngagementRow
+    kwargs. Empty dict if the search doesn't exist, isn't complete, or
+    doesn't contain a matching firm — caller should still honor whatever
+    contact info the request body provided.
+    """
+    search = session.get(ProfessionalSearchRequestRow, search_id)
+    if search is None or not search.firms_data:
+        return {}
+    target = firm_name.strip().lower()
+    for f in search.firms_data:
+        name = (f.get("name") or "").strip()
+        if name.lower() != target:
+            continue
+        emails = [
+            e for e in [f.get("email")] if e and isinstance(e, str)
+        ]
+        return {
+            "firm_emails": emails,
+            "firm_phone": f.get("phone") or None,
+            "firm_website": f.get("website") or None,
+            "firm_lead_attorney": f.get("lead_attorney") or None,
+        }
+    return {}
+
+
 @router.post(
     "/{case_id}/engagements",
     response_model=EngagementResponse,
@@ -385,14 +415,22 @@ def create_engagement(
     if existing is not None:
         return _serialize_engagement(existing)
 
+    # When the engagement comes from a search result, copy the firm's
+    # contact info from firms_data. The body-provided fields win when
+    # both are present (caller can override).
+    hydrated: dict[str, Any] = {}
+    if body.search_id:
+        hydrated = _hydrate_from_search(session, body.search_id, body.firm_name)
+
+    body_emails = [e.strip() for e in body.firm_emails if e and e.strip()]
     row = LawyerEngagementRow(
         case_id=case_id,
         search_id=body.search_id,
         firm_name=body.firm_name.strip(),
-        firm_emails=[e.strip() for e in body.firm_emails if e and e.strip()],
-        firm_phone=body.firm_phone,
-        firm_website=body.firm_website,
-        firm_lead_attorney=body.firm_lead_attorney,
+        firm_emails=body_emails or hydrated.get("firm_emails") or [],
+        firm_phone=body.firm_phone or hydrated.get("firm_phone"),
+        firm_website=body.firm_website or hydrated.get("firm_website"),
+        firm_lead_attorney=body.firm_lead_attorney or hydrated.get("firm_lead_attorney"),
         status=status,
         notes=body.notes,
     )
@@ -424,6 +462,133 @@ def update_engagement(
     session.commit()
     session.refresh(row)
     return _serialize_engagement(row)
+
+
+class DraftEmail(BaseModel):
+    to: list[str]
+    subject: str
+    body: str
+
+
+def _truncate_brief(brief: str, max_chars: int = 800) -> str:
+    """Trim the case brief to a single email-friendly paragraph.
+
+    The synthesized brief is markdown with section headers; for an outbound
+    email we strip the headers and keep the first ~800 chars of substantive
+    content. Users can hand-edit before sending.
+    """
+    if not brief:
+        return ""
+    # Drop markdown headers and bullet markers; collapse to plain prose.
+    lines: list[str] = []
+    for raw in brief.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("- "):
+            line = line[2:].strip()
+        lines.append(line)
+    text = " ".join(lines).strip()
+    if len(text) > max_chars:
+        text = text[:max_chars].rsplit(" ", 1)[0] + "…"
+    return text
+
+
+def _firm_why_fit(
+    session: Session, search_id: str | None, firm_name: str
+) -> str | None:
+    """Return the search agent's why-this-firm-fits paragraph if available."""
+    if not search_id:
+        return None
+    search = session.get(ProfessionalSearchRequestRow, search_id)
+    if search is None or not search.firms_data:
+        return None
+    target = firm_name.strip().lower()
+    for f in search.firms_data:
+        if (f.get("name") or "").strip().lower() != target:
+            continue
+        # _why_fits is a list of [persona_id, text] pairs (deduped across
+        # personas in the aggregator). Take the first — they all describe
+        # the same firm, so any one is a defensible paraphrase.
+        whys = f.get("_why_fits") or []
+        if whys and isinstance(whys, list):
+            first = whys[0]
+            if isinstance(first, list) and len(first) >= 2:
+                return str(first[1])
+        return None
+    return None
+
+
+@router.get(
+    "/{case_id}/engagements/{engagement_id}/draft-email",
+    response_model=DraftEmail,
+)
+def draft_engagement_email(
+    case_id: str,
+    engagement_id: str,
+    session: Session = Depends(get_session),
+):
+    """Synthesize a first-touch email for the user to send to this firm.
+
+    Subject + body are written first-person from the user's perspective,
+    using the case brief and (when available) the search agent's why-fit
+    rationale for this specific firm. The user opens it via mailto: and
+    edits before sending.
+    """
+    row = session.get(LawyerEngagementRow, engagement_id)
+    if row is None or row.case_id != case_id:
+        raise HTTPException(status_code=404, detail="Engagement not found")
+
+    case = session.get(CaseRow, case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    # Build the brief from discovery answers (same synthesis used at intake).
+    answer_rows = (
+        session.query(DiscoveryAnswerRow)
+        .filter(DiscoveryAnswerRow.case_id == case_id)
+        .all()
+    )
+    answers: dict[str, Any] = {r.question_key: r.answer for r in answer_rows}
+    brief_text = _truncate_brief(_synthesize_brief(case.workflow_type, answers))
+
+    vertical_label = case.workflow_type.replace("_", " ") if case.workflow_type else "legal"
+    purpose_seed = _suggest_purpose(case.workflow_type, answers)
+    subject = f"Inquiry — {purpose_seed}"
+
+    greeting = (
+        f"Hi {row.firm_lead_attorney},"
+        if row.firm_lead_attorney
+        else f"Hi {row.firm_name} team,"
+    )
+
+    why_fit = _firm_why_fit(session, row.search_id, row.firm_name)
+    why_fit_paragraph = (
+        f"\n\nI came across your firm during my research — what stood out: "
+        f"{why_fit.strip()}\n"
+        if why_fit
+        else ""
+    )
+
+    body_lines = [
+        greeting,
+        "",
+        f"I'm looking for {vertical_label} representation for the following situation:",
+        "",
+        brief_text or "(I'll share the full case brief on a call.)",
+        why_fit_paragraph.rstrip(),
+        "",
+        "Could we schedule a 30-minute consultation? Open to your preferred timing.",
+        "",
+        "Best,",
+    ]
+    body = "\n".join(line for line in body_lines if line is not None)
+
+    return DraftEmail(
+        to=list(row.firm_emails or []),
+        subject=subject,
+        body=body,
+    )
 
 
 @router.delete("/{case_id}/engagements/{engagement_id}")
