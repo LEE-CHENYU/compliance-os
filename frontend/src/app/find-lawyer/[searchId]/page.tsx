@@ -3,9 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
+  createEngagement,
   downloadProfessionalSearchUrl,
+  Engagement,
   getMarketplaceMatch,
   getProfessionalSearch,
+  listCaseEngagements,
   startCheckout,
   type MarketplaceMatch,
   type ProfessionalSearch,
@@ -375,6 +378,9 @@ export default function SearchStatus() {
   const [row, setRow] = useState<ProfessionalSearch | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [matches, setMatches] = useState<MarketplaceMatch[]>([]);
+  const [engagements, setEngagements] = useState<Engagement[]>([]);
+  const [tracking, setTracking] = useState<string | null>(null);
+  const [batchTracking, setBatchTracking] = useState(false);
   const stopped = useRef(false);
 
   useEffect(() => {
@@ -404,6 +410,58 @@ export default function SearchStatus() {
       stopped.current = true;
     };
   }, [params.searchId]);
+
+  // Once we know the case_id, fetch existing engagements so we can show
+  // "tracking" pills on already-tracked firms (and skip them in batch
+  // operations). Refreshes after each successful track.
+  const caseId = row?.case_id ?? null;
+  async function refreshEngagements() {
+    if (!caseId) return;
+    const fresh = await listCaseEngagements(caseId).catch(() => []);
+    setEngagements(fresh);
+  }
+  useEffect(() => {
+    void refreshEngagements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [caseId]);
+
+  async function trackOne(firmName: string) {
+    if (!caseId) return;
+    setTracking(firmName);
+    try {
+      await createEngagement(caseId, {
+        firm_name: firmName,
+        search_id: params.searchId,
+      });
+      await refreshEngagements();
+    } catch (err) {
+      console.error("track failed", err);
+    } finally {
+      setTracking(null);
+    }
+  }
+
+  async function trackTopN(n: number, firms: { firm: string }[]) {
+    if (!caseId) return;
+    setBatchTracking(true);
+    try {
+      const tracked = new Set(engagements.map((e) => e.firm_name.toLowerCase()));
+      const targets = firms
+        .filter((f) => !tracked.has(f.firm.toLowerCase()))
+        .slice(0, n);
+      // Sequential: idempotent + small N. Parallel would race the soft-
+      // dedupe in the backend.
+      for (const t of targets) {
+        await createEngagement(caseId, {
+          firm_name: t.firm,
+          search_id: params.searchId,
+        }).catch((e) => console.error("batch track failed for", t.firm, e));
+      }
+      await refreshEngagements();
+    } finally {
+      setBatchTracking(false);
+    }
+  }
 
   const bgClass =
     "min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-6 py-10";
@@ -525,6 +583,31 @@ export default function SearchStatus() {
             <p className="text-[14px] leading-6 text-[#556480]">
               {t.tierBlurb as string}
             </p>
+
+            {caseId && tierRows.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-[12px]">
+                <span className="text-[#7b8ba5]">
+                  {engagements.length > 0
+                    ? `${engagements.length} firm${engagements.length === 1 ? "" : "s"} tracked for this case`
+                    : "Track firms to your case to organize outreach"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => trackTopN(3, tierRows)}
+                  disabled={batchTracking}
+                  className="rounded-full border border-[#dbe5f2] bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#40536f] hover:border-[#5b8dee] hover:text-[#1a2036] disabled:opacity-50"
+                >
+                  {batchTracking ? "Tracking…" : "Track top 3 →"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push(`/case/${caseId}`)}
+                  className="rounded-full border border-[#dbe5f2] bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#40536f] hover:border-[#5b8dee] hover:text-[#1a2036]"
+                >
+                  Open case →
+                </button>
+              </div>
+            )}
             {row.status === "complete" && !row.is_paid && (
               <div className="mt-4">
                 <Paywall searchId={row.id} lang={lang} />
@@ -532,7 +615,11 @@ export default function SearchStatus() {
             )}
 
             <div className="mt-6 space-y-3">
-              {tierRows.map((r, idx) => (
+              {tierRows.map((r, idx) => {
+                const isTracked = engagements.some(
+                  (e) => e.firm_name.toLowerCase() === r.firm.toLowerCase(),
+                );
+                return (
                 <div
                   key={`${r.firm}-${idx}`}
                   className="rounded-2xl border border-[#e4edf7] bg-white/82 p-5 shadow-[0_10px_30px_rgba(61,84,128,0.05)]"
@@ -563,6 +650,22 @@ export default function SearchStatus() {
                           <span className="inline-flex items-center rounded-full border border-[#ffd6d6] bg-[#fff4f4] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a33a3a]">
                             {r.open_risks} {r.open_risks === 1 ? "risk" : "risks"}
                           </span>
+                        )}
+                        {caseId && (
+                          isTracked ? (
+                            <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em]">
+                              tracking
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => trackOne(r.firm)}
+                              disabled={tracking === r.firm}
+                              className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#40536f] hover:border-[#5b8dee] hover:text-[#1a2036] disabled:opacity-50"
+                            >
+                              {tracking === r.firm ? "tracking…" : "+ track"}
+                            </button>
+                          )
                         )}
                       </div>
 
@@ -599,7 +702,8 @@ export default function SearchStatus() {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             <p className="mt-6 text-[12px] leading-5 text-[#7b8ba5]">

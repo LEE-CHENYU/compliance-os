@@ -115,6 +115,10 @@ class SearchResponse(BaseModel):
     is_paid: bool
     is_claimed: bool
     stripe_customer_email: str | None
+    # Set when this search was launched from inside a case (via the
+    # "Find a specialist" CTA). The frontend uses it to enable the
+    # per-firm "+ Track" buttons on the results page.
+    case_id: str | None
 
 
 def _serialize(row: ProfessionalSearchRequestRow) -> SearchResponse:
@@ -134,6 +138,7 @@ def _serialize(row: ProfessionalSearchRequestRow) -> SearchResponse:
         is_paid=row.paid_at is not None,
         is_claimed=row.user_id is not None,
         stripe_customer_email=row.stripe_customer_email,
+        case_id=row.case_id,
     )
 
 

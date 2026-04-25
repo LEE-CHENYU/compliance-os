@@ -184,6 +184,7 @@ export interface ProfessionalSearch {
   is_paid: boolean;
   is_claimed: boolean;
   stripe_customer_email: string | null;
+  case_id: string | null;
 }
 
 export async function startProfessionalSearch(params: {
