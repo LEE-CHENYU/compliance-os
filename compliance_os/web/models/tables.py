@@ -22,7 +22,11 @@ class CaseRow(Base):
     # without a session) have NULL. Anonymous cases are auto-claimed
     # when an authenticated user first accesses them via case_access.
     user_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("users.id"), nullable=True
+        # `users` lives in a different MetaData (tables_v2.Base), so we
+        # cannot declare a real FK here — SQLAlchemy can't resolve cross-
+        # metadata column references at DDL compile time. Application layer
+        # enforces the relationship via the auth_service helpers.
+        String(36), nullable=True
     )
     workflow_type: Mapped[str] = mapped_column(String(50), default="")
     status: Mapped[str] = mapped_column(String(20), default="discovery")
@@ -131,7 +135,8 @@ class ProfessionalSearchRequestRow(Base):
     stripe_customer_email: Mapped[str | None] = mapped_column(String(320), nullable=True)
     # Set when an authenticated user claims a paid search via /claim. Null
     # until claimed — the row can exist (and be paid) without a user.
-    user_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("users.id"), nullable=True)
+    # See note on CaseRow.user_id above re: cross-MetaData FK limitation.
+    user_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -212,9 +217,8 @@ class EmailThreadRow(Base):
     __tablename__ = "email_threads"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
-    user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("users.id"), nullable=False
-    )
+    # See note on CaseRow.user_id re: cross-MetaData FK limitation.
+    user_id: Mapped[str] = mapped_column(String(36), nullable=False)
     engagement_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("lawyer_engagements.id"), nullable=False
     )
@@ -245,9 +249,8 @@ class GoogleOAuthTokenRow(Base):
     __tablename__ = "google_oauth_tokens"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
-    user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("users.id"), nullable=False, unique=True
-    )
+    # See note on CaseRow.user_id re: cross-MetaData FK limitation.
+    user_id: Mapped[str] = mapped_column(String(36), nullable=False, unique=True)
 
     access_token_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
     refresh_token_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
