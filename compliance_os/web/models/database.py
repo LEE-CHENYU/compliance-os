@@ -66,7 +66,34 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     _ensure_auth_columns(engine)
     _ensure_marketplace_columns(engine)
     _ensure_professional_search_columns(engine)
+    _ensure_google_oauth_token_columns(engine)
     return engine
+
+
+def _ensure_google_oauth_token_columns(engine: Engine) -> None:
+    """Backfill columns added to google_oauth_tokens after first deploy.
+
+    Cut 3 created the table; Cut 4 added sync bookkeeping. If Cut 3
+    already shipped to prod, create_all won't add these — alter the
+    table here so deploys don't error on the missing columns.
+    """
+    inspector = inspect(engine)
+    if "google_oauth_tokens" not in inspector.get_table_names():
+        return
+
+    existing = {col["name"] for col in inspector.get_columns("google_oauth_tokens")}
+    is_sqlite = engine.dialect.name == "sqlite"
+    timestamp_type = "DATETIME" if is_sqlite else "TIMESTAMP"
+    wanted = {
+        "last_synced_at": timestamp_type,
+        "last_sync_error": "TEXT",
+    }
+    with engine.begin() as conn:
+        for name, ddl in wanted.items():
+            if name not in existing:
+                conn.execute(
+                    text(f"ALTER TABLE google_oauth_tokens ADD COLUMN {name} {ddl}")
+                )
 
 
 def _ensure_professional_search_columns(engine: Engine) -> None:
