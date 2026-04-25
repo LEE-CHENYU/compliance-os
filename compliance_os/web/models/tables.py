@@ -183,3 +183,27 @@ class LawyerEngagementRow(Base):
 
     case: Mapped["CaseRow"] = relationship(back_populates="engagements")
     search: Mapped["ProfessionalSearchRequestRow | None"] = relationship()
+
+
+# ---- Google OAuth tokens (Gmail integration) ----------------------------
+#
+# One row per (user, provider). For now we only support Google/Gmail —
+# token columns are encrypted at rest via token_crypto.encrypt_token.
+# `revoked_at` is set when the user disconnects; the row is then deleted
+# on a subsequent reconnect (or kept around for audit if we need it).
+
+class GoogleOAuthTokenRow(Base):
+    __tablename__ = "google_oauth_tokens"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id"), nullable=False, unique=True
+    )
+
+    access_token_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
+    refresh_token_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
+    scope: Mapped[str] = mapped_column(Text, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
+    granted_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

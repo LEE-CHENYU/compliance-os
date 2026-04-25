@@ -349,6 +349,55 @@ export interface DraftEmail {
 export const getEngagementDraftEmail = (caseId: string, engagementId: string) =>
   request<DraftEmail>(`/cases/${caseId}/engagements/${engagementId}/draft-email`);
 
+// --- Gmail integration (OAuth) ---
+
+export interface GmailStatus {
+  connected: boolean;
+  scope?: string;
+  granted_at?: string | null;
+  expires_at?: string | null;
+}
+
+function _authHeaders(): Record<string, string> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export async function getGmailStatus(): Promise<GmailStatus> {
+  const headers = _authHeaders();
+  if (!headers.Authorization) return { connected: false };
+  const res = await fetch(`${API_BASE}/auth/me/gmail/status`, { headers });
+  if (!res.ok) return { connected: false };
+  return res.json();
+}
+
+export async function getGmailConnectUrl(nextPath?: string): Promise<{ url: string }> {
+  const headers = _authHeaders();
+  if (!headers.Authorization) throw new Error("Sign in first to connect Gmail");
+  const params = new URLSearchParams();
+  if (nextPath) params.set("next", nextPath);
+  const res = await fetch(
+    `${API_BASE}/auth/google/connect-gmail/url${params.toString() ? `?${params}` : ""}`,
+    { headers },
+  );
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
+  return res.json();
+}
+
+export async function disconnectGmail(): Promise<{ ok: boolean }> {
+  const headers = _authHeaders();
+  if (!headers.Authorization) throw new Error("Not signed in");
+  const res = await fetch(`${API_BASE}/auth/me/gmail/disconnect`, {
+    method: "POST",
+    headers,
+  });
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
 export async function listMySearches(): Promise<ProfessionalSearch[]> {
   const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
   const res = await fetch(`${API_BASE}/professional-search/mine/list`, {

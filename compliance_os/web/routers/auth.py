@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import os
+import time
 import uuid
+from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
@@ -22,8 +24,10 @@ from compliance_os.web.models.auth import (
 )
 from compliance_os.web.models.database import get_session
 from compliance_os.web.models.marketplace import MarketplaceUserRow
+from compliance_os.web.models.tables import GoogleOAuthTokenRow
 from compliance_os.web.models.tables_v2 import CheckRow
 from compliance_os.web.services.auth_service import (
+    JWT_SECRET,
     create_token,
     get_active_openclaw_token,
     get_bearer_payload,
@@ -31,6 +35,7 @@ from compliance_os.web.services.auth_service import (
     issue_openclaw_token,
     verify_password,
 )
+from compliance_os.web.services.token_crypto import decrypt_token, encrypt_token
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -337,6 +342,218 @@ def google_callback(
     if next_path:
         query["next"] = next_path
     return RedirectResponse(url=f"{_frontend_url(request)}/login?{urlencode(query)}")
+
+
+# --- Gmail connection (separate flow from sign-in) ---
+#
+# Sign-in uses minimal scopes (openid+email+profile). The user opts into
+# Gmail access via a *second* OAuth round-trip after they're already
+# logged in — keeps the trust ask narrow and lets users decline Gmail
+# without losing their account.
+#
+# State is a short-lived JWT keyed off the user's session, so the callback
+# can verify the connection belongs to the right account without trusting
+# anything from the URL.
+
+GMAIL_READONLY_SCOPE = "https://www.googleapis.com/auth/gmail.readonly"
+
+
+def _gmail_callback_uri(request: Request) -> str:
+    return _request_origin(request) + "/api/auth/google/connect-gmail/callback"
+
+
+@router.get("/google/connect-gmail/url")
+def google_connect_gmail_url(
+    request: Request,
+    next: str | None = None,
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Return the Google OAuth URL for granting Gmail read access.
+
+    Requires the user to already be signed in (Authorization: Bearer).
+    The `next` query param controls where the user lands post-callback.
+    """
+    payload = get_bearer_payload(authorization, db)
+    user_id = payload["user_id"]
+
+    client_id = _google_client_id()
+    if not client_id:
+        raise HTTPException(500, "Google OAuth not configured. Set GOOGLE_CLIENT_ID env var.")
+
+    import jwt as pyjwt
+    state_payload = {
+        "user_id": user_id,
+        "purpose": "connect_gmail",
+        "next": _safe_next_path(next) or "/dashboard",
+        "exp": int(time.time()) + 600,  # 10-min OAuth window
+    }
+    state = pyjwt.encode(state_payload, JWT_SECRET, algorithm="HS256")
+
+    params = {
+        "client_id": client_id,
+        "redirect_uri": _gmail_callback_uri(request),
+        "response_type": "code",
+        # Request the full scope set so Google honors `prompt=consent` and
+        # actually returns a refresh_token. Incremental auth would skip
+        # already-granted scopes, but we need consent to refresh-token.
+        "scope": f"openid email profile {GMAIL_READONLY_SCOPE}",
+        "access_type": "offline",
+        "prompt": "consent",
+        "state": state,
+        "include_granted_scopes": "true",
+    }
+    return {"url": f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"}
+
+
+@router.get("/google/connect-gmail/callback")
+def google_connect_gmail_callback(
+    code: str,
+    state: str,
+    request: Request,
+    db: Session = Depends(get_session),
+):
+    """Handle the Gmail-connect callback — store encrypted tokens, redirect."""
+    import httpx
+    import jwt as pyjwt
+
+    frontend = _frontend_url(request)
+    fallback_path = "/dashboard"
+    next_path = fallback_path
+
+    try:
+        state_payload = pyjwt.decode(state, JWT_SECRET, algorithms=["HS256"])
+        if state_payload.get("purpose") != "connect_gmail":
+            raise ValueError("bad purpose")
+        user_id = str(state_payload["user_id"])
+        next_path = _safe_next_path(state_payload.get("next")) or fallback_path
+    except Exception:
+        return RedirectResponse(url=f"{frontend}{fallback_path}?gmail=invalid_state")
+
+    user = db.query(UserRow).filter(UserRow.id == user_id).first()
+    if not user:
+        return RedirectResponse(url=f"{frontend}{next_path}?gmail=user_not_found")
+
+    client_id = _google_client_id()
+    client_secret = _google_client_secret()
+    redirect_uri = _gmail_callback_uri(request)
+    if not client_id or not client_secret:
+        return RedirectResponse(url=f"{frontend}{next_path}?gmail=not_configured")
+
+    try:
+        token_resp = httpx.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "code": code,
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "redirect_uri": redirect_uri,
+                "grant_type": "authorization_code",
+            },
+            timeout=15.0,
+        )
+    except Exception:
+        return RedirectResponse(url=f"{frontend}{next_path}?gmail=network_error")
+
+    if token_resp.status_code != 200:
+        return RedirectResponse(url=f"{frontend}{next_path}?gmail=token_exchange_failed")
+
+    tokens = token_resp.json()
+    access_token = tokens.get("access_token")
+    refresh_token = tokens.get("refresh_token")
+    if not access_token or not refresh_token:
+        # Without a refresh_token we can't keep syncing past the access
+        # token's 1-hour life. Most often this means the user already
+        # granted in the past; have them revoke at myaccount.google.com.
+        return RedirectResponse(url=f"{frontend}{next_path}?gmail=no_refresh_token")
+
+    expires_in = int(tokens.get("expires_in", 3600))
+    scope = tokens.get("scope", "")
+    expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+
+    existing = (
+        db.query(GoogleOAuthTokenRow)
+        .filter(GoogleOAuthTokenRow.user_id == user_id)
+        .first()
+    )
+    if existing is not None:
+        existing.access_token_encrypted = encrypt_token(access_token)
+        existing.refresh_token_encrypted = encrypt_token(refresh_token)
+        existing.scope = scope
+        existing.expires_at = expires_at
+        existing.granted_at = datetime.utcnow()
+        existing.revoked_at = None
+    else:
+        db.add(GoogleOAuthTokenRow(
+            user_id=user_id,
+            access_token_encrypted=encrypt_token(access_token),
+            refresh_token_encrypted=encrypt_token(refresh_token),
+            scope=scope,
+            expires_at=expires_at,
+            granted_at=datetime.utcnow(),
+        ))
+    db.commit()
+
+    return RedirectResponse(url=f"{frontend}{next_path}?gmail=connected")
+
+
+@router.get("/me/gmail/status")
+def gmail_status(
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Whether the signed-in user has connected Gmail (and the granted scope)."""
+    payload = get_bearer_payload(authorization, db)
+    row = (
+        db.query(GoogleOAuthTokenRow)
+        .filter(GoogleOAuthTokenRow.user_id == payload["user_id"])
+        .first()
+    )
+    if row is None or row.revoked_at is not None:
+        return {"connected": False}
+    return {
+        "connected": True,
+        "scope": row.scope,
+        "granted_at": row.granted_at.isoformat() if row.granted_at else None,
+        "expires_at": row.expires_at.isoformat() if row.expires_at else None,
+    }
+
+
+@router.post("/me/gmail/disconnect")
+def gmail_disconnect(
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Revoke the Gmail token at Google + delete the row locally.
+
+    Best-effort revoke: even if Google's revoke endpoint fails (e.g. the
+    refresh token is already invalid), we still delete the local row so
+    the user is fully disconnected from our side.
+    """
+    import httpx
+    payload = get_bearer_payload(authorization, db)
+    row = (
+        db.query(GoogleOAuthTokenRow)
+        .filter(GoogleOAuthTokenRow.user_id == payload["user_id"])
+        .first()
+    )
+    if row is None:
+        return {"ok": True, "already_disconnected": True}
+
+    try:
+        refresh = decrypt_token(row.refresh_token_encrypted)
+        if refresh:
+            httpx.post(
+                "https://oauth2.googleapis.com/revoke",
+                data={"token": refresh},
+                timeout=5.0,
+            )
+    except Exception:
+        pass  # local delete is the source of truth
+
+    db.delete(row)
+    db.commit()
+    return {"ok": True}
 
 
 @router.post("/google/token", response_model=AuthResponse)

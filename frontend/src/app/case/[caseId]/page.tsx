@@ -6,11 +6,15 @@ import {
   Case,
   createEngagement,
   deleteEngagement,
+  disconnectGmail,
   Engagement,
   ENGAGEMENT_STATUSES,
   EngagementStatus,
   getCase,
   getEngagementDraftEmail,
+  getGmailConnectUrl,
+  getGmailStatus,
+  GmailStatus,
   listCaseEngagements,
   listCaseSearches,
   ProfessionalSearchSummary,
@@ -80,6 +84,8 @@ export default function CaseOverview() {
         engagements={engagements}
         onChange={refreshEngagements}
       />
+
+      <GmailConnectionSection caseId={caseId} />
 
       <p className="text-sm text-stone-400 text-center">Review dashboard coming soon.</p>
     </div>
@@ -473,6 +479,119 @@ function EngagementRow({
         </button>
       )}
     </li>
+  );
+}
+
+
+function GmailConnectionSection({ caseId }: { caseId: string }) {
+  const [status, setStatus] = useState<GmailStatus | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getGmailStatus().then(setStatus).catch(() => setStatus({ connected: false }));
+  }, []);
+
+  // Surface OAuth callback result (?gmail=connected | error_code) as a one-time pill.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const gmail = params.get("gmail");
+    if (!gmail) return;
+    if (gmail === "connected") {
+      // Re-fetch status; clear param so reload doesn't re-show.
+      getGmailStatus().then(setStatus);
+    } else {
+      setError(`Gmail connection failed: ${gmail.replace(/_/g, " ")}`);
+    }
+    params.delete("gmail");
+    const newSearch = params.toString();
+    window.history.replaceState(
+      {},
+      "",
+      window.location.pathname + (newSearch ? `?${newSearch}` : ""),
+    );
+  }, []);
+
+  async function connect() {
+    setBusy(true);
+    setError(null);
+    try {
+      const { url } = await getGmailConnectUrl(`/case/${caseId}`);
+      window.location.href = url;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setBusy(false);
+    }
+  }
+
+  async function disconnect() {
+    if (!confirm("Disconnect Gmail? Synced threads will stop updating.")) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await disconnectGmail();
+      setStatus({ connected: false });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (status === null) return null;
+
+  return (
+    <div className="rounded-lg border border-stone-200 bg-white p-5 space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-base font-semibold text-stone-800">Gmail</span>
+            {status.connected ? (
+              <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                connected
+              </span>
+            ) : (
+              <span className="inline-flex items-center rounded-full border border-stone-200 bg-stone-50 text-stone-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                not connected
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-xs text-stone-500">
+            {status.connected
+              ? "We'll match incoming and outgoing emails to firms in your engagements list."
+              : "Connect Gmail to automatically track email threads with each firm. Read-only — we never send on your behalf."}
+          </p>
+          {status.connected && status.granted_at && (
+            <p className="mt-0.5 text-[11px] text-stone-400">
+              Granted {new Date(status.granted_at).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+        {status.connected ? (
+          <button
+            onClick={disconnect}
+            disabled={busy}
+            className="shrink-0 rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 hover:bg-stone-50 hover:text-rose-600"
+          >
+            Disconnect
+          </button>
+        ) : (
+          <button
+            onClick={connect}
+            disabled={busy}
+            className="shrink-0 rounded-lg bg-stone-800 px-4 py-1.5 text-xs font-medium text-white hover:bg-stone-700 disabled:opacity-50"
+          >
+            {busy ? "…" : "Connect Gmail"}
+          </button>
+        )}
+      </div>
+      {error && (
+        <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
+          {error}
+        </div>
+      )}
+    </div>
   );
 }
 
