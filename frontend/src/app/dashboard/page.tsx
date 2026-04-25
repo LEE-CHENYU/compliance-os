@@ -2,7 +2,7 @@
 
 import Vapi from "@vapi-ai/web";
 import type { ClientMessageTranscript, CreateAssistantDTO, OpenAIModel, VapiVoice } from "@vapi-ai/web/dist/api";
-import { useCallback, useEffect, useState, useRef, type ChangeEvent, type ComponentPropsWithoutRef, type DragEvent as ReactDragEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef, type ChangeEvent, type ComponentPropsWithoutRef, type DragEvent as ReactDragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, authHeaders, getUser, logout } from "@/lib/auth";
 import ReactMarkdown from "react-markdown";
@@ -11,6 +11,7 @@ import FormFillerUpload from "@/components/chat/FormFillerUpload";
 import FormPreviewCard, { FieldProposal } from "@/components/chat/FormPreviewCard";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import MySearches from "@/components/dashboard/MySearches";
+import MyEngagements from "@/components/dashboard/MyEngagements";
 import { useTheme } from "@/lib/theme";
 
 interface TimelineEvent {
@@ -302,6 +303,19 @@ const CATEGORY_COLORS_DARK: Record<string, CategoryPalette> = {
   personal: { bg: "rgba(236,72,153,0.16)", text: "#f9a8d4", border: "rgba(236,72,153,0.25)", label: "Personal" },
   other: { bg: "rgba(107,114,128,0.18)", text: "#9ca3af", border: "rgba(107,114,128,0.28)", label: "Other" },
 };
+
+const DASHBOARD_CATEGORY_KEYS = ["student_status", "immigration", "employment", "tax", "business", "personal", "other"] as const;
+type DashboardCategoryKey = typeof DASHBOARD_CATEGORY_KEYS[number];
+type DashboardRiskFilter = "needs_attention" | "potential_risks";
+
+function normalizeDashboardCategory(category?: string | null): DashboardCategoryKey {
+  if (category === "entity") return "business";
+  if (category === "work_auth") return "employment";
+  if (DASHBOARD_CATEGORY_KEYS.includes(category as DashboardCategoryKey)) {
+    return category as DashboardCategoryKey;
+  }
+  return "other";
+}
 
 function clampProgress(progress: number): number {
   return Math.min(1, Math.max(0, progress));
@@ -600,6 +614,8 @@ export default function DashboardPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [view, setView] = useState<"timeline" | "documents" | "profile" | "deadlines">("timeline");
+  const [selectedCategory, setSelectedCategory] = useState<DashboardCategoryKey | null>(null);
+  const [selectedRiskFilter, setSelectedRiskFilter] = useState<DashboardRiskFilter | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatAnswered, setChatAnswered] = useState<Set<string>>(new Set());
@@ -644,10 +660,66 @@ export default function DashboardPage() {
   const voiceActive = voiceCallState === "active";
   const voiceEnded = voiceCallState === "ended";
   const voiceListening = voiceActive && !assistantSpeaking && !micMuted;
+  const categoryCounts = useMemo(() => {
+    const counts = Object.fromEntries(DASHBOARD_CATEGORY_KEYS.map((category) => [category, 0])) as Record<DashboardCategoryKey, number>;
+    for (const document of documents) {
+      counts[normalizeDashboardCategory(document.category)] += 1;
+    }
+    return counts;
+  }, [documents]);
+  const visibleDocuments = useMemo(() => (
+    selectedCategory
+      ? documents.filter((document) => normalizeDashboardCategory(document.category) === selectedCategory)
+      : documents
+  ), [documents, selectedCategory]);
+  const visibleTimelineEvents = useMemo(() => {
+    const events = timeline?.events ?? [];
+    return events.filter((event) => {
+      if (selectedRiskFilter === "potential_risks") {
+        return false;
+      }
+      const matchesCategory = !selectedCategory
+        || normalizeDashboardCategory(event.category) === selectedCategory
+        || event.documents.some((document) => normalizeDashboardCategory(document.category) === selectedCategory)
+        || event.risks.some((risk) => risk.documents?.some((document) => normalizeDashboardCategory(document.category) === selectedCategory));
+      const matchesRisk = selectedRiskFilter !== "needs_attention" || event.risks.length > 0;
+      return matchesCategory && matchesRisk;
+    });
+  }, [selectedCategory, selectedRiskFilter, timeline?.events]);
+  const visibleAdvisories = useMemo(() => {
+    if (selectedCategory || selectedRiskFilter === "needs_attention") {
+      return [];
+    }
+    return timeline?.advisories ?? [];
+  }, [selectedCategory, selectedRiskFilter, timeline?.advisories]);
+  const activeFilterLabel = selectedRiskFilter === "needs_attention"
+    ? "Needs attention"
+    : selectedRiskFilter === "potential_risks"
+      ? "Potential risks"
+      : selectedCategory
+        ? categoryPalette[selectedCategory]?.label || selectedCategory
+        : null;
 
   const nextChatMessageId = useCallback(() => {
     chatMessageCounterRef.current += 1;
     return `chat-${chatMessageCounterRef.current}`;
+  }, []);
+
+  const clearDashboardFilters = useCallback(() => {
+    setSelectedCategory(null);
+    setSelectedRiskFilter(null);
+  }, []);
+
+  const activateCategoryFilter = useCallback((category: DashboardCategoryKey) => {
+    setSelectedRiskFilter(null);
+    setSelectedCategory((current) => (current === category ? null : category));
+    setView("documents");
+  }, []);
+
+  const activateRiskFilter = useCallback((filter: DashboardRiskFilter) => {
+    setSelectedCategory(null);
+    setSelectedRiskFilter((current) => (current === filter ? null : filter));
+    setView("timeline");
   }, []);
 
   const updateProcessingIndicator = useCallback((progress: number, title: string, detail: string) => {
@@ -1566,8 +1638,14 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-[#5b8dee] border-t-transparent animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#eef4fb] px-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="w-9 h-9 rounded-full border-2 border-[#5b8dee] border-t-transparent animate-spin" />
+          <div>
+            <div className="text-[15px] font-semibold text-[#0d1424]">Loading dashboard</div>
+            <div className="mt-1 text-[12px] text-[#556480]">Preparing your timeline, documents, and service workspace.</div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -1622,6 +1700,8 @@ export default function DashboardPage() {
                 <button
                   key={order.order_id}
                   type="button"
+                  aria-label={`Open service order: ${order.product_name}`}
+                  data-testid={`dashboard-service-order-${order.product_sku}`}
                   onClick={() => router.push(order.href)}
                   className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left shadow-[0_8px_18px_rgba(61,84,128,0.05)] transition hover:bg-white"
                 >
@@ -1662,6 +1742,8 @@ export default function DashboardPage() {
               <button
                 key={service.sku}
                 type="button"
+                aria-label={`Open recommended service: ${service.name}`}
+                data-testid={`dashboard-recommended-service-${service.sku}`}
                 onClick={() => router.push(service.href)}
                 className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left transition hover:bg-white"
               >
@@ -1681,6 +1763,8 @@ export default function DashboardPage() {
               <button
                 key={order.order_id}
                 type="button"
+                aria-label={`Open completed service: ${order.product_name}`}
+                data-testid={`dashboard-completed-service-${order.product_sku}`}
                 onClick={() => router.push(order.href)}
                 className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left transition hover:bg-white"
               >
@@ -1861,32 +1945,69 @@ export default function DashboardPage() {
 
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Categories</div>
-            {["student_status", "immigration", "employment", "tax", "business", "personal", "other"].map((cat) => {
-              const count = documents.filter((d) => (d.category || "other") === cat).length;
+            {DASHBOARD_CATEGORY_KEYS.map((cat) => {
+              const count = categoryCounts[cat];
               if (count === 0) return null;
               const colors = categoryPalette[cat] || categoryPalette.other;
               return (
-                <div key={cat} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480]">
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => activateCategoryFilter(cat)}
+                  aria-pressed={selectedCategory === cat}
+                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-all ${
+                    selectedCategory === cat
+                      ? "bg-white/70 font-semibold text-[#0d1424]"
+                      : "text-[#556480] hover:bg-white/40"
+                  }`}
+                >
                   <span className="w-2 h-2 rounded-full" style={{ background: colors.text }} />
                   {colors.label}
                   <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-md" style={{ background: colors.bg, color: colors.text }}>{count}</span>
-                </div>
+                </button>
               );
             })}
           </div>
 
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Risks</div>
-            <div className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480]">
+            <button
+              type="button"
+              onClick={() => activateRiskFilter("needs_attention")}
+              aria-pressed={selectedRiskFilter === "needs_attention"}
+              className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-all ${
+                selectedRiskFilter === "needs_attention"
+                  ? "bg-white/70 font-semibold text-[#0d1424]"
+                  : "text-[#556480] hover:bg-white/40"
+              }`}
+            >
               <span className="w-2 h-2 rounded-full bg-amber-400" />
               Needs attention
               <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-md bg-red-50 text-red-500">{stats?.risks || 0}</span>
-            </div>
-            <div className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#556480]">
+            </button>
+            <button
+              type="button"
+              onClick={() => activateRiskFilter("potential_risks")}
+              aria-pressed={selectedRiskFilter === "potential_risks"}
+              className={`mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-all ${
+                selectedRiskFilter === "potential_risks"
+                  ? "bg-white/70 font-semibold text-[#0d1424]"
+                  : "text-[#556480] hover:bg-white/40"
+              }`}
+            >
               <span className="w-2 h-2 rounded-full bg-[#8e9ab5]" />
               Potential risks
               <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-[#5b8dee]">{timeline?.advisories.length || 0}</span>
-            </div>
+            </button>
+            {activeFilterLabel ? (
+              <button
+                type="button"
+                onClick={clearDashboardFilters}
+                className="mt-3 w-full rounded-lg border border-blue-100/50 bg-white/60 px-3 py-2 text-left text-[12px] font-medium text-[#5b8dee] transition hover:bg-white"
+              >
+                Clear filter: {activeFilterLabel}
+              </button>
+            ) : null}
           </div>
 
           {renderServiceCenter()}
@@ -1909,7 +2030,24 @@ export default function DashboardPage() {
             ))}
           </div>
 
+          {activeFilterLabel ? (
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100/50 bg-white/55 px-4 py-3 text-[13px] text-[#556480]">
+              <span>
+                Showing filtered dashboard results for <strong className="text-[#0d1424]">{activeFilterLabel}</strong>.
+              </span>
+              <button
+                type="button"
+                onClick={clearDashboardFilters}
+                className="rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold text-[#5b8dee] transition hover:bg-[#f7f9fd]"
+              >
+                Clear filter
+              </button>
+            </div>
+          ) : null}
+
           <MySearches />
+
+          <MyEngagements />
 
           <section className="mb-8 overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(234,241,251,0.92))] backdrop-blur-xl shadow-[0_10px_36px_rgba(91,141,238,0.08)]">
             <div className="p-5 md:p-7">
@@ -2056,8 +2194,9 @@ export default function DashboardPage() {
                   tax_return: "Tax", w2: "Tax",
                 };
                 const grouped: Record<string, typeof documents> = {};
-                for (const doc of documents) {
-                  const cat = DOC_TO_CAT[doc.doc_type] || "Business";
+                for (const doc of visibleDocuments) {
+                  const catKey = normalizeDashboardCategory(doc.category);
+                  const cat = categoryPalette[catKey]?.label || DOC_TO_CAT[doc.doc_type] || "Other";
                   if (!grouped[cat]) grouped[cat] = [];
                   grouped[cat].push(doc);
                 }
@@ -2096,9 +2235,9 @@ export default function DashboardPage() {
                   </div>
                 ));
               })()}
-              {documents.length === 0 && (
+              {visibleDocuments.length === 0 && (
                 <div className="text-center py-12">
-                  <div className="text-[#8e9ab5] text-sm mb-3">No documents yet</div>
+                  <div className="text-[#8e9ab5] text-sm mb-3">{selectedCategory ? `No ${activeFilterLabel || "matching"} documents` : "No documents yet"}</div>
                   <button onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">Upload your first document</button>
                 </div>
               )}
@@ -2210,7 +2349,7 @@ export default function DashboardPage() {
           {view === "timeline" && (<><div className="relative pl-7">
             <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#5b8dee] to-[#5b8dee]/10" />
 
-            {timeline?.events.map((event, i) => (
+            {visibleTimelineEvents.map((event, i) => (
               <div key={i} className="relative mb-6">
                 <div className={`absolute -left-[18px] top-1.5 w-3.5 h-3.5 rounded-full border-[3px] border-white ${DOT_STYLE[event.type] || "bg-gray-300"}`} />
 
@@ -2269,8 +2408,14 @@ export default function DashboardPage() {
               </div>
             ))}
 
+            {timeline && visibleTimelineEvents.length === 0 && selectedRiskFilter !== "potential_risks" ? (
+              <div className="relative mb-6 rounded-2xl border border-dashed border-blue-100/60 bg-white/45 px-5 py-4 text-[13px] text-[#556480]">
+                No timeline events match this filter.
+              </div>
+            ) : null}
+
             {/* Upload Prompts */}
-            {timeline?.upload_prompts.map((prompt, i) => (
+            {!selectedRiskFilter && timeline?.upload_prompts.map((prompt, i) => (
               <div key={i} className="relative mb-6">
                 <div className="absolute -left-[18px] top-1.5 w-3.5 h-3.5 rounded-full border-[3px] border-white bg-amber-400" />
                 <div
@@ -2290,11 +2435,11 @@ export default function DashboardPage() {
           </div>
 
           {/* Potential risks — with upload action buttons */}
-          {timeline && timeline.advisories.length > 0 && (
+          {timeline && visibleAdvisories.length > 0 && (
             <div className="mt-8">
               <div className="text-xs font-semibold text-[#7b8ba5] uppercase tracking-widest mb-3">Worth looking into</div>
               <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
-                {timeline.advisories.map((a, i) => (
+                {visibleAdvisories.map((a, i) => (
                   <div key={a.id} className={`px-5 py-4 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
                     <div className="flex items-start gap-3">
                       <div className="flex-1 text-[13px]">

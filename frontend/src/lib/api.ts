@@ -450,6 +450,32 @@ export async function disconnectGmail(): Promise<{ ok: boolean }> {
   return res.json();
 }
 
+// --- Cross-case engagement view (dashboard) ---
+
+export interface MyEngagement {
+  id: string;
+  case_id: string;
+  case_workflow_type: string;
+  case_status: string;
+  firm_name: string;
+  firm_lead_attorney: string | null;
+  status: EngagementStatus;
+  notes: string | null;
+  last_activity_at: string;
+  thread_count: number;
+  last_thread_at: string | null;
+  last_thread_direction: "inbound" | "outbound" | null;
+  last_thread_subject: string | null;
+}
+
+export async function listMyEngagements(): Promise<MyEngagement[]> {
+  const headers = _authHeaders();
+  if (!headers.Authorization) return [];
+  const res = await fetch(`${API_BASE}/me/engagements`, { headers });
+  if (!res.ok) return [];
+  return res.json();
+}
+
 export async function listMySearches(): Promise<ProfessionalSearch[]> {
   const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
   const res = await fetch(`${API_BASE}/professional-search/mine/list`, {
