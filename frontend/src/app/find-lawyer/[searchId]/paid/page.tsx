@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
@@ -89,7 +89,15 @@ function Icon({ name }: { name: string }) {
   );
 }
 
-export default function PaidPage() {
+export default function PaidPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <PaidPage />
+    </Suspense>
+  );
+}
+
+function PaidPage() {
   const params = useParams<{ searchId: string }>();
   const router = useRouter();
   const search = useSearchParams();

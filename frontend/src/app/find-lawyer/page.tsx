@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getCaseDraftBrief, startProfessionalSearch } from "@/lib/api";
 import {
@@ -29,7 +29,19 @@ const LABEL =
 const INPUT =
   "w-full rounded-2xl border border-[#dbe5f2] bg-white/90 px-4 py-3 text-[15px] text-[#0d1424] shadow-[0_8px_28px_rgba(61,84,128,0.06)] outline-none transition focus:border-[#5b8dee] focus:ring-4 focus:ring-[#5b8dee]/10";
 
-export default function FindLawyer() {
+// Next.js 14 requires `useSearchParams()` in a client component to be
+// wrapped in <Suspense> so static prerendering doesn't bail. The wrapper
+// below is a no-op at runtime; it just satisfies the framework's
+// build-time invariant.
+export default function FindLawyerPage() {
+  return (
+    <Suspense fallback={null}>
+      <FindLawyer />
+    </Suspense>
+  );
+}
+
+function FindLawyer() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const caseId = searchParams.get("case_id");
