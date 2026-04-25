@@ -574,9 +574,18 @@ def gmail_disconnect(
     except Exception:
         pass  # local delete is the source of truth
 
+    # Purge synced thread metadata too — user is signaling they don't
+    # want us holding onto their lawyer correspondence shape.
+    from compliance_os.web.models.tables import EmailThreadRow
+    purged = (
+        db.query(EmailThreadRow)
+        .filter(EmailThreadRow.user_id == payload["user_id"])
+        .delete(synchronize_session=False)
+    )
+
     db.delete(row)
     db.commit()
-    return {"ok": True}
+    return {"ok": True, "threads_purged": purged}
 
 
 @router.post("/google/token", response_model=AuthResponse)

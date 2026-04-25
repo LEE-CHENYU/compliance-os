@@ -579,7 +579,14 @@ function EngagementRow({
             {threads.length} email thread{threads.length === 1 ? "" : "s"}
           </div>
           {threads.slice(0, 5).map((t) => (
-            <div key={t.id} className="text-xs">
+            <a
+              key={t.id}
+              href={`https://mail.google.com/mail/u/0/#all/${t.gmail_thread_id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-xs hover:bg-stone-50 -mx-1 px-1 py-0.5 rounded transition-colors"
+              title="Open thread in Gmail"
+            >
               <div className="flex items-baseline justify-between gap-2">
                 <span className="font-medium text-stone-700 truncate">
                   {t.subject || "(no subject)"}
@@ -598,12 +605,13 @@ function EngagementRow({
                     {t.message_count > 1 && `${t.message_count} · `}
                     {fmtThreadDate(t.last_message_at)}
                   </span>
+                  <span className="text-[10px] text-stone-300">↗</span>
                 </div>
               </div>
               <div className="text-[11px] text-stone-500 line-clamp-1">
                 {t.last_message_snippet}
               </div>
-            </div>
+            </a>
           ))}
           {threads.length > 5 && (
             <div className="text-[10px] text-stone-400">

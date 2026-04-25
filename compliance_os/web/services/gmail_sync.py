@@ -301,6 +301,18 @@ def sync_user_gmail(
         ):
             engagement.last_activity_at = last_date
 
+        # Auto-progression: an inbound reply moves the funnel from
+        # not_contacted/outreach_sent → in_discussion. Idempotent — once
+        # status is past in_discussion (engaged/declined) we don't touch it.
+        # User-set statuses always win on the way "forward"; sync only
+        # nudges progression, never reverses it.
+        if (
+            engagement
+            and direction == "inbound"
+            and engagement.status in ("not_contacted", "outreach_sent")
+        ):
+            engagement.status = "in_discussion"
+
     token_row.last_synced_at = now
     token_row.last_sync_error = None
     db.commit()
