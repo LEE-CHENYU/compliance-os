@@ -573,13 +573,25 @@ export default function SearchStatus() {
     <div className={bgClass}>
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-center justify-between gap-3">
-          <button
-            type="button"
-            onClick={() => router.push("/find-lawyer")}
-            className="rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur transition hover:text-[#1a2036]"
-          >
-            {t.statusBtnNew as string}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => router.push("/find-lawyer")}
+              className="rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur transition hover:text-[#1a2036]"
+            >
+              {t.statusBtnNew as string}
+            </button>
+            {caseId && (
+              <button
+                type="button"
+                onClick={() => router.push(`/case/${caseId}`)}
+                className="rounded-full bg-[#5b8dee] px-4 py-2 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
+                title="Back to your case — engagements, Gmail, notes"
+              >
+                {lang === "zh" ? "← 返回案件" : "← Back to case"}
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-3">
             <LangToggle
               lang={lang}
