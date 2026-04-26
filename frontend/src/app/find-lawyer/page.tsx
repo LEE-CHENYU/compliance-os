@@ -6,6 +6,7 @@ import { getCaseDraftBrief, startProfessionalSearch } from "@/lib/api";
 import {
   FIND_LAWYER_STRINGS,
   VERTICAL_LABELS,
+  personaPreviewsFor,
   useLang,
 } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
@@ -202,6 +203,8 @@ function FindLawyer() {
               href="/samples/lawyer-search-eb5-sample.pdf"
               target="_blank"
               rel="noopener noreferrer"
+              data-testid="find-lawyer-sample-report"
+              data-graph-edge="find-lawyer:sample-report"
               className="inline-flex items-center gap-1.5 rounded-full border border-[#cfe1ff] bg-[#eaf2ff]/90 px-4 py-2 text-[12px] font-semibold text-[#2f5bae] shadow-[0_8px_24px_rgba(91,141,238,0.18)] transition hover:bg-[#dde9fb] hover:text-[#1a2036]"
               title={lang === "zh" ? "查看示例 PDF 报告" : "Preview a sample PDF report"}
             >
@@ -414,13 +417,9 @@ function FindLawyer() {
               </div>
 
               <div className="mt-6 space-y-4">
-                {[
-                  { title: t.aside01Title as string, body: t.aside01Body as string },
-                  { title: t.aside02Title as string, body: t.aside02Body as string },
-                  { title: t.aside03Title as string, body: t.aside03Body as string },
-                ].map((item, i) => (
+                {personaPreviewsFor(lang, vertical).map((item, i) => (
                   <div
-                    key={item.title}
+                    key={`${vertical}-${i}-${item.title}`}
                     className="rounded-2xl border border-[#e4edf7] bg-white/82 p-4 shadow-[0_10px_30px_rgba(61,84,128,0.05)]"
                   >
                     <div className="flex items-baseline gap-3">

@@ -262,6 +262,229 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
   },
 };
 
+/**
+ * Per-vertical preview of the search agents that will run for the
+ * intake page's right-hand "How this works" panel. The list shifts to
+ * match the selected vertical so users see what kind of professionals
+ * we'll actually look for. Falls back to immigration_attorney when a
+ * vertical doesn't yet have a curated preview.
+ *
+ * Note: only `immigration_attorney` and `immigration_eb5` currently have
+ * fully-wired backend persona YAMLs. The other verticals' entries here
+ * describe the search angles we WOULD run when those verticals are
+ * fleshed out — we keep them honest by not promising more than we have.
+ */
+type PersonaPreview = { title: string; body: string };
+
+export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPreview[]>> = {
+  en: {
+    immigration_attorney: [
+      {
+        title: "Elite boutiques",
+        body: "Chambers-ranked firms with AILA past leadership and state-bar certifications.",
+      },
+      {
+        title: "Startup + founder-focused",
+        body: "Firms that have actually written about the 2024 H-1B rule and handle owner-beneficiary petitions.",
+      },
+      {
+        title: "Federal-court litigators",
+        body: "Former DOJ/OIL attorneys; counsel of record in ITServe-lineage APA challenges.",
+      },
+    ],
+    immigration_eb5: [
+      {
+        title: "EB-5 specialists",
+        body: "Chambers EB-5 ranking, AILA EB-5 Committee leadership, IIUSA participation, and EB5 Investors Top-25 recognition.",
+      },
+      {
+        title: "Securities-sophisticated counsel",
+        body: "RIA integrity-period offering structures, redeployment mechanics, and federal-court securities-law fluency.",
+      },
+      {
+        title: "Source-of-funds specialists",
+        body: "Multi-step path-of-funds tracing for China / India / Vietnam origin; documented federal-court SOF wins.",
+      },
+    ],
+    tax_attorney: [
+      {
+        title: "Cross-border practitioners",
+        body: "Treaty-position attorneys with FTC / GILTI / Subpart F experience and active US-China practice.",
+      },
+      {
+        title: "Penalty-relief litigators",
+        body: "Reasonable-cause defenses with Tax Court track record and IRS-appeals experience.",
+      },
+      {
+        title: "Disclosure + remediation",
+        body: "Streamlined / OVDP / FBAR / FATCA practice; specialty in late-filing remediation.",
+      },
+    ],
+    cpa: [
+      {
+        title: "International tax CPAs",
+        body: "1040NR, dual-status, treaty positions, and foreign-owned US LLC reporting (5472 / 1120-F).",
+      },
+      {
+        title: "Founder-friendly bookkeepers",
+        body: "S-corp / C-corp / LLC bookkeeping, payroll, and quarterly estimates with founders' work-style.",
+      },
+      {
+        title: "Audit-defense specialists",
+        body: "IRS examination representation; voluntary disclosure / streamlined consulting.",
+      },
+    ],
+    corporate_attorney: [
+      {
+        title: "Startup formation specialists",
+        body: "Delaware C-corp + founder agreements, vesting, IP assignment, 83(b) workflow.",
+      },
+      {
+        title: "SAFE / convertible-note counsel",
+        body: "Clean YC-SAFE practice, 409A coordination, secondary-sale mechanics.",
+      },
+      {
+        title: "Cross-border equity / cap table",
+        body: "Foreign founders, NRA tax issues, F-class shares, withholding-tax structuring.",
+      },
+    ],
+    bank: [
+      {
+        title: "Foreign-founder friendly banks",
+        body: "ITIN onboarding, no-SSN account opening, cross-border KYC.",
+      },
+      {
+        title: "Startup-banking + Stripe-ready",
+        body: "Fast onboarding, no minimums, integrates cleanly with Stripe / Mercury / Brex flows.",
+      },
+      {
+        title: "Premium-relationship banks",
+        body: "Concierge service, USD/CNY rails, multi-currency wire pricing.",
+      },
+    ],
+    caa: [
+      {
+        title: "IRS-authorized CAAs",
+        body: "Current Form 13551 in good standing; can certify ID copies for ITIN applications.",
+      },
+      {
+        title: "China-corridor practitioners",
+        body: "Chinese-language intake; certifications recognized by US consulates in China.",
+      },
+      {
+        title: "Fast-turnaround firms",
+        body: "Documented sub-30-day processing times and batch-volume experience.",
+      },
+    ],
+  },
+  zh: {
+    immigration_attorney: [
+      {
+        title: "精英精品律所",
+        body: "Chambers 排名律所,AILA 历任理事会成员,州律协认证。",
+      },
+      {
+        title: "初创 / 创始人导向",
+        body: "处理过 2024 年 H-1B 新规、能办理创始人本人持股公司担保的律所。",
+      },
+      {
+        title: "联邦法院诉讼律师",
+        body: "前 DOJ / OIL 律师;在 ITServe 系列 APA 诉讼中担任主辩。",
+      },
+    ],
+    immigration_eb5: [
+      {
+        title: "EB-5 专精律所",
+        body: "Chambers EB-5 上榜、AILA EB-5 委员会担任要职、IIUSA 成员、EB5 Investors Top-25 律师。",
+      },
+      {
+        title: "证券法精通",
+        body: "熟悉 RIA 新规下的发行结构、重新部署机制,以及联邦证券法实务。",
+      },
+      {
+        title: "资金来源专家",
+        body: "中国 / 印度 / 越南来源资金多步骤路径追溯;有联邦法院 SOF 胜诉记录。",
+      },
+    ],
+    tax_attorney: [
+      {
+        title: "跨境税务律师",
+        body: "熟悉中美税收协定,FTC / GILTI / Subpart F 实务,有活跃中美客户。",
+      },
+      {
+        title: "罚款减免诉讼律师",
+        body: "在税务法院有 reasonable cause 抗辩记录,熟悉 IRS Appeals 流程。",
+      },
+      {
+        title: "披露 / 合规补正",
+        body: "Streamlined / OVDP / FBAR / FATCA 实务专精;迟报情况补救经验丰富。",
+      },
+    ],
+    cpa: [
+      {
+        title: "国际税务 CPA",
+        body: "1040NR、双重身份、协定身份申报,以及外国人持股美国 LLC 报税(5472 / 1120-F)。",
+      },
+      {
+        title: "创始人友好型会计",
+        body: "S-corp / C-corp / LLC 账务、工资单、季度预估税款,适合创始人工作节奏。",
+      },
+      {
+        title: "稽查应对专家",
+        body: "IRS 审计代表;自愿披露 / streamlined 咨询。",
+      },
+    ],
+    corporate_attorney: [
+      {
+        title: "初创公司设立",
+        body: "Delaware C-corp、创始人协议、股权 vesting、知识产权转让、83(b) 流程。",
+      },
+      {
+        title: "SAFE / 可转债律师",
+        body: "标准 YC-SAFE 实务、409A 协调、二级市场转让机制。",
+      },
+      {
+        title: "跨境股权 / 股权架构",
+        body: "外国创始人、NRA 税务、F 类股、预提税结构设计。",
+      },
+    ],
+    bank: [
+      {
+        title: "外国创始人友好型银行",
+        body: "ITIN 开户、无 SSN 开户、跨境 KYC。",
+      },
+      {
+        title: "初创 + Stripe 兼容",
+        body: "开户快、无最低存款、与 Stripe / Mercury / Brex 流程兼容。",
+      },
+      {
+        title: "私人银行级服务",
+        body: "礼宾服务、美元 / 人民币通道、多币种电汇定价。",
+      },
+    ],
+    caa: [
+      {
+        title: "IRS 授权 CAA",
+        body: "持有有效 Form 13551,可为 ITIN 申请认证身份证件。",
+      },
+      {
+        title: "中国通道律所",
+        body: "中文受理;在中国境内的美国领事馆认可的认证机构。",
+      },
+      {
+        title: "快速处理律所",
+        body: "30 天内完成的处理记录,具备批量办理经验。",
+      },
+    ],
+  },
+};
+
+/** Pick the preview list for a given vertical, with a sensible fallback. */
+export function personaPreviewsFor(lang: Lang, vertical: string): PersonaPreview[] {
+  const map = PERSONA_PREVIEWS_BY_VERTICAL[lang];
+  return map[vertical] ?? map["immigration_attorney"];
+}
+
 export function personaLabel(lang: Lang, id: string): string {
   if (id in PERSONA_LABELS_I18N[lang]) return PERSONA_LABELS_I18N[lang][id];
   if (id.startsWith("tuned_")) {
