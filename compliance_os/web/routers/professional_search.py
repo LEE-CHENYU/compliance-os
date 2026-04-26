@@ -1450,7 +1450,19 @@ async def stripe_webhook(
         # Other event types are echoed back as 200 so Stripe stops retrying.
         return {"received": True, "ignored": event["type"]}
 
-    sess = event["data"]["object"]
+    # Coerce StripeObject → plain dict. Newer stripe-python versions do NOT
+    # have StripeObject inherit from dict, so sess.get(...) raises
+    # AttributeError: get. to_dict_recursive() walks nested objects too,
+    # so (sess.get("customer_details") or {}).get("email") works as expected.
+    raw_sess = event["data"]["object"]
+    if hasattr(raw_sess, "to_dict_recursive"):
+        sess = raw_sess.to_dict_recursive()
+    else:
+        try:
+            sess = dict(raw_sess)
+        except Exception:
+            sess = raw_sess  # last-ditch fallback; .get may still fail
+
     request_id = sess.get("client_reference_id") or (sess.get("metadata") or {}).get(
         "professional_search_id"
     )
