@@ -12,6 +12,7 @@ import FormPreviewCard, { FieldProposal } from "@/components/chat/FormPreviewCar
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import MySearches from "@/components/dashboard/MySearches";
 import MyEngagements from "@/components/dashboard/MyEngagements";
+import { listMySearches, listMyEngagements } from "@/lib/api";
 import { useTheme } from "@/lib/theme";
 
 interface TimelineEvent {
@@ -746,17 +747,29 @@ export default function DashboardPage() {
   }, []);
 
   const refreshDashboard = useCallback(async () => {
-    const [tl, st, docs] = await Promise.all([
+    const [tl, st, docs, mySearches, myEngagements] = await Promise.all([
       fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
+      // Don't bounce users to /check when they've already done a
+      // professional search or have lawyer engagements in flight.
+      // Both are "real content" the dashboard should render rather
+      // than treating the account as brand-new.
+      listMySearches().catch(() => []),
+      listMyEngagements().catch(() => []),
     ]);
     const hasServiceContent = Boolean(
       tl.service_summary?.active_orders?.length
       || tl.service_summary?.recent_completed?.length
       || tl.service_summary?.recommended_services?.length,
     );
-    if (docs.length === 0 && (!tl.events || tl.events.length <= 1) && !hasServiceContent) {
+    const hasLawyerContent = mySearches.length > 0 || myEngagements.length > 0;
+    if (
+      docs.length === 0
+      && (!tl.events || tl.events.length <= 1)
+      && !hasServiceContent
+      && !hasLawyerContent
+    ) {
       router.push("/check");
       return;
     }
