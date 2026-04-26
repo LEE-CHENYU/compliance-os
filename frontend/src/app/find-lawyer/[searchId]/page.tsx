@@ -170,8 +170,8 @@ function Paywall({
           </div>
           <div className="mt-1 text-[12px] text-[#7b8ba5]">
             {isZh
-              ? "一次性付费 $15 美元，永久访问。下方排名表保持免费可见。"
-              : "One-time $15 USD · keep the tier table above free; pay only for the deliverable."}
+              ? "一次性付费 $15 美元，永久访问。"
+              : "One-time $15 USD · permanent access."}
           </div>
         </div>
         <button

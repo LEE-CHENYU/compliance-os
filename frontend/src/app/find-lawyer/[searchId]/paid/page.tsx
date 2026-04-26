@@ -106,6 +106,7 @@ function PaidPage() {
 
   const [row, setRow] = useState<ProfessionalSearch | null>(null);
   const [pollError, setPollError] = useState<string | null>(null);
+  const [pollTimedOut, setPollTimedOut] = useState(false);
   const [authMode, setAuthMode] = useState<"signup" | "login">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -128,8 +129,17 @@ function PaidPage() {
         setPollError(e instanceof Error ? e.message : String(e));
       }
       attempts += 1;
-      if (!stopped && attempts < MAX_POLL_ATTEMPTS) {
-        setTimeout(poll, POLL_INTERVAL_MS);
+      if (!stopped) {
+        if (attempts < MAX_POLL_ATTEMPTS) {
+          setTimeout(poll, POLL_INTERVAL_MS);
+        } else {
+          // Surface the timeout to the user so they're not staring at a
+          // forever-spinner. The most common cause is a webhook that
+          // hasn't been registered (or has been temporarily delayed by
+          // Stripe). Funds are safe regardless — we only mark `paid_at`
+          // when the webhook arrives, so retrying later is non-destructive.
+          setPollTimedOut(true);
+        }
       }
     }
     poll();
@@ -218,6 +228,28 @@ function PaidPage() {
           {pollError && (
             <div className="mt-3 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-3 py-2 text-[12px] text-[#a33a3a]">
               {pollError}
+            </div>
+          )}
+
+          {pollTimedOut && !isPaid && (
+            <div className="mt-5 rounded-2xl border border-[#ffe3c9] bg-[#fff6ea] p-4">
+              <div className="text-[13px] font-semibold text-[#9c5a1c]">
+                {isZh
+                  ? "支付确认超时（60 秒）"
+                  : "Payment confirmation timed out (60s)"}
+              </div>
+              <p className="mt-1 text-[12.5px] leading-6 text-[#a06524]">
+                {isZh
+                  ? "您的款项是安全的 — Guardian 仅在收到 Stripe 的 webhook 通知后才会标记报告为已支付。请稍候片刻再刷新页面。如果问题持续，请联系支持。"
+                  : "Your funds are safe — we only mark the report paid when Stripe's webhook arrives. Refresh in a moment, or contact support if it persists."}
+              </p>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="mt-3 rounded-full border border-[#ffe3c9] bg-white/80 px-4 py-1.5 text-[12px] font-semibold text-[#9c5a1c] hover:bg-white"
+              >
+                {isZh ? "刷新" : "Refresh"}
+              </button>
             </div>
           )}
 

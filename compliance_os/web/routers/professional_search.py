@@ -121,14 +121,29 @@ class SearchResponse(BaseModel):
     case_id: str | None
 
 
-def _serialize(row: ProfessionalSearchRequestRow) -> SearchResponse:
+def _serialize(
+    row: ProfessionalSearchRequestRow,
+    *,
+    include_pii: bool = False,
+) -> SearchResponse:
+    """Serialize a search row to the public API shape.
+
+    PII gating: `case_brief`, `uploaded_notes`, and `stripe_customer_email`
+    contain user-supplied / Stripe-captured personal data. The status
+    page polls `GET /{request_id}` *unauthenticated* by design (the URL
+    is shareable + the user might not have signed up yet). Returning
+    the full brief / customer email there leaks PII to anyone who
+    learns the (UUID) request_id — including via Referer headers when
+    the page is shared. Pass `include_pii=True` only on auth-gated
+    paths (claim, mine/list, future authenticated GETs).
+    """
     return SearchResponse(
         id=row.id,
         status=row.status,
         purpose=row.purpose,
         vertical=row.vertical,
-        case_brief=row.case_brief,
-        uploaded_notes=row.uploaded_notes,
+        case_brief=(row.case_brief if include_pii else ""),
+        uploaded_notes=(row.uploaded_notes if include_pii else None),
         persona_status=row.persona_status or {},
         tier_report=row.tier_report,
         error=row.error,
@@ -137,7 +152,10 @@ def _serialize(row: ProfessionalSearchRequestRow) -> SearchResponse:
         paid_at=row.paid_at.isoformat() if row.paid_at else None,
         is_paid=row.paid_at is not None,
         is_claimed=row.user_id is not None,
-        stripe_customer_email=row.stripe_customer_email,
+        # Customer email is needed by the post-purchase page to pre-fill
+        # the signup form, but only the user who's about to claim should
+        # see it. Anonymous polling gets None.
+        stripe_customer_email=(row.stripe_customer_email if include_pii else None),
         case_id=row.case_id,
     )
 
@@ -190,15 +208,68 @@ def create_search(
     from compliance_os.web.services.professional_search_runner import run_search_sync
 
     background_tasks.add_task(run_search_sync, row.id)
-    return _serialize(row)
+    # Submitter is the implicit owner — return the full payload so they
+    # can immediately see what they posted (handy for client retries).
+    return _serialize(row, include_pii=True)
+
+
+# IMPORTANT: keep static-prefix routes (`/mine/list`, `/stripe-webhook`)
+# defined BEFORE the catch-all `/{request_id}` below. FastAPI matches in
+# declaration order; a future regression that splits these routes across
+# files could shadow the static ones if the order isn't preserved.
+@router.get("/mine/list", response_model=list[SearchResponse])
+def list_my_searches(
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+):
+    """List the authenticated user's claimed searches.
+
+    Path is `/mine/list` (not `/mine`) so it doesn't collide with the
+    `/{request_id}` route — FastAPI's `/{x}` matches one path segment,
+    so the two-segment `/mine/list` is unambiguous.
+    """
+    payload = get_bearer_payload(authorization, db)
+    rows = (
+        db.query(ProfessionalSearchRequestRow)
+        .filter(ProfessionalSearchRequestRow.user_id == payload["user_id"])
+        .order_by(ProfessionalSearchRequestRow.created_at.desc())
+        .limit(50)
+        .all()
+    )
+    # Authenticated owner — full PII is appropriate.
+    return [_serialize(r, include_pii=True) for r in rows]
 
 
 @router.get("/{request_id}", response_model=SearchResponse)
-def get_search(request_id: str, session: Session = Depends(get_session)):
+def get_search(
+    request_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
+    """Get a search by id.
+
+    Anonymous callers get a sanitized response (no `case_brief`, no
+    `uploaded_notes`, no `stripe_customer_email`). The authenticated
+    owner — and only the owner — gets the full row. We also accept any
+    valid bearer for the implicit case where the user has logged in
+    *between* search submission and the post-purchase claim, but match
+    the user only after parsing the token.
+    """
     row = session.get(ProfessionalSearchRequestRow, request_id)
     if row is None:
         raise HTTPException(status_code=404, detail="Search request not found")
-    return _serialize(row)
+
+    include_pii = False
+    if authorization:
+        try:
+            payload = get_bearer_payload(authorization, session)
+            if row.user_id and row.user_id == payload.get("user_id"):
+                include_pii = True
+        except HTTPException:
+            # Bad / missing token — fall through to anonymous response.
+            pass
+
+    return _serialize(row, include_pii=include_pii)
 
 
 # --- Guardian marketplace upsell ---
@@ -287,106 +358,22 @@ def _persona_label(persona_id: str) -> str:
     return persona_id.replace("_", " ").title()
 
 
+# Aggregation helpers live in `compliance_os.professional_search.aggregator`
+# (package layer, not web layer) so the background runner can import them
+# without a runner→router back-edge. Local aliases keep the existing
+# call sites in this file unchanged.
+from compliance_os.professional_search.aggregator import (
+    aggregate_firms as _aggregate_firms_impl,
+    load_persona_yamls as _load_persona_yamls_impl,
+)
+
+
 def _load_persona_yamls(row: ProfessionalSearchRequestRow) -> dict[str, dict]:
-    """Read every completed persona's YAML output, keyed by persona id."""
-    out: dict[str, dict] = {}
-    for persona_id, status in (row.persona_status or {}).items():
-        if status.get("status") != "complete":
-            continue
-        path_str = status.get("output_path")
-        if not path_str:
-            continue
-        path = Path(path_str)
-        if not path.exists():
-            continue
-        try:
-            doc = _yaml.safe_load(path.read_text()) or {}
-        except Exception:
-            continue
-        if isinstance(doc, dict):
-            out[persona_id] = doc
-    return out
+    return _load_persona_yamls_impl(row)
 
 
 def _aggregate_firms(persona_yamls: dict[str, dict]) -> list[dict]:
-    """Dedupe firms across personas; merge rationales, credentials, sources.
-
-    Returns a list of unified firm records sorted by max confidence
-    desc. Each record has the original firm fields plus:
-
-      - `_personas`:  list of persona ids that surfaced this firm
-      - `_why_fits`:  list of (persona_id, why_fit) tuples
-      - `_credentials`: deduped credential strings (preserve first-seen order)
-      - `_risks`:     deduped risk strings
-      - `_sources`:   deduped source URLs
-    """
-    by_key: dict[str, dict] = {}
-    seen_creds: dict[str, set[str]] = {}
-    seen_risks: dict[str, set[str]] = {}
-    seen_sources: dict[str, set[str]] = {}
-
-    for persona_id, doc in persona_yamls.items():
-        for firm in (doc.get("firms") or []):
-            name = (firm.get("name") or "").strip()
-            if not name:
-                continue
-            key = name.lower()
-            if key not in by_key:
-                by_key[key] = {
-                    **{k: v for k, v in firm.items() if k not in {"credentials", "risks", "sources", "why_fit"}},
-                    "_personas": [],
-                    "_why_fits": [],
-                    "_credentials": [],
-                    "_risks": [],
-                    "_sources": [],
-                }
-                seen_creds[key] = set()
-                seen_risks[key] = set()
-                seen_sources[key] = set()
-            entry = by_key[key]
-            entry["_personas"].append(persona_id)
-
-            if firm.get("why_fit"):
-                # Stored as a 2-element list (not tuple) so the result is
-                # JSON-serializable on every backend — psycopg's JSONB
-                # binder rejects tuples in some versions, and we want the
-                # round-trip to be lossless across SQLite ↔ Postgres.
-                entry["_why_fits"].append([persona_id, firm["why_fit"].strip()])
-
-            # Take max confidence across personas — different axes weigh
-            # different signals; we use the strongest evidence.
-            cur = entry.get("confidence") or 0
-            new = firm.get("confidence") or 0
-            if new > cur:
-                entry["confidence"] = new
-
-            # Take richest contact info: prefer non-null fields from later
-            # personas only if the existing slot is empty.
-            for field in ("lead_attorney", "role", "phone", "email",
-                          "website", "city", "state",
-                          "consultation_fee_low", "consultation_fee_high",
-                          "petition_fee_low", "petition_fee_high",
-                          "service_fee_label", "fee_basis",
-                          "litigation_capability"):
-                if entry.get(field) in (None, "") and firm.get(field) not in (None, ""):
-                    entry[field] = firm[field]
-
-            for c in firm.get("credentials") or []:
-                if c not in seen_creds[key]:
-                    seen_creds[key].add(c)
-                    entry["_credentials"].append(c)
-            for r in firm.get("risks") or []:
-                if r not in seen_risks[key]:
-                    seen_risks[key].add(r)
-                    entry["_risks"].append(r)
-            for s in firm.get("sources") or []:
-                if s not in seen_sources[key]:
-                    seen_sources[key].add(s)
-                    entry["_sources"].append(s)
-
-    out = list(by_key.values())
-    out.sort(key=lambda f: -(f.get("confidence") or 0))
-    return out
+    return _aggregate_firms_impl(persona_yamls)
 
 
 def _score_tier(score: int | None) -> tuple[str, str]:
@@ -453,7 +440,7 @@ def _render_html(row: ProfessionalSearchRequestRow) -> str:
         score_str = str(score) if score is not None else "—"
         loc_bits = [x for x in [f.get("city"), f.get("state")] if x]
         loc = ", ".join(loc_bits) if loc_bits else "—"
-        n_axes = len(f["_personas"])
+        n_axes = len(f.get("_personas") or [])
         cross = (
             f'<span class="cross-axis" title="Surfaced by {n_axes} different search axes — strongest match signal">×{n_axes}</span>'
             if n_axes >= 2
@@ -475,7 +462,7 @@ def _render_html(row: ProfessionalSearchRequestRow) -> str:
         firm_cards.append(_render_firm_card(f, e))
 
     n_firms = len(firms)
-    cross_count = sum(1 for f in firms if len(f["_personas"]) >= 2)
+    cross_count = sum(1 for f in firms if len(f.get("_personas") or []) >= 2)
     persona_count = len(persona_yamls)
 
     html = f"""<!DOCTYPE html>
@@ -651,9 +638,9 @@ def _render_firm_card(f: dict, e) -> str:
 
     persona_pills = " ".join(
         f'<span class="persona-pill">{e(_persona_label(p))}</span>'
-        for p in f["_personas"]
+        for p in (f.get("_personas") or [])
     )
-    n_axes = len(f["_personas"])
+    n_axes = len(f.get("_personas") or [])
     cross_html = (
         f'<span class="cross-axis-card" title="Surfaced by {n_axes} different search axes">×{n_axes} cross-axis match</span>'
         if n_axes >= 2 else ""
@@ -1284,17 +1271,9 @@ def download_search(
         c if c.isalnum() or c in "-_" else "-" for c in row.purpose
     ).strip("-")[:60] or "report"
 
-    if format == "md":
-        body = _render_markdown(row)
-        filename = f"lawyer-search-{safe_purpose}-{request_id[:8]}.md"
-        return Response(
-            content=body,
-            media_type="text/markdown; charset=utf-8",
-            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
-        )
-
-    # Bail early when there's nothing to render — avoids handing back a
-    # polished-but-empty PDF that looks like a successful download.
+    # Bail early when there's nothing to render — applies to ALL formats
+    # (md / html / pdf) so a stale row can't return a polished-but-empty
+    # report in any guise. Must come before any format-specific branch.
     if not row.firms_data and not _load_persona_yamls(row):
         raise HTTPException(
             status_code=410,
@@ -1303,6 +1282,15 @@ def download_search(
                 "(YAMLs missing and no DB-resident dossiers). Run a fresh "
                 "search to regenerate the report."
             ),
+        )
+
+    if format == "md":
+        body = _render_markdown(row)
+        filename = f"lawyer-search-{safe_purpose}-{request_id[:8]}.md"
+        return Response(
+            content=body,
+            media_type="text/markdown; charset=utf-8",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
         )
 
     if format == "pdf":
@@ -1450,12 +1438,33 @@ async def stripe_webhook(
         "professional_search_id"
     )
     if not request_id:
-        logger.error("stripe webhook missing client_reference_id; session=%s", sess.get("id"))
+        # Operational red flag — every checkout we create sets this. If
+        # we receive a verified webhook without it, either someone is
+        # creating Sessions outside our flow against the same account,
+        # or our own create_checkout_session call dropped client_reference_id.
+        logger.error(
+            "STRIPE_WEBHOOK_ALERT: verified checkout.session.completed with no "
+            "client_reference_id and no metadata.professional_search_id. "
+            "session_id=%s amount_total=%s customer_email=%s",
+            sess.get("id"),
+            sess.get("amount_total"),
+            (sess.get("customer_details") or {}).get("email"),
+        )
         return {"received": True, "ignored": "no client_reference_id"}
 
     row = db.get(ProfessionalSearchRequestRow, request_id)
     if row is None:
-        logger.error("stripe webhook for unknown search %s", request_id)
+        # The row was deleted between checkout and webhook delivery (rare —
+        # we don't currently delete rows). Log structured so we can grep
+        # alerts; refunds may be needed if the customer was actually charged.
+        logger.error(
+            "STRIPE_WEBHOOK_ALERT: webhook for non-existent search row. "
+            "request_id=%s session_id=%s amount_total=%s customer_email=%s",
+            request_id,
+            sess.get("id"),
+            sess.get("amount_total"),
+            (sess.get("customer_details") or {}).get("email"),
+        )
         return {"received": True, "ignored": "unknown row"}
 
     if row.paid_at is not None:
@@ -1478,7 +1487,31 @@ async def stripe_webhook(
         if existing is not None and row.user_id is None:
             row.user_id = existing.id
 
-    db.commit()
+    # If the commit fails AFTER Stripe has already charged the customer,
+    # the user is in the worst state: they paid but our DB never reflects
+    # it. Stripe will retry the webhook, but if the failure is persistent
+    # (constraint violation, schema drift), every retry will fail. Log
+    # an explicit ALERT so we catch it in observability and can manually
+    # reconcile (mark paid_at by hand, or refund). The HTTP 500 we then
+    # return causes Stripe to retry — preserving the canonical recovery
+    # path for transient failures.
+    try:
+        db.commit()
+    except Exception as exc:
+        db.rollback()
+        logger.error(
+            "STRIPE_WEBHOOK_ALERT: db.commit failed AFTER customer was charged. "
+            "request_id=%s session_id=%s amount_total=%s customer_email=%s exc=%s",
+            request_id,
+            sess.get("id"),
+            sess.get("amount_total"),
+            customer_email,
+            exc,
+        )
+        # Re-raise so Stripe sees a 5xx and retries. If the failure is
+        # transient the next retry succeeds; if persistent we'll have
+        # the alert log + the original Stripe charge to manually resolve.
+        raise HTTPException(status_code=500, detail="commit failed; will retry")
     logger.info("stripe webhook: marked search %s paid", request_id)
     return {"received": True, "paid": True}
 
@@ -1509,42 +1542,40 @@ def claim_search(
             detail="Cannot claim an unpaid search — complete checkout first.",
         )
 
-    # Soft check: if claimed by someone else, reject. We don't want a user
-    # to be able to claim a different person's purchased search by knowing
-    # the (UUID) request id.
+    # If already claimed by this same user, treat as idempotent success.
+    # If claimed by SOMEONE ELSE, reject — even with a valid token.
     if row.user_id is not None and row.user_id != user.id:
         raise HTTPException(
             status_code=409,
             detail="This search has already been claimed by another account.",
         )
 
-    # Allow claim if (a) email matches the Stripe-recorded customer email
-    # (the natural path), or (b) the row is unclaimed (anonymous purchase
-    # with mismatched email — still let them claim if they have the id).
+    # Defense-in-depth: require the claimer's email to match the email
+    # Stripe captured at checkout. UUIDs are unguessable but the search
+    # status URL is shareable, and a Referer leak or screenshot would
+    # otherwise let any authed account claim a stranger's paid search.
+    # Only enforce when Stripe gave us an email (older rows may be null).
+    if (
+        row.stripe_customer_email
+        and row.stripe_customer_email.strip().lower() != (user.email or "").strip().lower()
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Email mismatch: this search was paid for by a different "
+                "email. Sign in (or sign up) with the email you used at "
+                "checkout to claim it."
+            ),
+        )
+
     row.user_id = user.id
     db.commit()
     db.refresh(row)
-    return _serialize(row)
+    # Caller is now the authenticated owner — return full PII.
+    return _serialize(row, include_pii=True)
 
 
-@router.get("/mine/list", response_model=list[SearchResponse])
-def list_my_searches(
-    authorization: str | None = Header(None),
-    db: Session = Depends(get_session),
-):
-    """List the authenticated user's claimed searches.
-
-    Used by the Guardian dashboard to render the "My searches" section.
-    Path is `/mine/list` (not `/mine`) so it doesn't collide with the
-    `/{request_id}` route — FastAPI matches in declaration order, but
-    using a non-UUID-shaped path makes the routing intent obvious.
-    """
-    payload = get_bearer_payload(authorization, db)
-    rows = (
-        db.query(ProfessionalSearchRequestRow)
-        .filter(ProfessionalSearchRequestRow.user_id == payload["user_id"])
-        .order_by(ProfessionalSearchRequestRow.created_at.desc())
-        .limit(50)
-        .all()
-    )
-    return [_serialize(r) for r in rows]
+# NOTE: `GET /mine/list` is defined above near the top of the router
+# (next to `GET /{request_id}`) so the static-prefix route appears
+# before the catch-all in declaration order. The duplicate that used
+# to live here was removed during the code-review fixes.

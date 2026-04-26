@@ -24,8 +24,18 @@ class CaseRow(Base):
     user_id: Mapped[str | None] = mapped_column(
         # `users` lives in a different MetaData (tables_v2.Base), so we
         # cannot declare a real FK here — SQLAlchemy can't resolve cross-
-        # metadata column references at DDL compile time. Application layer
-        # enforces the relationship via the auth_service helpers.
+        # metadata column references at DDL compile time. Application
+        # layer enforces the relationship via the auth_service helpers.
+        #
+        # CONSEQUENCE: there's no `ON DELETE CASCADE` / `SET NULL`
+        # behaviour. If a user row is ever deleted directly in the DB,
+        # this column becomes a dangling reference to a non-existent
+        # user. There is currently no user-deletion flow in the codebase,
+        # but if/when one is added, it must explicitly null or claim
+        # these `user_id` columns across cases, professional_search_requests,
+        # email_threads, and google_oauth_tokens. The right long-term fix
+        # is to unify tables.Base and tables_v2.Base into a single
+        # MetaData so real FKs can be declared here.
         String(36), nullable=True
     )
     workflow_type: Mapped[str] = mapped_column(String(50), default="")

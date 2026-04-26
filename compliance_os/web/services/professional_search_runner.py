@@ -83,19 +83,41 @@ PER_PERSONA_TIMEOUT_S = 600
 def _update_persona_status(request_id: str, persona_id: str, status: dict) -> None:
     """Atomically merge a per-persona status slot into the request row.
 
-    Opens its own short-lived session. The JSON column needs reassignment
-    (not mutation) to trigger SQLAlchemy's change detection.
+    Concurrent personas all call this from the same asyncio event loop.
+    Read-modify-write on a JSON column would race: persona A reads at
+    T1, persona B reads at T1, both write at T2, last write wins and
+    one persona's status is silently dropped.
+
+    Fix:
+    - **Postgres (prod)**: `with_for_update()` emits `SELECT ... FOR
+      UPDATE`, taking a real row lock for the duration of `db.begin()`.
+      Other writers block until commit.
+    - **SQLite (local dev)**: `with_for_update()` is a no-op — pysqlite
+      doesn't translate it. The lost-update race is prevented in
+      practice because all persona coroutines run on a single asyncio
+      event loop and `_update_persona_status` is a synchronous DB call
+      (no `await` between the SELECT and the COMMIT inside `db.begin()`),
+      so cooperative scheduling can't interleave them. If we ever move
+      this to a thread pool / true parallelism, the SQLite path would
+      need `BEGIN IMMEDIATE` via a SQLAlchemy event hook.
     """
+    from sqlalchemy import select
+
     try:
         engine = get_engine()
         with Session(engine) as db:
-            row = db.get(ProfessionalSearchRequestRow, request_id)
-            if row is None:
-                return
-            current = dict(row.persona_status or {})
-            current[persona_id] = status
-            row.persona_status = current
-            db.commit()
+            with db.begin():
+                row = db.execute(
+                    select(ProfessionalSearchRequestRow)
+                    .where(ProfessionalSearchRequestRow.id == request_id)
+                    .with_for_update()
+                ).scalar_one_or_none()
+                if row is None:
+                    return
+                current = dict(row.persona_status or {})
+                current[persona_id] = status
+                row.persona_status = current
+                # Commit happens automatically when `with db.begin()` exits.
     except Exception:
         logger.exception("failed to update persona_status for %s/%s", request_id, persona_id)
 
@@ -350,31 +372,30 @@ def run_search_sync(request_id: str) -> None:
                     "ANTHROPIC_API_KEY not set; cannot run professional search"
                 )
 
-            # Generate one extra "tuned" persona from the case brief.
-            # This is a small Haiku call that designs a fourth search
-            # axis specific to this user's facts. Failure is silent:
-            # if it errors, we fall back to the canonical personas.
+            # Generate one extra "tuned" persona from the case brief
+            # (Haiku, ~5s) and then dispatch all personas in parallel.
+            # Both run inside a single `asyncio.run()` so we don't risk
+            # event-loop teardown weirdness on uvloop / older runtimes
+            # that can leave a partially-closed loop after the first
+            # call. Tuner failure is silent — we fall back to canonicals.
             from compliance_os.web.services.persona_tuner import generate_tuned_persona
-            tuned = asyncio.run(
-                generate_tuned_persona(enriched_brief, row.vertical, output_dir)
-            )
-            if tuned is not None:
-                personas = personas + [tuned]
-                logger.info("dispatching with tuned persona: %s", tuned.id)
 
-            # _run_all_personas commits per-persona status to the DB as
-            # each one starts/finishes, so the frontend sees live progress.
-            # The returned dict is the final snapshot we use to decide
-            # what to ingest below.
-            persona_status = asyncio.run(
-                _run_all_personas(
-                    personas,
+            async def _tune_then_dispatch() -> dict[str, dict]:
+                tuned = await generate_tuned_persona(
+                    enriched_brief, row.vertical, output_dir
+                )
+                personas_for_run = personas + ([tuned] if tuned is not None else [])
+                if tuned is not None:
+                    logger.info("dispatching with tuned persona: %s", tuned.id)
+                return await _run_all_personas(
+                    personas_for_run,
                     request_id=request_id,
                     case_brief=enriched_brief,
                     purpose=row.purpose,
                     output_dir=output_dir,
                 )
-            )
+
+            persona_status = asyncio.run(_tune_then_dispatch())
             # Re-read the row to pick up any concurrent writes from the
             # per-persona updaters before we set terminal state.
             db.refresh(row)
@@ -401,12 +422,15 @@ def run_search_sync(request_id: str) -> None:
             # column, so reports stay reproducible even if the on-disk
             # YAMLs are later lost or moved.
             try:
-                from compliance_os.web.routers.professional_search import (
-                    _aggregate_firms,
-                    _load_persona_yamls,
+                # Direct import from the aggregator package — avoids a
+                # service→router back-edge that would create a circular
+                # dependency and break if the router is ever split.
+                from compliance_os.professional_search.aggregator import (
+                    aggregate_firms,
+                    load_persona_yamls,
                 )
-                yamls = _load_persona_yamls(row)
-                aggregated = _aggregate_firms(yamls)
+                yamls = load_persona_yamls(row)
+                aggregated = aggregate_firms(yamls)
                 logger.info(
                     "firms_data persistence: %d personas, %d unique firms",
                     len(yamls), len(aggregated),
