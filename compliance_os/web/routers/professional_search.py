@@ -183,8 +183,25 @@ def create_search(
 
     Returns the created request with status=queued. Poll GET by id for updates.
     """
-    if not case_brief.strip():
+    # Each search burns ~$2-3 in API + web_search calls. A meaningful
+    # brief is required so agents have something to work with — 200
+    # chars (~30-40 words) is the floor for useful research output.
+    # Same threshold as the frontend, enforced here so the API can't be
+    # bypassed via direct curl.
+    MIN_BRIEF_CHARS = 200
+    brief_trimmed = case_brief.strip()
+    if not brief_trimmed:
         raise HTTPException(status_code=400, detail="case_brief cannot be empty")
+    if len(brief_trimmed) < MIN_BRIEF_CHARS:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"case_brief is too short ({len(brief_trimmed)} chars). "
+                f"Each search costs real compute — please describe the "
+                f"specific situation, regulatory wrinkles, location, and "
+                f"timeline (minimum {MIN_BRIEF_CHARS} chars)."
+            ),
+        )
     if not purpose.strip():
         raise HTTPException(status_code=400, detail="purpose cannot be empty")
 
