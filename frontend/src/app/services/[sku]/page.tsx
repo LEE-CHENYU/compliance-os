@@ -253,6 +253,8 @@ export default function ServiceDetailPage() {
               {canStart ? (
                 <button
                   type="button"
+                  data-testid={`service-start-${product.sku}`}
+                  data-graph-edge={`start-service:${product.sku}`}
                   onClick={() => void startWorkflow(product)}
                   disabled={starting}
                   className="mt-6 inline-flex rounded-full bg-white px-5 py-3 text-[14px] font-semibold text-[#10203d] transition hover:bg-[#eef4ff] disabled:cursor-not-allowed disabled:bg-white/60"

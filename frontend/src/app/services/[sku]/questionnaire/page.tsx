@@ -202,6 +202,8 @@ export default function MarketplaceQuestionnairePage() {
           {!result ? (
             <button
               type="button"
+              data-testid="service-questionnaire-evaluate"
+              data-graph-edge="questionnaire:evaluate"
               onClick={() => void handleEvaluate()}
               disabled={submitting}
               className="mt-8 inline-flex rounded-full bg-[#0f1728] px-6 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
@@ -223,6 +225,8 @@ export default function MarketplaceQuestionnairePage() {
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <button
                   type="button"
+                  data-testid="service-questionnaire-mode-execution"
+                  data-graph-edge="questionnaire:select-mode:execution"
                   onClick={() => setSelectedMode("execution")}
                   className={`rounded-[24px] border px-5 py-5 text-left transition ${
                     selectedMode === "execution"
@@ -238,6 +242,8 @@ export default function MarketplaceQuestionnairePage() {
                 </button>
                 <button
                   type="button"
+                  data-testid="service-questionnaire-mode-advisory"
+                  data-graph-edge="questionnaire:select-mode:advisory"
                   onClick={() => setSelectedMode("advisory")}
                   className={`rounded-[24px] border px-5 py-5 text-left transition ${
                     selectedMode === "advisory"
@@ -256,6 +262,8 @@ export default function MarketplaceQuestionnairePage() {
               <div className="mt-6 flex flex-wrap gap-3">
                 <button
                   type="button"
+                  data-testid="service-questionnaire-continue"
+                  data-graph-edge={`questionnaire:continue:${selectedMode || "unset"}`}
                   onClick={() => void handleContinue()}
                   disabled={!selectedMode || creatingOrder}
                   className="inline-flex rounded-full bg-[#5b8dee] px-6 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#7ea7ef]"
@@ -264,6 +272,8 @@ export default function MarketplaceQuestionnairePage() {
                 </button>
                 <button
                   type="button"
+                  data-testid="service-questionnaire-rerun"
+                  data-graph-edge="questionnaire:rerun"
                   onClick={() => {
                     setResult(null);
                     setSelectedMode(null);

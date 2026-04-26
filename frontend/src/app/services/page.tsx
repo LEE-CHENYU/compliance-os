@@ -49,6 +49,8 @@ function ProductCard({ product }: { product: MarketplaceProduct }) {
       <div className="mt-8">
         <Link
           href={href}
+          data-testid={`services-product-${product.sku}`}
+          data-graph-edge={`open-service:${product.sku}`}
           className={`inline-flex rounded-full px-5 py-3 text-[14px] font-semibold transition ${
             product.active
               ? "bg-[#5b8dee] text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] hover:bg-[#4f82de]"

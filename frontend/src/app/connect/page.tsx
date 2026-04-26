@@ -167,6 +167,8 @@ export default function ConnectPage() {
               {APPS.map((app) => (
                 <button
                   key={app.id}
+                  data-testid={`connect-app-${app.id}`}
+                  data-graph-edge={`connect:select-app:${app.id}`}
                   onClick={() => { setSelectedApp(app.id); setStep(Math.max(step, 2)); }}
                   className={`rounded-xl border p-4 text-center transition-all ${
                     selectedApp === app.id
@@ -216,6 +218,8 @@ export default function ConnectPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={generateToken}
+                    data-testid="connect-token-button"
+                    data-graph-edge="connect:token"
                     disabled={loading}
                     className="px-4 py-2 rounded-lg text-xs font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white disabled:opacity-50"
                   >
@@ -224,6 +228,8 @@ export default function ConnectPage() {
                   {token && (
                     <button
                       onClick={() => copyToClipboard(token, "token")}
+                      data-testid="connect-copy-token"
+                      data-graph-edge="connect:copy-token"
                       className="px-3 py-2 rounded-lg text-xs font-semibold border border-blue-100/50 text-[#3a5a8c] bg-white/70"
                     >
                       {copied === "token" ? "Copied" : "Copy token"}
@@ -265,6 +271,8 @@ export default function ConnectPage() {
                 </pre>
                 <button
                   onClick={() => copyToClipboard(configSnippet(selectedApp, token, apiHost), "config")}
+                  data-testid="connect-copy-config"
+                  data-graph-edge="connect:copy-config"
                   className="absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-semibold bg-white/90 border border-blue-100/50 text-[#3a5a8c] hover:bg-white transition-colors"
                 >
                   {copied === "config" ? "Copied" : "Copy"}

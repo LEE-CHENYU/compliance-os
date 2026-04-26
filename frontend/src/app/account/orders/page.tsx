@@ -131,12 +131,16 @@ export default function AccountOrdersPage() {
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/dashboard"
+            data-testid="account-orders-back-dashboard"
+            data-graph-edge="orders:back-dashboard"
             className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/84 px-4 py-2 text-[13px] font-semibold text-[#40536f] shadow-[0_10px_24px_rgba(61,84,128,0.06)] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
           >
             &larr; Back to dashboard
           </Link>
           <Link
             href="/services"
+            data-testid="account-orders-browse-services"
+            data-graph-edge="orders:browse-services"
             className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/70 px-4 py-2 text-[13px] font-semibold text-[#5b76a2] transition hover:border-[#c4d4ea] hover:text-[#243958]"
           >
             Browse services
@@ -242,6 +246,8 @@ export default function AccountOrdersPage() {
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
                     href={primaryAction.href}
+                    data-testid={`account-order-primary-${order.order_id}`}
+                    data-graph-edge={`orders:primary:${order.product_sku}`}
                     className="inline-flex items-center justify-center rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a]"
                   >
                     {primaryAction.label}
@@ -249,6 +255,8 @@ export default function AccountOrdersPage() {
                   {order.product.path ? (
                     <Link
                       href={order.product.path}
+                      data-testid={`account-order-service-${order.order_id}`}
+                      data-graph-edge={`orders:service:${order.product_sku}`}
                       className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
                     >
                       {order.product.public_cta_label || order.product.cta_label || "View service"}
