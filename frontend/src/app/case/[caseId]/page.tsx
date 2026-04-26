@@ -67,7 +67,7 @@ export default function CaseOverview() {
 
   if (caseError) {
     return (
-      <div className="mx-auto max-w-md py-16 text-center space-y-4">
+      <div className="mx-auto max-w-md px-4 md:px-8 py-16 text-center space-y-4">
         <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
           404
         </div>
@@ -96,14 +96,14 @@ export default function CaseOverview() {
       </div>
     );
   }
-  if (!caseData) return <p className="text-[12px] text-[#7b8ba5] text-center py-16">Loading…</p>;
+  if (!caseData) return <p className="text-[12px] text-[#7b8ba5] text-center py-16 px-4">Loading…</p>;
 
   const workflowLabel = caseData.workflow_type
     ? caseData.workflow_type.charAt(0).toUpperCase() + caseData.workflow_type.slice(1)
     : "Case";
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-[900px] px-4 md:px-8 py-6 md:py-8 space-y-6">
       {/* Minimal header — case page is tracking-focused; full case
           metrics live on the dashboard. Just a breadcrumb for
           orientation + a back-to-dashboard link. */}
