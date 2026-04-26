@@ -84,14 +84,25 @@ function FindLawyer() {
     };
   }, [caseId]);
 
+  // Each search costs ~$2-3 in API + web_search calls, so we gate on a
+  // meaningful brief — 200 chars (~30-40 words) is roughly the floor for
+  // an agent to do useful research. Below that we'd waste compute on
+  // searches that can't be tailored.
+  const MIN_BRIEF_CHARS = 200;
+  const briefLen = caseBrief.trim().length;
   const purposeOk = purpose.trim().length >= 4;
-  const briefOk = caseBrief.trim().length >= 40;
+  const briefOk = briefLen >= MIN_BRIEF_CHARS;
   const canSubmit = purposeOk && briefOk && !submitting;
+
+  // Quality indicator: encourage longer briefs without blocking once the
+  // minimum is met. Above 500 chars the agents have lots to work with.
+  const briefQuality: "weak" | "okay" | "strong" =
+    briefLen < MIN_BRIEF_CHARS ? "weak" : briefLen < 500 ? "okay" : "strong";
 
   const blockers: string[] = [];
   if (!purposeOk) blockers.push(t.blockerPurpose as string);
   if (!briefOk) {
-    const remaining = Math.max(0, 40 - caseBrief.trim().length);
+    const remaining = Math.max(0, MIN_BRIEF_CHARS - briefLen);
     blockers.push((t.blockerBrief as (n: number) => string)(remaining));
   }
 
@@ -222,8 +233,25 @@ function FindLawyer() {
                   placeholder={t.fieldBriefPlaceholder as string}
                   className={`${INPUT} font-mono leading-relaxed`}
                 />
-                <div className="mt-2 text-[13px] text-[#7b8ba5]">
-                  {t.fieldBriefHelp as string}
+                <div className="mt-2 flex items-baseline justify-between gap-3 text-[13px] text-[#7b8ba5]">
+                  <span>{t.fieldBriefHelp as string}</span>
+                  <span
+                    className={`shrink-0 font-medium tabular-nums ${
+                      briefQuality === "weak"
+                        ? "text-[#9c5a1c]"
+                        : briefQuality === "okay"
+                          ? "text-[#5b8dee]"
+                          : "text-[#2f7a45]"
+                    }`}
+                  >
+                    {briefLen} / {MIN_BRIEF_CHARS}
+                    {briefQuality === "weak" &&
+                      ` · ${(t.briefWeak as string) ?? "needs more detail"}`}
+                    {briefQuality === "okay" &&
+                      ` · ${(t.briefOkay as string) ?? "okay — more detail = better matches"}`}
+                    {briefQuality === "strong" &&
+                      ` · ${(t.briefStrong as string) ?? "strong context"}`}
+                  </span>
                 </div>
               </label>
 
