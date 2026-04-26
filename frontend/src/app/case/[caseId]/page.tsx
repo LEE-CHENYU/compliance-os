@@ -98,30 +98,30 @@ export default function CaseOverview() {
   }
   if (!caseData) return <p className="text-[12px] text-[#7b8ba5] text-center py-16">Loading…</p>;
 
+  const workflowLabel = caseData.workflow_type
+    ? caseData.workflow_type.charAt(0).toUpperCase() + caseData.workflow_type.slice(1)
+    : "Case";
+
   return (
     <div className="space-y-6">
-      <h2 className="text-[24px] font-bold tracking-tight text-[#0d1424]">Case Overview</h2>
-      <div className="rounded-lg border border-[#e4edf7] bg-white p-6 space-y-4">
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><span className="text-[#556480]">Status:</span> <span className="capitalize">{caseData.status}</span></div>
-          <div><span className="text-[#556480]">Type:</span> <span className="capitalize">{caseData.workflow_type || "General"}</span></div>
-          <div><span className="text-[#556480]">Answers:</span> {caseData.answer_count}</div>
-          <div><span className="text-[#556480]">Documents:</span> {caseData.document_count}</div>
+      {/* Minimal header — case page is tracking-focused; full case
+          metrics live on the dashboard. Just a breadcrumb for
+          orientation + a back-to-dashboard link. */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <span className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#40536f]">
+            {workflowLabel}
+          </span>
+          <span className="text-[12px] font-mono text-[#9ba8c4]">
+            case {caseId.slice(0, 8)}
+          </span>
         </div>
-        <div className="flex gap-3 pt-2">
-          <button
-            onClick={() => router.push(`/case/${caseId}/discovery`)}
-            className="rounded-lg border border-[#dbe5f2] px-4 py-2 text-sm hover:bg-[#f7f9fd]"
-          >
-            Discovery
-          </button>
-          <button
-            onClick={() => router.push(`/case/${caseId}/documents`)}
-            className="rounded-lg border border-[#dbe5f2] px-4 py-2 text-sm hover:bg-[#f7f9fd]"
-          >
-            Documents
-          </button>
-        </div>
+        <button
+          onClick={() => router.push("/dashboard")}
+          className="text-[12px] font-medium text-[#5b8dee] hover:text-[#2f5bae]"
+        >
+          ← Dashboard
+        </button>
       </div>
 
       <LawyersSection
@@ -140,8 +140,6 @@ export default function CaseOverview() {
       />
 
       <GmailConnectionSection caseId={caseId} onSynced={handleSynced} />
-
-      <p className="text-sm text-[#7b8ba5] text-center">Review dashboard coming soon.</p>
     </div>
   );
 }
