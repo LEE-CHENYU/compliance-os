@@ -28,6 +28,7 @@ export default function CaseOverview() {
   const { caseId } = useParams<{ caseId: string }>();
   const router = useRouter();
   const [caseData, setCaseData] = useState<Case | null>(null);
+  const [caseError, setCaseError] = useState<string | null>(null);
   const [searches, setSearches] = useState<ProfessionalSearchSummary[] | null>(null);
   const [engagements, setEngagements] = useState<Engagement[] | null>(null);
   // Bumped after every successful Gmail sync — child components watch
@@ -36,7 +37,15 @@ export default function CaseOverview() {
   const [syncTick, setSyncTick] = useState(0);
 
   useEffect(() => {
-    getCase(caseId).then(setCaseData);
+    setCaseError(null);
+    getCase(caseId)
+      .then(setCaseData)
+      .catch((err) => {
+        // Most common failure: case is owned by another user (404 to
+        // avoid leaking existence). Without this catch the page sits
+        // on "Loading..." forever.
+        setCaseError(err instanceof Error ? err.message : String(err));
+      });
     listCaseSearches(caseId)
       .then(setSearches)
       .catch(() => setSearches([]));
@@ -56,7 +65,33 @@ export default function CaseOverview() {
     setSyncTick((t) => t + 1);
   }
 
-  if (!caseData) return <p className="text-stone-400">Loading...</p>;
+  if (caseError) {
+    return (
+      <div className="mx-auto max-w-md py-16 text-center space-y-4">
+        <h2 className="text-lg font-semibold text-stone-700">Case not available</h2>
+        <p className="text-sm text-stone-500">
+          This case either doesn&apos;t exist or belongs to a different account.
+          If you signed up with a different email, sign in there to access it.
+        </p>
+        <p className="text-xs text-stone-400 font-mono">case {caseId.slice(0, 8)}</p>
+        <div className="flex justify-center gap-3 pt-2">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="rounded-lg bg-stone-800 px-4 py-2 text-sm font-medium text-white hover:bg-stone-700"
+          >
+            Go to dashboard
+          </button>
+          <button
+            onClick={() => router.push("/")}
+            className="rounded-lg border border-stone-300 px-4 py-2 text-sm hover:bg-stone-50"
+          >
+            Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+  if (!caseData) return <p className="text-stone-400 text-center py-16">Loading…</p>;
 
   return (
     <div className="space-y-6">
