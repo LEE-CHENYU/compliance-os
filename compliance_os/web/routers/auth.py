@@ -53,7 +53,13 @@ def _request_origin(request: Request) -> str:
     forwarded_host = request.headers.get("x-forwarded-host", "").split(",", 1)[0].strip()
     host = forwarded_host or request.headers.get("host") or request.url.netloc
     proto = forwarded_proto or request.url.scheme
-    if not forwarded_proto and host and not _is_local_host(host):
+    # Force HTTPS for any non-local host. The previous "only override
+    # when X-Forwarded-Proto is missing" gate let Fly's proxy through
+    # when it occasionally forwards `X-Forwarded-Proto: http` even
+    # though TLS was terminated at the edge — that produced http://
+    # redirect URIs that Google rejected as redirect_uri_mismatch.
+    # External users only ever reach this app via HTTPS in prod.
+    if host and not _is_local_host(host):
         proto = "https"
     return f"{proto}://{host}".rstrip("/")
 
@@ -359,6 +365,12 @@ GMAIL_READONLY_SCOPE = "https://www.googleapis.com/auth/gmail.readonly"
 
 
 def _gmail_callback_uri(request: Request) -> str:
+    """Same env-var-override pattern as `_google_redirect_uri` —
+    GMAIL_REDIRECT_URI lets ops hardcode the URI when proxy header
+    detection isn't reliable."""
+    configured = os.environ.get("GMAIL_REDIRECT_URI", "").strip()
+    if configured:
+        return configured
     return _request_origin(request) + "/api/auth/google/connect-gmail/callback"
 
 
