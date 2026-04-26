@@ -57,3 +57,10 @@ out/rubric-loop-*.md
 # Check quality loop
 scripts/check_quality_cache/
 .reviewer-credentials.local.txt
+
+# Local browser/CLI session caches — contain credentials, machine-specific
+# paths, or just log noise. Never commit these.
+.xhs-session/
+.playwright-cli/
+.playwright-mcp/
+.qwen/
