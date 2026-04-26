@@ -221,3 +221,29 @@ def _iso_to_epoch(iso: str) -> float:
         return datetime.fromisoformat(iso).timestamp()
     except ValueError:
         return 0
+
+
+class ActivityContextResponse(BaseModel):
+    text: str
+
+
+@router.get("/activity-context", response_model=ActivityContextResponse)
+def get_activity_context(
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Return the user's lawyer-search / engagement / email-thread summary
+    as a plain text block, ready to inline into a system prompt.
+
+    Used by the voice agent at call-start so the assistant has the same
+    cross-feature awareness the chat assistant gets server-side. Empty
+    string when there's nothing to report — caller should still concat
+    safely (no special-case needed).
+    """
+    payload = get_bearer_payload(authorization, db)
+    if not payload or "user_id" not in payload:
+        raise HTTPException(401, "Authentication required")
+    # Imported here to avoid a circular: activity_context imports
+    # _compute_attention from this module.
+    from compliance_os.web.services.activity_context import build_activity_context
+    return ActivityContextResponse(text=build_activity_context(payload["user_id"], db))

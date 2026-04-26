@@ -15,6 +15,7 @@ import MyEngagements from "@/components/dashboard/MyEngagements";
 import ProQuotaBadge from "@/components/subscription/ProQuotaBadge";
 import ExtractionPaywallModal from "@/components/subscription/ExtractionPaywallModal";
 import {
+  getActivityContext,
   listCases,
   listMySearches,
   listMyEngagements,
@@ -1387,7 +1388,14 @@ export default function DashboardPage() {
     }
 
     const nextVapi = new Vapi(VAPI_PUBLIC_KEY as string);
-    const contextMessage = buildVoiceContextMessage(timeline, stats, documents);
+    const baseContext = buildVoiceContextMessage(timeline, stats, documents);
+
+    // Pull recent searches / engagements / email threads so the voice
+    // agent can answer "what did Klasko quote me?" or "did Wolfsdorf
+    // reply?". Fire-and-forget — if the request fails, we still start
+    // with the base dashboard context (no regression). The /api/chat
+    // assistant gets the same data server-side via _build_context.
+    const activityPromise = getActivityContext().catch(() => "");
 
     vapiRef.current = nextVapi;
     voiceCallStartedRef.current = false;
@@ -1396,10 +1404,14 @@ export default function DashboardPage() {
     setAssistantTranscript("");
     setUserTranscript("");
 
-    nextVapi.on("call-start", () => {
+    nextVapi.on("call-start", async () => {
       voiceCallStartedRef.current = true;
       setVoiceCallState("active");
       setVoiceError(null);
+      const activity = await activityPromise;
+      const contextMessage = activity
+        ? `${baseContext}\n\n${activity}`
+        : baseContext;
       nextVapi.send({
         type: "add-message",
         message: {
@@ -2599,6 +2611,7 @@ export default function DashboardPage() {
             type="file"
             accept={DASHBOARD_ACCEPT}
             multiple
+            data-testid="dashboard-upload-file-input"
             className="hidden"
             onChange={handleNativeInputSelection}
           />
@@ -2705,7 +2718,7 @@ export default function DashboardPage() {
 
           {/* Upload Review Modal */}
           {showUploadReview && (
-            <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d1424]/25 backdrop-blur-sm p-4">
+            <div data-testid="dashboard-upload-review" className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d1424]/25 backdrop-blur-sm p-4">
               <div className="w-full max-w-3xl bg-white/90 backdrop-blur-xl rounded-2xl border border-white/60 p-6 shadow-[0_16px_64px_rgba(91,141,238,0.18)] max-h-[85vh] flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -2809,6 +2822,7 @@ export default function DashboardPage() {
                         setUploadError(null);
                         void executeUploadBatch(preparedUploads, { reopenReviewOnError: false });
                       }}
+                      data-testid="dashboard-upload-selected"
                       className="px-3.5 py-2 rounded-xl text-[12px] font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white disabled:opacity-50"
                     >
                       {uploading ? "Uploading..." : "Upload selected"}

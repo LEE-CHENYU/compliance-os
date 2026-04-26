@@ -512,6 +512,19 @@ export async function listMyEngagements(): Promise<MyEngagement[]> {
   return res.json();
 }
 
+/** Pull the activity-context blob (lawyer searches + engagements + recent
+ *  email threads) for the voice agent's call-start system message. The
+ *  chat assistant gets the same data server-side via /api/chat. Returns
+ *  empty string for signed-out users — caller can concat unconditionally. */
+export async function getActivityContext(): Promise<string> {
+  const headers = _authHeaders();
+  if (!headers.Authorization) return "";
+  const res = await fetch(`${API_BASE}/me/activity-context`, { headers });
+  if (!res.ok) return "";
+  const body = (await res.json().catch(() => ({ text: "" }))) as { text?: string };
+  return body.text ?? "";
+}
+
 export async function listMySearches(): Promise<ProfessionalSearch[]> {
   const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
   const res = await fetch(`${API_BASE}/professional-search/mine/list`, {

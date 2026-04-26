@@ -169,6 +169,16 @@ def _build_context(user_id: str, db: Session, query: str | None = None) -> tuple
                 )
         parts.append("")
 
+    # Activity surface — lawyer searches the user paid for, engagements
+    # they're tracking, and recent email threads. Lets the assistant
+    # answer "what did Klasko quote me?", "did Wolfsdorf reply?", etc.
+    # Empty string when the user has no activity yet (no-op append).
+    from compliance_os.web.services.activity_context import build_activity_context
+    activity = build_activity_context(user_id, db)
+    if activity:
+        parts.append(activity)
+        parts.append("")
+
     retrieved_refs: list[dict] = []
     if query and checks:
         retrieved = retrieve_documents_for_query(checks, query=query, top_k=10)
