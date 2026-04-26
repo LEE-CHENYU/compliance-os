@@ -2,12 +2,13 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 import {
   claimSearch,
   downloadProfessionalSearchUrl,
   getProfessionalSearch,
+  startProSubscriptionCheckout,
   startProTrialFromSearch,
   type ProfessionalSearch,
 } from "@/lib/api";
@@ -101,7 +102,6 @@ export default function PaidPageWrapper() {
 
 function PaidPage() {
   const params = useParams<{ searchId: string }>();
-  const router = useRouter();
   const search = useSearchParams();
   const { lang, setLang } = useLang();
   const isZh = lang === "zh";
@@ -501,14 +501,34 @@ function PaidPage() {
                     setProTrialState("started");
                   } catch (e) {
                     const message = e instanceof Error ? e.message : String(e);
-                    // 409 "No saved card" — older searches (or seeded test
-                    // data) don't have a Stripe customer attached. Quietly
-                    // bounce to /pricing where the user re-enters their card
-                    // for the same trial. Avoids surfacing a Stripe-error
-                    // string the user can't act on.
-                    if (/no saved card/i.test(message)) {
-                      router.push("/pricing");
-                      return;
+                    // Two ways the saved-card path fails:
+                    //   - 409 "No saved card" — older searches without
+                    //     setup_future_usage on the Stripe payment intent
+                    //   - 502 "No such checkout.session: cs_..." — fake
+                    //     stripe_session_id (seeded test data) or a
+                    //     Stripe-side session that was deleted
+                    // In both cases the user still wants to start the trial,
+                    // they just need to re-enter card details. Hand off
+                    // directly to the Pro subscription checkout (same trial,
+                    // fresh card) instead of showing the raw Stripe error
+                    // or bouncing to /pricing where they'd have to click
+                    // again to reach Stripe.
+                    const isMissingCard =
+                      /no saved card|no such checkout\.session|stripe error/i.test(message);
+                    if (isMissingCard) {
+                      try {
+                        const { url } = await startProSubscriptionCheckout({
+                          successPath: `/find-lawyer/${params.searchId}/paid?subscribed=1`,
+                          cancelPath: `/find-lawyer/${params.searchId}/paid`,
+                        });
+                        window.location.href = url;
+                        return;
+                      } catch (subErr) {
+                        const subMessage = subErr instanceof Error ? subErr.message : String(subErr);
+                        setProTrialError(subMessage);
+                        setProTrialState("error");
+                        return;
+                      }
                     }
                     setProTrialError(message);
                     setProTrialState("error");

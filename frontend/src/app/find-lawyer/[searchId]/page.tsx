@@ -808,7 +808,7 @@ export default function SearchStatus() {
                 </div>
                 <div className="text-[18px] font-bold text-[#0d1424]">TBD</div>
                 <a
-                  href="mailto:fretin13@gmail.com?subject=Guardian%20attorney%20engagement%20inquiry"
+                  href="mailto:info@yangtze-capital.com?subject=Guardian%20attorney%20engagement%20inquiry"
                   className="mt-1 inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
                 >
                   {isZh ? "联系我们 →" : "Get in touch →"}
