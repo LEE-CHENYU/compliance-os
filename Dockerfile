@@ -1,5 +1,7 @@
 # === Stage 1: Build Next.js frontend ===
-FROM node:20-slim AS frontend-build
+# Pin to bookworm — node:20-slim is a rolling tag that recently moved to
+# trixie, where some Debian package names changed (see stage 2 below).
+FROM node:20-bookworm-slim AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
@@ -7,7 +9,12 @@ COPY frontend/ ./
 RUN npm run build
 
 # === Stage 2: Python backend + serve everything ===
-FROM python:3.11-slim
+# Pin to bookworm — python:3.11-slim recently rolled to trixie, where
+# libgdk-pixbuf-2.0-0, libharfbuzz0b, shared-mime-info, fonts-liberation
+# were renamed/restructured. The package names below are bookworm-correct
+# and have shipped successfully many times. When ready to upgrade, also
+# update the names (libgdk-pixbuf2.0-0, etc.) in one coordinated change.
+FROM python:3.11-slim-bookworm
 WORKDIR /app
 
 # Install system deps + Node.js

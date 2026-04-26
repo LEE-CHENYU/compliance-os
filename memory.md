@@ -1,6 +1,6 @@
 # Compliance OS Memory
 
-Last updated: 2026-04-10
+Last updated: 2026-04-25
 
 This file is implementation-specific working memory for the repo. It should stay short, factual, and revision-friendly. Use `docs/product_master.md` for the durable product definition.
 
@@ -51,6 +51,32 @@ This file is implementation-specific working memory for the repo. It should stay
 - the actual user need is continuous compliance state management, not one-off Q&A
 
 ## Decisions From This Session
+
+- 2026-04-25 live production feature map for `https://guardiancompliance.app` was captured with browser automation under `output/playwright/guardian-map/`.
+- Test account used for live-app mapping: `test@123.com` / `test123`.
+- Durable live-app map artifacts:
+  - `output/playwright/guardian-map/feature-map.md`
+  - `output/playwright/guardian-map/route-scan.json`
+  - `output/playwright/guardian-map/deep-route-scan.json`
+  - `output/playwright/guardian-map/transition-scan.ndjson`
+- Live-app mapping intentionally skipped real payment/checkout, professional-search submission, Vapi voice start, token rotation, file upload submission, marketplace run/save actions, and mark-as-mailed actions.
+- Mapping side effects in the test account:
+  - draft case `9c8d1f30-0b04-444d-9bc5-cc734c1219b7`
+  - Form 8843 order `2f6d8bb4-edee-4106-8947-cb840be5e08e`
+  - check drafts `8ff28ecf-7397-4f13-800a-eaac06d018db`, `a84091e3-1c75-4df0-a6d4-1ad809953378`, `4cd7834d-c0b8-43c2-a21e-a971d748250e`
+- Live-app mapping findings to remember:
+  - dashboard hydration on the seeded test account takes roughly 20-25 seconds
+  - dashboard sidebar categories/risks are display-only counters, not filter transitions
+  - `/connect` rendered usable content but emitted React minified hydration/page errors `#418` and `#423`
+  - service questionnaire routes for non-questionnaire products and agreement routes for non-agreement orders return handled 400 messages
+- Follow-up fixes applied after the live-app map:
+  - `/connect` now avoids SSR/client auth and API-host mismatches by resolving auth/token state after mount
+  - dashboard loading state now includes visible text instead of an empty spinner-only body
+  - dashboard category/risk sidebar rows are now real filter buttons with clear-filter affordances
+  - non-questionnaire service questionnaire routes redirect to the service page before requesting questionnaire config
+  - non-agreement order agreement routes show a no-agreement-required page without calling the agreement API
+  - dashboard service cards now have explicit accessible names and test ids for reliable graph testing
+- Robust graph testing is now implemented in `frontend/tests/graph/` with `npm run test:graph`; safe dashboard edges use stable `data-testid` selectors and mocked API data, while payment and voice edges are cataloged but excluded from default runs.
 
 - Local homepage rendering issue on `localhost:3000` was traced to corrupted `next dev` assets, not to a landing-page code regression.
 - Failure signature to remember:
