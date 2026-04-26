@@ -12,7 +12,14 @@ import FormPreviewCard, { FieldProposal } from "@/components/chat/FormPreviewCar
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import MySearches from "@/components/dashboard/MySearches";
 import MyEngagements from "@/components/dashboard/MyEngagements";
-import { listCases, listMySearches, listMyEngagements } from "@/lib/api";
+import ProQuotaBadge from "@/components/subscription/ProQuotaBadge";
+import ExtractionPaywallModal from "@/components/subscription/ExtractionPaywallModal";
+import {
+  listCases,
+  listMySearches,
+  listMyEngagements,
+  type ExtractionQuotaExceededDetail,
+} from "@/lib/api";
 import { useTheme } from "@/lib/theme";
 
 interface TimelineEvent {
@@ -613,6 +620,11 @@ export default function DashboardPage() {
   const [preparedUploads, setPreparedUploads] = useState<PreparedUploadItem[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  // Extraction paywall — shown when /upload returns 402 with the
+  // extraction_quota_exceeded code. Bumping `quotaRefreshKey` re-loads
+  // the badge so it reflects new state after subscribe / cancel.
+  const [paywallDetail, setPaywallDetail] = useState<ExtractionQuotaExceededDetail | null>(null);
+  const [quotaRefreshKey, setQuotaRefreshKey] = useState(0);
   const [dragActive, setDragActive] = useState(false);
   const [view, setView] = useState<"timeline" | "documents" | "profile" | "deadlines">("timeline");
   const [selectedCategory, setSelectedCategory] = useState<DashboardCategoryKey | null>(null);
@@ -981,6 +993,14 @@ export default function DashboardPage() {
           body: form,
         });
         const body = await resp.json().catch(() => null);
+        // Quota gate — surface the paywall modal instead of a raw error.
+        // Stops the batch loop here; the user can retry after upgrading.
+        if (resp.status === 402 && body?.detail?.code === "extraction_quota_exceeded") {
+          setPaywallDetail(body.detail as ExtractionQuotaExceededDetail);
+          setShowUploadPanel(false);
+          clearProcessingIndicator();
+          return;
+        }
         if (!resp.ok) {
           throw new Error(body?.detail?.message || body?.detail || `Upload failed for ${item.fileName}`);
         }
@@ -1846,6 +1866,7 @@ export default function DashboardPage() {
           Guardian
         </div>
         <div className="flex items-center gap-2 md:gap-4">
+          <ProQuotaBadge refreshKey={quotaRefreshKey} className="hidden sm:inline-flex" />
           <ThemeToggle />
           <span className="text-sm text-[#556480] dark:text-[#8e9ab5] hidden md:inline">{user?.email}</span>
           <div className="relative">
@@ -2954,6 +2975,18 @@ export default function DashboardPage() {
           )}
         </button>
       )}
+      <ExtractionPaywallModal
+        open={paywallDetail !== null}
+        detail={paywallDetail}
+        onClose={() => {
+          setPaywallDetail(null);
+          // Refresh the badge in case the user upgraded in the modal —
+          // the upgrade flow redirects to Stripe and then back, but if
+          // the user dismissed and came back with a fresh sub the badge
+          // should still update.
+          setQuotaRefreshKey((k) => k + 1);
+        }}
+      />
     </div>
   );
 }

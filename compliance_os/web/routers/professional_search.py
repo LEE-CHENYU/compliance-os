@@ -1360,12 +1360,21 @@ def _stripe():
 
 
 @router.post("/{request_id}/checkout")
-def create_checkout_session(request_id: str, session: Session = Depends(get_session)):
+def create_checkout_session(
+    request_id: str,
+    authorization: str | None = Header(None),
+    session: Session = Depends(get_session),
+):
     """Create a Stripe Checkout Session for a completed-but-unpaid search.
 
     Returns a JSON `{ url }` the client redirects to. The Checkout Session's
     `success_url` redirects back to `/find-lawyer/{id}/paid?session_id=...`,
     where the frontend polls until the webhook fires and `paid_at` is set.
+
+    Pro free-pass: when the caller is an authenticated paid-Pro user and
+    has not yet consumed their 1-search-per-period grant, we skip Stripe
+    entirely — mark the row paid with `pro_free_grant_at` set, and return
+    a direct redirect to the /paid page.
     """
     row = session.get(ProfessionalSearchRequestRow, request_id)
     if row is None:
@@ -1376,6 +1385,42 @@ def create_checkout_session(request_id: str, session: Session = Depends(get_sess
         )
     if row.paid_at is not None:
         return {"url": f"{settings.public_app_url}/find-lawyer/{request_id}/paid"}
+
+    # Pro free-search short-circuit. Anonymous callers fall through to the
+    # paid Stripe flow below — quietly, no error. We only consult auth
+    # when a token is present so this endpoint stays open to logged-out
+    # users (the dominant pre-signup flow).
+    if authorization:
+        try:
+            payload = get_bearer_payload(authorization, session)
+            user = session.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
+        except HTTPException:
+            user = None  # bad/expired token → just fall through to paid path
+        if user is not None:
+            from compliance_os.web.services.subscription_service import (
+                get_pro_search_quota,
+                is_paying_pro,
+            )
+
+            if is_paying_pro(user, session):
+                pro_quota = get_pro_search_quota(user, session)
+                if pro_quota.has_free_search:
+                    now = _dt.datetime.utcnow()
+                    row.paid_at = now
+                    row.pro_free_grant_at = now
+                    row.user_id = user.id
+                    if not row.stripe_customer_email:
+                        row.stripe_customer_email = user.email
+                    session.commit()
+                    logger.info(
+                        "pro_free_grant: user %s consumed free search for %s",
+                        user.id,
+                        request_id,
+                    )
+                    return {
+                        "url": f"{settings.public_app_url}/find-lawyer/{request_id}/paid",
+                        "pro_free_grant": True,
+                    }
 
     stripe = _stripe()
     try:
@@ -1446,22 +1491,45 @@ async def stripe_webhook(
         logger.warning("stripe webhook signature verification failed: %s", exc)
         raise HTTPException(status_code=400, detail=f"Invalid signature: {exc}")
 
-    if event["type"] != "checkout.session.completed":
-        # Other event types are echoed back as 200 so Stripe stops retrying.
-        return {"received": True, "ignored": event["type"]}
+    event_type = event["type"]
 
     # Coerce StripeObject → plain dict. Newer stripe-python versions do NOT
     # have StripeObject inherit from dict, so sess.get(...) raises
     # AttributeError: get. to_dict_recursive() walks nested objects too,
     # so (sess.get("customer_details") or {}).get("email") works as expected.
-    raw_sess = event["data"]["object"]
-    if hasattr(raw_sess, "to_dict_recursive"):
-        sess = raw_sess.to_dict_recursive()
+    raw_obj = event["data"]["object"]
+    if hasattr(raw_obj, "to_dict_recursive"):
+        obj = raw_obj.to_dict_recursive()
     else:
         try:
-            sess = dict(raw_sess)
+            obj = dict(raw_obj)
         except Exception:
-            sess = raw_sess  # last-ditch fallback; .get may still fail
+            obj = raw_obj  # last-ditch fallback; .get may still fail
+
+    # Subscription lifecycle events — drive the SubscriptionRow mirror.
+    # Note: customer.subscription.created arrives near-simultaneously with
+    # checkout.session.completed (mode=subscription); both can create the
+    # row, so the upsert helper is idempotent.
+    if event_type in (
+        "customer.subscription.created",
+        "customer.subscription.updated",
+        "customer.subscription.deleted",
+    ):
+        _handle_subscription_event(event_type, obj, db)
+        return {"received": True, "kind": "subscription_event", "type": event_type}
+
+    if event_type != "checkout.session.completed":
+        return {"received": True, "ignored": event_type}
+
+    # Branch on Checkout mode: subscription signup vs. one-time payment.
+    if obj.get("mode") == "subscription":
+        _handle_subscription_checkout_completed(obj, db, stripe)
+        return {"received": True, "kind": "subscription_checkout_completed"}
+
+    # One-time payment → existing lawyer-search flow. The variable is
+    # named `sess` from here for git-blame stability with the historical
+    # implementation below.
+    sess = obj
 
     request_id = sess.get("client_reference_id") or (sess.get("metadata") or {}).get(
         "professional_search_id"
@@ -1542,7 +1610,252 @@ async def stripe_webhook(
         # the alert log + the original Stripe charge to manually resolve.
         raise HTTPException(status_code=500, detail="commit failed; will retry")
     logger.info("stripe webhook: marked search %s paid", request_id)
+
+    # If we identified a user on this purchase, give them a 30-day Pro trial
+    # (extractions only — no free searches in trial). Failures here MUST NOT
+    # roll back the payment — log and continue. The user can still claim
+    # later and we can also create the trial via the claim endpoint.
+    if row.user_id is not None:
+        try:
+            user_for_trial = db.get(UserRow, row.user_id)
+            if user_for_trial is not None:
+                _maybe_attach_trial(
+                    user_for_trial,
+                    db,
+                    stripe=stripe,
+                    customer_id=sess.get("customer"),
+                    source="lawyer_search_purchase",
+                )
+        except Exception:
+            logger.exception(
+                "trial attach failed for user_id=%s after search payment %s "
+                "(non-fatal — payment recorded)",
+                row.user_id,
+                request_id,
+            )
+
     return {"received": True, "paid": True}
+
+
+# ---------------------------- Subscription helpers ----------------------------
+
+
+def _to_dt_or_none(epoch: int | None) -> _dt.datetime | None:
+    if not epoch:
+        return None
+    return _dt.datetime.utcfromtimestamp(int(epoch))
+
+
+def _upsert_subscription_from_stripe(
+    sub_obj: dict,
+    user_id: str | None,
+    db: Session,
+) -> "SubscriptionRow | None":
+    """Mirror a Stripe Subscription object into our subscriptions table.
+
+    Idempotent — keyed on stripe_subscription_id. Returns the row, or
+    None if we cannot resolve a user_id (orphan subscription — log and
+    skip rather than create rows we can't attribute).
+    """
+    from compliance_os.web.models.auth import SubscriptionRow as _SubRow
+    from compliance_os.web.services.subscription_service import derive_tier
+
+    sub_id = sub_obj.get("id")
+    if not sub_id:
+        logger.error("STRIPE_WEBHOOK_ALERT: subscription event with no id")
+        return None
+
+    row = (
+        db.query(_SubRow)
+        .filter(_SubRow.stripe_subscription_id == sub_id)
+        .first()
+    )
+
+    # Resolve user_id — prefer caller-supplied, then metadata.user_id on
+    # the sub itself. If neither, the row is unattributable.
+    if user_id is None:
+        meta = sub_obj.get("metadata") or {}
+        user_id = meta.get("user_id")
+    if user_id is None and row is not None:
+        user_id = row.user_id  # already known from earlier event
+    if user_id is None:
+        logger.error(
+            "STRIPE_WEBHOOK_ALERT: subscription %s has no resolvable user_id "
+            "(no metadata.user_id, no existing row). Skipping.",
+            sub_id,
+        )
+        return None
+
+    status = sub_obj.get("status") or "incomplete"
+    is_canceled = status in ("canceled", "incomplete_expired", "unpaid")
+    new_values = {
+        "user_id": user_id,
+        "stripe_customer_id": sub_obj.get("customer"),
+        "stripe_subscription_id": sub_id,
+        "stripe_price_id": _extract_price_id(sub_obj),
+        "status": status,
+        "tier": derive_tier(status),
+        "current_period_start": _to_dt_or_none(sub_obj.get("current_period_start")),
+        "current_period_end": _to_dt_or_none(sub_obj.get("current_period_end")),
+        "trial_end": _to_dt_or_none(sub_obj.get("trial_end")),
+        "cancel_at_period_end": bool(sub_obj.get("cancel_at_period_end")),
+        "canceled_at": (
+            _to_dt_or_none(sub_obj.get("canceled_at"))
+            if is_canceled
+            else None
+        ),
+    }
+
+    if row is None:
+        row = _SubRow(**new_values)
+        db.add(row)
+    else:
+        for k, v in new_values.items():
+            setattr(row, k, v)
+    return row
+
+
+def _extract_price_id(sub_obj: dict) -> str | None:
+    """Pull the first price id off a Stripe Subscription object.
+
+    Subscriptions support multiple line items in theory, but our Pro
+    product is a single price. Defensive: return None if shape changes.
+    """
+    items = (sub_obj.get("items") or {}).get("data") or []
+    if not items:
+        return None
+    price = items[0].get("price") or {}
+    return price.get("id")
+
+
+def _handle_subscription_event(event_type: str, sub_obj: dict, db: Session) -> None:
+    """customer.subscription.{created,updated,deleted} → upsert mirror row."""
+    row = _upsert_subscription_from_stripe(sub_obj, user_id=None, db=db)
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        logger.exception(
+            "STRIPE_WEBHOOK_ALERT: subscription %s commit failed for %s",
+            event_type,
+            sub_obj.get("id"),
+        )
+        raise HTTPException(status_code=500, detail="commit failed; will retry")
+    if row is not None:
+        logger.info(
+            "stripe webhook: subscription %s %s tier=%s status=%s",
+            row.stripe_subscription_id,
+            event_type,
+            row.tier,
+            row.status,
+        )
+
+
+def _handle_subscription_checkout_completed(sess: dict, db: Session, stripe) -> None:
+    """checkout.session.completed for mode=subscription.
+
+    Stripe also fires customer.subscription.created at the same time, so
+    most of the time the SubscriptionRow is already in place by the time
+    this handler runs. But ordering is not guaranteed, so we fetch the
+    Subscription and upsert defensively.
+    """
+    sub_id = sess.get("subscription")
+    if not sub_id:
+        logger.error(
+            "STRIPE_WEBHOOK_ALERT: subscription checkout %s has no subscription id",
+            sess.get("id"),
+        )
+        return
+
+    user_id = sess.get("client_reference_id") or (sess.get("metadata") or {}).get("user_id")
+    try:
+        full = stripe.Subscription.retrieve(sub_id)
+        sub_obj = (
+            full.to_dict_recursive() if hasattr(full, "to_dict_recursive") else dict(full)
+        )
+    except Exception:
+        logger.exception(
+            "STRIPE_WEBHOOK_ALERT: failed to fetch subscription %s", sub_id
+        )
+        return
+
+    _upsert_subscription_from_stripe(sub_obj, user_id, db)
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        logger.exception(
+            "STRIPE_WEBHOOK_ALERT: subscription_checkout commit failed for %s", sub_id
+        )
+        raise HTTPException(status_code=500, detail="commit failed; will retry")
+
+
+def _maybe_attach_trial(
+    user: UserRow,
+    db: Session,
+    *,
+    stripe,
+    customer_id: str | None,
+    source: str,
+) -> None:
+    """Create a 30-day Pro trial for `user` if they don't already have one.
+
+    No-op if:
+      * user already has any active subscription (paid or trialing)
+      * STRIPE_PRO_PRICE_ID is not configured (graceful skip — the trial
+        is a benefit, not a payment, so missing config shouldn't crash
+        the calling search-payment flow)
+
+    Stripe will fire customer.subscription.created back to our webhook,
+    which is what actually persists the SubscriptionRow. This function
+    just initiates the Stripe-side state.
+    """
+    from compliance_os.web.services.subscription_service import get_active_subscription
+
+    if not settings.stripe_pro_price_id:
+        return  # Pro not configured — skip trial creation.
+    if get_active_subscription(user, db) is not None:
+        return  # Already entitled.
+
+    # Resolve a Stripe Customer for this user — reuse the one from the
+    # one-time charge if present, otherwise create one keyed by email.
+    if not customer_id:
+        try:
+            c = stripe.Customer.create(
+                email=user.email,
+                metadata={"user_id": user.id},
+            )
+            customer_id = c.id if hasattr(c, "id") else c.get("id")
+        except Exception:
+            logger.exception(
+                "trial attach: failed to create Stripe customer for %s", user.id
+            )
+            return
+
+    trial_end = int(
+        (_dt.datetime.utcnow() + _dt.timedelta(days=30)).timestamp()
+    )
+    try:
+        stripe.Subscription.create(
+            customer=customer_id,
+            items=[{"price": settings.stripe_pro_price_id}],
+            trial_end=trial_end,
+            # If the user never adds a card during the trial, Stripe will
+            # cancel the sub at trial_end rather than fail to charge.
+            trial_settings={"end_behavior": {"missing_payment_method": "cancel"}},
+            payment_settings={"save_default_payment_method": "on_subscription"},
+            metadata={
+                "user_id": user.id,
+                "trial_source": source,
+            },
+        )
+    except Exception:
+        logger.exception(
+            "trial attach: Stripe.Subscription.create failed for user %s", user.id
+        )
+        return
+    logger.info("trial attach: 30-day Pro trial created for user %s (source=%s)",
+                user.id, source)
 
 
 @router.post("/{request_id}/claim", response_model=SearchResponse)
@@ -1647,6 +1960,29 @@ def claim_search(
 
     db.commit()
     db.refresh(row)
+
+    # Now that the user is identified, give them a 30-day Pro trial if
+    # they don't already have one. Failures are non-fatal — the claim
+    # already succeeded; the trial is an upsell, not a contract.
+    try:
+        stripe_for_trial = _stripe()
+        _maybe_attach_trial(
+            user,
+            db,
+            stripe=stripe_for_trial,
+            customer_id=None,  # Stripe Customer not on the row; let helper create one
+            source="lawyer_search_claim",
+        )
+    except HTTPException:
+        # _stripe() raises 503 when keys aren't configured; treat as silent.
+        pass
+    except Exception:
+        logger.exception(
+            "trial attach: non-fatal failure during claim of search %s for user %s",
+            request_id,
+            user.id,
+        )
+
     # Caller is now the authenticated owner — return full PII.
     return _serialize(row, include_pii=True)
 

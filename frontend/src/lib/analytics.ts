@@ -43,6 +43,18 @@ type OnboardingEvent =
   | "onboarding_results_viewed"
   | "onboarding_save_clicked";
 
+type SubscriptionEvent =
+  | "subscription_pricing_viewed"
+  | "subscription_pro_checkout_clicked"
+  | "subscription_pro_checkout_failed"
+  | "subscription_billing_portal_opened"
+  | "subscription_billing_portal_failed"
+  | "subscription_paywall_modal_viewed"
+  | "subscription_paywall_modal_dismissed"
+  | "subscription_paywall_upgrade_clicked"
+  | "subscription_quota_badge_clicked"
+  | "subscription_pro_free_search_consumed";
+
 type ProfessionalSearchEvent =
   // intake
   | "professional_search_intake_viewed"
@@ -136,6 +148,16 @@ export function trackProfessionalSearchEvent(
 ) {
   trackMixpanelEvent(event, {
     funnel: "professional_search",
+    ...properties,
+  });
+}
+
+export function trackSubscriptionEvent(
+  event: SubscriptionEvent,
+  properties: Record<string, unknown> = {},
+) {
+  trackMixpanelEvent(event, {
+    funnel: "subscription",
     ...properties,
   });
 }

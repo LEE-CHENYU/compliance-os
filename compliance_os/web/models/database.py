@@ -45,7 +45,11 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     else:
         engine_kwargs["pool_pre_ping"] = True
     engine = create_engine(database_url, **engine_kwargs)
-    from compliance_os.web.models.auth import UserRow  # noqa: F401
+    from compliance_os.web.models.auth import (  # noqa: F401
+        SubscriptionRow,
+        UserApiTokenRow,
+        UserRow,
+    )
     from compliance_os.web.models.tables import CaseRow, DiscoveryAnswerRow, ChatMessageRow, DocumentRow  # noqa: F401
     Base.metadata.create_all(engine)
     # Guardian check flow tables (v2)
@@ -68,6 +72,7 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
     _ensure_professional_search_columns(engine)
     _ensure_google_oauth_token_columns(engine)
     _ensure_case_columns(engine)
+    _ensure_subscription_columns(engine)
     return engine
 
 
@@ -86,6 +91,41 @@ def _ensure_case_columns(engine: Engine) -> None:
         return
     with engine.begin() as conn:
         conn.execute(text("ALTER TABLE cases ADD COLUMN user_id VARCHAR(36)"))
+
+
+def _ensure_subscription_columns(engine: Engine) -> None:
+    """Backfill columns added to the subscriptions table after first deploy.
+
+    create_all() only adds NEW tables; if the table was created in an
+    earlier release and we add a column here, prod won't see it without
+    an ALTER. SQLite + Postgres both accept this DDL.
+    """
+    inspector = inspect(engine)
+    if "subscriptions" not in inspector.get_table_names():
+        return
+
+    existing = {col["name"] for col in inspector.get_columns("subscriptions")}
+    is_sqlite = engine.dialect.name == "sqlite"
+    timestamp_type = "DATETIME" if is_sqlite else "TIMESTAMP"
+    bool_type = "BOOLEAN" if is_sqlite else "BOOLEAN"
+    wanted = {
+        "stripe_customer_id": "VARCHAR(255)",
+        "stripe_subscription_id": "VARCHAR(255)",
+        "stripe_price_id": "VARCHAR(255)",
+        "status": "VARCHAR(32)",
+        "tier": "VARCHAR(32)",
+        "current_period_start": timestamp_type,
+        "current_period_end": timestamp_type,
+        "trial_end": timestamp_type,
+        "cancel_at_period_end": bool_type,
+        "canceled_at": timestamp_type,
+    }
+    with engine.begin() as conn:
+        for name, ddl in wanted.items():
+            if name not in existing:
+                conn.execute(
+                    text(f"ALTER TABLE subscriptions ADD COLUMN {name} {ddl}")
+                )
 
 
 def _ensure_google_oauth_token_columns(engine: Engine) -> None:
@@ -134,6 +174,10 @@ def _ensure_professional_search_columns(engine: Engine) -> None:
         "stripe_session_id": "VARCHAR(255)",
         "stripe_customer_email": "VARCHAR(320)",
         "user_id": "VARCHAR(36)",
+        # When non-NULL, the row was unlocked via a Pro plan free-search
+        # grant rather than a Stripe charge. Used to count a user's Pro
+        # free-search consumption against the current subscription period.
+        "pro_free_grant_at": "TIMESTAMP" if not is_sqlite else "DATETIME",
     }
     with engine.begin() as conn:
         for name, ddl in wanted.items():

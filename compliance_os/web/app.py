@@ -25,6 +25,7 @@ from compliance_os.web.routers import marketplace as marketplace_router
 from compliance_os.web.routers import attorney as attorney_router
 from compliance_os.web.routers import share as share_router
 from compliance_os.web.routers import professional_search as professional_search_router
+from compliance_os.web.routers import subscription as subscription_router
 from compliance_os.web.routers import me as me_router
 
 
@@ -84,6 +85,7 @@ app.include_router(marketplace_router.router)
 app.include_router(attorney_router.router)
 app.include_router(share_router.router)
 app.include_router(professional_search_router.router)
+app.include_router(subscription_router.router)
 app.include_router(me_router.router)
 
 

@@ -48,6 +48,11 @@ class Settings(BaseSettings):
     stripe_publishable_key: str = Field(default="", alias="STRIPE_PUBLISHABLE_KEY")
     # Price in cents — keep as int to avoid float math; Stripe wants integer cents.
     stripe_report_price_cents: int = Field(default=1500, alias="STRIPE_REPORT_PRICE_CENTS")
+    # Recurring price ID for Guardian Pro ($20/mo). Created in the Stripe
+    # Dashboard once; we never construct prices on the fly. Empty string
+    # means subscriptions endpoints will 503 — same pattern as the other
+    # Stripe knobs above.
+    stripe_pro_price_id: str = Field(default="", alias="STRIPE_PRO_PRICE_ID")
     # Where Stripe redirects after success/cancel; falls back to FRONTEND_URL.
     public_app_url: str = Field(default="https://guardian-compliance.fly.dev", alias="FRONTEND_URL")
 

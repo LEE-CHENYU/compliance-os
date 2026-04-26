@@ -236,9 +236,16 @@ export const getMarketplaceMatch = (searchId: string) =>
 export const downloadProfessionalSearchUrl = (id: string) =>
   `${API_BASE}/professional-search/${id}/download`;
 
-export async function startCheckout(searchId: string): Promise<{ url: string }> {
+export async function startCheckout(
+  searchId: string,
+): Promise<{ url: string; pro_free_grant?: boolean }> {
+  // Send the auth token if present so the backend can short-circuit to
+  // the Pro free-search grant path (skips Stripe entirely for Pro users
+  // who haven't consumed their 1-per-period free search).
+  const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
   const res = await fetch(`${API_BASE}/professional-search/${searchId}/checkout`, {
     method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
@@ -492,4 +499,111 @@ export async function listMySearches(): Promise<ProfessionalSearch[]> {
     throw new Error(err.detail || res.statusText);
   }
   return res.json();
+}
+
+// ----------------------------------------------------------------------------
+// Subscription (Guardian Pro $20/mo)
+// ----------------------------------------------------------------------------
+
+export type Tier = "free" | "pro_trial" | "pro";
+
+export interface SubscriptionState {
+  tier: Tier;
+  is_pro: boolean;          // Pro OR Pro Trial — unlimited extractions
+  is_paying_pro: boolean;   // paid Pro only — eligible for free lawyer search
+  subscription: {
+    status: string;
+    trial_end: string | null;
+    current_period_end: string | null;
+    cancel_at_period_end: boolean;
+    has_billing_portal: boolean;
+  } | null;
+  extraction_quota: {
+    used: number;
+    limit: number | null;     // null means unlimited
+    remaining: number | null;
+    at_limit: boolean;
+    reset_at: string | null;  // ISO timestamp; only set for Free tier
+  };
+  pro_search_quota: {
+    used: number;
+    limit: number | null;     // null means not eligible (Free / Trial)
+    has_free_search: boolean;
+    period_end: string | null;
+  };
+  limits: {
+    free_extractions_per_month: number;
+    pro_free_searches_per_period: number;
+  };
+}
+
+/** Read-only entitlement snapshot. Cheap — call from the dashboard mount
+ *  + any component that needs to render quota. Returns null if the user
+ *  isn't authenticated (no token in localStorage). */
+export async function getSubscriptionState(): Promise<SubscriptionState | null> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
+  if (!token) return null;
+  const res = await fetch(`${API_BASE}/subscription/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
+  return res.json();
+}
+
+export async function startProSubscriptionCheckout(opts?: {
+  successPath?: string;
+  cancelPath?: string;
+}): Promise<{ url: string; session_id: string }> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
+  if (!token) throw new Error("Sign in first to subscribe.");
+  const res = await fetch(`${API_BASE}/subscription/checkout`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      success_path: opts?.successPath,
+      cancel_path: opts?.cancelPath,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(typeof err.detail === "string" ? err.detail : (err.detail?.message ?? res.statusText));
+  }
+  return res.json();
+}
+
+export async function openBillingPortal(returnPath?: string): Promise<{ url: string }> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
+  if (!token) throw new Error("Sign in first.");
+  const res = await fetch(`${API_BASE}/subscription/portal`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ return_path: returnPath }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(typeof err.detail === "string" ? err.detail : (err.detail?.message ?? res.statusText));
+  }
+  return res.json();
+}
+
+/** Detail shape of a 402 response from the upload route when the user
+ *  has hit the Free-tier extraction cap. The dashboard upload paywall
+ *  modal keys on `code === "extraction_quota_exceeded"`. */
+export interface ExtractionQuotaExceededDetail {
+  code: "extraction_quota_exceeded";
+  tier: Tier;
+  used: number;
+  limit: number;
+  reset_at: string | null;
+  upgrade_url: string;
+  message: string;
 }

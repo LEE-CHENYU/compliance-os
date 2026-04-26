@@ -343,6 +343,13 @@ def upload_to_dataroom(
     if duplicate_action not in ALLOWED_DUPLICATE_ACTIONS:
         raise HTTPException(400, "duplicate_action must be one of ask, keep, skip")
 
+    # Quota gate — every upload triggers OCR + LLM extraction (paid). Free
+    # tier gets FREE_EXTRACTIONS_PER_MONTH; Pro & Pro Trial are unlimited.
+    # Raised BEFORE we read the file body or write any state, so a denied
+    # upload costs us nothing.
+    from compliance_os.web.services.subscription_service import enforce_extraction_quota
+    enforce_extraction_quota(user, db)
+
     # Find or create a check to attach this document to
     check = _ensure_dashboard_check(user, db)
 
