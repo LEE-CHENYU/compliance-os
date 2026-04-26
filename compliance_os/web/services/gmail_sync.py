@@ -132,17 +132,29 @@ def _extract_emails(value: str) -> list[str]:
     return [m.lower() for m in EMAIL_RE.findall(value or "")]
 
 
-def _build_query(addrs: list[str]) -> str:
-    """Build a Gmail search query that matches messages from/to ANY of these.
+def _build_query(addrs: list[str], domains: list[str] | None = None) -> str:
+    """Build a Gmail search query matching ANY of these addresses or domains.
 
-    Gmail caps query length; we cap addresses at 50 to stay safe. Even a
-    user with many engagements will see most-recent threads first when
-    sync runs frequently, so the cap rarely matters.
+    Exact addresses cap at 50, domains cap at 20 (Gmail query length limit).
+
+    Domain match (`from:@firm.com OR to:@firm.com`) is critical because the
+    address stored on an engagement is usually one specific attorney —
+    actual correspondence often involves a different person at the same
+    firm (intake@, partner@, secretary@). Without the domain query the
+    sync would silently miss every thread the user actually has.
+
+    The caller should pass only non-public, non-user-own domains in
+    `domains` — sending `@gmail.com` would scoop the user's entire inbox.
     """
-    if not addrs:
+    parts: list[str] = []
+    for a in (addrs or [])[:50]:
+        parts.append(f"from:{a}")
+        parts.append(f"to:{a}")
+    for d in (domains or [])[:20]:
+        parts.append(f"from:@{d}")
+        parts.append(f"to:@{d}")
+    if not parts:
         return ""
-    capped = addrs[:50]
-    parts = [f"from:{a}" for a in capped] + [f"to:{a}" for a in capped]
     return "(" + " OR ".join(parts) + ")"
 
 
@@ -232,10 +244,18 @@ def sync_user_gmail(
             "last_synced_at": now.isoformat(),
         }
 
-    # Query Gmail by exact addresses (higher precision than `from:@domain`
-    # which would scoop in too much for big-firm domains). Domain fallback
-    # is applied client-side during participant matching below.
-    query = _build_query(list(email_to_engagement.keys()))
+    # Query Gmail by exact addresses AND by firm domain. Domain queries
+    # are essential — the engagement's stored address is usually one
+    # specific attorney (e.g. partner@), but actual correspondence often
+    # comes from intake@, secretary@, or another colleague at the same
+    # firm. Without `from:@firm.com` we'd silently return nothing for
+    # users who exchange email with a different person than expected.
+    # Public domains (gmail.com etc.) and the user's own domain are
+    # already excluded from `domain_to_engagement` above.
+    query = _build_query(
+        list(email_to_engagement.keys()),
+        list(domain_to_engagement.keys()),
+    )
     try:
         list_resp = _gmail_get(
             access_token,
