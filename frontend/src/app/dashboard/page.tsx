@@ -1871,6 +1871,9 @@ export default function DashboardPage() {
           <span className="text-sm text-[#556480] dark:text-[#8e9ab5] hidden md:inline">{user?.email}</span>
           <div className="relative">
             <button
+              type="button"
+              data-testid="dashboard-openclaw-toggle"
+              data-graph-edge="open-openclaw-panel"
               onClick={() => {
                 setShowToken((current) => !current);
                 setTokenCopied(false);
@@ -1885,7 +1888,7 @@ export default function DashboardPage() {
                 {/* Backdrop on mobile */}
                 <div className="fixed inset-0 bg-black/20 z-40 md:hidden" onClick={() => setShowToken(false)} />
                 {/* Popover: centered fixed on mobile, absolute dropdown on desktop */}
-                <div className="fixed inset-x-4 top-20 z-50 md:absolute md:inset-auto md:right-0 md:top-full md:mt-2 md:w-80 bg-white/95 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-blue-100/30 p-4">
+                <div data-testid="dashboard-openclaw-popover" className="fixed inset-x-4 top-20 z-50 md:absolute md:inset-auto md:right-0 md:top-full md:mt-2 md:w-80 bg-white/95 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-blue-100/30 p-4">
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-xs font-semibold text-[#0d1424]">Connect Guardian to OpenClaw</div>
                     <button onClick={() => setShowToken(false)} className="text-[#8e9ab5] text-sm md:hidden">&times;</button>
@@ -1918,6 +1921,8 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
+                          data-testid="dashboard-openclaw-token-button"
+                          data-graph-edge="openclaw:token"
                           onClick={() => {
                             issueOpenClawToken().catch((error) => {
                               console.error(error);
@@ -1964,7 +1969,13 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
-          <button onClick={() => setShowUploadPanel(true)} className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] dark:from-[#3a5a9c] dark:to-[#2d4578] text-white text-xs md:text-sm font-semibold">
+          <button
+            type="button"
+            data-testid="dashboard-open-upload-panel"
+            data-graph-edge="open-upload-panel"
+            onClick={() => setShowUploadPanel(true)}
+            className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] dark:from-[#3a5a9c] dark:to-[#2d4578] text-white text-xs md:text-sm font-semibold"
+          >
             {processingIndicator && (
               <span className="inline-flex h-2.5 w-2.5 rounded-full border border-white/70 border-t-transparent animate-spin" />
             )}
@@ -2149,9 +2160,16 @@ export default function DashboardPage() {
             </section>
           )}
 
-          <MySearches />
-
-          <MyEngagements />
+          {/* MySearches + MyEngagements are timeline-only — they're
+              cross-case status panels, not artifacts. The Documents /
+              Deadlines / Key Facts views are artifact-focused and
+              stay clean without these panels. */}
+          {view === "timeline" && (
+            <>
+              <MySearches />
+              <MyEngagements />
+            </>
+          )}
 
           <section className="mb-8 overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(234,241,251,0.92))] backdrop-blur-xl shadow-[0_10px_36px_rgba(91,141,238,0.08)]">
             <div className="p-5 md:p-7">
@@ -2594,14 +2612,14 @@ export default function DashboardPage() {
 
           {/* Upload Panel Modal */}
           {showUploadPanel && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0d1424]/20 backdrop-blur-sm p-4">
+            <div data-testid="dashboard-upload-panel" className="fixed inset-0 z-50 flex items-center justify-center bg-[#0d1424]/20 backdrop-blur-sm p-4">
               <div className="w-full max-w-xl bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 p-6 shadow-[0_16px_64px_rgba(91,141,238,0.15)]">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h2 className="text-lg font-bold text-[#0d1424]">Upload documents</h2>
                     <div className="text-[12px] text-[#7b8ba5] mt-1">Drag files or a folder here, or browse and review duplicates before upload.</div>
                   </div>
-                  <button onClick={() => { setShowUploadPanel(false); setUploadError(null); }} className="text-[#7b8ba5] hover:text-[#0d1424] text-xl">&times;</button>
+                  <button data-testid="dashboard-upload-panel-close" onClick={() => { setShowUploadPanel(false); setUploadError(null); }} className="text-[#7b8ba5] hover:text-[#0d1424] text-xl">&times;</button>
                 </div>
 
                 {uploadError && (
