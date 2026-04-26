@@ -20,6 +20,7 @@ import {
   type Lang,
 } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
+import { trackProfessionalSearchEvent } from "@/lib/analytics";
 
 const POLL_INTERVAL_MS = 3000;
 
@@ -68,8 +69,21 @@ function ReportActions({
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      trackProfessionalSearchEvent("professional_search_report_downloaded", {
+        search_id: searchId,
+        format,
+        surface: "status_page",
+        lang,
+      });
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const message = e instanceof Error ? e.message : String(e);
+      trackProfessionalSearchEvent("professional_search_report_download_failed", {
+        search_id: searchId,
+        format,
+        message,
+        lang,
+      });
+      setError(message);
     } finally {
       setBusy(null);
     }
@@ -144,14 +158,32 @@ function Paywall({
   const [error, setError] = useState<string | null>(null);
   const isZh = lang === "zh";
 
+  // Fire viewed once when this component renders (i.e. paywall surfaces).
+  useEffect(() => {
+    trackProfessionalSearchEvent("professional_search_paywall_viewed", {
+      search_id: searchId,
+      lang,
+    });
+  }, [searchId, lang]);
+
   async function go() {
     setBusy(true);
     setError(null);
+    trackProfessionalSearchEvent("professional_search_checkout_clicked", {
+      search_id: searchId,
+      lang,
+    });
     try {
       const { url } = await startCheckout(searchId);
       window.location.href = url;
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const message = e instanceof Error ? e.message : String(e);
+      trackProfessionalSearchEvent("professional_search_checkout_failed", {
+        search_id: searchId,
+        message,
+        lang,
+      });
+      setError(message);
       setBusy(false);
     }
   }
@@ -275,9 +307,11 @@ function PersonaCard({
 function GuardianUpsell({
   matches,
   lang,
+  searchId,
 }: {
   matches: MarketplaceMatch[];
   lang: Lang;
+  searchId: string;
 }) {
   const router = useRouter();
   const isZh = lang === "zh";
@@ -328,7 +362,19 @@ function GuardianUpsell({
               <div className="mt-auto pt-4">
                 <button
                   type="button"
-                  onClick={() => m.path && router.push(m.path)}
+                  onClick={() => {
+                    trackProfessionalSearchEvent(
+                      "professional_search_marketplace_match_clicked",
+                      {
+                        search_id: searchId,
+                        sku: m.sku,
+                        match_reason: m.match_reason,
+                        price_cents: m.price_cents,
+                        lang,
+                      },
+                    );
+                    if (m.path) router.push(m.path);
+                  }}
                   disabled={!m.path}
                   className="w-full rounded-full bg-[#5b8dee] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#a8bce8]"
                 >
@@ -382,6 +428,8 @@ export default function SearchStatus() {
   const [tracking, setTracking] = useState<string | null>(null);
   const [batchTracking, setBatchTracking] = useState(false);
   const stopped = useRef(false);
+  const viewedRef = useRef(false);
+  const completedSeenRef = useRef(false);
 
   useEffect(() => {
     stopped.current = false;
@@ -390,6 +438,27 @@ export default function SearchStatus() {
         const data = await getProfessionalSearch(params.searchId);
         if (stopped.current) return;
         setRow(data);
+        // Fire status_viewed once on first successful load (with the
+        // initial server-known status), and completed_viewed exactly once
+        // when the row first transitions to complete in this session.
+        if (!viewedRef.current) {
+          viewedRef.current = true;
+          trackProfessionalSearchEvent("professional_search_status_viewed", {
+            search_id: data.id,
+            status: data.status,
+            vertical: data.vertical,
+            is_paid: Boolean(data.is_paid),
+          });
+        }
+        if (!completedSeenRef.current && data.status === "complete") {
+          completedSeenRef.current = true;
+          trackProfessionalSearchEvent("professional_search_completed_viewed", {
+            search_id: data.id,
+            vertical: data.vertical,
+            is_paid: Boolean(data.is_paid),
+            firms_count: data.tier_report?.length ?? 0,
+          });
+        }
         if (data.status === "complete" || data.status === "failed") {
           stopped.current = true;
           return;
@@ -433,6 +502,11 @@ export default function SearchStatus() {
         firm_name: firmName,
         search_id: params.searchId,
       });
+      trackProfessionalSearchEvent("professional_search_firm_tracked", {
+        search_id: params.searchId,
+        case_id: caseId,
+        firm_name: firmName,
+      });
       await refreshEngagements();
     } catch (err) {
       console.error("track failed", err);
@@ -457,6 +531,12 @@ export default function SearchStatus() {
           search_id: params.searchId,
         }).catch((e) => console.error("batch track failed for", t.firm, e));
       }
+      trackProfessionalSearchEvent("professional_search_top_n_tracked", {
+        search_id: params.searchId,
+        case_id: caseId,
+        n: targets.length,
+        requested: n,
+      });
       await refreshEngagements();
     } finally {
       setBatchTracking(false);
@@ -501,7 +581,20 @@ export default function SearchStatus() {
             {t.statusBtnNew as string}
           </button>
           <div className="flex items-center gap-3">
-            <LangToggle lang={lang} onChange={setLang} />
+            <LangToggle
+              lang={lang}
+              onChange={(next) => {
+                if (next !== lang) {
+                  trackProfessionalSearchEvent("professional_search_lang_toggled", {
+                    surface: "status_page",
+                    from: lang,
+                    to: next,
+                    search_id: row.id,
+                  });
+                }
+                setLang(next);
+              }}
+            />
             <StatusPill status={row.status} />
           </div>
         </div>
@@ -531,7 +624,7 @@ export default function SearchStatus() {
           )}
         </header>
 
-        <GuardianUpsell matches={matches} lang={lang} />
+        <GuardianUpsell matches={matches} lang={lang} searchId={row.id} />
 
         <section className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
           <div className="mb-5 flex items-baseline justify-between">

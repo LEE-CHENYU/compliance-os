@@ -43,6 +43,36 @@ type OnboardingEvent =
   | "onboarding_results_viewed"
   | "onboarding_save_clicked";
 
+type ProfessionalSearchEvent =
+  // intake
+  | "professional_search_intake_viewed"
+  | "professional_search_brief_quality_changed"
+  | "professional_search_submitted"
+  | "professional_search_submission_failed"
+  // status / paywall
+  | "professional_search_status_viewed"
+  | "professional_search_completed_viewed"
+  | "professional_search_paywall_viewed"
+  | "professional_search_checkout_clicked"
+  | "professional_search_checkout_failed"
+  // payment
+  | "professional_search_payment_succeeded"
+  | "professional_search_payment_polling_timed_out"
+  // download
+  | "professional_search_report_downloaded"
+  | "professional_search_report_download_failed"
+  // post-purchase signup
+  | "professional_search_signup_submitted"
+  | "professional_search_signup_succeeded"
+  | "professional_search_signup_failed"
+  // engagement
+  | "professional_search_firm_tracked"
+  | "professional_search_top_n_tracked"
+  | "professional_search_marketplace_match_clicked"
+  // misc
+  | "professional_search_lang_toggled"
+  | "professional_search_my_searches_viewed";
+
 type MixpanelWindow = Window & {
   mixpanel?: MixpanelClient;
 };
@@ -96,6 +126,16 @@ export function trackOnboardingEvent(
 ) {
   trackMixpanelEvent(event, {
     funnel: "check_onboarding",
+    ...properties,
+  });
+}
+
+export function trackProfessionalSearchEvent(
+  event: ProfessionalSearchEvent,
+  properties: Record<string, unknown> = {},
+) {
+  trackMixpanelEvent(event, {
+    funnel: "professional_search",
     ...properties,
   });
 }

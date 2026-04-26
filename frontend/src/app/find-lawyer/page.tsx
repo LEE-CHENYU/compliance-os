@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getCaseDraftBrief, startProfessionalSearch } from "@/lib/api";
 import {
@@ -9,6 +9,7 @@ import {
   useLang,
 } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
+import { trackProfessionalSearchEvent } from "@/lib/analytics";
 
 const VERTICAL_KEYS = [
   "immigration_attorney",
@@ -59,6 +60,16 @@ function FindLawyer() {
     caseId ? "loading" : "idle",
   );
 
+  // Fire intake_viewed once per page load. Tracks the top of the funnel and
+  // captures whether the user arrived with a pre-existing case context.
+  useEffect(() => {
+    trackProfessionalSearchEvent("professional_search_intake_viewed", {
+      lang,
+      has_case_id: Boolean(caseId),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!caseId) return;
     let cancelled = false;
@@ -99,6 +110,25 @@ function FindLawyer() {
   const briefQuality: "weak" | "okay" | "strong" =
     briefLen < MIN_BRIEF_CHARS ? "weak" : briefLen < 500 ? "okay" : "strong";
 
+  // Emit a brief-quality event only on transition (not every keystroke), so
+  // the funnel shows users moving from weak → okay → strong rather than a
+  // noisy stream of keystrokes. Skip the very first render's "weak" state
+  // for users who haven't typed anything — that's just the initial load.
+  const lastQualityRef = useRef<"weak" | "okay" | "strong" | null>(null);
+  useEffect(() => {
+    if (briefLen === 0) {
+      lastQualityRef.current = null;
+      return;
+    }
+    if (lastQualityRef.current === briefQuality) return;
+    lastQualityRef.current = briefQuality;
+    trackProfessionalSearchEvent("professional_search_brief_quality_changed", {
+      quality: briefQuality,
+      brief_chars: briefLen,
+      lang,
+    });
+  }, [briefQuality, briefLen, lang]);
+
   const blockers: string[] = [];
   if (!purposeOk) blockers.push(t.blockerPurpose as string);
   if (!briefOk) {
@@ -111,6 +141,14 @@ function FindLawyer() {
     if (!canSubmit) return;
     setSubmitting(true);
     setError(null);
+    trackProfessionalSearchEvent("professional_search_submitted", {
+      vertical,
+      brief_chars: briefLen,
+      brief_quality: briefQuality,
+      file_count: files.length,
+      has_case_id: Boolean(caseId),
+      lang,
+    });
     try {
       const row = await startProfessionalSearch({
         case_brief: caseBrief,
@@ -121,7 +159,14 @@ function FindLawyer() {
       });
       router.replace(`/find-lawyer/${row.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      const message = err instanceof Error ? err.message : String(err);
+      trackProfessionalSearchEvent("professional_search_submission_failed", {
+        vertical,
+        brief_chars: briefLen,
+        message,
+        lang,
+      });
+      setError(message);
       setSubmitting(false);
     }
   }
@@ -140,7 +185,19 @@ function FindLawyer() {
             {t.btnBack as string}
           </button>
           <div className="flex items-center gap-3">
-            <LangToggle lang={lang} onChange={setLang} />
+            <LangToggle
+              lang={lang}
+              onChange={(next) => {
+                if (next !== lang) {
+                  trackProfessionalSearchEvent("professional_search_lang_toggled", {
+                    surface: "intake",
+                    from: lang,
+                    to: next,
+                  });
+                }
+                setLang(next);
+              }}
+            />
             <div className="rounded-full border border-[#dce6f3] bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7c95] shadow-[0_8px_24px_rgba(42,64,102,0.08)]">
               {t.statusPagePill as string}
             </div>

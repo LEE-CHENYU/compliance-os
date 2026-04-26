@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 import { listMySearches, type ProfessionalSearch } from "@/lib/api";
+import { trackProfessionalSearchEvent } from "@/lib/analytics";
 
 /** "My professional searches" panel for the Guardian dashboard.
  *
@@ -15,10 +16,22 @@ import { listMySearches, type ProfessionalSearch } from "@/lib/api";
 export default function MySearches() {
   const [rows, setRows] = useState<ProfessionalSearch[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const viewedRef = useRef(false);
 
   useEffect(() => {
     listMySearches()
-      .then(setRows)
+      .then((data) => {
+        setRows(data);
+        // Emit once per dashboard mount, after the API returned. Captures
+        // count + paid_count so we can see who has 0 vs. 1 vs. many.
+        if (!viewedRef.current) {
+          viewedRef.current = true;
+          trackProfessionalSearchEvent("professional_search_my_searches_viewed", {
+            count: data.length,
+            paid_count: data.filter((r) => r.is_paid).length,
+          });
+        }
+      })
       .catch((e) => setError(e instanceof Error ? e.message : String(e)));
   }, []);
 

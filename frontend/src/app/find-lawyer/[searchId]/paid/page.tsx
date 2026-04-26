@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
@@ -13,6 +13,7 @@ import {
 import { isLoggedIn, login, register } from "@/lib/auth";
 import { useLang } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
+import { trackProfessionalSearchEvent } from "@/lib/analytics";
 
 const POLL_INTERVAL_MS = 2000;
 const MAX_POLL_ATTEMPTS = 30; // ~60 s
@@ -113,6 +114,8 @@ function PaidPage() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [claimed, setClaimed] = useState<boolean>(false);
+  const paidEmittedRef = useRef(false);
+  const timedOutEmittedRef = useRef(false);
 
   // Poll until the webhook has marked the search paid (or claimed).
   useEffect(() => {
@@ -123,7 +126,17 @@ function PaidPage() {
         const r = await getProfessionalSearch(params.searchId);
         if (stopped) return;
         setRow(r);
-        if (r.is_paid) return; // we're done waiting
+        if (r.is_paid) {
+          if (!paidEmittedRef.current) {
+            paidEmittedRef.current = true;
+            trackProfessionalSearchEvent("professional_search_payment_succeeded", {
+              search_id: r.id,
+              vertical: r.vertical,
+              poll_attempts: attempts + 1,
+            });
+          }
+          return; // we're done waiting
+        }
       } catch (e) {
         if (stopped) return;
         setPollError(e instanceof Error ? e.message : String(e));
@@ -139,6 +152,13 @@ function PaidPage() {
           // Stripe). Funds are safe regardless — we only mark `paid_at`
           // when the webhook arrives, so retrying later is non-destructive.
           setPollTimedOut(true);
+          if (!timedOutEmittedRef.current) {
+            timedOutEmittedRef.current = true;
+            trackProfessionalSearchEvent(
+              "professional_search_payment_polling_timed_out",
+              { search_id: params.searchId, poll_attempts: attempts },
+            );
+          }
         }
       }
     }
@@ -165,6 +185,11 @@ function PaidPage() {
     e.preventDefault();
     setAuthBusy(true);
     setAuthError(null);
+    trackProfessionalSearchEvent("professional_search_signup_submitted", {
+      search_id: params.searchId,
+      mode: authMode,
+      lang,
+    });
     try {
       if (authMode === "signup") {
         await register(email, password);
@@ -174,6 +199,12 @@ function PaidPage() {
       // Now we're logged in — claim the paid search.
       const claimed = await claimSearch(params.searchId);
       setClaimed(true);
+      trackProfessionalSearchEvent("professional_search_signup_succeeded", {
+        search_id: params.searchId,
+        mode: authMode,
+        landed_on: claimed.case_id ? "case" : "dashboard",
+        lang,
+      });
       // If the brief was rich enough, the backend auto-created a case
       // (skipping the discovery wizard for users who already supplied
       // substantial context). Land on the case page so they see their
@@ -184,7 +215,14 @@ function PaidPage() {
         : "/dashboard";
       setTimeout(() => router.push(next), 800);
     } catch (e) {
-      setAuthError(e instanceof Error ? e.message : String(e));
+      const message = e instanceof Error ? e.message : String(e);
+      trackProfessionalSearchEvent("professional_search_signup_failed", {
+        search_id: params.searchId,
+        mode: authMode,
+        message,
+        lang,
+      });
+      setAuthError(message);
       setAuthBusy(false);
     }
   }
@@ -202,7 +240,20 @@ function PaidPage() {
           >
             {isZh ? "← 返回搜索" : "← Back to search"}
           </Link>
-          <LangToggle lang={lang} onChange={setLang} />
+          <LangToggle
+            lang={lang}
+            onChange={(next) => {
+              if (next !== lang) {
+                trackProfessionalSearchEvent("professional_search_lang_toggled", {
+                  surface: "paid_page",
+                  from: lang,
+                  to: next,
+                  search_id: params.searchId,
+                });
+              }
+              setLang(next);
+            }}
+          />
         </div>
 
         <header className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
@@ -264,6 +315,17 @@ function PaidPage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <a
                 href={`${downloadProfessionalSearchUrl(params.searchId)}?format=pdf`}
+                onClick={() =>
+                  trackProfessionalSearchEvent(
+                    "professional_search_report_downloaded",
+                    {
+                      search_id: params.searchId,
+                      format: "pdf",
+                      surface: "paid_page",
+                      lang,
+                    },
+                  )
+                }
                 className="inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
               >
                 {isZh ? "下载 PDF" : "Download PDF"}
@@ -272,6 +334,17 @@ function PaidPage() {
                 href={downloadProfessionalSearchUrl(params.searchId)}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  trackProfessionalSearchEvent(
+                    "professional_search_report_downloaded",
+                    {
+                      search_id: params.searchId,
+                      format: "html",
+                      surface: "paid_page",
+                      lang,
+                    },
+                  )
+                }
                 className="inline-flex items-center gap-2 rounded-full border border-[#dbe5f2] bg-white/90 px-5 py-2.5 text-[13px] font-semibold text-[#40536f] transition hover:border-[#5b8dee] hover:text-[#1a2036]"
               >
                 {isZh ? "查看网页版" : "View web version"}
