@@ -68,22 +68,27 @@ export default function CaseOverview() {
   if (caseError) {
     return (
       <div className="mx-auto max-w-md py-16 text-center space-y-4">
-        <h2 className="text-lg font-semibold text-stone-700">Case not available</h2>
-        <p className="text-sm text-stone-500">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
+          404
+        </div>
+        <h2 className="text-[24px] font-bold tracking-tight text-[#0d1424]">
+          Case not available
+        </h2>
+        <p className="text-[14px] leading-7 text-[#556480]">
           This case either doesn&apos;t exist or belongs to a different account.
           If you signed up with a different email, sign in there to access it.
         </p>
-        <p className="text-xs text-stone-400 font-mono">case {caseId.slice(0, 8)}</p>
+        <p className="text-[12px] text-[#7b8ba5] font-mono">case {caseId.slice(0, 8)}</p>
         <div className="flex justify-center gap-3 pt-2">
           <button
             onClick={() => router.push("/dashboard")}
-            className="rounded-lg bg-stone-800 px-4 py-2 text-sm font-medium text-white hover:bg-stone-700"
+            className="rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
           >
             Go to dashboard
           </button>
           <button
             onClick={() => router.push("/")}
-            className="rounded-lg border border-stone-300 px-4 py-2 text-sm hover:bg-stone-50"
+            className="rounded-full border border-[#dbe5f2] px-5 py-2.5 text-[13px] font-semibold text-[#40536f] hover:bg-[#f7f9fd]"
           >
             Home
           </button>
@@ -91,28 +96,28 @@ export default function CaseOverview() {
       </div>
     );
   }
-  if (!caseData) return <p className="text-stone-400 text-center py-16">Loading…</p>;
+  if (!caseData) return <p className="text-[12px] text-[#7b8ba5] text-center py-16">Loading…</p>;
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Case Overview</h2>
-      <div className="rounded-lg border border-stone-200 bg-white p-6 space-y-4">
+      <h2 className="text-[24px] font-bold tracking-tight text-[#0d1424]">Case Overview</h2>
+      <div className="rounded-lg border border-[#e4edf7] bg-white p-6 space-y-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><span className="text-stone-500">Status:</span> <span className="capitalize">{caseData.status}</span></div>
-          <div><span className="text-stone-500">Type:</span> <span className="capitalize">{caseData.workflow_type || "General"}</span></div>
-          <div><span className="text-stone-500">Answers:</span> {caseData.answer_count}</div>
-          <div><span className="text-stone-500">Documents:</span> {caseData.document_count}</div>
+          <div><span className="text-[#556480]">Status:</span> <span className="capitalize">{caseData.status}</span></div>
+          <div><span className="text-[#556480]">Type:</span> <span className="capitalize">{caseData.workflow_type || "General"}</span></div>
+          <div><span className="text-[#556480]">Answers:</span> {caseData.answer_count}</div>
+          <div><span className="text-[#556480]">Documents:</span> {caseData.document_count}</div>
         </div>
         <div className="flex gap-3 pt-2">
           <button
             onClick={() => router.push(`/case/${caseId}/discovery`)}
-            className="rounded-lg border border-stone-300 px-4 py-2 text-sm hover:bg-stone-50"
+            className="rounded-lg border border-[#dbe5f2] px-4 py-2 text-sm hover:bg-[#f7f9fd]"
           >
             Discovery
           </button>
           <button
             onClick={() => router.push(`/case/${caseId}/documents`)}
-            className="rounded-lg border border-stone-300 px-4 py-2 text-sm hover:bg-stone-50"
+            className="rounded-lg border border-[#dbe5f2] px-4 py-2 text-sm hover:bg-[#f7f9fd]"
           >
             Documents
           </button>
@@ -136,7 +141,7 @@ export default function CaseOverview() {
 
       <GmailConnectionSection caseId={caseId} onSynced={handleSynced} />
 
-      <p className="text-sm text-stone-400 text-center">Review dashboard coming soon.</p>
+      <p className="text-sm text-[#7b8ba5] text-center">Review dashboard coming soon.</p>
     </div>
   );
 }
@@ -171,18 +176,18 @@ function LawyersSection({
   }
 
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-6 space-y-4">
+    <div className="rounded-lg border border-[#e4edf7] bg-white p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-semibold text-stone-800">Lawyers</h3>
-          <p className="text-xs text-stone-500 mt-0.5">
+          <h3 className="text-[16px] font-bold text-[#0d1424] tracking-tight">Lawyers</h3>
+          <p className="text-xs text-[#556480] mt-0.5">
             Search results stay attached to this case so you can come back to them.
           </p>
         </div>
         {searches && searches.length > 0 && (
           <button
             onClick={launch}
-            className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-50"
+            className="rounded-lg border border-[#dbe5f2] px-3 py-1.5 text-xs font-medium text-[#1a2036] hover:bg-[#f7f9fd]"
           >
             New search
           </button>
@@ -190,44 +195,44 @@ function LawyersSection({
       </div>
 
       {searches === null ? (
-        <p className="text-sm text-stone-400">Loading searches…</p>
+        <p className="text-sm text-[#7b8ba5]">Loading searches…</p>
       ) : searches.length === 0 ? (
-        <div className="rounded-md border border-dashed border-stone-300 bg-stone-50 p-5 text-center">
-          <p className="text-sm text-stone-600">
+        <div className="rounded-md border border-dashed border-[#dbe5f2] bg-[#f7f9fd] p-5 text-center">
+          <p className="text-sm text-[#40536f]">
             No professional searches yet for this case.
           </p>
           <button
             onClick={launch}
-            className="mt-3 rounded-lg bg-stone-800 px-5 py-2 text-sm font-medium text-white hover:bg-stone-700"
+            className="mt-3 rounded-lg bg-[#0d1424] px-5 py-2 text-sm font-medium text-white hover:bg-[#1a2036]"
           >
             Find a specialist for this case
           </button>
-          <p className="mt-2 text-[11px] text-stone-400">
+          <p className="mt-2 text-[11px] text-[#7b8ba5]">
             Pre-filled from your discovery answers — you can edit before submitting.
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-stone-100">
+        <ul className="divide-y divide-[#eef2f8]">
           {searches.map((s) => (
             <li key={s.id} className="py-3">
               <button
                 onClick={() => router.push(`/find-lawyer/${s.id}`)}
-                className="w-full text-left hover:bg-stone-50 px-2 -mx-2 rounded-md transition-colors"
+                className="w-full text-left hover:bg-[#f7f9fd] px-2 -mx-2 rounded-md transition-colors"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium text-sm text-stone-800 truncate">
+                      <span className="font-medium text-sm text-[#0d1424] truncate">
                         {s.purpose}
                       </span>
                       <StatusPill status={s.status} paid={!!s.paid_at} />
                     </div>
-                    <div className="text-xs text-stone-500 mt-0.5">
+                    <div className="text-xs text-[#556480] mt-0.5">
                       {s.vertical.replace(/_/g, " ")} · {fmtDate(s.created_at)}
                       {s.firm_count > 0 && ` · ${s.firm_count} firm${s.firm_count === 1 ? "" : "s"}`}
                     </div>
                   </div>
-                  <span className="text-stone-300 text-sm">→</span>
+                  <span className="text-[#9ba8c4] text-sm">→</span>
                 </div>
               </button>
               {s.top_firms.length > 0 && (
@@ -237,12 +242,12 @@ function LawyersSection({
                     return (
                       <li
                         key={f.name}
-                        className="flex items-center justify-between gap-2 text-xs text-stone-600"
+                        className="flex items-center justify-between gap-2 text-xs text-[#40536f]"
                       >
                         <span className="truncate">
                           {f.name}
                           {f.confidence != null && (
-                            <span className="text-stone-400"> ({f.confidence})</span>
+                            <span className="text-[#7b8ba5]"> ({f.confidence})</span>
                           )}
                         </span>
                         {isTracked ? (
@@ -255,7 +260,7 @@ function LawyersSection({
                               e.stopPropagation();
                               trackFirm(s.id, f.name);
                             }}
-                            className="shrink-0 rounded-full border border-stone-300 px-2 py-0.5 text-[10px] font-medium text-stone-600 hover:bg-stone-100 hover:text-stone-800"
+                            className="shrink-0 rounded-full border border-[#dbe5f2] px-2 py-0.5 text-[10px] font-medium text-[#40536f] hover:bg-[#eef2f8] hover:text-[#0d1424]"
                           >
                             + track
                           </button>
@@ -302,18 +307,18 @@ function EngagementsSection({
   }
 
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-6 space-y-4">
+    <div className="rounded-lg border border-[#e4edf7] bg-white p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-semibold text-stone-800">Engagements</h3>
-          <p className="text-xs text-stone-500 mt-0.5">
+          <h3 className="text-[16px] font-bold text-[#0d1424] tracking-tight">Engagements</h3>
+          <p className="text-xs text-[#556480] mt-0.5">
             Track your outreach, status, and notes for each firm you&apos;re working with.
           </p>
         </div>
         {!adding && (
           <button
             onClick={() => setAdding(true)}
-            className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-50"
+            className="rounded-lg border border-[#dbe5f2] px-3 py-1.5 text-xs font-medium text-[#1a2036] hover:bg-[#f7f9fd]"
           >
             + Add firm
           </button>
@@ -334,11 +339,11 @@ function EngagementsSection({
               }
             }}
             placeholder="Firm name"
-            className="flex-1 rounded-md border border-stone-300 px-3 py-1.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
+            className="flex-1 rounded-md border border-[#dbe5f2] px-3 py-1.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
           />
           <button
             onClick={handleAdd}
-            className="rounded-md bg-stone-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-stone-700"
+            className="rounded-md bg-[#0d1424] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#1a2036]"
           >
             Add
           </button>
@@ -347,7 +352,7 @@ function EngagementsSection({
               setAdding(false);
               setNewName("");
             }}
-            className="text-sm text-stone-500 hover:text-stone-700"
+            className="text-sm text-[#556480] hover:text-[#1a2036]"
           >
             Cancel
           </button>
@@ -355,13 +360,13 @@ function EngagementsSection({
       )}
 
       {engagements === null ? (
-        <p className="text-sm text-stone-400">Loading…</p>
+        <p className="text-sm text-[#7b8ba5]">Loading…</p>
       ) : engagements.length === 0 ? (
-        <p className="text-sm text-stone-400 text-center py-4">
+        <p className="text-sm text-[#7b8ba5] text-center py-4">
           No firms tracked yet. Click <span className="font-mono">+ track</span> on a firm above, or use <span className="font-mono">+ Add firm</span> for one not in your search results.
         </p>
       ) : (
-        <ul className="divide-y divide-stone-100">
+        <ul className="divide-y divide-[#eef2f8]">
           {engagements.map((e) => (
             <EngagementRow
               key={e.id}
@@ -490,12 +495,12 @@ function EngagementRow({
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium text-sm text-stone-800 truncate">
+            <span className="font-medium text-sm text-[#0d1424] truncate">
               {engagement.firm_name}
             </span>
             <EngagementStatusPill status={engagement.status} />
           </div>
-          <div className="text-[11px] text-stone-400 mt-0.5">
+          <div className="text-[11px] text-[#7b8ba5] mt-0.5">
             Last activity {fmtDate(engagement.last_activity_at)}
             {engagement.firm_lead_attorney && ` · ${engagement.firm_lead_attorney}`}
           </div>
@@ -505,7 +510,7 @@ function EngagementRow({
             onClick={emailFirm}
             disabled={busy || !canEmail}
             title={canEmail ? "Open pre-filled email" : "No email on file for this firm"}
-            className="rounded-md border border-stone-300 px-2 py-1 text-xs font-medium text-stone-700 hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md border border-[#dbe5f2] px-2 py-1 text-xs font-medium text-[#1a2036] hover:bg-[#f7f9fd] disabled:cursor-not-allowed disabled:opacity-50"
           >
             ✉ Email
           </button>
@@ -513,7 +518,7 @@ function EngagementRow({
             disabled={busy}
             value={engagement.status}
             onChange={(e) => setStatus(e.target.value as EngagementStatus)}
-            className="text-xs rounded-md border border-stone-300 px-2 py-1 bg-white hover:border-stone-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="text-xs rounded-md border border-[#dbe5f2] px-2 py-1 bg-white hover:border-[#7b8ba5] focus:outline-none focus:ring-2 focus:ring-blue-100"
           >
             {ENGAGEMENT_STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -524,7 +529,7 @@ function EngagementRow({
           <button
             onClick={remove}
             disabled={busy}
-            className="text-[11px] text-stone-400 hover:text-rose-600 px-1"
+            className="text-[11px] text-[#7b8ba5] hover:text-rose-600 px-1"
             title="Remove from case"
           >
             ✕
@@ -540,12 +545,12 @@ function EngagementRow({
             value={emailsDraft}
             onChange={(e) => setEmailsDraft(e.target.value)}
             placeholder="email1@firm.com, email2@firm.com"
-            className="flex-1 rounded-md border border-stone-300 px-2 py-1 text-xs focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
+            className="flex-1 rounded-md border border-[#dbe5f2] px-2 py-1 text-xs focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
           />
           <button
             onClick={saveEmails}
             disabled={busy}
-            className="rounded-md bg-stone-800 px-2 py-1 text-[11px] font-medium text-white hover:bg-stone-700"
+            className="rounded-md bg-[#0d1424] px-2 py-1 text-[11px] font-medium text-white hover:bg-[#1a2036]"
           >
             Save
           </button>
@@ -554,7 +559,7 @@ function EngagementRow({
               setEditingEmails(false);
               setEmailsDraft(engagement.firm_emails.join(", "));
             }}
-            className="text-[11px] text-stone-500 hover:text-stone-700"
+            className="text-[11px] text-[#556480] hover:text-[#1a2036]"
           >
             Cancel
           </button>
@@ -562,7 +567,7 @@ function EngagementRow({
       ) : (
         <button
           onClick={() => setEditingEmails(true)}
-          className="block text-[11px] text-stone-500 hover:text-stone-700"
+          className="block text-[11px] text-[#556480] hover:text-[#1a2036]"
         >
           {engagement.firm_emails.length > 0
             ? `📧 ${engagement.firm_emails.join(", ")}`
@@ -577,7 +582,7 @@ function EngagementRow({
             value={notesDraft}
             onChange={(e) => setNotesDraft(e.target.value)}
             rows={3}
-            className="w-full rounded-md border border-stone-300 px-3 py-2 text-xs focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
+            className="w-full rounded-md border border-[#dbe5f2] px-3 py-2 text-xs focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
             placeholder="Notes — last contact, key points, next step…"
           />
           <div className="flex justify-end gap-2">
@@ -586,14 +591,14 @@ function EngagementRow({
                 setEditingNotes(false);
                 setNotesDraft(engagement.notes || "");
               }}
-              className="text-xs text-stone-500 hover:text-stone-700"
+              className="text-xs text-[#556480] hover:text-[#1a2036]"
             >
               Cancel
             </button>
             <button
               onClick={saveNotes}
               disabled={busy}
-              className="rounded-md bg-stone-800 px-3 py-1 text-xs font-medium text-white hover:bg-stone-700"
+              className="rounded-md bg-[#0d1424] px-3 py-1 text-xs font-medium text-white hover:bg-[#1a2036]"
             >
               Save
             </button>
@@ -602,7 +607,7 @@ function EngagementRow({
       ) : (
         <button
           onClick={() => setEditingNotes(true)}
-          className="block w-full text-left text-xs text-stone-500 hover:text-stone-700 italic"
+          className="block w-full text-left text-xs text-[#556480] hover:text-[#1a2036] italic"
         >
           {engagement.notes || "+ add notes"}
         </button>
@@ -610,7 +615,7 @@ function EngagementRow({
 
       {threads.length > 0 && (
         <div className="mt-2 space-y-1.5 border-l-2 border-blue-100 pl-3">
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-stone-400">
+          <div className="text-[10px] font-semibold uppercase tracking-wide text-[#7b8ba5]">
             {threads.length} email thread{threads.length === 1 ? "" : "s"}
           </div>
           {threads.slice(0, 5).map((t) => (
@@ -619,11 +624,11 @@ function EngagementRow({
               href={`https://mail.google.com/mail/u/0/#all/${t.gmail_thread_id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="block text-xs hover:bg-stone-50 -mx-1 px-1 py-0.5 rounded transition-colors"
+              className="block text-xs hover:bg-[#f7f9fd] -mx-1 px-1 py-0.5 rounded transition-colors"
               title="Open thread in Gmail"
             >
               <div className="flex items-baseline justify-between gap-2">
-                <span className="font-medium text-stone-700 truncate">
+                <span className="font-medium text-[#1a2036] truncate">
                   {t.subject || "(no subject)"}
                 </span>
                 <div className="flex items-center gap-1.5 shrink-0">
@@ -631,25 +636,25 @@ function EngagementRow({
                     className={`inline-block rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase ${
                       t.last_message_direction === "inbound"
                         ? "bg-blue-50 text-blue-600 border border-blue-200"
-                        : "bg-stone-50 text-stone-500 border border-stone-200"
+                        : "bg-[#f7f9fd] text-[#556480] border border-[#e4edf7]"
                     }`}
                   >
                     {t.last_message_direction === "inbound" ? "← in" : "out →"}
                   </span>
-                  <span className="text-[10px] text-stone-400">
+                  <span className="text-[10px] text-[#7b8ba5]">
                     {t.message_count > 1 && `${t.message_count} · `}
                     {fmtThreadDate(t.last_message_at)}
                   </span>
-                  <span className="text-[10px] text-stone-300">↗</span>
+                  <span className="text-[10px] text-[#9ba8c4]">↗</span>
                 </div>
               </div>
-              <div className="text-[11px] text-stone-500 line-clamp-1">
+              <div className="text-[11px] text-[#556480] line-clamp-1">
                 {t.last_message_snippet}
               </div>
             </a>
           ))}
           {threads.length > 5 && (
-            <div className="text-[10px] text-stone-400">
+            <div className="text-[10px] text-[#7b8ba5]">
               + {threads.length - 5} more
             </div>
           )}
@@ -761,28 +766,28 @@ function GmailConnectionSection({
   if (status === null) return null;
 
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-5 space-y-3">
+    <div className="rounded-lg border border-[#e4edf7] bg-white p-5 space-y-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-base font-semibold text-stone-800">Gmail</span>
+            <span className="text-[16px] font-bold text-[#0d1424] tracking-tight">Gmail</span>
             {status.connected ? (
               <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
                 connected
               </span>
             ) : (
-              <span className="inline-flex items-center rounded-full border border-stone-200 bg-stone-50 text-stone-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+              <span className="inline-flex items-center rounded-full border border-[#e4edf7] bg-[#f7f9fd] text-[#556480] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
                 not connected
               </span>
             )}
           </div>
-          <p className="mt-1 text-xs text-stone-500">
+          <p className="mt-1 text-xs text-[#556480]">
             {status.connected
               ? "We'll match incoming and outgoing emails to firms in your engagements list."
               : "Connect Gmail to automatically track email threads with each firm. Read-only — we never send on your behalf."}
           </p>
           {status.connected && status.granted_at && (
-            <p className="mt-0.5 text-[11px] text-stone-400">
+            <p className="mt-0.5 text-[11px] text-[#7b8ba5]">
               Granted {new Date(status.granted_at).toLocaleDateString()}
             </p>
           )}
@@ -801,7 +806,7 @@ function GmailConnectionSection({
             <button
               onClick={disconnect}
               disabled={busy}
-              className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 hover:bg-stone-50 hover:text-rose-600"
+              className="rounded-lg border border-[#dbe5f2] px-3 py-1.5 text-xs font-medium text-[#40536f] hover:bg-[#f7f9fd] hover:text-rose-600"
             >
               Disconnect
             </button>
@@ -809,7 +814,7 @@ function GmailConnectionSection({
             <button
               onClick={connect}
               disabled={busy}
-              className="rounded-lg bg-stone-800 px-4 py-1.5 text-xs font-medium text-white hover:bg-stone-700 disabled:opacity-50"
+              className="rounded-lg bg-[#0d1424] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#1a2036] disabled:opacity-50"
             >
               {busy ? "…" : "Connect Gmail"}
             </button>
@@ -817,7 +822,7 @@ function GmailConnectionSection({
         </div>
       </div>
       {lastResult && (
-        <div className="text-[11px] text-stone-500">{lastResult}</div>
+        <div className="text-[11px] text-[#556480]">{lastResult}</div>
       )}
       {error && (
         <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
@@ -845,7 +850,7 @@ function fmtRel(iso?: string | null): string {
 
 function StatusPill({ status, paid }: { status: string; paid: boolean }) {
   const map: Record<string, string> = {
-    queued: "bg-stone-100 text-stone-600 border-stone-200",
+    queued: "bg-[#eef2f8] text-[#40536f] border-[#e4edf7]",
     running: "bg-blue-50 text-blue-700 border-blue-200",
     complete: paid
       ? "bg-emerald-50 text-emerald-700 border-emerald-200"
@@ -868,11 +873,11 @@ function StatusPill({ status, paid }: { status: string; paid: boolean }) {
 
 function EngagementStatusPill({ status }: { status: EngagementStatus }) {
   const map: Record<EngagementStatus, string> = {
-    not_contacted: "bg-stone-100 text-stone-600 border-stone-200",
+    not_contacted: "bg-[#eef2f8] text-[#40536f] border-[#e4edf7]",
     outreach_sent: "bg-blue-50 text-blue-700 border-blue-200",
     in_discussion: "bg-violet-50 text-violet-700 border-violet-200",
     engaged: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    declined: "bg-stone-50 text-stone-400 border-stone-200",
+    declined: "bg-[#f7f9fd] text-[#7b8ba5] border-[#e4edf7]",
   };
   return (
     <span
