@@ -2092,17 +2092,17 @@ export default function DashboardPage() {
           {documents.length === 0 && (
             <section
               data-testid="dashboard-empty-upload-cta"
-              className="mb-8 overflow-hidden rounded-[28px] border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-6 md:p-7 shadow-[0_10px_30px_rgba(91,141,238,0.08)]"
+              className="mb-8 overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(234,241,251,0.92))] backdrop-blur-xl p-5 md:p-7 shadow-[0_10px_36px_rgba(91,141,238,0.08)]"
             >
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="max-w-xl">
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5b8dee]">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div className="max-w-2xl">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
                     Get started
                   </div>
-                  <h2 className="mt-2 text-[20px] font-bold leading-tight text-[#0d1424]">
+                  <h2 className="mt-2 text-[24px] font-bold leading-tight text-[#0d1424]">
                     Upload your case documents to surface deadlines and risks
                   </h2>
-                  <p className="mt-2 text-[13.5px] leading-6 text-[#556480]">
+                  <p className="mt-3 text-[14px] leading-7 text-[#556480]">
                     The numbers above stay at zero until Guardian has something
                     to read. Drop your I-797s, I-983s, tax returns, or LLC docs
                     — we&rsquo;ll classify them, extract the dates that matter,
