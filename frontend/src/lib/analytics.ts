@@ -83,7 +83,18 @@ type ProfessionalSearchEvent =
   | "professional_search_marketplace_match_clicked"
   // misc
   | "professional_search_lang_toggled"
-  | "professional_search_my_searches_viewed";
+  | "professional_search_my_searches_viewed"
+  // 5-firm preview tail (paywall gate after the visible preview rows).
+  | "professional_search_preview_paywall_shown"
+  // End-of-firm-list "Want hands-on Guardian counsel?" mailto CTA.
+  | "professional_search_attorney_inquiry_clicked"
+  // Post-claim navigation CTA on /paid ("Go to case →" / "Go to dashboard →").
+  | "professional_search_post_claim_nav_clicked"
+  // Pro trial CTA on /paid — full lifecycle: clicked → started OR fallback OR failed.
+  | "professional_search_pro_trial_clicked"
+  | "professional_search_pro_trial_started"
+  | "professional_search_pro_trial_fallback"
+  | "professional_search_pro_trial_failed";
 
 type MixpanelWindow = Window & {
   mixpanel?: MixpanelClient;

@@ -460,6 +460,14 @@ function PaidPage() {
               </div>
               <Link
                 href={claimedCaseId ? `/case/${claimedCaseId}` : "/dashboard"}
+                onClick={() => {
+                  trackProfessionalSearchEvent("professional_search_post_claim_nav_clicked", {
+                    search_id: params.searchId,
+                    destination: claimedCaseId ? "case" : "dashboard",
+                    has_case: Boolean(claimedCaseId),
+                    lang,
+                  });
+                }}
                 className="rounded-full bg-[#5b8dee] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] hover:bg-[#4f82de]"
               >
                 {claimedCaseId
@@ -494,10 +502,19 @@ function PaidPage() {
               <button
                 type="button"
                 onClick={async () => {
+                  trackProfessionalSearchEvent("professional_search_pro_trial_clicked", {
+                    search_id: params.searchId,
+                    lang,
+                  });
                   setProTrialState("starting");
                   setProTrialError(null);
                   try {
                     await startProTrialFromSearch(params.searchId);
+                    trackProfessionalSearchEvent("professional_search_pro_trial_started", {
+                      search_id: params.searchId,
+                      via: "saved_card",
+                      lang,
+                    });
                     setProTrialState("started");
                   } catch (e) {
                     const message = e instanceof Error ? e.message : String(e);
@@ -516,6 +533,11 @@ function PaidPage() {
                     const isMissingCard =
                       /no saved card|no such checkout\.session|stripe error/i.test(message);
                     if (isMissingCard) {
+                      trackProfessionalSearchEvent("professional_search_pro_trial_fallback", {
+                        search_id: params.searchId,
+                        reason: message.slice(0, 120),
+                        lang,
+                      });
                       try {
                         const { url } = await startProSubscriptionCheckout({
                           successPath: `/find-lawyer/${params.searchId}/paid?subscribed=1`,
@@ -525,11 +547,23 @@ function PaidPage() {
                         return;
                       } catch (subErr) {
                         const subMessage = subErr instanceof Error ? subErr.message : String(subErr);
+                        trackProfessionalSearchEvent("professional_search_pro_trial_failed", {
+                          search_id: params.searchId,
+                          path: "fallback_checkout",
+                          message: subMessage.slice(0, 120),
+                          lang,
+                        });
                         setProTrialError(subMessage);
                         setProTrialState("error");
                         return;
                       }
                     }
+                    trackProfessionalSearchEvent("professional_search_pro_trial_failed", {
+                      search_id: params.searchId,
+                      path: "saved_card",
+                      message: message.slice(0, 120),
+                      lang,
+                    });
                     setProTrialError(message);
                     setProTrialState("error");
                   }

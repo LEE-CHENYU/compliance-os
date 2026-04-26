@@ -335,6 +335,7 @@ export default function SearchStatus() {
   const stopped = useRef(false);
   const viewedRef = useRef(false);
   const completedSeenRef = useRef(false);
+  const previewPaywallTailEmittedRef = useRef(false);
 
   useEffect(() => {
     stopped.current = false;
@@ -449,6 +450,27 @@ export default function SearchStatus() {
       setBatchTracking(false);
     }
   }
+
+  // Fire once when the "N more firms behind the paywall" tile first
+  // shows. Distinct from professional_search_paywall_viewed (top-of-list
+  // banner) so we can measure preview-tail conversion separately. Lives
+  // up here (above the early returns) so React's rules-of-hooks are
+  // satisfied even when row is still loading.
+  const tailHiddenCount = row && !row.is_paid
+    ? Math.max(0, (row.tier_report?.length ?? 0) - 5)
+    : 0;
+  useEffect(() => {
+    if (tailHiddenCount > 0 && !previewPaywallTailEmittedRef.current && row) {
+      previewPaywallTailEmittedRef.current = true;
+      trackProfessionalSearchEvent("professional_search_preview_paywall_shown", {
+        search_id: row.id,
+        hidden_count: tailHiddenCount,
+        preview_count: 5,
+        total_firms: row.tier_report?.length ?? 0,
+        lang,
+      });
+    }
+  }, [tailHiddenCount, row, lang]);
 
   const bgClass =
     "min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-6 py-10";
@@ -809,6 +831,15 @@ export default function SearchStatus() {
                 <div className="text-[18px] font-bold text-[#0d1424]">TBD</div>
                 <a
                   href="mailto:info@yangtze-capital.com?subject=Guardian%20attorney%20engagement%20inquiry"
+                  onClick={() => {
+                    trackProfessionalSearchEvent("professional_search_attorney_inquiry_clicked", {
+                      search_id: row.id,
+                      vertical: row.vertical,
+                      is_paid: Boolean(row.is_paid),
+                      firms_count: tierRows.length,
+                      lang,
+                    });
+                  }}
                   className="mt-1 inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
                 >
                   {isZh ? "联系我们 →" : "Get in touch →"}
