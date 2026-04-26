@@ -58,6 +58,10 @@ out/rubric-loop-*.md
 scripts/check_quality_cache/
 .reviewer-credentials.local.txt
 
+# Personal scratch — production case URLs, test account links, etc.
+# Always contains real user emails or live row IDs; never commit.
+case-urls.txt
+
 # Local browser/CLI session caches — contain credentials, machine-specific
 # paths, or just log noise. Never commit these.
 .xhs-session/
