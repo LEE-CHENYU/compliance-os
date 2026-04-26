@@ -119,7 +119,7 @@ function PricingPage() {
           <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
             {t.eyebrow as string}
           </div>
-          <h1 className="mt-3 font-[Charter,Georgia,serif] text-[40px] font-bold leading-[1.1] tracking-tight text-[#0d1424]">
+          <h1 className="mt-3 text-[40px] font-extrabold leading-[1.05] tracking-tight text-[#0d1424]">
             {t.title as string}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-7 text-[#556480]">
