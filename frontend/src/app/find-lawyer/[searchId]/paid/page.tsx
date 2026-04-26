@@ -115,6 +115,9 @@ function PaidPage() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [claimed, setClaimed] = useState<boolean>(false);
+  // case_id surfaces only after a rich-brief claim auto-creates a case;
+  // null otherwise. Drives the "Go to case" CTA on the Saved card.
+  const [claimedCaseId, setClaimedCaseId] = useState<string | null>(null);
   const [proTrialState, setProTrialState] = useState<"idle" | "starting" | "started" | "error">("idle");
   const [proTrialError, setProTrialError] = useState<string | null>(null);
   const paidEmittedRef = useRef(false);
@@ -202,21 +205,21 @@ function PaidPage() {
       // Now we're logged in — claim the paid search.
       const claimed = await claimSearch(params.searchId);
       setClaimed(true);
+      setClaimedCaseId(claimed.case_id ?? null);
       trackProfessionalSearchEvent("professional_search_signup_succeeded", {
         search_id: params.searchId,
         mode: authMode,
-        landed_on: claimed.case_id ? "case" : "dashboard",
+        landed_on: "paid",
+        has_case: Boolean(claimed.case_id),
         lang,
       });
-      // If the brief was rich enough, the backend auto-created a case
-      // (skipping the discovery wizard for users who already supplied
-      // substantial context). Land on the case page so they see their
-      // search waiting in the Lawyers section. Otherwise fall back to
-      // the dashboard.
-      const next = claimed.case_id
-        ? `/case/${claimed.case_id}`
-        : "/dashboard";
-      setTimeout(() => router.push(next), 800);
+      // Stay on /paid post-claim — this is where the actionable content
+      // lives (firm shortlist + Track buttons + Pro trial CTA). Earlier
+      // versions redirected to /case but landed users on a page where the
+      // firm list was buried; they had to back-button to find it. The
+      // "Saved" card below offers an explicit "Go to case →" link for
+      // users who want to navigate (case exists when the brief was rich
+      // enough — see professional_search.py:2012).
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       trackProfessionalSearchEvent("professional_search_signup_failed", {
@@ -263,7 +266,7 @@ function PaidPage() {
           <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#2f7a45]">
             {isZh ? "支付成功" : "Payment received"}
           </div>
-          <h1 className="mt-3 font-[Charter,Georgia,serif] text-[40px] font-bold leading-[1.1] text-[#0d1424]">
+          <h1 className="mt-3 text-[40px] font-extrabold leading-[1.1] tracking-tight text-[#0d1424]">
             {isPaid
               ? isZh
                 ? "您的报告已解锁。"
@@ -293,7 +296,7 @@ function PaidPage() {
           )}
 
           {pollTimedOut && !isPaid && (
-            <div className="mt-5 rounded-2xl border border-[#ffe3c9] bg-[#fff6ea] p-4">
+            <div data-testid="find-lawyer-paid-timeout" className="mt-5 rounded-2xl border border-[#ffe3c9] bg-[#fff6ea] p-4">
               <div className="text-[13px] font-semibold text-[#9c5a1c]">
                 {isZh
                   ? "支付确认超时（60 秒）"
@@ -329,6 +332,7 @@ function PaidPage() {
                     },
                   )
                 }
+                data-testid="find-lawyer-paid-download-pdf"
                 className="inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
               >
                 {isZh ? "下载 PDF" : "Download PDF"}
@@ -348,6 +352,7 @@ function PaidPage() {
                     },
                   )
                 }
+                data-testid="find-lawyer-paid-view-web"
                 className="inline-flex items-center gap-2 rounded-full border border-[#dbe5f2] bg-white/90 px-5 py-2.5 text-[13px] font-semibold text-[#40536f] transition hover:border-[#5b8dee] hover:text-[#1a2036]"
               >
                 {isZh ? "查看网页版" : "View web version"}
@@ -362,7 +367,7 @@ function PaidPage() {
             <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
               {isZh ? "保存到 Guardian 账户" : "Save this to your Guardian account"}
             </div>
-            <h2 className="mt-2 font-[Charter,Georgia,serif] text-[28px] font-bold leading-tight text-[#0d1424]">
+            <h2 className="mt-2 text-[28px] font-extrabold leading-tight tracking-tight text-[#0d1424]">
               {isZh
                 ? "登录账户，长期使用您的研究成果"
                 : "Sign up to keep using what you just bought."}
@@ -390,6 +395,7 @@ function PaidPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={isZh ? "邮箱" : "Email"}
+                data-testid="find-lawyer-paid-email"
                 className="w-full rounded-2xl border border-[#dbe5f2] bg-white/90 px-4 py-3 text-[15px] text-[#0d1424] outline-none transition focus:border-[#5b8dee] focus:ring-4 focus:ring-[#5b8dee]/10"
               />
               <input
@@ -399,11 +405,13 @@ function PaidPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={isZh ? "密码 (至少 8 位)" : "Password (8+ chars)"}
+                data-testid="find-lawyer-paid-password"
                 className="w-full rounded-2xl border border-[#dbe5f2] bg-white/90 px-4 py-3 text-[15px] text-[#0d1424] outline-none transition focus:border-[#5b8dee] focus:ring-4 focus:ring-[#5b8dee]/10"
               />
               <button
                 type="submit"
                 disabled={authBusy}
+                data-testid="find-lawyer-paid-auth-submit"
                 className="rounded-full bg-[#5b8dee] px-6 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-wait disabled:bg-[#a8bce8]"
               >
                 {authBusy
@@ -417,6 +425,7 @@ function PaidPage() {
               <button
                 type="button"
                 onClick={() => setAuthMode(authMode === "signup" ? "login" : "signup")}
+                data-testid="find-lawyer-paid-auth-toggle"
                 className="underline-offset-4 hover:text-[#40536f] hover:underline"
               >
                 {authMode === "signup"
@@ -428,7 +437,7 @@ function PaidPage() {
                   : "New here? Create an account"}
               </button>
               {authError && (
-                <span className="rounded-full border border-[#ffd6d6] bg-[#fff4f4] px-3 py-1 text-[#a33a3a]">
+                <span data-testid="find-lawyer-paid-auth-error" className="rounded-full border border-[#ffd6d6] bg-[#fff4f4] px-3 py-1 text-[#a33a3a]">
                   {authError}
                 </span>
               )}
@@ -450,10 +459,12 @@ function PaidPage() {
                 </div>
               </div>
               <Link
-                href="/dashboard"
+                href={claimedCaseId ? `/case/${claimedCaseId}` : "/dashboard"}
                 className="rounded-full bg-[#5b8dee] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] hover:bg-[#4f82de]"
               >
-                {isZh ? "前往面板 →" : "Go to dashboard →"}
+                {claimedCaseId
+                  ? (isZh ? "前往案件 →" : "Go to case →")
+                  : (isZh ? "前往面板 →" : "Go to dashboard →")}
               </Link>
             </div>
           </section>
@@ -489,11 +500,22 @@ function PaidPage() {
                     await startProTrialFromSearch(params.searchId);
                     setProTrialState("started");
                   } catch (e) {
-                    setProTrialError(e instanceof Error ? e.message : String(e));
+                    const message = e instanceof Error ? e.message : String(e);
+                    // 409 "No saved card" — older searches (or seeded test
+                    // data) don't have a Stripe customer attached. Quietly
+                    // bounce to /pricing where the user re-enters their card
+                    // for the same trial. Avoids surfacing a Stripe-error
+                    // string the user can't act on.
+                    if (/no saved card/i.test(message)) {
+                      router.push("/pricing");
+                      return;
+                    }
+                    setProTrialError(message);
                     setProTrialState("error");
                   }
                 }}
                 disabled={proTrialState === "starting"}
+                data-testid="find-lawyer-paid-start-trial"
                 className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-wait disabled:bg-[#a8bce8]"
               >
                 {proTrialState === "starting"
@@ -502,7 +524,7 @@ function PaidPage() {
               </button>
             </div>
             {proTrialError && (
-              <div className="mt-3 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-3 py-2 text-[12px] text-[#a33a3a]">
+              <div data-testid="find-lawyer-paid-trial-error" className="mt-3 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-3 py-2 text-[12px] text-[#a33a3a]">
                 {proTrialError}
               </div>
             )}
@@ -510,7 +532,7 @@ function PaidPage() {
         )}
 
         {claimed && proTrialState === "started" && (
-          <section className="rounded-[32px] border border-[#cfe8d5] bg-[#eaf6ec]/80 p-5 backdrop-blur">
+          <section data-testid="find-lawyer-paid-trial-started" className="rounded-[32px] border border-[#cfe8d5] bg-[#eaf6ec]/80 p-5 backdrop-blur">
             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#2f7a45]">
               {isZh ? "Pro 试用已开通" : "Pro trial active"}
             </div>

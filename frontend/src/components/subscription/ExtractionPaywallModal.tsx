@@ -74,12 +74,12 @@ export default function ExtractionPaywallModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d1424]/30 backdrop-blur-sm p-4">
+    <div data-testid="extraction-paywall-modal" className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d1424]/30 backdrop-blur-sm p-4">
       <div className="w-full max-w-md rounded-[28px] border border-white/70 bg-white/90 p-7 shadow-[0_30px_80px_rgba(56,85,131,0.18)] backdrop-blur-xl">
         <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#9c5a1c]">
           {isZh ? "需要升级" : "Upgrade required"}
         </div>
-        <h3 className="mt-3 font-[Charter,Georgia,serif] text-[24px] font-bold leading-[1.2] text-[#0d1424]">
+        <h3 className="mt-3 text-[24px] font-extrabold leading-[1.2] tracking-tight text-[#0d1424]">
           {t.paywallTitle as string}
         </h3>
         <p className="mt-3 text-[13.5px] leading-6 text-[#556480]">
@@ -94,6 +94,7 @@ export default function ExtractionPaywallModal({
           <button
             type="button"
             onClick={handleUpgrade}
+            data-testid="extraction-paywall-upgrade"
             className="inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
           >
             {t.paywallUpgrade as string}
@@ -101,6 +102,7 @@ export default function ExtractionPaywallModal({
           <button
             type="button"
             onClick={handleDismiss}
+            data-testid="extraction-paywall-dismiss"
             className="rounded-full border border-[#dbe5f2] bg-white/90 px-4 py-2 text-[13px] font-semibold text-[#52627d] transition hover:text-[#1a2036]"
           >
             {t.paywallDismiss as string}

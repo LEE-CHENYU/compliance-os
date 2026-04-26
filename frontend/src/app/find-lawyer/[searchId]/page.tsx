@@ -6,11 +6,9 @@ import {
   createEngagement,
   downloadProfessionalSearchUrl,
   Engagement,
-  getMarketplaceMatch,
   getProfessionalSearch,
   listCaseEngagements,
   startCheckout,
-  type MarketplaceMatch,
   type ProfessionalSearch,
 } from "@/lib/api";
 import {
@@ -100,6 +98,7 @@ function ReportActions({
         type="button"
         onClick={() => downloadAs("pdf")}
         disabled={busy !== null}
+        data-testid="find-lawyer-report-download-pdf"
         className="inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-wait disabled:bg-[#a8bce8]"
       >
         <svg
@@ -123,6 +122,7 @@ function ReportActions({
         href={downloadProfessionalSearchUrl(searchId)}
         target="_blank"
         rel="noopener noreferrer"
+        data-testid="find-lawyer-report-view-web"
         className="text-[12px] font-medium text-[#40536f] underline-offset-4 hover:text-[#1a2036] hover:underline"
       >
         {t.btnViewWeb as string}
@@ -210,6 +210,7 @@ function Paywall({
           type="button"
           onClick={go}
           disabled={busy}
+          data-testid="find-lawyer-checkout"
           className="inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-wait disabled:bg-[#a8bce8]"
         >
           {busy
@@ -233,7 +234,7 @@ function Paywall({
         </button>
       </div>
       {error && (
-        <div className="mt-3 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-3 py-2 text-[12px] text-[#a33a3a]">
+        <div data-testid="find-lawyer-checkout-error" className="mt-3 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-3 py-2 text-[12px] text-[#a33a3a]">
           {error}
         </div>
       )}
@@ -304,102 +305,6 @@ function PersonaCard({
   );
 }
 
-function GuardianUpsell({
-  matches,
-  lang,
-  searchId,
-}: {
-  matches: MarketplaceMatch[];
-  lang: Lang;
-  searchId: string;
-}) {
-  const router = useRouter();
-  const isZh = lang === "zh";
-  if (matches.length === 0) return null;
-
-  return (
-    <section className="rounded-[32px] border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-7 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5b8dee]">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#5b8dee]" />
-        {isZh ? "或者由 Guardian 直接为您处理" : "Or have Guardian do this for you"}
-      </div>
-      <p className="mt-3 max-w-2xl text-[14px] leading-6 text-[#556480]">
-        {isZh
-          ? "您的情况符合 Guardian 提供的标准服务。固定价格、可验证流程、由我们的执业律师交付。如果您更倾向于聘用下方列出的外部律所，下方的搜索结果依然完整可用。"
-          : "Your situation matches a Guardian service we deliver in-house — fixed price, vetted attorney, no quote-shopping. If you'd rather hire one of the external firms below, the full search results are still yours."}
-      </p>
-
-      <div className="mt-5 grid gap-4 sm:grid-cols-2">
-        {matches.map((m) => {
-          const name = m.public_name || m.name;
-          const headline = m.public_headline || m.headline;
-          const desc = m.public_description || m.description;
-          const cta = m.public_cta_label || m.cta_label || (isZh ? "查看服务" : "View service");
-          const price =
-            m.price_cents === 0
-              ? isZh ? "免费" : "Free"
-              : `$${(m.price_cents / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-          return (
-            <div
-              key={m.sku}
-              className="rounded-2xl border border-white/70 bg-white/82 p-5 shadow-[0_10px_30px_rgba(61,84,128,0.05)] flex flex-col"
-            >
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="text-[16px] font-bold text-[#0d1424]">{name}</div>
-                <div className="text-[15px] font-bold text-[#5b8dee] tabular-nums">{price}</div>
-              </div>
-              {headline && (
-                <div className="mt-1 text-[13px] font-medium text-[#40536f]">{headline}</div>
-              )}
-              {desc && (
-                <p className="mt-2 text-[12.5px] leading-5 text-[#7b8ba5] line-clamp-3">
-                  {desc}
-                </p>
-              )}
-              <div className="mt-3 text-[11px] font-medium text-[#9aa9c2] italic">
-                {m.match_reason}
-              </div>
-              <div className="mt-auto pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    trackProfessionalSearchEvent(
-                      "professional_search_marketplace_match_clicked",
-                      {
-                        search_id: searchId,
-                        sku: m.sku,
-                        match_reason: m.match_reason,
-                        price_cents: m.price_cents,
-                        lang,
-                      },
-                    );
-                    if (m.path) router.push(m.path);
-                  }}
-                  disabled={!m.path}
-                  className="w-full rounded-full bg-[#5b8dee] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#a8bce8]"
-                >
-                  {cta} →
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <button
-        type="button"
-        onClick={() => {
-          const el = document.getElementById("tier-report-anchor");
-          el?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }}
-        className="mt-5 text-[12px] font-medium text-[#5b8dee] hover:text-[#2f5bae] underline-offset-4 hover:underline"
-      >
-        {isZh ? "或查看下方外部律所对比 ↓" : "Or compare external firms below ↓"}
-      </button>
-    </section>
-  );
-}
-
 
 function priorityStyle(priority: string | null): string {
   switch (priority) {
@@ -421,9 +326,9 @@ export default function SearchStatus() {
   const router = useRouter();
   const { lang, setLang } = useLang();
   const t = FIND_LAWYER_STRINGS[lang];
+  const isZh = lang === "zh";
   const [row, setRow] = useState<ProfessionalSearch | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [matches, setMatches] = useState<MarketplaceMatch[]>([]);
   const [engagements, setEngagements] = useState<Engagement[]>([]);
   const [tracking, setTracking] = useState<string | null>(null);
   const [batchTracking, setBatchTracking] = useState(false);
@@ -470,11 +375,6 @@ export default function SearchStatus() {
       if (!stopped.current) setTimeout(poll, POLL_INTERVAL_MS);
     }
     poll();
-    // Marketplace match depends only on vertical+brief (set at intake),
-    // so a single fetch is enough — no need to refresh as the search runs.
-    getMarketplaceMatch(params.searchId)
-      .then(setMatches)
-      .catch(() => setMatches([]));
     return () => {
       stopped.current = true;
     };
@@ -497,6 +397,7 @@ export default function SearchStatus() {
   async function trackOne(firmName: string) {
     if (!caseId) return;
     setTracking(firmName);
+    setError(null);
     try {
       await createEngagement(caseId, {
         firm_name: firmName,
@@ -509,7 +410,7 @@ export default function SearchStatus() {
       });
       await refreshEngagements();
     } catch (err) {
-      console.error("track failed", err);
+      setError(err instanceof Error ? err.message : "Could not track this firm");
     } finally {
       setTracking(null);
     }
@@ -518,6 +419,7 @@ export default function SearchStatus() {
   async function trackTopN(n: number, firms: { firm: string }[]) {
     if (!caseId) return;
     setBatchTracking(true);
+    setError(null);
     try {
       const tracked = new Set(engagements.map((e) => e.firm_name.toLowerCase()));
       const targets = firms
@@ -526,10 +428,15 @@ export default function SearchStatus() {
       // Sequential: idempotent + small N. Parallel would race the soft-
       // dedupe in the backend.
       for (const t of targets) {
-        await createEngagement(caseId, {
-          firm_name: t.firm,
-          search_id: params.searchId,
-        }).catch((e) => console.error("batch track failed for", t.firm, e));
+        try {
+          await createEngagement(caseId, {
+            firm_name: t.firm,
+            search_id: params.searchId,
+          });
+        } catch (err) {
+          setError(err instanceof Error ? err.message : `Could not track ${t.firm}`);
+          break;
+        }
       }
       trackProfessionalSearchEvent("professional_search_top_n_tracked", {
         search_id: params.searchId,
@@ -634,9 +541,12 @@ export default function SearchStatus() {
               <div className="mt-1 text-[13px]">{row.error}</div>
             </div>
           )}
+          {error ? (
+            <div data-testid="find-lawyer-status-error" className="mt-5 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
+              {error}
+            </div>
+          ) : null}
         </header>
-
-        <GuardianUpsell matches={matches} lang={lang} searchId={row.id} />
 
         <section className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
           <div className="mb-5 flex items-baseline justify-between">
@@ -700,6 +610,7 @@ export default function SearchStatus() {
                   type="button"
                   onClick={() => trackTopN(3, tierRows)}
                   disabled={batchTracking}
+                  data-testid="find-lawyer-track-top-3"
                   className="rounded-full border border-[#dbe5f2] bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#40536f] hover:border-[#5b8dee] hover:text-[#1a2036] disabled:opacity-50"
                 >
                   {batchTracking ? "Tracking…" : "Track top 3 →"}
@@ -707,6 +618,7 @@ export default function SearchStatus() {
                 <button
                   type="button"
                   onClick={() => router.push(`/case/${caseId}`)}
+                  data-testid="find-lawyer-open-case"
                   className="rounded-full border border-[#dbe5f2] bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#40536f] hover:border-[#5b8dee] hover:text-[#1a2036]"
                 >
                   Open case →
@@ -766,6 +678,7 @@ export default function SearchStatus() {
                               type="button"
                               onClick={() => trackOne(r.firm)}
                               disabled={tracking === r.firm}
+                              data-testid={`find-lawyer-track-${safeName(r.firm).toLowerCase()}`}
                               className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#40536f] hover:border-[#5b8dee] hover:text-[#1a2036] disabled:opacity-50"
                             >
                               {tracking === r.firm ? "tracking…" : "+ track"}
@@ -820,6 +733,46 @@ export default function SearchStatus() {
               MCP tool or the vendor directory endpoint for any firm above to
               pull the dossier.
             </p>
+          </section>
+        )}
+
+        {/* End-of-firm-list "human review" CTA. Single tile, TBD pricing —
+            differentiates from the firm shortlist (external counsel) by
+            offering Guardian-staffed counsel as a hands-on alternative.
+            Replaces the prior in-house product upsell that lived above the
+            firm list with priced cards. */}
+        {tierRows.length > 0 && (
+          <section className="rounded-[32px] border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-7 shadow-[0_24px_70px_rgba(91,141,238,0.08)] backdrop-blur">
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5b8dee]">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#5b8dee]" />
+              {isZh ? "或者由 Guardian 律师为您处理" : "Or have a Guardian attorney handle this"}
+            </div>
+            <div className="mt-3 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-2xl">
+                <div className="mt-1 text-[20px] font-bold leading-tight text-[#0d1424]">
+                  {isZh
+                    ? "想让我们的律师亲自跟进?"
+                    : "Want hands-on Guardian counsel?"}
+                </div>
+                <p className="mt-2 text-[13.5px] leading-6 text-[#556480]">
+                  {isZh
+                    ? "如果上面的律所对比不是您想要的,我们的内部律师可以直接接管整个案件 — 文件准备、提交、与 USCIS 沟通全程负责。请告诉我们您的情况,我们会回复定价方案。"
+                    : "If you'd rather skip the shortlist comparison, a Guardian-staffed attorney can take the case end-to-end — drafting, filing, USCIS correspondence. Tell us about your situation and we'll come back with pricing."}
+                </p>
+              </div>
+              <div className="flex flex-col items-start gap-2 md:items-end">
+                <div className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">
+                  {isZh ? "价格" : "Pricing"}
+                </div>
+                <div className="text-[18px] font-bold text-[#0d1424]">TBD</div>
+                <a
+                  href="mailto:fretin13@gmail.com?subject=Guardian%20attorney%20engagement%20inquiry"
+                  className="mt-1 inline-flex items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
+                >
+                  {isZh ? "联系我们 →" : "Get in touch →"}
+                </a>
+              </div>
+            </div>
           </section>
         )}
 

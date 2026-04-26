@@ -1,0 +1,66 @@
+I'm an F-1 student on STEM OPT looking for an H-1B attorney for the FY2027 cap cycle (March 2026 lottery, October 2026 start date). My situation has a few moving parts and I want a firm that can handle all of them in one engagement rather than splitting across multiple lawyers.
+
+Background on me:
+- Master's in Computer Science from a US university, graduated May 2025
+- Currently on STEM OPT (24-month extension), valid through May 2027
+- Working as a Research Data Scientist at an early-stage AI research startup in Menlo Park, CA
+- I-983 training plan signed and on file with the school; first 12-month evaluation submitted
+- Chinese national (PRC), Mandarin native speaker, came to the US in 2022 on F-1
+- Single, no dependents
+- SEVIS active, no prior visa denials or status issues
+
+Background on my employer (the petitioner):
+- Delaware C-Corp, incorporated January 2026
+- ~12 employees, recently closed an $8M seed round (February 2026, led by a tier-1 VC)
+- Headquartered in Menlo Park, CA — fully on-site, no remote
+- E-Verify enrolled (required for STEM OPT)
+- This will be the company's first H-1B petition; they have not filed before
+- Founder/CEO is a US citizen; I'd be the second person on a work visa they sponsor
+
+The H-1B itself:
+- Job title: Research Data Scientist
+- SOC code: 15-2051.00 (Data Scientists)
+- Wage level III based on my experience and degree
+- Prevailing wage in SF-San Mateo-Redwood City MSA: about $148K/yr; my offered salary is $150K-$165K so I'm comfortably above
+- Specialty occupation argument is strong on paper (CS Master's directly maps to data-science role) but the petitioner is a startup, so I'm worried about RFE risk on:
+  - Specialty occupation (specifically the requirement that a bachelor's in a specific field is a normal entry requirement)
+  - Employer-employee relationship (I work with a small team, do hands-on research, no formal management chain — I want to make sure we don't trigger an "are they really an employer?" RFE)
+  - Beneficial owner / company viability (early-stage, pre-revenue, all funding is investor-backed)
+
+What I need from counsel:
+1. Cap-subject H-1B filing for the FY2027 lottery — registration window opens early March 2026, filing window April-June if selected
+2. Drafting the specialty-occupation argument with attention to startup-RFE risk patterns
+3. Coordinating LCA filing with DOL (employer's first one — they'll need help with FEIN, NAICS, wage data setup)
+4. Optional: STEM OPT 12-month evaluation review — my second one is due in May 2026 and I want to make sure it's clean before the H-1B filing
+5. Backup plans if I don't get selected in the lottery: my STEM OPT runs through May 2027 so I have a second cap cycle (FY2028) as fallback. I'd want to discuss whether a cap-exempt employer secondment or O-1 would be reasonable contingencies given my publication record (3 first-author NeurIPS papers, 1 ICML).
+
+Firm criteria:
+- Strong startup-employer practice — not just enterprise H-1B mills
+- Demonstrated track record on specialty-occupation RFEs in technical roles (data science, ML, software engineering)
+- Comfort with first-time petitioners (LCA setup, FEIN registration, etc.)
+- West coast preferred (CA / WA office or strong CA practice) but I'll engage a remote-first firm if the experience is right
+- Mandarin-speaking attorney is a plus but absolutely not required — English is fine
+- Boutique or mid-size preferred over the largest firms; I want a partner who'll actually look at my case, not be 17 layers down on a Fragomen team
+- Budget: I have $5K-$8K set aside for legal fees plus government filing fees ($460 I-129 + premium processing $2805 if we go that route + ACWIA fee). Open to going higher for the right firm.
+
+Timing:
+- Today is late April 2026
+- Registration deadline is early March 2027 for FY2028, but FY2027 (March 2026) already passed unless I'm reading this wrong — please confirm timing
+- Wait, let me re-check: I want to file in the next available cycle. If I'm too late for FY2027 I want to plan for FY2028 (March 2027 registration, October 2027 start)
+- Either way, I want to engage counsel ASAP so we have time to do a clean petition rather than rushing
+
+A few specific questions I'd want a 30-min consult to cover:
+- How aggressive should I be on premium processing (extra $2805 to USCIS)?
+- Should the company file an LCA per location if I ever travel for work, or is the primary worksite enough?
+- Any flags on my STEM OPT-to-H-1B transition given that the employer is a startup that's never sponsored before?
+- If the lottery doesn't pick me, what's a realistic O-1 path with my publication record?
+
+Documents I can share:
+- Most recent I-20, I-94, EAD card
+- Signed I-983 training plan + first 12-month evaluation
+- Offer letter, current employment verification letter
+- Employer's incorporation documents, EIN letter, recent investor announcement
+- My CV with publications list
+- Passport (Chinese, valid through 2031)
+
+Looking forward to recommendations. Please flag any red flags you see in my situation that I might be missing.
