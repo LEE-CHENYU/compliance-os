@@ -198,6 +198,30 @@ function FindLawyer() {
                 setLang(next);
               }}
             />
+            <a
+              href="/samples/lawyer-search-eb5-sample.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#cfe1ff] bg-[#eaf2ff]/90 px-4 py-2 text-[12px] font-semibold text-[#2f5bae] shadow-[0_8px_24px_rgba(91,141,238,0.18)] transition hover:bg-[#dde9fb] hover:text-[#1a2036]"
+              title={lang === "zh" ? "查看示例 PDF 报告" : "Preview a sample PDF report"}
+            >
+              <svg
+                aria-hidden="true"
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="9" y1="15" x2="15" y2="15" />
+              </svg>
+              {lang === "zh" ? "查看示例报告" : "See sample report"}
+            </a>
             <div className="rounded-full border border-[#dce6f3] bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7c95] shadow-[0_8px_24px_rgba(42,64,102,0.08)]">
               {t.statusPagePill as string}
             </div>
