@@ -72,6 +72,13 @@ class CheckoutRequest(BaseModel):
     # to /dashboard on success, /pricing on cancel.
     success_path: str | None = None
     cancel_path: str | None = None
+    # Optional: pre-attach a free trial so the user sees "Free for N days,
+    # then $20/mo" on the Stripe checkout page instead of "$20/mo today".
+    # Used by the post-search-payment trial CTA when the saved-card path
+    # fails (no setup_future_usage on the original purchase) — same trial
+    # offer, fresh card. Stripe rejects trials for users who've already
+    # had one on this customer, so pass-through is safe.
+    trial_period_days: int | None = None
 
 
 @router.post("/checkout")
@@ -110,6 +117,18 @@ def create_subscription_checkout(
     else:
         customer_kwargs["customer_email"] = user.email
 
+    subscription_data: dict = {
+        "metadata": {"user_id": user.id, "kind": "pro_subscription"},
+    }
+    if body.trial_period_days and body.trial_period_days > 0:
+        subscription_data["trial_period_days"] = int(body.trial_period_days)
+        # Match the saved-card trial behaviour: if no card lands by trial
+        # end, cancel rather than fail to charge. Belt-and-suspenders since
+        # Checkout already collects a card upfront for subscription mode.
+        subscription_data["trial_settings"] = {
+            "end_behavior": {"missing_payment_method": "cancel"}
+        }
+
     try:
         checkout = stripe.checkout.Session.create(
             mode="subscription",
@@ -119,9 +138,7 @@ def create_subscription_checkout(
             cancel_url=f"{settings.public_app_url}{cancel_path}",
             client_reference_id=user.id,
             metadata={"user_id": user.id, "kind": "pro_subscription"},
-            subscription_data={
-                "metadata": {"user_id": user.id, "kind": "pro_subscription"},
-            },
+            subscription_data=subscription_data,
             **customer_kwargs,
         )
     except Exception as exc:

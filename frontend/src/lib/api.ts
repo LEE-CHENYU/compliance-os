@@ -476,7 +476,10 @@ export async function disconnectGmail(): Promise<{ ok: boolean }> {
     method: "POST",
     headers,
   });
-  if (!res.ok) throw new Error(res.statusText);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
   return res.json();
 }
 
@@ -592,6 +595,7 @@ export async function getSubscriptionState(): Promise<SubscriptionState | null> 
 export async function startProSubscriptionCheckout(opts?: {
   successPath?: string;
   cancelPath?: string;
+  trialPeriodDays?: number;
 }): Promise<{ url: string; session_id: string }> {
   const token = typeof window !== "undefined" ? localStorage.getItem("guardian_token") : null;
   if (!token) throw new Error("Sign in first to subscribe.");
@@ -604,6 +608,7 @@ export async function startProSubscriptionCheckout(opts?: {
     body: JSON.stringify({
       success_path: opts?.successPath,
       cancel_path: opts?.cancelPath,
+      trial_period_days: opts?.trialPeriodDays,
     }),
   });
   if (!res.ok) {

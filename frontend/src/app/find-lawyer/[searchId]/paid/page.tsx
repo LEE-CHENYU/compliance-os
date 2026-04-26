@@ -542,6 +542,11 @@ function PaidPage() {
                         const { url } = await startProSubscriptionCheckout({
                           successPath: `/find-lawyer/${params.searchId}/paid?subscribed=1`,
                           cancelPath: `/find-lawyer/${params.searchId}/paid`,
+                          // Same 30-day trial as the saved-card path so the
+                          // Stripe page reads "Free for 30 days, then $20/mo"
+                          // instead of "$20/mo today". Otherwise the rescue
+                          // path silently downgrades the user's offer.
+                          trialPeriodDays: 30,
                         });
                         window.location.href = url;
                         return;
