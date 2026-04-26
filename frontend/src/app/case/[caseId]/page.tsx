@@ -675,6 +675,7 @@ function GmailConnectionSection({
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastResult, setLastResult] = useState<string | null>(null);
+  const [lastSummary, setLastSummary] = useState<string | null>(null);
 
   useEffect(() => {
     getGmailStatus().then(setStatus).catch(() => setStatus({ connected: false }));
@@ -716,6 +717,7 @@ function GmailConnectionSection({
       const result = await syncGmail(force);
       if (result.skipped) {
         setLastResult(`Synced recently — skipped (last: ${fmtRel(result.last_synced_at)})`);
+        setLastSummary(null);
       } else {
         const matched = result.threads_matched ?? 0;
         const newish = result.threads_new ?? 0;
@@ -726,6 +728,7 @@ function GmailConnectionSection({
               ? `Synced — ${matched} thread${matched === 1 ? "" : "s"} updated`
               : `Synced — no new email matches`,
         );
+        setLastSummary(result.summary ?? null);
         await onSynced();
       }
     } catch (e) {
@@ -820,7 +823,17 @@ function GmailConnectionSection({
         </div>
       </div>
       {lastResult && (
-        <div className="text-[11px] text-[#556480]">{lastResult}</div>
+        <div className="space-y-1.5">
+          <div className="text-[11px] text-[#556480]">{lastResult}</div>
+          {lastSummary && (
+            <div className="rounded-xl border border-[#dbe5f2] bg-[#f5faff]/70 px-3 py-2 text-[12.5px] leading-5 text-[#1a2036]">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5b8dee] mr-2">
+                summary
+              </span>
+              {lastSummary}
+            </div>
+          )}
+        </div>
       )}
       {error && (
         <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">

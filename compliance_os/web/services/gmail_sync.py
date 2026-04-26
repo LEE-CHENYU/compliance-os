@@ -24,6 +24,7 @@ from typing import Any
 import httpx
 from sqlalchemy.orm import Session
 
+from compliance_os.settings import settings
 from compliance_os.web.models.tables import (
     CaseRow,
     EmailThreadRow,
@@ -394,9 +395,99 @@ def sync_user_gmail(
     token_row.last_sync_error = None
     db.commit()
 
+    # Brief LLM-generated summary of what just synced — actionable
+    # signal vs raw counts. Skipped silently when no API key, no
+    # threads touched, or the call fails (sync result is more
+    # important than the optional summary).
+    summary: str | None = None
+    if (threads_new + threads_matched) > 0 and settings.anthropic_api_key:
+        try:
+            summary = _summarize_sync(db, user_id, threads_touched_ids=list(seen_threads))
+        except Exception:
+            logger.exception("gmail sync summary failed; returning counts only")
+
     return {
         "messages_scanned": messages_scanned,
         "threads_matched": threads_matched,
         "threads_new": threads_new,
         "last_synced_at": now.isoformat(),
+        "summary": summary,
     }
+
+
+SUMMARY_MODEL = "claude-haiku-4-5"
+SUMMARY_TIMEOUT_S = 15
+
+
+def _summarize_sync(
+    db: Session, user_id: str, *, threads_touched_ids: list[str]
+) -> str | None:
+    """Generate a 1-2 sentence "what's new" summary using Haiku.
+
+    Reads the touched threads back from the DB (post-upsert state) so the
+    summary reflects what was actually persisted, not raw Gmail data.
+    Groups by firm (engagement) and surfaces direction/age signals.
+    Returns None if the LLM call fails or there's nothing notable.
+    """
+    if not threads_touched_ids:
+        return None
+    rows = (
+        db.query(EmailThreadRow, LawyerEngagementRow)
+        .join(LawyerEngagementRow, EmailThreadRow.engagement_id == LawyerEngagementRow.id)
+        .filter(EmailThreadRow.user_id == user_id)
+        .filter(EmailThreadRow.gmail_thread_id.in_(threads_touched_ids))
+        .order_by(EmailThreadRow.last_message_at.desc())
+        .all()
+    )
+    if not rows:
+        return None
+
+    # Compact line per thread; cap to keep prompt small + cheap.
+    lines: list[str] = []
+    for thread, engagement in rows[:20]:
+        age_h = max(
+            0,
+            int((datetime.utcnow() - thread.last_message_at).total_seconds() / 3600),
+        )
+        age_label = (
+            f"{age_h}h ago" if age_h < 48 else f"{age_h // 24}d ago"
+        )
+        lines.append(
+            f"- {engagement.firm_name} | {thread.last_message_direction} | "
+            f"{age_label} | subject: {thread.subject[:80]!r} | "
+            f"snippet: {thread.last_message_snippet[:120]!r}"
+        )
+    threads_block = "\n".join(lines)
+
+    system = (
+        "You are an assistant summarizing the result of a Gmail sync for a "
+        "compliance app. Write 1-2 short sentences (max 220 chars) describing "
+        "what's notable for the user — focus on inbound replies, urgent items, "
+        "and which firms are active. No bullet lists, no preamble like 'Here is'. "
+        "Direct, actionable, present-tense. If nothing inbound and nothing new, "
+        "say it briefly (e.g., 'Outbox-only sync — no replies yet')."
+    )
+    user_prompt = (
+        f"{len(rows)} threads were synced. Details:\n{threads_block}\n\n"
+        "Summarize."
+    )
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(
+            api_key=settings.anthropic_api_key,
+            timeout=SUMMARY_TIMEOUT_S,
+            max_retries=1,
+        )
+        resp = client.messages.create(
+            model=SUMMARY_MODEL,
+            max_tokens=180,
+            system=system,
+            messages=[{"role": "user", "content": user_prompt}],
+        )
+        text = "\n".join(b.text for b in resp.content if getattr(b, "type", None) == "text").strip()
+        # Defensive trim — model occasionally over-runs the char budget.
+        return text[:280] if text else None
+    except Exception as exc:
+        logger.warning("gmail sync summary call failed: %s", exc)
+        return None

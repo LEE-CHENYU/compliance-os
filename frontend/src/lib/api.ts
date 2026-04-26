@@ -429,6 +429,10 @@ export interface GmailSyncResult {
   threads_matched?: number;
   threads_new?: number;
   last_synced_at: string;
+  /** LLM-generated 1-2 sentence summary of what was synced.
+   *  Null when no threads were touched, no Anthropic key set, or the
+   *  summary call failed (sync result is the source of truth either way). */
+  summary?: string | null;
 }
 
 export async function syncGmail(force = false): Promise<GmailSyncResult> {
