@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 
 import MixpanelIdentitySync from "@/components/analytics/MixpanelIdentitySync";
+import { OG_IMAGE, SITE_DESC, SITE_NAME, SITE_URL } from "@/lib/site";
 
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
@@ -41,11 +42,6 @@ const MIXPANEL_BOOTSTRAP = MIXPANEL_TOKEN ? `
   });
 ` : "";
 
-const SITE_URL = "https://guardiancompliance.app";
-const SITE_NAME = "Guardian";
-const SITE_DESC =
-  "Guardian cross-checks your immigration and tax documents to find mismatches, missing forms, and deadline risks before USCIS or the IRS does. Built for F-1 / OPT / STEM OPT / H-1B workers, international students, and nonresident-alien entrepreneurs with US entities.";
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -73,11 +69,13 @@ export const metadata: Metadata = {
     title: "Guardian — compliance copilot for visas, tax, and entities",
     description: SITE_DESC,
     locale: "en_US",
+    images: [{ url: OG_IMAGE, width: 1024, height: 1024, alt: "Guardian" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Guardian — compliance copilot for visas, tax, and entities",
     description: SITE_DESC,
+    images: [OG_IMAGE],
   },
   robots: {
     index: true,
