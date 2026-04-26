@@ -11,8 +11,9 @@ Quotas (single source of truth — change here):
   Pro tier:     unlimited extractions; PRO_FREE_SEARCHES_PER_PERIOD lawyer
                 search per Stripe billing period; additional searches use
                 the same $15 SKU as Free users
-  Pro Trial:    unlimited extractions; NO free lawyer searches (trial is
-                the data-room benefit only — paid Pro is the search benefit)
+  Pro Trial:    unlimited extractions + 1 free lawyer search per period
+                (same entitlements as paid Pro — the trial is meant to be
+                a real preview, not a watered-down sample)
 """
 from __future__ import annotations
 
@@ -155,12 +156,15 @@ def get_extraction_quota(user: UserRow, db: Session) -> ExtractionQuota:
 def get_pro_search_quota(user: UserRow, db: Session) -> ProSearchQuota:
     """Compute current-period Pro free-lawyer-search consumption.
 
-    Returns limit=None for Free + Trial users (they don't get the perk).
-    For paid Pro users, counts professional_search_requests rows whose
-    `pro_free_grant_at` falls within the active subscription period.
+    Both `pro` and `pro_trial` tiers are entitled to 1 free search per
+    period — the trial is meant to be a real Pro preview, including the
+    search benefit, so users have something to compare against the $15
+    one-off price when deciding to convert.
+
+    Free tier users don't get the perk (limit=None).
     """
     sub = get_active_subscription(user, db)
-    if sub is None or sub.tier != "pro":
+    if sub is None or sub.tier not in ("pro", "pro_trial"):
         return ProSearchQuota(used=0, limit=None, period_end=None)
 
     period_start = sub.current_period_start

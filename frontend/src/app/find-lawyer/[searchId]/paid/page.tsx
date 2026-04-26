@@ -8,6 +8,7 @@ import {
   claimSearch,
   downloadProfessionalSearchUrl,
   getProfessionalSearch,
+  startProTrialFromSearch,
   type ProfessionalSearch,
 } from "@/lib/api";
 import { isLoggedIn, login, register } from "@/lib/auth";
@@ -114,6 +115,8 @@ function PaidPage() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [claimed, setClaimed] = useState<boolean>(false);
+  const [proTrialState, setProTrialState] = useState<"idle" | "starting" | "started" | "error">("idle");
+  const [proTrialError, setProTrialError] = useState<string | null>(null);
   const paidEmittedRef = useRef(false);
   const timedOutEmittedRef = useRef(false);
 
@@ -452,6 +455,69 @@ function PaidPage() {
               >
                 {isZh ? "前往面板 →" : "Go to dashboard →"}
               </Link>
+            </div>
+          </section>
+        )}
+
+        {/* Post-claim Pro trial offer. Single visible card, opt-in only.
+            Uses the saved card from the $15 checkout — one click → 30-day
+            trial → auto-renews at the standard $20/mo Pro price. */}
+        {claimed && proTrialState !== "started" && (
+          <section className="rounded-[32px] border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-6 shadow-[0_24px_70px_rgba(91,141,238,0.08)] backdrop-blur">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="max-w-2xl">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5b8dee]">
+                  {isZh ? "Pro 试用" : "Pro trial"}
+                </div>
+                <div className="mt-2 text-[20px] font-bold leading-tight text-[#0d1424]">
+                  {isZh
+                    ? "免费试用 Pro 30 天，之后 $20/月"
+                    : "Keep Pro free for 30 days, then $20/mo"}
+                </div>
+                <p className="mt-2 text-[13.5px] leading-6 text-[#556480]">
+                  {isZh
+                    ? "包含每月 1 次免费律所搜索 + 无限文件提取。我们会在试用结束时自动续费您刚才使用的卡，可随时取消。"
+                    : "Includes 1 free lawyer search per month + unlimited document extractions. Auto-renews to the card you just used at trial end — cancel anytime in the billing portal."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  setProTrialState("starting");
+                  setProTrialError(null);
+                  try {
+                    await startProTrialFromSearch(params.searchId);
+                    setProTrialState("started");
+                  } catch (e) {
+                    setProTrialError(e instanceof Error ? e.message : String(e));
+                    setProTrialState("error");
+                  }
+                }}
+                disabled={proTrialState === "starting"}
+                className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-wait disabled:bg-[#a8bce8]"
+              >
+                {proTrialState === "starting"
+                  ? isZh ? "正在开通…" : "Starting…"
+                  : isZh ? "开始 30 天免费试用" : "Start 30-day free trial"}
+              </button>
+            </div>
+            {proTrialError && (
+              <div className="mt-3 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-3 py-2 text-[12px] text-[#a33a3a]">
+                {proTrialError}
+              </div>
+            )}
+          </section>
+        )}
+
+        {claimed && proTrialState === "started" && (
+          <section className="rounded-[32px] border border-[#cfe8d5] bg-[#eaf6ec]/80 p-5 backdrop-blur">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#2f7a45]">
+              {isZh ? "Pro 试用已开通" : "Pro trial active"}
+            </div>
+            <div className="mt-1 text-[14px] text-[#1a2036]">
+              {isZh
+                ? "30 天后将以 $20/月续费您刚才使用的卡。可在面板的账单页面随时取消。"
+                : "Your saved card will be charged $20/mo after 30 days. Cancel anytime in the dashboard's billing section."}
             </div>
           </section>
         )}

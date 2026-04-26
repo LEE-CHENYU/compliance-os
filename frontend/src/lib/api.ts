@@ -233,6 +233,25 @@ export interface MarketplaceMatch {
 export const getMarketplaceMatch = (searchId: string) =>
   request<MarketplaceMatch[]>(`/professional-search/${searchId}/marketplace-match`);
 
+// Opt-in 30-day Pro trial post-search-payment. Uses the card the user
+// saved during the $15 checkout to set up auto-renewal at $20/mo after
+// the trial ends. Returns { ok: true, already_active?, trial_days? }.
+export async function startProTrialFromSearch(
+  searchId: string,
+): Promise<{ ok: boolean; already_active?: boolean; trial_days?: number }> {
+  const headers = _authHeaders();
+  if (!headers.Authorization) throw new Error("Sign in first");
+  const res = await fetch(
+    `${API_BASE}/professional-search/${searchId}/start-pro-trial`,
+    { method: "POST", headers },
+  );
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
+  }
+  return res.json();
+}
+
 export const downloadProfessionalSearchUrl = (id: string) =>
   `${API_BASE}/professional-search/${id}/download`;
 

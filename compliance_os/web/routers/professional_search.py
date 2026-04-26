@@ -1399,12 +1399,12 @@ def create_checkout_session(
         if user is not None:
             from compliance_os.web.services.subscription_service import (
                 get_pro_search_quota,
-                is_paying_pro,
             )
 
-            if is_paying_pro(user, session):
-                pro_quota = get_pro_search_quota(user, session)
-                if pro_quota.has_free_search:
+            # Includes pro_trial users now — see subscription_service
+            # `get_pro_search_quota` for the entitlement rule.
+            pro_quota = get_pro_search_quota(user, session)
+            if pro_quota.has_free_search:
                     now = _dt.datetime.utcnow()
                     row.paid_at = now
                     row.pro_free_grant_at = now
@@ -1427,6 +1427,13 @@ def create_checkout_session(
         checkout = stripe.checkout.Session.create(
             mode="payment",
             payment_method_types=["card"],
+            # Force a Stripe Customer for every $15 purchase so we can
+            # later create a Pro trial subscription that bills the saved
+            # card without re-prompting (see /start-pro-trial below).
+            customer_creation="always",
+            # Save the payment method to the customer so off-session
+            # subscription creation can charge it after the trial ends.
+            payment_intent_data={"setup_future_usage": "off_session"},
             line_items=[
                 {
                     "price_data": {
@@ -1611,28 +1618,12 @@ async def stripe_webhook(
         raise HTTPException(status_code=500, detail="commit failed; will retry")
     logger.info("stripe webhook: marked search %s paid", request_id)
 
-    # If we identified a user on this purchase, give them a 30-day Pro trial
-    # (extractions only — no free searches in trial). Failures here MUST NOT
-    # roll back the payment — log and continue. The user can still claim
-    # later and we can also create the trial via the claim endpoint.
-    if row.user_id is not None:
-        try:
-            user_for_trial = db.get(UserRow, row.user_id)
-            if user_for_trial is not None:
-                _maybe_attach_trial(
-                    user_for_trial,
-                    db,
-                    stripe=stripe,
-                    customer_id=sess.get("customer"),
-                    source="lawyer_search_purchase",
-                )
-        except Exception:
-            logger.exception(
-                "trial attach failed for user_id=%s after search payment %s "
-                "(non-fatal — payment recorded)",
-                row.user_id,
-                request_id,
-            )
+    # NOTE: trials are no longer silently auto-created on $15 payment.
+    # With saved-card now in place (`setup_future_usage`), an auto-attach
+    # would mean a surprise $20/mo charge after 30 days — exactly the
+    # negative-option pattern we want to avoid. Trial creation now flows
+    # through the explicit "Start Pro free for 30 days" CTA on the paid
+    # page → POST /{request_id}/start-pro-trial.
 
     return {"received": True, "paid": True}
 
@@ -1858,6 +1849,95 @@ def _maybe_attach_trial(
                 user.id, source)
 
 
+@router.post("/{request_id}/start-pro-trial")
+def start_pro_trial(
+    request_id: str,
+    authorization: str | None = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Opt-in: start a 30-day Pro trial that auto-renews at \$20/mo.
+
+    Called from the paid page's "Keep Pro free for 30 days" CTA. The
+    user has just paid \$15 for a one-off search — that checkout saved
+    their card via `setup_future_usage`. We use that saved card to
+    create a Stripe subscription with a 30-day trial; Stripe auto-bills
+    the standard Pro price (\$20/mo) at trial end unless the user
+    cancels via the billing portal.
+
+    Idempotent: if the user already has any active subscription
+    (paid or trialing), returns ok without creating a duplicate.
+    """
+    payload = get_bearer_payload(authorization, db)
+    user = db.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
+    if user is None:
+        raise HTTPException(status_code=401, detail="User not found")
+
+    row = db.get(ProfessionalSearchRequestRow, request_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Search request not found")
+    if row.user_id != user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="This search isn't claimed under your account.",
+        )
+    if row.paid_at is None or not row.stripe_session_id:
+        raise HTTPException(
+            status_code=409,
+            detail="Need a paid one-off search before starting a Pro trial.",
+        )
+
+    from compliance_os.web.services.subscription_service import get_active_subscription
+    if get_active_subscription(user, db) is not None:
+        return {"ok": True, "already_active": True}
+
+    if not settings.stripe_pro_price_id:
+        raise HTTPException(
+            status_code=503,
+            detail="Pro plan not configured on server (STRIPE_PRO_PRICE_ID).",
+        )
+
+    stripe = _stripe()
+
+    # Pull the saved Stripe Customer + payment method from the $15 payment.
+    # Sessions older than the setup_future_usage change won't have a saved
+    # card; in that case we surface a clear error so the UI can fall back
+    # to the standard /api/subscription/checkout flow (re-enter card).
+    try:
+        sess = stripe.checkout.Session.retrieve(
+            row.stripe_session_id,
+            expand=["payment_intent.payment_method"],
+        )
+    except Exception as exc:
+        logger.exception("stripe session retrieve failed for %s", request_id)
+        raise HTTPException(status_code=502, detail=f"Stripe error: {exc}")
+
+    customer_id = (
+        sess.get("customer") if isinstance(sess, dict) else getattr(sess, "customer", None)
+    )
+    if not customer_id:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "No saved card on this purchase — start a Pro subscription via "
+                "/pricing instead (you'll re-enter card details)."
+            ),
+        )
+
+    _maybe_attach_trial(
+        user,
+        db,
+        stripe=stripe,
+        customer_id=customer_id,
+        source="post_search_cta",
+    )
+
+    return {
+        "ok": True,
+        "trial_days": 30,
+        "renewal_price_cents": 2000,  # informational — actual amount comes from Stripe price
+    }
+
+
 @router.post("/{request_id}/claim", response_model=SearchResponse)
 def claim_search(
     request_id: str,
@@ -1961,27 +2041,11 @@ def claim_search(
     db.commit()
     db.refresh(row)
 
-    # Now that the user is identified, give them a 30-day Pro trial if
-    # they don't already have one. Failures are non-fatal — the claim
-    # already succeeded; the trial is an upsell, not a contract.
-    try:
-        stripe_for_trial = _stripe()
-        _maybe_attach_trial(
-            user,
-            db,
-            stripe=stripe_for_trial,
-            customer_id=None,  # Stripe Customer not on the row; let helper create one
-            source="lawyer_search_claim",
-        )
-    except HTTPException:
-        # _stripe() raises 503 when keys aren't configured; treat as silent.
-        pass
-    except Exception:
-        logger.exception(
-            "trial attach: non-fatal failure during claim of search %s for user %s",
-            request_id,
-            user.id,
-        )
+    # Trial creation is no longer auto-attached on claim. Users opt in
+    # via the explicit "Start Pro free for 30 days" CTA on the paid page,
+    # which calls POST /{request_id}/start-pro-trial. Keeps the claim
+    # action transactionally simple (just links search → user) and
+    # avoids any surprise auto-billing once the saved card lands.
 
     # Caller is now the authenticated owner — return full PII.
     return _serialize(row, include_pii=True)
