@@ -475,6 +475,14 @@ export default function SearchStatus() {
 
   const personas = Object.entries(row.persona_status);
   const tierRows = row.tier_report ?? [];
+  // Pre-payment: show only the top N firms as a free preview. The rest are
+  // hidden behind the paywall so users can sample the quality of the
+  // shortlist without seeing the full set. Five is enough for a meaningful
+  // preview of the tier-pyramid (1 elite + 2-3 strong matches + a back-up)
+  // without giving away the long tail.
+  const PREVIEW_COUNT = 5;
+  const visibleRows = row.is_paid ? tierRows : tierRows.slice(0, PREVIEW_COUNT);
+  const hiddenCount = row.is_paid ? 0 : Math.max(0, tierRows.length - PREVIEW_COUNT);
 
   return (
     <div className={bgClass}>
@@ -625,14 +633,20 @@ export default function SearchStatus() {
                 </button>
               </div>
             )}
-            {row.status === "complete" && !row.is_paid && (
+            {/* Top-of-list Paywall only when there are 5 or fewer firms total
+                — in that case the bottom-of-list "N more firms behind the
+                paywall" tail card never renders, so we'd otherwise leave the
+                user without a CTA. When there ARE more than 5 firms, the
+                tail card below carries the unlock CTA and we skip this one
+                to avoid double-banner clutter. */}
+            {row.status === "complete" && !row.is_paid && tierRows.length <= PREVIEW_COUNT && (
               <div className="mt-4">
                 <Paywall searchId={row.id} lang={lang} />
               </div>
             )}
 
             <div className="mt-6 space-y-3">
-              {tierRows.map((r, idx) => {
+              {visibleRows.map((r, idx) => {
                 const isTracked = engagements.some(
                   (e) => e.firm_name.toLowerCase() === r.firm.toLowerCase(),
                 );
@@ -722,6 +736,34 @@ export default function SearchStatus() {
                 </div>
                 );
               })}
+
+              {hiddenCount > 0 && (
+                <div
+                  data-testid="find-lawyer-preview-paywall-tail"
+                  className="rounded-2xl border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-6 shadow-[0_10px_30px_rgba(91,141,238,0.08)]"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5b8dee]">
+                        {isZh ? "已隐藏" : "Behind the paywall"}
+                      </div>
+                      <div className="mt-1 text-[15px] font-semibold text-[#0d1424]">
+                        {isZh
+                          ? `还有 ${hiddenCount} 家律所等待解锁`
+                          : `${hiddenCount} more ${hiddenCount === 1 ? "firm" : "firms"} matched — unlock to compare the full shortlist`}
+                      </div>
+                      <p className="mt-1 text-[12.5px] leading-5 text-[#556480]">
+                        {isZh
+                          ? "您看到的是评分最高的前 5 家。$15 解锁完整名单、外部信用资料和联系方式。"
+                          : `You're previewing the top ${PREVIEW_COUNT} by score. Unlock for $15 to see the full ranking, outside credentials, and contact info for every firm.`}
+                      </p>
+                    </div>
+                    <div className="shrink-0">
+                      <Paywall searchId={row.id} lang={lang} />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <p className="mt-6 text-[12px] leading-5 text-[#7b8ba5]">

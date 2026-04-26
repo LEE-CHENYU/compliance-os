@@ -4,42 +4,71 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import {
+  listCases,
   listMyEngagements,
   type AttentionLabel,
+  type Case,
   type EngagementStatus,
   type MyEngagement,
 } from "@/lib/api";
 
-/** "My lawyer engagements" panel for the Guardian dashboard.
+/** "My cases" panel for the Guardian dashboard.
  *
- *  Sibling to MySearches. Renders a flat cross-case list of every firm
- *  the user is tracking, sorted by most recent activity. Each row
- *  surfaces the latest email thread direction so users can see at a
- *  glance "did anyone reply since I last looked?".
+ *  Shows ONE row per case the user owns. Cases that have tracked
+ *  engagements get the engagement summary nested inside (count + the
+ *  most-attention-worthy firm). Cases without engagements still show
+ *  a row so the user has a clickable path back to /case/[id] — without
+ *  this, a user who created a case (paid + claimed) but hasn't yet
+ *  tracked any firms would have no way to find it again from the
+ *  dashboard. The whole panel only hides when the user has zero cases.
  */
 export default function MyEngagements() {
-  const [rows, setRows] = useState<MyEngagement[] | null>(null);
+  const [engagements, setEngagements] = useState<MyEngagement[] | null>(null);
+  const [cases, setCases] = useState<Case[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    listMyEngagements()
-      .then(setRows)
-      .catch((e) => setError(e instanceof Error ? e.message : String(e)));
+    Promise.all([
+      listMyEngagements().catch((e) => {
+        setError(e instanceof Error ? e.message : String(e));
+        return [] as MyEngagement[];
+      }),
+      listCases().catch(() => ({ cases: [] as Case[] })),
+    ]).then(([e, c]) => {
+      setEngagements(e);
+      setCases(c.cases ?? []);
+    });
   }, []);
 
-  if (error || rows === null) {
-    return null;  // Stay quiet — most often this is "not signed in".
+  if (error || engagements === null || cases === null) {
+    return null; // Stay quiet — most often this is "not signed in".
   }
 
-  // Don't render the section header at all if there are no engagements
-  // to show. Keeps the dashboard tidy for users who haven't started
-  // tracking yet (who'll see MySearches' empty state instead).
-  if (rows.length === 0) return null;
+  // No cases at all → nothing to show. The whole panel disappears, same
+  // as the prior "no engagements" empty state.
+  if (cases.length === 0) return null;
 
-  // Backend pre-sorted by attention priority, but a small "needs your
-  // attention" header above the actionable rows lets users know why
-  // the order isn't strictly chronological.
-  const attentionCount = rows.filter((r) => r.attention_label !== null).length;
+  // Group engagements by case for nested rendering. Cases without
+  // engagements still get a row (just no nested firms).
+  const byCase = new Map<string, MyEngagement[]>();
+  for (const e of engagements) {
+    const list = byCase.get(e.case_id) ?? [];
+    list.push(e);
+    byCase.set(e.case_id, list);
+  }
+
+  // Sort: cases with activity first (most-recent engagement), then
+  // by case created_at desc.
+  const sortedCases = [...cases].sort((a, b) => {
+    const aLatest = lastActivityForCase(byCase.get(a.id) ?? []);
+    const bLatest = lastActivityForCase(byCase.get(b.id) ?? []);
+    if (aLatest && bLatest) return bLatest.localeCompare(aLatest);
+    if (aLatest) return -1;
+    if (bLatest) return 1;
+    return b.created_at.localeCompare(a.created_at);
+  });
+
+  const totalAttention = engagements.filter((e) => e.attention_label !== null).length;
 
   return (
     <section className="mb-8 overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(234,241,251,0.92))] backdrop-blur-xl shadow-[0_10px_36px_rgba(91,141,238,0.08)]">
@@ -47,67 +76,29 @@ export default function MyEngagements() {
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div className="max-w-2xl">
             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
-              My lawyer engagements
+              My cases
             </div>
             <h2 className="mt-2 text-[24px] font-bold leading-tight text-[#0d1424]">
               Track outreach across every case in one place
             </h2>
             <p className="mt-3 text-[14px] leading-7 text-[#556480]">
-              Every firm you&rsquo;re working with, sorted by what needs
-              attention first. Inbound replies bump the funnel automatically
-              when Gmail is connected.
+              Each case shows the firms you&rsquo;re working with and inbound
+              replies from Gmail. Click a case to manage engagements, notes,
+              and email threads.
             </p>
-            {attentionCount > 0 && (
+            {totalAttention > 0 && (
               <p className="mt-2 text-[12px] font-medium text-[#5b8dee]">
-                {attentionCount} {attentionCount === 1 ? "firm needs" : "firms need"} your attention
+                {totalAttention} {totalAttention === 1 ? "firm needs" : "firms need"} your attention
               </p>
             )}
           </div>
         </div>
 
-        <ul className="mt-6 space-y-2">
-          {rows.map((r) => (
-            <li
-              key={r.id}
-              className="rounded-2xl border border-[#e4edf7] bg-white/82 p-4 shadow-[0_10px_30px_rgba(61,84,128,0.05)]"
-            >
-              <Link
-                href={`/case/${r.case_id}`}
-                className="block hover:bg-stone-50/50 -mx-2 -my-1 px-2 py-1 rounded-lg transition-colors"
-              >
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                      <span className="text-[15px] font-semibold text-[#0d1424] truncate">
-                        {r.firm_name}
-                      </span>
-                      <EngagementStatusPill status={r.status} />
-                      {r.attention_label && (
-                        <AttentionBadge label={r.attention_label} />
-                      )}
-                    </div>
-                    <div className="mt-1 text-[12px] text-[#7b8ba5]">
-                      {r.case_workflow_type
-                        ? `${r.case_workflow_type} case`
-                        : "Case"}
-                      {" · "}
-                      {r.thread_count > 0
-                        ? `${r.thread_count} email thread${r.thread_count === 1 ? "" : "s"}`
-                        : "no email threads yet"}
-                      {" · "}
-                      last activity {fmtRel(r.last_activity_at)}
-                    </div>
-                    {r.last_thread_subject && (
-                      <div className="mt-1 text-[12px] text-[#556480] line-clamp-1">
-                        ↳ <em>{r.last_thread_subject}</em>
-                      </div>
-                    )}
-                  </div>
-                  <span className="shrink-0 text-[12px] text-[#7b8ba5]">→</span>
-                </div>
-              </Link>
-            </li>
-          ))}
+        <ul className="mt-6 space-y-3">
+          {sortedCases.map((c) => {
+            const caseEngagements = byCase.get(c.id) ?? [];
+            return <CaseRow key={c.id} c={c} engagements={caseEngagements} />;
+          })}
         </ul>
       </div>
     </section>
@@ -115,8 +106,88 @@ export default function MyEngagements() {
 }
 
 
+function CaseRow({ c, engagements }: { c: Case; engagements: MyEngagement[] }) {
+  // Pick the most attention-worthy engagement to feature in the row.
+  // Backend already pre-sorted listMyEngagements by attention priority,
+  // so the first one wins.
+  const featured = engagements[0];
+  const attentionCount = engagements.filter((e) => e.attention_label !== null).length;
+  const label = c.workflow_type
+    ? `${c.workflow_type.charAt(0).toUpperCase()}${c.workflow_type.slice(1)} case`
+    : "Case";
+
+  return (
+    <li className="rounded-2xl border border-[#e4edf7] bg-white/82 p-4 shadow-[0_10px_30px_rgba(61,84,128,0.05)]">
+      <Link
+        href={`/case/${c.id}`}
+        className="block hover:bg-stone-50/50 -mx-2 -my-1 px-2 py-1 rounded-lg transition-colors"
+      >
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[15px] font-semibold text-[#0d1424] truncate">
+                {label}
+              </span>
+              <span className="text-[11px] font-mono text-[#7b8ba5]">
+                {c.id.slice(0, 8)}
+              </span>
+              {attentionCount > 0 && (
+                <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700">
+                  {attentionCount} need attention
+                </span>
+              )}
+            </div>
+            <div className="mt-1 text-[12px] text-[#7b8ba5]">
+              {engagements.length === 0 ? (
+                <>
+                  No firms tracked yet · created {fmtRel(c.created_at)}
+                </>
+              ) : (
+                <>
+                  {engagements.length} {engagements.length === 1 ? "firm" : "firms"} tracked ·
+                  last activity {fmtRel(featured?.last_activity_at ?? c.updated_at)}
+                </>
+              )}
+            </div>
+            {featured && (
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[12px]">
+                <span className="font-medium text-[#40536f]">{featured.firm_name}</span>
+                <EngagementStatusPill status={featured.status} />
+                {featured.attention_label && (
+                  <AttentionBadge label={featured.attention_label} />
+                )}
+                {engagements.length > 1 && (
+                  <span className="text-[11px] text-[#9aa9c2]">
+                    +{engagements.length - 1} more
+                  </span>
+                )}
+              </div>
+            )}
+            {!featured && (
+              <div className="mt-2 text-[12px] font-medium text-[#5b8dee]">
+                Open case to find lawyers →
+              </div>
+            )}
+          </div>
+          <span className="shrink-0 text-[12px] text-[#7b8ba5]">→</span>
+        </div>
+      </Link>
+    </li>
+  );
+}
+
+
+function lastActivityForCase(engagements: MyEngagement[]): string | null {
+  if (engagements.length === 0) return null;
+  return engagements.reduce<string | null>((latest, e) => {
+    if (!e.last_activity_at) return latest;
+    if (!latest) return e.last_activity_at;
+    return e.last_activity_at > latest ? e.last_activity_at : latest;
+  }, null);
+}
+
+
 function AttentionBadge({ label }: { label: AttentionLabel }) {
-  // Color-code by urgency: blue = new info, amber = stale, gray = neutral.
   const config: Record<AttentionLabel, { text: string; cls: string }> = {
     new_reply: {
       text: "← new reply",
