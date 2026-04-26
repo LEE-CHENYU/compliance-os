@@ -16,6 +16,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
+const AGREEMENT_SKUS = new Set(["opt_execution", "opt_advisory"]);
+
 export default function OrderAgreementPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
@@ -42,15 +44,19 @@ export default function OrderAgreementPage() {
     }
 
     let cancelled = false;
-    Promise.all([
-      getMarketplaceOrder(orderId),
-      getMarketplaceAgreement(orderId),
-    ])
-      .then(([nextOrder, nextAgreement]) => {
+    getMarketplaceOrder(orderId)
+      .then(async (nextOrder) => {
         if (cancelled) {
           return;
         }
         setOrder(nextOrder);
+        if (!AGREEMENT_SKUS.has(nextOrder.product_sku)) {
+          return;
+        }
+        const nextAgreement = await getMarketplaceAgreement(orderId);
+        if (cancelled) {
+          return;
+        }
         setAgreement(nextAgreement);
       })
       .catch((nextError) => {
@@ -97,11 +103,57 @@ export default function OrderAgreementPage() {
     );
   }
 
-  if (error || !order || !agreement) {
+  if (error || !order) {
     return (
       <div className="min-h-screen bg-[#eef4fb] px-6 py-16">
         <div className="mx-auto max-w-5xl rounded-[28px] border border-[#ffd6d6] bg-white p-8 text-[#a33a3a] shadow-[0_24px_70px_rgba(61,84,128,0.06)]">
-          {error || "Could not load this agreement"}
+          {error || "Could not load this order"}
+        </div>
+      </div>
+    );
+  }
+
+  if (!AGREEMENT_SKUS.has(order.product_sku)) {
+    return (
+      <main className="min-h-screen bg-[linear-gradient(180deg,#edf3f9_0%,#f7faff_100%)] px-6 py-12">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/dashboard"
+              className="inline-flex rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-medium text-[#40536f] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur hover:text-[#1a2036]"
+            >
+              ← Back to dashboard
+            </Link>
+            <Link
+              href={`/account/orders/${orderId}`}
+              className="inline-flex rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur hover:text-[#1a2036]"
+            >
+              Back to order
+            </Link>
+          </div>
+          <section className="mt-6 rounded-[32px] border border-white/80 bg-white/84 p-8 shadow-[0_28px_80px_rgba(61,84,128,0.08)] md:p-10">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">No agreement required</div>
+            <h1 className="mt-3 text-[34px] font-extrabold tracking-tight text-[#0d1424]">{order.product.public_name || order.product.name}</h1>
+            <p className="mt-4 max-w-3xl text-[16px] leading-7 text-[#556480]">
+              This order does not use a limited-scope agreement. Continue from the order workspace.
+            </p>
+            <Link
+              href={`/account/orders/${orderId}`}
+              className="mt-6 inline-flex rounded-full bg-[#0f1728] px-6 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a]"
+            >
+              Open order workspace
+            </Link>
+          </section>
+        </div>
+      </main>
+    );
+  }
+
+  if (!agreement) {
+    return (
+      <div className="min-h-screen bg-[#eef4fb] px-6 py-16">
+        <div className="mx-auto max-w-5xl rounded-[28px] border border-[#ffd6d6] bg-white p-8 text-[#a33a3a] shadow-[0_24px_70px_rgba(61,84,128,0.06)]">
+          Could not load this agreement
         </div>
       </div>
     );

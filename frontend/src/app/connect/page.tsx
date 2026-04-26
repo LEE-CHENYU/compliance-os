@@ -9,10 +9,14 @@ const AUTH_API =
     ? "http://127.0.0.1:8000/api/auth"
     : "/api/auth";
 
-const API_HOST =
-  typeof window !== "undefined" && window.location.hostname === "localhost"
-    ? "http://localhost:8000"
-    : "https://guardiancompliance.app";
+const DEFAULT_API_HOST = "https://guardiancompliance.app";
+
+function resolveApiHost(): string {
+  if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+    return "http://localhost:8000";
+  }
+  return DEFAULT_API_HOST;
+}
 
 type AppId = "claude-desktop" | "claude-code" | "codex";
 
@@ -27,8 +31,8 @@ interface ConnectionStatus {
   active_token: TokenInfo | null;
 }
 
-function configSnippet(app: AppId, token: string): string {
-  const url = `${API_HOST}/mcp`;
+function configSnippet(app: AppId, token: string, apiHost: string): string {
+  const url = `${apiHost}/mcp`;
   if (app === "codex") {
     return `[mcp_servers.guardian]
 type = "http"
@@ -78,19 +82,28 @@ export default function ConnectPage() {
   const [selectedApp, setSelectedApp] = useState<AppId>("claude-desktop");
   const [connection, setConnection] = useState<ConnectionStatus | null>(null);
   const [token, setToken] = useState<string>("");
+  const [apiHost, setApiHost] = useState(DEFAULT_API_HOST);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<"config" | "token" | null>(null);
   const [step, setStep] = useState(1);
-  const isLoggedIn = !!getToken();
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+    setApiHost(resolveApiHost());
+    const hasToken = Boolean(getToken());
+    setIsLoggedIn(hasToken);
+    setAuthReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!authReady || !isLoggedIn) return;
     fetch(`${AUTH_API}/openclaw/connection`, { headers: authHeaders() })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => data && setConnection(data))
       .catch(() => {});
-  }, [isLoggedIn]);
+  }, [authReady, isLoggedIn]);
 
   async function generateToken() {
     setLoading(true);
@@ -177,7 +190,11 @@ export default function ConnectPage() {
               <h2 className="text-sm font-semibold text-[#0d1424]">Get your token</h2>
             </div>
 
-            {!isLoggedIn ? (
+            {!authReady ? (
+              <div className="rounded-xl border border-blue-100/40 bg-[#f7f9fd] px-3 py-3 text-xs text-[#556480]">
+                Checking sign-in status...
+              </div>
+            ) : !isLoggedIn ? (
               <div className="rounded-xl border border-amber-200/50 bg-amber-50/50 p-4">
                 <p className="text-xs text-amber-800 mb-2">Sign in to generate a token.</p>
                 <a href="/login" className="inline-block px-4 py-2 rounded-lg text-xs font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white">
@@ -244,10 +261,10 @@ export default function ConnectPage() {
 
               <div className="relative">
                 <pre className="text-[11px] bg-[#f0f3f8] rounded-lg p-4 text-[#3a5a8c] overflow-x-auto font-mono leading-relaxed">
-                  {configSnippet(selectedApp, token)}
+                  {configSnippet(selectedApp, token, apiHost)}
                 </pre>
                 <button
-                  onClick={() => copyToClipboard(configSnippet(selectedApp, token), "config")}
+                  onClick={() => copyToClipboard(configSnippet(selectedApp, token, apiHost), "config")}
                   className="absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-semibold bg-white/90 border border-blue-100/50 text-[#3a5a8c] hover:bg-white transition-colors"
                 >
                   {copied === "config" ? "Copied" : "Copy"}

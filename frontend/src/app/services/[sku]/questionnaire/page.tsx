@@ -45,15 +45,20 @@ export default function MarketplaceQuestionnairePage() {
     }
 
     let cancelled = false;
-    Promise.all([
-      getMarketplaceProduct(sku, true),
-      getMarketplaceQuestionnaire(sku),
-    ])
-      .then(([nextProduct, nextConfig]) => {
+    getMarketplaceProduct(sku, true)
+      .then(async (nextProduct) => {
         if (cancelled) {
           return;
         }
         setProduct(nextProduct);
+        if (!nextProduct.requires_questionnaire) {
+          router.replace(nextProduct.path || `/services/${sku}`);
+          return;
+        }
+        const nextConfig = await getMarketplaceQuestionnaire(sku);
+        if (cancelled) {
+          return;
+        }
         setConfig(nextConfig);
       })
       .catch((nextError) => {

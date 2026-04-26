@@ -1672,6 +1672,8 @@ export default function DashboardPage() {
   const renderServiceCenter = ({ mobile = false }: { mobile?: boolean } = {}) => (
     <section
       id={mobile ? undefined : "service-center"}
+      data-testid={mobile ? "dashboard-service-center-mobile" : "dashboard-service-center"}
+      data-graph-node="dashboard"
       className={`overflow-hidden rounded-[24px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.82),rgba(240,246,255,0.94))] backdrop-blur-xl shadow-[0_10px_30px_rgba(91,141,238,0.08)] ${
         mobile ? "mb-6 md:hidden" : "mt-2"
       }`}
@@ -1701,7 +1703,8 @@ export default function DashboardPage() {
                   key={order.order_id}
                   type="button"
                   aria-label={`Open service order: ${order.product_name}`}
-                  data-testid={`dashboard-service-order-${order.product_sku}`}
+                  data-testid={mobile ? `dashboard-service-order-${order.product_sku}-mobile` : `dashboard-service-order-${order.product_sku}`}
+                  data-graph-edge={`open-service-order:${order.product_sku}`}
                   onClick={() => router.push(order.href)}
                   className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left shadow-[0_8px_18px_rgba(61,84,128,0.05)] transition hover:bg-white"
                 >
@@ -1743,7 +1746,8 @@ export default function DashboardPage() {
                 key={service.sku}
                 type="button"
                 aria-label={`Open recommended service: ${service.name}`}
-                data-testid={`dashboard-recommended-service-${service.sku}`}
+                data-testid={mobile ? `dashboard-recommended-service-${service.sku}-mobile` : `dashboard-recommended-service-${service.sku}`}
+                data-graph-edge={`open-recommended-service:${service.sku}`}
                 onClick={() => router.push(service.href)}
                 className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left transition hover:bg-white"
               >
@@ -1764,7 +1768,8 @@ export default function DashboardPage() {
                 key={order.order_id}
                 type="button"
                 aria-label={`Open completed service: ${order.product_name}`}
-                data-testid={`dashboard-completed-service-${order.product_sku}`}
+                data-testid={mobile ? `dashboard-completed-service-${order.product_sku}-mobile` : `dashboard-completed-service-${order.product_sku}`}
+                data-graph-edge={`open-completed-service:${order.product_sku}`}
                 onClick={() => router.push(order.href)}
                 className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left transition hover:bg-white"
               >
@@ -1787,6 +1792,8 @@ export default function DashboardPage() {
         <div className={`mt-4 grid gap-2 ${mobile ? "sm:grid-cols-2" : ""}`}>
           <button
             type="button"
+            data-testid={mobile ? "dashboard-open-orders-mobile" : "dashboard-open-orders"}
+            data-graph-edge="open-orders"
             onClick={() => router.push("/account/orders")}
             className="inline-flex items-center justify-center rounded-full border border-blue-100/50 bg-white/85 px-4 py-2 text-[12px] font-semibold text-[#3a5a8c] transition hover:bg-white"
           >
@@ -1794,6 +1801,8 @@ export default function DashboardPage() {
           </button>
           <button
             type="button"
+            data-testid={mobile ? "dashboard-browse-services-mobile" : "dashboard-browse-services"}
+            data-graph-edge="browse-services"
             onClick={() => router.push("/services")}
             className="inline-flex items-center justify-center rounded-full bg-[#5b8dee] px-4 py-2 text-[12px] font-semibold text-white shadow-[0_10px_20px_rgba(91,141,238,0.18)] transition hover:bg-[#4f82de]"
           >
@@ -1805,7 +1814,7 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" data-testid="dashboard-root" data-graph-node="dashboard">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3 flex items-center justify-between bg-[#dce4f0]/60 dark:bg-[#0d1118]/80 backdrop-blur-2xl border-b border-blue-200/20 dark:border-white/5 transition-colors">
         <div className="text-lg font-extrabold text-[#0d1424] dark:text-white flex items-center gap-2.5">
@@ -1928,19 +1937,23 @@ export default function DashboardPage() {
 
       <div className="flex flex-col md:flex-row pt-14">
         {/* Sidebar — hidden on mobile, shown on md+ */}
-        <div className="hidden md:flex md:flex-col w-64 flex-shrink-0 p-5 bg-white/30 backdrop-blur-xl border-r border-white/50 min-h-screen">
+        <div
+          data-testid="dashboard-sidebar"
+          data-graph-node="dashboard"
+          className="hidden md:flex md:flex-col w-64 flex-shrink-0 p-5 bg-white/30 backdrop-blur-xl border-r border-white/50 min-h-screen"
+        >
           <div className="mb-7">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Views</div>
-            <button onClick={() => setView("timeline")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "timeline" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Timeline</button>
-            <button onClick={() => setView("documents")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "documents" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>
+            <button type="button" data-testid="dashboard-view-timeline" data-graph-edge="switch-view:timeline" aria-pressed={view === "timeline"} onClick={() => setView("timeline")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "timeline" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Timeline</button>
+            <button type="button" data-testid="dashboard-view-documents" data-graph-edge="switch-view:documents" aria-pressed={view === "documents"} onClick={() => setView("documents")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "documents" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>
               All Documents
               <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#5b8dee]/8 text-[#5b8dee]">{documents.length}</span>
             </button>
-            <button onClick={() => setView("deadlines")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "deadlines" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>
+            <button type="button" data-testid="dashboard-view-deadlines" data-graph-edge="switch-view:deadlines" aria-pressed={view === "deadlines"} onClick={() => setView("deadlines")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "deadlines" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>
               Deadlines
               {timeline?.deadlines && <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-600">{timeline.deadlines.filter((d: {days: number}) => d.days <= 30).length || ""}</span>}
             </button>
-            <button onClick={() => setView("profile")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "profile" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Key Facts</button>
+            <button type="button" data-testid="dashboard-view-profile" data-graph-edge="switch-view:profile" aria-pressed={view === "profile"} onClick={() => setView("profile")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "profile" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Key Facts</button>
           </div>
 
           <div className="mb-7">
@@ -1953,8 +1966,11 @@ export default function DashboardPage() {
                 <button
                   key={cat}
                   type="button"
+                  data-testid={`dashboard-filter-category-${cat}`}
+                  data-graph-edge={`filter:category:${cat}`}
                   onClick={() => activateCategoryFilter(cat)}
                   aria-pressed={selectedCategory === cat}
+                  aria-label={`Filter dashboard by category: ${colors.label}`}
                   className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-all ${
                     selectedCategory === cat
                       ? "bg-white/70 font-semibold text-[#0d1424]"
@@ -1973,8 +1989,11 @@ export default function DashboardPage() {
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#7b8ba5] mb-2.5">Risks</div>
             <button
               type="button"
+              data-testid="dashboard-filter-risk-needs-attention"
+              data-graph-edge="filter:risk:needs_attention"
               onClick={() => activateRiskFilter("needs_attention")}
               aria-pressed={selectedRiskFilter === "needs_attention"}
+              aria-label="Filter dashboard by risk: Needs attention"
               className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-all ${
                 selectedRiskFilter === "needs_attention"
                   ? "bg-white/70 font-semibold text-[#0d1424]"
@@ -1987,8 +2006,11 @@ export default function DashboardPage() {
             </button>
             <button
               type="button"
+              data-testid="dashboard-filter-risk-potential-risks"
+              data-graph-edge="filter:risk:potential_risks"
               onClick={() => activateRiskFilter("potential_risks")}
               aria-pressed={selectedRiskFilter === "potential_risks"}
+              aria-label="Filter dashboard by risk: Potential risks"
               className={`mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-all ${
                 selectedRiskFilter === "potential_risks"
                   ? "bg-white/70 font-semibold text-[#0d1424]"
@@ -2002,6 +2024,8 @@ export default function DashboardPage() {
             {activeFilterLabel ? (
               <button
                 type="button"
+                data-testid="dashboard-clear-filter-sidebar"
+                data-graph-edge="clear-filter"
                 onClick={clearDashboardFilters}
                 className="mt-3 w-full rounded-lg border border-blue-100/50 bg-white/60 px-3 py-2 text-left text-[12px] font-medium text-[#5b8dee] transition hover:bg-white"
               >
@@ -2016,7 +2040,7 @@ export default function DashboardPage() {
         {/* Main */}
         <div className="flex-1 p-4 md:p-8 max-w-[900px]">
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
+          <div data-testid="dashboard-stats" className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
             {[
               { num: stats?.documents || 0, label: "Documents", color: "#0d1424" },
               { num: stats?.risks || 0, label: "Needs attention", color: "#f59e0b" },
@@ -2031,12 +2055,14 @@ export default function DashboardPage() {
           </div>
 
           {activeFilterLabel ? (
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100/50 bg-white/55 px-4 py-3 text-[13px] text-[#556480]">
+            <div data-testid="dashboard-active-filter" className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100/50 bg-white/55 px-4 py-3 text-[13px] text-[#556480]">
               <span>
                 Showing filtered dashboard results for <strong className="text-[#0d1424]">{activeFilterLabel}</strong>.
               </span>
               <button
                 type="button"
+                data-testid="dashboard-clear-filter-main"
+                data-graph-edge="clear-filter"
                 onClick={clearDashboardFilters}
                 className="rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold text-[#5b8dee] transition hover:bg-[#f7f9fd]"
               >
@@ -2171,7 +2197,15 @@ export default function DashboardPage() {
           {/* Mobile view toggle */}
           <div className="flex md:hidden gap-1.5 mb-4 overflow-x-auto">
             {(["timeline", "deadlines", "documents", "profile"] as const).map((v) => (
-              <button key={v} onClick={() => setView(v)} className={`flex-shrink-0 px-3 py-2 rounded-xl text-xs font-medium transition-all ${view === v ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-white/50 text-[#556480]"}`}>
+              <button
+                key={v}
+                type="button"
+                data-testid={`dashboard-mobile-view-${v}`}
+                data-graph-edge={`switch-view:${v}`}
+                aria-pressed={view === v}
+                onClick={() => setView(v)}
+                className={`flex-shrink-0 px-3 py-2 rounded-xl text-xs font-medium transition-all ${view === v ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-white/50 text-[#556480]"}`}
+              >
                 {v === "documents" ? `Docs` : v === "profile" ? "Facts" : v === "deadlines" ? "Deadlines" : "Timeline"}
               </button>
             ))}
@@ -2181,10 +2215,10 @@ export default function DashboardPage() {
 
           {/* Documents View */}
           {view === "documents" && (
-            <div>
+            <div data-testid="dashboard-documents-view">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-[#0d1424]">All Documents</h2>
-                <button onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">+ Upload</button>
+                <button type="button" data-testid="dashboard-upload-documents-view" data-graph-edge="open-upload-panel" onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">+ Upload</button>
               </div>
               {(() => {
                 const DOC_TO_CAT: Record<string, string> = {
@@ -2246,7 +2280,7 @@ export default function DashboardPage() {
 
           {/* Deadlines View */}
           {view === "deadlines" && (
-            <div>
+            <div data-testid="dashboard-deadlines-view">
               <h2 className="text-lg font-bold text-[#0d1424] mb-6">Upcoming Deadlines</h2>
               {timeline?.deadlines && timeline.deadlines.length > 0 ? (
                 <div className="flex flex-col gap-3">
@@ -2297,7 +2331,7 @@ export default function DashboardPage() {
 
           {/* Key Facts View */}
           {view === "profile" && (
-            <div>
+            <div data-testid="dashboard-profile-view">
               <h2 className="text-lg font-bold text-[#0d1424] mb-6">Key Facts</h2>
 
               {(() => {
@@ -2346,7 +2380,7 @@ export default function DashboardPage() {
           )}
 
           {/* Timeline */}
-          {view === "timeline" && (<><div className="relative pl-7">
+          {view === "timeline" && (<div data-testid="dashboard-timeline-view"><div className="relative pl-7">
             <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#5b8dee] to-[#5b8dee]/10" />
 
             {visibleTimelineEvents.map((event, i) => (
@@ -2461,7 +2495,7 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
-          </>)}
+          </div>)}
 
           {/* Hidden upload inputs */}
           <input
