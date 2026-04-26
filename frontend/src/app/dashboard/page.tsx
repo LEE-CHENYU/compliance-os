@@ -1964,7 +1964,12 @@ export default function DashboardPage() {
             </button>
             <button type="button" data-testid="dashboard-view-deadlines" data-graph-edge="switch-view:deadlines" aria-pressed={view === "deadlines"} onClick={() => setView("deadlines")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "deadlines" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>
               Deadlines
-              {timeline?.deadlines && <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-600">{timeline.deadlines.filter((d: {days: number}) => d.days <= 30).length || ""}</span>}
+              {(() => {
+                const due = timeline?.deadlines?.filter((d: { days: number }) => d.days <= 30).length ?? 0;
+                return due > 0 ? (
+                  <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-600">{due}</span>
+                ) : null;
+              })()}
             </button>
             <button type="button" data-testid="dashboard-view-profile" data-graph-edge="switch-view:profile" aria-pressed={view === "profile"} onClick={() => setView("profile")} className={`w-full text-left text-sm px-3 py-2 rounded-lg mb-1 transition-all ${view === "profile" ? "font-semibold text-[#3d6bc5] bg-[#5b8dee]/8" : "text-[#556480] hover:bg-white/40"}`}>Key Facts</button>
           </div>
@@ -2083,6 +2088,38 @@ export default function DashboardPage() {
               </button>
             </div>
           ) : null}
+
+          {documents.length === 0 && (
+            <section
+              data-testid="dashboard-empty-upload-cta"
+              className="mb-8 overflow-hidden rounded-[28px] border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-6 md:p-7 shadow-[0_10px_30px_rgba(91,141,238,0.08)]"
+            >
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="max-w-xl">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5b8dee]">
+                    Get started
+                  </div>
+                  <h2 className="mt-2 text-[20px] font-bold leading-tight text-[#0d1424]">
+                    Upload your case documents to surface deadlines and risks
+                  </h2>
+                  <p className="mt-2 text-[13.5px] leading-6 text-[#556480]">
+                    The numbers above stay at zero until Guardian has something
+                    to read. Drop your I-797s, I-983s, tax returns, or LLC docs
+                    — we&rsquo;ll classify them, extract the dates that matter,
+                    and flag anything that needs attention.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  data-testid="dashboard-empty-upload-cta-button"
+                  onClick={() => setShowUploadPanel(true)}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de]"
+                >
+                  + Upload documents
+                </button>
+              </div>
+            </section>
+          )}
 
           <MySearches />
 
