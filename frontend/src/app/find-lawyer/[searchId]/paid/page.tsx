@@ -172,10 +172,17 @@ function PaidPage() {
         await login(email, password);
       }
       // Now we're logged in — claim the paid search.
-      await claimSearch(params.searchId);
+      const claimed = await claimSearch(params.searchId);
       setClaimed(true);
-      // Brief pause so the user sees the success state, then go to dashboard.
-      setTimeout(() => router.push("/dashboard"), 800);
+      // If the brief was rich enough, the backend auto-created a case
+      // (skipping the discovery wizard for users who already supplied
+      // substantial context). Land on the case page so they see their
+      // search waiting in the Lawyers section. Otherwise fall back to
+      // the dashboard.
+      const next = claimed.case_id
+        ? `/case/${claimed.case_id}`
+        : "/dashboard";
+      setTimeout(() => router.push(next), 800);
     } catch (e) {
       setAuthError(e instanceof Error ? e.message : String(e));
       setAuthBusy(false);

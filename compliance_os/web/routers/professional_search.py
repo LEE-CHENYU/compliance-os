@@ -1598,6 +1598,53 @@ def claim_search(
         )
 
     row.user_id = user.id
+
+    # Skip-onboarding shortcut: if the search came with a substantive
+    # brief or supporting docs and isn't already case-attached, mint a
+    # case for it now. The user will be redirected straight to the case
+    # page (post-claim flow) instead of being forced through the empty
+    # discovery wizard. They can always fill the wizard later for richer
+    # follow-ups — it remains available, just not blocking.
+    #
+    # Threshold rationale: 400 chars is "above the 200-char minimum + a
+    # bit more than the floor", which signals real intent. Any uploaded
+    # files are an even stronger signal — the user already gathered
+    # documents, so they clearly know their situation.
+    BRIEF_RICHNESS_CHARS = 400
+    has_uploads = bool((row.uploaded_notes or "").strip())
+    brief_is_rich = (
+        len((row.case_brief or "").strip()) >= BRIEF_RICHNESS_CHARS
+        or has_uploads
+    )
+    if row.case_id is None and brief_is_rich:
+        from compliance_os.web.models.tables import CaseRow as _CaseRow
+
+        # Map vertical → workflow_type so the case shows the right track
+        # in dashboards and CTAs. Verticals without a clear track default
+        # to immigration (the most common path through find-lawyer).
+        _VERTICAL_TO_WORKFLOW = {
+            "immigration_attorney": "immigration",
+            "immigration_eb5": "immigration",
+            "tax_attorney": "tax",
+            "cpa": "tax",
+            "caa": "tax",
+            "corporate_attorney": "corporate",
+            "bank": "",
+        }
+        case = _CaseRow(
+            user_id=user.id,
+            workflow_type=_VERTICAL_TO_WORKFLOW.get(row.vertical, "immigration"),
+            # `status="discovery"` is the default. Leave it — if the user
+            # opens the discovery wizard later it picks up correctly.
+        )
+        db.add(case)
+        db.flush()  # need case.id before assigning back
+        row.case_id = case.id
+        logger.info(
+            "claim auto-created case %s for search %s (brief=%dch uploads=%s)",
+            case.id, request_id, len((row.case_brief or "").strip()), has_uploads,
+        )
+
     db.commit()
     db.refresh(row)
     # Caller is now the authenticated owner — return full PII.
