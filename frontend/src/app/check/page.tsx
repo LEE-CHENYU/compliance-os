@@ -1,14 +1,56 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 import { inferForm8843CheckPath, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
+import { isLoggedIn } from "@/lib/auth";
+import { listMySearches, listMyEngagements } from "@/lib/api";
 
 export default function CheckSelect() {
   const router = useRouter();
   const viewedRef = useRef(false);
+  // Block render until we've checked whether the signed-in user already
+  // has lawyer content — we don't want them to glimpse the persona
+  // picker before being bounced to their actual case/dashboard.
+  const [authGateChecked, setAuthGateChecked] = useState(false);
+
+  // If the signed-in user already has a lawyer search or engagement,
+  // /check is the wrong destination — they're not a brand-new account.
+  // Redirect to the case page (newest search) or dashboard. Same anti-
+  // bounce rule as the dashboard's onboarding gate, applied here so
+  // CTAs from the homepage that hardcode /check don't trap returning
+  // users in the persona picker.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isLoggedIn()) {
+      setAuthGateChecked(true);
+      return;
+    }
+    let cancelled = false;
+    Promise.all([
+      listMySearches().catch(() => []),
+      listMyEngagements().catch(() => []),
+    ]).then(([searches, engagements]) => {
+      if (cancelled) return;
+      if (searches.length > 0 || engagements.length > 0) {
+        // Prefer a case attached to the user's newest search; fall back
+        // to any engagement's case; finally /dashboard if nothing has
+        // a case yet (search not yet auto-cased, e.g. brief was thin).
+        const searchWithCase = searches.find((s) => s.case_id);
+        const engagementWithCase = engagements.find((e) => e.case_id);
+        const caseId =
+          searchWithCase?.case_id ?? engagementWithCase?.case_id ?? null;
+        router.replace(caseId ? `/case/${caseId}` : "/dashboard");
+        return;
+      }
+      setAuthGateChecked(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
 
   useEffect(() => {
     if (viewedRef.current) {
@@ -47,6 +89,14 @@ export default function CheckSelect() {
       redirect_mode: "generic_check_router",
     });
   }, [router]);
+
+  if (!authGateChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-[#7b8ba5]">
+        Loading…
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
