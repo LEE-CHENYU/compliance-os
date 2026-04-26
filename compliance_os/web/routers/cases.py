@@ -56,16 +56,24 @@ def list_cases(
     authorization: str | None = Header(None),
     session: Session = Depends(get_session),
 ):
-    """List cases scoped to the caller. Authenticated → only their own
-    + unowned legacy. Anonymous → only unowned (since they can't prove
-    ownership of any other case)."""
+    """List cases scoped strictly to the calling user.
+
+    Authenticated callers see only their own cases. Anonymous callers
+    get an empty list — anonymous case URLs remain accessible directly
+    via /api/cases/{id}, where case_access auto-claims them on first
+    authenticated touch. Listing them here would (a) leak strangers'
+    NULL-owner cases to any logged-in user and (b) provide nothing
+    actionable to anonymous callers since they can't prove ownership.
+    """
     user_id = maybe_user_id(authorization, session)
-    q = session.query(CaseRow).order_by(CaseRow.created_at.desc())
-    if user_id is not None:
-        q = q.filter((CaseRow.user_id == user_id) | (CaseRow.user_id.is_(None)))
-    else:
-        q = q.filter(CaseRow.user_id.is_(None))
-    cases = q.all()
+    if user_id is None:
+        return CaseListResponse(cases=[])
+    cases = (
+        session.query(CaseRow)
+        .filter(CaseRow.user_id == user_id)
+        .order_by(CaseRow.created_at.desc())
+        .all()
+    )
     return CaseListResponse(cases=[
         CaseResponse(
             id=c.id, workflow_type=c.workflow_type, status=c.status,

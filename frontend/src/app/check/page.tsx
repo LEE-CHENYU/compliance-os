@@ -5,8 +5,12 @@ import { useRouter } from "next/navigation";
 
 import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 import { inferForm8843CheckPath, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
-import { isLoggedIn } from "@/lib/auth";
-import { listMySearches, listMyEngagements } from "@/lib/api";
+import { isLoggedIn, authHeaders } from "@/lib/auth";
+import {
+  listCases,
+  listMySearches,
+  listMyEngagements,
+} from "@/lib/api";
 
 export default function CheckSelect() {
   const router = useRouter();
@@ -16,12 +20,15 @@ export default function CheckSelect() {
   // picker before being bounced to their actual case/dashboard.
   const [authGateChecked, setAuthGateChecked] = useState(false);
 
-  // If the signed-in user already has a lawyer search or engagement,
-  // /check is the wrong destination — they're not a brand-new account.
-  // Redirect to the case page (newest search) or dashboard. Same anti-
-  // bounce rule as the dashboard's onboarding gate, applied here so
-  // CTAs from the homepage that hardcode /check don't trap returning
-  // users in the persona picker.
+  // If the signed-in user already has ANY meaningful content — searches,
+  // engagements, cases, docs, or marketplace activity — /check is the
+  // wrong destination. They're not a brand-new account, and the persona
+  // picker is just noise. Redirect to /case/{id} when a search/engagement
+  // has one (richest landing); otherwise /dashboard.
+  //
+  // Mirror of the dashboard's anti-bounce gate, intentionally — these
+  // two surfaces should be symmetric: if dashboard wouldn't redirect a
+  // user to /check, /check shouldn't trap them either.
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!isLoggedIn()) {
@@ -29,19 +36,53 @@ export default function CheckSelect() {
       return;
     }
     let cancelled = false;
+    const API = "/api";
     Promise.all([
       listMySearches().catch(() => []),
       listMyEngagements().catch(() => []),
-    ]).then(([searches, engagements]) => {
+      listCases().catch(() => ({ cases: [] })),
+      fetch(`${API}/dashboard/documents`, { headers: authHeaders() })
+        .then((r) => (r.ok ? r.json() : []))
+        .catch(() => []),
+      fetch(`${API}/dashboard/timeline`, { headers: authHeaders() })
+        .then((r) => (r.ok ? r.json() : {}))
+        .catch(() => ({})),
+    ]).then(([searches, engagements, casesResp, docs, tlAny]) => {
       if (cancelled) return;
-      if (searches.length > 0 || engagements.length > 0) {
-        // Prefer a case attached to the user's newest search; fall back
-        // to any engagement's case; finally /dashboard if nothing has
-        // a case yet (search not yet auto-cased, e.g. brief was thin).
+      const cases = casesResp?.cases ?? [];
+      const docList = Array.isArray(docs) ? docs : [];
+      type TimelineService = {
+        service_summary?: {
+          active_orders?: unknown[];
+          recent_completed?: unknown[];
+          recommended_services?: unknown[];
+        };
+      };
+      const tl = tlAny as TimelineService;
+      const hasServiceContent = Boolean(
+        tl?.service_summary?.active_orders?.length
+          || tl?.service_summary?.recent_completed?.length
+          || tl?.service_summary?.recommended_services?.length,
+      );
+      const hasContent =
+        searches.length > 0
+        || engagements.length > 0
+        || cases.length > 0
+        || docList.length > 0
+        || hasServiceContent;
+
+      if (hasContent) {
+        // Prefer the richest landing: a case attached to a search, then
+        // a case attached to an engagement, then any owned case, then
+        // the dashboard.
         const searchWithCase = searches.find((s) => s.case_id);
         const engagementWithCase = engagements.find((e) => e.case_id);
+        const firstCase = cases[0];
         const caseId =
-          searchWithCase?.case_id ?? engagementWithCase?.case_id ?? null;
+          searchWithCase?.case_id
+          ?? engagementWithCase?.case_id
+          ?? firstCase?.id
+          ?? null;
         router.replace(caseId ? `/case/${caseId}` : "/dashboard");
         return;
       }

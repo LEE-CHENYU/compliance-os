@@ -12,7 +12,7 @@ import FormPreviewCard, { FieldProposal } from "@/components/chat/FormPreviewCar
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import MySearches from "@/components/dashboard/MySearches";
 import MyEngagements from "@/components/dashboard/MyEngagements";
-import { listMySearches, listMyEngagements } from "@/lib/api";
+import { listCases, listMySearches, listMyEngagements } from "@/lib/api";
 import { useTheme } from "@/lib/theme";
 
 interface TimelineEvent {
@@ -747,7 +747,7 @@ export default function DashboardPage() {
   }, []);
 
   const refreshDashboard = useCallback(async () => {
-    const [tl, st, docs, mySearches, myEngagements] = await Promise.all([
+    const [tl, st, docs, mySearches, myEngagements, casesResp] = await Promise.all([
       fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
       fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
@@ -757,6 +757,11 @@ export default function DashboardPage() {
       // than treating the account as brand-new.
       listMySearches().catch(() => []),
       listMyEngagements().catch(() => []),
+      // Also count cases — a user who went through the discovery
+      // wizard before signing up has a case but no docs/searches/
+      // engagements/services yet. Without this they'd be re-onboarded
+      // through the persona picker.
+      listCases().catch(() => ({ cases: [] })),
     ]);
     const hasServiceContent = Boolean(
       tl.service_summary?.active_orders?.length
@@ -764,11 +769,13 @@ export default function DashboardPage() {
       || tl.service_summary?.recommended_services?.length,
     );
     const hasLawyerContent = mySearches.length > 0 || myEngagements.length > 0;
+    const hasCaseContent = (casesResp?.cases ?? []).length > 0;
     if (
       docs.length === 0
       && (!tl.events || tl.events.length <= 1)
       && !hasServiceContent
       && !hasLawyerContent
+      && !hasCaseContent
     ) {
       router.push("/check");
       return;
