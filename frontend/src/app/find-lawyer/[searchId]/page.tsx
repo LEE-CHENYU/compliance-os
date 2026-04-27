@@ -242,6 +242,110 @@ function Paywall({
   );
 }
 
+/** Single flat tile rendered after the visible top-N preview rows.
+ *
+ *  Replaces the prior nested layout (outer "Behind the paywall" card
+ *  wrapping an inner <Paywall> sub-card). The two cards repeated the
+ *  same CTA — flattening into one tile keeps the message tight: how
+ *  many firms are hidden, what the unlock buys, single button.
+ */
+function PreviewPaywallTail({
+  hiddenCount,
+  previewCount,
+  searchId,
+  lang,
+}: {
+  hiddenCount: number;
+  previewCount: number;
+  searchId: string;
+  lang: Lang;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const isZh = lang === "zh";
+
+  async function go() {
+    setBusy(true);
+    setError(null);
+    trackProfessionalSearchEvent("professional_search_checkout_clicked", {
+      search_id: searchId,
+      surface: "preview_paywall_tail",
+      lang,
+    });
+    try {
+      const { url } = await startCheckout(searchId);
+      window.location.href = url;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      trackProfessionalSearchEvent("professional_search_checkout_failed", {
+        search_id: searchId,
+        surface: "preview_paywall_tail",
+        message,
+        lang,
+      });
+      setError(message);
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div
+      data-testid="find-lawyer-preview-paywall-tail"
+      className="rounded-2xl border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-6 shadow-[0_10px_30px_rgba(91,141,238,0.08)]"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="min-w-0">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5b8dee]">
+            {isZh ? "已隐藏" : "Behind the paywall"}
+          </div>
+          <div className="mt-1 text-[15px] font-semibold text-[#0d1424]">
+            {isZh
+              ? `还有 ${hiddenCount} 家律所、完整简介与联系方式`
+              : `${hiddenCount} more ${hiddenCount === 1 ? "firm" : "firms"}, full dossiers, credentials, contact info`}
+          </div>
+          <p className="mt-1 text-[12.5px] leading-5 text-[#556480]">
+            {isZh
+              ? `您看到的是评分最高的前 ${previewCount} 家。一次性 $15 解锁完整名单与可验证资质来源,永久访问。`
+              : `Previewing top ${previewCount} by score. One-time $15 unlocks the full ranking, verified sources, and PDF + HTML report. Permanent access.`}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={go}
+          disabled={busy}
+          data-testid="find-lawyer-checkout"
+          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] transition hover:bg-[#4f82de] disabled:cursor-wait disabled:bg-[#a8bce8]"
+        >
+          {busy
+            ? isZh ? "正在跳转到支付…" : "Redirecting…"
+            : isZh ? "$15 解锁" : "Unlock for $15"}
+          {!busy && (
+            <svg
+              aria-hidden="true"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          )}
+        </button>
+      </div>
+      {error && (
+        <div className="mt-3 rounded-xl border border-[#ffd6d6] bg-[#fff4f4] px-3 py-2 text-[12px] text-[#a33a3a]">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 function PersonaCard({
   name,
   state,
@@ -760,31 +864,12 @@ export default function SearchStatus() {
               })}
 
               {hiddenCount > 0 && (
-                <div
-                  data-testid="find-lawyer-preview-paywall-tail"
-                  className="rounded-2xl border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-6 shadow-[0_10px_30px_rgba(91,141,238,0.08)]"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="min-w-0">
-                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5b8dee]">
-                        {isZh ? "已隐藏" : "Behind the paywall"}
-                      </div>
-                      <div className="mt-1 text-[15px] font-semibold text-[#0d1424]">
-                        {isZh
-                          ? `还有 ${hiddenCount} 家律所等待解锁`
-                          : `${hiddenCount} more ${hiddenCount === 1 ? "firm" : "firms"} matched — unlock to compare the full shortlist`}
-                      </div>
-                      <p className="mt-1 text-[12.5px] leading-5 text-[#556480]">
-                        {isZh
-                          ? "您看到的是评分最高的前 5 家。$15 解锁完整名单、外部信用资料和联系方式。"
-                          : `You're previewing the top ${PREVIEW_COUNT} by score. Unlock for $15 to see the full ranking, outside credentials, and contact info for every firm.`}
-                      </p>
-                    </div>
-                    <div className="shrink-0">
-                      <Paywall searchId={row.id} lang={lang} />
-                    </div>
-                  </div>
-                </div>
+                <PreviewPaywallTail
+                  hiddenCount={hiddenCount}
+                  previewCount={PREVIEW_COUNT}
+                  searchId={row.id}
+                  lang={lang}
+                />
               )}
             </div>
 
