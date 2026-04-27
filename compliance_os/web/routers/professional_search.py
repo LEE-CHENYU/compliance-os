@@ -126,6 +126,11 @@ class SearchResponse(BaseModel):
     enrichment_started_at: str | None = None
     enrichment_completed_at: str | None = None
     enrichment_error: str | None = None
+    # Per-firm rich data (Stage 1 personas + Stage 2 enrichment overlays).
+    # Only exposed when paid_at is set — pre-payment users see just the
+    # top-5 tier_report slice, never the full contact-info list. Field is
+    # always present in the response shape but null for unpaid rows.
+    firms_data: list | None = None
 
 
 class EnrichmentStatusResponse(BaseModel):
@@ -187,6 +192,10 @@ def _serialize(
             row.enrichment_completed_at.isoformat() if row.enrichment_completed_at else None
         ),
         enrichment_error=row.enrichment_error,
+        # Gate firms_data on paid_at — pre-payment polling gets only
+        # tier_report (top-5 frontend slice). Paid users see the full
+        # list including Stage-2 enrichment underscore-prefixed fields.
+        firms_data=(row.firms_data if row.paid_at is not None else None),
     )
 
 
