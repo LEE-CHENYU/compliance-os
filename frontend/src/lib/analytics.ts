@@ -94,7 +94,19 @@ type ProfessionalSearchEvent =
   | "professional_search_pro_trial_clicked"
   | "professional_search_pro_trial_started"
   | "professional_search_pro_trial_fallback"
-  | "professional_search_pro_trial_failed";
+  | "professional_search_pro_trial_failed"
+  // Stage 2 enrichment lifecycle (per-firm individual-attorney verification).
+  // dispatched: fires when /paid first observes enrichment_status flipping
+  // off "idle" (i.e., user clicked Unlock and the backend kicked off the
+  // runner). completed/failed: fires when the polled status reaches its
+  // terminal state.
+  | "professional_search_enrichment_dispatched"
+  | "professional_search_enrichment_completed"
+  | "professional_search_enrichment_failed"
+  // Click on the alternate-attorney suggestion list rendered post-Stage-2.
+  // Lets us measure whether the band-gap warning is changing user behavior
+  // away from the originally-listed lead_attorney.
+  | "professional_search_alternate_attorney_clicked";
 
 type MixpanelWindow = Window & {
   mixpanel?: MixpanelClient;

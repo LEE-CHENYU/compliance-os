@@ -177,6 +177,14 @@ export interface ProfessionalSearch {
     highest_quote: number | null;
     open_risks: number;
   }> | null;
+  // firms_data carries the per-firm Stage 1 + Stage 2 details. Stage 1
+  // populates `name`, `lead_attorney`, `_credentials`, etc. Stage 2 adds
+  // underscore-prefixed enrichment keys: `_lead_attorney_band`,
+  // `_lead_attorney_credentials`, `_alternate_attorneys`, `_verified_sources`,
+  // `_individual_band_gap`, `_individual_vs_firm_band_gap_warning`,
+  // `_enriched_at`. The shape is loose because persona YAML schemas vary
+  // — keep it as a Record and narrow at access sites.
+  firms_data: Array<Record<string, unknown>> | null;
   error: string | null;
   created_at: string;
   completed_at: string | null;
@@ -185,7 +193,24 @@ export interface ProfessionalSearch {
   is_claimed: boolean;
   stripe_customer_email: string | null;
   case_id: string | null;
+  // Stage 2 enrichment lifecycle (per-firm individual-attorney verification).
+  enrichment_status: "idle" | "enriching" | "complete" | "failed";
+  enrichment_started_at: string | null;
+  enrichment_completed_at: string | null;
+  enrichment_error: string | null;
 }
+
+export interface EnrichmentStatus {
+  status: "idle" | "enriching" | "complete" | "failed";
+  started_at: string | null;
+  completed_at: string | null;
+  error: string | null;
+  firms_enriched: number;
+  firms_total: number;
+}
+
+export const getEnrichmentStatus = (id: string) =>
+  request<EnrichmentStatus>(`/professional-search/${id}/enrichment-status`);
 
 export async function startProfessionalSearch(params: {
   case_brief: string;

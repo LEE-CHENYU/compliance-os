@@ -148,6 +148,26 @@ class ProfessionalSearchRequestRow(Base):
     # See note on CaseRow.user_id above re: cross-MetaData FK limitation.
     user_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
 
+    # Stage-2 enrichment lifecycle — fully decoupled from `paid_at` so:
+    #   (a) we can dispatch enrichment on click intent (before payment
+    #       confirms) and have it run in parallel with the user's Stripe
+    #       checkout window, hiding the ~2-3min latency, and
+    #   (b) abandoned-Stripe sessions still produce enriched data that's
+    #       latent until the user pays (free conversion lever — coming
+    #       back and clicking again is a no-op on enrichment, just a
+    #       fresh Stripe session).
+    # States: idle -> enriching -> complete | failed.
+    # Per-firm enrichment fields (lead_attorney_band, verified_sources,
+    # alternate_attorneys, etc.) live INSIDE firms_data under
+    # underscore-prefixed keys, mirroring the existing _personas /
+    # _why_fits convention.
+    enrichment_status: Mapped[str] = mapped_column(
+        String(20), default="idle", nullable=False
+    )
+    enrichment_started_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    enrichment_completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    enrichment_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

@@ -610,6 +610,16 @@ export default function SearchStatus() {
   const visibleRows = row.is_paid ? tierRows : tierRows.slice(0, PREVIEW_COUNT);
   const hiddenCount = row.is_paid ? 0 : Math.max(0, tierRows.length - PREVIEW_COUNT);
 
+  // Build a lookup table from firm name → firms_data entry so tier rows
+  // (which come from the diligence DB query) can pick up Stage-2 enrichment
+  // fields stored on firms_data. Lower-cased keys to dodge minor
+  // capitalization drift between persona output and diligence ingestion.
+  const firmsDataByName = new Map<string, Record<string, unknown>>();
+  for (const f of row.firms_data ?? []) {
+    const name = String((f?.name as string) || "").trim().toLowerCase();
+    if (name) firmsDataByName.set(name, f);
+  }
+
   return (
     <div className={bgClass}>
       <div className="mx-auto max-w-5xl space-y-6">
@@ -771,6 +781,48 @@ export default function SearchStatus() {
               </div>
             )}
 
+            {/* Stage-2 enrichment banner. Only renders for paid users while
+                Stage 2 is in flight. Pre-payment users see the preview-tail
+                paywall instead, which serves the same "you'll get more after
+                payment" message. */}
+            {row.is_paid && row.enrichment_status === "enriching" && (
+              <div className="mt-4 rounded-2xl border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-4">
+                <div className="flex items-start gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="mt-0.5 inline-block h-2 w-2 shrink-0 animate-pulse rounded-full bg-[#5b8dee]"
+                  />
+                  <div>
+                    <div className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#5b8dee]">
+                      {isZh ? "正在深度核实" : "Verifying individual attorney credentials"}
+                    </div>
+                    <p className="mt-1 text-[13px] leading-5 text-[#556480]">
+                      {isZh
+                        ? "我们正在为每家律所核实指定律师的个人 Chambers / Legal500 等级、备选合伙人、来源链接 — 通常 2-3 分钟。完成后此处会自动更新。"
+                        : "Per-firm: confirming the named lead attorney's individual Chambers / Legal500 band, alternate same-firm partners, and source URL liveness. Usually 2-3 min — refreshes here automatically."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {row.is_paid && row.enrichment_status === "failed" && (
+              <div className="mt-4 rounded-2xl border border-[#ffe3c9] bg-[#fff6ea] px-4 py-3">
+                <div className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#9c5a1c]">
+                  {isZh ? "深度核实失败" : "Enrichment failed"}
+                </div>
+                <p className="mt-1 text-[13px] leading-5 text-[#a06524]">
+                  {isZh
+                    ? "我们无法为本次搜索完成深度核实(详见错误信息)。原始律所列表已保留 — 您可在面板的账户页面联系我们重新触发。"
+                    : "We couldn't complete per-firm verification (see error). The base firm list is preserved — contact us from the dashboard to re-trigger free."}
+                </p>
+                {row.enrichment_error && (
+                  <p className="mt-1 text-[11px] text-[#a06524] opacity-80">
+                    {row.enrichment_error}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="mt-6 space-y-3">
               {visibleRows.map((r, idx) => {
                 const isTracked = engagements.some(
@@ -857,6 +909,122 @@ export default function SearchStatus() {
                           </div>
                         )}
                       </dl>
+
+                      {/* Stage-2 enrichment block. Renders only when this
+                          firm has at least one enrichment field set —
+                          gracefully degrades for legacy paid searches that
+                          haven't been backfilled. Three sub-elements: the
+                          firm-vs-individual band-gap warning, the lead
+                          attorney's individual band/focus, and the alternate-
+                          attorney suggestions list. Hidden for unpaid views
+                          since we paywall this whole layer. */}
+                      {row.is_paid && (() => {
+                        const enriched = firmsDataByName.get(r.firm.toLowerCase());
+                        if (!enriched || !enriched._enriched_at) return null;
+                        const gapWarning = enriched._individual_vs_firm_band_gap_warning as string | null | undefined;
+                        const attorneyBand = enriched._lead_attorney_band as number | null | undefined;
+                        const bandSource = enriched._lead_attorney_band_source as string | null | undefined;
+                        const bandYear = enriched._lead_attorney_band_year as number | null | undefined;
+                        const practiceFocus = enriched._lead_attorney_practice_focus as string | null | undefined;
+                        const takesConsults = enriched._lead_attorney_takes_outside_consults as boolean | null | undefined;
+                        const alternates = (enriched._alternate_attorneys as Array<Record<string, unknown>>) || [];
+                        const leadName = (enriched.lead_attorney as string) || "Lead attorney";
+                        return (
+                          <div className="mt-4 rounded-xl border border-[#e4edf7] bg-[#f9fbfe] p-3">
+                            {gapWarning && (
+                              <div className="mb-2 inline-flex items-start gap-2 rounded-lg border border-[#ffe3c9] bg-[#fff6ea] px-2.5 py-1.5">
+                                <span aria-hidden="true" className="mt-0.5">⚠️</span>
+                                <span className="text-[12px] font-medium text-[#9c5a1c]">
+                                  {gapWarning}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12.5px]">
+                              <span className="font-semibold text-[#0d1424]">
+                                {leadName}
+                              </span>
+                              {attorneyBand != null && (
+                                <span className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white px-2 py-0.5 text-[10px] font-semibold text-[#40536f]">
+                                  {bandSource ? `${bandSource} ` : ""}Band {attorneyBand}
+                                  {bandYear ? ` (${bandYear})` : ""}
+                                </span>
+                              )}
+                              {takesConsults === false && (
+                                <span className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-stone-50 px-2 py-0.5 text-[10px] font-semibold text-[#7b8ba5]">
+                                  may not take outside consults
+                                </span>
+                              )}
+                            </div>
+                            {practiceFocus && (
+                              <p className="mt-1 text-[12px] leading-5 text-[#556480]">
+                                <span className="text-[#7b8ba5]">Practice focus: </span>
+                                {practiceFocus}
+                              </p>
+                            )}
+                            {alternates.length > 0 && (
+                              <div className="mt-3 border-t border-[#e4edf7] pt-3">
+                                <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">
+                                  {isZh ? "建议改请" : "Better-fit attorneys at this firm"}
+                                </div>
+                                <ul className="mt-2 space-y-1.5">
+                                  {alternates.slice(0, 3).map((a, ai) => {
+                                    const aName = a.name as string;
+                                    const aBand = a.band as number | null | undefined;
+                                    const aFit = a.fit_for_case as string | null | undefined;
+                                    const aTakes = a.takes_outside_consults as boolean | null | undefined;
+                                    return (
+                                      <li
+                                        key={`${aName}-${ai}`}
+                                        className="text-[12px]"
+                                        onClick={() => {
+                                          trackProfessionalSearchEvent("professional_search_alternate_attorney_clicked", {
+                                            search_id: row.id,
+                                            firm: r.firm,
+                                            alternate_name: aName,
+                                            alternate_band: aBand ?? null,
+                                            takes_consults: aTakes ?? null,
+                                            lang,
+                                          });
+                                        }}
+                                      >
+                                        <div className="flex flex-wrap items-baseline gap-x-2">
+                                          <span className="font-semibold text-[#0d1424]">{aName}</span>
+                                          {aBand != null && (
+                                            <span className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white px-1.5 py-0.5 text-[10px] font-semibold text-[#40536f]">
+                                              Band {aBand}
+                                            </span>
+                                          )}
+                                          {aTakes === false && (
+                                            <span className="text-[10px] text-[#9aa9c2]">(retained only)</span>
+                                          )}
+                                        </div>
+                                        {aFit && (
+                                          <div className="mt-0.5 text-[11.5px] text-[#556480]">
+                                            {aFit}
+                                          </div>
+                                        )}
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+
+                      {/* Pre-payment caveat: be honest about why the
+                          credentials shown here are firm-level only. The
+                          $15 unlock buys per-attorney verification (which
+                          firms_data._lead_attorney_* fields populate after
+                          Stage 2). */}
+                      {!row.is_paid && (
+                        <p className="mt-3 text-[11px] italic leading-4 text-[#9aa9c2]">
+                          {isZh
+                            ? "上方仅为律所层面的资质,指定律师本人的个人评级须在解锁后核实。"
+                            : "Credentials above are firm-level. The named lead attorney's individual band is verified after unlock."}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

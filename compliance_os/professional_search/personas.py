@@ -172,6 +172,26 @@ def build_prompt(
         f"## Target: {target} firms",
         "Return fewer if you cannot find that many that meet the bar. Do not pad.",
         "",
+        "## Stage 1 — preview research budget (shallow but honest)",
+        "",
+        "This is the FREE preview shown to the user before payment. They see "
+        "the top 5 firms by score; we want them to make a confident pay/skip "
+        "decision in 30 seconds. Stage 2 (post-payment, ~2-3min) verifies "
+        "individual attorney bands, source URLs, and routing risk per firm. "
+        "Don't do Stage 2's job here.",
+        "",
+        "Specifically:",
+        "- 1 firm-level credential per firm (Chambers band, AILA leadership, etc.)",
+        "- 1 source URL per firm (their best third-party citation)",
+        "- 2-3 sentence why_fit",
+        "- DO NOT verify the named lead_attorney's *individual* Chambers / "
+        "  Legal500 / Best Lawyers band — that's Stage 2's responsibility. "
+        "  Any band you list MUST be the FIRM's band, not the individual's.",
+        "- DO NOT chase RFE history, federal-court appearances, or specialty "
+        "  sub-rankings — Stage 2 handles deep diligence per firm.",
+        "- Cap web_search at 8 calls per firm; skip the firm if you can't "
+        "  satisfy the bar within budget rather than padding with weak signals.",
+        "",
         "## Credential methodology (apply this verbatim)",
         "",
         _methodology_excerpt(),

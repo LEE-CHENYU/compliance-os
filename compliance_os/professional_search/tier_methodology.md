@@ -101,3 +101,45 @@ Confidence returned by a search persona (0–100) maps to priority:
 
 The mapping is implemented in
 `compliance_os/professional_search/ingest.py::_confidence_to_priority`.
+
+---
+
+## Firm-level vs individual-attorney credentials (CRITICAL)
+
+A firm's Chambers / Legal 500 / Best Lawyers band is **not** the same as
+the named lead_attorney's individual band, and the gap matters. A Band 1
+firm can have Band 4 partners taking individual consults; the named
+partner you book is not guaranteed to attend.
+
+**The incident** (recorded for posterity): we paid $750 for a consult
+with Robert F. Loughran at Foster LLP based on the firm's Chambers Band
+1 (Texas Immigration) ranking. Loughran personally is Chambers Band 4
+(2025) — two tiers below the firm. His specialty is EB-5 / L-1 / E-2 /
+UHNW investor immigration, not H-1B owner-beneficiary. The substantive
+consult quality reflected the gap, not the firm's headline credential.
+
+**The rule for sub-agents:**
+
+* **Stage 1 (preview):** any Chambers / Legal500 / Best Lawyers band you
+  list MUST be the firm's band, not the named lead_attorney's individual
+  band. Don't conflate them. If you only have firm-level evidence, label
+  it that way ("Chambers USA Band 1 (firm)").
+
+* **Stage 2 (paid enrichment):** verify the named lead_attorney's
+  *individual* profile separately and surface the gap. The Stage 2
+  enrichment runner (`enrichment_runner.py`) handles this — it asks per
+  firm: "what is THIS named individual's personal Chambers/Legal500/Best
+  Lawyers band, and which alternate same-firm partners fit the case
+  better?"
+
+* **UI obligation:** when individual_band − firm_band ≥ 2, the search
+  results page renders a yellow "Routing risk: firm Band X / attorney
+  Band Y" badge and surfaces alternate same-firm attorneys with their
+  individual bands. The user gets the gap, not just the headline.
+
+**Operational rule for users (intake template, not search agent):** in
+every outreach reply to a firm, include: *"Which specific attorney
+would attend the consultation? My case touches [issues]; I would prefer
+the consult be with [Named Attorney 1 or Named Attorney 2] in that
+order. I would prefer not to be routed to an unnamed associate."* And
+re-confirm in writing 24-48 hours before any pre-paid consult.

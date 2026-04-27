@@ -7,9 +7,11 @@ import { useParams, useSearchParams } from "next/navigation";
 import {
   claimSearch,
   downloadProfessionalSearchUrl,
+  getEnrichmentStatus,
   getProfessionalSearch,
   startProSubscriptionCheckout,
   startProTrialFromSearch,
+  type EnrichmentStatus,
   type ProfessionalSearch,
 } from "@/lib/api";
 import { isLoggedIn, login, register } from "@/lib/auth";
@@ -122,6 +124,13 @@ function PaidPage() {
   const [proTrialError, setProTrialError] = useState<string | null>(null);
   const paidEmittedRef = useRef(false);
   const timedOutEmittedRef = useRef(false);
+  // Stage 2 enrichment polling state. The /paid page polls
+  // /enrichment-status independently from the main search-row poll because
+  // they have different terminal conditions (paid_at vs enrichment_status)
+  // and different cadences (3s vs 10s).
+  const [enrichment, setEnrichment] = useState<EnrichmentStatus | null>(null);
+  const enrichmentDispatchedEmittedRef = useRef(false);
+  const enrichmentTerminalEmittedRef = useRef(false);
 
   // Poll until the webhook has marked the search paid (or claimed).
   useEffect(() => {
@@ -173,6 +182,63 @@ function PaidPage() {
       stopped = true;
     };
   }, [params.searchId]);
+
+  // Poll Stage 2 enrichment status. Independent from the search-row poll
+  // — enrichment was kicked off when the user clicked "Unlock for $15" on
+  // the previous page, so by the time we mount /paid it's usually already
+  // enriching. Stop polling once we hit a terminal state.
+  useEffect(() => {
+    let stopped = false;
+    async function poll() {
+      try {
+        const e = await getEnrichmentStatus(params.searchId);
+        if (stopped) return;
+        setEnrichment(e);
+        // Fire-once dispatched event when we first observe a non-idle
+        // state. Captures both the click-triggered path and any path
+        // where enrichment was kicked off elsewhere (e.g. backfill).
+        if (e.status !== "idle" && !enrichmentDispatchedEmittedRef.current) {
+          enrichmentDispatchedEmittedRef.current = true;
+          trackProfessionalSearchEvent("professional_search_enrichment_dispatched", {
+            search_id: params.searchId,
+            firms_total: e.firms_total,
+            lang,
+          });
+        }
+        // Terminal — fire the appropriate completion event once.
+        if (
+          (e.status === "complete" || e.status === "failed")
+          && !enrichmentTerminalEmittedRef.current
+        ) {
+          enrichmentTerminalEmittedRef.current = true;
+          if (e.status === "complete") {
+            trackProfessionalSearchEvent("professional_search_enrichment_completed", {
+              search_id: params.searchId,
+              firms_enriched: e.firms_enriched,
+              firms_total: e.firms_total,
+              lang,
+            });
+          } else {
+            trackProfessionalSearchEvent("professional_search_enrichment_failed", {
+              search_id: params.searchId,
+              error: (e.error || "").slice(0, 200),
+              lang,
+            });
+          }
+          return; // stop polling on terminal
+        }
+      } catch {
+        // Silent on poll errors — non-blocking for the rest of the page.
+      }
+      if (!stopped) {
+        setTimeout(poll, 10_000); // 10s — enrichment runs ~2-3 min
+      }
+    }
+    poll();
+    return () => {
+      stopped = true;
+    };
+  }, [params.searchId, lang]);
 
   // If already logged in (e.g. user paid while logged in), claim immediately.
   useEffect(() => {
@@ -287,6 +353,49 @@ function PaidPage() {
           {sessionId && (
             <div className="mt-3 text-[11px] text-[#7b8ba5]">
               {isZh ? "Stripe 会话" : "Stripe session"}: <code>{sessionId}</code>
+            </div>
+          )}
+
+          {/* Stage 2 enrichment status — kicked off when the user clicked
+              "Unlock for $15", running in parallel with their Stripe
+              session. Most of the time enrichment finishes before the
+              user even lands here, so we just show "✓ verified" and a
+              link back to the firm list. When still in flight: live
+              progress with X/Y firms verified. */}
+          {enrichment && enrichment.status !== "idle" && (
+            <div className="mt-4 rounded-2xl border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] px-4 py-3 text-[12.5px]">
+              {enrichment.status === "enriching" && (
+                <div className="flex items-center gap-2">
+                  <span aria-hidden="true" className="inline-block h-2 w-2 animate-pulse rounded-full bg-[#5b8dee]" />
+                  <span className="font-medium text-[#5b8dee]">
+                    {isZh
+                      ? `正在核实律师个人资质 — ${enrichment.firms_enriched}/${enrichment.firms_total} 家完成`
+                      : `Verifying individual attorney credentials — ${enrichment.firms_enriched}/${enrichment.firms_total} firms complete`}
+                  </span>
+                </div>
+              )}
+              {enrichment.status === "complete" && (
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-medium text-[#2f7a45]">
+                    {isZh
+                      ? `✓ 已为 ${enrichment.firms_enriched} 家律所完成深度核实`
+                      : `✓ Per-firm verification complete (${enrichment.firms_enriched} firms)`}
+                  </span>
+                  <Link
+                    href={`/find-lawyer/${params.searchId}`}
+                    className="rounded-full border border-[#cfe1ff] bg-white/80 px-3 py-1 text-[11.5px] font-semibold text-[#3a5a8c] hover:border-[#5b8dee] hover:text-[#1a2036]"
+                  >
+                    {isZh ? "查看完整报告 →" : "View enriched report →"}
+                  </Link>
+                </div>
+              )}
+              {enrichment.status === "failed" && (
+                <div className="text-[#9c5a1c]">
+                  {isZh
+                    ? "深度核实失败 — 可在面板的账户页面联系我们重新触发。"
+                    : "Per-firm verification failed — contact support from the dashboard to re-trigger free."}
+                </div>
+              )}
             </div>
           )}
           {pollError && (

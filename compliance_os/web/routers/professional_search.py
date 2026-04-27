@@ -119,6 +119,28 @@ class SearchResponse(BaseModel):
     # "Find a specialist" CTA). The frontend uses it to enable the
     # per-firm "+ Track" buttons on the results page.
     case_id: str | None
+    # Stage-2 enrichment lifecycle — null fields when never dispatched.
+    # Frontend polls these to decide whether to show "verifying individual
+    # attorney credentials..." banner above the firm list.
+    enrichment_status: str = "idle"
+    enrichment_started_at: str | None = None
+    enrichment_completed_at: str | None = None
+    enrichment_error: str | None = None
+
+
+class EnrichmentStatusResponse(BaseModel):
+    """Lightweight polling shape for the /paid page — we don't want every
+    poll to drag the full firms_data + tier_report payload across the wire.
+    """
+    status: str  # idle | enriching | complete | failed
+    started_at: str | None
+    completed_at: str | None
+    error: str | None
+    # firm-level rough completion: how many firms have at least one
+    # `_lead_attorney_*` field set. Lets the UI show a "X of Y firms
+    # enriched" progress bar during the ~2-3 min window.
+    firms_enriched: int
+    firms_total: int
 
 
 def _serialize(
@@ -157,6 +179,14 @@ def _serialize(
         # see it. Anonymous polling gets None.
         stripe_customer_email=(row.stripe_customer_email if include_pii else None),
         case_id=row.case_id,
+        enrichment_status=row.enrichment_status or "idle",
+        enrichment_started_at=(
+            row.enrichment_started_at.isoformat() if row.enrichment_started_at else None
+        ),
+        enrichment_completed_at=(
+            row.enrichment_completed_at.isoformat() if row.enrichment_completed_at else None
+        ),
+        enrichment_error=row.enrichment_error,
     )
 
 
@@ -1362,6 +1392,7 @@ def _stripe():
 @router.post("/{request_id}/checkout")
 def create_checkout_session(
     request_id: str,
+    background_tasks: BackgroundTasks,
     authorization: str | None = Header(None),
     session: Session = Depends(get_session),
 ):
@@ -1468,8 +1499,71 @@ def create_checkout_session(
     # Optimistic write — webhook is the source of truth, but recording the
     # session id here lets us recover if the webhook ever lags.
     row.stripe_session_id = checkout.id
+
+    # Stage 2 dispatch — fire enrichment as a background task IFF we have
+    # firms_data to enrich AND we haven't already kicked off enrichment.
+    # This runs in parallel with the user's Stripe session; by the time
+    # they finish entering card details (~30-60s), enrichment is usually
+    # 1/3 done. The /paid page polls /enrichment-status to update the UI
+    # when it lands. Idempotent: re-clicks don't re-dispatch.
+    if (
+        row.firms_data
+        and (row.enrichment_status or "idle") in ("idle", "failed")
+    ):
+        from compliance_os.web.services.enrichment_runner import run_enrichment_sync
+
+        row.enrichment_status = "enriching"
+        row.enrichment_started_at = _dt.datetime.utcnow()
+        row.enrichment_error = None
+        background_tasks.add_task(run_enrichment_sync, row.id)
+        logger.info(
+            "checkout: dispatched enrichment for %s (firms=%d)",
+            request_id, len(row.firms_data),
+        )
+
     session.commit()
     return {"url": checkout.url, "session_id": checkout.id}
+
+
+@router.get(
+    "/{request_id}/enrichment-status",
+    response_model=EnrichmentStatusResponse,
+)
+def get_enrichment_status(
+    request_id: str,
+    session: Session = Depends(get_session),
+):
+    """Lightweight polling endpoint for the /paid page.
+
+    Returns just the enrichment lifecycle state + a per-firm completion
+    counter so the UI can render a "X of Y firms enriched" progress hint
+    during the ~2-3min enrichment window. Avoids dragging the full
+    firms_data + tier_report payload across the wire on every poll.
+    """
+    row = session.get(ProfessionalSearchRequestRow, request_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Search request not found")
+
+    firms_total = len(row.firms_data or [])
+    firms_enriched = sum(
+        1
+        for f in (row.firms_data or [])
+        if isinstance(f, dict) and f.get("_enriched_at")
+    )
+    return EnrichmentStatusResponse(
+        status=row.enrichment_status or "idle",
+        started_at=(
+            row.enrichment_started_at.isoformat()
+            if row.enrichment_started_at else None
+        ),
+        completed_at=(
+            row.enrichment_completed_at.isoformat()
+            if row.enrichment_completed_at else None
+        ),
+        error=row.enrichment_error,
+        firms_enriched=firms_enriched,
+        firms_total=firms_total,
+    )
 
 
 @router.post("/stripe-webhook")

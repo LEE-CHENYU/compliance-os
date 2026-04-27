@@ -28,7 +28,17 @@ RECOVERY_GRACE = timedelta(minutes=10)
 
 
 def reap_stuck_searches() -> None:
-    """Find and recover stuck `running` searches. No-op if nothing stuck."""
+    """Find and recover stuck `running` searches AND stuck `enriching`
+    rows. No-op if nothing stuck.
+
+    Two-headed because the search has two state machines that can each
+    get killed by SIGTERM mid-run:
+      * `status=running` — Stage 1 persona dispatch was interrupted; we
+        re-aggregate from on-disk YAMLs.
+      * `enrichment_status=enriching` — Stage 2 per-firm enrichment was
+        interrupted; we re-dispatch the enrichment runner. Re-runs are
+        idempotent (overwrites the underscore-prefixed enrichment keys).
+    """
     db = next(get_session())
     try:
         cutoff = datetime.utcnow() - RECOVERY_GRACE
@@ -38,13 +48,71 @@ def reap_stuck_searches() -> None:
             .filter(ProfessionalSearchRequestRow.updated_at < cutoff)
             .all()
         )
-        if not candidates:
-            return
-        logger.info("search reaper: %d stuck rows to inspect", len(candidates))
-        for row in candidates:
-            _recover_one(row, db)
+        if candidates:
+            logger.info("search reaper: %d stuck running rows", len(candidates))
+            for row in candidates:
+                _recover_one(row, db)
+
+        # Stage 2 stuck rows: enrichment_started_at set, status=enriching,
+        # but the runner died before flipping to complete. Re-dispatch.
+        stuck_enriching = (
+            db.query(ProfessionalSearchRequestRow)
+            .filter(ProfessionalSearchRequestRow.enrichment_status == "enriching")
+            .filter(ProfessionalSearchRequestRow.enrichment_started_at < cutoff)
+            .all()
+        )
+        if stuck_enriching:
+            logger.info(
+                "search reaper: %d stuck enriching rows", len(stuck_enriching),
+            )
+            for row in stuck_enriching:
+                _recover_stuck_enrichment(row, db)
     finally:
         db.close()
+
+
+def _recover_stuck_enrichment(row: ProfessionalSearchRequestRow, db) -> None:
+    """Re-dispatch enrichment for a row that was killed mid-flight.
+
+    Hard cap: after 1 hour of being stuck, give up and mark `failed`.
+    The user sees a "Re-enrich (free)" button on the /paid page that
+    re-triggers via the same code path.
+    """
+    age = datetime.utcnow() - (row.enrichment_started_at or datetime.utcnow())
+    if age > timedelta(hours=1):
+        row.enrichment_status = "failed"
+        row.enrichment_error = (
+            f"Enrichment stuck > {age.total_seconds() / 60:.0f}min "
+            "(likely repeated deploy interrupts); user can re-trigger via "
+            "the /paid page CTA."
+        )
+        row.enrichment_completed_at = datetime.utcnow()
+        try:
+            db.commit()
+            logger.warning("reaper: enrichment %s gave up after %s", row.id, age)
+        except Exception:
+            db.rollback()
+            logger.exception("reaper: failed to mark stuck enrichment as failed")
+        return
+
+    # Within the recovery window — re-dispatch synchronously (we're
+    # in the boot path, no event loop yet). The enrichment runner is
+    # synchronous at the entrypoint and uses `asyncio.run` internally.
+    try:
+        from compliance_os.web.services.enrichment_runner import run_enrichment_sync
+        # Fire-and-forget via thread so app boot isn't blocked. The
+        # runner has its own DB session, so we can release the boot-time
+        # session immediately after spawning.
+        import threading
+        threading.Thread(
+            target=run_enrichment_sync,
+            args=(row.id,),
+            daemon=True,
+            name=f"enrichment-recovery-{row.id[:8]}",
+        ).start()
+        logger.info("reaper: re-dispatched enrichment for %s", row.id)
+    except Exception:
+        logger.exception("reaper: failed to re-dispatch enrichment for %s", row.id)
 
 
 def _recover_one(row: ProfessionalSearchRequestRow, db) -> None:

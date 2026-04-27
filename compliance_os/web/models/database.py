@@ -178,6 +178,21 @@ def _ensure_professional_search_columns(engine: Engine) -> None:
         # grant rather than a Stripe charge. Used to count a user's Pro
         # free-search consumption against the current subscription period.
         "pro_free_grant_at": "TIMESTAMP" if not is_sqlite else "DATETIME",
+        # Stage-2 per-firm enrichment lifecycle. Decoupled from paid_at —
+        # dispatched on /checkout click so enrichment runs in parallel with
+        # the user's Stripe session, then UI surfaces the deeper data
+        # (individual attorney bands, verified sources, alternates) once
+        # both paid_at and enrichment_status=complete are set.
+        "enrichment_status": (
+            # Default for existing rows is `idle`. Postgres needs the NOT NULL
+            # explicit; SQLite ignores NOT NULL on ALTER but the model-level
+            # default fills it on first read.
+            "VARCHAR(20) NOT NULL DEFAULT 'idle'"
+            if not is_sqlite else "VARCHAR(20) DEFAULT 'idle'"
+        ),
+        "enrichment_started_at": "TIMESTAMP" if not is_sqlite else "DATETIME",
+        "enrichment_completed_at": "TIMESTAMP" if not is_sqlite else "DATETIME",
+        "enrichment_error": "TEXT",
     }
     with engine.begin() as conn:
         for name, ddl in wanted.items():
