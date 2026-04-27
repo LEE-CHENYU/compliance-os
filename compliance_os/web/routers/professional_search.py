@@ -1534,6 +1534,94 @@ def create_checkout_session(
     return {"url": checkout.url, "session_id": checkout.id}
 
 
+@router.post("/{request_id}/sync-stripe-session", response_model=SearchResponse)
+def sync_stripe_session(
+    request_id: str,
+    session_id: str,
+    db: Session = Depends(get_session),
+):
+    """Webhook fallback — verify a Stripe Checkout Session directly and
+    apply the same updates the webhook would have, idempotently.
+
+    Triggered from the /paid page's mount-effect when the URL has
+    session_id in it (every Stripe success_url redirect does). Stripe's
+    webhook delivery is occasionally flaky — when the Stripe dashboard
+    webhook config drifts (wrong domain, expired secret, disabled
+    endpoint), payments succeed but `paid_at` never gets set, leaving
+    the user staring at "Confirming your payment…" forever even though
+    the money was already taken.
+
+    This endpoint short-circuits that. It calls Stripe directly with our
+    server-side secret key, confirms the session was paid for THIS search
+    (`client_reference_id == request_id`), then commits paid_at + the
+    saved customer email exactly like the webhook handler. Idempotent —
+    if paid_at is already set we just return the current row state.
+    """
+    row = db.get(ProfessionalSearchRequestRow, request_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Search request not found")
+    if row.paid_at is not None:
+        # Already paid (probably by a webhook that did fire, or a prior
+        # call to this endpoint). No-op.
+        return _serialize(row)
+
+    stripe = _stripe()
+    try:
+        sess = stripe.checkout.Session.retrieve(session_id)
+    except Exception as exc:
+        logger.exception("sync-stripe-session: retrieve failed for %s", request_id)
+        raise HTTPException(status_code=502, detail=f"Stripe error: {exc}")
+
+    # Two safety checks that the webhook handler also enforces:
+    sess_request_id = (
+        sess.get("client_reference_id")
+        if isinstance(sess, dict)
+        else getattr(sess, "client_reference_id", None)
+    )
+    if sess_request_id != request_id:
+        logger.warning(
+            "sync-stripe-session: client_reference_id mismatch — "
+            "session %s belongs to %s, not %s",
+            session_id, sess_request_id, request_id,
+        )
+        raise HTTPException(
+            status_code=400,
+            detail="Stripe session does not belong to this search request",
+        )
+    payment_status = (
+        sess.get("payment_status")
+        if isinstance(sess, dict)
+        else getattr(sess, "payment_status", None)
+    )
+    if payment_status != "paid":
+        raise HTTPException(
+            status_code=409,
+            detail=f"Stripe session is not paid (payment_status={payment_status})",
+        )
+
+    # All checks pass — apply the webhook's writes.
+    row.paid_at = _dt.datetime.utcnow()
+    row.stripe_session_id = (
+        sess.get("id") if isinstance(sess, dict) else getattr(sess, "id", session_id)
+    )
+    customer_details = (
+        sess.get("customer_details") if isinstance(sess, dict)
+        else getattr(sess, "customer_details", None)
+    )
+    if customer_details:
+        email = (
+            customer_details.get("email")
+            if isinstance(customer_details, dict)
+            else getattr(customer_details, "email", None)
+        )
+        if email and not row.stripe_customer_email:
+            row.stripe_customer_email = email
+    db.commit()
+    db.refresh(row)
+    logger.info("sync-stripe-session: marked %s paid via API fallback", request_id)
+    return _serialize(row)
+
+
 @router.get(
     "/{request_id}/enrichment-status",
     response_model=EnrichmentStatusResponse,

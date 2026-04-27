@@ -11,6 +11,7 @@ import {
   getProfessionalSearch,
   startProSubscriptionCheckout,
   startProTrialFromSearch,
+  syncStripeSession,
   type EnrichmentStatus,
   type ProfessionalSearch,
 } from "@/lib/api";
@@ -105,6 +106,7 @@ export default function PaidPageWrapper() {
 function PaidPage() {
   const params = useParams<{ searchId: string }>();
   const search = useSearchParams();
+  const sessionId = search?.get("session_id") ?? null;
   const { lang, setLang } = useLang();
   const isZh = lang === "zh";
 
@@ -132,7 +134,22 @@ function PaidPage() {
   const enrichmentDispatchedEmittedRef = useRef(false);
   const enrichmentTerminalEmittedRef = useRef(false);
 
-  // Poll until the webhook has marked the search paid (or claimed).
+  // Webhook fallback: if Stripe redirected us here with a session_id in
+  // the URL, hit /sync-stripe-session immediately. The backend verifies
+  // with Stripe API and sets paid_at — bypasses webhook delivery flakiness
+  // entirely. The poll loop below catches the resulting state on its
+  // next tick. Idempotent: returns silently if paid_at is already set.
+  useEffect(() => {
+    if (!sessionId) return;
+    syncStripeSession(params.searchId, sessionId).catch(() => {
+      // Silent — the poll loop is the safety net. Backend logs the
+      // attempt; we just don't want to surface a confusing error if
+      // sync raced ahead of an actual webhook delivery.
+    });
+  }, [params.searchId, sessionId]);
+
+  // Poll until paid_at is set (by webhook OR by the sync-stripe-session
+  // fallback above).
   useEffect(() => {
     let stopped = false;
     let attempts = 0;
@@ -300,7 +317,6 @@ function PaidPage() {
   }
 
   const isPaid = !!row?.is_paid;
-  const sessionId = search?.get("session_id");
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-6 py-10">

@@ -212,6 +212,17 @@ export interface EnrichmentStatus {
 export const getEnrichmentStatus = (id: string) =>
   request<EnrichmentStatus>(`/professional-search/${id}/enrichment-status`);
 
+/** Webhook fallback: verify a Stripe Checkout Session via our backend and
+ *  set paid_at if the session matches this search and is paid. Called
+ *  from the /paid page on mount with session_id from the URL — protects
+ *  against flaky Stripe webhook delivery. Returns the now-paid search
+ *  row, or throws if the session doesn't match / isn't paid. */
+export const syncStripeSession = (id: string, sessionId: string) =>
+  request<ProfessionalSearch>(
+    `/professional-search/${id}/sync-stripe-session?session_id=${encodeURIComponent(sessionId)}`,
+    { method: "POST" },
+  );
+
 export async function startProfessionalSearch(params: {
   case_brief: string;
   purpose: string;
