@@ -33,6 +33,20 @@ from compliance_os.web.routers import me as me_router
 async def lifespan(app: FastAPI):
     # Initialize database on startup
     get_engine()
+    # Reap professional-search rows stuck in `running` from the previous
+    # deploy. BackgroundTasks runners die on SIGTERM during redeploy, so
+    # rows whose personas finished before the kill never get
+    # firms_data/tier_report/status=complete written. Recovery is safe to
+    # run on every boot — re-aggregating from on-disk YAMLs is idempotent.
+    try:
+        from compliance_os.web.services.search_reaper import reap_stuck_searches
+        reap_stuck_searches()
+    except Exception:
+        # Reaper failure must not block app startup — health checks come
+        # next and a missing reaper is recoverable, an app that won't boot
+        # is not.
+        import logging
+        logging.getLogger(__name__).exception("search reaper failed; continuing boot")
     yield
 
 
