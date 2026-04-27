@@ -75,18 +75,21 @@ def _recover_one(row: ProfessionalSearchRequestRow, db) -> None:
 
     try:
         # Imports are inside the function so a missing aggregator package
-        # at boot doesn't crash the reaper.
+        # at boot doesn't crash the reaper. Names mirror the live runner
+        # (professional_search_runner.py) — `connect`/`init_schema` are
+        # aliased to the more descriptive *_diligence names, and
+        # ingest_docs lives in `ingest.py`, not `db.py`.
         from compliance_os.professional_search.aggregator import (
             aggregate_firms,
             load_persona_yamls,
         )
         from compliance_os.professional_search.db import (
             attorney_comparison,
-            connect_diligence,
-            init_diligence_schema,
-            ingest_docs,
             vendor_comparison,
+            connect as connect_diligence,
+            init_schema as init_diligence_schema,
         )
+        from compliance_os.professional_search.ingest import ingest_docs
 
         init_diligence_schema()
         ingest_docs(yaml_paths)
