@@ -175,17 +175,22 @@ function FindLawyer() {
   const selectedHelper = verticalsLocalized[vertical]?.helper;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-6 py-10">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-4 py-6 sm:px-6 sm:py-10">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-8 flex items-center justify-between gap-3">
+        {/* Mobile: flex-wrap so back + lang + sample-report don't overflow
+            on a 390px-wide viewport. Status pill hides below sm — it's
+            purely decorative ("Professional search" label) and was the
+            element that pushed the row to wrap awkwardly across 3 lines
+            with broken-up labels on iOS Safari. */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-2 sm:mb-8 sm:gap-3">
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur transition hover:text-[#1a2036]"
+            className="rounded-full border border-white/80 bg-white/75 px-3 py-1.5 text-[13px] font-medium text-[#52627d] shadow-[0_8px_24px_rgba(42,64,102,0.08)] backdrop-blur transition hover:text-[#1a2036] sm:px-4 sm:py-2 sm:text-sm"
           >
             {t.btnBack as string}
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <LangToggle
               lang={lang}
               onChange={(next) => {
@@ -205,7 +210,7 @@ function FindLawyer() {
               rel="noopener noreferrer"
               data-testid="find-lawyer-sample-report"
               data-graph-edge="find-lawyer:sample-report"
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#cfe1ff] bg-[#eaf2ff]/90 px-4 py-2 text-[12px] font-semibold text-[#2f5bae] shadow-[0_8px_24px_rgba(91,141,238,0.18)] transition hover:bg-[#dde9fb] hover:text-[#1a2036]"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#cfe1ff] bg-[#eaf2ff]/90 px-3 py-1.5 text-[12px] font-semibold text-[#2f5bae] shadow-[0_8px_24px_rgba(91,141,238,0.18)] transition hover:bg-[#dde9fb] hover:text-[#1a2036] sm:px-4 sm:py-2"
               title={lang === "zh" ? "查看示例 PDF 报告" : "Preview a sample PDF report"}
             >
               <svg
@@ -223,9 +228,10 @@ function FindLawyer() {
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="9" y1="15" x2="15" y2="15" />
               </svg>
-              {lang === "zh" ? "查看示例报告" : "See sample report"}
+              <span className="sm:inline">{lang === "zh" ? "示例报告" : "Sample"}</span>
+              <span className="hidden sm:inline">{lang === "zh" ? "" : " report"}</span>
             </a>
-            <div className="rounded-full border border-[#dce6f3] bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7c95] shadow-[0_8px_24px_rgba(42,64,102,0.08)]">
+            <div className="hidden rounded-full border border-[#dce6f3] bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7c95] shadow-[0_8px_24px_rgba(42,64,102,0.08)] sm:inline-flex">
               {t.statusPagePill as string}
             </div>
           </div>
@@ -281,6 +287,7 @@ function FindLawyer() {
                 <select
                   value={vertical}
                   onChange={(e) => setVertical(e.target.value)}
+                  data-testid="find-lawyer-vertical"
                   className={INPUT}
                 >
                   {VERTICAL_KEYS.map((key) => (
@@ -301,6 +308,7 @@ function FindLawyer() {
                   value={purpose}
                   onChange={(e) => setPurpose(e.target.value)}
                   placeholder={t.fieldPurposePlaceholder as string}
+                  data-testid="find-lawyer-purpose"
                   className={INPUT}
                 />
                 <div className="mt-2 text-[13px] text-[#7b8ba5]">
@@ -315,6 +323,7 @@ function FindLawyer() {
                   onChange={(e) => setCaseBrief(e.target.value)}
                   rows={10}
                   placeholder={t.fieldBriefPlaceholder as string}
+                  data-testid="find-lawyer-brief"
                   className={`${INPUT} font-mono leading-relaxed`}
                 />
                 <div className="mt-2 flex items-baseline justify-between gap-3 text-[13px] text-[#7b8ba5]">
@@ -347,6 +356,7 @@ function FindLawyer() {
                     multiple
                     accept=".pdf,.docx,.txt,.md"
                     onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+                    data-testid="find-lawyer-files"
                     className="sr-only"
                   />
                   <div className="text-[14px] font-semibold text-[#40536f]">
@@ -394,6 +404,7 @@ function FindLawyer() {
                 <button
                   type="submit"
                   disabled={!canSubmit}
+                  data-testid="find-lawyer-submit"
                   className={canSubmit ? PRIMARY_BTN : DISABLED_BTN}
                 >
                   {submitting ? (t.btnStarting as string) : (t.btnStart as string)}
