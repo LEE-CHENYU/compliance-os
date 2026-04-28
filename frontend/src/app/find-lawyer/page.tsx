@@ -11,6 +11,7 @@ import {
 } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import { trackProfessionalSearchEvent } from "@/lib/analytics";
+import { professionalSearchVocabulary } from "@/lib/professionalSearchCopy";
 
 const VERTICAL_KEYS = [
   "immigration_attorney",
@@ -57,6 +58,7 @@ function FindLawyer() {
   const [files, setFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const vocab = professionalSearchVocabulary(vertical, lang);
   const [prefillState, setPrefillState] = useState<"idle" | "loading" | "ready" | "error">(
     caseId ? "loading" : "idle",
   );
@@ -173,6 +175,21 @@ function FindLawyer() {
   }
 
   const selectedHelper = verticalsLocalized[vertical]?.helper;
+  const pageTitle = vocab.isAttorney
+    ? (t.pageTitle as string)
+    : lang === "zh"
+      ? `告诉我们您的情况，我们帮您找到合适的${vocab.orgSingular}。`
+      : `Tell us about your needs. We'll find the right ${vocab.orgSingular}.`;
+  const pageBlurb = vocab.isAttorney
+    ? (t.pageBlurb as string)
+    : lang === "zh"
+      ? "描述您的情况，并可选择上传相关文件。研究代理将根据所选专业类别并行搜索不同角度，并基于可外部验证的资质与适配度返回排名列表。"
+      : `Describe your situation and optionally upload relevant documents. Research agents will search category-specific angles and return a ranked list of ${vocab.orgPlural} scored against externally-verifiable credentials and fit.`;
+  const briefHelp = vocab.isAttorney
+    ? (t.fieldBriefHelp as string)
+    : lang === "zh"
+      ? "越具体越好 — 代理会据此判断服务方是否真正适合您的问题。"
+      : `The more specific, the better — agents use this to judge whether a ${vocab.orgSingular} fits your exact needs.`;
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-4 py-6 sm:px-6 sm:py-10">
@@ -204,33 +221,35 @@ function FindLawyer() {
                 setLang(next);
               }}
             />
-            <a
-              href="/samples/lawyer-search-eb5-sample.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-testid="find-lawyer-sample-report"
-              data-graph-edge="find-lawyer:sample-report"
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#cfe1ff] bg-[#eaf2ff]/90 px-3 py-1.5 text-[12px] font-semibold text-[#2f5bae] shadow-[0_8px_24px_rgba(91,141,238,0.18)] transition hover:bg-[#dde9fb] hover:text-[#1a2036] sm:px-4 sm:py-2"
-              title={lang === "zh" ? "查看示例 PDF 报告" : "Preview a sample PDF report"}
-            >
-              <svg
-                aria-hidden="true"
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            {vocab.isAttorney && (
+              <a
+                href="/samples/lawyer-search-eb5-sample.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="find-lawyer-sample-report"
+                data-graph-edge="find-lawyer:sample-report"
+                className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#cfe1ff] bg-[#eaf2ff]/90 px-3 py-1.5 text-[12px] font-semibold text-[#2f5bae] shadow-[0_8px_24px_rgba(91,141,238,0.18)] transition hover:bg-[#dde9fb] hover:text-[#1a2036] sm:px-4 sm:py-2"
+                title={lang === "zh" ? "查看示例 PDF 报告" : "Preview a sample PDF report"}
               >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="9" y1="15" x2="15" y2="15" />
-              </svg>
-              <span className="sm:inline">{lang === "zh" ? "示例报告" : "Sample"}</span>
-              <span className="hidden sm:inline">{lang === "zh" ? "" : " report"}</span>
-            </a>
+                <svg
+                  aria-hidden="true"
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="9" y1="15" x2="15" y2="15" />
+                </svg>
+                <span className="sm:inline">{lang === "zh" ? "示例报告" : "Sample"}</span>
+                <span className="hidden sm:inline">{lang === "zh" ? "" : " report"}</span>
+              </a>
+            )}
             <div className="hidden rounded-full border border-[#dce6f3] bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7c95] shadow-[0_8px_24px_rgba(42,64,102,0.08)] sm:inline-flex">
               {t.statusPagePill as string}
             </div>
@@ -244,10 +263,10 @@ function FindLawyer() {
                 {t.eyebrow as string}
               </div>
               <h1 className="mt-3 text-[40px] font-extrabold leading-[1.05] tracking-tight text-[#0d1424]">
-                {t.pageTitle as string}
+                {pageTitle}
               </h1>
               <p className="mt-4 text-[16px] leading-7 text-[#556480]">
-                {t.pageBlurb as string}
+                {pageBlurb}
               </p>
               {caseId && (
                 <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#dbe5f2] bg-[#eef4fd]/80 px-4 py-3">
@@ -327,7 +346,7 @@ function FindLawyer() {
                   className={`${INPUT} font-mono leading-relaxed`}
                 />
                 <div className="mt-2 flex items-baseline justify-between gap-3 text-[13px] text-[#7b8ba5]">
-                  <span>{t.fieldBriefHelp as string}</span>
+                  <span>{briefHelp}</span>
                   <span
                     className={`shrink-0 font-medium tabular-nums ${
                       briefQuality === "weak"
@@ -398,7 +417,13 @@ function FindLawyer() {
                       {blockers.join(" · ")}
                     </>
                   ) : (
-                    <span className="text-[#2f7a45]">{t.ready as string}</span>
+                    <span className="text-[#2f7a45]">
+                      {vocab.isAttorney
+                        ? (t.ready as string)
+                        : lang === "zh"
+                          ? "准备就绪，将并行调度研究代理。"
+                          : "Ready to dispatch research agents in parallel."}
+                    </span>
                   )}
                 </div>
                 <button

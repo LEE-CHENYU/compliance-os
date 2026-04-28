@@ -55,8 +55,8 @@ export default function MySearches() {
               communications
             </h2>
             <p className="mt-3 text-[14px] leading-7 text-[#556480]">
-              Re-download any lawyer search you&rsquo;ve purchased, organize
-              the case files those firms need, and capture your back-and-forth
+              Re-download any professional search you&rsquo;ve purchased, organize
+              the files those providers need, and capture your back-and-forth
               with each one in a single timeline.
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function MySearches() {
           <div className="mt-6 text-[13px] text-[#7b8ba5]">Loading…</div>
         ) : rows.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-dashed border-[#c9d7eb] bg-white/70 p-5 text-[13px] text-[#556480]">
-            You haven&rsquo;t purchased a lawyer search yet. Once you do, your
+            You haven&rsquo;t purchased a professional search yet. Once you do, your
             reports show up here permanently — no expiring links.
           </div>
         ) : (

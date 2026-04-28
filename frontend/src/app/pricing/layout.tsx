@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { OG_IMAGE, SITE_NAME, SITE_URL } from "@/lib/site";
 import { JsonLdScript, PRICING_SCHEMA } from "@/components/SchemaOrg";
 
-const TITLE = "Pricing — Free, Pro $20/mo, $15 per lawyer search";
+const TITLE = "Pricing — Free, Pro $20/mo, $15 per professional search";
 const DESC =
-  "Free Form 8843 generation and document cross-checks. Guardian Pro at $20/mo unlocks unlimited document extraction, monthly lawyer searches, and priority email support. Pay $15 per one-off lawyer search and get 30 days of Pro free.";
+  "Free Form 8843 generation and document cross-checks. Guardian Pro at $20/mo unlocks unlimited document extraction, monthly professional searches, and priority email support. Pay $15 per one-off professional search and get 30 days of Pro free.";
 const URL = `${SITE_URL}/pricing`;
 
 export const metadata: Metadata = {

@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 // to a paid request, and have nothing to gain from indexing. Strong
 // noindex so any leaked URL doesn't get crawled.
 export const metadata: Metadata = {
-  title: "Lawyer search",
+  title: "Professional search",
   robots: { index: false, follow: false, nocache: true },
 };
 

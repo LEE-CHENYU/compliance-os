@@ -140,7 +140,7 @@ export const PRICING_SCHEMA = {
       "@type": "Product",
       name: "Guardian Pro",
       description:
-        "Unlimited document extraction, monthly lawyer searches, priority email support, and a personal compliance vault for nonresidents and US-based founders.",
+        "Unlimited document extraction, monthly professional searches, priority email support, and a personal compliance vault for nonresidents and US-based founders.",
       brand: { "@type": "Brand", name: "Guardian" },
       offers: [
         {
@@ -153,10 +153,10 @@ export const PRICING_SCHEMA = {
         },
         {
           "@type": "Offer",
-          name: "On-demand lawyer search",
+          name: "On-demand professional search",
           price: "15",
           priceCurrency: "USD",
-          description: "Single-use lawyer search; 30 days of Guardian Pro included.",
+          description: "Single-use professional search; 30 days of Guardian Pro included.",
           url: PRICING_URL,
           availability: "https://schema.org/InStock",
         },
@@ -187,8 +187,8 @@ export const FIND_LAWYER_SCHEMA = {
   "@graph": [
     {
       "@type": "Service",
-      name: "Guardian lawyer matching",
-      serviceType: "Immigration attorney shortlisting",
+      name: "Guardian professional matching",
+      serviceType: "Attorney, CPA, banking provider, and CAA shortlisting",
       provider: { "@type": "Organization", name: "Guardian", url: SITE_URL },
       areaServed: "United States",
       audience: {
@@ -200,7 +200,7 @@ export const FIND_LAWYER_SCHEMA = {
         "@type": "Offer",
         price: "15",
         priceCurrency: "USD",
-        description: "Single-use lawyer search; 30 days of Guardian Pro included.",
+        description: "Single-use professional search; 30 days of Guardian Pro included.",
         url: FIND_LAWYER_URL,
       },
       hasOfferCatalog: {
@@ -221,7 +221,7 @@ export const FIND_LAWYER_SCHEMA = {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-        { "@type": "ListItem", position: 2, name: "Find a lawyer", item: FIND_LAWYER_URL },
+        { "@type": "ListItem", position: 2, name: "Find a professional", item: FIND_LAWYER_URL },
       ],
     },
   ],

@@ -534,13 +534,13 @@ export const PRICING_STRINGS: Record<Lang, Dict> = {
     eyebrow: "Pricing",
     title: "Pay only when you need professional services",
     subtitle:
-      "Free for casual document review and one-off lawyer searches. Upgrade to Pro when your data room outgrows the basics.",
+      "Free for casual document review and one-off professional searches. Upgrade to Pro when your data room outgrows the basics.",
     freeTitle: "Free",
     freePrice: "$0",
     freeUnit: "/ month",
-    freeBlurb: "For checking a quick document or running a single lawyer search.",
+    freeBlurb: "For checking a quick document or running a single professional search.",
     freeFeat1: "10 document extractions / month",
-    freeFeat2: "Lawyer search at $15 per report",
+    freeFeat2: "Professional search at $15 per report",
     freeFeat3: "Permanent access to purchased reports",
     freeFeat4: "MCP + Claude integration",
     freeCTA: "Get started",
@@ -550,14 +550,14 @@ export const PRICING_STRINGS: Record<Lang, Dict> = {
     proBadge: "Most popular",
     proBlurb: "For navigators actively managing their visa, tax, or compliance work.",
     proFeat1: "Unlimited document extractions",
-    proFeat2: "1 lawyer search included / month",
+    proFeat2: "1 professional search included / month",
     proFeat3: "Additional searches at $15 each",
     proFeat4: "Cancel anytime in the billing portal",
     proCTA: "Start Pro",
     proCTAFromTrial: "Continue Pro",
     proCTASignedOut: "Sign in to subscribe",
     trialNote:
-      "Already paid for a lawyer search? You're already on a 30-day Pro trial — no card required.",
+      "Already paid for a professional search? You're already on a 30-day Pro trial — no card required.",
     faqTitle: "Questions",
     faq1Q: "What counts as an extraction?",
     faq1A:
@@ -568,7 +568,7 @@ export const PRICING_STRINGS: Record<Lang, Dict> = {
     faq3Q: "Can I keep my reports if I cancel?",
     faq3A:
       "Yes — every report you've paid for stays accessible from your dashboard, forever. Cancellation only affects future entitlements.",
-    faq4Q: "Do trial users get the free lawyer search?",
+    faq4Q: "Do trial users get the free professional search?",
     faq4A:
       "No — the included monthly search is a paid-Pro perk only. Trial users still pay $15 per search, but get unlimited extractions during the trial.",
     backHome: "← Back to home",
@@ -577,13 +577,13 @@ export const PRICING_STRINGS: Record<Lang, Dict> = {
     eyebrow: "套餐",
     title: "按需付费,无月租门槛",
     subtitle:
-      "偶尔上传一份文件、做一次律所搜索 — 免费即可。当您的资料室真正进入活跃使用期,再升级到 Pro。",
+      "偶尔上传一份文件、做一次专业人士搜索 — 免费即可。当您的资料室真正进入活跃使用期,再升级到 Pro。",
     freeTitle: "免费版",
     freePrice: "$0",
     freeUnit: "/ 月",
-    freeBlurb: "适合快速审阅一份文件或一次性律所搜索。",
+    freeBlurb: "适合快速审阅一份文件或一次性专业人士搜索。",
     freeFeat1: "每月 10 次文档解析",
-    freeFeat2: "律所搜索单次 $15",
+    freeFeat2: "专业人士搜索单次 $15",
     freeFeat3: "已购报告永久可访问",
     freeFeat4: "支持 MCP / Claude 集成",
     freeCTA: "开始使用",
@@ -593,14 +593,14 @@ export const PRICING_STRINGS: Record<Lang, Dict> = {
     proBadge: "推荐",
     proBlurb: "适合正在主动处理签证、税务或合规事务的用户。",
     proFeat1: "无限次文档解析",
-    proFeat2: "每月赠送 1 次律所搜索",
+    proFeat2: "每月赠送 1 次专业人士搜索",
     proFeat3: "超出后每次 $15",
     proFeat4: "随时通过 Stripe 自助取消",
     proCTA: "开通 Pro",
     proCTAFromTrial: "继续 Pro 订阅",
     proCTASignedOut: "登录后订阅",
     trialNote:
-      "购买过律所搜索? 您已自动获得 30 天 Pro 试用 — 无需信用卡。",
+      "购买过专业人士搜索? 您已自动获得 30 天 Pro 试用 — 无需信用卡。",
     faqTitle: "常见问题",
     faq1Q: "什么算一次解析?",
     faq1A:
@@ -611,9 +611,9 @@ export const PRICING_STRINGS: Record<Lang, Dict> = {
     faq3Q: "取消后我购买过的报告还能看吗?",
     faq3A:
       "可以 — 已付费的报告永久保留在您的账户中。取消订阅只会影响未来的权益。",
-    faq4Q: "试用用户也能获赠律所搜索吗?",
+    faq4Q: "试用用户也能获赠专业人士搜索吗?",
     faq4A:
-      "不能 — 每月赠送 1 次律所搜索仅限付费 Pro 用户。试用用户仍需按 $15 单次付费,但解析次数在试用期内不限。",
+      "不能 — 每月赠送 1 次专业人士搜索仅限付费 Pro 用户。试用用户仍需按 $15 单次付费,但解析次数在试用期内不限。",
     backHome: "← 返回首页",
   },
 };
@@ -629,7 +629,7 @@ export const PRO_STRINGS: Record<Lang, Dict> = {
     badgeUpgrade: "Upgrade",
     paywallTitle: "You've used all 10 free extractions this month",
     paywallBody:
-      "Each upload triggers OCR + structured extraction (a paid LLM call). Free resets on the 1st of next month — or upgrade to Pro for unlimited extractions and one free lawyer search per month.",
+      "Each upload triggers OCR + structured extraction (a paid LLM call). Free resets on the 1st of next month — or upgrade to Pro for unlimited extractions and one free professional search per month.",
     paywallUpgrade: "Upgrade to Pro · $20/mo",
     paywallDismiss: "Maybe later",
     paywallReset: (date: string) => `Resets ${date}`,
@@ -645,7 +645,7 @@ export const PRO_STRINGS: Record<Lang, Dict> = {
     badgeUpgrade: "升级",
     paywallTitle: "本月免费解析次数已用完",
     paywallBody:
-      "每次上传都会触发 OCR + 结构化抽取(付费 LLM 调用)。免费额度将于下月 1 日重置 — 或升级到 Pro,享受无限次解析及每月 1 次免费律所搜索。",
+      "每次上传都会触发 OCR + 结构化抽取(付费 LLM 调用)。免费额度将于下月 1 日重置 — 或升级到 Pro,享受无限次解析及每月 1 次免费专业人士搜索。",
     paywallUpgrade: "升级到 Pro · $20/月",
     paywallDismiss: "稍后再说",
     paywallReset: (date: string) => `${date} 重置`,

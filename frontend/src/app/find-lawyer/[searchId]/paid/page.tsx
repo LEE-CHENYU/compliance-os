@@ -19,13 +19,36 @@ import { getGoogleAuthUrl, handleGoogleCallback, isLoggedIn, login, register } f
 import { useLang } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import { trackProfessionalSearchEvent } from "@/lib/analytics";
+import {
+  professionalSearchVocabulary,
+  type ProfessionalSearchVocabulary,
+} from "@/lib/professionalSearchCopy";
 
 const POLL_INTERVAL_MS = 2000;
 const MAX_POLL_ATTEMPTS = 30; // ~60 s
 
 /** "Save it to your account" CTA — three concrete benefits, in EN/中文. */
-const BENEFITS = {
-  en: [
+function paidBenefits(lang: "en" | "zh", vocab: ProfessionalSearchVocabulary) {
+  if (lang === "zh") {
+    return [
+      {
+        title: "随时访问您的报告",
+        body: "从任何设备重新下载 PDF 和网页版。链接永不过期，您的购买永久保存在账户中。",
+        icon: "report",
+      },
+      {
+        title: "管理您的案件文件",
+        body: vocab.benefitDocs,
+        icon: "docs",
+      },
+      {
+        title: "追踪沟通记录",
+        body: vocab.benefitComms,
+        icon: "mail",
+      },
+    ];
+  }
+  return [
     {
       title: "Access this report anytime",
       body: "Re-download the PDF and HTML from any device. No expiring links — your purchase stays in your account.",
@@ -33,33 +56,16 @@ const BENEFITS = {
     },
     {
       title: "Manage your case documents",
-      body: "Upload and organize the files this firm will ask for — passport scans, I-797s, source-of-funds paperwork, prior filings. Guardian's data room keeps them ready.",
+      body: vocab.benefitDocs,
       icon: "docs",
     },
     {
       title: "Track ongoing communications",
-      body: "Keep emails, consultation notes, and contracts with the firms you reach out to in one place — alongside your timeline of compliance deadlines.",
+      body: vocab.benefitComms,
       icon: "mail",
     },
-  ],
-  zh: [
-    {
-      title: "随时访问您的报告",
-      body: "从任何设备重新下载 PDF 和网页版。链接永不过期，您的购买永久保存在账户中。",
-      icon: "report",
-    },
-    {
-      title: "管理您的案件文件",
-      body: "上传并整理律所所需的文件 — 护照扫描件、I-797、资金来源材料、历次申请记录。Guardian 数据室让所有材料随时备查。",
-      icon: "docs",
-    },
-    {
-      title: "追踪沟通记录",
-      body: "将您与律所之间的邮件、咨询笔记、合同等集中管理 — 与合规时间线一起呈现。",
-      icon: "mail",
-    },
-  ],
-} as const;
+  ];
+}
 
 function Icon({ name }: { name: string }) {
   const common = {
@@ -111,6 +117,7 @@ function PaidPage() {
   const isZh = lang === "zh";
 
   const [row, setRow] = useState<ProfessionalSearch | null>(null);
+  const vocab = professionalSearchVocabulary(row?.vertical ?? "professional", lang);
   const [pollError, setPollError] = useState<string | null>(null);
   const [pollTimedOut, setPollTimedOut] = useState(false);
   const [authMode, setAuthMode] = useState<"signup" | "login">("signup");
@@ -416,8 +423,8 @@ function PaidPage() {
                   <span aria-hidden="true" className="inline-block h-2 w-2 animate-pulse rounded-full bg-[#5b8dee]" />
                   <span className="font-medium text-[#5b8dee]">
                     {isZh
-                      ? `正在核实律师个人资质 — ${enrichment.firms_enriched}/${enrichment.firms_total} 家完成`
-                      : `Verifying individual attorney credentials — ${enrichment.firms_enriched}/${enrichment.firms_total} firms complete`}
+                      ? vocab.paidProgress(enrichment.firms_enriched, enrichment.firms_total)
+                      : vocab.paidProgress(enrichment.firms_enriched, enrichment.firms_total)}
                   </span>
                 </div>
               )}
@@ -425,8 +432,8 @@ function PaidPage() {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-medium text-[#2f7a45]">
                     {isZh
-                      ? `✓ 已为 ${enrichment.firms_enriched} 家律所完成深度核实`
-                      : `✓ Per-firm verification complete (${enrichment.firms_enriched} firms)`}
+                      ? vocab.paidComplete(enrichment.firms_enriched)
+                      : vocab.paidComplete(enrichment.firms_enriched)}
                   </span>
                   <Link
                     href={`/find-lawyer/${params.searchId}`}
@@ -439,8 +446,8 @@ function PaidPage() {
               {enrichment.status === "failed" && (
                 <div className="text-[#9c5a1c]">
                   {isZh
-                    ? "深度核实失败 — 可在面板的账户页面联系我们重新触发。"
-                    : "Per-firm verification failed — contact support from the dashboard to re-trigger free."}
+                    ? vocab.paidFailed
+                    : vocab.paidFailed}
                 </div>
               )}
             </div>
@@ -530,7 +537,7 @@ function PaidPage() {
             </h2>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              {BENEFITS[lang].map((b) => (
+              {paidBenefits(lang, vocab).map((b) => (
                 <div
                   key={b.title}
                   className="rounded-2xl border border-[#e4edf7] bg-white/82 p-4 shadow-[0_10px_30px_rgba(61,84,128,0.05)]"
@@ -699,8 +706,8 @@ function PaidPage() {
                 </div>
                 <p className="mt-2 text-[13.5px] leading-6 text-[#556480]">
                   {isZh
-                    ? "包含每月 1 次免费律所搜索 + 无限文件提取。我们会在试用结束时自动续费您刚才使用的卡，可随时取消。"
-                    : "Includes 1 free lawyer search per month + unlimited document extractions. Auto-renews to the card you just used at trial end — cancel anytime in the billing portal."}
+                    ? vocab.proTrialBody
+                    : vocab.proTrialBody}
                 </p>
               </div>
               <button

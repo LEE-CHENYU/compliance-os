@@ -13,6 +13,7 @@ from compliance_os.web.models.tables import ProfessionalSearchRequestRow
 from compliance_os.web.routers.professional_search import (
     _normalize_tier_report,
     _render_html,
+    _render_markdown,
     _serialize,
 )
 from compliance_os.web.services.enrichment_runner import _normalize_enrichment
@@ -189,6 +190,83 @@ def test_pdf_html_report_includes_stage_two_enrichment() -> None:
     assert "https://example.com/chambers-robert-loughran" in html
     assert "RuntimeError" not in html
     assert "provider timeout" not in html
+
+
+def test_cpa_report_uses_professional_provider_copy_not_attorney_copy(
+    tmp_path: Path,
+) -> None:
+    persona_path = tmp_path / "international_tax.yaml"
+    persona_path.write_text(
+        """
+firms:
+  - name: BrightTax Advisors
+    confidence: 82
+    city: New York
+    state: NY
+    why_fit: Strong nonresident and cross-border tax focus.
+    credentials:
+      - IRS enrolled agent and CPA references
+""".strip()
+    )
+
+    row = ProfessionalSearchRequestRow(
+        id="cpa-copy-test",
+        case_brief=(
+            "Need a CPA for nonresident 1040-NR, Form 8843, FBAR screening, "
+            "and foreign-owned disregarded LLC Form 5472 cleanup."
+        ),
+        purpose="CPA tax engagement",
+        vertical="cpa",
+        status="complete",
+        persona_status={
+            "international_tax": {
+                "status": "complete",
+                "output_path": str(persona_path),
+            }
+        },
+        tier_report=[],
+        firms_data=[
+            {
+                "name": "BrightTax Advisors",
+                "confidence": 82,
+                "city": "New York",
+                "state": "NY",
+                "_personas": ["international_tax"],
+                "_why_fits": [
+                    ("international_tax", "Strong nonresident and cross-border tax focus."),
+                ],
+                "_credentials": ["IRS enrolled agent and CPA references"],
+                "_lead_attorney_credentials": ["CPA license active in NY"],
+                "_lead_attorney_practice_focus": "Nonresident tax and foreign-owned LLC compliance",
+                "_alternate_attorneys": [
+                    {
+                        "name": "Dana Chen",
+                        "fit_for_case": "Handles Form 5472 cleanup and FBAR screening.",
+                    }
+                ],
+                "_verified_sources": ["https://example.com/cpa-license"],
+            }
+        ],
+        created_at=dt.datetime(2026, 1, 1, 12, 0, 0),
+        completed_at=dt.datetime(2026, 1, 1, 12, 10, 0),
+        paid_at=dt.datetime(2026, 1, 1, 12, 11, 0),
+    )
+
+    html = _render_html(row)
+    markdown = _render_markdown(row)
+
+    assert "CPA practices" in html
+    assert "CPA practice dossiers" in html
+    assert "Lead CPA/contact" in html
+    assert "Same-practice alternates" in html
+    assert "Lawyer search" not in html
+    assert "Top firms" not in html
+    assert "Firm dossiers" not in html
+    assert "Lead attorney" not in html
+    assert "Better-fit attorneys" not in html
+    assert "Same-firm alternates" not in html
+    assert "# Professional search — CPA tax engagement" in markdown
+    assert "**Why this CPA practice**" in markdown
 
 
 def test_public_search_payload_redacts_worker_internal_details() -> None:

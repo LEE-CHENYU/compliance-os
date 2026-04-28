@@ -14,6 +14,7 @@ from __future__ import annotations
 import datetime as _dt
 import html as _html
 import io
+import json
 import logging
 from pathlib import Path
 from typing import Any
@@ -468,6 +469,159 @@ PERSONA_LABELS = {
 }
 
 
+def _report_vocabulary(vertical: str | None) -> dict[str, Any]:
+    normalized = (vertical or "").lower()
+    if (
+        "attorney" in normalized
+        or "lawyer" in normalized
+        or normalized.startswith("immigration")
+        or "eb5" in normalized
+    ):
+        kind = "attorney"
+    elif normalized == "cpa" or "accounting" in normalized or "tax_cpa" in normalized:
+        kind = "cpa"
+    elif "bank" in normalized:
+        kind = "bank"
+    elif normalized == "caa" or "acceptance_agent" in normalized or "itin" in normalized:
+        kind = "caa"
+    else:
+        kind = "provider"
+
+    vocab: dict[str, Any] = {
+        "is_attorney": kind == "attorney",
+        "report_title": "Professional search",
+        "lead_label": "Lead contact",
+        "alternate_label": "Alternate contact",
+        "alternate_group_label": "Same-provider alternates",
+        "issue_pattern_label": "Issue pattern",
+        "org_singular": "provider",
+        "org_plural": "providers",
+        "org_plural_title": "Providers",
+        "org_dossiers": "Provider dossiers",
+        "no_orgs": "No providers surfaced.",
+        "retain_copy": "engaging a provider",
+        "stripe_description": (
+            "Full professional search report (PDF + HTML) with all provider "
+            "dossiers, credentials, and verification sources."
+        ),
+    }
+    if kind == "attorney":
+        vocab.update({
+            "lead_label": "Lead attorney",
+            "alternate_label": "Alternate attorney",
+            "alternate_group_label": "Same-firm alternates",
+            "issue_pattern_label": "RFE pattern",
+            "org_singular": "firm",
+            "org_plural": "firms",
+            "org_plural_title": "Firms",
+            "org_dossiers": "Firm dossiers",
+            "no_orgs": "No firms surfaced.",
+            "retain_copy": "retaining a firm",
+            "stripe_description": (
+                "Full attorney search report (PDF + HTML) with all firm "
+                "dossiers, credentials, and verification sources."
+            ),
+        })
+    elif kind == "cpa":
+        vocab.update({
+            "lead_label": "Lead CPA/contact",
+            "alternate_group_label": "Same-practice alternates",
+            "org_singular": "CPA practice",
+            "org_plural": "CPA practices",
+            "org_plural_title": "CPA practices",
+            "org_dossiers": "CPA practice dossiers",
+            "no_orgs": "No CPA practices surfaced.",
+            "retain_copy": "engaging a CPA practice",
+            "stripe_description": (
+                "Full CPA search report (PDF + HTML) with all practice "
+                "dossiers, credentials, and verification sources."
+            ),
+        })
+    elif kind == "bank":
+        vocab.update({
+            "lead_label": "Lead banker/contact",
+            "alternate_group_label": "Same-provider alternates",
+            "org_singular": "banking provider",
+            "org_plural": "banking providers",
+            "org_plural_title": "Banking providers",
+            "org_dossiers": "Banking provider dossiers",
+            "no_orgs": "No banking providers surfaced.",
+            "retain_copy": "engaging a banking provider",
+            "stripe_description": (
+                "Full banking-provider search report (PDF + HTML) with all "
+                "provider dossiers, credentials, and verification sources."
+            ),
+        })
+    elif kind == "caa":
+        vocab.update({
+            "lead_label": "Lead acceptance agent/contact",
+            "alternate_group_label": "Same-provider alternates",
+            "org_singular": "acceptance agent",
+            "org_plural": "acceptance agents",
+            "org_plural_title": "Acceptance agents",
+            "org_dossiers": "Acceptance agent dossiers",
+            "no_orgs": "No acceptance agents surfaced.",
+            "retain_copy": "engaging an acceptance agent",
+            "stripe_description": (
+                "Full acceptance-agent search report (PDF + HTML) with all "
+                "provider dossiers, credentials, and verification sources."
+            ),
+        })
+    return vocab
+
+
+def _report_methodology_html(vocab: dict[str, Any]) -> str:
+    if vocab["is_attorney"]:
+        return (
+            "<p>Firms were scored 0–100 against externally-verifiable credentials only — "
+            "Chambers USA / Global rankings, AILA elected leadership (not just membership), "
+            "AV Preeminent and Best Lawyers peer recognition, ABIL membership, documented "
+            "PACER filings, third-party press coverage, and government-service alumni status.</p>"
+            "<p>Self-published marketing — firm blog posts, &ldquo;success stories&rdquo;, "
+            "self-described practice pages — was excluded from weighting. Where a firm&rsquo;s "
+            "own site is cited, it is for contact information only, never as a credential source.</p>"
+            "<p>Three independent search axes were dispatched in parallel: <em>elite boutiques</em> "
+            "(peer-recognized specialists), <em>startup-focused</em> (firms with published positions "
+            "on the specific regulatory question), and <em>federal-court litigators</em> (counsel "
+            "of record in reported decisions). Convergence across axes is treated as a quality "
+            "signal and surfaced via the <span class=\"cross-axis-inline\">×N</span> badge.</p>"
+        )
+
+    org_plural_title = vocab["org_plural_title"]
+    org_singular = vocab["org_singular"]
+    return (
+        f"<p>{org_plural_title} were scored 0–100 against externally-verifiable signals "
+        "relevant to the selected category: professional credentials, regulator or industry "
+        "listings, third-party references, published service focus, pricing transparency, "
+        "and fit with the case brief.</p>"
+        f"<p>Self-published marketing is used only for {org_singular} contact and service "
+        "details. It is not treated as a sole credential signal.</p>"
+        "<p>Independent search axes were dispatched in parallel based on the selected category. "
+        "Convergence across axes is treated as a quality signal and surfaced via the "
+        "<span class=\"cross-axis-inline\">×N</span> badge.</p>"
+    )
+
+
+def _report_methodology_markdown(vocab: dict[str, Any]) -> str:
+    if vocab["is_attorney"]:
+        return (
+            "Firms are scored 0–100 by externally-verifiable signals only — "
+            "Chambers rankings, AILA elected leadership (not membership), "
+            "AV Preeminent / Best Lawyers, ABIL membership, documented PACER "
+            "filings, and third-party press. A firm's own marketing copy "
+            "(blog posts, self-described practice pages) is excluded from "
+            "weighting."
+        )
+    return (
+        f"{vocab['org_plural_title']} are scored 0–100 by externally-verifiable "
+        "signals relevant to the selected category: professional credentials, "
+        "regulator or industry listings, third-party references, published service "
+        "focus, pricing transparency, and fit with the case brief. Self-published "
+        "marketing is used only for contact and service details, not as a sole "
+        "credential signal."
+    )
+
+
 def _persona_label(persona_id: str) -> str:
     """Pretty label, with a graceful fallback for tuned personas."""
     if persona_id in PERSONA_LABELS:
@@ -548,6 +702,8 @@ def _render_html(row: ProfessionalSearchRequestRow) -> str:
         firms = _aggregate_firms(persona_yamls)
 
     e = _html.escape
+    vocab = _report_vocabulary(row.vertical)
+    methodology_html = _report_methodology_html(vocab)
 
     started = row.created_at.strftime("%B %d, %Y") if row.created_at else "—"
     finished = row.completed_at.strftime("%B %d, %Y") if row.completed_at else None
@@ -579,7 +735,7 @@ def _render_html(row: ProfessionalSearchRequestRow) -> str:
     # Per-firm detail cards
     firm_cards: list[str] = []
     for f in firms:
-        firm_cards.append(_render_firm_card(f, e))
+        firm_cards.append(_render_firm_card(f, e, vocab))
 
     n_firms = len(firms)
     cross_count = sum(1 for f in firms if len(f.get("_personas") or []) >= 2)
@@ -590,7 +746,7 @@ def _render_html(row: ProfessionalSearchRequestRow) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lawyer search — {e(row.purpose)}</title>
+<title>{e(vocab["report_title"])} — {e(row.purpose)}</title>
 <style>
 {_REPORT_CSS}
 </style>
@@ -607,7 +763,7 @@ def _render_html(row: ProfessionalSearchRequestRow) -> str:
       {f'<span class="dot">·</span><span>finished {finished}</span>' if finished else ''}
     </div>
     <div class="metrics">
-      <div class="metric"><div class="num">{n_firms}</div><div class="lbl">Firms</div></div>
+      <div class="metric"><div class="num">{n_firms}</div><div class="lbl">{e(vocab["org_plural_title"])}</div></div>
       <div class="metric"><div class="num">{persona_count}</div><div class="lbl">Search axes</div></div>
       <div class="metric"><div class="num">{cross_count}</div><div class="lbl">Cross-axis matches</div></div>
     </div>
@@ -615,27 +771,25 @@ def _render_html(row: ProfessionalSearchRequestRow) -> str:
 
   <section class="block">
     <h2>Tier summary</h2>
-    <p class="lede">Top firms ranked by confidence. <span class="cross-axis-inline">×N</span> means a firm was independently surfaced by N different search axes — the strongest quality signal.</p>
+    <p class="lede">Top {e(vocab["org_plural"])} ranked by confidence. <span class="cross-axis-inline">×N</span> means a {e(vocab["org_singular"])} was independently surfaced by N different search axes — the strongest quality signal.</p>
     <table class="tier-table">
       <thead>
-        <tr><th>Tier</th><th>Firm</th><th>Location</th><th>Estimated fees</th></tr>
+        <tr><th>Tier</th><th>{e(vocab["org_singular"])}</th><th>Location</th><th>Estimated fees</th></tr>
       </thead>
       <tbody>
-        {''.join(summary_rows) if summary_rows else '<tr><td colspan="4" class="empty">No firms surfaced.</td></tr>'}
+        {''.join(summary_rows) if summary_rows else f'<tr><td colspan="4" class="empty">{e(vocab["no_orgs"])}</td></tr>'}
       </tbody>
     </table>
   </section>
 
   <section class="block">
-    <h2>How firms were ranked</h2>
-    <p>Firms were scored 0–100 against externally-verifiable credentials only — Chambers USA / Global rankings, AILA elected leadership (not just membership), AV Preeminent and Best Lawyers peer recognition, ABIL membership, documented PACER filings, third-party press coverage, and government-service alumni status.</p>
-    <p>Self-published marketing — firm blog posts, &ldquo;success stories&rdquo;, self-described practice pages — was excluded from weighting. Where a firm&rsquo;s own site is cited, it is for contact information only, never as a credential source.</p>
-    <p>Three independent search axes were dispatched in parallel: <em>elite boutiques</em> (peer-recognized specialists), <em>startup-focused</em> (firms with published positions on the specific regulatory question), and <em>federal-court litigators</em> (counsel of record in reported decisions). Convergence across axes is treated as a quality signal and surfaced via the <span class="cross-axis-inline">×N</span> badge.</p>
+    <h2>How {e(vocab["org_plural"])} were ranked</h2>
+    {methodology_html}
   </section>
 
   <section class="block firm-list">
-    <h2>Firm dossiers</h2>
-    {''.join(firm_cards) if firm_cards else '<p class="empty">No firms surfaced.</p>'}
+    <h2>{e(vocab["org_dossiers"])}</h2>
+    {''.join(firm_cards) if firm_cards else f'<p class="empty">{e(vocab["no_orgs"])}</p>'}
   </section>
 
   <section class="block brief">
@@ -645,7 +799,7 @@ def _render_html(row: ProfessionalSearchRequestRow) -> str:
 
   <footer>
     <div>Generated {_dt.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")} by Guardian professional search · Report ID {e(row.id[:8])}</div>
-    <div class="disclaimer">This report is research output, not legal advice. Verify each credential against its cited source before retaining a firm.</div>
+    <div class="disclaimer">This report is research output, not legal or tax advice. Verify each credential against its cited source before {e(vocab["retain_copy"])}.</div>
   </footer>
 </div>
 </body>
@@ -734,7 +888,7 @@ def _render_source_item(source: Any, e) -> str | None:
     return f"<li>{e(label)}</li>"
 
 
-def _render_stage_two_enrichment(f: dict, e) -> str:
+def _render_stage_two_enrichment(f: dict, e, vocab: dict[str, Any]) -> str:
     warning = _report_text(f.get("_individual_vs_firm_band_gap_warning"))
     lead_band = _band_label(
         f.get("_lead_attorney_band_source"),
@@ -767,7 +921,7 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
 
     lead_name = (
         _report_text(f.get("lead_attorney") or f.get("lead_contact"))
-        or "Lead attorney"
+        or vocab["lead_label"]
     )
     lead_consults = f.get("_lead_attorney_takes_outside_consults")
     consult_note = ""
@@ -801,7 +955,7 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
         if lead_creds else ""
     )
     rfe_html = (
-        '<div class="enrichment-row"><span>RFE pattern</span>'
+        f'<div class="enrichment-row"><span>{e(vocab["issue_pattern_label"])}</span>'
         f"<p>{e(rfe_pattern)}</p></div>"
         if rfe_pattern else ""
     )
@@ -810,7 +964,7 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
     if alternates:
         items: list[str] = []
         for alternate in alternates[:3]:
-            alt_name = _report_text(alternate.get("name")) or "Alternate attorney"
+            alt_name = _report_text(alternate.get("name")) or vocab["alternate_label"]
             alt_band = _band_label(
                 alternate.get("band_source"),
                 alternate.get("band"),
@@ -841,7 +995,7 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
                 "</li>"
             )
         alternate_html = (
-            "<div class='enrichment-row'><span>Same-firm alternates</span>"
+            f"<div class='enrichment-row'><span>{e(vocab['alternate_group_label'])}</span>"
             "<ul class='alt-list'>"
             + "".join(items)
             + "</ul></div>"
@@ -871,7 +1025,7 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
 """
 
 
-def _render_firm_card(f: dict, e) -> str:
+def _render_firm_card(f: dict, e, vocab: dict[str, Any]) -> str:
     name = f.get("name", "(unnamed)")
     anchor = _slug(name)
     score = f.get("confidence")
@@ -964,7 +1118,7 @@ def _render_firm_card(f: dict, e) -> str:
             + "</ul>"
         )
 
-    stage_two_html = _render_stage_two_enrichment(f, e)
+    stage_two_html = _render_stage_two_enrichment(f, e, vocab)
 
     persona_pills = " ".join(
         f'<span class="persona-pill">{e(_persona_label(p))}</span>'
@@ -1493,8 +1647,9 @@ def _render_markdown(row: ProfessionalSearchRequestRow) -> str:
     overlap is itself a quality signal.
     """
     sections: list[str] = []
+    vocab = _report_vocabulary(row.vertical)
 
-    sections.append(f"# Lawyer search — {row.purpose}")
+    sections.append(f"# {vocab['report_title']} — {row.purpose}")
     sections.append("")
     sections.append(f"**Vertical:** {row.vertical.replace('_', ' ')}  ")
     sections.append(f"**Started:** {row.created_at.isoformat() if row.created_at else '-'}  ")
@@ -1512,14 +1667,7 @@ def _render_markdown(row: ProfessionalSearchRequestRow) -> str:
 
     sections.append("## Methodology")
     sections.append("")
-    sections.append(
-        "Firms are scored 0–100 by externally-verifiable signals only — "
-        "Chambers rankings, AILA elected leadership (not membership), "
-        "AV Preeminent / Best Lawyers, ABIL membership, documented PACER "
-        "filings, and third-party press. A firm's own marketing copy "
-        "(blog posts, self-described practice pages) is excluded from "
-        "weighting."
-    )
+    sections.append(_report_methodology_markdown(vocab))
     sections.append("")
 
     persona_status = row.persona_status or {}
@@ -1555,7 +1703,7 @@ def _render_markdown(row: ProfessionalSearchRequestRow) -> str:
 
         firms = doc.get("firms") or []
         if not firms:
-            sections.append("_No firms returned._")
+            sections.append(f"_No {vocab['org_plural']} returned._")
             sections.append("")
             continue
 
@@ -1613,7 +1761,7 @@ def _render_markdown(row: ProfessionalSearchRequestRow) -> str:
                 sections.append("")
 
             if firm.get("why_fit"):
-                sections.append("**Why this firm**")
+                sections.append(f"**Why this {vocab['org_singular']}**")
                 sections.append("")
                 sections.append(firm["why_fit"].strip())
                 sections.append("")
@@ -1649,7 +1797,10 @@ def _render_markdown(row: ProfessionalSearchRequestRow) -> str:
             sections.append("")
 
     if not any_firms:
-        sections.append("_No firms were ingested. Please rerun the search or contact support._")
+        sections.append(
+            f"_No {vocab['org_plural']} were ingested. "
+            "Please rerun the search or contact support._"
+        )
         sections.append("")
 
     sections.append("")
@@ -1691,6 +1842,7 @@ def download_search(
     safe_purpose = "".join(
         c if c.isalnum() or c in "-_" else "-" for c in row.purpose
     ).strip("-")[:60] or "report"
+    filename_prefix = "professional-search"
 
     # Bail early when there's nothing to render — applies to ALL formats
     # (md / html / pdf) so a stale row can't return a polished-but-empty
@@ -1699,7 +1851,7 @@ def download_search(
         raise HTTPException(
             status_code=410,
             detail=(
-                "This search's underlying firm data is no longer available "
+                "This search's underlying result data is no longer available "
                 "(YAMLs missing and no DB-resident dossiers). Run a fresh "
                 "search to regenerate the report."
             ),
@@ -1707,7 +1859,7 @@ def download_search(
 
     if format == "md":
         body = _render_markdown(row)
-        filename = f"lawyer-search-{safe_purpose}-{request_id[:8]}.md"
+        filename = f"{filename_prefix}-{safe_purpose}-{request_id[:8]}.md"
         return Response(
             content=body,
             media_type="text/markdown; charset=utf-8",
@@ -1725,7 +1877,7 @@ def download_search(
             )
         html_body = _render_html(row)
         pdf_bytes = _WeasyHTML(string=html_body).write_pdf()
-        filename = f"lawyer-search-{safe_purpose}-{request_id[:8]}.pdf"
+        filename = f"{filename_prefix}-{safe_purpose}-{request_id[:8]}.pdf"
         return Response(
             content=pdf_bytes,
             media_type="application/pdf",
@@ -1734,7 +1886,7 @@ def download_search(
 
     # Default: polished HTML, inline so it opens as a page (not a download).
     body = _render_html(row)
-    filename = f"lawyer-search-{safe_purpose}-{request_id[:8]}.html"
+    filename = f"{filename_prefix}-{safe_purpose}-{request_id[:8]}.html"
     return Response(
         content=body,
         media_type="text/html; charset=utf-8",
@@ -1828,6 +1980,7 @@ def create_checkout_session(
                     }
 
     stripe = _stripe()
+    vocab = _report_vocabulary(row.vertical)
     try:
         checkout = stripe.checkout.Session.create(
             mode="payment",
@@ -1845,10 +1998,7 @@ def create_checkout_session(
                         "currency": "usd",
                         "product_data": {
                             "name": f"Guardian — {row.purpose}",
-                            "description": (
-                                "Full lawyer search report (PDF + HTML) with all "
-                                "firm dossiers, credentials, and verification sources."
-                            ),
+                            "description": vocab["stripe_description"],
                         },
                         "unit_amount": settings.stripe_report_price_cents,
                     },
@@ -2046,27 +2196,20 @@ async def stripe_webhook(
 
     stripe = _stripe()
     try:
-        event = stripe.Webhook.construct_event(
+        stripe.Webhook.construct_event(
             payload, stripe_signature, settings.stripe_webhook_secret
         )
     except Exception as exc:
         logger.warning("stripe webhook signature verification failed: %s", exc)
         raise HTTPException(status_code=400, detail=f"Invalid signature: {exc}")
 
+    # stripe-python 15.x's StripeObject no longer inherits from dict and
+    # `to_dict_recursive` was removed, so the previous shim left `obj`
+    # as a `Session` whose `.get(...)` raises AttributeError. We already
+    # have the verified raw bytes — parse them as JSON for a plain dict.
+    event = json.loads(payload)
     event_type = event["type"]
-
-    # Coerce StripeObject → plain dict. Newer stripe-python versions do NOT
-    # have StripeObject inherit from dict, so sess.get(...) raises
-    # AttributeError: get. to_dict_recursive() walks nested objects too,
-    # so (sess.get("customer_details") or {}).get("email") works as expected.
-    raw_obj = event["data"]["object"]
-    if hasattr(raw_obj, "to_dict_recursive"):
-        obj = raw_obj.to_dict_recursive()
-    else:
-        try:
-            obj = dict(raw_obj)
-        except Exception:
-            obj = raw_obj  # last-ditch fallback; .get may still fail
+    obj = event["data"]["object"]
 
     # Subscription lifecycle events — drive the SubscriptionRow mirror.
     # Note: customer.subscription.created arrives near-simultaneously with
@@ -2184,6 +2327,21 @@ async def stripe_webhook(
 
 
 # ---------------------------- Subscription helpers ----------------------------
+
+
+def _stripe_obj_to_dict(obj: Any) -> dict:
+    """Coerce a stripe-python `StripeObject` (15.x) to a plain dict.
+
+    `StripeObject.to_dict()` returns a top-level dict but nested values
+    can still be `StripeObject`s — and StripeObject no longer inherits
+    from dict in 15.x, so callers that do `obj.get(...)` raise
+    AttributeError. JSON round-trip flattens everything; `default=str`
+    covers any non-JSON-native values Stripe might surface.
+    """
+    if isinstance(obj, dict):
+        return obj
+    base = obj.to_dict() if hasattr(obj, "to_dict") else obj
+    return json.loads(json.dumps(base, default=str))
 
 
 def _to_dt_or_none(epoch: int | None) -> _dt.datetime | None:
@@ -2316,9 +2474,7 @@ def _handle_subscription_checkout_completed(sess: dict, db: Session, stripe) -> 
     user_id = sess.get("client_reference_id") or (sess.get("metadata") or {}).get("user_id")
     try:
         full = stripe.Subscription.retrieve(sub_id)
-        sub_obj = (
-            full.to_dict_recursive() if hasattr(full, "to_dict_recursive") else dict(full)
-        )
+        sub_obj = _stripe_obj_to_dict(full)
     except Exception:
         logger.exception(
             "STRIPE_WEBHOOK_ALERT: failed to fetch subscription %s", sub_id

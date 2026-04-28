@@ -19,6 +19,10 @@ import {
 } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import { trackProfessionalSearchEvent } from "@/lib/analytics";
+import {
+  professionalSearchVocabulary,
+  type ProfessionalSearchVocabulary,
+} from "@/lib/professionalSearchCopy";
 
 const POLL_INTERVAL_MS = 3000;
 
@@ -61,7 +65,7 @@ function booleanValue(value: unknown): boolean | null {
   return null;
 }
 
-function alternateAttorneys(value: unknown): Array<{
+function alternateContacts(value: unknown): Array<{
   name: string;
   band: number | null;
   fit: string | null;
@@ -84,12 +88,12 @@ function alternateAttorneys(value: unknown): Array<{
 
 type TierReportRow = NonNullable<ProfessionalSearch["tier_report"]>[number];
 
-function tierFirmName(row: TierReportRow): string {
+function tierFirmName(row: TierReportRow, fallback = "Unknown firm"): string {
   return (
     textValue(row.firm) ??
     textValue(row.vendor) ??
     textValue(row.name) ??
-    "Unknown firm"
+    fallback
   );
 }
 
@@ -124,7 +128,7 @@ function ReportActions({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `lawyer-search-${safeName(purpose)}-${searchId.slice(0, 8)}.${format}`;
+      a.download = `professional-search-${safeName(purpose)}-${searchId.slice(0, 8)}.${format}`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -212,9 +216,11 @@ function StatusPill({ status }: { status: ProfessionalSearch["status"] }) {
 function Paywall({
   searchId,
   lang,
+  vocab,
 }: {
   searchId: string;
   lang: Lang;
+  vocab: ProfessionalSearchVocabulary;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -258,9 +264,7 @@ function Paywall({
             {isZh ? "解锁完整报告" : "Unlock the full report"}
           </div>
           <div className="mt-1 text-[15px] font-semibold text-[#0d1424]">
-            {isZh
-              ? "PDF + 网页版报告，包含完整律所简介、可验证资质与原始资料链接"
-              : "PDF + HTML report — full firm dossiers, credentials, and verification sources"}
+            {vocab.reportDossierCopy}
           </div>
           <div className="mt-1 text-[12px] text-[#7b8ba5]">
             {isZh
@@ -316,11 +320,13 @@ function PreviewPaywallTail({
   previewCount,
   searchId,
   lang,
+  vocab,
 }: {
   hiddenCount: number;
   previewCount: number;
   searchId: string;
   lang: Lang;
+  vocab: ProfessionalSearchVocabulary;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -361,9 +367,7 @@ function PreviewPaywallTail({
             {isZh ? "已隐藏" : "Behind the paywall"}
           </div>
           <div className="mt-1 text-[15px] font-semibold text-[#0d1424]">
-            {isZh
-              ? `还有 ${hiddenCount} 家律所、完整简介与联系方式`
-              : `${hiddenCount} more ${hiddenCount === 1 ? "firm" : "firms"}, full dossiers, credentials, contact info`}
+            {vocab.hiddenPreviewCopy(hiddenCount)}
           </div>
           <p className="mt-1 text-[12.5px] leading-5 text-[#556480]">
             {isZh
@@ -412,10 +416,12 @@ function PersonaCard({
   name,
   state,
   lang,
+  vocab,
 }: {
   name: string;
   state: ProfessionalSearch["persona_status"][string];
   lang: Lang;
+  vocab: ProfessionalSearchVocabulary;
 }) {
   const t = FIND_LAWYER_STRINGS[lang];
   const status = state?.status ?? "running";
@@ -444,7 +450,7 @@ function PersonaCard({
             className={`h-2 w-2 rounded-full ${dotColors[s]} ${status === "running" ? "animate-pulse" : ""}`}
           />
           {status === "complete"
-            ? (t.personaFirms as (n: number) => string)(state.firm_count ?? 0)
+            ? vocab.resultCount(state.firm_count ?? 0)
             : status === "failed"
             ? (t.personaFailed as string)
             : status === "skipped"
@@ -655,6 +661,7 @@ export default function SearchStatus() {
 
   const personas = Object.entries(row.persona_status);
   const tierRows = row.tier_report ?? [];
+  const vocab = professionalSearchVocabulary(row.vertical, lang);
   // Pre-payment: show only the top N firms as a free preview. The rest are
   // hidden behind the paywall so users can sample the quality of the
   // shortlist without seeing the full set. Five is enough for a meaningful
@@ -773,7 +780,7 @@ export default function SearchStatus() {
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {personas.map(([name, state]) => (
-                <PersonaCard key={name} name={name} state={state} lang={lang} />
+                <PersonaCard key={name} name={name} state={state} lang={lang} vocab={vocab} />
               ))}
             </div>
           )}
@@ -790,7 +797,7 @@ export default function SearchStatus() {
                   {t.tierTitle as string}
                 </h2>
                 <span className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">
-                  {(t.tierFirms as (n: number) => string)(tierRows.length)}
+                  {vocab.resultCount(tierRows.length)}
                 </span>
               </div>
               {row.status === "complete" && row.is_paid && (
@@ -805,8 +812,8 @@ export default function SearchStatus() {
               <div className="mt-3 flex flex-wrap items-center gap-2 text-[12px]">
                 <span className="text-[#7b8ba5]">
                   {engagements.length > 0
-                    ? `${engagements.length} firm${engagements.length === 1 ? "" : "s"} tracked for this case`
-                    : "Track firms to your case to organize outreach"}
+                    ? vocab.trackingCount(engagements.length)
+                    : vocab.trackingPrompt}
                 </span>
                 <button
                   type="button"
@@ -835,7 +842,7 @@ export default function SearchStatus() {
                 to avoid double-banner clutter. */}
             {row.status === "complete" && !row.is_paid && tierRows.length <= PREVIEW_COUNT && (
               <div className="mt-4">
-                <Paywall searchId={row.id} lang={lang} />
+                <Paywall searchId={row.id} lang={lang} vocab={vocab} />
               </div>
             )}
 
@@ -852,12 +859,10 @@ export default function SearchStatus() {
                   />
                   <div>
                     <div className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#5b8dee]">
-                      {isZh ? "正在深度核实" : "Verifying individual attorney credentials"}
+                      {isZh ? "正在深度核实" : vocab.enrichmentTitle}
                     </div>
                     <p className="mt-1 text-[13px] leading-5 text-[#556480]">
-                      {isZh
-                        ? "我们正在为每家律所核实指定律师的个人 Chambers / Legal500 等级、备选合伙人、来源链接 — 通常 2-3 分钟。完成后此处会自动更新。"
-                        : "Per-firm: confirming the named lead attorney's individual Chambers / Legal500 band, alternate same-firm partners, and source URL liveness. Usually 2-3 min — refreshes here automatically."}
+                      {vocab.enrichmentBody}
                     </p>
                   </div>
                 </div>
@@ -870,15 +875,15 @@ export default function SearchStatus() {
                 </div>
                 <p className="mt-1 text-[13px] leading-5 text-[#a06524]">
                   {isZh
-                    ? "我们无法为本次搜索完成深度核实。原始律所列表已保留 — 您可在面板的账户页面联系我们重新触发。"
-                    : "We couldn't complete per-firm verification. The base firm list is preserved — contact us from the dashboard to re-trigger it."}
+                    ? vocab.enrichmentFailedBody
+                    : vocab.enrichmentFailedBody}
                 </p>
               </div>
             )}
 
             <div className="mt-6 space-y-3">
               {visibleRows.map((r, idx) => {
-                const firmName = tierFirmName(r);
+                const firmName = tierFirmName(r, vocab.unknownOrg);
                 const priority = textValue(r.priority);
                 const status = textValue(r.status) ?? "prospective";
                 const nextAction = textValue(r.next_action);
@@ -989,8 +994,8 @@ export default function SearchStatus() {
                         const bandYear = numberValue(enriched._lead_attorney_band_year);
                         const practiceFocus = textValue(enriched._lead_attorney_practice_focus);
                         const takesConsults = booleanValue(enriched._lead_attorney_takes_outside_consults);
-                        const alternates = alternateAttorneys(enriched._alternate_attorneys);
-                        const leadName = textValue(enriched.lead_attorney) ?? textValue(enriched.lead_contact) ?? "Lead attorney";
+                        const alternates = alternateContacts(enriched._alternate_attorneys);
+                        const leadName = textValue(enriched.lead_attorney) ?? textValue(enriched.lead_contact) ?? vocab.leadLabel;
                         return (
                           <div className="mt-4 rounded-xl border border-[#e4edf7] bg-[#f9fbfe] p-3">
                             {gapWarning && (
@@ -1026,7 +1031,7 @@ export default function SearchStatus() {
                             {alternates.length > 0 && (
                               <div className="mt-3 border-t border-[#e4edf7] pt-3">
                                 <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#7b8ba5]">
-                                  {isZh ? "建议改请" : "Better-fit attorneys at this firm"}
+                                  {vocab.alternateHeader}
                                 </div>
                                 <ul className="mt-2 space-y-1.5">
                                   {alternates.slice(0, 3).map((a, ai) => {
@@ -1079,8 +1084,8 @@ export default function SearchStatus() {
                       {!row.is_paid && (
                         <p className="mt-3 text-[11px] italic leading-4 text-[#9aa9c2]">
                           {isZh
-                            ? "上方仅为律所层面的资质,指定律师本人的个人评级须在解锁后核实。"
-                            : "Credentials above are firm-level. The named lead attorney's individual band is verified after unlock."}
+                            ? vocab.credentialCaveat
+                            : vocab.credentialCaveat}
                         </p>
                       )}
                     </div>
@@ -1095,6 +1100,7 @@ export default function SearchStatus() {
                   previewCount={PREVIEW_COUNT}
                   searchId={row.id}
                   lang={lang}
+                  vocab={vocab}
                 />
               )}
             </div>
@@ -1105,7 +1111,7 @@ export default function SearchStatus() {
               <code className="rounded bg-white/80 px-1 py-0.5 text-[11px]">
                 vendor_detail
               </code>{" "}
-              MCP tool or the vendor directory endpoint for any firm above to
+              MCP tool or the vendor directory endpoint for any {vocab.orgSingular} above to
               pull the dossier.
             </p>
           </section>
@@ -1120,19 +1126,15 @@ export default function SearchStatus() {
           <section className="rounded-[32px] border border-[#cfe1ff] bg-gradient-to-br from-white via-[#f5faff] to-[#eaf2ff] p-7 shadow-[0_24px_70px_rgba(91,141,238,0.08)] backdrop-blur">
             <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5b8dee]">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#5b8dee]" />
-              {isZh ? "或者由 Guardian 律师为您处理" : "Or have a Guardian attorney handle this"}
+              {vocab.guardianCtaEyebrow}
             </div>
             <div className="mt-3 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
                 <div className="mt-1 text-[20px] font-bold leading-tight text-[#0d1424]">
-                  {isZh
-                    ? "想让我们的律师亲自跟进?"
-                    : "Want hands-on Guardian counsel?"}
+                  {vocab.guardianCtaTitle}
                 </div>
                 <p className="mt-2 text-[13.5px] leading-6 text-[#556480]">
-                  {isZh
-                    ? "如果上面的律所对比不是您想要的,我们的内部律师可以直接接管整个案件 — 文件准备、提交、与 USCIS 沟通全程负责。请告诉我们您的情况,我们会回复定价方案。"
-                    : "If you'd rather skip the shortlist comparison, a Guardian-staffed attorney can take the case end-to-end — drafting, filing, USCIS correspondence. Tell us about your situation and we'll come back with pricing."}
+                  {vocab.guardianCtaBody}
                 </p>
               </div>
               <div className="flex flex-col items-start gap-2 md:items-end">
@@ -1141,7 +1143,7 @@ export default function SearchStatus() {
                 </div>
                 <div className="text-[18px] font-bold text-[#0d1424]">TBD</div>
                 <a
-                  href="mailto:info@yangtze-capital.com?subject=Guardian%20attorney%20engagement%20inquiry"
+                  href={`mailto:info@yangtze-capital.com?subject=${encodeURIComponent(vocab.guardianCtaSubject)}`}
                   onClick={() => {
                     trackProfessionalSearchEvent("professional_search_attorney_inquiry_clicked", {
                       search_id: row.id,
@@ -1163,7 +1165,7 @@ export default function SearchStatus() {
         {row.status === "complete" && tierRows.length === 0 && (
           <section className="rounded-[32px] border border-[#ffe3c9] bg-[#fff6ea]/80 p-6 backdrop-blur">
             <div className="text-[14px] font-semibold text-[#9c5a1c]">
-              Search finished but no firms were ingested.
+              Search finished but no {vocab.orgPlural} were ingested.
             </div>
             <div className="mt-1 text-[13px] text-[#a06524]">
               Please rerun the search or contact Guardian support from your dashboard.
