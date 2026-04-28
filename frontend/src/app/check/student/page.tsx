@@ -38,6 +38,7 @@ export default function StudentIntake() {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form8843PrefillNote, setForm8843PrefillNote] = useState<string | null>(null);
 
   const set = (key: string, value: string) => setAnswers((a) => ({ ...a, [key]: value }));
@@ -88,6 +89,7 @@ export default function StudentIntake() {
         <div className="flex flex-col gap-2">
           {options.map((o) => (
             <button key={o.value} onClick={() => set(field, o.value)}
+              data-testid={`student-intake-${field}-${o.value}`}
               className={`text-left px-5 py-3 rounded-xl border transition-all ${
                 answers[field] === o.value ? "border-[#5b8dee] bg-blue-50/80 shadow-sm" : "border-white/70 bg-white/60 hover:bg-white/80"
               }`}>
@@ -107,6 +109,7 @@ export default function StudentIntake() {
         <div className="flex flex-wrap gap-2">
           {options.map((o) => (
             <button key={o.value} onClick={() => set(field, o.value)}
+              data-testid={`student-intake-${field}-${o.value}`}
               className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 answers[field] === o.value
                   ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_2px_12px_rgba(74,116,212,0.3)]"
@@ -123,23 +126,29 @@ export default function StudentIntake() {
   async function handleContinue() {
     if (!canContinue) return;
     setLoading(true);
-    const check = await createCheck("student", {
-      ...answers,
-      has_employment: answers.student_status === "enrolled_cpt" ? "yes" : "no",
-    });
-    trackOnboardingEvent("onboarding_check_created", {
-      check_id: check.id,
-      check_track: "student",
-      student_status: answers.student_status || "unknown",
-    });
-    if (answers.source_form_8843 === "yes") {
-      trackForm8843FunnelEvent("form_8843_gtm_check_created", {
+    setError(null);
+    try {
+      const check = await createCheck("student", {
+        ...answers,
+        has_employment: answers.student_status === "enrolled_cpt" ? "yes" : "no",
+      });
+      trackOnboardingEvent("onboarding_check_created", {
         check_id: check.id,
         check_track: "student",
         student_status: answers.student_status || "unknown",
       });
+      if (answers.source_form_8843 === "yes") {
+        trackForm8843FunnelEvent("form_8843_gtm_check_created", {
+          check_id: check.id,
+          check_track: "student",
+          student_status: answers.student_status || "unknown",
+        });
+      }
+      router.push(`/check/student/upload?id=${check.id}`);
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Could not create this check");
+      setLoading(false);
     }
-    router.push(`/check/student/upload?id=${check.id}`);
   }
 
     return (
@@ -185,7 +194,14 @@ export default function StudentIntake() {
           <ChipRow label="Do you have a pending change of status petition (e.g., H-1B)?" options={[...YES_NO, { value: "not_sure", label: "Not sure" }]} field="pending_status_change" />
         )}
 
+        {error ? (
+          <div data-testid="student-intake-error" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+            {error}
+          </div>
+        ) : null}
+
         <button onClick={handleContinue} disabled={!canContinue || loading}
+          data-testid="student-intake-continue"
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all mt-4 ${
             canContinue ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)]" : "bg-gray-200 text-gray-400 cursor-not-allowed"
           }`}>

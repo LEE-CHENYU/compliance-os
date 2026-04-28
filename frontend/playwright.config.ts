@@ -3,6 +3,8 @@ import { defineConfig, devices } from "@playwright/test";
 const localPort = process.env.PLAYWRIGHT_PORT || "3100";
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || `http://127.0.0.1:${localPort}`;
 const shouldStartLocalServer = !process.env.PLAYWRIGHT_BASE_URL;
+const serverMode = process.env.PLAYWRIGHT_SERVER_MODE || "dev";
+const useProductionServer = serverMode === "prod" || serverMode === "production";
 
 export default defineConfig({
   testDir: "./tests",
@@ -19,10 +21,13 @@ export default defineConfig({
   },
   webServer: shouldStartLocalServer
     ? {
-        command: `npm run dev -- --hostname 127.0.0.1 --port ${localPort}`,
+        command: useProductionServer
+          ? `npm run build && npm run start -- --hostname 127.0.0.1 --port ${localPort}`
+          : `npm run dev -- --hostname 127.0.0.1 --port ${localPort}`,
+        env: { ...process.env, NODE_ENV: useProductionServer ? "production" : "development" },
         url: baseURL,
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
+        reuseExistingServer: !useProductionServer && !process.env.CI,
+        timeout: useProductionServer ? 240_000 : 120_000,
       }
     : undefined,
   projects: [

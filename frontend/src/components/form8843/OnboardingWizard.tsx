@@ -44,6 +44,7 @@ function Field({
   type?: string;
   required?: boolean;
 }) {
+  const fieldId = slugifyAnalyticsLabel(label);
   return (
     <label className="block">
       <div className="mb-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#6d7c95]">
@@ -51,6 +52,7 @@ function Field({
         {required ? " *" : ""}
       </div>
       <input
+        data-testid={`form8843-field-${fieldId}`}
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -380,6 +382,7 @@ export default function OnboardingWizard({
           {!isLastStep ? (
             <button
               type="button"
+              data-testid="form8843-wizard-continue"
               disabled={!stepComplete}
               onClick={() => advanceStep("continue_button")}
               className={`rounded-full px-6 py-3 text-[14px] font-semibold transition ${
@@ -393,6 +396,7 @@ export default function OnboardingWizard({
           ) : (
             <button
               type="submit"
+              data-testid="form8843-wizard-generate"
               onClick={() => {
                 submitIntentRef.current = true;
               }}

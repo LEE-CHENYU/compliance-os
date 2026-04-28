@@ -140,6 +140,7 @@ export default function FilingChecklistCard({
                 <button
                   type="button"
                   onClick={handleCopyAddress}
+                  data-testid="form8843-copy-mailing-address"
                   className="rounded-full border border-[#dbe5f2] bg-[#f8fbff] px-4 py-3 text-[14px] font-semibold text-[#35527f] transition hover:border-[#c4d4ea] hover:bg-white"
                 >
                   {copyState === "copied" ? "Mailing address copied" : copyState === "error" ? "Copy failed" : "Copy mailing address"}
@@ -149,6 +150,7 @@ export default function FilingChecklistCard({
                 type="button"
                 onClick={handleDownloadKit}
                 disabled={kitLoading}
+                data-testid="form8843-download-mailing-kit"
                 className={`rounded-full border px-4 py-3 text-[14px] font-semibold transition ${
                   kitLoading
                     ? "border-[#dbe5f2] bg-[#eef3f8] text-[#93a1b7]"
@@ -177,12 +179,14 @@ export default function FilingChecklistCard({
                 value={trackingNumber}
                 onChange={(event) => setTrackingNumber(event.target.value)}
                 placeholder="Optional USPS tracking number"
+                data-testid="form8843-mailing-tracking"
                 className="mt-4 w-full rounded-2xl border border-[#dbe5f2] bg-[#fbfdff] px-4 py-3 text-[14px] text-[#0d1424] outline-none transition focus:border-[#5b8dee] focus:ring-4 focus:ring-[#5b8dee]/10"
               />
               <button
                 type="button"
                 onClick={handleMarkMailed}
                 disabled={markingMailed}
+                data-testid="form8843-mark-mailed"
                 className={`mt-4 w-full rounded-full px-5 py-3 text-[14px] font-semibold transition ${
                   markingMailed
                     ? "bg-[#d9e3f0] text-[#90a0bb]"

@@ -52,6 +52,7 @@ export default function WizardShell({
         <button
           onClick={onBack}
           disabled={isFirst}
+          data-testid="case-discovery-back"
           className="rounded-lg border border-stone-300 px-5 py-2.5 text-sm font-medium disabled:opacity-30 hover:bg-stone-50 transition-colors"
         >
           Back
@@ -59,6 +60,7 @@ export default function WizardShell({
         <button
           onClick={onNext}
           disabled={nextDisabled || saving}
+          data-testid="case-discovery-next"
           className="rounded-lg bg-stone-800 px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50 hover:bg-stone-700 transition-colors"
         >
           {saving ? "Saving..." : nextLabel || (isLast ? "Confirm" : "Continue")}

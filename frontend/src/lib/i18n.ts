@@ -109,6 +109,7 @@ export const FIND_LAWYER_STRINGS: Record<Lang, Dict> = {
       "This typically takes 60 – 120 seconds per agent, running in parallel.",
     personaSearching: "searching…",
     personaFailed: "failed",
+    personaSkipped: "skipped",
     personaFirms: (n: number) => `${n} firms`,
     tierTitle: "Tier report",
     tierFirms: (n: number) => `${n} firms`,
@@ -188,6 +189,7 @@ export const FIND_LAWYER_STRINGS: Record<Lang, Dict> = {
       "每个代理通常需要 60 – 120 秒，多个代理并行运行。",
     personaSearching: "搜索中…",
     personaFailed: "失败",
+    personaSkipped: "已跳过",
     personaFirms: (n: number) => `共 ${n} 家律所`,
     tierTitle: "层级排名报告",
     tierFirms: (n: number) => `${n} 家律所`,
@@ -251,6 +253,21 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
     eb5_specialist: "EB-5 Specialist",
     securities_sophisticated: "Securities Sophisticated",
     source_of_funds: "Source-of-Funds Specialist",
+    cross_border_tax: "Cross-Border Tax",
+    penalty_relief: "Penalty Relief",
+    disclosure_remediation: "Disclosure Remediation",
+    startup_formation: "Startup Formation",
+    safes_and_notes: "SAFEs and Notes",
+    cross_border_equity: "Cross-Border Equity",
+    international_tax: "International Tax CPA",
+    founder_accounting: "Founder Accounting",
+    audit_defense: "Audit Defense",
+    foreign_founder_banking: "Foreign-Founder Banking",
+    startup_banking: "Startup Banking",
+    premium_relationship: "Premium Relationship",
+    irs_authorized_caa: "IRS-Authorized CAA",
+    china_corridor_caa: "China-Corridor CAA",
+    fast_turnaround_caa: "Fast-Turnaround CAA",
   },
   zh: {
     elite_boutique: "精英精品律所",
@@ -259,6 +276,21 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
     eb5_specialist: "EB-5 专家",
     securities_sophisticated: "证券法精通",
     source_of_funds: "资金来源专家",
+    cross_border_tax: "跨境税务",
+    penalty_relief: "罚款减免",
+    disclosure_remediation: "披露 / 补正",
+    startup_formation: "初创设立",
+    safes_and_notes: "SAFE / 可转债",
+    cross_border_equity: "跨境股权",
+    international_tax: "国际税务 CPA",
+    founder_accounting: "创始人会计",
+    audit_defense: "稽查应对",
+    foreign_founder_banking: "外国创始人银行",
+    startup_banking: "初创银行",
+    premium_relationship: "高端关系银行",
+    irs_authorized_caa: "IRS 授权 CAA",
+    china_corridor_caa: "中国通道 CAA",
+    fast_turnaround_caa: "快速 ITIN CAA",
   },
 };
 
@@ -269,10 +301,9 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
  * we'll actually look for. Falls back to immigration_attorney when a
  * vertical doesn't yet have a curated preview.
  *
- * Note: only `immigration_attorney` and `immigration_eb5` currently have
- * fully-wired backend persona YAMLs. The other verticals' entries here
- * describe the search angles we WOULD run when those verticals are
- * fleshed out — we keep them honest by not promising more than we have.
+ * The backend ships matching persona YAMLs for every vertical listed in
+ * VERTICAL_LABELS; keep this preview list in sync with those canonical
+ * search axes.
  */
 type PersonaPreview = { title: string; body: string };
 

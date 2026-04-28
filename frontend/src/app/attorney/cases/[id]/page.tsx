@@ -213,6 +213,7 @@ export default function AttorneyCasePage() {
                   <textarea
                     value={notes}
                     onChange={(event) => setNotes(event.target.value)}
+                    data-testid="attorney-case-notes"
                     className="mt-2 min-h-[140px] w-full rounded-[22px] border border-[#dbe5f2] bg-white px-4 py-3 text-[14px] text-[#1a2942] outline-none transition focus:border-[#9db8e6]"
                     placeholder="Explain any concerns or filing context for the ops team."
                   />
@@ -222,6 +223,7 @@ export default function AttorneyCasePage() {
                     type="button"
                     onClick={() => void handleReview("approve")}
                     disabled={busy === "review"}
+                    data-testid="attorney-case-approve-review"
                     className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
                   >
                     {busy === "review" ? "Saving..." : "Approve review"}
@@ -230,6 +232,7 @@ export default function AttorneyCasePage() {
                     type="button"
                     onClick={() => void handleReview("flag_upgrade")}
                     disabled={busy === "review"}
+                    data-testid="attorney-case-flag-upgrade"
                     className="inline-flex rounded-full border border-[#d8c69a] bg-[#fff9eb] px-5 py-3 text-[14px] font-semibold text-[#8a6a1f] transition hover:border-[#cfb16b] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     Flag for upgrade
@@ -259,6 +262,7 @@ export default function AttorneyCasePage() {
                   <input
                     value={receiptNumber}
                     onChange={(event) => setReceiptNumber(event.target.value)}
+                    data-testid="attorney-case-receipt-number"
                     className="mt-2 w-full rounded-[22px] border border-[#dbe5f2] bg-white px-4 py-3 text-[14px] text-[#1a2942] outline-none transition focus:border-[#9db8e6]"
                     placeholder="IOE1234567890"
                   />
@@ -268,6 +272,7 @@ export default function AttorneyCasePage() {
                   <input
                     value={filingConfirmation}
                     onChange={(event) => setFilingConfirmation(event.target.value)}
+                    data-testid="attorney-case-filing-confirmation"
                     className="mt-2 w-full rounded-[22px] border border-[#dbe5f2] bg-white px-4 py-3 text-[14px] text-[#1a2942] outline-none transition focus:border-[#9db8e6]"
                   />
                 </label>
@@ -275,6 +280,7 @@ export default function AttorneyCasePage() {
                   type="button"
                   onClick={() => void handleFile()}
                   disabled={busy === "file" || data.assignment?.decision !== "approve"}
+                  data-testid="attorney-case-record-filing"
                   className="mt-5 inline-flex rounded-full bg-[#5b8dee] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#9db8e6]"
                 >
                   {busy === "file" ? "Saving..." : "Record filing"}

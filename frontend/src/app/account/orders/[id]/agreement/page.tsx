@@ -194,6 +194,7 @@ export default function OrderAgreementPage() {
 
           <div
             ref={agreementRef}
+            data-testid="order-agreement-text"
             onScroll={(event) => {
               const target = event.currentTarget;
               const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
@@ -213,6 +214,7 @@ export default function OrderAgreementPage() {
                 value={signature}
                 onChange={(event) => setSignature(event.target.value)}
                 disabled={!order.intake_complete || !scrolledToBottom || agreement.signed}
+                data-testid="order-agreement-signature"
                 className="mt-2 w-full rounded-2xl border border-[#dbe5f2] bg-[#fbfdff] px-4 py-3 text-[15px] text-[#1a2942] outline-none transition focus:border-[#9db8e6] disabled:cursor-not-allowed disabled:bg-[#f2f5fa]"
                 placeholder={!order.intake_complete ? "Complete intake on the order page first" : scrolledToBottom ? "Type your full legal name" : "Scroll to the bottom to unlock"}
               />
@@ -221,6 +223,7 @@ export default function OrderAgreementPage() {
               type="button"
               onClick={() => void handleSign()}
               disabled={!order.intake_complete || !scrolledToBottom || !signature.trim() || signing || agreement.signed}
+              data-testid="order-agreement-sign"
               className="self-end inline-flex rounded-full bg-[#0f1728] px-6 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
             >
               {agreement.signed ? "Already signed" : signing ? "Signing..." : "Sign agreement"}

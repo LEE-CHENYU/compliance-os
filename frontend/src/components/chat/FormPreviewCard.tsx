@@ -57,7 +57,7 @@ export default function FormPreviewCard({
   });
 
   return (
-    <div className="bg-white/60 backdrop-blur rounded-2xl border border-white/60 overflow-hidden">
+    <div data-testid="form-preview-card" className="bg-white/60 backdrop-blur rounded-2xl border border-white/60 overflow-hidden">
       <div className="px-4 py-3 border-b border-blue-50/40">
         <div className="text-[13px] font-semibold text-[#0d1424]">Form Preview</div>
         <div className="text-[11px] text-[#7b8ba5] mt-0.5">
@@ -111,6 +111,7 @@ export default function FormPreviewCard({
                   setValues((prev) => ({ ...prev, [field.field_name]: e.target.value }))
                 }
                 placeholder="Enter value..."
+                data-testid={`form-preview-field-${field.field_name}`}
                 className="w-full px-2.5 py-1.5 rounded-lg border border-white/70 bg-white/60 text-[12px] text-[#0d1424] focus:border-[#5b8dee] focus:outline-none focus:ring-1 focus:ring-blue-200/30"
               />
               {field.source && (
@@ -127,6 +128,7 @@ export default function FormPreviewCard({
         <button
           onClick={onCancel}
           disabled={disabled}
+          data-testid="form-preview-cancel"
           className="px-3.5 py-2 rounded-xl text-[12px] font-medium bg-white/70 border border-blue-100/30 text-[#3a5a8c] hover:bg-white/90 disabled:opacity-50"
         >
           Cancel
@@ -134,6 +136,7 @@ export default function FormPreviewCard({
         <button
           onClick={handleGenerate}
           disabled={disabled}
+          data-testid="form-preview-generate"
           className="px-3.5 py-2 rounded-xl text-[12px] font-medium bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white disabled:opacity-50"
         >
           {disabled ? "Generating..." : "Generate PDF"}

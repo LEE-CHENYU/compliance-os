@@ -285,6 +285,19 @@ function resolveGuardianVoiceId(value?: string) {
 const GUARDIAN_VOICE_MODEL = resolveGuardianVoiceModel(process.env.NEXT_PUBLIC_GUARDIAN_VOICE_MODEL);
 const GUARDIAN_VOICE_ID = resolveGuardianVoiceId(process.env.NEXT_PUBLIC_GUARDIAN_VOICE_ID);
 
+declare global {
+  interface Window {
+    __guardianGraphVapiFactory?: (publicKey: string) => Vapi;
+  }
+}
+
+function createVapiClient(publicKey: string): Vapi {
+  if (typeof window !== "undefined" && window.__guardianGraphVapiFactory) {
+    return window.__guardianGraphVapiFactory(publicKey);
+  }
+  return new Vapi(publicKey);
+}
+
 type CategoryPalette = { bg: string; text: string; border: string; label: string };
 
 const CATEGORY_COLORS: Record<string, CategoryPalette> = {
@@ -613,6 +626,7 @@ export default function DashboardPage() {
   const [timeline, setTimeline] = useState<TimelineData | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const folderRef = useRef<HTMLInputElement | null>(null);
   const [uploadDocType, setUploadDocType] = useState("");
@@ -645,6 +659,7 @@ export default function DashboardPage() {
     originalFile: File;
   } | null>(null);
   const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string; category: string }[]>([]);
+  const [documentOpenError, setDocumentOpenError] = useState<string | null>(null);
   const [showToken, setShowToken] = useState(false);
   const [tokenCopied, setTokenCopied] = useState(false);
   const [openClawConnection, setOpenClawConnection] = useState<OpenClawConnectionStatus | null>(null);
@@ -760,49 +775,69 @@ export default function DashboardPage() {
   }, []);
 
   const refreshDashboard = useCallback(async () => {
-    const [tl, st, docs, mySearches, myEngagements, casesResp] = await Promise.all([
-      fetch(`${API}/timeline`, { headers: authHeaders() }).then((r) => r.json()),
-      fetch(`${API}/stats`, { headers: authHeaders() }).then((r) => r.json()),
-      fetch(`${API}/documents`, { headers: authHeaders() }).then((r) => r.json()),
-      // Don't bounce users to /check when they've already done a
-      // professional search or have lawyer engagements in flight.
-      // Both are "real content" the dashboard should render rather
-      // than treating the account as brand-new.
-      listMySearches().catch(() => []),
-      listMyEngagements().catch(() => []),
-      // Also count cases — a user who went through the discovery
-      // wizard before signing up has a case but no docs/searches/
-      // engagements/services yet. Without this they'd be re-onboarded
-      // through the persona picker.
-      listCases().catch(() => ({ cases: [] })),
-    ]);
-    const hasServiceContent = Boolean(
-      tl.service_summary?.active_orders?.length
-      || tl.service_summary?.recent_completed?.length
-      || tl.service_summary?.recommended_services?.length,
-    );
-    const hasLawyerContent = mySearches.length > 0 || myEngagements.length > 0;
-    const hasCaseContent = (casesResp?.cases ?? []).length > 0;
-    if (
-      docs.length === 0
-      && (!tl.events || tl.events.length <= 1)
-      && !hasServiceContent
-      && !hasLawyerContent
-      && !hasCaseContent
-    ) {
-      router.push("/check");
-      return;
+    setLoadError(null);
+    const fetchDashboardJson = async <T,>(path: string, fallback: string): Promise<T> => {
+      const response = await fetch(`${API}${path}`, { headers: authHeaders() });
+      const body = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(body?.detail || body?.message || fallback);
+      }
+      return body as T;
+    };
+
+    try {
+      const [tl, st, docs, mySearches, myEngagements, casesResp] = await Promise.all([
+        fetchDashboardJson<TimelineData>("/timeline", "Could not load dashboard timeline"),
+        fetchDashboardJson<Stats>("/stats", "Could not load dashboard stats"),
+        fetchDashboardJson<Array<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string; category: string }>>(
+          "/documents",
+          "Could not load dashboard documents",
+        ),
+        // Don't bounce users to /check when they've already done a
+        // professional search or have lawyer engagements in flight.
+        // Both are "real content" the dashboard should render rather
+        // than treating the account as brand-new.
+        listMySearches().catch(() => []),
+        listMyEngagements().catch(() => []),
+        // Also count cases — a user who went through the discovery
+        // wizard before signing up has a case but no docs/searches/
+        // engagements/services yet. Without this they'd be re-onboarded
+        // through the persona picker.
+        listCases().catch(() => ({ cases: [] })),
+      ]);
+      const hasServiceContent = Boolean(
+        tl.service_summary?.active_orders?.length
+        || tl.service_summary?.recent_completed?.length
+        || tl.service_summary?.recommended_services?.length,
+      );
+      const hasLawyerContent = mySearches.length > 0 || myEngagements.length > 0;
+      const hasCaseContent = (casesResp?.cases ?? []).length > 0;
+      if (
+        docs.length === 0
+        && (!tl.events || tl.events.length <= 1)
+        && !hasServiceContent
+        && !hasLawyerContent
+        && !hasCaseContent
+      ) {
+        router.push("/check");
+        return;
+      }
+      setTimeline(tl);
+      setStats(st);
+      setDocuments(docs);
+      setLoading(false);
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : "Could not load dashboard");
+      setLoading(false);
     }
-    setTimeline(tl);
-    setStats(st);
-    setDocuments(docs);
-    setLoading(false);
   }, [router]);
 
   const openDashboardDocument = useCallback(async (docId: string) => {
+    setDocumentOpenError(null);
     const resp = await fetch(`${API}/documents/${docId}/view`, { headers: authHeaders() });
     if (!resp.ok) {
-      throw new Error("Could not open document");
+      const body = await resp.json().catch(() => null);
+      throw new Error(body?.detail || body?.message || "Could not open document");
     }
     const blob = await resp.blob();
     const url = URL.createObjectURL(blob);
@@ -822,9 +857,10 @@ export default function DashboardPage() {
       <button
         key={doc.id}
         type="button"
+        data-testid={`dashboard-document-chip-${doc.id}`}
         onClick={() => {
           openDashboardDocument(doc.id).catch((error) => {
-            console.error(error);
+            setDocumentOpenError(error instanceof Error ? error.message : "Could not open document");
           });
         }}
         className={`flex items-center gap-2 rounded-xl border text-left font-medium text-[#3d6bc5] dark:text-[#8aa8e0] shadow-sm transition-all hover:bg-white/80 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#5b8dee]/35 ${
@@ -1323,7 +1359,11 @@ export default function DashboardPage() {
         headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ message: text, history: history.slice(0, -1).map((m) => ({ role: m.role, text: m.text })) }),
       });
-      const data = await resp.json();
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok) {
+        const message = data?.detail || data?.message || "Could not process chat message";
+        throw new Error(message);
+      }
       const replyText = data.reply || "I was not able to summarize that just now.";
       const assistantMessage: ChatMessage = {
         id: nextChatMessageId(),
@@ -1337,8 +1377,10 @@ export default function DashboardPage() {
         ...prev,
         assistantMessage,
       ]);
-    } catch {
-      const fallbackText = "Sorry, I couldn't process that. Please try again.";
+    } catch (err) {
+      const fallbackText = err instanceof Error && err.message
+        ? err.message
+        : "Sorry, I couldn't process that. Please try again.";
       const assistantMessage: ChatMessage = {
         id: nextChatMessageId(),
         role: "assistant",
@@ -1387,7 +1429,7 @@ export default function DashboardPage() {
       return;
     }
 
-    const nextVapi = new Vapi(VAPI_PUBLIC_KEY as string);
+    const nextVapi = createVapiClient(VAPI_PUBLIC_KEY as string);
     const baseContext = buildVoiceContextMessage(timeline, stats, documents);
 
     // Pull recent searches / engagements / email threads so the voice
@@ -1687,6 +1729,30 @@ export default function DashboardPage() {
   }
 
   const user = getUser();
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#eef4fb] px-6">
+        <div className="w-full max-w-md rounded-2xl border border-red-200 bg-white p-6 text-center shadow-[0_24px_70px_rgba(61,84,128,0.08)]">
+          <div className="text-[12px] font-semibold uppercase tracking-[0.18em] text-red-500">Dashboard unavailable</div>
+          <h1 className="mt-3 text-[22px] font-bold tracking-tight text-[#0d1424]">Could not load your dashboard</h1>
+          <p className="mt-3 text-[14px] leading-6 text-[#556480]">{loadError}</p>
+          <button
+            type="button"
+            data-testid="dashboard-load-retry"
+            onClick={() => {
+              setLoadError(null);
+              setLoading(true);
+              void refreshDashboard();
+            }}
+            className="mt-5 rounded-full bg-[#5b8dee] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de]"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -2140,6 +2206,12 @@ export default function DashboardPage() {
             </div>
           ) : null}
 
+          {documentOpenError ? (
+            <div data-testid="dashboard-document-open-error" className="mb-6 rounded-2xl border border-red-200 bg-red-50/90 px-4 py-3 text-[13px] text-red-700">
+              {documentOpenError}
+            </div>
+          ) : null}
+
           {documents.length === 0 && (
             <section
               data-testid="dashboard-empty-upload-cta"
@@ -2197,6 +2269,7 @@ export default function DashboardPage() {
                 <div className="flex shrink-0 items-center">
                   <button
                     type="button"
+                    data-testid="dashboard-voice-toggle"
                     onClick={() => {
                       if (voiceActive) {
                         void stopVoiceConversation();
@@ -2364,9 +2437,10 @@ export default function DashboardPage() {
                           <button
                             onClick={() => {
                               openDashboardDocument(doc.id).catch((error) => {
-                                console.error(error);
+                                setDocumentOpenError(error instanceof Error ? error.message : "Could not open document");
                               });
                             }}
+                            data-testid={`dashboard-document-view-${doc.id}`}
                             className="text-[12px] font-medium text-[#5b8dee] hover:text-[#4a74d4] flex-shrink-0"
                           >
                             View
@@ -2784,6 +2858,7 @@ export default function DashboardPage() {
                             </span>
                             <button
                               disabled={!canToggle || uploading}
+                              data-testid={`dashboard-upload-review-toggle-${index}`}
                               onClick={() => setPreparedUploads((current) => current.map((currentItem, currentIndex) => (
                                 currentIndex === index
                                   ? { ...currentItem, action: currentItem.action === "upload" ? "skip" : "upload" }
@@ -2854,7 +2929,7 @@ export default function DashboardPage() {
             <ModeBar active={chatMode} onChange={setChatMode} />
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-4" id="chat-scroll">
+            <div data-testid="dashboard-chat-messages" className="flex-1 overflow-y-auto p-5 space-y-4" id="chat-scroll">
               {visibleChatMessages.length === 0 && (
                 <div className="bg-white/50 backdrop-blur rounded-2xl p-4 border border-white/60">
                   {chatMode === "guardian" ? (
@@ -2962,12 +3037,14 @@ export default function DashboardPage() {
                     name="msg"
                     type="text"
                     placeholder="Ask about your compliance..."
+                    data-testid="dashboard-chat-input"
                     className="flex-1 px-4 py-2.5 rounded-xl border border-white/70 bg-white/60 text-[13px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
                     disabled={chatLoading}
                   />
                   <button
                     type="submit"
                     disabled={chatLoading}
+                    data-testid="dashboard-chat-submit"
                     className="px-4 py-2.5 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-[13px] font-medium flex-shrink-0 disabled:opacity-50"
                   >
                     Send
@@ -2988,6 +3065,7 @@ export default function DashboardPage() {
       {!chatOpen && (
         <button
           onClick={() => setChatOpen(true)}
+          data-testid="dashboard-chat-toggle"
           className="fixed bottom-5 right-5 z-40 flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(91,141,238,0.1)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.15)] transition-all hover:-translate-y-0.5 group"
         >
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] flex items-center justify-center flex-shrink-0 p-1.5">

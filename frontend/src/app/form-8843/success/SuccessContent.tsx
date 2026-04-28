@@ -298,6 +298,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
               void handleDownload();
             }}
             disabled={!canDownload || downloadLoading}
+            data-testid="form8843-success-download"
             className={`inline-flex items-center justify-center rounded-full px-6 py-3 text-[15px] font-semibold transition ${
               canDownload && !downloadLoading
                 ? "bg-[#5b8dee] text-white shadow-[0_14px_30px_rgba(91,141,238,0.28)] hover:bg-[#4f82de]"
@@ -308,6 +309,7 @@ export default function SuccessContent({ orderId }: { orderId: string }) {
           </button>
           <Link
             href="/form-8843"
+            data-testid="form8843-success-start-another"
             className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-6 py-3 text-[15px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
           >
             Start another draft

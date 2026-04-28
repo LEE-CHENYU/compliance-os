@@ -23,6 +23,8 @@ export default function ModeBar({ active, onChange }: Props) {
       {MODES.map((mode) => (
         <button
           key={mode.id}
+          type="button"
+          data-testid={`chat-mode-${mode.id}`}
           onClick={() => onChange(mode.id)}
           className={`px-3.5 py-1.5 rounded-xl text-[12px] font-medium transition-all ${
             active === mode.id

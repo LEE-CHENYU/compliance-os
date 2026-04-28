@@ -124,6 +124,7 @@ export default function SharePage() {
           <div className="flex items-center gap-4">
             <a
               href={`${API_HOST}/api/share/${token}/download`}
+              data-testid="share-download-all"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white hover:shadow-md transition-shadow"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -243,6 +244,7 @@ export default function SharePage() {
                   key={slot.id}
                   onClick={() => slot.file && setPreview(slot)}
                   disabled={!slot.file}
+                  data-testid={`share-slot-${slot.id}`}
                   className={`w-full text-left py-3 px-2 -mx-2 rounded-lg flex items-start gap-3 transition-colors ${
                     slot.file ? "hover:bg-blue-50/40 cursor-pointer" : "cursor-default opacity-80"
                   }`}
@@ -300,14 +302,14 @@ export default function SharePage() {
 
       {/* File preview drawer */}
       {preview && (
-        <div className="fixed inset-0 bg-[#0d1424]/40 backdrop-blur-sm z-20 flex items-stretch justify-end" onClick={() => setPreview(null)}>
+        <div data-testid="share-preview-drawer" className="fixed inset-0 bg-[#0d1424]/40 backdrop-blur-sm z-20 flex items-stretch justify-end" onClick={() => setPreview(null)}>
           <div className="bg-white w-full md:w-2/3 lg:w-1/2 h-full shadow-2xl flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="p-4 border-b border-blue-100 flex items-center justify-between">
               <div>
                 <div className="text-[10px] font-mono text-[#8b97ad]">{preview.id}</div>
                 <div className="text-sm font-semibold text-[#0d1424]">{preview.title}</div>
               </div>
-              <button onClick={() => setPreview(null)} className="text-sm text-[#8b97ad] hover:text-[#0d1424] px-2">✕</button>
+              <button data-testid="share-preview-close" onClick={() => setPreview(null)} className="text-sm text-[#8b97ad] hover:text-[#0d1424] px-2">✕</button>
             </div>
             <iframe
               title={preview.title}

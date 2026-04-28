@@ -8,11 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "test:e2e": "playwright test",
-    "test:graph": "playwright test tests/graph/guardian-graph.spec.ts"
+    "test:graph": "PLAYWRIGHT_SERVER_MODE=prod playwright test tests/graph/guardian-graph.spec.ts"
   },
   "dependencies": {
     "@vapi-ai/web": "^2.5.2",
-    "next": "14.2.35",
+    "next": "^14.2.35",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^10.1.0"

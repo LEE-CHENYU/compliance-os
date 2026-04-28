@@ -27,8 +27,70 @@ function formatUSD(n: number | null | undefined): string {
   return `$${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 }
 
-function safeName(s: string): string {
-  return s.replace(/[^a-z0-9-_]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+function safeName(s: unknown): string {
+  return String(s ?? "item").replace(/[^a-z0-9-_]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+}
+
+function textValue(value: unknown): string | null {
+  if (value == null) return null;
+  if (typeof value === "string") return value.trim() || null;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (Array.isArray(value)) {
+    const joined = value.map(textValue).filter(Boolean).join("; ");
+    return joined || null;
+  }
+  return null;
+}
+
+function numberValue(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const match = value.match(/\d+/);
+    return match ? Number(match[0]) : null;
+  }
+  return null;
+}
+
+function booleanValue(value: unknown): boolean | null {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["true", "yes", "y", "1"].includes(normalized)) return true;
+    if (["false", "no", "n", "0"].includes(normalized)) return false;
+  }
+  return null;
+}
+
+function alternateAttorneys(value: unknown): Array<{
+  name: string;
+  band: number | null;
+  fit: string | null;
+  takesOutsideConsults: boolean | null;
+}> {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Record<string, unknown>;
+    const name = textValue(record.name);
+    if (!name) return [];
+    return [{
+      name,
+      band: numberValue(record.band),
+      fit: textValue(record.fit_for_case),
+      takesOutsideConsults: booleanValue(record.takes_outside_consults),
+    }];
+  });
+}
+
+type TierReportRow = NonNullable<ProfessionalSearch["tier_report"]>[number];
+
+function tierFirmName(row: TierReportRow): string {
+  return (
+    textValue(row.firm) ??
+    textValue(row.vendor) ??
+    textValue(row.name) ??
+    "Unknown firm"
+  );
 }
 
 /** Download the report by fetching it and triggering a save with the right filename.
@@ -361,11 +423,13 @@ function PersonaCard({
     complete: "text-[#2f7a45]",
     failed: "text-[#a33a3a]",
     running: "text-[#2f5bae]",
+    skipped: "text-[#7b8ba5]",
   };
   const dotColors = {
     complete: "bg-[#5ab474]",
     failed: "bg-[#d46b6b]",
     running: "bg-[#5b8dee]",
+    skipped: "bg-[#b8c3d3]",
   };
   const s = status as keyof typeof statusColors;
 
@@ -383,12 +447,19 @@ function PersonaCard({
             ? (t.personaFirms as (n: number) => string)(state.firm_count ?? 0)
             : status === "failed"
             ? (t.personaFailed as string)
+            : status === "skipped"
+            ? (t.personaSkipped as string)
             : (t.personaSearching as string)}
         </div>
       </div>
       {state?.error && (
         <div className="mt-2 text-[12px] leading-5 text-[#a33a3a]">
           {state.error}
+        </div>
+      )}
+      {state?.status === "skipped" && state.reason && (
+        <div className="mt-2 text-[12px] leading-5 text-[#7b8ba5]">
+          {state.reason}
         </div>
       )}
       {state?.status === "complete" && (
@@ -521,25 +592,27 @@ export default function SearchStatus() {
     }
   }
 
-  async function trackTopN(n: number, firms: { firm: string }[]) {
+  async function trackTopN(n: number, firms: TierReportRow[]) {
     if (!caseId) return;
     setBatchTracking(true);
     setError(null);
     try {
       const tracked = new Set(engagements.map((e) => e.firm_name.toLowerCase()));
       const targets = firms
-        .filter((f) => !tracked.has(f.firm.toLowerCase()))
+        .map((f) => tierFirmName(f))
+        .filter((firmName) => firmName !== "Unknown firm")
+        .filter((firmName) => !tracked.has(firmName.toLowerCase()))
         .slice(0, n);
       // Sequential: idempotent + small N. Parallel would race the soft-
       // dedupe in the backend.
-      for (const t of targets) {
+      for (const firmName of targets) {
         try {
           await createEngagement(caseId, {
-            firm_name: t.firm,
+            firm_name: firmName,
             search_id: params.searchId,
           });
         } catch (err) {
-          setError(err instanceof Error ? err.message : `Could not track ${t.firm}`);
+          setError(err instanceof Error ? err.message : `Could not track ${firmName}`);
           break;
         }
       }
@@ -825,18 +898,27 @@ export default function SearchStatus() {
 
             <div className="mt-6 space-y-3">
               {visibleRows.map((r, idx) => {
+                const firmName = tierFirmName(r);
+                const priority = textValue(r.priority);
+                const status = textValue(r.status) ?? "prospective";
+                const nextAction = textValue(r.next_action);
+                const nextActionDate = textValue(r.next_action_date);
+                const score = numberValue(r.score);
+                const openRisks = numberValue(r.open_risks) ?? 0;
+                const lowestQuote = numberValue(r.lowest_quote);
+                const highestQuote = numberValue(r.highest_quote);
                 const isTracked = engagements.some(
-                  (e) => e.firm_name.toLowerCase() === r.firm.toLowerCase(),
+                  (e) => e.firm_name.toLowerCase() === firmName.toLowerCase(),
                 );
                 return (
                 <div
-                  key={`${r.firm}-${idx}`}
+                  key={`${firmName}-${idx}`}
                   className="rounded-2xl border border-[#e4edf7] bg-white/82 p-5 shadow-[0_10px_30px_rgba(61,84,128,0.05)]"
                 >
                   <div className="flex items-start gap-5">
                     <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl border border-[#dbe5f2] bg-[#fbfdff]">
                       <div className="text-[20px] font-extrabold leading-none text-[#0d1424]">
-                        {r.score ?? "—"}
+                        {score ?? "—"}
                       </div>
                       <div className="mt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
                         score
@@ -846,18 +928,18 @@ export default function SearchStatus() {
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                         <div className="text-[17px] font-bold text-[#0d1424]">
-                          {r.firm}
+                          {firmName}
                         </div>
-                        {r.priority && (
+                        {priority && (
                           <span
-                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${priorityStyle(r.priority)}`}
+                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${priorityStyle(priority)}`}
                           >
-                            {r.priority}
+                            {priority}
                           </span>
                         )}
-                        {r.open_risks > 0 && (
+                        {openRisks > 0 && (
                           <span className="inline-flex items-center rounded-full border border-[#ffd6d6] bg-[#fff4f4] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a33a3a]">
-                            {r.open_risks} {r.open_risks === 1 ? "risk" : "risks"}
+                            {openRisks} {openRisks === 1 ? "risk" : "risks"}
                           </span>
                         )}
                         {caseId && (
@@ -868,12 +950,12 @@ export default function SearchStatus() {
                           ) : (
                             <button
                               type="button"
-                              onClick={() => trackOne(r.firm)}
-                              disabled={tracking === r.firm}
-                              data-testid={`find-lawyer-track-${safeName(r.firm).toLowerCase()}`}
+                              onClick={() => trackOne(firmName)}
+                              disabled={tracking === firmName}
+                              data-testid={`find-lawyer-track-${safeName(firmName).toLowerCase()}`}
                               className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#40536f] hover:border-[#5b8dee] hover:text-[#1a2036] disabled:opacity-50"
                             >
-                              {tracking === r.firm ? "tracking…" : "+ track"}
+                              {tracking === firmName ? "tracking…" : "+ track"}
                             </button>
                           )
                         )}
@@ -883,26 +965,26 @@ export default function SearchStatus() {
                         <div className="flex gap-2">
                           <dt className="text-[#7b8ba5]">{t.rowFee as string}</dt>
                           <dd className="font-medium text-[#40536f]">
-                            {r.lowest_quote || r.highest_quote
-                              ? `${formatUSD(r.lowest_quote)} – ${formatUSD(r.highest_quote)}`
+                            {lowestQuote != null || highestQuote != null
+                              ? `${formatUSD(lowestQuote)} – ${formatUSD(highestQuote)}`
                               : "—"}
                           </dd>
                         </div>
                         <div className="flex gap-2">
                           <dt className="text-[#7b8ba5]">{t.rowStatus as string}</dt>
                           <dd className="font-medium text-[#40536f]">
-                            {r.status}
+                            {status}
                           </dd>
                         </div>
-                        {r.next_action && (
+                        {nextAction && (
                           <div className="col-span-2 flex gap-2">
                             <dt className="text-[#7b8ba5]">{t.rowNext as string}</dt>
                             <dd className="font-medium text-[#40536f]">
-                              {r.next_action}
-                              {r.next_action_date && (
+                              {nextAction}
+                              {nextActionDate && (
                                 <span className="text-[#7b8ba5]">
                                   {" "}
-                                  &middot; by {r.next_action_date}
+                                  &middot; by {nextActionDate}
                                 </span>
                               )}
                             </dd>
@@ -919,16 +1001,16 @@ export default function SearchStatus() {
                           attorney suggestions list. Hidden for unpaid views
                           since we paywall this whole layer. */}
                       {row.is_paid && (() => {
-                        const enriched = firmsDataByName.get(r.firm.toLowerCase());
+                        const enriched = firmsDataByName.get(firmName.toLowerCase());
                         if (!enriched || !enriched._enriched_at) return null;
-                        const gapWarning = enriched._individual_vs_firm_band_gap_warning as string | null | undefined;
-                        const attorneyBand = enriched._lead_attorney_band as number | null | undefined;
-                        const bandSource = enriched._lead_attorney_band_source as string | null | undefined;
-                        const bandYear = enriched._lead_attorney_band_year as number | null | undefined;
-                        const practiceFocus = enriched._lead_attorney_practice_focus as string | null | undefined;
-                        const takesConsults = enriched._lead_attorney_takes_outside_consults as boolean | null | undefined;
-                        const alternates = (enriched._alternate_attorneys as Array<Record<string, unknown>>) || [];
-                        const leadName = (enriched.lead_attorney as string) || "Lead attorney";
+                        const gapWarning = textValue(enriched._individual_vs_firm_band_gap_warning);
+                        const attorneyBand = numberValue(enriched._lead_attorney_band);
+                        const bandSource = textValue(enriched._lead_attorney_band_source);
+                        const bandYear = numberValue(enriched._lead_attorney_band_year);
+                        const practiceFocus = textValue(enriched._lead_attorney_practice_focus);
+                        const takesConsults = booleanValue(enriched._lead_attorney_takes_outside_consults);
+                        const alternates = alternateAttorneys(enriched._alternate_attorneys);
+                        const leadName = textValue(enriched.lead_attorney) ?? textValue(enriched.lead_contact) ?? "Lead attorney";
                         return (
                           <div className="mt-4 rounded-xl border border-[#e4edf7] bg-[#f9fbfe] p-3">
                             {gapWarning && (
@@ -968,39 +1050,35 @@ export default function SearchStatus() {
                                 </div>
                                 <ul className="mt-2 space-y-1.5">
                                   {alternates.slice(0, 3).map((a, ai) => {
-                                    const aName = a.name as string;
-                                    const aBand = a.band as number | null | undefined;
-                                    const aFit = a.fit_for_case as string | null | undefined;
-                                    const aTakes = a.takes_outside_consults as boolean | null | undefined;
                                     return (
                                       <li
-                                        key={`${aName}-${ai}`}
+                                        key={`${a.name}-${ai}`}
                                         className="text-[12px]"
                                         onClick={() => {
                                           trackProfessionalSearchEvent("professional_search_alternate_attorney_clicked", {
                                             search_id: row.id,
-                                            firm: r.firm,
-                                            alternate_name: aName,
-                                            alternate_band: aBand ?? null,
-                                            takes_consults: aTakes ?? null,
+                                            firm: firmName,
+                                            alternate_name: a.name,
+                                            alternate_band: a.band,
+                                            takes_consults: a.takesOutsideConsults,
                                             lang,
                                           });
                                         }}
                                       >
                                         <div className="flex flex-wrap items-baseline gap-x-2">
-                                          <span className="font-semibold text-[#0d1424]">{aName}</span>
-                                          {aBand != null && (
+                                          <span className="font-semibold text-[#0d1424]">{a.name}</span>
+                                          {a.band != null && (
                                             <span className="inline-flex items-center rounded-full border border-[#dbe5f2] bg-white px-1.5 py-0.5 text-[10px] font-semibold text-[#40536f]">
-                                              Band {aBand}
+                                              Band {a.band}
                                             </span>
                                           )}
-                                          {aTakes === false && (
+                                          {a.takesOutsideConsults === false && (
                                             <span className="text-[10px] text-[#9aa9c2]">(retained only)</span>
                                           )}
                                         </div>
-                                        {aFit && (
+                                        {a.fit && (
                                           <div className="mt-0.5 text-[11.5px] text-[#556480]">
-                                            {aFit}
+                                            {a.fit}
                                           </div>
                                         )}
                                       </li>

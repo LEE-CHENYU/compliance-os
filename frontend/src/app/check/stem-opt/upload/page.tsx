@@ -69,59 +69,71 @@ function StemOptUpload() {
   const [slots, setSlots] = useState<UploadSlot[]>([]);
   const [stage, setStage] = useState<string>("");
   const [isForm8843Flow, setIsForm8843Flow] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
   const uploadViewTrackedRef = useRef(false);
 
   // Load the check to get the stage, then set appropriate slots
   useEffect(() => {
     if (!checkId) return;
-    getCheck(checkId).then((check) => {
-      const s = check.answers?.stage as string || "not_sure";
-      const fromForm8843 = check.answers?.source_form_8843 === "yes";
-      const configuredSlots = STAGE_SLOTS[s] || STAGE_SLOTS.not_sure;
-      setStage(s);
-      setSlots(configuredSlots);
-      setIsForm8843Flow(fromForm8843);
-      trackOnboardingEvent("onboarding_upload_viewed", {
-        check_id: check.id,
-        check_track: "stem_opt",
-        stage: s,
-        required_document_count: configuredSlots.filter((slot) => slot.required).length,
-      });
-      if (fromForm8843 && !uploadViewTrackedRef.current) {
-        uploadViewTrackedRef.current = true;
-        trackForm8843FunnelEvent("form_8843_gtm_upload_viewed", {
+    setError(null);
+    getCheck(checkId)
+      .then((check) => {
+        const s = check.answers?.stage as string || "not_sure";
+        const fromForm8843 = check.answers?.source_form_8843 === "yes";
+        const configuredSlots = STAGE_SLOTS[s] || STAGE_SLOTS.not_sure;
+        setStage(s);
+        setSlots(configuredSlots);
+        setIsForm8843Flow(fromForm8843);
+        trackOnboardingEvent("onboarding_upload_viewed", {
           check_id: check.id,
           check_track: "stem_opt",
           stage: s,
           required_document_count: configuredSlots.filter((slot) => slot.required).length,
         });
-      }
-    });
+        if (fromForm8843 && !uploadViewTrackedRef.current) {
+          uploadViewTrackedRef.current = true;
+          trackForm8843FunnelEvent("form_8843_gtm_upload_viewed", {
+            check_id: check.id,
+            check_track: "stem_opt",
+            stage: s,
+            required_document_count: configuredSlots.filter((slot) => slot.required).length,
+          });
+        }
+      })
+      .catch((nextError) => {
+        setError(nextError instanceof Error ? nextError.message : "Could not load this check");
+      });
   }, [checkId]);
 
   const requiredUploaded = slots.filter((s) => s.required).every((s) => s.uploaded);
 
   const handleFile = useCallback(async (index: number, file: File) => {
     const slot = slots[index];
+    setError(null);
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, file, uploading: true } : s));
-    await uploadDocument(checkId, file, slot.docType);
-    setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: true } : s));
-    trackOnboardingEvent("onboarding_document_uploaded", {
-      check_id: checkId,
-      check_track: "stem_opt",
-      stage,
-      doc_type: slot.docType,
-      required: slot.required,
-    });
-    if (isForm8843Flow) {
-      trackForm8843FunnelEvent("form_8843_gtm_document_uploaded", {
+    try {
+      await uploadDocument(checkId, file, slot.docType);
+      setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: true } : s));
+      trackOnboardingEvent("onboarding_document_uploaded", {
         check_id: checkId,
         check_track: "stem_opt",
         stage,
         doc_type: slot.docType,
         required: slot.required,
       });
+      if (isForm8843Flow) {
+        trackForm8843FunnelEvent("form_8843_gtm_document_uploaded", {
+          check_id: checkId,
+          check_track: "stem_opt",
+          stage,
+          doc_type: slot.docType,
+          required: slot.required,
+        });
+      }
+    } catch (nextError) {
+      setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: false } : s));
+      setError(nextError instanceof Error ? nextError.message : "Could not upload this document");
     }
   }, [checkId, isForm8843Flow, slots, stage]);
 
@@ -132,6 +144,10 @@ function StemOptUpload() {
     pre_completion: "Pre-completion (CPT)",
     not_sure: "your situation",
   };
+
+  if (error && !slots.length) {
+    return <div data-testid="stem-upload-error" className="min-h-screen flex items-center justify-center px-6 text-center text-red-700">{error}</div>;
+  }
 
   if (!slots.length) {
     return <div className="min-h-screen flex items-center justify-center text-[#8e9ab5]">Loading...</div>;
@@ -175,6 +191,7 @@ function StemOptUpload() {
                   ref={(el) => { fileRefs.current[globalIndex] = el; }}
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png"
+                  data-testid={`stem-upload-input-${slot.docType}`}
                   style={{ position: 'absolute', width: 1, height: 1, opacity: 0, overflow: 'hidden' }}
                   onChange={(e) => {
                     const f = e.target.files?.[0];
@@ -227,6 +244,7 @@ function StemOptUpload() {
                       ref={(el) => { fileRefs.current[globalIndex] = el; }}
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png"
+                      data-testid={`stem-upload-input-${slot.docType}`}
                       style={{ position: 'absolute', width: 1, height: 1, opacity: 0, overflow: 'hidden' }}
                       onChange={(e) => {
                         const f = e.target.files?.[0];
@@ -255,6 +273,12 @@ function StemOptUpload() {
           Your documents are stored securely and used only for compliance checking.
         </div>
 
+        {error ? (
+          <div data-testid="stem-upload-error" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+            {error}
+          </div>
+        ) : null}
+
         <button
           onClick={() => {
             trackOnboardingEvent("onboarding_review_phase_viewed", {
@@ -273,6 +297,7 @@ function StemOptUpload() {
             router.push(`/check/stem-opt/review?id=${checkId}`);
           }}
           disabled={!requiredUploaded}
+          data-testid="stem-upload-continue"
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all ${
             requiredUploaded
               ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)]"

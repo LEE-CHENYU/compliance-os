@@ -842,6 +842,7 @@ export default function AccountOrderDetailPage() {
               type="button"
               onClick={() => void handlePullPrefill()}
               disabled={busyAction === "prefill"}
+              data-testid="order-detail-pull-prefill"
               className="inline-flex rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b] disabled:cursor-not-allowed disabled:text-[#98a5ba]"
             >
               {busyAction === "prefill" ? "Pulling from data room..." : "Pull from data room"}
@@ -850,6 +851,7 @@ export default function AccountOrderDetailPage() {
               type="button"
               onClick={() => void handleSaveIntake()}
               disabled={busyAction === "save"}
+              data-testid="order-detail-save-intake"
               className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
             >
               {busyAction === "save" ? "Saving intake..." : "Save intake"}
@@ -1221,6 +1223,7 @@ export default function AccountOrderDetailPage() {
               <input
                 value={election83BForm.taxpayer_name}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, taxpayer_name: event.target.value }))}
+                data-testid="order-83b-taxpayer-name"
                 className={inputClassName}
                 placeholder="Jessica Chen"
               />
@@ -1230,6 +1233,7 @@ export default function AccountOrderDetailPage() {
               <input
                 value={election83BForm.taxpayer_address}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, taxpayer_address: event.target.value }))}
+                data-testid="order-83b-taxpayer-address"
                 className={inputClassName}
                 placeholder="123 Startup Way, San Francisco, CA 94107"
               />
@@ -1239,6 +1243,7 @@ export default function AccountOrderDetailPage() {
               <input
                 value={election83BForm.company_name}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, company_name: event.target.value }))}
+                data-testid="order-83b-company-name"
                 className={inputClassName}
                 placeholder="CliniPulse, Inc."
               />
@@ -1249,6 +1254,7 @@ export default function AccountOrderDetailPage() {
                 type="date"
                 value={election83BForm.grant_date}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, grant_date: event.target.value }))}
+                data-testid="order-83b-grant-date"
                 className={inputClassName}
               />
             </label>
@@ -1257,6 +1263,7 @@ export default function AccountOrderDetailPage() {
               <input
                 value={election83BForm.property_description}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, property_description: event.target.value }))}
+                data-testid="order-83b-property-description"
                 className={inputClassName}
                 placeholder="Restricted common stock"
               />
@@ -1266,6 +1273,7 @@ export default function AccountOrderDetailPage() {
               <input
                 value={election83BForm.share_count}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, share_count: event.target.value }))}
+                data-testid="order-83b-share-count"
                 className={inputClassName}
                 placeholder="10000"
               />
@@ -1275,6 +1283,7 @@ export default function AccountOrderDetailPage() {
               <input
                 value={election83BForm.fair_market_value_per_share}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, fair_market_value_per_share: event.target.value }))}
+                data-testid="order-83b-fmv"
                 className={inputClassName}
                 placeholder="0.02"
               />
@@ -1284,6 +1293,7 @@ export default function AccountOrderDetailPage() {
               <input
                 value={election83BForm.exercise_price_per_share}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, exercise_price_per_share: event.target.value }))}
+                data-testid="order-83b-exercise-price"
                 className={inputClassName}
                 placeholder="0.01"
               />
@@ -1293,6 +1303,7 @@ export default function AccountOrderDetailPage() {
               <textarea
                 value={election83BForm.vesting_schedule}
                 onChange={(event) => setElection83BForm((current) => ({ ...current, vesting_schedule: event.target.value }))}
+                data-testid="order-83b-vesting-schedule"
                 className={`${inputClassName} min-h-[120px] resize-y`}
                 placeholder="25% after 12 months, then monthly over 36 months"
               />
@@ -1409,6 +1420,7 @@ export default function AccountOrderDetailPage() {
                   <button
                     key={artifact.filename}
                     type="button"
+                    data-testid={`order-detail-artifact-${artifact.filename.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}`}
                     onClick={() => {
                       void downloadMarketplaceArtifact(artifact.url, artifact.filename).catch((nextError) => {
                         setActionError(nextError instanceof Error ? nextError.message : "Could not download artifact");
@@ -1503,6 +1515,7 @@ export default function AccountOrderDetailPage() {
                 type="button"
                 onClick={() => void handlePullPrefill()}
                 disabled={busyAction === "prefill"}
+                data-testid="order-detail-opt-pull-prefill"
                 className="inline-flex rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b] disabled:cursor-not-allowed disabled:text-[#98a5ba]"
               >
                 {busyAction === "prefill" ? "Pulling from data room..." : "Pull from data room"}
@@ -1511,6 +1524,7 @@ export default function AccountOrderDetailPage() {
                 type="button"
                 onClick={() => void handleSaveIntake()}
                 disabled={busyAction === "save"}
+                data-testid="order-detail-opt-save-intake"
                 className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a] disabled:cursor-not-allowed disabled:bg-[#8b97ad]"
               >
                 {busyAction === "save" ? "Saving intake..." : "Save intake"}
@@ -1536,6 +1550,7 @@ export default function AccountOrderDetailPage() {
                 type="date"
                 value={optIntakeForm.desired_start_date}
                 onChange={(event) => setOptIntakeForm((current) => ({ ...current, desired_start_date: event.target.value }))}
+                data-testid="order-opt-start-date"
                 className={inputClassName}
               />
             </label>
@@ -1544,6 +1559,7 @@ export default function AccountOrderDetailPage() {
               <textarea
                 value={optIntakeForm.employment_plan_text}
                 onChange={(event) => setOptIntakeForm((current) => ({ ...current, employment_plan_text: event.target.value }))}
+                data-testid="order-opt-employment-plan"
                 className={`${inputClassName} min-h-[120px] resize-y`}
                 placeholder="Describe the role you intend to pursue and how it connects to your field of study."
               />
@@ -1559,6 +1575,7 @@ export default function AccountOrderDetailPage() {
                 <input
                   type="file"
                   accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
+                  data-testid={`order-opt-file-${fieldName.replace(/_file$/, "")}`}
                   className={`${inputClassName} file:mr-4 file:rounded-full file:border-0 file:bg-[#eef4ff] file:px-4 file:py-2 file:text-[13px] file:font-semibold file:text-[#355694]`}
                   onChange={(event) => {
                     const file = event.target.files?.[0] ?? null;
@@ -1689,6 +1706,7 @@ export default function AccountOrderDetailPage() {
                         setError(nextError instanceof Error ? nextError.message : "Could not download the PDF");
                       });
                     }}
+                    data-testid="order-detail-download-pdf"
                     className="inline-flex items-center justify-center rounded-full bg-[#5b8dee] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de]"
                   >
                     Download PDF
@@ -1697,6 +1715,7 @@ export default function AccountOrderDetailPage() {
                 {order.product.path ? (
                   <Link
                     href={order.product.path}
+                    data-testid="order-detail-reopen-service"
                     className="inline-flex items-center justify-center rounded-full border border-[#dbe5f2] bg-white px-5 py-3 text-[14px] font-semibold text-[#40536f] transition hover:border-[#c4d4ea] hover:text-[#16253b]"
                   >
                     Reopen service
@@ -1814,6 +1833,7 @@ export default function AccountOrderDetailPage() {
                   </div>
                   <Link
                     href={`/account/orders/${order.order_id}/agreement`}
+                    data-testid="order-detail-open-agreement"
                     className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a]"
                   >
                     Open agreement
@@ -1883,6 +1903,7 @@ export default function AccountOrderDetailPage() {
                     type="button"
                     onClick={() => void handleProcessOrder()}
                     disabled={busyAction === "process"}
+                    data-testid="order-detail-run-now"
                     className="inline-flex rounded-full bg-[#5b8dee] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_30px_rgba(91,141,238,0.24)] transition hover:bg-[#4f82de] disabled:cursor-not-allowed disabled:bg-[#9db8e6]"
                   >
                     {busyAction === "process" ? "Processing..." : "Run now"}
@@ -1916,6 +1937,7 @@ export default function AccountOrderDetailPage() {
                     <input
                       value={trackingNumber}
                       onChange={(event) => setTrackingNumber(event.target.value)}
+                      data-testid="order-detail-tracking-number"
                       className="mt-2 w-full rounded-2xl border border-[#ebd7a2] bg-white px-4 py-3 text-[14px] text-[#6b5214] outline-none transition focus:border-[#d4ab3a]"
                       placeholder="9407 1000 0000 0000 1234 56"
                     />
@@ -1924,6 +1946,7 @@ export default function AccountOrderDetailPage() {
                     type="button"
                     onClick={() => void handleMarkMailed()}
                     disabled={busyAction === "mail" || order.mailing_status === "mailed"}
+                    data-testid="order-detail-mark-mailed"
                     className="self-end inline-flex rounded-full bg-[#c98f20] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#b8821b] disabled:cursor-not-allowed disabled:bg-[#e0c27c]"
                   >
                     {order.mailing_status === "mailed"

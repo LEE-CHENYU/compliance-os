@@ -10,7 +10,7 @@ interface Props {
 
 export default function DocumentRow({ doc, slots, onAssignSlot, onRemove }: Props) {
   return (
-    <div className="flex items-center justify-between rounded-lg border border-stone-200 bg-white p-3">
+    <div data-testid={`case-doc-row-${doc.id}`} className="flex items-center justify-between rounded-lg border border-stone-200 bg-white p-3">
       <div className="flex items-center gap-3 min-w-0">
         <div className="min-w-0">
           <p className="text-sm font-medium truncate">{doc.filename}</p>
@@ -24,6 +24,7 @@ export default function DocumentRow({ doc, slots, onAssignSlot, onRemove }: Prop
         <select
           value={doc.slot_key || ""}
           onChange={(e) => e.target.value && onAssignSlot(e.target.value)}
+          data-testid={`case-doc-assign-${doc.id}`}
           className="text-xs border border-stone-200 rounded px-2 py-1"
         >
           <option value="">Assign to slot...</option>
@@ -31,7 +32,7 @@ export default function DocumentRow({ doc, slots, onAssignSlot, onRemove }: Prop
             <option key={s.key} value={s.key}>{s.label}</option>
           ))}
         </select>
-        <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700">Remove</button>
+        <button data-testid={`case-doc-remove-${doc.id}`} onClick={onRemove} className="text-xs text-red-500 hover:text-red-700">Remove</button>
       </div>
     </div>
   );

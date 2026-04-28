@@ -59,6 +59,7 @@ export default function EntityInfo() {
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     trackOnboardingEvent("onboarding_intake_viewed", {
@@ -82,13 +83,19 @@ export default function EntityInfo() {
   async function handleContinue() {
     if (!canContinue) return;
     setLoading(true);
-    const check = await createCheck("entity", answers);
-    trackOnboardingEvent("onboarding_check_created", {
-      check_id: check.id,
-      check_track: "entity",
-      entity_type: answers.entity_type || "unknown",
-    });
-    router.push(`/check/entity/upload?id=${check.id}`);
+    setError(null);
+    try {
+      const check = await createCheck("entity", answers);
+      trackOnboardingEvent("onboarding_check_created", {
+        check_id: check.id,
+        check_track: "entity",
+        entity_type: answers.entity_type || "unknown",
+      });
+      router.push(`/check/entity/upload?id=${check.id}`);
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Could not create this check");
+      setLoading(false);
+    }
   }
 
   function ChipGroup({ label, options, field }: { label: string; options: { value: string; label: string }[]; field: string }) {
@@ -100,6 +107,7 @@ export default function EntityInfo() {
             <button
               key={o.value}
               onClick={() => set(field, o.value)}
+              data-testid={`entity-intake-${field}-${o.value}`}
               className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 answers[field] === o.value
                   ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_2px_12px_rgba(74,116,212,0.3)]"
@@ -139,6 +147,7 @@ export default function EntityInfo() {
             value={answers.state_of_formation || ""}
             onChange={(e) => set("state_of_formation", e.target.value)}
             placeholder="e.g., Delaware, Wyoming"
+            data-testid="entity-intake-state-of-formation"
             className="w-full px-4 py-3 rounded-xl border border-white/70 bg-white/60 text-[15px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
           />
         </div>
@@ -148,9 +157,16 @@ export default function EntityInfo() {
         <ChipGroup label="When was the entity formed?" options={FORMATION_AGE} field="formation_age" />
         <ChipGroup label="What did you use to file your most recent US tax return?" options={TAX_SOFTWARE} field="tax_software_used" />
 
+        {error ? (
+          <div data-testid="entity-intake-error" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+            {error}
+          </div>
+        ) : null}
+
         <button
           onClick={handleContinue}
           disabled={!canContinue || loading}
+          data-testid="entity-intake-continue"
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all mt-4 ${
             canContinue
               ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)]"

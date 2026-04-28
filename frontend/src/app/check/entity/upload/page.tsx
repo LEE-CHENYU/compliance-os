@@ -23,32 +23,45 @@ function EntityUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!checkId) {
       return;
     }
-    getCheck(checkId).then((check) => {
-      trackOnboardingEvent("onboarding_upload_viewed", {
-        check_id: check.id,
-        check_track: "entity",
-        required_document_count: 1,
+    setError(null);
+    getCheck(checkId)
+      .then((check) => {
+        trackOnboardingEvent("onboarding_upload_viewed", {
+          check_id: check.id,
+          check_track: "entity",
+          required_document_count: 1,
+        });
+      })
+      .catch((nextError) => {
+        setError(nextError instanceof Error ? nextError.message : "Could not load this check");
       });
-    });
   }, [checkId]);
 
   const handleFile = useCallback(async (f: File) => {
     setFile(f);
     setUploading(true);
-    await uploadDocument(checkId, f, "tax_return");
-    setUploading(false);
-    setUploaded(true);
-    trackOnboardingEvent("onboarding_document_uploaded", {
-      check_id: checkId,
-      check_track: "entity",
-      doc_type: "tax_return",
-      required: true,
-    });
+    setError(null);
+    try {
+      await uploadDocument(checkId, f, "tax_return");
+      setUploaded(true);
+      trackOnboardingEvent("onboarding_document_uploaded", {
+        check_id: checkId,
+        check_track: "entity",
+        doc_type: "tax_return",
+        required: true,
+      });
+    } catch (nextError) {
+      setUploaded(false);
+      setError(nextError instanceof Error ? nextError.message : "Could not upload this document");
+    } finally {
+      setUploading(false);
+    }
   }, [checkId]);
 
   return (
@@ -77,6 +90,7 @@ function EntityUpload() {
             ref={fileRef}
             type="file"
             accept=".pdf"
+            data-testid="entity-upload-input-tax-return"
             style={{ position: 'absolute', width: 1, height: 1, opacity: 0, overflow: 'hidden' }}
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -105,6 +119,12 @@ function EntityUpload() {
           Your documents are stored securely and used only for compliance checking.
         </div>
 
+        {error ? (
+          <div data-testid="entity-upload-error" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+            {error}
+          </div>
+        ) : null}
+
         <button
           onClick={() => {
             trackOnboardingEvent("onboarding_review_phase_viewed", {
@@ -115,6 +135,7 @@ function EntityUpload() {
             router.push(`/check/entity/review?id=${checkId}`);
           }}
           disabled={!uploaded}
+          data-testid="entity-upload-continue"
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all ${
             uploaded
               ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)]"

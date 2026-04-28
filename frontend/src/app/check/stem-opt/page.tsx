@@ -51,6 +51,7 @@ export default function StemOptStage() {
   const [petitionStatus, setPetitionStatus] = useState<string | null>(null);
   const [taxSoftware, setTaxSoftware] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [prefillContext, setPrefillContext] = useState<Record<string, string>>({});
   const [form8843PrefillNote, setForm8843PrefillNote] = useState<string | null>(null);
 
@@ -106,28 +107,34 @@ export default function StemOptStage() {
   async function handleContinue() {
     if (!canContinue) return;
     setLoading(true);
-    const check = await createCheck("stem_opt", {
-      stage,
-      years_in_us: Number(years),
-      employment_status: employmentStatus,
-      employer_changed: employerChanged,
-      petition_status: petitionStatus,
-      tax_software_used: taxSoftware,
-      ...prefillContext,
-    });
-    trackOnboardingEvent("onboarding_check_created", {
-      check_id: check.id,
-      check_track: "stem_opt",
-      stage: stage || "unknown",
-    });
-    if (prefillContext.source_form_8843 === "yes") {
-      trackForm8843FunnelEvent("form_8843_gtm_check_created", {
+    setError(null);
+    try {
+      const check = await createCheck("stem_opt", {
+        stage,
+        years_in_us: Number(years),
+        employment_status: employmentStatus,
+        employer_changed: employerChanged,
+        petition_status: petitionStatus,
+        tax_software_used: taxSoftware,
+        ...prefillContext,
+      });
+      trackOnboardingEvent("onboarding_check_created", {
         check_id: check.id,
         check_track: "stem_opt",
         stage: stage || "unknown",
       });
+      if (prefillContext.source_form_8843 === "yes") {
+        trackForm8843FunnelEvent("form_8843_gtm_check_created", {
+          check_id: check.id,
+          check_track: "stem_opt",
+          stage: stage || "unknown",
+        });
+      }
+      router.push(`/check/stem-opt/upload?id=${check.id}`);
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Could not create this check");
+      setLoading(false);
     }
-    router.push(`/check/stem-opt/upload?id=${check.id}`);
   }
 
   function ChipSelect({ label, options, value, onChange }: {
@@ -136,6 +143,14 @@ export default function StemOptStage() {
     value: string | null;
     onChange: (v: string) => void;
   }) {
+    const field =
+      label.startsWith("Are you currently employed")
+        ? "employment_status"
+        : label.startsWith("Have you changed employers")
+          ? "employer_changed"
+          : label.startsWith("Has your")
+            ? "petition_status"
+            : "tax_software_used";
     return (
       <div className="mb-8">
         <div className="text-sm font-medium text-[#0d1424] mb-3">{label}</div>
@@ -144,6 +159,7 @@ export default function StemOptStage() {
             <button
               key={o.value}
               onClick={() => onChange(o.value)}
+              data-testid={`stem-intake-${field}-${o.value}`}
               className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 value === o.value
                   ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_2px_12px_rgba(74,116,212,0.3)]"
@@ -186,6 +202,7 @@ export default function StemOptStage() {
               <button
                 key={s.value}
                 onClick={() => setStage(s.value)}
+                data-testid={`stem-intake-stage-${s.value}`}
                 className={`text-left px-5 py-4 rounded-xl border transition-all ${
                   stage === s.value
                     ? "border-[#5b8dee] bg-blue-50/80 shadow-sm"
@@ -211,6 +228,7 @@ export default function StemOptStage() {
             value={years}
             onChange={(e) => setYears(e.target.value === "" ? "" : Number(e.target.value))}
             placeholder="e.g., 4"
+            data-testid="stem-intake-years"
             className="w-24 px-4 py-3 rounded-xl border border-white/70 bg-white/60 text-[15px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
           />
         </div>
@@ -255,9 +273,16 @@ export default function StemOptStage() {
           onChange={setTaxSoftware}
         />
 
+        {error ? (
+          <div data-testid="stem-intake-error" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+            {error}
+          </div>
+        ) : null}
+
         <button
           onClick={handleContinue}
           disabled={!canContinue || loading}
+          data-testid="stem-intake-continue"
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all ${
             canContinue
               ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)]"

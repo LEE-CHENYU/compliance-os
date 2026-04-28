@@ -124,6 +124,7 @@ function LoginPage() {
           {/* Google Sign-In */}
           <button
             onClick={handleGoogleSignIn}
+            data-testid="login-google"
             className="w-full flex items-center justify-center gap-3 py-3 rounded-xl bg-white border border-gray-200 text-[14px] font-medium text-[#3c4043] hover:bg-gray-50 hover:shadow-sm transition-all mb-4"
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
@@ -144,7 +145,7 @@ function LoginPage() {
           {/* Email/Password form */}
           <form onSubmit={handleSubmit}>
             {error && (
-              <div className="mb-4 px-4 py-2 rounded-xl text-sm text-red-600 bg-red-50/60 border border-red-100/40">
+              <div data-testid="login-error" className="mb-4 px-4 py-2 rounded-xl text-sm text-red-600 bg-red-50/60 border border-red-100/40">
                 {error}
               </div>
             )}
@@ -156,6 +157,7 @@ function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                data-testid="login-email"
                 className="w-full px-4 py-3 rounded-xl border border-white/70 bg-white/60 text-[15px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
                 placeholder="you@example.com"
               />
@@ -169,6 +171,7 @@ function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
+                data-testid="login-password"
                 className="w-full px-4 py-3 rounded-xl border border-white/70 bg-white/60 text-[15px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
                 placeholder={isRegister ? "At least 6 characters" : "Your password"}
               />
@@ -177,6 +180,7 @@ function LoginPage() {
             <button
               type="submit"
               disabled={loading}
+              data-testid="login-submit"
               className="w-full py-3.5 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white font-semibold text-[15px] shadow-[0_4px_16px_rgba(74,116,212,0.3)] hover:shadow-[0_8px_28px_rgba(74,116,212,0.4)] transition-all"
             >
               {loading ? "..." : isRegister ? "Create account" : "Sign in"}
@@ -186,6 +190,7 @@ function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setIsRegister(!isRegister); setError(""); }}
+                data-testid="login-toggle-register"
                 className="text-sm text-[#5b8dee] hover:underline"
               >
                 {isRegister ? "Already have an account? Sign in" : "Need an account? Create one"}

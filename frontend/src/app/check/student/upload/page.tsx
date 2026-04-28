@@ -26,61 +26,77 @@ function StudentUpload() {
   const checkId = params.get("id") || "";
   const [slots, setSlots] = useState<UploadSlot[]>([]);
   const [isForm8843Flow, setIsForm8843Flow] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
   const uploadViewTrackedRef = useRef(false);
 
   useEffect(() => {
     if (!checkId) return;
-    getCheck(checkId).then((check) => {
-      const fromForm8843 = check.answers?.source_form_8843 === "yes";
-      const hasCpt = check.answers?.student_status === "enrolled_cpt";
-      const s: UploadSlot[] = [
-        { docType: "i20", label: "I-20", sub: "Your most recent I-20 — we\u2019ll check your program dates, CPT authorization, and travel signature", required: true, file: null, uploading: false, uploaded: false },
-      ];
-      if (hasCpt) {
-        s.push({ docType: "employment_letter", label: "Employment / Offer Letter", sub: "Your CPT employer\u2019s offer letter — helps us cross-check against your I-20", required: false, file: null, uploading: false, uploaded: false });
-      }
-      s.push({ docType: "i94", label: "I-94", sub: "Most recent arrival record — download from i94.cbp.dhs.gov", required: false, file: null, uploading: false, uploaded: false });
-      setSlots(s);
-      setIsForm8843Flow(fromForm8843);
-      trackOnboardingEvent("onboarding_upload_viewed", {
-        check_id: check.id,
-        check_track: "student",
-        required_document_count: s.filter((slot) => slot.required).length,
-      });
-      if (fromForm8843 && !uploadViewTrackedRef.current) {
-        uploadViewTrackedRef.current = true;
-        trackForm8843FunnelEvent("form_8843_gtm_upload_viewed", {
+    setError(null);
+    getCheck(checkId)
+      .then((check) => {
+        const fromForm8843 = check.answers?.source_form_8843 === "yes";
+        const hasCpt = check.answers?.student_status === "enrolled_cpt";
+        const s: UploadSlot[] = [
+          { docType: "i20", label: "I-20", sub: "Your most recent I-20 — we\u2019ll check your program dates, CPT authorization, and travel signature", required: true, file: null, uploading: false, uploaded: false },
+        ];
+        if (hasCpt) {
+          s.push({ docType: "employment_letter", label: "Employment / Offer Letter", sub: "Your CPT employer\u2019s offer letter — helps us cross-check against your I-20", required: false, file: null, uploading: false, uploaded: false });
+        }
+        s.push({ docType: "i94", label: "I-94", sub: "Most recent arrival record — download from i94.cbp.dhs.gov", required: false, file: null, uploading: false, uploaded: false });
+        setSlots(s);
+        setIsForm8843Flow(fromForm8843);
+        trackOnboardingEvent("onboarding_upload_viewed", {
           check_id: check.id,
           check_track: "student",
           required_document_count: s.filter((slot) => slot.required).length,
         });
-      }
-    });
+        if (fromForm8843 && !uploadViewTrackedRef.current) {
+          uploadViewTrackedRef.current = true;
+          trackForm8843FunnelEvent("form_8843_gtm_upload_viewed", {
+            check_id: check.id,
+            check_track: "student",
+            required_document_count: s.filter((slot) => slot.required).length,
+          });
+        }
+      })
+      .catch((nextError) => {
+        setError(nextError instanceof Error ? nextError.message : "Could not load this check");
+      });
   }, [checkId]);
 
   const requiredUploaded = slots.filter((s) => s.required).every((s) => s.uploaded);
 
   const handleFile = useCallback(async (index: number, file: File) => {
     const slot = slots[index];
+    setError(null);
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, file, uploading: true } : s));
-    await uploadDocument(checkId, file, slot.docType);
-    setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: true } : s));
-    trackOnboardingEvent("onboarding_document_uploaded", {
-      check_id: checkId,
-      check_track: "student",
-      doc_type: slot.docType,
-      required: slot.required,
-    });
-    if (isForm8843Flow) {
-      trackForm8843FunnelEvent("form_8843_gtm_document_uploaded", {
+    try {
+      await uploadDocument(checkId, file, slot.docType);
+      setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: true } : s));
+      trackOnboardingEvent("onboarding_document_uploaded", {
         check_id: checkId,
         check_track: "student",
         doc_type: slot.docType,
         required: slot.required,
       });
+      if (isForm8843Flow) {
+        trackForm8843FunnelEvent("form_8843_gtm_document_uploaded", {
+          check_id: checkId,
+          check_track: "student",
+          doc_type: slot.docType,
+          required: slot.required,
+        });
+      }
+    } catch (nextError) {
+      setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: false } : s));
+      setError(nextError instanceof Error ? nextError.message : "Could not upload this document");
     }
   }, [checkId, isForm8843Flow, slots]);
+
+  if (error && !slots.length) {
+    return <div data-testid="student-upload-error" className="min-h-screen flex items-center justify-center px-6 text-center text-red-700">{error}</div>;
+  }
 
   if (!slots.length) return <div className="min-h-screen flex items-center justify-center text-[#8e9ab5]">Loading...</div>;
 
@@ -97,7 +113,7 @@ function StudentUpload() {
             return (
               <div key={slot.docType} onClick={() => { if (!slot.uploading && !slot.uploaded) fileRefs.current[gi]?.click(); }}
                 className={`relative flex flex-col items-center px-6 py-8 rounded-xl border-2 border-dashed transition-all cursor-pointer ${slot.uploaded ? "border-green-300 bg-green-50/50" : "border-blue-200/40 bg-white/60 hover:border-blue-300/60 hover:bg-white/80"}`}>
-                <input ref={(el) => { fileRefs.current[gi] = el; }} type="file" accept=".pdf,.jpg,.jpeg,.png" style={{position:'absolute',width:1,height:1,opacity:0,overflow:'hidden'}} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(gi, f); }} disabled={slot.uploading || slot.uploaded} />
+                <input ref={(el) => { fileRefs.current[gi] = el; }} data-testid={`student-upload-input-${slot.docType}`} type="file" accept=".pdf,.jpg,.jpeg,.png" style={{position:'absolute',width:1,height:1,opacity:0,overflow:'hidden'}} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(gi, f); }} disabled={slot.uploading || slot.uploaded} />
                 {slot.uploaded ? (<><div className="text-green-600 font-semibold text-sm">{slot.file?.name}</div><div className="text-xs text-green-500 mt-1">Uploaded</div></>) : slot.uploading ? (<div className="text-sm text-[#5b8dee] font-medium">Uploading...</div>) : (<><div className="text-[15px] font-semibold text-[#1a2036] mb-1">{slot.label}</div><div className="text-xs text-[#8e9ab5]">{slot.sub}</div><div className="text-xs text-[#b0bdd0] mt-3">Drop PDF here or click to browse</div></>)}
               </div>
             );
@@ -113,7 +129,7 @@ function StudentUpload() {
                 return (
                   <div key={slot.docType} onClick={() => { if (!slot.uploading && !slot.uploaded) fileRefs.current[gi]?.click(); }}
                     className={`relative flex flex-col items-center px-5 py-5 rounded-xl border border-dashed transition-all cursor-pointer ${slot.uploaded ? "border-green-300 bg-green-50/50" : "border-blue-100/30 bg-white/40 hover:border-blue-200/40 hover:bg-white/60"}`}>
-                    <input ref={(el) => { fileRefs.current[gi] = el; }} type="file" accept=".pdf,.jpg,.jpeg,.png" style={{position:'absolute',width:1,height:1,opacity:0,overflow:'hidden'}} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(gi, f); }} disabled={slot.uploading || slot.uploaded} />
+                    <input ref={(el) => { fileRefs.current[gi] = el; }} data-testid={`student-upload-input-${slot.docType}`} type="file" accept=".pdf,.jpg,.jpeg,.png" style={{position:'absolute',width:1,height:1,opacity:0,overflow:'hidden'}} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(gi, f); }} disabled={slot.uploading || slot.uploaded} />
                     {slot.uploaded ? (<div className="text-green-600 font-semibold text-sm">{slot.file?.name}</div>) : (<><div className="text-[13px] font-medium text-[#556480]">{slot.label}</div><div className="text-[11px] text-[#8e9ab5] mt-0.5">{slot.sub}</div></>)}
                   </div>
                 );
@@ -123,6 +139,12 @@ function StudentUpload() {
         )}
 
         <div className="px-4 py-3 rounded-xl bg-white/40 backdrop-blur border border-white/60 text-xs text-[#556480] mb-8">Your documents are stored securely and used only for compliance checking.</div>
+
+        {error ? (
+          <div data-testid="student-upload-error" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+            {error}
+          </div>
+        ) : null}
 
         <button onClick={() => {
           trackOnboardingEvent("onboarding_review_phase_viewed", {
@@ -138,6 +160,7 @@ function StudentUpload() {
           }
           router.push(`/check/student/review?id=${checkId}`);
         }} disabled={!requiredUploaded}
+          data-testid="student-upload-continue"
           className={`w-full py-4 rounded-xl font-semibold text-[15px] transition-all ${requiredUploaded ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_4px_16px_rgba(74,116,212,0.3)]" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
           Continue to review
         </button>

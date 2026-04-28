@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 interface Props {
   onSubmit: (file: File, instruction: string) => void;
@@ -12,6 +12,7 @@ export default function FormFillerUpload({ onSubmit, disabled }: Props) {
   const [instruction, setInstruction] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const validate = (f: File): string | null => {
     if (!f.name.toLowerCase().endsWith(".pdf")) return "Please upload a PDF file";
@@ -42,14 +43,7 @@ export default function FormFillerUpload({ onSubmit, disabled }: Props) {
 
   const handleClick = () => {
     if (disabled) return;
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".pdf,application/pdf";
-    input.onchange = () => {
-      const f = input.files?.[0];
-      if (f) handleFile(f);
-    };
-    input.click();
+    inputRef.current?.click();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -60,8 +54,21 @@ export default function FormFillerUpload({ onSubmit, disabled }: Props) {
 
   return (
     <div className="p-4 border-t border-blue-50/40 flex-shrink-0 space-y-3">
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".pdf,application/pdf"
+        data-testid="form-filler-file-input"
+        className="sr-only"
+        disabled={disabled}
+        onChange={(event) => {
+          const f = event.target.files?.[0];
+          if (f) handleFile(f);
+        }}
+      />
       {!file ? (
         <div
+          data-testid="form-filler-dropzone"
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
@@ -78,7 +85,7 @@ export default function FormFillerUpload({ onSubmit, disabled }: Props) {
           <p className="text-[11px] text-[#7b8ba5] mt-1">or click to browse</p>
         </div>
       ) : (
-        <div className="flex items-center gap-2 bg-white/50 rounded-xl px-3 py-2 border border-white/60">
+        <div data-testid="form-filler-selected-file" className="flex items-center gap-2 bg-white/50 rounded-xl px-3 py-2 border border-white/60">
           <div className="flex-1 min-w-0">
             <p className="text-[12px] font-medium text-[#0d1424] truncate">{file.name}</p>
             <p className="text-[11px] text-[#7b8ba5]">{(file.size / 1024).toFixed(0)} KB</p>
@@ -91,7 +98,7 @@ export default function FormFillerUpload({ onSubmit, disabled }: Props) {
           </button>
         </div>
       )}
-      {error && <p className="text-[11px] text-red-500">{error}</p>}
+      {error && <p data-testid="form-filler-error" className="text-[11px] text-red-500">{error}</p>}
 
       {file && (
         <form onSubmit={handleSubmit} className="flex gap-2">
@@ -100,11 +107,13 @@ export default function FormFillerUpload({ onSubmit, disabled }: Props) {
             onChange={(e) => setInstruction(e.target.value)}
             placeholder="Optional instructions..."
             disabled={disabled}
+            data-testid="form-filler-instruction"
             className="flex-1 px-3 py-2 rounded-xl border border-white/70 bg-white/60 text-[12px] focus:border-[#5b8dee] focus:outline-none focus:ring-2 focus:ring-blue-200/30"
           />
           <button
             type="submit"
             disabled={disabled}
+            data-testid="form-filler-submit"
             className="px-4 py-2 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-[12px] font-medium flex-shrink-0 disabled:opacity-50"
           >
             {disabled ? "..." : "Fill"}

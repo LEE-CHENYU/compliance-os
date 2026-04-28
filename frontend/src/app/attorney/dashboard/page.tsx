@@ -120,6 +120,7 @@ export default function AttorneyDashboardPage() {
                       </div>
                       <Link
                         href={`/attorney/cases/${item.order_id}`}
+                        data-testid={`attorney-open-case-${item.order_id}`}
                         className="inline-flex rounded-full bg-[#0f1728] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[#18243a]"
                       >
                         Open case

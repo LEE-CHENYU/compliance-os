@@ -118,6 +118,7 @@ export default function CaseOverview() {
         </div>
         <button
           onClick={() => router.push("/dashboard")}
+          data-testid="case-overview-back-dashboard"
           className="text-[12px] font-medium text-[#5b8dee] hover:text-[#2f5bae]"
         >
           ← Dashboard
@@ -160,8 +161,10 @@ function LawyersSection({
 }) {
   const launch = () => router.push(`/find-lawyer?case_id=${caseId}`);
   const trackedNames = new Set(engagements.map((e) => e.firm_name.toLowerCase()));
+  const [trackError, setTrackError] = useState<string | null>(null);
 
   async function trackFirm(searchId: string, firmName: string) {
+    setTrackError(null);
     try {
       await createEngagement(caseId, {
         firm_name: firmName,
@@ -169,7 +172,7 @@ function LawyersSection({
       });
       await onTracked();
     } catch (err) {
-      console.error("track failed", err);
+      setTrackError(err instanceof Error ? err.message : "Could not track this firm");
     }
   }
 
@@ -185,6 +188,7 @@ function LawyersSection({
         {searches && searches.length > 0 && (
           <button
             onClick={launch}
+            data-testid="case-lawyers-new-search"
             className="rounded-lg border border-[#dbe5f2] px-3 py-1.5 text-xs font-medium text-[#1a2036] hover:bg-[#f7f9fd]"
           >
             New search
@@ -201,6 +205,7 @@ function LawyersSection({
           </p>
           <button
             onClick={launch}
+            data-testid="case-lawyers-find-specialist"
             className="mt-3 rounded-lg bg-[#0d1424] px-5 py-2 text-sm font-medium text-white hover:bg-[#1a2036]"
           >
             Find a specialist for this case
@@ -258,6 +263,7 @@ function LawyersSection({
                               e.stopPropagation();
                               trackFirm(s.id, f.name);
                             }}
+                            data-testid={`case-lawyers-track-${f.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
                             className="shrink-0 rounded-full border border-[#dbe5f2] px-2 py-0.5 text-[10px] font-medium text-[#40536f] hover:bg-[#eef2f8] hover:text-[#0d1424]"
                           >
                             + track
@@ -272,6 +278,11 @@ function LawyersSection({
           ))}
         </ul>
       )}
+      {trackError ? (
+        <div data-testid="case-lawyers-track-error" className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
+          {trackError}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -290,17 +301,19 @@ function EngagementsSection({
 }) {
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   async function handleAdd() {
     const name = newName.trim();
     if (!name) return;
+    setError(null);
     try {
       await createEngagement(caseId, { firm_name: name });
       setNewName("");
       setAdding(false);
       await onChange();
     } catch (err) {
-      console.error("add engagement failed", err);
+      setError(err instanceof Error ? err.message : "Could not add this firm");
     }
   }
 
@@ -316,6 +329,7 @@ function EngagementsSection({
         {!adding && (
           <button
             onClick={() => setAdding(true)}
+            data-testid="case-engagement-add-open"
             className="rounded-lg border border-[#dbe5f2] px-3 py-1.5 text-xs font-medium text-[#1a2036] hover:bg-[#f7f9fd]"
           >
             + Add firm
@@ -329,6 +343,7 @@ function EngagementsSection({
             autoFocus
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
+            data-testid="case-engagement-new-name"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleAdd();
               if (e.key === "Escape") {
@@ -341,6 +356,7 @@ function EngagementsSection({
           />
           <button
             onClick={handleAdd}
+            data-testid="case-engagement-add-submit"
             className="rounded-md bg-[#0d1424] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#1a2036]"
           >
             Add
@@ -356,6 +372,12 @@ function EngagementsSection({
           </button>
         </div>
       )}
+
+      {error ? (
+        <div data-testid="case-engagement-error" className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
+          {error}
+        </div>
+      ) : null}
 
       {engagements === null ? (
         <p className="text-sm text-[#7b8ba5]">Loading…</p>
@@ -408,10 +430,13 @@ function EngagementRow({
       .map((s) => s.trim())
       .filter(Boolean);
     setBusy(true);
+    setRowError(null);
     try {
       await updateEngagement(caseId, engagement.id, { firm_emails: list });
       setEditingEmails(false);
       await onChange();
+    } catch (err) {
+      setRowError(err instanceof Error ? err.message : "Could not save firm emails");
     } finally {
       setBusy(false);
     }
@@ -420,12 +445,16 @@ function EngagementRow({
   const [notesDraft, setNotesDraft] = useState(engagement.notes || "");
   const [editingNotes, setEditingNotes] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [rowError, setRowError] = useState<string | null>(null);
 
   async function setStatus(status: EngagementStatus) {
     setBusy(true);
+    setRowError(null);
     try {
       await updateEngagement(caseId, engagement.id, { status });
       await onChange();
+    } catch (err) {
+      setRowError(err instanceof Error ? err.message : "Could not update firm status");
     } finally {
       setBusy(false);
     }
@@ -433,10 +462,13 @@ function EngagementRow({
 
   async function saveNotes() {
     setBusy(true);
+    setRowError(null);
     try {
       await updateEngagement(caseId, engagement.id, { notes: notesDraft });
       setEditingNotes(false);
       await onChange();
+    } catch (err) {
+      setRowError(err instanceof Error ? err.message : "Could not save notes");
     } finally {
       setBusy(false);
     }
@@ -445,9 +477,12 @@ function EngagementRow({
   async function remove() {
     if (!confirm(`Remove ${engagement.firm_name} from this case?`)) return;
     setBusy(true);
+    setRowError(null);
     try {
       await deleteEngagement(caseId, engagement.id);
       await onChange();
+    } catch (err) {
+      setRowError(err instanceof Error ? err.message : "Could not remove this firm");
     } finally {
       setBusy(false);
     }
@@ -455,6 +490,7 @@ function EngagementRow({
 
   async function emailFirm() {
     setBusy(true);
+    setRowError(null);
     try {
       const draft = await getEngagementDraftEmail(caseId, engagement.id);
       // mailto: requires URI-encoded params; multiple "to" addrs joined by comma.
@@ -472,8 +508,7 @@ function EngagementRow({
         await onChange();
       }
     } catch (err) {
-      console.error("draft email failed", err);
-      alert("Couldn't draft the email — see console for details.");
+      setRowError(err instanceof Error ? err.message : "Could not draft the email");
     } finally {
       setBusy(false);
     }
@@ -507,6 +542,7 @@ function EngagementRow({
           <button
             onClick={emailFirm}
             disabled={busy || !canEmail}
+            data-testid={`case-engagement-email-${engagement.id}`}
             title={canEmail ? "Open pre-filled email" : "No email on file for this firm"}
             className="rounded-md border border-[#dbe5f2] px-2 py-1 text-xs font-medium text-[#1a2036] hover:bg-[#f7f9fd] disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -516,6 +552,7 @@ function EngagementRow({
             disabled={busy}
             value={engagement.status}
             onChange={(e) => setStatus(e.target.value as EngagementStatus)}
+            data-testid={`case-engagement-status-${engagement.id}`}
             className="text-xs rounded-md border border-[#dbe5f2] px-2 py-1 bg-white hover:border-[#7b8ba5] focus:outline-none focus:ring-2 focus:ring-blue-100"
           >
             {ENGAGEMENT_STATUSES.map((s) => (
@@ -527,6 +564,7 @@ function EngagementRow({
           <button
             onClick={remove}
             disabled={busy}
+            data-testid={`case-engagement-delete-${engagement.id}`}
             className="text-[11px] text-[#7b8ba5] hover:text-rose-600 px-1"
             title="Remove from case"
           >
@@ -543,11 +581,13 @@ function EngagementRow({
             value={emailsDraft}
             onChange={(e) => setEmailsDraft(e.target.value)}
             placeholder="email1@firm.com, email2@firm.com"
+            data-testid={`case-engagement-emails-input-${engagement.id}`}
             className="flex-1 rounded-md border border-[#dbe5f2] px-2 py-1 text-xs focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
           />
           <button
             onClick={saveEmails}
             disabled={busy}
+            data-testid={`case-engagement-emails-save-${engagement.id}`}
             className="rounded-md bg-[#0d1424] px-2 py-1 text-[11px] font-medium text-white hover:bg-[#1a2036]"
           >
             Save
@@ -565,6 +605,7 @@ function EngagementRow({
       ) : (
         <button
           onClick={() => setEditingEmails(true)}
+          data-testid={`case-engagement-emails-open-${engagement.id}`}
           className="block text-[11px] text-[#556480] hover:text-[#1a2036]"
         >
           {engagement.firm_emails.length > 0
@@ -580,6 +621,7 @@ function EngagementRow({
             value={notesDraft}
             onChange={(e) => setNotesDraft(e.target.value)}
             rows={3}
+            data-testid={`case-engagement-notes-input-${engagement.id}`}
             className="w-full rounded-md border border-[#dbe5f2] px-3 py-2 text-xs focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
             placeholder="Notes — last contact, key points, next step…"
           />
@@ -596,6 +638,7 @@ function EngagementRow({
             <button
               onClick={saveNotes}
               disabled={busy}
+              data-testid={`case-engagement-notes-save-${engagement.id}`}
               className="rounded-md bg-[#0d1424] px-3 py-1 text-xs font-medium text-white hover:bg-[#1a2036]"
             >
               Save
@@ -605,6 +648,7 @@ function EngagementRow({
       ) : (
         <button
           onClick={() => setEditingNotes(true)}
+          data-testid={`case-engagement-notes-open-${engagement.id}`}
           className="block w-full text-left text-xs text-[#556480] hover:text-[#1a2036] italic"
         >
           {engagement.notes || "+ add notes"}
@@ -658,6 +702,12 @@ function EngagementRow({
           )}
         </div>
       )}
+
+      {rowError ? (
+        <div data-testid={`case-engagement-row-error-${engagement.id}`} className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
+          {rowError}
+        </div>
+      ) : null}
     </li>
   );
 }
@@ -798,6 +848,7 @@ function GmailConnectionSection({
             <button
               onClick={() => doSync(true)}
               disabled={syncing || busy}
+              data-testid="case-gmail-sync"
               className="rounded-lg border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
             >
               {syncing ? "Syncing…" : "Sync now"}
@@ -807,6 +858,7 @@ function GmailConnectionSection({
             <button
               onClick={disconnect}
               disabled={busy}
+              data-testid="case-gmail-disconnect"
               className="rounded-lg border border-[#dbe5f2] px-3 py-1.5 text-xs font-medium text-[#40536f] hover:bg-[#f7f9fd] hover:text-rose-600"
             >
               Disconnect
@@ -815,6 +867,7 @@ function GmailConnectionSection({
             <button
               onClick={connect}
               disabled={busy}
+              data-testid="case-gmail-connect"
               className="rounded-lg bg-[#0d1424] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#1a2036] disabled:opacity-50"
             >
               {busy ? "…" : "Connect Gmail"}
@@ -836,7 +889,7 @@ function GmailConnectionSection({
         </div>
       )}
       {error && (
-        <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
+        <div data-testid="case-gmail-error" className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
           {error}
         </div>
       )}

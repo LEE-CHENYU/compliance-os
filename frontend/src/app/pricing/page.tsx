@@ -31,9 +31,13 @@ function PricingPage() {
   const [state, setState] = useState<SubscriptionState | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
   const isZh = lang === "zh";
-  const loggedIn = isLoggedIn();
   const canceledFlag = search?.get("canceled") === "1";
+
+  useEffect(() => {
+    setLoggedIn(isLoggedIn());
+  }, []);
 
   // Pull entitlement so the CTA reflects state ("Continue Pro" vs "Start Pro").
   // No-op when signed out (returns null silently).

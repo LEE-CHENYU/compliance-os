@@ -12,7 +12,7 @@ interface Props {
 
 export default function ChecklistSlot({ slot, document: doc, uploading, onDrop, onRemove }: Props) {
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-4">
+    <div data-testid={`case-doc-slot-${slot.key}`} className="rounded-lg border border-stone-200 bg-white p-4">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium">{slot.label}</span>
         <Badge variant={doc ? "uploaded" : slot.required ? "required" : "optional"}>
@@ -22,10 +22,10 @@ export default function ChecklistSlot({ slot, document: doc, uploading, onDrop, 
       {doc ? (
         <div className="flex items-center justify-between text-sm text-stone-500">
           <span>{doc.filename} ({(doc.file_size / 1024).toFixed(0)} KB)</span>
-          <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700">Remove</button>
+          <button data-testid={`case-doc-slot-remove-${slot.key}`} onClick={onRemove} className="text-xs text-red-500 hover:text-red-700">Remove</button>
         </div>
       ) : (
-        <FileDropZone onDrop={onDrop} disabled={uploading} className="p-4">
+        <FileDropZone testId={`case-doc-slot-upload-${slot.key}`} onDrop={onDrop} disabled={uploading} className="p-4">
           <p className="text-sm text-stone-400 text-center">
             {uploading ? "Uploading..." : "Drop file here or click to upload"}
           </p>

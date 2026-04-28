@@ -152,10 +152,14 @@ export interface ProfessionalSearch {
   persona_status: Record<
     string,
     {
-      status?: "complete" | "failed";
+      status?: "complete" | "failed" | "skipped";
       output_path?: string;
       firm_count?: number;
       error?: string;
+      reason?: string;
+      score?: number;
+      threshold?: number;
+      matched_signals?: string[];
       started_at?: string;
       finished_at?: string;
       input_tokens?: number;
@@ -165,7 +169,11 @@ export interface ProfessionalSearch {
     }
   >;
   tier_report: Array<{
-    firm: string;
+    firm?: string | null;
+    vendor?: string | null;
+    name?: string | null;
+    vendor_type?: string | null;
+    category?: string | null;
     purpose: string;
     status: string;
     score: number | null;

@@ -6,6 +6,14 @@ const API = typeof window !== "undefined" && window.location.hostname === "local
   ? "http://127.0.0.1:8000/api"
   : "/api";
 
+async function parseResponse<T>(resp: Response): Promise<T> {
+  const body = await resp.json().catch(() => null);
+  if (!resp.ok) {
+    throw new Error(body?.detail || body?.message || resp.statusText || "Request failed");
+  }
+  return body as T;
+}
+
 // --- Types ---
 
 export interface Check {
@@ -116,12 +124,12 @@ export async function createCheck(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ track, answers }),
   });
-  return resp.json();
+  return parseResponse<Check>(resp);
 }
 
 export async function getCheck(id: string): Promise<Check> {
   const resp = await fetch(`${API}/checks/${id}`);
-  return resp.json();
+  return parseResponse<Check>(resp);
 }
 
 export async function updateCheck(
@@ -133,7 +141,7 @@ export async function updateCheck(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  return resp.json();
+  return parseResponse<Check>(resp);
 }
 
 export async function uploadDocument(
@@ -148,12 +156,12 @@ export async function uploadDocument(
     method: "POST",
     body: form,
   });
-  return resp.json();
+  return parseResponse<DocumentOut>(resp);
 }
 
 export async function getDocuments(checkId: string): Promise<DocumentOut[]> {
   const resp = await fetch(`${API}/checks/${checkId}/documents`);
-  return resp.json();
+  return parseResponse<DocumentOut[]>(resp);
 }
 
 export async function triggerExtraction(
@@ -173,44 +181,44 @@ export async function triggerExtraction(
   }>;
 }> {
   const resp = await fetch(`${API}/checks/${checkId}/extract`, { method: "POST" });
-  return resp.json();
+  return parseResponse(resp);
 }
 
 export async function getExtractions(
   checkId: string
 ): Promise<DocumentExtraction[]> {
   const resp = await fetch(`${API}/checks/${checkId}/extractions`);
-  return resp.json();
+  return parseResponse<DocumentExtraction[]>(resp);
 }
 
 export async function triggerCompare(checkId: string): Promise<Comparison[]> {
   const resp = await fetch(`${API}/checks/${checkId}/compare`, { method: "POST" });
-  return resp.json();
+  return parseResponse<Comparison[]>(resp);
 }
 
 export async function getComparisons(checkId: string): Promise<Comparison[]> {
   const resp = await fetch(`${API}/checks/${checkId}/comparisons`);
-  return resp.json();
+  return parseResponse<Comparison[]>(resp);
 }
 
 export async function triggerEvaluate(checkId: string): Promise<Finding[]> {
   const resp = await fetch(`${API}/checks/${checkId}/evaluate`, { method: "POST" });
-  return resp.json();
+  return parseResponse<Finding[]>(resp);
 }
 
 export async function getFindings(checkId: string): Promise<Finding[]> {
   const resp = await fetch(`${API}/checks/${checkId}/findings`);
-  return resp.json();
+  return parseResponse<Finding[]>(resp);
 }
 
 export async function generateFollowups(checkId: string): Promise<Followup[]> {
   const resp = await fetch(`${API}/checks/${checkId}/followups`, { method: "POST" });
-  return resp.json();
+  return parseResponse<Followup[]>(resp);
 }
 
 export async function getFollowups(checkId: string): Promise<Followup[]> {
   const resp = await fetch(`${API}/checks/${checkId}/followups`);
-  return resp.json();
+  return parseResponse<Followup[]>(resp);
 }
 
 export async function answerFollowup(
@@ -223,10 +231,10 @@ export async function answerFollowup(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ answer }),
   });
-  return resp.json();
+  return parseResponse<Followup>(resp);
 }
 
 export async function getSnapshot(checkId: string): Promise<Snapshot> {
   const resp = await fetch(`${API}/checks/${checkId}/snapshot`);
-  return resp.json();
+  return parseResponse<Snapshot>(resp);
 }

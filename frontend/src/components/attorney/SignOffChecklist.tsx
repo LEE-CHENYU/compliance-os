@@ -25,6 +25,7 @@ export default function SignOffChecklist({
             type="checkbox"
             checked={Boolean(responses[item.id])}
             onChange={(event) => onChange(item.id, event.target.checked)}
+            data-testid={`attorney-checklist-${item.id}`}
             className="mt-1 h-5 w-5 rounded border-[#b8c8df] text-[#5b8dee] focus:ring-[#5b8dee]"
           />
           <span>{item.label}</span>
