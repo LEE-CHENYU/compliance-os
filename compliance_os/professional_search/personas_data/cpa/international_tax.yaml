@@ -1,0 +1,62 @@
+id: international_tax
+vertical: cpa
+title: "International tax CPAs — NRA, treaty, foreign-owned LLC"
+
+activation:
+  fallback: true
+  threshold: 4
+  strong_signals:
+    - "1040-NR"
+    - "1040NR"
+    - "Form 8843"
+    - "nonresident"
+    - "NRA"
+    - "dual-status"
+    - "tax treaty"
+    - "treaty position"
+    - "FBAR"
+    - "FATCA"
+    - "foreign-owned LLC"
+    - "foreign owned LLC"
+    - "Form 5472"
+    - "1120 pro forma"
+    - "disregarded entity"
+  weak_signals:
+    - "visa"
+    - "F-1"
+    - "OPT"
+    - "H-1B"
+    - "foreign account"
+    - "US-source income"
+
+search_angle: |
+  Find CPA firms or enrolled-agent-led tax practices with a visible
+  international individual tax practice for nonresident aliens, dual-status
+  filers, tax treaty positions, Form 8843, Form 1040-NR, FBAR/FATCA screening,
+  and foreign-owned US disregarded entities.
+
+  Prioritize practitioners who can handle the practical combination Guardian
+  users often bring: F-1 / OPT / H-1B transition history, US-source income,
+  foreign accounts, a Delaware or Wyoming LLC owned by a nonresident, and
+  year-end cleanup before filing.
+
+must_weight:
+  - "CPA license or EA credential in good standing"
+  - "Published international individual tax / NRA / dual-status expertise"
+  - "Experience with Forms 1040-NR, 8843, 5472, 1120 pro forma, FBAR, FATCA"
+  - "Clear intake for treaty positions and substantial presence test analysis"
+  - "Ability to work remotely with secure document exchange"
+
+also_value:
+  - "Experience with founders, students, or visa holders"
+  - "Transparent fixed-fee ranges for nonresident or entity filing packages"
+  - "Chinese-language or cross-border Asia client service"
+  - "IRS representation rights through CPA or EA credential"
+
+deprioritize:
+  - "Pure domestic 1040 preparers with no nonresident or entity reporting content"
+  - "Mass-market tax franchises with no named international specialist"
+  - "Firms that advertise aggressive treaty positions without documentation standards"
+
+fee_range_expected_usd: "$350-$1,500 for 1040-NR/8843; $800-$3,000+ when FBAR/FATCA/entity reporting is included"
+target_count: 6

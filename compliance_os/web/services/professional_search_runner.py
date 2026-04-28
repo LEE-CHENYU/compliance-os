@@ -43,6 +43,7 @@ from compliance_os.professional_search.personas import (
     Persona,
     build_prompt,
     list_personas,
+    select_personas,
 )
 from compliance_os.settings import settings
 from compliance_os.web.models.database import get_engine
@@ -353,7 +354,7 @@ def run_search_sync(request_id: str) -> None:
         db.commit()
 
         try:
-            personas = list_personas(row.vertical)
+            all_personas = list_personas(row.vertical)
             output_dir = (
                 settings.professional_search_output_dir
                 / _dt.date.today().isoformat()
@@ -366,6 +367,36 @@ def run_search_sync(request_id: str) -> None:
             enriched_brief = row.case_brief
             if row.uploaded_notes:
                 enriched_brief += "\n\n=== Context from uploaded documents ===\n" + row.uploaded_notes
+
+            selection = select_personas(
+                row.vertical,
+                case_brief=row.case_brief,
+                purpose=row.purpose,
+                uploaded_notes=row.uploaded_notes,
+                personas=all_personas,
+            )
+            personas = selection.selected
+            skipped_at = _dt.datetime.utcnow().isoformat()
+            for skipped in selection.skipped:
+                _update_persona_status(
+                    request_id,
+                    skipped["id"],
+                    {
+                        "status": "skipped",
+                        "reason": skipped["reason"],
+                        "score": skipped["score"],
+                        "threshold": skipped["threshold"],
+                        "matched_signals": skipped["matched_signals"],
+                        "finished_at": skipped_at,
+                    },
+                )
+            logger.info(
+                "persona selection for %s/%s: selected=%s skipped=%s",
+                request_id,
+                row.vertical,
+                [p.id for p in personas],
+                [p["id"] for p in selection.skipped],
+            )
 
             if not settings.anthropic_api_key:
                 raise RuntimeError(
@@ -382,7 +413,10 @@ def run_search_sync(request_id: str) -> None:
 
             async def _tune_then_dispatch() -> dict[str, dict]:
                 tuned = await generate_tuned_persona(
-                    enriched_brief, row.vertical, output_dir
+                    enriched_brief,
+                    row.vertical,
+                    output_dir,
+                    canonical_personas=personas,
                 )
                 personas_for_run = personas + ([tuned] if tuned is not None else [])
                 if tuned is not None:

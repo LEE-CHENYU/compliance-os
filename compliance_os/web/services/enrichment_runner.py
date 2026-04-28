@@ -342,21 +342,82 @@ def _normalize_enrichment(parsed: dict) -> dict[str, Any]:
     to. Bands are integers 1-5+ in Chambers (1 best); a gap of 2+ tiers
     is the warning threshold.
     """
+    def as_text(value: Any) -> str | None:
+        if value is None:
+            return None
+        if isinstance(value, str):
+            text = value.strip()
+            return text or None
+        if isinstance(value, (int, float, bool)):
+            return str(value)
+        if isinstance(value, list):
+            parts = [as_text(item) for item in value]
+            joined = "; ".join(part for part in parts if part)
+            return joined or None
+        return None
+
+    def as_int(value: Any) -> int | None:
+        if isinstance(value, bool) or value is None:
+            return None
+        if isinstance(value, int):
+            return value
+        if isinstance(value, float):
+            return int(value)
+        if isinstance(value, str):
+            m = re.search(r"\d+", value)
+            return int(m.group(0)) if m else None
+        return None
+
+    def as_bool(value: Any) -> bool | None:
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in {"true", "yes", "y", "1"}:
+                return True
+            if normalized in {"false", "no", "n", "0"}:
+                return False
+        return None
+
+    def as_text_list(value: Any) -> list[str]:
+        if isinstance(value, list):
+            return [text for item in value if (text := as_text(item))]
+        text = as_text(value)
+        return [text] if text else []
+
+    def as_alternates(value: Any) -> list[dict[str, Any]]:
+        if not isinstance(value, list):
+            return []
+        out: list[dict[str, Any]] = []
+        for item in value:
+            if not isinstance(item, dict):
+                continue
+            name = as_text(item.get("name"))
+            if not name:
+                continue
+            out.append({
+                "name": name,
+                "band": as_int(item.get("band")),
+                "fit_for_case": as_text(item.get("fit_for_case")),
+                "takes_outside_consults": as_bool(item.get("takes_outside_consults")),
+            })
+        return out
+
     out: dict[str, Any] = {
-        "_lead_attorney_band": parsed.get("lead_attorney_band"),
-        "_lead_attorney_band_source": parsed.get("lead_attorney_band_source"),
-        "_lead_attorney_band_year": parsed.get("lead_attorney_band_year"),
-        "_lead_attorney_practice_focus": parsed.get("lead_attorney_practice_focus"),
-        "_lead_attorney_credentials": parsed.get("lead_attorney_credentials") or [],
-        "_lead_attorney_takes_outside_consults": parsed.get(
-            "lead_attorney_takes_outside_consults"
+        "_lead_attorney_band": as_int(parsed.get("lead_attorney_band")),
+        "_lead_attorney_band_source": as_text(parsed.get("lead_attorney_band_source")),
+        "_lead_attorney_band_year": as_int(parsed.get("lead_attorney_band_year")),
+        "_lead_attorney_practice_focus": as_text(parsed.get("lead_attorney_practice_focus")),
+        "_lead_attorney_credentials": as_text_list(parsed.get("lead_attorney_credentials")),
+        "_lead_attorney_takes_outside_consults": as_bool(
+            parsed.get("lead_attorney_takes_outside_consults")
         ),
-        "_individual_vs_firm_band_gap_warning": parsed.get(
-            "individual_vs_firm_band_gap_warning"
+        "_individual_vs_firm_band_gap_warning": as_text(
+            parsed.get("individual_vs_firm_band_gap_warning")
         ),
-        "_alternate_attorneys": parsed.get("alternate_attorneys") or [],
-        "_verified_sources": parsed.get("verified_sources") or [],
-        "_rfe_pattern": parsed.get("rfe_pattern"),
+        "_alternate_attorneys": as_alternates(parsed.get("alternate_attorneys")),
+        "_verified_sources": as_text_list(parsed.get("verified_sources")),
+        "_rfe_pattern": as_text(parsed.get("rfe_pattern")),
         "_enriched_at": _dt.datetime.utcnow().isoformat(),
     }
     return out

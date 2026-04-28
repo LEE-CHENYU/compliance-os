@@ -107,7 +107,7 @@ def aggregate_firms(persona_yamls: dict[str, dict]) -> list[dict]:
             # Take richest contact info: prefer non-null fields from later
             # personas only if the existing slot is empty.
             for field in (
-                "lead_attorney", "role", "phone", "email",
+                "lead_attorney", "lead_contact", "role", "phone", "email",
                 "website", "city", "state",
                 "consultation_fee_low", "consultation_fee_high",
                 "petition_fee_low", "petition_fee_high",

@@ -1,0 +1,32 @@
+id: startup_formation
+vertical: corporate_attorney
+title: "Startup formation counsel — Delaware, founders, 83(b)"
+
+search_angle: |
+  Find corporate attorneys who routinely form Delaware C-corps or LLCs for
+  early-stage founders, draft founder stock purchase agreements, IP assignment,
+  vesting terms, board consents, and coordinate 83(b) election workflows.
+
+  Prioritize counsel who understands foreign founder constraints, immigration
+  status concerns, nonresident tax coordination, and the operational reality of
+  a solo founder moving fast.
+
+must_weight:
+  - "Startup formation and founder equity practice focus"
+  - "Published Delaware C-corp / LLC / 83(b) / founder-stock guidance"
+  - "Experience with foreign or nonresident founders"
+  - "Can coordinate with tax and immigration counsel"
+  - "Transparent fixed-fee formation package or startup retainer"
+
+also_value:
+  - "YC, Techstars, accelerator, or venture-backed startup client base"
+  - "Cap table tooling fluency: Carta, Pulley, Clerky, Stripe Atlas"
+  - "Can support IP assignment and contractor cleanup"
+
+deprioritize:
+  - "General business lawyers with no startup equity workflow"
+  - "Large firms with minimums inappropriate for pre-seed founders"
+  - "Formation mills with no attorney review"
+
+fee_range_expected_usd: "$1,500-$7,500 formation package; more for cleanup or custom equity"
+target_count: 6

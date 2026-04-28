@@ -1,0 +1,64 @@
+id: audit_defense
+vertical: cpa
+title: "Audit-defense and remediation CPAs"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "IRS notice"
+    - "audit"
+    - "exam"
+    - "penalty"
+    - "penalty abatement"
+    - "reasonable cause"
+    - "late filing"
+    - "late-filed"
+    - "amended return"
+    - "streamlined"
+    - "voluntary disclosure"
+    - "remediation"
+    - "delinquent FBAR"
+    - "cleanup filing"
+    - "prior-year cleanup"
+  weak_signals:
+    - "cleanup"
+    - "missed"
+    - "incorrect"
+    - "rejected"
+    - "letter"
+  exclude_signals:
+    - "no IRS notice"
+    - "no audit"
+    - "no penalty"
+    - "no late filing"
+    - "no amended return"
+    - "no remediation"
+
+search_angle: |
+  Find CPA or EA practices with explicit IRS representation, audit defense,
+  penalty abatement, late-filing remediation, streamlined foreign offshore
+  procedure support, or FBAR/FATCA cleanup experience.
+
+  Prioritize firms that can diagnose whether the user needs a simple amended
+  return, reasonable-cause package, delinquent FBAR submission, streamlined
+  filing, or referral to a tax attorney for privilege-sensitive facts.
+
+must_weight:
+  - "IRS representation credential: CPA, EA, or tax controversy team"
+  - "Published audit defense, penalty abatement, FBAR/FATCA remediation, or streamlined procedure expertise"
+  - "Experience preparing reasonable-cause statements and document binders"
+  - "Clear boundary between CPA remediation and tax-attorney controversy needs"
+  - "Verifiable professional standing through state board, IRS EA lookup, NATP, NAEA, AICPA, or state society"
+
+also_value:
+  - "Multiyear nonresident or expat cleanup experience"
+  - "Can review prior preparer mistakes without requiring full-year bookkeeping"
+  - "Transparent consultation or diagnostic fee"
+
+deprioritize:
+  - "Firms that promise guaranteed penalty removal"
+  - "Tax-debt settlement marketers focused on ads rather than credentialed practice"
+  - "Practices with no named licensed professional"
+
+fee_range_expected_usd: "$250-$750 consultation; $1,500-$7,500+ remediation package depending on years and forms"
+target_count: 6

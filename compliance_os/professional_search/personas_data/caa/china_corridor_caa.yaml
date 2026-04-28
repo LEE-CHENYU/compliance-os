@@ -1,0 +1,32 @@
+id: china_corridor_caa
+vertical: caa
+title: "China-corridor ITIN practitioners"
+
+search_angle: |
+  Find CAAs or ITIN-focused tax practices with Chinese-language intake,
+  experience helping Chinese nationals or China-based founders, and a clear
+  process for passport certification, consular alternatives, or US visit-based
+  document review.
+
+  Prioritize firms that can explain the difference between CAA certification,
+  embassy/consulate certification, original passport mailing, and return-linked
+  W-7 filing.
+
+must_weight:
+  - "Chinese-language service or China corridor experience"
+  - "CAA credential or documented ITIN/W-7 practice"
+  - "Clear passport/document certification workflow"
+  - "Can coordinate with NRA tax return or foreign-owned LLC filing"
+
+also_value:
+  - "Timezone-friendly remote intake"
+  - "Experience with students, founders, investors, or foreign spouses/dependents"
+  - "Transparent timeline expectations"
+
+deprioritize:
+  - "Generic translation offices with no tax credential"
+  - "Preparers who do not explain document certification risks"
+  - "Unsupported claims of guaranteed ITIN approval"
+
+fee_range_expected_usd: "$200-$650 depending on certification and return bundle"
+target_count: 6

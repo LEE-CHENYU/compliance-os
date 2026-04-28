@@ -1,0 +1,30 @@
+id: penalty_relief
+vertical: tax_attorney
+title: "Penalty relief and tax controversy attorneys"
+
+search_angle: |
+  Find tax controversy attorneys with IRS Appeals, Tax Court, penalty
+  abatement, reasonable-cause, collection due process, and exam-defense
+  experience. The search should emphasize counsel who can triage whether a
+  missed filing or incorrect position should be handled by amended filing,
+  disclosure, audit defense, or a formal controversy strategy.
+
+must_weight:
+  - "Tax Court admissions or documented Tax Court docket experience"
+  - "IRS Appeals, exam defense, penalty abatement, or reasonable-cause publications"
+  - "Experience with international information return penalties where relevant"
+  - "Clear attorney-client privilege workflow"
+  - "State bar good standing and tax controversy focus"
+
+also_value:
+  - "Former IRS Chief Counsel, DOJ Tax, or IRS Appeals experience"
+  - "Documented results in FBAR, 5471/5472, 3520, 8938, or late-filing penalties"
+  - "Can work with CPA to execute filings after legal strategy"
+
+deprioritize:
+  - "Tax relief call centers with little named-attorney involvement"
+  - "Firms promising guaranteed penalty removal"
+  - "Pure preparers without controversy practice"
+
+litigation_capability_required: true
+target_count: 6

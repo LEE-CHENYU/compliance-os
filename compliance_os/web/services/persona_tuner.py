@@ -124,6 +124,7 @@ async def generate_tuned_persona(
     case_brief: str,
     vertical: str,
     output_dir: Path,
+    canonical_personas: list[Persona] | None = None,
 ) -> Persona | None:
     """Generate one extra persona tuned to this case. Returns None on failure.
 
@@ -131,9 +132,16 @@ async def generate_tuned_persona(
     reuse. The runner loads it like any other persona.
     """
     try:
-        canonical = list_personas(vertical)
+        canonical = (
+            canonical_personas
+            if canonical_personas is not None
+            else list_personas(vertical)
+        )
     except FileNotFoundError:
         logger.warning("tuned persona: no canonical personas for vertical %s", vertical)
+        return None
+    if not canonical:
+        logger.warning("tuned persona: no selected canonical personas for vertical %s", vertical)
         return None
 
     if not settings.anthropic_api_key:

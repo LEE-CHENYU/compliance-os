@@ -1,0 +1,32 @@
+id: irs_authorized_caa
+vertical: caa
+title: "IRS-authorized Certifying Acceptance Agents"
+
+search_angle: |
+  Find IRS-authorized Certifying Acceptance Agents who can certify identity
+  documents for ITIN applications and support Form W-7 packages for
+  nonresident taxpayers, foreign owners, spouses, or dependents.
+
+  Prioritize current authorization, clear W-7 document workflows, and ability
+  to support applicants without mailing original passports when certification
+  is allowed.
+
+must_weight:
+  - "Listed or verifiably represented as an IRS Certifying Acceptance Agent"
+  - "Form W-7 / ITIN application practice focus"
+  - "Clear ID certification and document checklist workflow"
+  - "Experience with nonresident taxpayers or foreign-owned US entities"
+  - "Named licensed professional or firm contact"
+
+also_value:
+  - "Remote pre-review plus in-person or consular certification guidance"
+  - "Can coordinate ITIN with 1040-NR, 8843, 5472, or banking needs"
+  - "Transparent flat fee"
+
+deprioritize:
+  - "Preparers who say they do ITINs but are not CAAs"
+  - "Firms that require mailing original passports without explaining alternatives"
+  - "No named professional or credential verification path"
+
+fee_range_expected_usd: "$150-$500 per W-7 package; more when bundled with return prep"
+target_count: 6

@@ -1,0 +1,32 @@
+id: fast_turnaround_caa
+vertical: caa
+title: "Fast-turnaround ITIN package teams"
+
+search_angle: |
+  Find CAA or tax-preparer teams that emphasize quick document review,
+  complete W-7 package preparation, status tracking, and high-volume ITIN
+  workflows for time-sensitive filings, banking requirements, or entity
+  compliance.
+
+  Prioritize teams that are fast because their process is organized, not
+  because they skip eligibility or document checks.
+
+must_weight:
+  - "Published ITIN timeline/process and package checklist"
+  - "CAA credential or named certifying professional"
+  - "Status tracking or documented follow-up process"
+  - "Experience with return-attached and exception-based W-7 applications"
+  - "Clear refund/rework policy for rejected packages"
+
+also_value:
+  - "Can coordinate with CPA/tax attorney when ITIN depends on filing position"
+  - "Online intake and secure upload"
+  - "Transparent rush or expedited-review fee"
+
+deprioritize:
+  - "Guarantees of IRS processing speed"
+  - "No professional credential listed"
+  - "Vague 'ITIN service' pages without W-7 details"
+
+fee_range_expected_usd: "$150-$600 per application; rush review may add fees"
+target_count: 6

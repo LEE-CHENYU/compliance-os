@@ -66,6 +66,12 @@ class Persona:
         )
 
 
+@dataclass
+class PersonaSelection:
+    selected: list[Persona]
+    skipped: list[dict[str, Any]]
+
+
 def list_personas(vertical: str) -> list[Persona]:
     """Load every persona YAML for a given vertical."""
     vdir = _persona_dir_for(vertical)
@@ -80,6 +86,124 @@ def list_personas(vertical: str) -> list[Persona]:
     return [Persona.load(p) for p in files]
 
 
+def _signal_list(raw: Any) -> list[str]:
+    if raw is None:
+        return []
+    if isinstance(raw, str):
+        return [raw]
+    if isinstance(raw, list):
+        return [str(item) for item in raw if str(item).strip()]
+    return []
+
+
+def _matches(context: str, signals: list[str]) -> list[str]:
+    normalized = context.lower()
+    return [signal for signal in signals if signal.lower() in normalized]
+
+
+def _score_persona(persona: Persona, context: str) -> dict[str, Any] | None:
+    activation = persona.raw.get("activation")
+    if not isinstance(activation, dict):
+        return None
+
+    strong = _signal_list(activation.get("strong_signals"))
+    weak = _signal_list(activation.get("weak_signals"))
+    exclusions = _signal_list(activation.get("exclude_signals"))
+    strong_hits = _matches(context, strong)
+    weak_hits = _matches(context, weak)
+    excluded_hits = _matches(context, exclusions)
+    score = len(strong_hits) * int(activation.get("strong_weight", 4))
+    score += len(weak_hits) * int(activation.get("weak_weight", 1))
+    score -= len(excluded_hits) * int(activation.get("exclude_weight", 6))
+
+    threshold = int(activation.get("threshold", 4))
+    return {
+        "id": persona.id,
+        "title": persona.title,
+        "score": score,
+        "threshold": threshold,
+        "matched_signals": strong_hits + weak_hits,
+        "excluded_signals": excluded_hits,
+        "fallback": bool(activation.get("fallback")),
+    }
+
+
+def select_personas(
+    vertical: str,
+    *,
+    case_brief: str,
+    purpose: str = "",
+    uploaded_notes: str | None = None,
+    personas: list[Persona] | None = None,
+    min_selected: int = 1,
+) -> PersonaSelection:
+    """Choose case-relevant canonical personas for a search.
+
+    Persona YAMLs can opt into deterministic activation with:
+
+        activation:
+          strong_signals: [...]
+          weak_signals: [...]
+          threshold: 4
+          fallback: true
+
+    Verticals without activation metadata preserve the old behavior and run
+    every canonical persona. This lets us migrate verticals one at a time.
+    """
+    all_personas = personas if personas is not None else list_personas(vertical)
+    context = "\n".join([purpose, case_brief, uploaded_notes or ""])
+    scored = [_score_persona(p, context) for p in all_personas]
+
+    if not any(item is not None for item in scored):
+        return PersonaSelection(selected=list(all_personas), skipped=[])
+
+    selected: list[Persona] = []
+    skipped: list[dict[str, Any]] = []
+    scored_by_id = {item["id"]: item for item in scored if item is not None}
+
+    for persona in all_personas:
+        score = scored_by_id.get(persona.id)
+        if score is None:
+            selected.append(persona)
+            continue
+        if score["score"] >= score["threshold"]:
+            selected.append(persona)
+        else:
+            skipped.append({
+                **score,
+                "status": "skipped",
+                "reason": "No case-specific activation signals matched strongly enough.",
+            })
+
+    if len(selected) < min_selected:
+        fallback_candidates = [
+            p for p in all_personas
+            if scored_by_id.get(p.id, {}).get("fallback")
+        ]
+        if not fallback_candidates:
+            fallback_candidates = sorted(
+                all_personas,
+                key=lambda p: scored_by_id.get(p.id, {}).get("score", 0),
+                reverse=True,
+            )
+        for persona in fallback_candidates:
+            if persona not in selected:
+                selected.append(persona)
+                skipped = [s for s in skipped if s["id"] != persona.id]
+                break
+
+    selected.sort(
+        key=lambda p: scored_by_id.get(p.id, {}).get("score", 0),
+        reverse=True,
+    )
+
+    selected_ids = {p.id for p in selected}
+    return PersonaSelection(
+        selected=selected,
+        skipped=[item for item in skipped if item["id"] not in selected_ids],
+    )
+
+
 # ---- output schema the sub-agent is asked to produce -----------------
 
 OUTPUT_YAML_EXAMPLE = """\
@@ -92,8 +216,9 @@ case_risks:                    # optional; if provided, applied to each engageme
     mitigation: "what to do"
 firms:
   - name: "Full firm name, exactly as it appears on their website"
-    lead_attorney: "First Last"
-    role: "Partner" | "Founder" | "Managing Attorney" | ...
+    lead_attorney: "First Last"  # for attorneys/law firms
+    lead_contact: "First Last"   # for CPA, bank, CAA, or other non-attorney vendors
+    role: "Partner" | "Founder" | "Managing Attorney" | "Relationship Manager" | ...
     city: "Washington"
     state: "DC"
     phone: "(202) 555-0100"
@@ -249,7 +374,8 @@ def build_search_plan(
     Returns a dict with one `prompts[]` entry per persona, plus an
     `ingest_call` string the caller can run after sub-agents finish.
     """
-    all_personas = {p.id: p for p in list_personas(vertical)}
+    loaded_personas = list_personas(vertical)
+    all_personas = {p.id: p for p in loaded_personas}
     if personas:
         missing = [p for p in personas if p not in all_personas]
         if missing:
@@ -258,8 +384,15 @@ def build_search_plan(
                 f"Available: {sorted(all_personas)}"
             )
         selected = [all_personas[p] for p in personas]
+        selection = PersonaSelection(selected=selected, skipped=[])
     else:
-        selected = list(all_personas.values())
+        selection = select_personas(
+            vertical,
+            case_brief=case_brief,
+            purpose=purpose,
+            personas=loaded_personas,
+        )
+        selected = selection.selected
 
     out_dir = Path(output_dir) if output_dir else (
         settings.professional_search_output_dir
@@ -290,6 +423,8 @@ def build_search_plan(
         "output_dir": str(out_dir),
         "prompts": prompts,
         "output_paths": output_paths,
+        "selected_personas": [p.id for p in selected],
+        "skipped_personas": selection.skipped,
         "ingest_call": ingest_call,
         "dispatch_hint": (
             "Dispatch one sub-agent per persona in parallel (e.g. via the Task tool "

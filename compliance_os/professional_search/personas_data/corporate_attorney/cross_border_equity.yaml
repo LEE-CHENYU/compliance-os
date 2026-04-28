@@ -1,0 +1,30 @@
+id: cross_border_equity
+vertical: corporate_attorney
+title: "Cross-border equity and cap-table counsel"
+
+search_angle: |
+  Find corporate counsel comfortable with foreign founders, nonresident
+  shareholders, cross-border IP ownership, withholding concerns, secondary
+  transfers, F-class or special share structures, and coordination with US tax
+  counsel.
+
+  Prioritize attorneys who can flag where corporate documents intersect with
+  NRA tax status, immigration work authorization, and investor diligence.
+
+must_weight:
+  - "Cross-border startup or foreign-founder practice experience"
+  - "Equity, cap table, founder restrictions, and IP assignment fluency"
+  - "Can coordinate with US tax counsel on withholding or entity classification"
+  - "Published guidance or verifiable deal experience with international founders"
+
+also_value:
+  - "Asia corridor or China-founder experience"
+  - "Experience with subsidiaries, intercompany IP, or contractor ownership cleanup"
+  - "Can produce investor diligence-ready records"
+
+deprioritize:
+  - "Domestic-only formation practices"
+  - "Firms that cannot advise beyond boilerplate formation documents"
+  - "Lawyers who ignore tax/immigration dependencies"
+
+target_count: 6

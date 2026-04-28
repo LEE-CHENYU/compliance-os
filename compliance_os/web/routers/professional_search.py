@@ -16,6 +16,7 @@ import html as _html
 import io
 import logging
 from pathlib import Path
+from typing import Any
 
 import yaml as _yaml
 from fastapi import (
@@ -148,6 +149,29 @@ class EnrichmentStatusResponse(BaseModel):
     firms_total: int
 
 
+def _normalize_tier_report(rows: list | None) -> list | None:
+    """Expose a stable `firm` key for attorney and non-attorney reports.
+
+    Older CPA/bank/CAA rows were stored directly from `v_vendor_comparison`,
+    whose name column is `vendor` while attorney rows use `firm`. The public
+    status page expects one canonical display key, so normalize on serialize
+    as well as at new-row creation time.
+    """
+    if rows is None:
+        return None
+    normalized: list = []
+    for row in rows:
+        if not isinstance(row, dict):
+            normalized.append(row)
+            continue
+        item = dict(row)
+        firm = item.get("firm") or item.get("vendor") or item.get("name")
+        if firm is not None and not item.get("firm"):
+            item["firm"] = str(firm)
+        normalized.append(item)
+    return normalized
+
+
 def _serialize(
     row: ProfessionalSearchRequestRow,
     *,
@@ -172,7 +196,7 @@ def _serialize(
         case_brief=(row.case_brief if include_pii else ""),
         uploaded_notes=(row.uploaded_notes if include_pii else None),
         persona_status=row.persona_status or {},
-        tier_report=row.tier_report,
+        tier_report=_normalize_tier_report(row.tier_report),
         error=row.error,
         created_at=row.created_at.isoformat() if row.created_at else "",
         completed_at=row.completed_at.isoformat() if row.completed_at else None,
@@ -600,6 +624,222 @@ def _format_fee_range(f: dict) -> str:
     return f"${int(lo):,}–${int(hi):,}"
 
 
+def _report_text(value: Any) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        text = value.strip()
+        return text or None
+    if isinstance(value, (int, float, bool)):
+        return str(value)
+    if isinstance(value, (list, tuple)):
+        parts = [_report_text(item) for item in value]
+        text = "; ".join(part for part in parts if part)
+        return text or None
+    return None
+
+
+def _report_text_list(value: Any) -> list[str]:
+    if isinstance(value, (list, tuple)):
+        return [text for item in value if (text := _report_text(item))]
+    text = _report_text(value)
+    return [text] if text else []
+
+
+def _report_sequence(value: Any) -> list[Any]:
+    if value is None:
+        return []
+    if isinstance(value, (list, tuple)):
+        return list(value)
+    return [value]
+
+
+def _band_label(source: Any, band: Any, year: Any) -> str | None:
+    band_text = _report_text(band)
+    if not band_text:
+        return None
+    if not band_text.lower().startswith("band"):
+        band_text = f"Band {band_text}"
+    source_text = _report_text(source)
+    year_text = _report_text(year)
+    label = f"{source_text} {band_text}" if source_text else band_text
+    if year_text:
+        label = f"{label} ({year_text})"
+    return label
+
+
+def _render_source_item(source: Any, e) -> str | None:
+    if isinstance(source, dict):
+        url = _report_text(source.get("url"))
+        title = _report_text(source.get("title"))
+        note = _report_text(source.get("note"))
+        verified = source.get("verified")
+        status = (
+            "verified" if verified is True
+            else "unverified" if verified is False
+            else None
+        )
+        details = " - ".join(part for part in [title, status, note] if part)
+    else:
+        url = _report_text(source)
+        details = None
+    if not url:
+        return None
+    label = details or url
+    if url.startswith(("http://", "https://")):
+        return (
+            f'<li><a href="{e(url)}" target="_blank" rel="noopener">'
+            f"{e(label)}</a></li>"
+        )
+    return f"<li>{e(label)}</li>"
+
+
+def _render_stage_two_enrichment(f: dict, e) -> str:
+    warning = _report_text(f.get("_individual_vs_firm_band_gap_warning"))
+    lead_band = _band_label(
+        f.get("_lead_attorney_band_source"),
+        f.get("_lead_attorney_band"),
+        f.get("_lead_attorney_band_year"),
+    )
+    practice_focus = _report_text(f.get("_lead_attorney_practice_focus"))
+    lead_creds = _report_text_list(f.get("_lead_attorney_credentials"))
+    rfe_pattern = _report_text(f.get("_rfe_pattern"))
+    enrichment_error = _report_text(f.get("_enrichment_error"))
+
+    alternates = [
+        item for item in _report_sequence(f.get("_alternate_attorneys"))
+        if isinstance(item, dict) and _report_text(item.get("name"))
+    ]
+    verified_sources = [
+        item for item in _report_sequence(f.get("_verified_sources"))
+        if _render_source_item(item, e)
+    ]
+
+    if not any([
+        warning,
+        lead_band,
+        practice_focus,
+        lead_creds,
+        rfe_pattern,
+        enrichment_error,
+        alternates,
+        verified_sources,
+    ]):
+        return ""
+
+    lead_name = (
+        _report_text(f.get("lead_attorney") or f.get("lead_contact"))
+        or "Lead attorney"
+    )
+    lead_consults = f.get("_lead_attorney_takes_outside_consults")
+    consult_note = ""
+    if lead_consults is True:
+        consult_note = '<span class="consult-note">Reported as taking outside consults</span>'
+    elif lead_consults is False:
+        consult_note = (
+            '<span class="consult-note consult-limited">'
+            "May not take outside consults</span>"
+        )
+
+    lead_parts = [f"<strong>{e(lead_name)}</strong>"]
+    if lead_band:
+        lead_parts.append(f'<span class="band-pill">{e(lead_band)}</span>')
+    if consult_note:
+        lead_parts.append(consult_note)
+
+    warning_html = (
+        f'<div class="enrichment-warning">{e(warning)}</div>' if warning else ""
+    )
+    practice_html = (
+        '<div class="enrichment-row"><span>Practice focus</span>'
+        f"<p>{e(practice_focus)}</p></div>"
+        if practice_focus else ""
+    )
+    creds_html = (
+        "<div class='enrichment-row'><span>Individual credentials</span>"
+        "<ul class='creds'>"
+        + "".join(f"<li>{e(cred)}</li>" for cred in lead_creds)
+        + "</ul></div>"
+        if lead_creds else ""
+    )
+    rfe_html = (
+        '<div class="enrichment-row"><span>RFE pattern</span>'
+        f"<p>{e(rfe_pattern)}</p></div>"
+        if rfe_pattern else ""
+    )
+
+    alternate_html = ""
+    if alternates:
+        items: list[str] = []
+        for alternate in alternates[:3]:
+            alt_name = _report_text(alternate.get("name")) or "Alternate attorney"
+            alt_band = _band_label(
+                alternate.get("band_source"),
+                alternate.get("band"),
+                alternate.get("band_year"),
+            )
+            alt_fit = _report_text(alternate.get("fit_for_case"))
+            alt_focus = _report_text(alternate.get("practice_focus"))
+            alt_consults = alternate.get("takes_outside_consults")
+            alt_consult_note = ""
+            if alt_consults is False:
+                alt_consult_note = (
+                    '<span class="consult-note consult-limited">'
+                    "retained matters only</span>"
+                )
+            elif alt_consults is True:
+                alt_consult_note = '<span class="consult-note">takes outside consults</span>'
+            band_html = (
+                f'<span class="band-pill alt-band">{e(alt_band)}</span>'
+                if alt_band else ""
+            )
+            detail = alt_fit or alt_focus
+            detail_html = f"<p>{e(detail)}</p>" if detail else ""
+            items.append(
+                "<li>"
+                f"<div><strong>{e(alt_name)}</strong> "
+                f"{band_html} {alt_consult_note}</div>"
+                f"{detail_html}"
+                "</li>"
+            )
+        alternate_html = (
+            "<div class='enrichment-row'><span>Same-firm alternates</span>"
+            "<ul class='alt-list'>"
+            + "".join(items)
+            + "</ul></div>"
+        )
+
+    verified_sources_html = ""
+    if verified_sources:
+        items = [_render_source_item(source, e) for source in verified_sources]
+        verified_sources_html = (
+            "<div class='enrichment-row'><span>Individual verification sources</span>"
+            "<ul class='sources verified-sources'>"
+            + "".join(item for item in items if item)
+            + "</ul></div>"
+        )
+
+    error_html = (
+        '<div class="enrichment-error">Individual verification incomplete: '
+        f"{e(enrichment_error)}</div>"
+        if enrichment_error else ""
+    )
+
+    return f"""
+  <section class="enrichment">
+    <h4>Stage 2 individual verification</h4>
+    {warning_html}
+    <div class="lead-line">{" ".join(lead_parts)}</div>
+    {practice_html}
+    {creds_html}
+    {alternate_html}
+    {rfe_html}
+    {verified_sources_html}
+    {error_html}
+  </section>
+"""
+
+
 def _render_firm_card(f: dict, e) -> str:
     name = f.get("name", "(unnamed)")
     anchor = _slug(name)
@@ -608,10 +848,11 @@ def _render_firm_card(f: dict, e) -> str:
     score_str = str(score) if score is not None else "—"
 
     contact_bits: list[str] = []
-    if f.get("lead_attorney"):
+    lead_contact = f.get("lead_attorney") or f.get("lead_contact")
+    if lead_contact:
         role = f.get("role")
         contact_bits.append(
-            f"<strong>{e(f['lead_attorney'])}</strong>"
+            f"<strong>{e(lead_contact)}</strong>"
             + (f" <span class='role'>({e(role)})</span>" if role else "")
         )
     loc = ", ".join([x for x in [f.get("city"), f.get("state")] if x])
@@ -692,6 +933,8 @@ def _render_firm_card(f: dict, e) -> str:
             + "</ul>"
         )
 
+    stage_two_html = _render_stage_two_enrichment(f, e)
+
     persona_pills = " ".join(
         f'<span class="persona-pill">{e(_persona_label(p))}</span>'
         for p in (f.get("_personas") or [])
@@ -716,6 +959,7 @@ def _render_firm_card(f: dict, e) -> str:
   </div>
   <div class="firm-contact">{" · ".join(contact_bits)}</div>
   {fee_html}
+  {stage_two_html}
   {why_html}
   {creds_html}
   {lit_html}
@@ -1031,6 +1275,101 @@ dl.fees dd.fees-missing { color: var(--muted); font-style: italic; font-variant-
 }
 .fees-missing-inline { color: var(--muted-2); font-style: italic; font-size: 12.5px; }
 
+.enrichment {
+  margin-top: 18px;
+  padding: 16px 18px;
+  background: #f7fbf8;
+  border: 1px solid #dcefe1;
+  border-radius: 12px;
+  break-inside: avoid;
+}
+.enrichment h4 {
+  margin-top: 0;
+  color: #2f6f43;
+}
+.lead-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--ink);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.band-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eaf6ed;
+  border: 1px solid #cbe6d3;
+  color: #2f6f43;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.consult-note {
+  color: #2f6f43;
+  font-size: 12px;
+  font-weight: 600;
+}
+.consult-note.consult-limited {
+  color: #9c5a1c;
+}
+.enrichment-warning,
+.enrichment-error {
+  margin: 0 0 12px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: #fff6ea;
+  border: 1px solid #ffe3c9;
+  color: #7c4415;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.enrichment-error {
+  background: #fff4f4;
+  border-color: #f6d0d0;
+  color: #8a2f2f;
+}
+.enrichment-row {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+.enrichment-row > span {
+  color: var(--muted-2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.enrichment-row p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.alt-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.alt-list li {
+  padding: 10px 12px;
+  background: white;
+  border: 1px solid #e4edf7;
+  border-radius: 10px;
+}
+.alt-list p {
+  margin-top: 4px;
+  color: var(--muted);
+}
+.verified-sources {
+  margin-top: 2px;
+}
+
 ul.creds, ul.risks, ul.sources {
   list-style: none;
   padding: 0;
@@ -1104,13 +1443,14 @@ footer .disclaimer { margin-top: 6px; font-style: italic; }
   .metrics { flex-direction: column; }
   .firm { padding: 22px; }
   .firm-head { flex-direction: row; }
+  .enrichment-row { grid-template-columns: 1fr; gap: 4px; }
 }
 
 @media print {
   body { background: white; }
   .page { margin: 0; max-width: none; padding: 0 24px; }
   header.cover { padding: 24px 0; }
-  .firm, .metric, .tier-table { box-shadow: none; break-inside: avoid; }
+  .firm, .metric, .tier-table, .enrichment { box-shadow: none; break-inside: avoid; }
   .block { margin-top: 32px; }
   a { color: var(--ink); }
   ul.sources a { color: var(--muted); }
@@ -1207,10 +1547,11 @@ def _render_markdown(row: ProfessionalSearchRequestRow) -> str:
 
             # Contact line
             contact_bits = []
-            if firm.get("lead_attorney"):
+            lead_contact = firm.get("lead_attorney") or firm.get("lead_contact")
+            if lead_contact:
                 role = firm.get("role")
                 contact_bits.append(
-                    f"**{firm['lead_attorney']}**" + (f" ({role})" if role else "")
+                    f"**{lead_contact}**" + (f" ({role})" if role else "")
                 )
             loc = ", ".join([x for x in [firm.get("city"), firm.get("state")] if x])
             if loc:

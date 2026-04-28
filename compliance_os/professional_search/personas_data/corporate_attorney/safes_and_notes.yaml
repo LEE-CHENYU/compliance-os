@@ -1,0 +1,31 @@
+id: safes_and_notes
+vertical: corporate_attorney
+title: "SAFE and convertible-note counsel"
+
+search_angle: |
+  Find corporate lawyers with strong early-stage financing experience:
+  YC SAFEs, convertible notes, side letters, board approvals, investor consents,
+  409A coordination, and clean cap table maintenance.
+
+  The ideal candidate can review or draft a seed financing package without
+  over-lawyering a small round, while spotting securities, tax, and founder
+  control issues.
+
+must_weight:
+  - "Published SAFE, convertible note, or venture financing guidance"
+  - "Repeated early-stage financing deal experience"
+  - "Cap table and 409A coordination experience"
+  - "Securities-law awareness for private offerings"
+  - "Transparent startup financing fee ranges"
+
+also_value:
+  - "Experience with foreign founders or foreign investors"
+  - "Can coordinate with Carta/Pulley and company CPA"
+  - "Willing to handle small rounds and one-off reviews"
+
+deprioritize:
+  - "M&A-only corporate lawyers with no venture financing practice"
+  - "Enterprise securities counsel whose minimums are too high"
+  - "Template-only services without attorney review"
+
+target_count: 6

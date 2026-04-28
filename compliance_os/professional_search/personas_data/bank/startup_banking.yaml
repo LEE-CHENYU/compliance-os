@@ -1,0 +1,31 @@
+id: startup_banking
+vertical: bank
+title: "Startup banking and payment-rail readiness"
+
+search_angle: |
+  Find business banking options that work well for software startups, online
+  services, or founder-operated companies that need Stripe-ready accounts,
+  virtual cards, expense controls, API-friendly exports, and fast onboarding.
+
+  Prioritize platforms with clear startup use cases, low minimums, clean
+  accounting exports, and support for international founders when available.
+
+must_weight:
+  - "Startup/business banking focus"
+  - "Stripe or payment-processor compatible account details"
+  - "Low minimums and transparent monthly fees"
+  - "Accounting exports or integrations with QuickBooks/Xero"
+  - "Documented support channels for account holds or compliance review"
+
+also_value:
+  - "Venture debt or treasury products for later-stage companies"
+  - "Founder-friendly UX for solo operators"
+  - "Good wire/ACH limits and clear fraud review process"
+
+deprioritize:
+  - "Consumer-only accounts"
+  - "Banks with hidden minimum balance requirements"
+  - "Platforms with frequent unexplained account-freeze complaints and no escalation path"
+
+fee_range_expected_usd: "$0-$30/month typical startup banking; wires/cards/treasury priced separately"
+target_count: 6

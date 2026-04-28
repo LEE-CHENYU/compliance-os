@@ -286,7 +286,14 @@ def vendor_comparison(
             "SELECT * FROM v_vendor_comparison "
             "ORDER BY vendor_type, score IS NULL, score DESC"
         )
-    return _rows_to_dicts(rows)
+    result = _rows_to_dicts(rows)
+    for row in result:
+        # v_attorney_comparison exposes `firm`; v_vendor_comparison historically
+        # exposed `vendor`. Keep a stable `firm` alias so consumers can render
+        # any professional-search vertical with one field.
+        if not row.get("firm") and row.get("vendor"):
+            row["firm"] = row["vendor"]
+    return result
 
 
 def vendor_directory(

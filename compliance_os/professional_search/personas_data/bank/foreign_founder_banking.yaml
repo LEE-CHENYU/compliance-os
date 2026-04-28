@@ -1,0 +1,32 @@
+id: foreign_founder_banking
+vertical: bank
+title: "Foreign-founder friendly banking"
+
+search_angle: |
+  Find banks, fintech banking platforms, or banker relationship teams that can
+  onboard non-US-resident founders, ITIN-only applicants, foreign-owned US
+  entities, or founders without a US credit history.
+
+  Prioritize verifiable onboarding criteria over marketing. The best candidate
+  explains required documents, acceptable IDs, entity documents, beneficial
+  ownership/KYC expectations, and whether remote onboarding is available.
+
+must_weight:
+  - "Publicly documented nonresident, ITIN, or foreign-owner onboarding support"
+  - "Business checking for US LLCs or corporations"
+  - "Clear KYC/beneficial-owner document requirements"
+  - "Remote onboarding or named banker contact path"
+  - "FDIC-insured bank partner or regulated bank relationship"
+
+also_value:
+  - "Multicurrency wires or international transfer support"
+  - "Chinese-language or Asia corridor support"
+  - "Compatibility with Stripe, PayPal, Mercury/Brex-style workflows"
+
+deprioritize:
+  - "Banks requiring SSN and in-branch US presence with no exception path"
+  - "Opaque fintechs with no listed bank partner"
+  - "High-fee private banks without startup/business basics"
+
+fee_range_expected_usd: "$0-$50/month basic business checking; wire and FX fees vary"
+target_count: 6

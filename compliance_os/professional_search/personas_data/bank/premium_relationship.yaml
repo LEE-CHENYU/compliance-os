@@ -1,0 +1,32 @@
+id: premium_relationship
+vertical: bank
+title: "Premium relationship banking"
+
+search_angle: |
+  Find premium banking or relationship-manager options for clients who need
+  concierge onboarding, higher wire limits, foreign-account coordination,
+  multi-currency support, or business + personal banking coordination.
+
+  This persona should not default to expensive private banking unless the
+  service materially helps the user's cross-border compliance or operating
+  needs.
+
+must_weight:
+  - "Named relationship manager or premium business banking team"
+  - "International wire, FX, or multicurrency capability"
+  - "Clear fee schedule and minimum balance requirements"
+  - "Business entity onboarding support"
+  - "Strong compliance/KYC escalation path"
+
+also_value:
+  - "Experience with founders, foreign investors, or globally mobile clients"
+  - "Can coordinate business and personal accounts"
+  - "Transparent treasury or cash-management options"
+
+deprioritize:
+  - "Private banks with high minimums and no business-operating value"
+  - "Retail branches with no cross-border expertise"
+  - "Relationship claims without a named team or published program"
+
+fee_range_expected_usd: "$25-$100/month or balance-based waivers; premium/private banking may require high minimums"
+target_count: 6

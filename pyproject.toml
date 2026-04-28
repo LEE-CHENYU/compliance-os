@@ -90,6 +90,13 @@ Issues        = "https://github.com/LEE-CHENYU/compliance-os/issues"
 [tool.setuptools.packages.find]
 include = ["compliance_os*"]
 
+[tool.setuptools.package-data]
+compliance_os = [
+    "professional_search/*.md",
+    "professional_search/*.sql",
+    "professional_search/personas_data/*/*.yaml",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"

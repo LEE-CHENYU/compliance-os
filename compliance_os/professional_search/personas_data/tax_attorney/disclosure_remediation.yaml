@@ -1,0 +1,32 @@
+id: disclosure_remediation
+vertical: tax_attorney
+title: "Disclosure and remediation counsel"
+
+search_angle: |
+  Find tax attorneys focused on voluntary disclosure, streamlined filing
+  compliance procedures, delinquent FBAR/information return submissions,
+  reasonable-cause packages, and remediation for taxpayers with cross-border
+  assets or late foreign-owned entity reporting.
+
+  The ideal candidate can decide whether the facts are non-willful, whether a
+  streamlined or delinquent submission is appropriate, and what documents a CPA
+  needs to prepare the corrected filings.
+
+must_weight:
+  - "Published streamlined / voluntary disclosure / delinquent FBAR expertise"
+  - "Experience with international information return penalties"
+  - "Privilege-sensitive intake and written legal analysis"
+  - "Coordination model with CPAs or in-house tax preparers"
+  - "State bar good standing and tax controversy/remediation focus"
+
+also_value:
+  - "Multilingual intake for foreign-account record collection"
+  - "Experience with nonresident, expat, or recent-resident fact patterns"
+  - "Transparent diagnostic fee for remediation roadmap"
+
+deprioritize:
+  - "CPA-only remediation where privilege may matter"
+  - "One-size-fits-all offshore disclosure marketers"
+  - "Firms that do not distinguish willful from non-willful paths"
+
+target_count: 6

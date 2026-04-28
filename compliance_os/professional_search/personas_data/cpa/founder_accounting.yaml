@@ -1,0 +1,67 @@
+id: founder_accounting
+vertical: cpa
+title: "Founder-friendly accounting — startup books, payroll, estimates"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "bookkeeping"
+    - "startup books"
+    - "monthly close"
+    - "payroll"
+    - "QuickBooks"
+    - "Xero"
+    - "Stripe"
+    - "Mercury"
+    - "Brex"
+    - "Ramp"
+    - "contractor payments"
+    - "founder reimbursements"
+    - "owner draws"
+    - "quarterly estimates"
+    - "1099"
+  weak_signals:
+    - "startup"
+    - "founder"
+    - "S-corp"
+    - "C-corp"
+    - "LLC"
+    - "clean books"
+  exclude_signals:
+    - "no bookkeeping"
+    - "no payroll"
+    - "no accounting support"
+    - "no books"
+    - "bookkeeping is not needed"
+    - "payroll is not needed"
+
+search_angle: |
+  Find CPA firms, cloud accounting firms, or fractional accounting teams that
+  serve early-stage founders and owner-managed companies, especially foreign
+  founders who need clean books, payroll, quarterly estimates, and year-end tax
+  coordination.
+
+  The ideal candidate can translate messy founder reality into compliant books:
+  Stripe or Mercury transactions, contractor payments, owner draws or founder
+  reimbursements, equity/83(b) coordination, and tax-ready close packages.
+
+must_weight:
+  - "CPA-led or CPA-reviewed bookkeeping/tax practice"
+  - "Published startup, SaaS, creator, or founder accounting focus"
+  - "Bookkeeping plus tax coordination, not filing-only service"
+  - "Payroll, 1099, quarterly estimate, and state registration awareness"
+  - "Experience with QuickBooks Online, Xero, Stripe, Mercury, Brex, or Ramp"
+
+also_value:
+  - "Packages designed for pre-seed or solo-founder companies"
+  - "Experience with foreign founders or nonresident owners"
+  - "Can coordinate with immigration/tax counsel on entity classification issues"
+  - "Clear monthly pricing or onboarding checklist"
+
+deprioritize:
+  - "Generic bookkeeping-only vendors with no CPA review"
+  - "Enterprise outsourced accounting firms with minimums too high for solo founders"
+  - "Firms that do not support remote document workflows"
+
+fee_range_expected_usd: "$300-$1,500/month for startup bookkeeping; $750-$3,500+ for annual business tax package"
+target_count: 6

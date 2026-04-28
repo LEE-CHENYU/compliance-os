@@ -1,0 +1,33 @@
+id: cross_border_tax
+vertical: tax_attorney
+title: "Cross-border tax attorneys — treaty and entity classification"
+
+search_angle: |
+  Find tax attorneys with international individual and closely held business
+  tax experience, especially treaty positions, foreign tax credits, GILTI /
+  Subpart F awareness, foreign-owned US LLC reporting, and US-China or broader
+  Asia cross-border client work.
+
+  Prioritize lawyers who can advise on legal positions before a CPA files:
+  residency classification, treaty tie-breaker, effectively connected income,
+  LLC classification, withholding, and whether privilege-sensitive facts require
+  counsel rather than accountant-only handling.
+
+must_weight:
+  - "LL.M. Tax, board-certified tax specialist, or equivalent tax credential"
+  - "Published cross-border individual/entity tax analysis"
+  - "Experience with treaty positions, Form 8833, 5472/1120 pro forma, FBAR/FATCA"
+  - "Can coordinate with CPAs for implementation"
+  - "State bar good standing and tax practice focus"
+
+also_value:
+  - "US-China or Asia corridor experience"
+  - "Experience with founders, students, visa holders, or nonresident owners"
+  - "Reasonable fixed-fee diagnostic or memo package"
+
+deprioritize:
+  - "Estate-planning-only tax lawyers with no international filing experience"
+  - "Firms that only litigate controversy and do not advise pre-filing"
+  - "Marketing pages with no named tax attorney"
+
+target_count: 6

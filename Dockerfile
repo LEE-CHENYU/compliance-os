@@ -5,6 +5,7 @@ FROM node:20-bookworm-slim AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
+RUN npm install --no-save @next/swc-linux-x64-gnu@14.2.33
 COPY frontend/ ./
 RUN npm run build
 
@@ -21,7 +22,10 @@ WORKDIR /app
 # WeasyPrint needs cairo, pango, and gdk-pixbuf for HTML→PDF rendering;
 # fonts-liberation gives it a serif/sans set so reports render even without
 # any user-supplied fonts.
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' > /etc/apt/apt.conf.d/80-retries && \
+    find /etc/apt -type f \( -name '*.sources' -o -name '*.list' \) -print0 | \
+      xargs -0 -r sed -i 's|http://deb.debian.org|https://deb.debian.org|g' && \
+    apt-get update && apt-get install -y --no-install-recommends \
     gcc libffi-dev curl \
     libpango-1.0-0 libpangoft2-1.0-0 libcairo2 libgdk-pixbuf-2.0-0 \
     libharfbuzz0b shared-mime-info fonts-liberation && \
