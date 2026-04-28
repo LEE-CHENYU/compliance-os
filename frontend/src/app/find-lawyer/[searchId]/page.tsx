@@ -452,28 +452,9 @@ function PersonaCard({
             : (t.personaSearching as string)}
         </div>
       </div>
-      {state?.error && (
-        <div className="mt-2 text-[12px] leading-5 text-[#a33a3a]">
-          {state.error}
-        </div>
-      )}
       {state?.status === "skipped" && state.reason && (
         <div className="mt-2 text-[12px] leading-5 text-[#7b8ba5]">
           {state.reason}
-        </div>
-      )}
-      {state?.status === "complete" && (
-        <div className="mt-2 text-[11px] text-[#7b8ba5]">
-          {state.input_tokens?.toLocaleString() ?? 0} in ·{" "}
-          {state.output_tokens?.toLocaleString() ?? 0} out
-          {state.cache_read_tokens ? (
-            <>
-              {" "}
-              · <span className="text-[#2f5bae]">
-                {state.cache_read_tokens.toLocaleString()} cached
-              </span>
-            </>
-          ) : null}
         </div>
       )}
     </div>
@@ -755,7 +736,11 @@ export default function SearchStatus() {
           {row.status === "failed" && row.error && (
             <div className="mt-5 rounded-2xl border border-[#ffd6d6] bg-[#fff4f4] px-4 py-3 text-[14px] text-[#a33a3a]">
               <div className="font-semibold">{t.statusFailed as string}</div>
-              <div className="mt-1 text-[13px]">{row.error}</div>
+              <div className="mt-1 text-[13px]">
+                {isZh
+                  ? "本次搜索未能完成。请重试,或在面板中联系 Guardian 支持。"
+                  : "This search did not complete. Please retry or contact Guardian support from your dashboard."}
+              </div>
             </div>
           )}
           {error ? (
@@ -885,14 +870,9 @@ export default function SearchStatus() {
                 </div>
                 <p className="mt-1 text-[13px] leading-5 text-[#a06524]">
                   {isZh
-                    ? "我们无法为本次搜索完成深度核实(详见错误信息)。原始律所列表已保留 — 您可在面板的账户页面联系我们重新触发。"
-                    : "We couldn't complete per-firm verification (see error). The base firm list is preserved — contact us from the dashboard to re-trigger free."}
+                    ? "我们无法为本次搜索完成深度核实。原始律所列表已保留 — 您可在面板的账户页面联系我们重新触发。"
+                    : "We couldn't complete per-firm verification. The base firm list is preserved — contact us from the dashboard to re-trigger it."}
                 </p>
-                {row.enrichment_error && (
-                  <p className="mt-1 text-[11px] text-[#a06524] opacity-80">
-                    {row.enrichment_error}
-                  </p>
-                )}
               </div>
             )}
 
@@ -1186,7 +1166,7 @@ export default function SearchStatus() {
               Search finished but no firms were ingested.
             </div>
             <div className="mt-1 text-[13px] text-[#a06524]">
-              Check per-agent errors above.
+              Please rerun the search or contact Guardian support from your dashboard.
             </div>
           </section>
         )}

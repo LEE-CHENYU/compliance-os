@@ -116,7 +116,7 @@ export const FIND_LAWYER_STRINGS: Record<Lang, Dict> = {
     tierBlurb:
       "Scored by externally-verifiable credentials (Chambers, AILA leadership, PACER filings) — marketing copy from firm websites is excluded from weighting.",
     tierEmptyHint:
-      "Search finished but no firms were ingested. Check per-agent errors above.",
+      "Search finished but no firms were ingested. Please rerun the search or contact Guardian support.",
     btnDownloadPDF: "Download PDF",
     btnDownloadPDFBusy: "Preparing PDF…",
     btnViewWeb: "View web version",

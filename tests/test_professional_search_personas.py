@@ -13,6 +13,7 @@ from compliance_os.web.models.tables import ProfessionalSearchRequestRow
 from compliance_os.web.routers.professional_search import (
     _normalize_tier_report,
     _render_html,
+    _serialize,
 )
 from compliance_os.web.services.enrichment_runner import _normalize_enrichment
 
@@ -167,6 +168,7 @@ def test_pdf_html_report_includes_stage_two_enrichment() -> None:
                     }
                 ],
                 "_verified_sources": ["https://example.com/chambers-robert-loughran"],
+                "_enrichment_error": "RuntimeError: provider timeout with internal trace",
             }
         ],
         created_at=dt.datetime(2026, 1, 1, 12, 0, 0),
@@ -185,3 +187,75 @@ def test_pdf_html_report_includes_stage_two_enrichment() -> None:
     assert "Helene Dang" in html
     assert "Individual verification sources" in html
     assert "https://example.com/chambers-robert-loughran" in html
+    assert "RuntimeError" not in html
+    assert "provider timeout" not in html
+
+
+def test_public_search_payload_redacts_worker_internal_details() -> None:
+    row = ProfessionalSearchRequestRow(
+        id="public-payload-test",
+        case_brief="Need H-1B owner-beneficiary counsel for a founder case.",
+        purpose="H-1B owner-beneficiary lawyer search",
+        vertical="immigration_attorney",
+        status="failed",
+        error="RuntimeError: raw internal runner exception",
+        persona_status={
+            "elite_boutique": {
+                "status": "failed",
+                "output_path": "/tmp/private/persona.yaml",
+                "error": "Traceback: private worker exception",
+                "input_tokens": 1234,
+                "output_tokens": 567,
+                "cache_read_tokens": 89,
+                "started_at": "2026-01-01T12:00:00",
+                "finished_at": "2026-01-01T12:01:00",
+            },
+            "audit_defense": {
+                "status": "skipped",
+                "reason": "internal activation score below threshold",
+                "score": 0,
+                "threshold": 4,
+                "matched_signals": ["private signal"],
+            },
+        },
+        tier_report=[],
+        firms_data=[
+            {
+                "name": "Foster LLP",
+                "_enriched_at": "2026-01-01T12:02:00",
+                "_enrichment_error": "TimeoutError: provider request id abc123",
+                "_lead_attorney_band": 2,
+            }
+        ],
+        created_at=dt.datetime(2026, 1, 1, 12, 0, 0),
+        completed_at=dt.datetime(2026, 1, 1, 12, 10, 0),
+        paid_at=dt.datetime(2026, 1, 1, 12, 11, 0),
+        enrichment_status="failed",
+        enrichment_error="TimeoutError: provider request id abc123",
+    )
+
+    payload = _serialize(row).model_dump()
+
+    assert "enrichment_error" not in payload
+    assert payload["error"] == (
+        "This search did not complete. Please retry or contact Guardian support "
+        "from your dashboard."
+    )
+    assert payload["persona_status"]["elite_boutique"] == {
+        "status": "failed",
+        "started_at": "2026-01-01T12:00:00",
+        "finished_at": "2026-01-01T12:01:00",
+    }
+    assert payload["persona_status"]["audit_defense"] == {
+        "status": "skipped",
+        "reason": "Skipped because this search axis was not relevant to the case.",
+    }
+    assert payload["firms_data"] == [
+        {
+            "name": "Foster LLP",
+            "_enriched_at": "2026-01-01T12:02:00",
+            "_lead_attorney_band": 2,
+        }
+    ]
+    assert "provider request id" not in str(payload)
+    assert "/tmp/private" not in str(payload)

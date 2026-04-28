@@ -153,19 +153,10 @@ export interface ProfessionalSearch {
     string,
     {
       status?: "complete" | "failed" | "skipped";
-      output_path?: string;
       firm_count?: number;
-      error?: string;
       reason?: string;
-      score?: number;
-      threshold?: number;
-      matched_signals?: string[];
       started_at?: string;
       finished_at?: string;
-      input_tokens?: number;
-      output_tokens?: number;
-      cache_read_tokens?: number;
-      cache_write_tokens?: number;
     }
   >;
   tier_report: Array<{
@@ -190,7 +181,8 @@ export interface ProfessionalSearch {
   // underscore-prefixed enrichment keys: `_lead_attorney_band`,
   // `_lead_attorney_credentials`, `_alternate_attorneys`, `_verified_sources`,
   // `_individual_band_gap`, `_individual_vs_firm_band_gap_warning`,
-  // `_enriched_at`. The shape is loose because persona YAML schemas vary
+  // `_enriched_at`. Internal enrichment errors are stripped server-side.
+  // The shape is loose because persona YAML schemas vary
   // — keep it as a Record and narrow at access sites.
   firms_data: Array<Record<string, unknown>> | null;
   error: string | null;
@@ -205,14 +197,12 @@ export interface ProfessionalSearch {
   enrichment_status: "idle" | "enriching" | "complete" | "failed";
   enrichment_started_at: string | null;
   enrichment_completed_at: string | null;
-  enrichment_error: string | null;
 }
 
 export interface EnrichmentStatus {
   status: "idle" | "enriching" | "complete" | "failed";
   started_at: string | null;
   completed_at: string | null;
-  error: string | null;
   firms_enriched: number;
   firms_total: number;
 }

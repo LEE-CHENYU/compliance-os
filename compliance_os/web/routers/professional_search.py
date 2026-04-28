@@ -126,7 +126,6 @@ class SearchResponse(BaseModel):
     enrichment_status: str = "idle"
     enrichment_started_at: str | None = None
     enrichment_completed_at: str | None = None
-    enrichment_error: str | None = None
     # Per-firm rich data (Stage 1 personas + Stage 2 enrichment overlays).
     # Only exposed when paid_at is set — pre-payment users see just the
     # top-5 tier_report slice, never the full contact-info list. Field is
@@ -141,7 +140,6 @@ class EnrichmentStatusResponse(BaseModel):
     status: str  # idle | enriching | complete | failed
     started_at: str | None
     completed_at: str | None
-    error: str | None
     # firm-level rough completion: how many firms have at least one
     # `_lead_attorney_*` field set. Lets the UI show a "X of Y firms
     # enriched" progress bar during the ~2-3 min window.
@@ -172,6 +170,47 @@ def _normalize_tier_report(rows: list | None) -> list | None:
     return normalized
 
 
+def _public_persona_status(statuses: dict | None) -> dict:
+    """Return only progress fields that belong in the browser payload."""
+    public: dict = {}
+    for persona_id, status in (statuses or {}).items():
+        if not isinstance(status, dict):
+            continue
+        item: dict = {}
+        for key in ("status", "firm_count", "started_at", "finished_at"):
+            if key in status:
+                item[key] = status[key]
+        if status.get("status") == "skipped":
+            item["reason"] = "Skipped because this search axis was not relevant to the case."
+        public[persona_id] = item
+    return public
+
+
+def _public_firms_data(firms: list | None) -> list | None:
+    if firms is None:
+        return None
+    public: list = []
+    hidden_keys = {"_enrichment_error"}
+    for firm in firms:
+        if not isinstance(firm, dict):
+            public.append(firm)
+            continue
+        public.append({
+            key: value for key, value in firm.items()
+            if key not in hidden_keys
+        })
+    return public
+
+
+def _public_search_error(error: str | None) -> str | None:
+    if not error:
+        return None
+    return (
+        "This search did not complete. Please retry or contact Guardian support "
+        "from your dashboard."
+    )
+
+
 def _serialize(
     row: ProfessionalSearchRequestRow,
     *,
@@ -195,9 +234,9 @@ def _serialize(
         vertical=row.vertical,
         case_brief=(row.case_brief if include_pii else ""),
         uploaded_notes=(row.uploaded_notes if include_pii else None),
-        persona_status=row.persona_status or {},
+        persona_status=_public_persona_status(row.persona_status),
         tier_report=_normalize_tier_report(row.tier_report),
-        error=row.error,
+        error=_public_search_error(row.error),
         created_at=row.created_at.isoformat() if row.created_at else "",
         completed_at=row.completed_at.isoformat() if row.completed_at else None,
         paid_at=row.paid_at.isoformat() if row.paid_at else None,
@@ -215,11 +254,12 @@ def _serialize(
         enrichment_completed_at=(
             row.enrichment_completed_at.isoformat() if row.enrichment_completed_at else None
         ),
-        enrichment_error=row.enrichment_error,
         # Gate firms_data on paid_at — pre-payment polling gets only
         # tier_report (top-5 frontend slice). Paid users see the full
         # list including Stage-2 enrichment underscore-prefixed fields.
-        firms_data=(row.firms_data if row.paid_at is not None else None),
+        firms_data=(
+            _public_firms_data(row.firms_data) if row.paid_at is not None else None
+        ),
     )
 
 
@@ -704,7 +744,6 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
     practice_focus = _report_text(f.get("_lead_attorney_practice_focus"))
     lead_creds = _report_text_list(f.get("_lead_attorney_credentials"))
     rfe_pattern = _report_text(f.get("_rfe_pattern"))
-    enrichment_error = _report_text(f.get("_enrichment_error"))
 
     alternates = [
         item for item in _report_sequence(f.get("_alternate_attorneys"))
@@ -721,7 +760,6 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
         practice_focus,
         lead_creds,
         rfe_pattern,
-        enrichment_error,
         alternates,
         verified_sources,
     ]):
@@ -819,12 +857,6 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
             + "</ul></div>"
         )
 
-    error_html = (
-        '<div class="enrichment-error">Individual verification incomplete: '
-        f"{e(enrichment_error)}</div>"
-        if enrichment_error else ""
-    )
-
     return f"""
   <section class="enrichment">
     <h4>Stage 2 individual verification</h4>
@@ -835,7 +867,6 @@ def _render_stage_two_enrichment(f: dict, e) -> str:
     {alternate_html}
     {rfe_html}
     {verified_sources_html}
-    {error_html}
   </section>
 """
 
@@ -1315,8 +1346,7 @@ dl.fees dd.fees-missing { color: var(--muted); font-style: italic; font-variant-
 .consult-note.consult-limited {
   color: #9c5a1c;
 }
-.enrichment-warning,
-.enrichment-error {
+.enrichment-warning {
   margin: 0 0 12px;
   padding: 9px 11px;
   border-radius: 9px;
@@ -1325,11 +1355,6 @@ dl.fees dd.fees-missing { color: var(--muted); font-style: italic; font-variant-
   color: #7c4415;
   font-size: 13px;
   line-height: 1.5;
-}
-.enrichment-error {
-  background: #fff4f4;
-  border-color: #f6d0d0;
-  color: #8a2f2f;
 }
 .enrichment-row {
   display: grid;
@@ -1506,26 +1531,25 @@ def _render_markdown(row: ProfessionalSearchRequestRow) -> str:
         sections.append("")
 
         if status.get("status") != "complete":
-            err = status.get("error") or "(no result)"
-            sections.append(f"_Persona did not complete: {err}_")
+            sections.append("_This search axis did not produce a usable result._")
             sections.append("")
             continue
 
         path_str = status.get("output_path")
         if not path_str:
-            sections.append("_No output path recorded._")
+            sections.append("_Saved result unavailable for this search axis._")
             sections.append("")
             continue
         path = Path(path_str)
         if not path.exists():
-            sections.append(f"_Output file missing on disk: `{path}`_")
+            sections.append("_Saved result unavailable for this search axis._")
             sections.append("")
             continue
 
         try:
             doc = _yaml.safe_load(path.read_text()) or {}
-        except Exception as exc:
-            sections.append(f"_Failed to read output file: {exc}_")
+        except Exception:
+            sections.append("_Saved result unavailable for this search axis._")
             sections.append("")
             continue
 
@@ -1625,7 +1649,7 @@ def _render_markdown(row: ProfessionalSearchRequestRow) -> str:
             sections.append("")
 
     if not any_firms:
-        sections.append("_No firms were ingested. Check per-persona errors above._")
+        sections.append("_No firms were ingested. Please rerun the search or contact support._")
         sections.append("")
 
     sections.append("")
@@ -1998,7 +2022,6 @@ def get_enrichment_status(
             row.enrichment_completed_at.isoformat()
             if row.enrichment_completed_at else None
         ),
-        error=row.enrichment_error,
         firms_enriched=firms_enriched,
         firms_total=firms_total,
     )

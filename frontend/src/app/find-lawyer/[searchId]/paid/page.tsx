@@ -270,7 +270,6 @@ function PaidPage() {
           } else {
             trackProfessionalSearchEvent("professional_search_enrichment_failed", {
               search_id: params.searchId,
-              error: (e.error || "").slice(0, 200),
               lang,
             });
           }
