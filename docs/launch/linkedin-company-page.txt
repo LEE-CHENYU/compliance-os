@@ -1,0 +1,331 @@
+================================================================
+GUARDIAN COMPLIANCE — LINKEDIN COMPANY PAGE
+PATH: RENAME EXISTING HAPPYHUNTING PAGE
+================================================================
+Decision locked 2026-04-30:
+- Same legal entity as HappyHunting
+- HappyHunting is sunsetting
+- 60 existing followers (same customer base — self-directed immigrants)
+- Action: rename the existing page; do not create a new one
+- Why: inherit page-age SEO + existing follower base; pivot
+  narrative is cleaner than a parallel page
+
+Setup URL:
+  linkedin.com/company/<your-happyhunting-slug>/admin/settings/
+
+Use: copy-paste each labeled value into the page admin form.
+================================================================
+
+
+----------------------------------------------------------------
+SECTION 0 — RENAME SEQUENCE (DO IN THIS ORDER)
+----------------------------------------------------------------
+
+Recommended date: May 1-2, 2026 (10-11 days before PH launch).
+Do NOT rename on or near May 12 — too much going on.
+
+Step-by-step (each step is a separate save in LinkedIn admin):
+
+[ ] 1. Update LOGO first (300x300, glassmorphic Guardian icon).
+       Why first: the followers' "page renamed" notification
+       shows the current logo + new name. Old logo + new name
+       reads like a hijacked account.
+
+[ ] 2. Update COVER IMAGE (1128x191, see Section 2).
+
+[ ] 3. Update TAGLINE (Section 1).
+
+[ ] 4. Update DESCRIPTION (Section 3).
+
+[ ] 5. Update SPECIALTIES (Section 4).
+
+[ ] 6. Update HASHTAGS (Section 5).
+
+[ ] 7. Update WEBSITE URL: guardiancompliance.app (Section 1).
+
+[ ] 8. Change PAGE NAME: HappyHunting -> Guardian Compliance.
+       This triggers the follower notification.
+
+[ ] 9. Change URL SLUG: /happyhunting -> /guardian-compliance.
+       LinkedIn allows ONE slug change per 6 months — make this
+       the one. Do this within 24h of the name change so search
+       engines update consistently.
+
+[ ] 10. Publish the PINNED RENAME POST (Section 8, Post 0).
+
+[ ] 11. Send invite-to-follow batch using free quota (~250/mo)
+        to your Tier 1 contacts who weren't already following.
+
+[ ] 12. KEEP the original "Year founded" date from HappyHunting.
+        Older = more credibility. Do not reset to 2026.
+
+
+----------------------------------------------------------------
+SECTION 1 — PAGE IDENTITY (paste into admin form)
+----------------------------------------------------------------
+
+NAME:
+Guardian Compliance
+
+LINKEDIN PUBLIC URL (slug):
+guardian-compliance
+
+WEBSITE:
+https://guardiancompliance.app
+
+INDUSTRY (pick exactly one):
+Software Development
+
+COMPANY SIZE:
+2-10 employees
+
+COMPANY TYPE:
+Privately Held
+
+YEAR FOUNDED:
+[KEEP HappyHunting's original founded year — do not change]
+
+TAGLINE (max 120 chars):
+Reconcile every filing — then match the right pro, based on what we find. For self-directed legal/tax navigators.
+
+
+----------------------------------------------------------------
+SECTION 2 — LOGO + COVER IMAGE
+----------------------------------------------------------------
+
+LOGO (UPLOAD THIS):
+  /Users/lichenyu/compliance-os/frontend/public/assets/guardian-logo-white-400.png
+  Spec: 400 x 400 white-background PNG (LinkedIn-recommended size)
+  Mark: three blue bars (#5b8dee gradient) on clean white
+
+Other available logo files (use only if needed):
+  - guardian-logo-white-300.png    300x300 white bg (smaller version, also LinkedIn-OK)
+  - guardian-logo-white-1024.png   1024x1024 white bg (high-res; for future use, e.g. press kit)
+  - guardian-logo.svg               vector source, transparent (use to regenerate any size)
+  - guardian-logo-512.png           DARK NAVY background — DO NOT use for LinkedIn
+  - guardian-logo-1024.png          DARK NAVY background — DO NOT use for LinkedIn
+
+To regenerate at any size (rsvg-convert installed via Homebrew):
+  rsvg-convert -w SIZE -h SIZE -b white guardian-logo.svg -o output.png
+
+COVER IMAGE (UPLOAD THIS):
+  /Users/lichenyu/compliance-os/frontend/public/assets/guardian-linkedin-cover-1128x191.png
+  Spec: 1128 x 191, PNG, ~107KB
+  Content (clean, headline-only):
+    - brand-gradient background with single soft right-side glow
+    - headline "Find your lawyer or CPA. Reconcile every filing."
+      (second clause in accent blue) on the left
+    - 3-bar Guardian mark on the right
+    - no eyebrow (LinkedIn shows company name above the cover already)
+    - no subhead, no chips, no doc cards — clean negative space
+
+Source HTML (regenerate any time):
+  /Users/lichenyu/compliance-os/docs/launch/linkedin-cover.html
+
+To regenerate after edits:
+  CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  "$CHROME" --headless --disable-gpu --hide-scrollbars \
+    --window-size=1128,191 \
+    --screenshot=/Users/lichenyu/compliance-os/frontend/public/assets/guardian-linkedin-cover-1128x191.png \
+    "file:///Users/lichenyu/compliance-os/docs/launch/linkedin-cover.html"
+
+
+----------------------------------------------------------------
+SECTION 3 — ABOUT / DESCRIPTION (max 2,000 chars; pivot-aware)
+----------------------------------------------------------------
+
+Guardian Compliance is the personal data room for self-directed legal/tax navigators. Drop your filings — we reconcile every document, then match you with the lawyer or CPA who fits what we found. Across immigration, tax, corporate, and every vertical to come. Built for the driver's seat, not the hand-off.
+
+(307 chars — order inverted: reconciliation precedes matching, because the data room is the moat. Fits LinkedIn's 2,000-char About cap.)
+
+ALTERNATIVE LONGER VERSIONS (use if a surface needs more depth — e.g., Battlefield app, press blurb, investor deck):
+
+--- 324-word long-form version ---
+
+Guardian Compliance is the personal data room for self-directed legal/tax navigators — founders, students, and small-business owners who want to stay in the driver's seat of their own legal and tax life, even when they hire help.
+
+We're not built for people who do everything themselves — we're built for people who don't want to be handed off. You drop the documents. You own the data room. You hire the lawyer.
+
+Here's how the three pieces connect.
+
+We start with the wedge: reconciling your documents. Drop your immigration, tax, and corporate filings into Guardian — we cross-reference every document against every other in your personal data room. Real life isn't compartmentalized: a 1099-NEC line on your tax return can raise an H-1B question, an I-983 duty description can contradict an offer letter. Single-domain tools miss these. Guardian doesn't.
+
+That reconciliation kicks off the body: matched professionals informed by ground truth. Based on what we found — the actual conflicts, the actual stage of your case — Guardian matches you with the lawyer or CPA who fits. Most matching is form-based: you describe your case, the marketplace guesses. Guardian's match is informed by the real filings, not stated preferences.
+
+The data room is what unlocks the potential. Today we cover immigration, tax, and corporate. Tomorrow, healthcare directives, real estate, estate planning, education — every vertical where complex documents need to talk to each other. New verticals plug in to the same data room.
+
+Guardian was built by an immigrant who almost lost his STEM OPT to a six-word mismatch on his I-983. His lawyer caught it the night before filing. Most people running their own case never get that catch. Guardian is the catch — before you even pick the lawyer.
+
+Why now: STEM OPT RFE rates nearly doubled from 6% to 10% over two years (NAFSA, 2024). Those running their own case bear the cost. Guardian gives them the data room a corporate legal team would.
+
+Free Form 8843 generator: guardiancompliance.app/8843
+
+
+----------------------------------------------------------------
+SECTION 4 — SPECIALTIES (paste comma-separated)
+----------------------------------------------------------------
+
+Lawyer matching, CPA matching, Personal data room, Document reconciliation, Immigration compliance, USCIS forms, STEM OPT, H-1B, Form 8843, Tax compliance, Corporate compliance, Legal tech, AI document review, Form Filler, Cross-vertical compliance
+
+
+----------------------------------------------------------------
+SECTION 5 — HASHTAGS (max 3)
+----------------------------------------------------------------
+
+#ImmigrationTech
+#LegalAI
+#STEMOPT
+
+
+----------------------------------------------------------------
+SECTION 6 — LOCATION
+----------------------------------------------------------------
+
+ADDRESS LINE 1:
+[your registered C-corp address — NEVER home]
+
+CITY:
+San Francisco
+
+STATE:
+California
+
+COUNTRY:
+United States
+
+POSTAL CODE:
+[fill in]
+
+IS HEADQUARTERS?
+Yes
+
+
+----------------------------------------------------------------
+SECTION 7 — CUSTOM BUTTON (top of page)
+----------------------------------------------------------------
+
+BUTTON TEXT:
+Visit website
+
+BUTTON URL:
+https://guardiancompliance.app
+
+
+----------------------------------------------------------------
+SECTION 8 — POSTS
+----------------------------------------------------------------
+
+==================================================
+POST 0 — PIN THIS IMMEDIATELY AFTER RENAME (May 2)
+Where: Company page (now Guardian Compliance)
+==================================================
+
+>>>
+HappyHunting is now Guardian Compliance.
+
+Same mission — helping immigrants navigate the U.S. system — but a sharper focus.
+
+We started by helping immigrants find jobs. Along the way, we kept hearing the same thing from users: getting hired wasn't the hard part. The paperwork that decided whether you could keep the job — I-983, H-1B, taxes, corporate docs — was. And the inconsistencies between those documents quietly triggered RFEs that cost people their visas.
+
+So we pivoted.
+
+Guardian is an AI pre-intake compliance layer that cross-checks your immigration, tax, and corporate documents in a single pass. It catches what a single-domain tool — and most lawyers in 30 seconds — can't.
+
+If you've been with us as HappyHunting: thank you for being here from the start. The next chapter is one we're prouder of.
+
+Free Form 8843 generator for international students, live now: guardiancompliance.app/8843
+
+Launching on Product Hunt May 12.
+
+#ImmigrationTech #LegalAI #STEMOPT
+<<<
+
+
+==================================================
+POST 1 — FOUNDER STORY
+Where: PERSONAL account (not company page)
+When: T-7 days before PH launch (May 5)
+==================================================
+
+>>>
+Two years ago, six words on my I-983 almost cost me my STEM OPT.
+
+My training plan said "machine learning pipelines."
+My offer letter said "backend infrastructure."
+Same job. Different language. To USCIS — two different jobs.
+
+My lawyer caught it the night before filing. Most people running their own case don't have a lawyer reading every line — even when they hire one.
+
+So I built one.
+
+Guardian (formerly HappyHunting) cross-checks your immigration, tax, and corporate documents in a single pass. STEM OPT, H-1B, O-1, EB-1 — anything that gets rejected for inconsistencies a human eye would tire of catching.
+
+We launch on Product Hunt May 12. Free Form 8843 generator is live now if you want to try the wedge: guardiancompliance.app/8843
+
+If you've ever filed your own immigration paperwork, what's the one check you wish existed? Reply or DM — I'm building this for you.
+<<<
+
+
+==================================================
+POST 2A — PH LAUNCH DAY (Personal)
+Where: Personal account
+When: May 12, 12:30 AM PT
+==================================================
+
+>>>
+Guardian is live on Product Hunt today.
+
+The first AI tool that cross-checks your immigration, tax, and corporate documents together — catching the inconsistencies that quietly trigger RFEs.
+
+If you find it useful, your feedback in the comments would mean everything: [PH link]
+
+Free Form 8843 generator + first cross-check free. Built for the people in the driver's seat.
+<<<
+
+
+==================================================
+POST 2B — PH LAUNCH DAY (Company page)
+Where: Guardian Compliance company page
+When: May 12, 1:00 AM PT (30 min after personal — staggering avoids spam-flag)
+==================================================
+
+>>>
+We're live on Product Hunt today.
+
+Guardian — the personal data room for self-directed legal/tax navigators. Cross-checks your I-983, offer letter, tax returns, and more in 30 seconds.
+
+Try free today: [PH link]
+
+#ProductHunt #ImmigrationTech #LegalAI
+<<<
+
+
+----------------------------------------------------------------
+SECTION 9 — POST-RENAME CHECKLIST
+----------------------------------------------------------------
+
+[ ] 1. Confirm you're still listed as Super Admin
+[ ] 2. Verify the page (upload Articles of Incorporation PDF if not already verified) — takes 1-3 days
+[ ] 3. Update your personal profile: change "HappyHunting" current role to "Guardian Compliance" — search and select the renamed page in the dropdown so the link follows
+[ ] 4. Use the free LinkedIn invite quota (~250/month) to invite Tier 1 contacts to follow Guardian Compliance
+[ ] 5. Pin Post 0 (rename announcement) to the top of the page
+[ ] 6. Reply to every comment on Post 0 within 24h — the rename is a content moment, not just an admin task
+[ ] 7. Within 7 days, post a single follow-up: a screenshot of Guardian catching a real cross-document conflict (use a redacted version of your own STEM OPT case for authenticity)
+
+
+----------------------------------------------------------------
+SECTION 10 — FOLLOWER MIGRATION NOTES
+----------------------------------------------------------------
+
+Of your existing 60 HappyHunting followers:
+- ~70-80% will stay (immigration audience overlap is high)
+- ~10-15% will silently disengage (job-search-only interest)
+- ~5-10% may unfollow within 2 weeks of the name change
+This is normal and acceptable. Do NOT chase the unfollows.
+
+The rename notification appears in followers' feeds for ~24h.
+This is your free reach moment — make Post 0 worth seeing.
+
+================================================================
+END OF FILE
+================================================================
