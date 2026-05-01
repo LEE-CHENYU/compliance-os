@@ -33,6 +33,26 @@ def test_every_configured_professional_search_vertical_has_personas() -> None:
             assert persona.raw.get("target_count"), persona.id
 
 
+def test_public_attorney_and_cpa_personas_are_case_selective() -> None:
+    public_verticals = {
+        "immigration_attorney",
+        "immigration_eb5",
+        "tax_attorney",
+        "corporate_attorney",
+        "cpa",
+    }
+
+    for vertical in public_verticals:
+        missing = [p.id for p in list_personas(vertical) if not p.raw.get("activation")]
+        assert missing == [], f"{vertical} personas missing activation: {missing}"
+
+
+def test_bundled_personas_win_over_local_data_mirror() -> None:
+    personas = {p.id: p for p in list_personas("immigration_attorney")}
+
+    assert "personas_data" in personas["elite_boutique"].path.parts
+
+
 def test_cpa_search_plan_builds_dispatch_prompts(tmp_path: Path) -> None:
     plan = build_search_plan(
         case_brief=(
@@ -46,9 +66,22 @@ def test_cpa_search_plan_builds_dispatch_prompts(tmp_path: Path) -> None:
     )
 
     persona_ids = {prompt["persona_id"] for prompt in plan["prompts"]}
-    assert persona_ids == {"founder_accounting", "international_tax"}
-    assert plan["selected_personas"] == ["international_tax", "founder_accounting"]
-    assert [item["id"] for item in plan["skipped_personas"]] == ["audit_defense"]
+    assert persona_ids == {
+        "foreign_owned_entity",
+        "founder_accounting",
+        "international_tax",
+    }
+    assert plan["selected_personas"] == [
+        "international_tax",
+        "foreign_owned_entity",
+        "founder_accounting",
+    ]
+    assert {item["id"] for item in plan["skipped_personas"]} == {
+        "audit_defense",
+        "equity_crypto_tax",
+        "expat_tax",
+        "state_sales_tax",
+    }
     assert plan["vertical"] == "cpa"
     assert all(Path(path).parent == tmp_path for path in plan["output_paths"])
     assert "lead_contact" in plan["prompts"][0]["prompt"]
@@ -65,10 +98,16 @@ def test_cpa_persona_selection_prunes_irrelevant_founder_accounting() -> None:
         ),
     )
 
-    assert [p.id for p in selection.selected] == ["international_tax"]
+    assert [p.id for p in selection.selected] == [
+        "international_tax",
+        "foreign_owned_entity",
+    ]
     assert {item["id"] for item in selection.skipped} == {
         "audit_defense",
+        "equity_crypto_tax",
+        "expat_tax",
         "founder_accounting",
+        "state_sales_tax",
     }
 
 
@@ -84,6 +123,23 @@ def test_cpa_persona_selection_runs_accounting_when_books_are_in_scope() -> None
     )
 
     assert "founder_accounting" in {p.id for p in selection.selected}
+
+
+def test_immigration_persona_selection_targets_status_issue_without_broad_run() -> None:
+    selection = select_personas(
+        "immigration_attorney",
+        purpose="F-1 OPT status risk consult",
+        case_brief=(
+            "Need an immigration attorney for an F-1 student who used CPT, "
+            "has STEM OPT unemployment-day and SEVIS questions, and may need "
+            "reinstatement or travel advice before an H-1B change of status."
+        ),
+    )
+
+    selected_ids = {p.id for p in selection.selected}
+    assert "student_opt_status" in selected_ids
+    assert "family_humanitarian" not in selected_ids
+    assert "employment_green_card" not in selected_ids
 
 
 def test_enrichment_normalization_protects_client_from_model_shape_drift() -> None:

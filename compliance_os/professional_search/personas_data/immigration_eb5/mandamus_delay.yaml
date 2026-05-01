@@ -1,0 +1,54 @@
+id: mandamus_delay
+vertical: immigration_eb5
+title: "EB-5 mandamus and delay-litigation counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "mandamus"
+    - "unreasonable delay"
+    - "outside processing time"
+    - "I-526 pending"
+    - "I-526E pending"
+    - "I-829 pending"
+    - "delayed"
+    - "stuck"
+    - "federal court"
+    - "lawsuit"
+    - "APA"
+  weak_signals:
+    - "long wait"
+    - "processing time"
+    - "case inquiry"
+    - "expedite"
+  exclude_signals:
+    - "no lawsuit"
+    - "not looking to sue"
+    - "normal timing"
+
+search_angle: |
+  Find EB-5 counsel with federal-court mandamus and APA delay-litigation
+  experience for delayed I-526/I-526E, I-829, adjustment, or consular steps.
+
+  Prioritize firms that can realistically evaluate litigation timing, venue,
+  government response patterns, and whether the delay is ripe enough to sue.
+
+must_weight:
+  - "Documented federal-court mandamus or APA delay litigation experience"
+  - "EB-5-specific delay cases or investor immigration delay practice"
+  - "Ability to explain pre-suit evidence, venue, and government response risks"
+  - "Transparent fee ranges for demand letter versus complaint filing"
+  - "State bar good standing and litigation capability"
+
+also_value:
+  - "PACER-verifiable counsel-of-record history"
+  - "Coordination with primary EB-5 filing counsel"
+  - "Experience with consular or adjustment-stage delays"
+
+deprioritize:
+  - "Firms advertising mandamus with no filed cases"
+  - "Pure petition drafters with no litigation infrastructure"
+  - "Firms that treat every delay as ripe without analysis"
+
+fee_range_expected_usd: "$5,000-$20,000+ depending on demand-letter and federal complaint scope"
+target_count: 5

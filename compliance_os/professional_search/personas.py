@@ -1,6 +1,7 @@
 """Persona loader and search-plan builder.
 
-Each persona is a YAML file under `data/professional_search/personas/<vertical>/`.
+Each shipped persona is a YAML file under
+`compliance_os/professional_search/personas_data/<vertical>/`.
 Personas describe one *search axis* (e.g. elite boutique, startup-focused,
 litigation-focused). The MCP `lawyer_search_plan` tool renders one prompt
 per persona that a caller can Task-dispatch in parallel; each sub-agent
@@ -20,28 +21,34 @@ import yaml
 from compliance_os.settings import settings
 
 # Personas live inside the package (so they ship with the wheel/image).
-# A `data/professional_search/personas/` mirror in the repo can override
-# any vertical for local dev — but the override is *per-vertical*: if a
-# given vertical exists in the dev path it wins; otherwise we fall back
-# to the bundled copy. This lets you hot-iterate on H-1B prompts in the
-# dev tree without losing access to verticals that only exist bundled.
+# A `data/professional_search/personas/` mirror may add local-only
+# experimental personas, but bundled personas remain authoritative for
+# shipped IDs. This prevents ignored local data from silently shadowing
+# production persona updates.
 _BUNDLED_PERSONAS = Path(__file__).parent / "personas_data"
 _DEV_PERSONAS = settings.project_root / "data" / "professional_search" / "personas"
 METHODOLOGY_PATH = Path(__file__).parent / "tier_methodology.md"
 
 
-def _persona_dir_for(vertical: str) -> Path:
-    """Pick the dev override directory if it exists, else the bundled one."""
-    dev = _DEV_PERSONAS / vertical
-    if dev.is_dir() and any(dev.glob("*.y*ml")):
-        return dev
-    return _BUNDLED_PERSONAS / vertical
+def _persona_files_for(vertical: str) -> list[Path]:
+    """Load bundled personas plus local-only additions.
+
+    Local files are keyed by filename first, then bundled files are keyed over
+    them so stale ignored `data/` mirrors cannot override shipped personas.
+    """
+    by_name: dict[str, Path] = {}
+    for root in (_DEV_PERSONAS / vertical, _BUNDLED_PERSONAS / vertical):
+        if not root.is_dir():
+            continue
+        for path in sorted(root.glob("*.yaml")) + sorted(root.glob("*.yml")):
+            by_name[path.name] = path
+    return [by_name[name] for name in sorted(by_name)]
 
 
-# Kept as a module-level alias for any existing import-time consumers; new
-# call sites should prefer the lazy `_persona_dir_for(vertical)` helper so
-# verticals can be added without restarting.
-PERSONAS_ROOT = _DEV_PERSONAS if _DEV_PERSONAS.is_dir() else _BUNDLED_PERSONAS
+# Kept as a module-level alias for existing import-time consumers. New call
+# sites should use `list_personas()` so bundled personas and local additions
+# are resolved consistently.
+PERSONAS_ROOT = _BUNDLED_PERSONAS
 
 
 @dataclass
@@ -74,15 +81,12 @@ class PersonaSelection:
 
 def list_personas(vertical: str) -> list[Persona]:
     """Load every persona YAML for a given vertical."""
-    vdir = _persona_dir_for(vertical)
-    if not vdir.is_dir():
+    files = _persona_files_for(vertical)
+    if not files:
         raise FileNotFoundError(
             f"No personas for vertical '{vertical}' (looked under "
             f"{_DEV_PERSONAS / vertical} and {_BUNDLED_PERSONAS / vertical})."
         )
-    files = sorted(vdir.glob("*.yaml")) + sorted(vdir.glob("*.yml"))
-    if not files:
-        raise FileNotFoundError(f"No YAML persona files in {vdir}")
     return [Persona.load(p) for p in files]
 
 

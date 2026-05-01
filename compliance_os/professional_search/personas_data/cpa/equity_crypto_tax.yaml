@@ -1,0 +1,60 @@
+id: equity_crypto_tax
+vertical: cpa
+title: "Equity compensation, stock-option, and crypto tax CPAs"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "ISO"
+    - "NSO"
+    - "RSU"
+    - "ESPP"
+    - "83(b)"
+    - "409A"
+    - "stock options"
+    - "equity compensation"
+    - "crypto"
+    - "cryptocurrency"
+    - "digital asset"
+    - "DeFi"
+    - "Form 8949"
+  weak_signals:
+    - "capital gains"
+    - "basis"
+    - "vesting"
+    - "shares"
+    - "tokens"
+  exclude_signals:
+    - "no equity"
+    - "no crypto"
+    - "no investments"
+
+search_angle: |
+  Find CPA or EA-led tax practices that can prepare and review returns with
+  equity compensation, founder stock, ISO/NSO exercises, AMT, RSUs, ESPP,
+  83(b) elections, 409A-adjacent records, crypto trades, DeFi/staking income,
+  and Form 8949 basis reconstruction.
+
+  Prioritize practitioners who understand the compliance boundary: they can
+  prepare the return and flag when a tax attorney should opine on a legal
+  position or controversy risk.
+
+must_weight:
+  - "CPA license or EA credential in good standing"
+  - "Published equity-compensation, stock-option, AMT, or crypto tax expertise"
+  - "Experience with Forms 8949/Schedule D and broker/exchange reconciliation"
+  - "Ability to handle founder, employee, and cross-border equity facts"
+  - "Clear workflow for messy transaction data and supporting schedules"
+
+also_value:
+  - "Can coordinate with Carta/Pulley, payroll, and cap-table records"
+  - "Experience with nonresident or dual-status equity timing"
+  - "Transparent pricing for high-transaction-count returns"
+
+deprioritize:
+  - "Basic 1040 preparers with no equity/crypto support"
+  - "Software-only crypto tax services with no licensed professional review"
+  - "Firms promoting aggressive no-reporting positions"
+
+fee_range_expected_usd: "$500-$2,500+ depending on transaction count and equity complexity"
+target_count: 6

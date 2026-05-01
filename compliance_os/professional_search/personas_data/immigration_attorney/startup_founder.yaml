@@ -2,6 +2,32 @@ id: startup_founder
 vertical: immigration_attorney
 title: "Startup + founder-focused firms"
 
+activation:
+  threshold: 4
+  strong_signals:
+    - "founder"
+    - "startup"
+    - "owner-beneficiary"
+    - "owner beneficiary"
+    - "self-sponsor"
+    - "self sponsor"
+    - "small employer"
+    - "pre-revenue"
+    - "H-1B"
+    - "E-2"
+    - "entrepreneur"
+    - "related entity"
+    - "cap table"
+  weak_signals:
+    - "new company"
+    - "LLC"
+    - "C-corp"
+    - "single founder"
+  exclude_signals:
+    - "not a founder"
+    - "large employer"
+    - "routine transfer"
+
 search_angle: |
   Find firms that specialize in founder-beneficiary / owner-adjacent
   H-1B and E-2 petitions, and have published thought leadership on

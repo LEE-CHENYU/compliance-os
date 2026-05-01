@@ -2,6 +2,28 @@ id: safes_and_notes
 vertical: corporate_attorney
 title: "SAFE and convertible-note counsel"
 
+activation:
+  threshold: 4
+  strong_signals:
+    - "SAFE"
+    - "convertible note"
+    - "seed round"
+    - "pre-seed"
+    - "priced round"
+    - "side letter"
+    - "investor consent"
+    - "409A"
+    - "financing"
+    - "term sheet"
+  weak_signals:
+    - "investor"
+    - "fundraise"
+    - "valuation cap"
+    - "discount"
+  exclude_signals:
+    - "not fundraising"
+    - "no investors"
+
 search_angle: |
   Find corporate lawyers with strong early-stage financing experience:
   YC SAFEs, convertible notes, side letters, board approvals, investor consents,

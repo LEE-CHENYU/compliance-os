@@ -19,8 +19,6 @@ const VERTICAL_KEYS = [
   "tax_attorney",
   "corporate_attorney",
   "cpa",
-  "bank",
-  "caa",
 ] as const;
 
 const PRIMARY_BTN =
@@ -345,10 +343,10 @@ function FindLawyer() {
                   data-testid="find-lawyer-brief"
                   className={`${INPUT} font-mono leading-relaxed`}
                 />
-                <div className="mt-2 flex items-baseline justify-between gap-3 text-[13px] text-[#7b8ba5]">
+                <div className="mt-2 flex flex-col gap-1 text-[13px] text-[#7b8ba5] sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
                   <span>{briefHelp}</span>
                   <span
-                    className={`shrink-0 font-medium tabular-nums ${
+                    className={`font-medium tabular-nums sm:shrink-0 ${
                       briefQuality === "weak"
                         ? "text-[#9c5a1c]"
                         : briefQuality === "okay"

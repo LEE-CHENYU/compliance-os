@@ -1,0 +1,61 @@
+id: foreign_owned_entity
+vertical: cpa
+title: "Foreign-owned US entity and Form 5472 CPAs"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "foreign-owned LLC"
+    - "foreign owned LLC"
+    - "foreign-owned US disregarded LLC"
+    - "foreign-owned disregarded LLC"
+    - "foreign-owned US disregarded entity"
+    - "foreign-owned US entity"
+    - "Form 5472"
+    - "1120 pro forma"
+    - "disregarded entity"
+    - "related-party transaction"
+    - "foreign owner"
+    - "EIN"
+    - "ITIN"
+    - "BOI"
+    - "FinCEN"
+  weak_signals:
+    - "LLC"
+    - "nonresident owner"
+    - "single-member"
+    - "owner contribution"
+    - "startup entity"
+  exclude_signals:
+    - "no entity"
+    - "individual return only"
+    - "not foreign-owned"
+
+search_angle: |
+  Find CPA or EA-led practices that understand foreign-owned US disregarded
+  entities, Form 5472 with pro-forma 1120, related-party transaction ledgers,
+  owner contributions/distributions, EIN/ITIN dependencies, BOI/FinCEN
+  coordination, and the difference between bookkeeping cleanup and tax filing.
+
+  Prioritize firms that can work with sparse first-year records without
+  papering over missing related-party transaction detail.
+
+must_weight:
+  - "CPA license or EA credential in good standing"
+  - "Published foreign-owned LLC, Form 5472, pro-forma 1120, or disregarded entity expertise"
+  - "Experience with related-party transaction ledgers and owner contributions/distributions"
+  - "Ability to coordinate ITIN/EIN, BOI, bookkeeping, and nonresident owner tax filings"
+  - "Remote document workflow and clear filing checklist"
+
+also_value:
+  - "Experience with foreign founders, students, investors, or nonresident owners"
+  - "Can review bank statements and cap-table/entity documents"
+  - "Transparent fixed fee for 5472/1120 pro-forma package"
+
+deprioritize:
+  - "Domestic-only LLC preparers unfamiliar with foreign-owner reporting"
+  - "Bookkeepers who cannot prepare or review Form 5472"
+  - "Firms that ignore $25,000+ penalty exposure for late/incomplete 5472"
+
+fee_range_expected_usd: "$800-$3,000+ for 5472/pro-forma 1120; more with bookkeeping cleanup"
+target_count: 6

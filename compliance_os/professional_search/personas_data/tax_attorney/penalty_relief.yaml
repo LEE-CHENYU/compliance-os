@@ -2,6 +2,33 @@ id: penalty_relief
 vertical: tax_attorney
 title: "Penalty relief and tax controversy attorneys"
 
+activation:
+  threshold: 4
+  strong_signals:
+    - "IRS notice"
+    - "penalty"
+    - "penalty abatement"
+    - "CP2000"
+    - "audit"
+    - "exam"
+    - "Tax Court"
+    - "Appeals"
+    - "collection"
+    - "levy"
+    - "lien"
+    - "notice of deficiency"
+    - "90-day letter"
+    - "FBAR penalty"
+  weak_signals:
+    - "letter"
+    - "dispute"
+    - "assessment"
+    - "balance due"
+  exclude_signals:
+    - "no IRS notice"
+    - "no penalty"
+    - "no audit"
+
 search_angle: |
   Find tax controversy attorneys with IRS Appeals, Tax Court, penalty
   abatement, reasonable-cause, collection due process, and exam-defense

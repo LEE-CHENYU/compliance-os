@@ -1,0 +1,62 @@
+id: expat_tax
+vertical: cpa
+title: "Expat and globally mobile US taxpayer CPAs"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "expat"
+    - "living abroad"
+    - "foreign earned income"
+    - "FEIE"
+    - "Form 2555"
+    - "foreign tax credit"
+    - "Form 1116"
+    - "Form 8938"
+    - "FBAR"
+    - "dual-status"
+    - "totalization"
+    - "foreign employer"
+  weak_signals:
+    - "foreign income"
+    - "foreign account"
+    - "overseas"
+    - "tax treaty"
+  exclude_signals:
+    - "not a US taxpayer abroad"
+    - "no foreign income"
+    - "nonresident"
+    - "NRA"
+    - "1040-NR"
+    - "1040NR"
+    - "Form 8843"
+
+search_angle: |
+  Find CPA or EA-led practices for US citizens, green-card holders, residents,
+  and dual-status taxpayers with foreign income, FEIE/Form 2555, foreign tax
+  credits/Form 1116, FBAR, FATCA/Form 8938, treaty issues, and foreign employer
+  payroll or social-tax coordination.
+
+  Prioritize practitioners who can compare FEIE versus foreign tax credit
+  outcomes and document residency/travel facts rather than defaulting to one
+  filing pattern.
+
+must_weight:
+  - "CPA license or EA credential in good standing"
+  - "Published expat, FEIE, FTC, FBAR/FATCA, or dual-status tax expertise"
+  - "Experience with foreign wage, self-employment, and foreign-tax-credit records"
+  - "Secure remote workflow across time zones"
+  - "Ability to flag when a treaty or legal-position issue needs tax counsel"
+
+also_value:
+  - "Multilingual intake or Asia/Europe corridor experience"
+  - "Can coordinate state residency and domicile questions"
+  - "Transparent expat return package pricing"
+
+deprioritize:
+  - "Domestic-only 1040 preparers"
+  - "Mass-market services without a named expat specialist"
+  - "Firms that ignore FBAR/FATCA screening"
+
+fee_range_expected_usd: "$600-$2,500+ for expat individual returns depending on forms and accounts"
+target_count: 6

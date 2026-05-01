@@ -2,6 +2,31 @@ id: cross_border_tax
 vertical: tax_attorney
 title: "Cross-border tax attorneys — treaty and entity classification"
 
+activation:
+  fallback: true
+  threshold: 4
+  strong_signals:
+    - "tax treaty"
+    - "treaty position"
+    - "Form 8833"
+    - "dual-status"
+    - "nonresident"
+    - "resident alien"
+    - "substantial presence"
+    - "foreign tax credit"
+    - "Form 1116"
+    - "GILTI"
+    - "Subpart F"
+    - "PFIC"
+    - "CFC"
+    - "entity classification"
+    - "check-the-box"
+  weak_signals:
+    - "cross-border"
+    - "international tax"
+    - "foreign income"
+    - "US-China"
+
 search_angle: |
   Find tax attorneys with international individual and closely held business
   tax experience, especially treaty positions, foreign tax credits, GILTI /

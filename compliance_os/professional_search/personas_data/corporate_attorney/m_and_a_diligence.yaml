@@ -1,0 +1,57 @@
+id: m_and_a_diligence
+vertical: corporate_attorney
+title: "M&A, asset purchase, and diligence counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "M&A"
+    - "acquisition"
+    - "asset purchase"
+    - "stock purchase"
+    - "LOI"
+    - "letter of intent"
+    - "due diligence"
+    - "acqui-hire"
+    - "sell company"
+    - "buy a business"
+    - "purchase agreement"
+    - "escrow"
+  weak_signals:
+    - "buyer"
+    - "seller"
+    - "transaction"
+    - "diligence"
+  exclude_signals:
+    - "not selling"
+    - "not buying"
+    - "formation only"
+
+search_angle: |
+  Find corporate attorneys who can run small-company M&A, asset purchases,
+  acqui-hires, LOIs, diligence, purchase agreements, escrow, closing mechanics,
+  and founder-specific post-closing constraints.
+
+  Prioritize counsel who can size the work appropriately for a small business
+  or startup transaction while still catching tax, IP, employment, immigration,
+  and liability issues that affect the deal.
+
+must_weight:
+  - "Published M&A, asset purchase, or startup transaction practice focus"
+  - "Experience with small-business/startup diligence and closing process"
+  - "Can coordinate tax, employment, IP, and regulatory diligence"
+  - "Practical fee model for smaller transactions"
+  - "State bar good standing and corporate transactions practice"
+
+also_value:
+  - "Cross-border buyer/seller or foreign-founder transaction experience"
+  - "Can review cap table, founder vesting, IP chain, and contractor records"
+  - "Experience with escrow, holdback, earnout, or transition-services terms"
+
+deprioritize:
+  - "Only mega-deal M&A counsel with minimums that do not fit small transactions"
+  - "Business brokers without attorney-led diligence"
+  - "Formation-only practices with no transaction closing experience"
+
+fee_range_expected_usd: "$5,000-$25,000+ for small transaction counsel depending on complexity"
+target_count: 6

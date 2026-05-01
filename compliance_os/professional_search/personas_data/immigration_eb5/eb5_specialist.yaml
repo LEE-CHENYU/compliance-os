@@ -2,6 +2,24 @@ id: eb5_specialist
 vertical: immigration_eb5
 title: "EB-5 boutiques and specialist practitioners"
 
+activation:
+  fallback: true
+  threshold: 4
+  strong_signals:
+    - "EB-5"
+    - "I-526"
+    - "I-526E"
+    - "I-829"
+    - "regional center"
+    - "investor visa"
+    - "RIA"
+    - "set-aside"
+    - "EB5"
+  weak_signals:
+    - "investment immigration"
+    - "green card investment"
+    - "investor"
+
 search_angle: |
   Find firms where EB-5 is THE practice or a marquee practice — not a
   side menu item. Strongest signals: Chambers USA / Global ranking

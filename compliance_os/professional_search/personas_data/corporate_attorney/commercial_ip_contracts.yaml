@@ -1,0 +1,56 @@
+id: commercial_ip_contracts
+vertical: corporate_attorney
+title: "Commercial contracts and IP ownership counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "MSA"
+    - "SOW"
+    - "SaaS agreement"
+    - "terms of service"
+    - "privacy policy"
+    - "commercial contract"
+    - "customer contract"
+    - "IP assignment"
+    - "license agreement"
+    - "data processing agreement"
+    - "DPA"
+    - "vendor agreement"
+  weak_signals:
+    - "contract"
+    - "IP"
+    - "customer"
+    - "vendor"
+    - "software"
+  exclude_signals:
+    - "no contracts"
+    - "formation only"
+
+search_angle: |
+  Find corporate attorneys who can handle commercial contracts and IP ownership
+  cleanup for founder-led companies: MSAs, SOWs, SaaS terms, DPAs, vendor
+  agreements, IP assignments, open-source issues, and customer negotiation.
+
+  Prioritize counsel who can make contracts operational for a small company,
+  not just produce enterprise templates that are too heavy to use.
+
+must_weight:
+  - "Published commercial contracts, SaaS, IP assignment, or technology transactions focus"
+  - "Experience with startup customer/vendor contract negotiation"
+  - "Can identify IP ownership gaps across founders, employees, and contractors"
+  - "Practical fixed-fee or fractional counsel options"
+  - "State bar good standing and corporate/technology transactions practice"
+
+also_value:
+  - "Privacy/DPA fluency for SaaS and AI products"
+  - "Can coordinate with open-source, security, or product counsel when needed"
+  - "Experience with cross-border contractors or customers"
+
+deprioritize:
+  - "Litigators with no transactional contract workflow"
+  - "Template-only document shops without attorney negotiation support"
+  - "Large enterprise counsel whose minimums do not fit a small company"
+
+fee_range_expected_usd: "$750-$3,500 contract review; fractional counsel or negotiation packages vary"
+target_count: 6

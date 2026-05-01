@@ -1,0 +1,57 @@
+id: regional_center_diligence
+vertical: immigration_eb5
+title: "Regional center and project due-diligence counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "regional center"
+    - "project due diligence"
+    - "NCE"
+    - "JCE"
+    - "TEA"
+    - "rural"
+    - "high unemployment"
+    - "infrastructure"
+    - "set-aside"
+    - "business plan"
+    - "economic report"
+    - "issuer"
+  weak_signals:
+    - "project"
+    - "investment"
+    - "offering"
+    - "due diligence"
+  exclude_signals:
+    - "direct EB-5"
+    - "already invested"
+
+search_angle: |
+  Find EB-5 attorneys who can independently review regional-center projects
+  and offering packages: NCE/JCE structure, TEA/set-aside eligibility, business
+  plans, economic reports, issuer disclosures, investor protections, and RIA
+  compliance.
+
+  This persona is not for generic EB-5 filing. It is for users deciding whether
+  a regional-center investment is immigration-safe and legally coherent before
+  wiring funds.
+
+must_weight:
+  - "Published regional-center, RIA, TEA, set-aside, or project diligence analysis"
+  - "Experience reviewing offering documents and immigration project evidence"
+  - "Ability to coordinate with securities counsel without conflicts"
+  - "Investor-side conflict screening where project or RC referrals are involved"
+  - "EB-5-specific credentials and verifiable project-review work"
+
+also_value:
+  - "Experience with rural/high-unemployment/infrastructure set-aside strategy"
+  - "Can review business plans, economic reports, escrow, and redeployment terms"
+  - "Clear fixed-fee project-review or second-opinion package"
+
+deprioritize:
+  - "Regional-center marketers or migration agents"
+  - "Counsel receiving undisclosed referral compensation from projects"
+  - "Firms that only prepare I-526E forms and do not review project risk"
+
+fee_range_expected_usd: "$2,500-$10,000+ for project review or second opinion"
+target_count: 6

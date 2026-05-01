@@ -2,6 +2,30 @@ id: startup_formation
 vertical: corporate_attorney
 title: "Startup formation counsel — Delaware, founders, 83(b)"
 
+activation:
+  fallback: true
+  threshold: 4
+  strong_signals:
+    - "formation"
+    - "incorporation"
+    - "Delaware"
+    - "C-corp"
+    - "LLC"
+    - "83(b)"
+    - "founder stock"
+    - "vesting"
+    - "IP assignment"
+    - "Clerky"
+    - "Stripe Atlas"
+  weak_signals:
+    - "startup"
+    - "founder"
+    - "new company"
+    - "entity"
+  exclude_signals:
+    - "already formed"
+    - "not formation"
+
 search_angle: |
   Find corporate attorneys who routinely form Delaware C-corps or LLCs for
   early-stage founders, draft founder stock purchase agreements, IP assignment,

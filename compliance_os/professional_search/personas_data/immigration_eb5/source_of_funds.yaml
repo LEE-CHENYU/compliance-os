@@ -2,6 +2,31 @@ id: source_of_funds
 vertical: immigration_eb5
 title: "Source-of-funds specialists (multi-step, China / India / VN origin)"
 
+activation:
+  threshold: 4
+  strong_signals:
+    - "source of funds"
+    - "path of funds"
+    - "SOF"
+    - "gift"
+    - "loan"
+    - "inheritance"
+    - "business sale"
+    - "real estate sale"
+    - "SAFE"
+    - "currency conversion"
+    - "China"
+    - "India"
+    - "Vietnam"
+    - "RFE"
+  weak_signals:
+    - "bank records"
+    - "wire"
+    - "family funds"
+    - "transfer path"
+  exclude_signals:
+    - "source of funds already prepared"
+
 search_angle: |
   Source-of-funds (SOF) and path-of-funds documentation is the
   single most likely point of failure in an I-526E petition,

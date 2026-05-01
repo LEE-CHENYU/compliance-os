@@ -2,6 +2,29 @@ id: securities_sophisticated
 vertical: immigration_eb5
 title: "EB-5 firms with securities-law sophistication"
 
+activation:
+  threshold: 4
+  strong_signals:
+    - "PPM"
+    - "private placement"
+    - "subscription agreement"
+    - "securities"
+    - "Reg D"
+    - "Reg S"
+    - "offering documents"
+    - "escrow"
+    - "redeployment"
+    - "investment risk"
+    - "regional center offering"
+  weak_signals:
+    - "due diligence"
+    - "project documents"
+    - "NCE"
+    - "JCE"
+  exclude_signals:
+    - "direct EB-5 only"
+    - "no securities review"
+
 search_angle: |
   EB-5 investments are securities transactions wrapped in an
   immigration filing. The single biggest gap between competent and

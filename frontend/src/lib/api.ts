@@ -140,7 +140,7 @@ export const updateDocument = (caseId: string, docId: string, update: { slot_key
 export const deleteDocument = (caseId: string, docId: string) =>
   request<{ ok: boolean }>(`/cases/${caseId}/documents/${docId}`, { method: "DELETE" });
 
-// --- Professional Search (lawyer / CPA / banker discovery) ---
+// --- Professional Search (attorney / CPA discovery) ---
 
 export interface ProfessionalSearch {
   id: string;

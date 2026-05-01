@@ -1,0 +1,57 @@
+id: employment_contractors
+vertical: corporate_attorney
+title: "Employment, contractor, and founder-workforce counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "contractor"
+    - "employee"
+    - "offer letter"
+    - "consulting agreement"
+    - "independent contractor"
+    - "worker classification"
+    - "PEO"
+    - "payroll"
+    - "advisor agreement"
+    - "invention assignment"
+    - "noncompete"
+    - "termination"
+  weak_signals:
+    - "hire"
+    - "employment"
+    - "consultant"
+    - "advisor"
+    - "HR"
+  exclude_signals:
+    - "no employees"
+    - "no contractors"
+
+search_angle: |
+  Find corporate/employment counsel who can help early-stage companies hire
+  employees, engage contractors, issue advisor agreements, protect IP, and avoid
+  worker-classification problems across states or countries.
+
+  Prioritize lawyers who understand founder-operating constraints: clean,
+  usable documents, payroll/PEO coordination, and IP assignment coverage before
+  investor or immigration diligence.
+
+must_weight:
+  - "Published startup employment, contractor, advisor, or IP-assignment guidance"
+  - "Experience with employee/contractor classification and state-law variation"
+  - "Can coordinate offer letters, consulting agreements, invention assignment, and termination risk"
+  - "Practical fixed-fee or outside-general-counsel support"
+  - "State bar good standing and employment/corporate practice focus"
+
+also_value:
+  - "Cross-border contractor and remote-workforce experience"
+  - "Can coordinate with immigration counsel for founder or visa-holder work authorization"
+  - "Experience with PEO/payroll vendor workflows"
+
+deprioritize:
+  - "Plaintiff-only employment litigators for routine company setup"
+  - "Template vendors without state-specific review"
+  - "Enterprise-only counsel with high minimums"
+
+fee_range_expected_usd: "$500-$2,500 document package/review; ongoing counsel varies"
+target_count: 6

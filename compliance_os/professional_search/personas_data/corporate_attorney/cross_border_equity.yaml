@@ -2,6 +2,29 @@ id: cross_border_equity
 vertical: corporate_attorney
 title: "Cross-border equity and cap-table counsel"
 
+activation:
+  threshold: 4
+  strong_signals:
+    - "foreign founder"
+    - "nonresident shareholder"
+    - "cross-border equity"
+    - "cap table"
+    - "founder shares"
+    - "IP ownership"
+    - "withholding"
+    - "F-class"
+    - "foreign investor"
+    - "China founder"
+    - "offshore parent"
+  weak_signals:
+    - "equity"
+    - "shares"
+    - "stock"
+    - "IP"
+  exclude_signals:
+    - "no equity"
+    - "domestic only"
+
 search_angle: |
   Find corporate counsel comfortable with foreign founders, nonresident
   shareholders, cross-border IP ownership, withholding concerns, secondary

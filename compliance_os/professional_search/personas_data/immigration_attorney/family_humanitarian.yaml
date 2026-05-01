@@ -1,0 +1,64 @@
+id: family_humanitarian
+vertical: immigration_attorney
+title: "Family, waiver, and humanitarian immigration counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "I-130"
+    - "I-485"
+    - "marriage green card"
+    - "spouse"
+    - "parent petition"
+    - "fiance"
+    - "K-1"
+    - "asylum"
+    - "VAWA"
+    - "U visa"
+    - "T visa"
+    - "I-601"
+    - "I-212"
+    - "waiver"
+    - "removal"
+    - "deportation"
+    - "NTA"
+  weak_signals:
+    - "family"
+    - "humanitarian"
+    - "inadmissibility"
+    - "interview"
+    - "hardship"
+  exclude_signals:
+    - "employment-based"
+    - "PERM"
+    - "H-1B only"
+
+search_angle: |
+  Find immigration attorneys with substantial family-based, waiver, removal,
+  and humanitarian practice experience: I-130/I-485, consular processing,
+  inadmissibility waivers, asylum, VAWA, U/T visas, and removal defense.
+
+  Prioritize firms that can handle facts where family immigration overlaps
+  with status violations, unlawful presence, criminal history, prior denials,
+  or humanitarian risk. The search should separate routine marriage green-card
+  practices from counsel who can handle waiver and court-adjacent risk.
+
+must_weight:
+  - "Published family, waiver, asylum, VAWA, U/T, or removal-defense practice focus"
+  - "Named attorneys with immigration-court or waiver package experience"
+  - "Ability to explain inadmissibility, unlawful presence, and hardship evidence"
+  - "Clear process for client declarations, country-condition evidence, or family evidence"
+  - "State bar good standing and verifiable immigration credentials"
+
+also_value:
+  - "Trauma-informed or multilingual intake"
+  - "Experience with consular processing and embassy/administrative-processing issues"
+  - "Transparent fees for consult, waiver memo, and full filing"
+
+deprioritize:
+  - "Employment-only practices"
+  - "Low-cost filing mills that cannot handle legal-risk facts"
+  - "Firms promising guaranteed waiver or asylum outcomes"
+
+fee_range_expected_usd: "$2,000-$8,000+ for family filings; waivers/removal/asylum often higher"
+target_count: 6

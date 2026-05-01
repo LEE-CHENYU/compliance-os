@@ -462,10 +462,38 @@ PERSONA_LABELS = {
     "elite_boutique": "Elite boutiques",
     "startup_founder": "Startup / founder-focused",
     "litigation_contrarian": "Federal-court litigators",
+    "employment_green_card": "Employment green-card counsel",
+    "family_humanitarian": "Family / humanitarian counsel",
+    "student_opt_status": "Student / OPT status counsel",
     # EB-5 set
     "eb5_specialist": "EB-5 specialists",
     "securities_sophisticated": "Securities-sophisticated",
     "source_of_funds": "Source-of-funds specialists",
+    "i829_redeployment": "I-829 / redeployment counsel",
+    "mandamus_delay": "Mandamus / delay litigators",
+    "regional_center_diligence": "Regional center diligence counsel",
+    # Tax attorney set
+    "cross_border_tax": "Cross-border tax counsel",
+    "crypto_digital_assets": "Crypto / digital-asset tax counsel",
+    "disclosure_remediation": "Disclosure and remediation counsel",
+    "estate_gift_cross_border": "Estate / gift cross-border counsel",
+    "international_info_returns": "International information-return counsel",
+    "penalty_relief": "Penalty relief and controversy counsel",
+    # Corporate attorney set
+    "commercial_ip_contracts": "Commercial / IP contracts counsel",
+    "cross_border_equity": "Cross-border equity counsel",
+    "employment_contractors": "Employment / contractor counsel",
+    "m_and_a_diligence": "M&A diligence counsel",
+    "safes_and_notes": "SAFE and note counsel",
+    "startup_formation": "Startup formation counsel",
+    # CPA set
+    "audit_defense": "Audit-defense CPAs",
+    "equity_crypto_tax": "Equity / crypto tax CPAs",
+    "expat_tax": "Expat tax CPAs",
+    "foreign_owned_entity": "Foreign-owned entity CPAs",
+    "founder_accounting": "Founder-friendly accounting CPAs",
+    "international_tax": "International tax CPAs",
+    "state_sales_tax": "State / sales-tax CPAs",
 }
 
 

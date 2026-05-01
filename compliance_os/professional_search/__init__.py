@@ -1,4 +1,4 @@
-"""Professional-search subsystem — find and track attorneys, CPAs, bankers, etc.
+"""Professional-search subsystem — find and track attorneys, CPAs, and specialists.
 
 Two complementary modes:
 

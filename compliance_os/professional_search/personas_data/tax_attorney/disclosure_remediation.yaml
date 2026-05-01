@@ -2,6 +2,33 @@ id: disclosure_remediation
 vertical: tax_attorney
 title: "Disclosure and remediation counsel"
 
+activation:
+  threshold: 4
+  strong_signals:
+    - "voluntary disclosure"
+    - "streamlined"
+    - "delinquent FBAR"
+    - "late FBAR"
+    - "late 5471"
+    - "late 5472"
+    - "late 3520"
+    - "late information return"
+    - "reasonable cause"
+    - "willful"
+    - "non-willful"
+    - "prior-year cleanup"
+    - "missed filing"
+    - "remediation"
+  weak_signals:
+    - "late"
+    - "cleanup"
+    - "amended"
+    - "forgot"
+  exclude_signals:
+    - "no late filing"
+    - "no remediation"
+    - "no disclosure"
+
 search_angle: |
   Find tax attorneys focused on voluntary disclosure, streamlined filing
   compliance procedures, delinquent FBAR/information return submissions,

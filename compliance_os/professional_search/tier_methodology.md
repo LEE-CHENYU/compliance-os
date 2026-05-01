@@ -1,7 +1,7 @@
 # Professional Tier List — Methodology
 
-A reusable methodology for ranking professionals (attorneys, CPAs,
-bankers, CAAs) by externally-verifiable credentials only. Ported and
+A reusable methodology for ranking professionals, with primary focus on
+attorneys and CPAs, by externally-verifiable credentials only. Ported and
 generalized from the accounting project's
 `attorney_external_credentials_tierlist_042326.txt`.
 
@@ -21,8 +21,8 @@ third party has to issue.
   table against this list.
 - **Generalizing to other verticals** — swap in vertical-specific
   directories (e.g. for CPAs, replace Chambers with AICPA practice
-  specialization; for banks, replace AILA with state banking
-  commissioner enforcement history).
+  specialization; for legacy banking searches, replace AILA with state
+  banking commissioner enforcement history).
 
 ---
 

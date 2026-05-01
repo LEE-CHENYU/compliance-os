@@ -2,6 +2,26 @@ id: elite_boutique
 vertical: immigration_attorney
 title: "Elite boutiques — Chambers-ranked, AILA leadership"
 
+activation:
+  fallback: true
+  threshold: 4
+  strong_signals:
+    - "complex immigration"
+    - "high-stakes"
+    - "second opinion"
+    - "Chambers"
+    - "AILA leadership"
+    - "state-bar certified"
+    - "certified specialist"
+    - "unusual fact pattern"
+    - "premium counsel"
+  weak_signals:
+    - "immigration"
+    - "attorney"
+    - "lawyer"
+    - "strategy"
+    - "expert"
+
 search_angle: |
   Find boutique to mid-sized immigration firms (5–50 attorneys) with
   strong externally-verifiable credentials. Prefer firms where

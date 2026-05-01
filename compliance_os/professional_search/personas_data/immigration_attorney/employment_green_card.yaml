@@ -1,0 +1,62 @@
+id: employment_green_card
+vertical: immigration_attorney
+title: "Employment green-card and extraordinary-ability counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "PERM"
+    - "labor certification"
+    - "I-140"
+    - "I-485"
+    - "employment green card"
+    - "EB-1"
+    - "EB-2"
+    - "EB-3"
+    - "NIW"
+    - "National Interest Waiver"
+    - "O-1"
+    - "extraordinary ability"
+    - "priority date"
+    - "adjustment of status"
+    - "consular processing"
+  weak_signals:
+    - "green card"
+    - "petition"
+    - "profile"
+    - "publications"
+    - "citations"
+  exclude_signals:
+    - "not green card"
+    - "only H-1B"
+    - "family-based"
+
+search_angle: |
+  Find immigration attorneys with a strong employment-based permanent
+  residence and talent-visa practice: PERM, I-140, EB-1, EB-2 NIW, O-1,
+  adjustment of status, and consular processing.
+
+  Prioritize counsel who can evaluate evidence quality and timing, not just
+  fill forms. The right firm can explain whether the user should pursue PERM,
+  NIW, EB-1, O-1 bridge strategy, or a staged approach tied to visa max-out,
+  priority-date, or travel constraints.
+
+must_weight:
+  - "Published employment-based green-card, NIW, EB-1, O-1, or PERM analysis"
+  - "Named attorneys with verifiable employment immigration credentials"
+  - "Evidence strategy for recommendation letters, citations, publications, awards, or business traction"
+  - "Ability to coordinate nonimmigrant bridge timing with I-140/I-485 strategy"
+  - "Transparent scope for eligibility review versus full petition drafting"
+
+also_value:
+  - "Experience with founders, researchers, engineers, artists, or nontraditional profiles"
+  - "AAO appeal or federal-court record for I-140/O-1 denials"
+  - "Can coordinate dependent and travel strategy"
+
+deprioritize:
+  - "Form-filling practices with no evidence-strategy content"
+  - "Firms that advertise guaranteed NIW/EB-1 approval"
+  - "Pure family immigration practices with only incidental employment work"
+
+fee_range_expected_usd: "$3,500-$12,000 for NIW/O-1/EB-1 strategy and filing; PERM + I-140 often higher"
+target_count: 6

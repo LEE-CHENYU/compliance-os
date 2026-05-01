@@ -1,0 +1,61 @@
+id: international_info_returns
+vertical: tax_attorney
+title: "International information-return penalty counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "Form 5471"
+    - "Form 5472"
+    - "Form 3520"
+    - "Form 3520-A"
+    - "Form 8938"
+    - "Form 8865"
+    - "Form 8858"
+    - "FBAR"
+    - "FinCEN 114"
+    - "foreign corporation"
+    - "foreign partnership"
+    - "foreign-owned LLC"
+    - "information return penalty"
+    - "$10,000 penalty"
+  weak_signals:
+    - "foreign account"
+    - "foreign entity"
+    - "foreign trust"
+    - "CFC"
+    - "PFIC"
+  exclude_signals:
+    - "no foreign accounts"
+    - "no foreign entity"
+    - "no information returns"
+
+search_angle: |
+  Find tax attorneys who focus on international information-return reporting
+  and penalty defense: Forms 5471, 5472, 3520/3520-A, 8938, 8865, 8858,
+  FBAR/FinCEN 114, foreign-owned disregarded entities, CFC/PFIC issues, and
+  reasonable-cause strategy.
+
+  Prioritize counsel who can decide whether the issue is routine CPA filing,
+  reasonable-cause remediation, streamlined filing, or controversy requiring
+  attorney-client privilege.
+
+must_weight:
+  - "Published international information-return or FBAR penalty analysis"
+  - "Experience with Forms 5471, 5472, 3520, 8938, 8865, 8858, or FinCEN 114"
+  - "Reasonable-cause and penalty-defense practice"
+  - "Ability to coordinate with CPAs for amended or delinquent filings"
+  - "State bar good standing and tax controversy/international tax focus"
+
+also_value:
+  - "Experience with foreign-owned US LLCs, CFCs, PFICs, or foreign trusts"
+  - "Can review entity charts and bank/brokerage records"
+  - "Transparent diagnostic and remediation-roadmap pricing"
+
+deprioritize:
+  - "Filing-only CPAs where privilege may matter"
+  - "Tax-debt marketers with no international information-return expertise"
+  - "Firms that cannot distinguish willful and non-willful paths"
+
+fee_range_expected_usd: "$750-$3,500 diagnostic; $3,000-$15,000+ for remediation or penalty defense"
+target_count: 6

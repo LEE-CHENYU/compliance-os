@@ -1,0 +1,58 @@
+id: crypto_digital_assets
+vertical: tax_attorney
+title: "Crypto and digital-asset tax counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "crypto"
+    - "cryptocurrency"
+    - "digital asset"
+    - "DeFi"
+    - "staking"
+    - "airdrops"
+    - "NFT"
+    - "wallet"
+    - "exchange"
+    - "Coinbase"
+    - "Binance"
+    - "basis"
+    - "Form 8949"
+    - "1099-DA"
+  weak_signals:
+    - "token"
+    - "mining"
+    - "trading"
+    - "capital gains"
+  exclude_signals:
+    - "no crypto"
+    - "no digital assets"
+
+search_angle: |
+  Find tax attorneys who can advise on crypto and digital-asset tax positions,
+  especially where the facts are too legal-risk-heavy for a CPA alone: DeFi,
+  staking, airdrops, NFTs, wallet tracing, exchange failures, cross-border
+  transfers, or amended filings.
+
+  Prioritize counsel who can distinguish ordinary tax reporting cleanup from
+  legal-position risk, penalty exposure, or privilege-sensitive facts.
+
+must_weight:
+  - "Published crypto or digital-asset tax analysis"
+  - "Experience with Form 8949, basis reconstruction, staking/airdrop income, or DeFi transactions"
+  - "Ability to coordinate with CPA software workflows without treating software as legal advice"
+  - "Tax controversy awareness for amended filings and penalty risk"
+  - "State bar good standing and tax practice focus"
+
+also_value:
+  - "Experience with cross-border wallets, foreign exchanges, or FBAR/8938 crypto uncertainty"
+  - "Can work with forensic crypto accountants when transaction volume is high"
+  - "Transparent diagnostic memo or consult fee"
+
+deprioritize:
+  - "Crypto tax software-only vendors"
+  - "Preparers with no attorney privilege or legal-position analysis"
+  - "Promoters of aggressive no-tax positions"
+
+fee_range_expected_usd: "$500-$2,500 diagnostic; $3,000-$15,000+ for complex remediation or controversy"
+target_count: 6

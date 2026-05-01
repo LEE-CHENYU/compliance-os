@@ -1,0 +1,52 @@
+id: i829_redeployment
+vertical: immigration_eb5
+title: "I-829, sustainment, and redeployment counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "I-829"
+    - "remove conditions"
+    - "sustainment"
+    - "redeployment"
+    - "job creation"
+    - "TEA"
+    - "conditional green card"
+    - "NCE"
+    - "JCE"
+    - "at-risk"
+    - "material change"
+  weak_signals:
+    - "conditions"
+    - "project delay"
+    - "capital returned"
+    - "deployment"
+  exclude_signals:
+    - "pre-investment only"
+    - "not I-829"
+
+search_angle: |
+  Find EB-5 attorneys with strong I-829, sustainment, job-creation, material
+  change, and redeployment experience. This persona is for investors who are
+  already invested, conditionally approved, or facing post-investment project
+  changes rather than choosing a new EB-5 project.
+
+must_weight:
+  - "Published I-829, sustainment, redeployment, or job-creation analysis"
+  - "Documented work on material change, redeployment, or project distress issues"
+  - "Ability to review NCE/JCE updates, investor notices, and job-creation evidence"
+  - "Experience responding to I-829 RFEs or NOIDs"
+  - "EB-5-specific attorney credentials, not general immigration only"
+
+also_value:
+  - "Coordination with securities counsel or litigation counsel when project distress is present"
+  - "Experience with post-RIA sustainment and redeployment rules"
+  - "China/India/Vietnam investor communication channels"
+
+deprioritize:
+  - "Firms focused only on pre-investment marketing"
+  - "Regional-center-side counsel with no investor-side conflict screening"
+  - "General immigration practices with no I-829 track record"
+
+fee_range_expected_usd: "$4,000-$12,000+ for I-829/redeployment strategy; more for RFE/NOID or litigation"
+target_count: 6

@@ -1,0 +1,58 @@
+id: estate_gift_cross_border
+vertical: tax_attorney
+title: "Cross-border estate, gift, and inheritance tax counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "gift"
+    - "inheritance"
+    - "estate"
+    - "Form 709"
+    - "Form 3520"
+    - "foreign trust"
+    - "nonresident estate"
+    - "NRA gift"
+    - "expatriation"
+    - "covered expatriate"
+    - "exit tax"
+    - "generation-skipping"
+  weak_signals:
+    - "family transfer"
+    - "parents"
+    - "trust"
+    - "beneficiary"
+    - "wire from family"
+  exclude_signals:
+    - "no gift"
+    - "no estate"
+    - "no inheritance"
+
+search_angle: |
+  Find tax attorneys focused on cross-border estate, gift, inheritance, and
+  trust issues: foreign gifts, Form 3520, Form 709, nonresident donor/donee
+  planning, estate tax situs analysis, expatriation, and family wealth transfers.
+
+  Prioritize attorneys who can give legal-position advice before a CPA reports
+  the transfer, especially where source documents, family entities, trusts, or
+  foreign-law concepts affect US reporting.
+
+must_weight:
+  - "Published cross-border estate/gift/trust or expatriation tax analysis"
+  - "Experience with Forms 3520, 3520-A, 709, estate situs, or nonresident gift rules"
+  - "Ability to coordinate with CPA reporting and foreign counsel documentation"
+  - "Privilege-sensitive intake for family wealth and trust facts"
+  - "State bar good standing and tax/estate practice focus"
+
+also_value:
+  - "Asia corridor or multilingual family-office intake"
+  - "Can review gift letters, trust deeds, estate documents, and transfer records"
+  - "Transparent consult or memo package"
+
+deprioritize:
+  - "Domestic-only estate planners with no international reporting experience"
+  - "Pure return preparers without legal planning scope"
+  - "Promoters of undocumented gift/inheritance reporting shortcuts"
+
+fee_range_expected_usd: "$750-$3,500 memo/consult; planning or remediation can exceed $10,000"
+target_count: 6

@@ -250,17 +250,33 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
     elite_boutique: "Elite Boutique",
     startup_founder: "Startup Founder",
     litigation_contrarian: "Litigation Contrarian",
+    employment_green_card: "Employment Green Card",
+    family_humanitarian: "Family / Humanitarian",
+    student_opt_status: "Student / OPT Status",
     eb5_specialist: "EB-5 Specialist",
     securities_sophisticated: "Securities Sophisticated",
     source_of_funds: "Source-of-Funds Specialist",
+    i829_redeployment: "I-829 / Redeployment",
+    mandamus_delay: "Mandamus / Delay",
+    regional_center_diligence: "Regional Center Diligence",
     cross_border_tax: "Cross-Border Tax",
+    crypto_digital_assets: "Crypto / Digital Assets",
     penalty_relief: "Penalty Relief",
     disclosure_remediation: "Disclosure Remediation",
+    estate_gift_cross_border: "Estate / Gift",
+    international_info_returns: "International Information Returns",
     startup_formation: "Startup Formation",
     safes_and_notes: "SAFEs and Notes",
     cross_border_equity: "Cross-Border Equity",
+    commercial_ip_contracts: "Commercial / IP Contracts",
+    employment_contractors: "Employment / Contractors",
+    m_and_a_diligence: "M&A Diligence",
     international_tax: "International Tax CPA",
+    equity_crypto_tax: "Equity / Crypto Tax",
+    expat_tax: "Expat Tax",
+    foreign_owned_entity: "Foreign-Owned Entity",
     founder_accounting: "Founder Accounting",
+    state_sales_tax: "State / Sales Tax",
     audit_defense: "Audit Defense",
     foreign_founder_banking: "Foreign-Founder Banking",
     startup_banking: "Startup Banking",
@@ -273,17 +289,33 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
     elite_boutique: "精英精品律所",
     startup_founder: "初创 / 创始人导向",
     litigation_contrarian: "联邦诉讼律师",
+    employment_green_card: "职业绿卡 / 杰出人才",
+    family_humanitarian: "家庭 / 人道移民",
+    student_opt_status: "学生 / OPT 身份",
     eb5_specialist: "EB-5 专家",
     securities_sophisticated: "证券法精通",
     source_of_funds: "资金来源专家",
+    i829_redeployment: "I-829 / 再投资",
+    mandamus_delay: "曼达穆斯 / 延误诉讼",
+    regional_center_diligence: "区域中心尽调",
     cross_border_tax: "跨境税务",
+    crypto_digital_assets: "加密资产税务",
     penalty_relief: "罚款减免",
     disclosure_remediation: "披露 / 补正",
+    estate_gift_cross_border: "跨境赠与 / 遗产",
+    international_info_returns: "国际信息申报",
     startup_formation: "初创设立",
     safes_and_notes: "SAFE / 可转债",
     cross_border_equity: "跨境股权",
+    commercial_ip_contracts: "商业合同 / IP",
+    employment_contractors: "雇佣 / 承包商",
+    m_and_a_diligence: "并购尽调",
     international_tax: "国际税务 CPA",
+    equity_crypto_tax: "股权 / 加密税务",
+    expat_tax: "海外美国纳税人",
+    foreign_owned_entity: "外国人持股实体",
     founder_accounting: "创始人会计",
+    state_sales_tax: "州税 / 销售税",
     audit_defense: "稽查应对",
     foreign_founder_banking: "外国创始人银行",
     startup_banking: "初创银行",
@@ -295,11 +327,12 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
 };
 
 /**
- * Per-vertical preview of the search agents that will run for the
+ * Per-vertical preview of the search agents the selector can run for the
  * intake page's right-hand "How this works" panel. The list shifts to
  * match the selected vertical so users see what kind of professionals
- * we'll actually look for. Falls back to immigration_attorney when a
- * vertical doesn't yet have a curated preview.
+ * we can look for, while the backend prunes irrelevant agents from the
+ * actual run. Falls back to immigration_attorney when a vertical doesn't
+ * yet have a curated preview.
  *
  * The backend ships matching persona YAMLs for every vertical listed in
  * VERTICAL_LABELS; keep this preview list in sync with those canonical
@@ -322,6 +355,18 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
         title: "Federal-court litigators",
         body: "Former DOJ/OIL attorneys; counsel of record in ITServe-lineage APA challenges.",
       },
+      {
+        title: "Employment green-card counsel",
+        body: "PERM, NIW, EB-1, O-1, priority-date, and adjustment strategy for work-based cases.",
+      },
+      {
+        title: "Student / OPT status counsel",
+        body: "F-1, OPT/STEM OPT, CPT, SEVIS, cap-gap, reinstatement, and travel-timing risk.",
+      },
+      {
+        title: "Family + humanitarian counsel",
+        body: "I-130/I-485, waivers, asylum, VAWA, U/T visas, and removal-adjacent risk.",
+      },
     ],
     immigration_eb5: [
       {
@@ -335,6 +380,18 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
       {
         title: "Source-of-funds specialists",
         body: "Multi-step path-of-funds tracing for China / India / Vietnam origin; documented federal-court SOF wins.",
+      },
+      {
+        title: "Regional-center diligence",
+        body: "Project, NCE/JCE, TEA/set-aside, business-plan, and offering-package review before wiring funds.",
+      },
+      {
+        title: "I-829 + redeployment",
+        body: "Sustainment, material change, job creation, redeployment, and post-investment RFE strategy.",
+      },
+      {
+        title: "Mandamus / delay litigation",
+        body: "EB-5-specific APA and mandamus counsel for delayed I-526E, I-829, AOS, or consular stages.",
       },
     ],
     tax_attorney: [
@@ -350,6 +407,18 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
         title: "Disclosure + remediation",
         body: "Streamlined / OVDP / FBAR / FATCA practice; specialty in late-filing remediation.",
       },
+      {
+        title: "Information-return penalties",
+        body: "5471, 5472, 3520, 8938, 8865, 8858, FBAR, and reasonable-cause strategy.",
+      },
+      {
+        title: "Crypto + digital assets",
+        body: "DeFi, staking, airdrops, wallet tracing, basis reconstruction, and amended-position risk.",
+      },
+      {
+        title: "Estate + gift cross-border",
+        body: "Foreign gifts, inheritance, trusts, 3520/709, expatriation, and family wealth transfers.",
+      },
     ],
     cpa: [
       {
@@ -364,6 +433,22 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
         title: "Audit-defense specialists",
         body: "IRS examination representation; voluntary disclosure / streamlined consulting.",
       },
+      {
+        title: "Foreign-owned entity CPAs",
+        body: "Form 5472, pro-forma 1120, disregarded entities, owner ledgers, EIN/ITIN, and BOI coordination.",
+      },
+      {
+        title: "Expat tax CPAs",
+        body: "FEIE, FTC, FBAR/FATCA, foreign employer, dual-status, and globally mobile taxpayer filings.",
+      },
+      {
+        title: "Equity + crypto tax CPAs",
+        body: "ISOs, NSOs, RSUs, 83(b), AMT, 8949, crypto basis, and transaction reconciliation.",
+      },
+      {
+        title: "State + sales-tax CPAs",
+        body: "Nexus, registrations, franchise tax, SaaS/ecommerce taxability, notices, and filing calendars.",
+      },
     ],
     corporate_attorney: [
       {
@@ -377,6 +462,18 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
       {
         title: "Cross-border equity / cap table",
         body: "Foreign founders, NRA tax issues, F-class shares, withholding-tax structuring.",
+      },
+      {
+        title: "Commercial + IP contracts",
+        body: "MSAs, SOWs, SaaS terms, DPAs, vendor agreements, IP assignments, and product counsel.",
+      },
+      {
+        title: "Employment + contractors",
+        body: "Offer letters, advisor agreements, contractor classification, PEO/payroll, and IP assignment.",
+      },
+      {
+        title: "M&A + diligence",
+        body: "LOIs, asset purchases, acqui-hires, escrow, closing mechanics, and small-company diligence.",
       },
     ],
     bank: [
@@ -422,6 +519,18 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
         title: "联邦法院诉讼律师",
         body: "前 DOJ / OIL 律师;在 ITServe 系列 APA 诉讼中担任主辩。",
       },
+      {
+        title: "职业绿卡律师",
+        body: "PERM、NIW、EB-1、O-1、优先日和 I-485 / 领馆处理策略。",
+      },
+      {
+        title: "学生 / OPT 身份律师",
+        body: "F-1、OPT/STEM OPT、CPT、SEVIS、cap-gap、恢复身份和旅行时点风险。",
+      },
+      {
+        title: "家庭 / 人道移民律师",
+        body: "I-130/I-485、豁免、庇护、VAWA、U/T 签证和递解风险。",
+      },
     ],
     immigration_eb5: [
       {
@@ -435,6 +544,18 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
       {
         title: "资金来源专家",
         body: "中国 / 印度 / 越南来源资金多步骤路径追溯;有联邦法院 SOF 胜诉记录。",
+      },
+      {
+        title: "区域中心尽调",
+        body: "汇款前审查项目、NCE/JCE、TEA / 预留名额、商业计划和发行文件。",
+      },
+      {
+        title: "I-829 / 再投资",
+        body: "维持投资、重大变化、就业创造、再投资和投后 RFE 策略。",
+      },
+      {
+        title: "曼达穆斯 / 延误诉讼",
+        body: "针对 I-526E、I-829、AOS 或领馆阶段延误的 EB-5 APA / mandamus 律师。",
       },
     ],
     tax_attorney: [
@@ -450,6 +571,18 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
         title: "披露 / 合规补正",
         body: "Streamlined / OVDP / FBAR / FATCA 实务专精;迟报情况补救经验丰富。",
       },
+      {
+        title: "国际信息申报罚款",
+        body: "5471、5472、3520、8938、8865、8858、FBAR 和 reasonable-cause 策略。",
+      },
+      {
+        title: "加密资产税务",
+        body: "DeFi、staking、空投、钱包追踪、成本基础重建和补报风险。",
+      },
+      {
+        title: "跨境赠与 / 遗产",
+        body: "外国赠与、继承、信托、3520/709、弃籍税和家庭财富转移。",
+      },
     ],
     cpa: [
       {
@@ -464,6 +597,22 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
         title: "稽查应对专家",
         body: "IRS 审计代表;自愿披露 / streamlined 咨询。",
       },
+      {
+        title: "外国人持股实体 CPA",
+        body: "Form 5472、pro-forma 1120、disregarded entity、业主往来账、EIN/ITIN 和 BOI 协调。",
+      },
+      {
+        title: "海外美国纳税人 CPA",
+        body: "FEIE、FTC、FBAR/FATCA、外国雇主、双重身份和全球流动纳税人申报。",
+      },
+      {
+        title: "股权 + 加密税务 CPA",
+        body: "ISO、NSO、RSU、83(b)、AMT、8949、加密资产成本基础和交易核对。",
+      },
+      {
+        title: "州税 + 销售税 CPA",
+        body: "Nexus、注册、franchise tax、SaaS / 电商税务、通知和申报日历。",
+      },
     ],
     corporate_attorney: [
       {
@@ -477,6 +626,18 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
       {
         title: "跨境股权 / 股权架构",
         body: "外国创始人、NRA 税务、F 类股、预提税结构设计。",
+      },
+      {
+        title: "商业合同 / IP",
+        body: "MSA、SOW、SaaS 条款、DPA、供应商协议、IP 转让和产品法律支持。",
+      },
+      {
+        title: "雇佣 / 承包商",
+        body: "offer letter、顾问协议、承包商分类、PEO/工资单和 IP 转让。",
+      },
+      {
+        title: "并购 + 尽调",
+        body: "LOI、资产收购、acqui-hire、escrow、交割机制和小公司尽调。",
       },
     ],
     bank: [

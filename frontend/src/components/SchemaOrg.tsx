@@ -188,7 +188,7 @@ export const FIND_LAWYER_SCHEMA = {
     {
       "@type": "Service",
       name: "Guardian professional matching",
-      serviceType: "Attorney, CPA, banking provider, and CAA shortlisting",
+      serviceType: "Attorney and CPA shortlisting",
       provider: { "@type": "Organization", name: "Guardian", url: SITE_URL },
       areaServed: "United States",
       audience: {
@@ -212,8 +212,6 @@ export const FIND_LAWYER_SCHEMA = {
           { "@type": "Offer", itemOffered: { "@type": "Service", name: "Tax attorney" } },
           { "@type": "Offer", itemOffered: { "@type": "Service", name: "Corporate attorney" } },
           { "@type": "Offer", itemOffered: { "@type": "Service", name: "CPA — nonresident tax" } },
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Bank — US business banking for nonresidents" } },
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Certifying Acceptance Agent (CAA)" } },
         ],
       },
     },

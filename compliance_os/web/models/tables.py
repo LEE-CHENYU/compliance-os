@@ -100,7 +100,7 @@ class DocumentRow(Base):
 
 
 class ProfessionalSearchRequestRow(Base):
-    """User-initiated search for professionals (attorneys / CPAs / bankers).
+    """User-initiated search for professionals (primarily attorneys / CPAs).
 
     Populated by `POST /api/professional-search`, driven to completion by
     the runner in `services/professional_search_runner.py`. `status`

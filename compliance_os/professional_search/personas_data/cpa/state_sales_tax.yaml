@@ -1,0 +1,58 @@
+id: state_sales_tax
+vertical: cpa
+title: "State, sales-tax, and multistate compliance CPAs"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "sales tax"
+    - "nexus"
+    - "economic nexus"
+    - "state registration"
+    - "franchise tax"
+    - "Delaware annual report"
+    - "California FTB"
+    - "state income tax"
+    - "multi-state"
+    - "multistate"
+    - "1099-K"
+    - "marketplace facilitator"
+  weak_signals:
+    - "state"
+    - "remote sales"
+    - "SaaS"
+    - "Shopify"
+    - "Stripe"
+  exclude_signals:
+    - "no sales tax"
+    - "one state only"
+    - "federal only"
+
+search_angle: |
+  Find CPA or sales-tax specialist practices that can help small businesses
+  and founders with state income/franchise tax, sales-tax nexus, marketplace
+  facilitator rules, SaaS taxability, Delaware/California compliance, state
+  registrations, and notices.
+
+  Prioritize practical compliance triage: determine what needs registration or
+  filing now, what can be monitored, and what requires attorney advice.
+
+must_weight:
+  - "CPA license, EA credential, or dedicated state/sales-tax specialist team"
+  - "Published state nexus, sales-tax, franchise-tax, or multistate compliance expertise"
+  - "Experience with SaaS, ecommerce, Stripe/Shopify, or marketplace revenue"
+  - "Ability to handle registrations, notices, and filing calendar setup"
+  - "Clear boundary between tax preparation and legal nexus opinions"
+
+also_value:
+  - "Can coordinate bookkeeping categories and revenue sourcing"
+  - "Packages for early-stage businesses with limited transactions"
+  - "Transparent setup and monthly filing fees"
+
+deprioritize:
+  - "Federal-only tax preparers"
+  - "Generic registration vendors with no tax analysis"
+  - "Firms that register every state without threshold analysis"
+
+fee_range_expected_usd: "$500-$2,500 nexus review/setup; ongoing filing often $50-$300/state/month"
+target_count: 6

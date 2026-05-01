@@ -276,7 +276,8 @@ def _methodology_system_block() -> list[dict]:
             "type": "text",
             "text": (
                 "You are a professional-search analyst helping a user find "
-                "lawyers, CPAs, or bankers for their case. You always ground "
+                "attorneys, CPAs, or other specialists for their case. You "
+                "always ground "
                 "credential scoring in externally-verifiable signals per the "
                 "methodology below. You use web_search liberally to verify "
                 "Chambers rankings, AILA leadership, PACER filings, and "
