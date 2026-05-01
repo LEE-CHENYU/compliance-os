@@ -91,10 +91,10 @@ See `tools` array in `frontend/public/guardian.dxt` manifest. Grouped:
 
 ## Screenshots to include
 
-- Landing page hero                        → share-page-prod.png (existing)
-- /connect page                            → connect-brand-icons.png
-- Data room share page (desktop)           → share-page-full.png
-- Data room share page (mobile)            → mobile-after.png
+- Landing page hero                        → screenshots/marketing/share-page-prod.png (existing)
+- /connect page                            → screenshots/marketing/connect-brand-icons.png
+- Data room share page (desktop)           → screenshots/marketing/share-page-full.png
+- Data room share page (mobile)            → screenshots/marketing/mobile-after.png
 - Docs/install page                        → (capture before submit)
 - DXT install prompt in Claude Desktop     → (capture after Claude Desktop adds DXT support)
 
