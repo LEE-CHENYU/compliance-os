@@ -12,6 +12,7 @@ from compliance_os.web.models.database import get_session
 from compliance_os.web.models.tables_v2 import CheckRow
 from compliance_os.web.services.auth_service import get_bearer_payload
 from compliance_os.web.services.llm_runtime import chat_completion
+from compliance_os.web.services.query_helpers import light_user_checks_query
 from compliance_os.web.services.retrieval import build_check_retrieval_context, retrieve_documents_for_query
 from compliance_os.web.services.subject_chains import list_user_subject_chains, serialize_subject_chain
 from compliance_os.web.services.timeline_builder import build_timeline, canonical_documents_for_checks
@@ -74,7 +75,7 @@ def _build_context(user_id: str, db: Session, query: str | None = None) -> tuple
     dicts with id, filename, doc_type, score for the query-relevant documents.
     """
     timeline = build_timeline(user_id, db)
-    checks = db.query(CheckRow).filter(CheckRow.user_id == user_id).all()
+    checks = light_user_checks_query(db, user_id).all()
     canonical_docs = canonical_documents_for_checks(checks)
     subject_chains = [
         serialize_subject_chain(chain, canonical_docs)
@@ -422,7 +423,7 @@ def store_answer(
         from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine
         from compliance_os.web.models.tables_v2 import FindingRow
 
-        for user_check in db.query(CheckRow).filter(CheckRow.user_id == user.id).all():
+        for user_check in light_user_checks_query(db, user.id).all():
             rule_file = Path(__file__).resolve().parents[3] / "config" / "rules" / f"{user_check.track}.yaml"
             if not rule_file.exists():
                 continue

@@ -7,6 +7,8 @@ from pathlib import Path
 from compliance_os.web.services.classifier import (
     Classification,
     classify_file,
+    classify_filename,
+    classify_text,
     is_auto_doc_type,
     normalize_doc_type,
 )
@@ -29,6 +31,14 @@ class ResolvedDocumentType:
     confidence: str | None
     source: str | None
     provided_doc_type: str | None = None
+    # Filename + text classifications computed independently. Set by
+    # `detect_filename_content_mismatch`; allows the upload route to
+    # emit an `ingestion_issue` when the two disagree (a common signal
+    # that the file is mislabeled — e.g. an "affidavit" filename
+    # wrapping an I-20 PDF).
+    filename_doc_type: str | None = None
+    text_doc_type: str | None = None
+    has_mismatch: bool = False
 
 
 class UploadValidationError(ValueError):
@@ -94,3 +104,61 @@ def resolve_document_type(
         source=classification.source,
         provided_doc_type=provided_doc_type,
     )
+
+
+def detect_filename_content_mismatch(
+    file_path: str,
+    mime_type: str,
+    resolved: ResolvedDocumentType,
+) -> ResolvedDocumentType:
+    """Annotate `resolved` with separate filename + text classifications.
+
+    The default cascade (`classify_file`) returns the *first* match
+    across filename → text → OCR, so a filename that wins doesn't tell
+    us whether the content would have classified differently. This
+    helper runs both passes independently and stamps the comparison
+    onto the resolved type. The caller can then emit an ingestion
+    issue when they disagree.
+
+    Skipped when the user supplied an explicit doc_type (their choice
+    wins; we don't second-guess them).
+    """
+    if resolved.source == "user":
+        return resolved
+
+    fname_cls = classify_filename(file_path)
+    text_cls = Classification(doc_type=None, confidence=None)
+    if mime_type == "application/pdf":
+        try:
+            from compliance_os.web.services.pdf_reader import extract_first_page
+
+            text = extract_first_page(file_path)
+            if text:
+                text_cls = classify_text(text)
+        except Exception:
+            pass
+    elif mime_type == DOCX_MIME_TYPE:
+        try:
+            from compliance_os.web.services.docx_reader import extract_docx_text
+
+            text, _ = extract_docx_text(file_path)
+            if text:
+                text_cls = classify_text(text)
+        except Exception:
+            pass
+    elif mime_type in {"text/plain", "text/csv"}:
+        try:
+            text = Path(file_path).read_text(encoding="utf-8", errors="ignore")
+            if text:
+                text_cls = classify_text(text)
+        except Exception:
+            pass
+
+    resolved.filename_doc_type = fname_cls.doc_type
+    resolved.text_doc_type = text_cls.doc_type
+    resolved.has_mismatch = bool(
+        fname_cls.doc_type
+        and text_cls.doc_type
+        and fname_cls.doc_type != text_cls.doc_type
+    )
+    return resolved

@@ -73,8 +73,39 @@ def detect_upload_issues(
     classification_source: str | None,
     provided_doc_type: str | None,
     provenance: dict[str, Any] | None = None,
+    filename_doc_type: str | None = None,
+    text_doc_type: str | None = None,
 ) -> list[DetectedIssue]:
     issues: list[DetectedIssue] = []
+
+    if (
+        filename_doc_type
+        and text_doc_type
+        and filename_doc_type != text_doc_type
+    ):
+        # Filename and content disagree. Common cause: a file was renamed
+        # (or initially mislabeled) and the actual content tells a
+        # different story. Worth surfacing because mislabeled docs
+        # propagate downstream — a *yunhong_affidavit*.pdf turned out to
+        # be Chenyu's I-20 in one real-world case.
+        issues.append(
+            DetectedIssue(
+                issue_code="filename_content_mismatch",
+                severity="warning",
+                message=(
+                    f"Filename suggests '{filename_doc_type}' but the file's "
+                    f"content matches '{text_doc_type}'. Confirm the file is "
+                    "labeled correctly before relying on it downstream."
+                ),
+                details={
+                    "filename": filename,
+                    "filename_doc_type": filename_doc_type,
+                    "text_doc_type": text_doc_type,
+                    "resolved_doc_type": doc_type,
+                    "classification_source": classification_source,
+                },
+            )
+        )
 
     if doc_type is None:
         issues.append(

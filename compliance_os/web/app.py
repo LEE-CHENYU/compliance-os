@@ -32,7 +32,10 @@ from compliance_os.web.routers import me as me_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize database on startup
-    get_engine()
+    engine = get_engine()
+    # Per-request DB egress logging — see middleware/db_egress.py.
+    from compliance_os.web.middleware.db_egress import install as _install_egress
+    _install_egress(engine)
     # Reap professional-search rows stuck in `running` from the previous
     # deploy. BackgroundTasks runners die on SIGTERM during redeploy, so
     # rows whose personas finished before the kill never get
@@ -55,6 +58,12 @@ app = FastAPI(
     description="Compliance copilot backend — discovery, document management, and review.",
     lifespan=lifespan,
 )
+
+# Per-request DB egress instrumentation — must be added BEFORE CORSMiddleware
+# so that the contextvar resets early and the log line covers the whole
+# request lifecycle.
+from compliance_os.web.middleware.db_egress import DBEgressMiddleware
+app.add_middleware(DBEgressMiddleware)
 
 # CORS for Next.js dev server
 app.add_middleware(

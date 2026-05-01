@@ -10,7 +10,14 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, FindingRow, SubjectChainRow
+from compliance_os.web.models.tables_v2 import (
+    CheckRow,
+    DocumentRow,
+    FindingRow,
+    IngestionIssueRow,
+    SubjectChainRow,
+)
+from compliance_os.web.services.query_helpers import light_user_checks_query
 from compliance_os.web.services.rule_engine import Rule, RuleEngine
 from compliance_os.web.services.subject_chains import (
     EMPLOYMENT_CHAIN_DOC_TYPES,
@@ -18,6 +25,16 @@ from compliance_os.web.services.subject_chains import (
     list_user_subject_chains,
     mapping_resolution_for_document,
 )
+
+
+# Caps for the dashboard timeline payload. The frontend renders a finite
+# scroll so the tail is wasted bytes for users with large data rooms;
+# clients that need the full list can hit `/api/dashboard/documents`
+# (paginated separately) for docs or filter `/timeline?since=...` (TODO)
+# for older events. Both caps are generous defaults — typical users see
+# 100% of their events under either limit.
+TIMELINE_EVENT_CAP = 100
+TIMELINE_DOC_CAP = 50
 
 
 def _normalized_uploaded_at(doc: DocumentRow) -> datetime:
@@ -734,6 +751,51 @@ def _field_values_for_chain_conflict(
     return conflicts
 
 
+def _ingestion_issues_for_user(
+    db: Session,
+    check_ids: list[str],
+    canonical_docs: list[DocumentRow],
+) -> list[dict[str, Any]]:
+    """Pull `IngestionIssueRow` records for these checks into the timeline.
+
+    The upload + extraction paths log issues like `filename_content_mismatch`,
+    `doc_type_unresolved`, `generic_source_name`, `image_context_low_signal`,
+    and `extraction_failure`. They share the structural integrity issues'
+    shape so the dashboard groups them together.
+    """
+    if not check_ids:
+        return []
+    canonical_doc_map = {doc.id: doc for doc in canonical_docs}
+    rows = (
+        db.query(IngestionIssueRow)
+        .filter(IngestionIssueRow.check_id.in_(check_ids))
+        .order_by(IngestionIssueRow.detected_at.desc())
+        .all()
+    )
+    issues: list[dict[str, Any]] = []
+    for row in rows:
+        doc = canonical_doc_map.get(row.document_id) if row.document_id else None
+        title_by_code = {
+            "filename_content_mismatch": "Filename and content disagree",
+            "doc_type_unresolved": "Document not classified",
+            "generic_source_name": "Document filename lacks context",
+            "image_context_low_signal": "Image upload lacks context",
+            "extraction_failure": "Extraction did not run",
+        }
+        issues.append(
+            {
+                "issue_code": row.issue_code,
+                "severity": row.severity,
+                "title": title_by_code.get(row.issue_code, row.issue_code.replace("_", " ").title()),
+                "message": row.message,
+                "documents": [serialize_dashboard_document(doc)] if doc else [],
+                "chains": [],
+                "details": dict(row.details or {}),
+            }
+        )
+    return issues
+
+
 def _build_integrity_issues(
     checks: list[CheckRow],
     subject_chains: list[SubjectChainRow],
@@ -1106,9 +1168,184 @@ def _active_stem_opt_chains(
     return active
 
 
+# Cross-doc consistency: which extracted-field combinations should agree.
+#
+# Each group lists `(doc_type, field_name)` pairs that all refer to the
+# same real-world fact (e.g., the beneficiary's name appears as
+# `student_name` on an I-983 and `employee_name` on a W-2 — they should
+# match). The `normalize` step strips formatting noise so cosmetic
+# differences (case, whitespace, EIN dashes) don't trigger false
+# positives.
+#
+# Adding a new field is cheap — drop a new group below and the next
+# build_timeline() picks it up.
+def _norm_text(value: Any) -> str:
+    return re.sub(r"\s+", " ", str(value).strip().lower())
+
+
+def _norm_text_loose(value: Any) -> str:
+    return re.sub(r"[^a-z0-9]+", "", str(value).strip().lower())
+
+
+def _norm_digits(value: Any) -> str:
+    return re.sub(r"\D", "", str(value))
+
+
+_CONSISTENCY_GROUPS: list[dict[str, Any]] = [
+    {
+        "label": "Beneficiary name",
+        "fields": {
+            ("i983", "student_name"),
+            ("employment_letter", "employee_name"),
+            ("paystub", "employee_name"),
+            ("w2", "employee_name"),
+            ("i20", "student_name"),
+            ("ead", "card_holder_name"),
+            ("passport", "name"),
+            ("visa_stamp", "surname"),
+        },
+        "normalize": _norm_text_loose,
+    },
+    {
+        "label": "Employer name",
+        "fields": {
+            ("i983", "employer_name"),
+            ("employment_letter", "employer_name"),
+            ("paystub", "employer_name"),
+            ("w2", "employer_name"),
+            ("ein_letter", "entity_name"),
+        },
+        "normalize": _norm_text_loose,
+    },
+    {
+        "label": "Employer EIN",
+        "fields": {
+            ("i983", "employer_ein"),
+            ("employment_letter", "employer_ein"),
+            ("paystub", "employer_ein"),
+            ("w2", "employer_ein"),
+            ("ein_letter", "ein"),
+            ("tax_return", "ein"),
+        },
+        "normalize": _norm_digits,
+    },
+    {
+        "label": "Job title",
+        "fields": {
+            ("i983", "job_title"),
+            ("employment_letter", "job_title"),
+            ("paystub", "job_title"),
+        },
+        "normalize": _norm_text,
+    },
+    {
+        "label": "Compensation",
+        "fields": {
+            ("i983", "compensation"),
+            ("employment_letter", "compensation"),
+        },
+        "normalize": _norm_digits,
+    },
+    {
+        "label": "SEVIS number",
+        "fields": {
+            ("i983", "sevis_number"),
+            ("i20", "sevis_number"),
+        },
+        "normalize": _norm_digits,
+    },
+    {
+        "label": "Work site address",
+        "fields": {
+            ("i983", "work_site_address"),
+            ("employment_letter", "work_location"),
+        },
+        "normalize": _norm_text_loose,
+    },
+]
+
+
+def _build_cross_doc_consistency_findings(
+    checks: list[CheckRow], canonical_docs: list[DocumentRow]
+) -> list[dict[str, Any]]:
+    """Detect when the same logical field has different values across docs.
+
+    Returns a list of findings in the same shape as the rule-engine
+    findings so they merge through `_dedupe_finding_dicts` cleanly.
+    Only emits one finding per consistency group, with up to ~6
+    representative documents listed.
+    """
+    canonical_doc_ids = {doc.id for doc in canonical_docs}
+    findings: list[dict[str, Any]] = []
+    for group in _CONSISTENCY_GROUPS:
+        wanted: set[tuple[str, str]] = group["fields"]
+        normalize = group["normalize"]
+        # observation = (doc, raw_value, normalized_value)
+        observations: list[tuple[DocumentRow, str, str]] = []
+        for check in checks:
+            for doc in check.documents:
+                if doc.id not in canonical_doc_ids:
+                    continue  # superseded versions don't count
+                for field in doc.extracted_fields:
+                    if (doc.doc_type, field.field_name) not in wanted:
+                        continue
+                    if field.field_value in (None, "", "None"):
+                        continue
+                    norm = normalize(field.field_value)
+                    if not norm:
+                        continue
+                    observations.append((doc, field.field_value, norm))
+
+        if len(observations) < 2:
+            continue
+
+        by_norm: dict[str, list[tuple[DocumentRow, str]]] = {}
+        for doc, raw, norm in observations:
+            by_norm.setdefault(norm, []).append((doc, raw))
+
+        if len(by_norm) < 2:
+            continue  # all observations agree
+
+        # Conflict: ≥2 distinct normalized values for this group.
+        # List up to 6 doc/value pairs for the user to drill into.
+        evidence_docs: list[dict] = []
+        seen_doc_ids: set[str] = set()
+        details_lines: list[str] = []
+        for norm, occs in by_norm.items():
+            for doc, raw in occs[:3]:
+                if doc.id not in seen_doc_ids:
+                    evidence_docs.append(serialize_dashboard_document(doc))
+                    seen_doc_ids.add(doc.id)
+                details_lines.append(f"{doc.filename}: {raw}")
+                if len(evidence_docs) >= 6:
+                    break
+            if len(evidence_docs) >= 6:
+                break
+
+        findings.append(
+            {
+                "id": f"cross_doc_inconsistency:{_norm_text_loose(group['label'])}",
+                "rule_id": "cross_doc_inconsistency",
+                "severity": "warning",
+                "category": "logic",
+                "title": f"{group['label']} differs across documents",
+                "action": "Review the conflicting documents and confirm which value is canonical.",
+                "consequence": (
+                    "Inconsistent values across legal, immigration, or tax "
+                    "documents invite scrutiny and can delay filings."
+                ),
+                "immigration_impact": None,
+                "documents": evidence_docs,
+                "source_comparison_ids": [],
+                "details": details_lines,
+            }
+        )
+    return findings
+
+
 def build_timeline(user_id: str, db: Session) -> dict:
     """Build a full timeline for a user from their checks and documents."""
-    checks = db.query(CheckRow).filter(CheckRow.user_id == user_id).all()
+    checks = light_user_checks_query(db, user_id).all()
     subject_chains = list_user_subject_chains(user_id, db)
 
     events: list[dict[str, Any]] = []
@@ -1318,6 +1555,11 @@ def build_timeline(user_id: str, db: Session) -> dict:
             except ValueError:
                 pass
 
+    # Cross-document fact-consistency findings — one per inconsistent
+    # field group (employer EIN differs between W-2 and I-983, etc.).
+    # Computed locally from extracted_fields; not stored in FindingRow.
+    all_findings.extend(_build_cross_doc_consistency_findings(checks, canonical_docs))
+
     # Sort and merge duplicate events by identity
     events = _merge_events(events)
     all_findings = _dedupe_finding_dicts(all_findings)
@@ -1337,6 +1579,11 @@ def build_timeline(user_id: str, db: Session) -> dict:
                     break
 
     all_integrity_issues = _build_integrity_issues(checks, subject_chains, canonical_docs, events)
+    # Surface ingestion-time issues (filename_content_mismatch, generic_source_name,
+    # extraction failures, etc.) alongside the structural ones. They share the
+    # same shape so the dashboard renders them in one stream.
+    ingestion_issues = _ingestion_issues_for_user(db, [c.id for c in checks], canonical_docs)
+    all_integrity_issues = ingestion_issues + all_integrity_issues
     integrity_issues, assistant_prompts = _split_integrity_issues_for_timeline(all_integrity_issues)
 
     # Build key facts from check answers
@@ -1429,9 +1676,29 @@ def build_timeline(user_id: str, db: Session) -> dict:
             for field in doc.extracted_fields:
                 if field.field_name in field_map and field.field_value and field.field_value != "None":
                     label, cat = field_map[field.field_name]
-                    key_facts.append({"label": label, "value": field.field_value, "category": cat})
+                    key_facts.append(
+                        {
+                            "label": label,
+                            "value": field.field_value,
+                            "category": cat,
+                            # Provenance: tells the UI which document this
+                            # fact was extracted from. Lets the user audit
+                            # or correct without guessing.
+                            "source_document": {
+                                "id": doc.id,
+                                "filename": doc.filename,
+                                "doc_type": doc.doc_type,
+                                "uploaded_at": (
+                                    doc.uploaded_at.isoformat()
+                                    if doc.uploaded_at
+                                    else None
+                                ),
+                            },
+                        }
+                    )
 
-    # Deduplicate by label (keep first)
+    # Deduplicate by label (keep first — first seen is typically the
+    # most-recent doc because checks/documents are ordered that way upstream)
     seen = set()
     unique_facts = []
     for f in key_facts:
@@ -1442,9 +1709,16 @@ def build_timeline(user_id: str, db: Session) -> dict:
     # Build deadlines
     deadlines = _build_deadlines(checks, subject_chains)
 
+    # Page the heavy lists. The dashboard renders a finite scroll, not a
+    # tail; the user does not need every event from the start of their
+    # data room on every fetch. Caps are intentionally generous so the
+    # default view is unchanged for typical users.
+    paged_events = sorted(events, key=lambda e: e.get("date") or "", reverse=True)[:TIMELINE_EVENT_CAP]
+    paged_docs = sorted(all_docs, key=lambda d: d.get("uploaded_at") or "", reverse=True)[:TIMELINE_DOC_CAP]
+
     return {
-        "events": events,
-        "documents": all_docs,
+        "events": paged_events,
+        "documents": paged_docs,
         "findings": all_findings,
         "advisories": all_advisories,
         "all_integrity_issues": all_integrity_issues,
@@ -1453,12 +1727,14 @@ def build_timeline(user_id: str, db: Session) -> dict:
         "upload_prompts": upload_prompts,
         "key_facts": unique_facts,
         "deadlines": deadlines,
+        "events_total": len(events),
+        "documents_total": len(all_docs),
     }
 
 
 def build_stats(user_id: str, db: Session) -> dict:
     """Build aggregate stats for the user's dashboard."""
-    checks = db.query(CheckRow).filter(CheckRow.user_id == user_id).all()
+    checks = light_user_checks_query(db, user_id).all()
 
     doc_count = len(canonical_documents_for_checks(checks))
     risk_count = len(

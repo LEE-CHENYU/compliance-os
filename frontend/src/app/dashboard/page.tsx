@@ -147,7 +147,17 @@ interface TimelineData {
   integrity_issues: IntegrityIssue[];
   assistant_prompts: AssistantPrompt[];
   upload_prompts: UploadPrompt[];
-  key_facts: { label: string; value: string }[];
+  key_facts: {
+    label: string;
+    value: string;
+    category?: string;
+    source_document?: {
+      id: string;
+      filename: string;
+      doc_type: string;
+      uploaded_at?: string | null;
+    };
+  }[];
   deadlines: { title: string; date: string; days: number; category: string; severity: string; action: string }[];
   service_summary?: DashboardServiceSummary;
 }
@@ -2527,23 +2537,45 @@ export default function DashboardPage() {
                 const CAT_ORDER = ["student_status", "immigration", "employment", "tax", "entity"];
                 const grouped: Record<string, { label: string; value: string }[]> = {};
 
-                for (const fact of (timeline?.key_facts || []) as { label: string; value: string; category?: string }[]) {
+                type KeyFact = {
+                  label: string;
+                  value: string;
+                  category?: string;
+                  source_document?: {
+                    id: string;
+                    filename: string;
+                    doc_type: string;
+                    uploaded_at?: string | null;
+                  };
+                };
+
+                for (const fact of (timeline?.key_facts || []) as KeyFact[]) {
                   const cat = fact.category || "immigration";
                   if (!grouped[cat]) grouped[cat] = [];
                   grouped[cat].push(fact);
                 }
 
                 return CAT_ORDER.map((cat) => {
-                  const facts = grouped[cat];
+                  const facts = grouped[cat] as KeyFact[] | undefined;
                   if (!facts || facts.length === 0) return null;
                   return (
                     <div key={cat} className="mb-5">
                       <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">{CAT_LABELS[cat] || cat}</div>
                       <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
                         {facts.map((fact, i) => (
-                          <div key={`${fact.label}-${i}`} className={`flex justify-between px-5 py-3.5 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
-                            <span className="text-[13px] text-[#556480]">{fact.label}</span>
-                            <span className="text-[13px] font-semibold text-[#0d1424] text-right max-w-[60%] truncate">{fact.value}</span>
+                          <div key={`${fact.label}-${i}`} className={`flex justify-between items-start px-5 py-3.5 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
+                            <span className="text-[13px] text-[#556480] pt-0.5">{fact.label}</span>
+                            <div className="flex flex-col items-end max-w-[60%] gap-0.5">
+                              <span className="text-[13px] font-semibold text-[#0d1424] text-right truncate w-full">{fact.value}</span>
+                              {fact.source_document?.filename && (
+                                <span
+                                  className="text-[10.5px] text-[#8e9ab5] truncate w-full text-right"
+                                  title={`Extracted from ${fact.source_document.filename}${fact.source_document.uploaded_at ? ` (uploaded ${fact.source_document.uploaded_at.slice(0, 10)})` : ""}`}
+                                >
+                                  from {fact.source_document.filename}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>

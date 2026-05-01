@@ -18,6 +18,7 @@ from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow, ExtractedF
 from compliance_os.web.services.auth_service import get_bearer_payload
 from compliance_os.web.services.document_intake import (
     UploadValidationError,
+    detect_filename_content_mismatch,
     resolve_document_type,
     validate_upload,
 )
@@ -29,6 +30,7 @@ from compliance_os.web.services.document_store import (
     serialize_duplicate_document,
 )
 from compliance_os.web.services.dashboard_marketplace import build_dashboard_service_summary
+from compliance_os.web.services.query_helpers import light_user_checks_query
 from compliance_os.web.services.ingestion_detector import (
     DetectedIssue,
     detect_upload_issues,
@@ -43,6 +45,7 @@ from compliance_os.web.services.subject_chains import (
     sync_user_subject_chains,
 )
 from compliance_os.web.services.timeline_builder import (
+    _normalized_uploaded_at,
     build_stats,
     build_timeline,
     canonical_documents_for_checks,
@@ -155,14 +158,18 @@ def _resolve_doc_type_for_upload_file(
             provided_doc_type=provided_doc_type,
             allow_ocr=False,
         )
-        if result.doc_type:
-            return result
-        return resolve_document_type(
-            str(temp_path),
-            mime_type,
-            provided_doc_type=provided_doc_type,
-            allow_ocr=True,
-        )
+        if not result.doc_type:
+            result = resolve_document_type(
+                str(temp_path),
+                mime_type,
+                provided_doc_type=provided_doc_type,
+                allow_ocr=True,
+            )
+        # Annotate with separate filename / text classifications so the
+        # upload route can flag a mismatch (e.g. file named *_affidavit.pdf
+        # but content matches I-20 patterns).
+        result = detect_filename_content_mismatch(str(temp_path), mime_type, result)
+        return result
     finally:
         temp_path.unlink(missing_ok=True)
 
@@ -286,7 +293,7 @@ def list_subject_chains(
 ):
     user = _get_user(authorization, db)
     sync_user_subject_chains(user.id, db)
-    checks = db.query(CheckRow).filter(CheckRow.user_id == user.id).all()
+    checks = light_user_checks_query(db, user.id).all()
     canonical_docs = canonical_documents_for_checks(checks)
     chains = [serialize_subject_chain(chain, canonical_docs) for chain in list_user_subject_chains(user.id, db)]
     db.commit()
@@ -296,11 +303,19 @@ def list_subject_chains(
 @router.get("/documents")
 def list_documents(
     authorization: str = Header(None),
+    limit: int = 50,
+    offset: int = 0,
     db: Session = Depends(get_session),
 ):
     user = _get_user(authorization, db)
-    checks = db.query(CheckRow).filter(CheckRow.user_id == user.id).all()
-    return [serialize_dashboard_document(doc) for doc in canonical_documents_for_checks(checks)]
+    checks = light_user_checks_query(db, user.id).all()
+    docs = canonical_documents_for_checks(checks)
+    # Sort newest-first so a `limit=50` returns the user's recent uploads
+    # — that's what every existing caller actually wants.
+    docs.sort(key=_normalized_uploaded_at, reverse=True)
+    capped = max(1, min(limit, 500))
+    page = docs[offset : offset + capped]
+    return [serialize_dashboard_document(doc) for doc in page]
 
 
 @router.get("/documents/{doc_id}/view")
@@ -484,6 +499,8 @@ def upload_to_dataroom(
             classification_source=resolved_doc_type.source,
             provided_doc_type=resolved_doc_type.provided_doc_type,
             provenance=doc.provenance,
+            filename_doc_type=resolved_doc_type.filename_doc_type,
+            text_doc_type=resolved_doc_type.text_doc_type,
         ),
     )
     db.commit()
@@ -506,7 +523,7 @@ def upload_to_dataroom(
     # Re-evaluate all checks for this user
     from compliance_os.web.services.rule_engine import EvaluationContext, RuleEngine
 
-    for user_check in db.query(CheckRow).filter(CheckRow.user_id == user.id).all():
+    for user_check in light_user_checks_query(db, user.id).all():
         try:
             rule_file = Path(__file__).resolve().parents[3] / "config" / "rules" / f"{user_check.track}.yaml"
             if not rule_file.exists():

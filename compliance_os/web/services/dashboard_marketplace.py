@@ -11,6 +11,7 @@ from compliance_os.web.models.auth import UserRow
 from compliance_os.web.models.marketplace import MarketplaceUserRow, OrderRow
 from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow
 from compliance_os.web.services.product_catalog import get_product_config, serialize_product
+from compliance_os.web.services.query_helpers import light_user_checks_query
 from compliance_os.web.services.timeline_builder import canonical_documents_for_checks
 
 
@@ -396,7 +397,7 @@ def build_dashboard_service_summary(
     timeline_payload: Mapping[str, Any],
     db: Session,
 ) -> dict[str, Any]:
-    checks = db.query(CheckRow).filter(CheckRow.user_id == user.id).all()
+    checks = light_user_checks_query(db, user.id).all()
     docs = canonical_documents_for_checks(checks)
     marketplace_user = (
         db.query(MarketplaceUserRow)
