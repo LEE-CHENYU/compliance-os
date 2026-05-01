@@ -1,0 +1,3809 @@
+{
+  "api_url": "https://guardian-compliance.fly.dev",
+  "ok": 338,
+  "duplicates": 212,
+  "errors": 136,
+  "total": 254,
+  "results": [
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citizens_payment_options_2958.pdf",
+      "status": 200,
+      "ms": 7476,
+      "doc_type": null,
+      "error": null,
+      "size": 574660
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/wells_fargo/wf_personal_20251023_20260209.csv",
+      "status": 400,
+      "ms": 849,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1724
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_202307.pdf",
+      "status": 200,
+      "ms": 7384,
+      "doc_type": null,
+      "error": null,
+      "size": 190111
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20251219_20260122.pdf",
+      "status": 200,
+      "ms": 8391,
+      "doc_type": null,
+      "error": null,
+      "size": 191120
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20250920_20251021.pdf",
+      "status": 200,
+      "ms": 8929,
+      "doc_type": null,
+      "error": null,
+      "size": 192402
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20260221_20260319.pdf",
+      "status": 200,
+      "ms": 5010,
+      "doc_type": null,
+      "error": null,
+      "size": 191117
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_personal_chk6544_20241021_20251006.csv",
+      "status": 200,
+      "ms": 5238,
+      "doc_type": null,
+      "error": null,
+      "size": 5035
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20240409_20250929.csv",
+      "status": 200,
+      "ms": 3247,
+      "doc_type": null,
+      "error": null,
+      "size": 6668
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_personal_chk6544_20240819_20260209.csv",
+      "status": 200,
+      "ms": 3445,
+      "doc_type": null,
+      "error": null,
+      "size": 8012
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20251122_20251218.pdf",
+      "status": 200,
+      "ms": 5628,
+      "doc_type": null,
+      "error": null,
+      "size": 191240
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20251022_20251121.pdf",
+      "status": 200,
+      "ms": 5552,
+      "doc_type": null,
+      "error": null,
+      "size": 191706
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20260123_20260220.pdf",
+      "status": 200,
+      "ms": 5214,
+      "doc_type": null,
+      "error": null,
+      "size": 191207
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/boa/boa_personal_20240408_20251007.csv",
+      "status": 200,
+      "ms": 4360,
+      "doc_type": null,
+      "error": null,
+      "size": 39740
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/schwab/schwab_llc_xxx239_20250225_20251006.csv",
+      "status": 400,
+      "ms": 752,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 15076
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/schwab/schwab_personal_xxx619_20241030_20251006.csv",
+      "status": 400,
+      "ms": 654,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 14395
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/schwab/schwab_personal_xxx619_20230120_20260107.csv",
+      "status": 400,
+      "ms": 859,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 40298
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/schwab/schwab_llc_xxx239_20250225_20260212.csv",
+      "status": 400,
+      "ms": 728,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 25907
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/schwab/statements/schwab_brokerage_stmt_xxx619_2025-07.pdf",
+      "status": 200,
+      "ms": 8615,
+      "doc_type": null,
+      "error": null,
+      "size": 175047
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/schwab/statements/schwab_brokerage_stmt_xxx239_2025-09.pdf",
+      "status": 400,
+      "ms": 4107,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 284984
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/schwab/statements/schwab_brokerage_stmt_xxx239_2025-07.pdf",
+      "status": 400,
+      "ms": 4593,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 276948
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/06_citibank_llc_transactions.csv",
+      "status": 200,
+      "ms": 3501,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 6668
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_1042s_tda_updated.pdf",
+      "status": 200,
+      "ms": 8820,
+      "doc_type": null,
+      "error": null,
+      "size": 73301
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2023_w2_vcv.pdf",
+      "status": 200,
+      "ms": 8564,
+      "doc_type": null,
+      "error": null,
+      "size": 192423
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2025_1042s_schwab.pdf",
+      "status": 200,
+      "ms": 11194,
+      "doc_type": null,
+      "error": null,
+      "size": 133428
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/06_schwab_llc_2025_account_summary.pdf",
+      "status": 200,
+      "ms": 7673,
+      "doc_type": null,
+      "error": null,
+      "size": 143836
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2025_w2_claudius.pdf",
+      "status": 200,
+      "ms": 6278,
+      "doc_type": null,
+      "error": null,
+      "size": 157931
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2025_w2_wolffli.pdf",
+      "status": 200,
+      "ms": 8455,
+      "doc_type": null,
+      "error": null,
+      "size": 420731
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_w2_vcv.pdf",
+      "status": 200,
+      "ms": 8505,
+      "doc_type": null,
+      "error": null,
+      "size": 224103
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_1099b_schwab_part1.pdf",
+      "status": 200,
+      "ms": 5326,
+      "doc_type": null,
+      "error": null,
+      "size": 32875
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_w2_bitsync.pdf",
+      "status": 200,
+      "ms": 9180,
+      "doc_type": null,
+      "error": null,
+      "size": 404987
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_1042s_schwab.pdf",
+      "status": 200,
+      "ms": 8536,
+      "doc_type": null,
+      "error": null,
+      "size": 125242
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_1099b_schwab_part2.pdf",
+      "status": 200,
+      "ms": 7497,
+      "doc_type": null,
+      "error": null,
+      "size": 32875
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_yearend_summary_schwab.pdf",
+      "status": 200,
+      "ms": 5783,
+      "doc_type": null,
+      "error": null,
+      "size": 54390
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/02_2024_TaxReturn.pdf",
+      "status": 200,
+      "ms": 8635,
+      "doc_type": "tax_return",
+      "error": null,
+      "size": 617644
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2025_1098t_ciam_unlocked.pdf",
+      "status": 200,
+      "ms": 4074,
+      "doc_type": null,
+      "error": null,
+      "size": 28432
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_1042s_tda.pdf",
+      "status": 200,
+      "ms": 7250,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 73301
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/06_schwab_llc_transactions.csv",
+      "status": 400,
+      "ms": 806,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 25907
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_1099int_citibank_llc.pdf",
+      "status": 400,
+      "ms": 2763,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 326781
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2023_1042s_tda.pdf",
+      "status": 200,
+      "ms": 7016,
+      "doc_type": null,
+      "error": null,
+      "size": 48482
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/02_2023_TaxReturn.pdf",
+      "status": 200,
+      "ms": 9616,
+      "doc_type": null,
+      "error": null,
+      "size": 515737
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/01_BSGC_articles_and_ss4.pdf",
+      "status": 400,
+      "ms": 4370,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/01_BSGC_formation_wyoming.pdf",
+      "status": 200,
+      "ms": 5399,
+      "doc_type": null,
+      "error": null,
+      "size": 430479
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/01_BSGC_ein_notice.pdf",
+      "status": 200,
+      "ms": 5681,
+      "doc_type": null,
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/06_citibank_llc_transactions.csv",
+      "status": 200,
+      "ms": 3235,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 6668
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2023_w2_vcv.pdf",
+      "status": 200,
+      "ms": 7919,
+      "doc_type": "w2",
+      "error": null,
+      "size": 192423
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2025_1042s_schwab.pdf",
+      "status": 200,
+      "ms": 14619,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 133428
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/06_schwab_llc_2025_account_summary.pdf",
+      "status": 200,
+      "ms": 6607,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 143836
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2025_w2_claudius.pdf",
+      "status": 200,
+      "ms": 6494,
+      "doc_type": "w2",
+      "error": null,
+      "size": 157931
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2025_w2_wolffli.pdf",
+      "status": 200,
+      "ms": 6654,
+      "doc_type": "w2",
+      "error": null,
+      "size": 420731
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2024_w2_vcv.pdf",
+      "status": 200,
+      "ms": 8439,
+      "doc_type": "w2",
+      "error": null,
+      "size": 224103
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2024_1099b_schwab_part1.pdf",
+      "status": 200,
+      "ms": 5877,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 32875
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2024_w2_bitsync.pdf",
+      "status": 200,
+      "ms": 6465,
+      "doc_type": "w2",
+      "error": null,
+      "size": 404987
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2024_1042s_schwab.pdf",
+      "status": 200,
+      "ms": 8625,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 125242
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2024_1099b_schwab_part2.pdf",
+      "status": 200,
+      "ms": 5680,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 32875
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/02_2024_TaxReturn.pdf",
+      "status": 200,
+      "ms": 9560,
+      "doc_type": "tax_return",
+      "error": null,
+      "size": 617644
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2025_1098t_ciam_unlocked.pdf",
+      "status": 200,
+      "ms": 5301,
+      "doc_type": "tuition_statement",
+      "error": null,
+      "size": 28432
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/06_schwab_llc_transactions.csv",
+      "status": 400,
+      "ms": 743,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 25907
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2024_1099int_citibank_llc.pdf",
+      "status": 400,
+      "ms": 2818,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 326781
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/03_2023_1042s_tda.pdf",
+      "status": 200,
+      "ms": 7581,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 48482
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/02_2023_TaxReturn.pdf",
+      "status": 200,
+      "ms": 11453,
+      "doc_type": "tax_return",
+      "error": null,
+      "size": 515737
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/01_BSGC_articles_and_ss4.pdf",
+      "status": 400,
+      "ms": 6112,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/priority/01_BSGC_ein_notice.pdf",
+      "status": 200,
+      "ms": 4346,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/04_citibank_llc_stmt_nov22_dec18_2025.pdf",
+      "status": 200,
+      "ms": 20215,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 191240
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/02_citibank_llc_stmt_sep20_oct21_2025.pdf",
+      "status": 200,
+      "ms": 7438,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 192402
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/06_citibank_llc_stmt_jan23_feb20_2026.pdf",
+      "status": 200,
+      "ms": 6331,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 191207
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/09_BSGC_operating_agreement.pdf",
+      "status": 200,
+      "ms": 4832,
+      "doc_type": null,
+      "error": null,
+      "size": 68548
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/01_2025_w2_wolffli_CORRECTED_13440.pdf",
+      "status": 200,
+      "ms": 7375,
+      "doc_type": "w2",
+      "error": null,
+      "size": 432723
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/03_citibank_llc_stmt_oct22_nov21_2025.pdf",
+      "status": 200,
+      "ms": 13101,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 191706
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/07_citibank_llc_stmt_feb21_mar19_2026.pdf",
+      "status": 200,
+      "ms": 5408,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 191117
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/08_citibank_llc_stmt_jul_2023.pdf",
+      "status": 200,
+      "ms": 4909,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 190111
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kaufman_rossin/suralink_upload_033026/05_citibank_llc_stmt_dec19_jan22_2026.pdf",
+      "status": 200,
+      "ms": 7432,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 191120
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/tarlson/fw7_prefilled_NGT.pdf",
+      "status": 200,
+      "ms": 7642,
+      "doc_type": null,
+      "error": null,
+      "size": 121476
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/tarlson/w7_yunhong_filled.pdf",
+      "status": 200,
+      "ms": 5728,
+      "doc_type": null,
+      "error": null,
+      "size": 136971
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/tarlson/w7_filled_042126.pdf",
+      "status": 200,
+      "ms": 4963,
+      "doc_type": null,
+      "error": null,
+      "size": 4811
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/tarlson/itin_support_letter_042126.pdf",
+      "status": 400,
+      "ms": 2695,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 38232
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/tarlson/tarlson_itin_fact_sheet.pdf",
+      "status": 400,
+      "ms": 3468,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 158200
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/chenyu_li_cv_financial_specialist_041026.pdf",
+      "status": 200,
+      "ms": 10361,
+      "doc_type": null,
+      "error": null,
+      "size": 52309
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/yangtze_business_plan_v1.pdf",
+      "status": 200,
+      "ms": 7331,
+      "doc_type": null,
+      "error": null,
+      "size": 43121
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/guardian_business_plan_v1.pdf",
+      "status": 400,
+      "ms": 2501,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 55069
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B07_i20_westcliff_transfer_pending.pdf",
+      "status": 400,
+      "ms": 4292,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 53753
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B12_i20_ciam_cpt_yangtze_apr2026.pdf",
+      "status": 200,
+      "ms": 6764,
+      "doc_type": null,
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B09_i20_ciam_transfer_pending_sep2025.pdf",
+      "status": 400,
+      "ms": 3995,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 104350
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B02_i20_columbia_travel_2022.pdf",
+      "status": 200,
+      "ms": 6173,
+      "doc_type": null,
+      "error": null,
+      "size": 155912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B10_i20_ciam_cpt_wolff_li_nov2025.pdf",
+      "status": 200,
+      "ms": 6303,
+      "doc_type": null,
+      "error": null,
+      "size": 121830
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B03_i20_columbia_travel_2023.pdf",
+      "status": 200,
+      "ms": 6575,
+      "doc_type": null,
+      "error": null,
+      "size": 227911
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B06_i20_columbia_stemopt_signed.pdf",
+      "status": 200,
+      "ms": 13982,
+      "doc_type": null,
+      "error": null,
+      "size": 903189
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B08_i20_westcliff_continued.pdf",
+      "status": 200,
+      "ms": 6753,
+      "doc_type": null,
+      "error": null,
+      "size": 78229
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B11_i20_ciam_current.pdf",
+      "status": 200,
+      "ms": 6507,
+      "doc_type": null,
+      "error": null,
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B01_i20_columbia_original.pdf",
+      "status": 200,
+      "ms": 32890,
+      "doc_type": null,
+      "error": null,
+      "size": 348142
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B04_i20_columbia_opt_jan2023.pdf",
+      "status": 200,
+      "ms": 13233,
+      "doc_type": null,
+      "error": null,
+      "size": 156365
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B05_i20_columbia_stemopt_jan2024.pdf",
+      "status": 200,
+      "ms": 7397,
+      "doc_type": null,
+      "error": null,
+      "size": 172891
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/F3_bsgc_formation_wyoming.pdf",
+      "status": 200,
+      "ms": 6887,
+      "doc_type": "articles_of_organization",
+      "error": null,
+      "size": 430479
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/F2_claudius_termination_letter.pdf",
+      "status": 400,
+      "ms": 2416,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 109631
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/BitSync_Evidence/F5b_bitsync_offer_letter_signed.pdf",
+      "status": 200,
+      "ms": 17876,
+      "doc_type": "employment_letter",
+      "error": null,
+      "size": 158236
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/BitSync_Evidence/F5a_bitsync_refused_i983.pdf",
+      "status": 200,
+      "ms": 6450,
+      "doc_type": "i983",
+      "error": null,
+      "size": 143351
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/I983_STEM_OPT/F4b_i983_claudius_signed.pdf",
+      "status": 200,
+      "ms": 7127,
+      "doc_type": null,
+      "error": null,
+      "size": 223685
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/I983_STEM_OPT/F4a_i983_tiger_cloud_vcv_signed.pdf",
+      "status": 200,
+      "ms": 8603,
+      "doc_type": null,
+      "error": null,
+      "size": 2861298
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/I983_STEM_OPT/F4d_i983_wolff_li_signed.pdf",
+      "status": 200,
+      "ms": 7047,
+      "doc_type": null,
+      "error": null,
+      "size": 275092
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/I983_STEM_OPT/F4c_i983_clinipulse_signed.pdf",
+      "status": 200,
+      "ms": 8430,
+      "doc_type": null,
+      "error": null,
+      "size": 334148
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/E_H1B_Registration/E1_fy2027_selection_notice.pdf",
+      "status": 200,
+      "ms": 5343,
+      "doc_type": null,
+      "error": null,
+      "size": 32318
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/E_H1B_Registration/E4_bsgc_g28_mt_law.pdf",
+      "status": 200,
+      "ms": 5370,
+      "doc_type": null,
+      "error": null,
+      "size": 59820
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/E_H1B_Registration/E2_yangtze_g28_arora.pdf",
+      "status": 200,
+      "ms": 5258,
+      "doc_type": null,
+      "error": null,
+      "size": 59912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/E_H1B_Registration/E3_yangtze_registration_draft.pdf",
+      "status": 200,
+      "ms": 4983,
+      "doc_type": null,
+      "error": null,
+      "size": 36840
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/E_H1B_Registration/E5_bsgc_registration_draft.pdf",
+      "status": 200,
+      "ms": 4924,
+      "doc_type": null,
+      "error": null,
+      "size": 36883
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/G_Business_Plans/G1_yangtze_capital_business_plan_v1.pdf",
+      "status": 200,
+      "ms": 6676,
+      "doc_type": "insurance_record",
+      "error": null,
+      "size": 43121
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/G_Business_Plans/G2_guardian_ai_business_plan_v1.pdf",
+      "status": 400,
+      "ms": 2684,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 55069
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/A_Beneficiary/A3_columbia_degree.pdf",
+      "status": 400,
+      "ms": 6534,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 474407
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/A_Beneficiary/A5_cv_chenyu_li_041026.pdf",
+      "status": 200,
+      "ms": 9637,
+      "doc_type": "resume",
+      "error": null,
+      "size": 52309
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/A_Beneficiary/A4_columbia_transcript.pdf",
+      "status": 200,
+      "ms": 8343,
+      "doc_type": null,
+      "error": null,
+      "size": 494359
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/A_Beneficiary/A10b_sjtu_transcript_grade_scale.pdf",
+      "status": 200,
+      "ms": 9652,
+      "doc_type": null,
+      "error": null,
+      "size": 292245
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/A_Beneficiary/A2_i94_most_recent.pdf",
+      "status": 200,
+      "ms": 4657,
+      "doc_type": null,
+      "error": null,
+      "size": 50321
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/A_Beneficiary/A10_sjtu_transcript_english.pdf",
+      "status": 200,
+      "ms": 9155,
+      "doc_type": null,
+      "error": null,
+      "size": 292127
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/A_Beneficiary/A11_waseda_transcript.pdf",
+      "status": 200,
+      "ms": 8572,
+      "doc_type": null,
+      "error": null,
+      "size": 5278443
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/C_CPT_Evidence/C2_ciam_cpt_application_training_plan.pdf",
+      "status": 400,
+      "ms": 3075,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 222968
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/C_CPT_Evidence/C1_cpt_academic_evidence_summary.pdf",
+      "status": 200,
+      "ms": 6006,
+      "doc_type": null,
+      "error": null,
+      "size": 8538
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D14_yangtze_employment_letter.pdf",
+      "status": 200,
+      "ms": 6313,
+      "doc_type": "employment_letter",
+      "error": null,
+      "size": 54438
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D2_bylaws.pdf",
+      "status": 400,
+      "ms": 3218,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 796287
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D13_i20_affidavit_financial_support.pdf",
+      "status": 200,
+      "ms": 6049,
+      "doc_type": null,
+      "error": null,
+      "size": 361910
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D8_ein_fax_notification.pdf",
+      "status": 400,
+      "ms": 2062,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 247841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D7_ein_cancellation_letter.pdf",
+      "status": 200,
+      "ms": 11634,
+      "doc_type": null,
+      "error": null,
+      "size": 180878
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D3_corporate_resolutions.pdf",
+      "status": 400,
+      "ms": 1939,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 102754
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D15_office_lease_full_signed.pdf",
+      "status": 200,
+      "ms": 6415,
+      "doc_type": null,
+      "error": null,
+      "size": 152368
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D11_board_resolution_signing_authority.pdf",
+      "status": 400,
+      "ms": 1800,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 7188
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D6_key_documents_compilation.pdf",
+      "status": 400,
+      "ms": 2536,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 299520
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D1_articles_of_incorporation_ss4.pdf",
+      "status": 400,
+      "ms": 4872,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D12_ein_cp575_notice.pdf",
+      "status": 200,
+      "ms": 5586,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D10_ftb_withholding_notice.pdf",
+      "status": 200,
+      "ms": 5783,
+      "doc_type": null,
+      "error": null,
+      "size": 1439209
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D5_governance_docs_signed.pdf",
+      "status": 400,
+      "ms": 3401,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 958776
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D4_soi_goodstanding.pdf",
+      "status": 200,
+      "ms": 4995,
+      "doc_type": null,
+      "error": null,
+      "size": 131798
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/INT501 INT599 Application Non-CPT.pdf",
+      "status": 200,
+      "ms": 5129,
+      "doc_type": null,
+      "error": null,
+      "size": 139190
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/CIAM - CPT F-1 Sample Employment Offer Letter.pdf",
+      "status": 200,
+      "ms": 5626,
+      "doc_type": null,
+      "error": null,
+      "size": 102772
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/CIAM_CPT_Application.pdf",
+      "status": 200,
+      "ms": 5724,
+      "doc_type": null,
+      "error": null,
+      "size": 152727
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/CIAM_CPT_App_Li_Chenyu.pdf",
+      "status": 200,
+      "ms": 6054,
+      "doc_type": null,
+      "error": null,
+      "size": 205885
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/CIAM Internship Courses (INT501 & INT599) 10.22.2025.pdf",
+      "status": 200,
+      "ms": 6790,
+      "doc_type": null,
+      "error": null,
+      "size": 266329
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/CIAM_CPT_Application_BLANK.pdf",
+      "status": 200,
+      "ms": 11423,
+      "doc_type": "cpt_application",
+      "error": null,
+      "size": 152727
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/yangtze_cpt_offer_letter_031526.pdf",
+      "status": 200,
+      "ms": 5728,
+      "doc_type": null,
+      "error": null,
+      "size": 4738
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/CIAM Fall II 2025 Introduction (10.22.2025).pdf",
+      "status": 200,
+      "ms": 5912,
+      "doc_type": null,
+      "error": null,
+      "size": 372671
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/cpt_application_summer2026/to_submit/Employment_Letter_Li_Chenyu.pdf",
+      "status": 200,
+      "ms": 6544,
+      "doc_type": "employment_letter",
+      "error": null,
+      "size": 4738
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/cpt_application_summer2026/to_submit/CIAM_CPT_App_Li_Chenyu.pdf",
+      "status": 200,
+      "ms": 5423,
+      "doc_type": "cpt_application",
+      "error": null,
+      "size": 205885
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/04_yangtze_ein_fax.pdf",
+      "status": 400,
+      "ms": 2095,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 247841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/05_yangtze_registration_draft.pdf",
+      "status": 200,
+      "ms": 5469,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 36840
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/02_columbia_degree.pdf",
+      "status": 400,
+      "ms": 4733,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 474407
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/04_yangtze_governance_signed.pdf",
+      "status": 400,
+      "ms": 3643,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 958776
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/05_h1b_selection_notice.pdf",
+      "status": 200,
+      "ms": 6230,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 32318
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/04_yangtze_resolutions.pdf",
+      "status": 400,
+      "ms": 2366,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 102754
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/03_i94.pdf",
+      "status": 200,
+      "ms": 5247,
+      "doc_type": "i94",
+      "error": null,
+      "size": 50321
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/04_yangtze_bylaws.pdf",
+      "status": 400,
+      "ms": 4410,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 796287
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/01_resume.pdf",
+      "status": 200,
+      "ms": 6009,
+      "doc_type": null,
+      "error": null,
+      "size": 125935
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/06_i20_current_ciam.pdf",
+      "status": 200,
+      "ms": 8289,
+      "doc_type": "i20",
+      "error": null,
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/04_yangtze_soi_goodstanding.pdf",
+      "status": 200,
+      "ms": 5355,
+      "doc_type": "certificate_of_good_standing",
+      "error": null,
+      "size": 131798
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/06_i20_current_ciam_cpt_yangtze.pdf",
+      "status": 200,
+      "ms": 7366,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/02_columbia_transcript.pdf",
+      "status": 200,
+      "ms": 8203,
+      "doc_type": "transcript",
+      "error": null,
+      "size": 494359
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/04_yangtze_key_documents.pdf",
+      "status": 400,
+      "ms": 2274,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 299520
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/sweta_khandelwal/data_room/04_yangtze_articles_ss4.pdf",
+      "status": 400,
+      "ms": 4874,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/Data_Sheet_H1B_Registration_2026_FILLED_OLD.docx",
+      "status": 200,
+      "ms": 4604,
+      "doc_type": null,
+      "error": null,
+      "size": 24087
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/Data_Sheet_H1B_Registration_2026_BSGC_FILLED.docx",
+      "status": 200,
+      "ms": 4295,
+      "doc_type": null,
+      "error": null,
+      "size": 23714
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/Data Sheet for H1B Electronic Registration 2026 - FILLED.docx",
+      "status": 200,
+      "ms": 3930,
+      "doc_type": "h1b_registration",
+      "error": null,
+      "size": 24087
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/Data Sheet for H1B Electronic Registration 2026.docx",
+      "status": 200,
+      "ms": 4038,
+      "doc_type": null,
+      "error": null,
+      "size": 25720
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/Data_Sheet_H1B_Registration_2026_BLANK.docx",
+      "status": 200,
+      "ms": 3830,
+      "doc_type": null,
+      "error": null,
+      "size": 26019
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/Employer Data Sheet for H1B or H1B1 Petition - FILLED.docx",
+      "status": 200,
+      "ms": 4244,
+      "doc_type": null,
+      "error": null,
+      "size": 26564
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/Employer Data Sheet for H1B or H1B1 Petition.docx",
+      "status": 200,
+      "ms": 4719,
+      "doc_type": null,
+      "error": null,
+      "size": 27587
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/05_yangtze_ein_fax.pdf",
+      "status": 400,
+      "ms": 2598,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 247841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_11_ciam_current.pdf",
+      "status": 200,
+      "ms": 13140,
+      "doc_type": "i20",
+      "error": null,
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/05_yangtze_filings_goodstanding_2026.pdf",
+      "status": 200,
+      "ms": 13887,
+      "doc_type": "certificate_of_good_standing",
+      "error": null,
+      "size": 131798
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/06_prior_fy2026_h1br.pdf",
+      "status": 200,
+      "ms": 6094,
+      "doc_type": null,
+      "error": null,
+      "size": 79820
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_07_westcliff_transfer_pending.pdf",
+      "status": 400,
+      "ms": 5572,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 53753
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/05_yangtze_governance_docs_signed.pdf",
+      "status": 400,
+      "ms": 6629,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 958776
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_10_ciam_continued_cpt.pdf",
+      "status": 200,
+      "ms": 9918,
+      "doc_type": "i20",
+      "error": null,
+      "size": 121830
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_09_ciam_transfer_pending.pdf",
+      "status": 400,
+      "ms": 16589,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 104350
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/02_columbia_degree.pdf",
+      "status": 400,
+      "ms": 5744,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 474407
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_06_columbia_stemopt_signed.pdf",
+      "status": 200,
+      "ms": 23913,
+      "doc_type": "i20",
+      "error": null,
+      "size": 903189
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/07_employer_data_sheet_BLANK.docx",
+      "status": 200,
+      "ms": 5510,
+      "doc_type": "h1b_registration",
+      "error": null,
+      "size": 26019
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_12_ciam_cpt_yangtze_su26.pdf",
+      "status": 200,
+      "ms": 7241,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_08_westcliff_continued.pdf",
+      "status": 200,
+      "ms": 8600,
+      "doc_type": "i20",
+      "error": null,
+      "size": 78229
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_05_columbia_stemopt.pdf",
+      "status": 200,
+      "ms": 8343,
+      "doc_type": "i20",
+      "error": null,
+      "size": 172891
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/05_yangtze_articles_ss4.pdf",
+      "status": 400,
+      "ms": 8562,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/03_i94.pdf",
+      "status": 200,
+      "ms": 4915,
+      "doc_type": "i94",
+      "error": null,
+      "size": 50321
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_03_columbia_travel_23.pdf",
+      "status": 200,
+      "ms": 24527,
+      "doc_type": "i20",
+      "error": null,
+      "size": 227911
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/01_resume.pdf",
+      "status": 200,
+      "ms": 10108,
+      "doc_type": "resume",
+      "error": null,
+      "size": 125935
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/05_yangtze_key_documents_2026.pdf",
+      "status": 400,
+      "ms": 2516,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 299520
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/06_prior_fy2026_g28.pdf",
+      "status": 200,
+      "ms": 8438,
+      "doc_type": null,
+      "error": null,
+      "size": 173184
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/05_bsgc_ein_notice.pdf",
+      "status": 200,
+      "ms": 7794,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/05_yangtze_ein_cancellation.pdf",
+      "status": 200,
+      "ms": 6442,
+      "doc_type": "entity_notice",
+      "error": null,
+      "size": 180878
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/01_resume.docx",
+      "status": 200,
+      "ms": 3902,
+      "doc_type": null,
+      "error": null,
+      "size": 19294
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_04_columbia_opt.pdf",
+      "status": 200,
+      "ms": 9060,
+      "doc_type": "i20",
+      "error": null,
+      "size": 156365
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_02_columbia_travel_22.pdf",
+      "status": 200,
+      "ms": 35800,
+      "doc_type": "i20",
+      "error": null,
+      "size": 155912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/02_columbia_transcript.pdf",
+      "status": 200,
+      "ms": 79191,
+      "doc_type": "transcript",
+      "error": null,
+      "size": 494359
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_01_columbia_original.pdf",
+      "status": 0,
+      "ms": 181044,
+      "doc_type": null,
+      "error": null,
+      "size": 348142
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/03_business_plan/yangtze_capital_5yr_business_plan.pdf",
+      "status": 200,
+      "ms": 10006,
+      "doc_type": "insurance_record",
+      "error": null,
+      "size": 43121
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/06_corporate_resolutions.pdf",
+      "status": 400,
+      "ms": 4240,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 102754
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/05_bylaws.pdf",
+      "status": 400,
+      "ms": 60485,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 796287
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/10_soi_filed_041326_latest.pdf",
+      "status": 400,
+      "ms": 7732,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 133969
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/07_board_resolution_signing_authority.pdf",
+      "status": 400,
+      "ms": 2081,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 7188
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/11_key_documents_compilation.pdf",
+      "status": 400,
+      "ms": 9286,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 299520
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/03_ein_fax_notification.pdf",
+      "status": 400,
+      "ms": 7772,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 247841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/04_ein_cancellation_letter_dup_eIN.pdf",
+      "status": 200,
+      "ms": 37363,
+      "doc_type": "entity_notice",
+      "error": null,
+      "size": 180878
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/02_ein_cp575_notice.pdf",
+      "status": 200,
+      "ms": 10363,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/08_governance_signed_includes_stock_cert.pdf",
+      "status": 400,
+      "ms": 33538,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 958776
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/09_soi_goodstanding.pdf",
+      "status": 200,
+      "ms": 13151,
+      "doc_type": "certificate_of_good_standing",
+      "error": null,
+      "size": 131798
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/01_articles_of_incorporation_ss4.pdf",
+      "status": 400,
+      "ms": 10346,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/05_office_lease/yangtze_office_lease_signed.pdf",
+      "status": 200,
+      "ms": 13107,
+      "doc_type": "lease",
+      "error": null,
+      "size": 152368
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B07_i20_westcliff_transfer_pending.pdf",
+      "status": 400,
+      "ms": 7192,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 53753
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B12_i20_ciam_cpt_yangtze_apr2026.pdf",
+      "status": 200,
+      "ms": 13998,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B09_i20_ciam_transfer_pending_sep2025.pdf",
+      "status": 400,
+      "ms": 10485,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 104350
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B02_i20_columbia_travel_2022.pdf",
+      "status": 200,
+      "ms": 14980,
+      "doc_type": "i20",
+      "error": null,
+      "size": 155912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B10_i20_ciam_cpt_wolff_li_nov2025.pdf",
+      "status": 200,
+      "ms": 17545,
+      "doc_type": "i20",
+      "error": null,
+      "size": 121830
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B03_i20_columbia_travel_2023.pdf",
+      "status": 200,
+      "ms": 17061,
+      "doc_type": "i20",
+      "error": null,
+      "size": 227911
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B06_i20_columbia_stemopt_signed.pdf",
+      "status": 200,
+      "ms": 16295,
+      "doc_type": "i20",
+      "error": null,
+      "size": 903189
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B08_i20_westcliff_continued.pdf",
+      "status": 200,
+      "ms": 12675,
+      "doc_type": "i20",
+      "error": null,
+      "size": 78229
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B11_i20_ciam_current.pdf",
+      "status": 200,
+      "ms": 13132,
+      "doc_type": "i20",
+      "error": null,
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B01_i20_columbia_original.pdf",
+      "status": 200,
+      "ms": 11431,
+      "doc_type": "i20",
+      "error": null,
+      "size": 348142
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B04_i20_columbia_opt_jan2023.pdf",
+      "status": 200,
+      "ms": 14046,
+      "doc_type": "i20",
+      "error": null,
+      "size": 156365
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/02_i20_history/B05_i20_columbia_stemopt_jan2024.pdf",
+      "status": 200,
+      "ms": 11182,
+      "doc_type": "i20",
+      "error": null,
+      "size": 172891
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/04_ability_to_pay/01_MISLABELED_was_yunhong_actually_chenyu_ciam_i20_affidavit.pdf",
+      "status": 200,
+      "ms": 11468,
+      "doc_type": "financial_support_affidavit",
+      "error": null,
+      "size": 361910
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/04_ability_to_pay/02_yangtze_employment_offer_letter.pdf",
+      "status": 200,
+      "ms": 10214,
+      "doc_type": "employment_letter",
+      "error": null,
+      "size": 54438
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/04_ability_to_pay/03_ftb_withholding_notice.pdf",
+      "status": 200,
+      "ms": 11862,
+      "doc_type": "tax_notice",
+      "error": null,
+      "size": 1439209
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/2026-04-28_demand_letter_v1.pdf",
+      "status": 400,
+      "ms": 5276,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 48804
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/2026-04-28_litigation_hold_v1.pdf",
+      "status": 400,
+      "ms": 5214,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 29110
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/firm_intake_shortlist.pdf",
+      "status": 400,
+      "ms": 4724,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 40916
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/2026-04-28_demand_letter_v1_clean.pdf",
+      "status": 400,
+      "ms": 4268,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 38345
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/consultation_playbook.pdf",
+      "status": 400,
+      "ms": 5012,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 49720
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/00_README_exhibit_index.pdf",
+      "status": 400,
+      "ms": 4481,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 49165
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/C_termination_email_thread_2024-12-05_to_29.pdf",
+      "status": 400,
+      "ms": 5370,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 133011
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/E_thunderbird_deck_delivered_2024-12-11.pdf",
+      "status": 400,
+      "ms": 13248,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 4578758
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/B_offer_letter_amended_signed_2024-12-27.pdf",
+      "status": 200,
+      "ms": 10334,
+      "doc_type": "employment_contract",
+      "error": null,
+      "size": 278386
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/K_nda_thunderbirds_me_unsigned_2024-09-23.pdf",
+      "status": 200,
+      "ms": 10951,
+      "doc_type": "non_disclosure_agreement",
+      "error": null,
+      "size": 236047
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/H_dochub_reminder_2024-12-13.pdf",
+      "status": 400,
+      "ms": 7621,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 173295
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/A_offer_letter_original_signed_2024-12-05.pdf",
+      "status": 200,
+      "ms": 11719,
+      "doc_type": "employment_contract",
+      "error": null,
+      "size": 292587
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/L_nda_dr_pecker_unsigned_2024-09-23.pdf",
+      "status": 200,
+      "ms": 8073,
+      "doc_type": "non_disclosure_agreement",
+      "error": null,
+      "size": 199210
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/J_nda_rai_inc_unsigned_2024-09-23.pdf",
+      "status": 200,
+      "ms": 10015,
+      "doc_type": "non_disclosure_agreement",
+      "error": null,
+      "size": 196839
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/G_dochub_finalized_audit_trail_2024-12-05.pdf",
+      "status": 400,
+      "ms": 22984,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 566046
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/rai_demand/exhibits/I_glyde_digital_45m_press_release.pdf",
+      "status": 200,
+      "ms": 9183,
+      "doc_type": "news_article",
+      "error": null,
+      "size": 365345
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/wolf_group/2025_welcome_letter_fee_schedule.pdf",
+      "status": 400,
+      "ms": 25470,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 616167
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/yunhong/nanjing_xinchunzhu_document_checklist_042926.pdf",
+      "status": 200,
+      "ms": 9728,
+      "doc_type": null,
+      "error": null,
+      "size": 28503
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/murthy_law/H1BcoII_PS.pdf",
+      "status": 200,
+      "ms": 13262,
+      "doc_type": null,
+      "error": null,
+      "size": 176874
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/murthy_law/H1BcoCapReg_PS_FY27.pdf",
+      "status": 400,
+      "ms": 8856,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 284186
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/litwin_smith/Beneficiary_Questionnaire_FILLED.docx",
+      "status": 400,
+      "ms": 812,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 87083
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/litwin_smith/EmployER_Questionnaire_FILLED.docx",
+      "status": 200,
+      "ms": 5652,
+      "doc_type": null,
+      "error": null,
+      "size": 82414
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/immigration/i94_most_recent.pdf",
+      "status": 200,
+      "ms": 11512,
+      "doc_type": "i94",
+      "error": null,
+      "size": 50321
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/entity/CertOfGoodStanding.pdf",
+      "status": 200,
+      "ms": 9219,
+      "doc_type": null,
+      "error": null,
+      "size": 414648
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/entity/Articles of Organization.pdf",
+      "status": 200,
+      "ms": 8634,
+      "doc_type": "articles_of_organization",
+      "error": null,
+      "size": 430479
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/entity/EIN_CP575_Notice.pdf",
+      "status": 200,
+      "ms": 8140,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/education/columbia_transcript.pdf",
+      "status": 200,
+      "ms": 19653,
+      "doc_type": "transcript",
+      "error": null,
+      "size": 494359
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/education/columbia_degree_certification.pdf",
+      "status": 400,
+      "ms": 16522,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 474407
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/prior_h1b/fy2027_mtlaw_agreement_signed.pdf",
+      "status": 200,
+      "ms": 11031,
+      "doc_type": null,
+      "error": null,
+      "size": 298948
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/prior_h1b/fy2026_status_overview.pdf",
+      "status": 200,
+      "ms": 37044,
+      "doc_type": null,
+      "error": null,
+      "size": 685698
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/prior_h1b/fy2026_g28.pdf",
+      "status": 200,
+      "ms": 11022,
+      "doc_type": "h1b_g28",
+      "error": null,
+      "size": 173184
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/prior_h1b/fy2026_invoice_paid.pdf",
+      "status": 200,
+      "ms": 5715,
+      "doc_type": null,
+      "error": null,
+      "size": 52350
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/prior_h1b/fy2026_h1br.pdf",
+      "status": 200,
+      "ms": 6423,
+      "doc_type": "h1b_registration",
+      "error": null,
+      "size": 79820
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/2024_w2_wolff_li.pdf",
+      "status": 200,
+      "ms": 10030,
+      "doc_type": "w2",
+      "error": null,
+      "size": 224103
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/2025_w2_wolff_li.pdf",
+      "status": 200,
+      "ms": 8958,
+      "doc_type": "w2",
+      "error": null,
+      "size": 420731
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/paystub_claudius_2025-02-25.pdf",
+      "status": 200,
+      "ms": 7760,
+      "doc_type": "paystub",
+      "error": null,
+      "size": 21320
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/2024_w2_bitsync.pdf",
+      "status": 200,
+      "ms": 29963,
+      "doc_type": "w2",
+      "error": null,
+      "size": 404987
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/paystub_claudius_2025-02-11.pdf",
+      "status": 200,
+      "ms": 9693,
+      "doc_type": "paystub",
+      "error": null,
+      "size": 21234
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/claudius_termination_020525.pdf",
+      "status": 400,
+      "ms": 17563,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 109631
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/paystub_claudius_2025-01-09.pdf",
+      "status": 200,
+      "ms": 7810,
+      "doc_type": "paystub",
+      "error": null,
+      "size": 20882
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/2023_w2_vcv.pdf",
+      "status": 200,
+      "ms": 42278,
+      "doc_type": "w2",
+      "error": null,
+      "size": 192423
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/01_initial_inquiry/11_ciam_current.pdf",
+      "status": 400,
+      "ms": 13535,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/01_initial_inquiry/columbia_i20_masters.pdf",
+      "status": 200,
+      "ms": 17851,
+      "doc_type": "i20",
+      "error": null,
+      "size": 156365
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/01_initial_inquiry/i94_most_recent.pdf",
+      "status": 200,
+      "ms": 6799,
+      "doc_type": "i94",
+      "error": null,
+      "size": 50321
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/06_columbia_stemopt_signed.pdf",
+      "status": 200,
+      "ms": 43430,
+      "doc_type": "i20",
+      "error": null,
+      "size": 903189
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/02_columbia_travel_22.pdf",
+      "status": 400,
+      "ms": 4476,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 155912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/05_columbia_stemopt.pdf",
+      "status": 400,
+      "ms": 4155,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 172891
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/08_westcliff_continued.pdf",
+      "status": 400,
+      "ms": 3720,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 78229
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/03_columbia_travel_23.pdf",
+      "status": 400,
+      "ms": 16025,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 227911
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/11_ciam_current.pdf",
+      "status": 400,
+      "ms": 5010,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/10_ciam_continued_cpt.pdf",
+      "status": 400,
+      "ms": 15619,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 121830
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/04_columbia_opt.pdf",
+      "status": 400,
+      "ms": 5297,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 156365
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/01_columbia_original.pdf",
+      "status": 400,
+      "ms": 6350,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 348142
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/09_ciam_transfer_pending.pdf",
+      "status": 200,
+      "ms": 12065,
+      "doc_type": null,
+      "error": null,
+      "size": 104350
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/i20/07_westcliff_transfer_pending.pdf",
+      "status": 200,
+      "ms": 22231,
+      "doc_type": null,
+      "error": null,
+      "size": 53753
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/case_summary_for_kuck_042826.pdf",
+      "status": 400,
+      "ms": 7285,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 46487
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/consult_prep_042826.pdf",
+      "status": 200,
+      "ms": 11401,
+      "doc_type": null,
+      "error": null,
+      "size": 61559
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/internal_only_NOT_FOR_UPLOAD/MISLABELED_was_called_yunhong_affidavit_actually_chenyu_ciam_i20.pdf",
+      "status": 200,
+      "ms": 20444,
+      "doc_type": "financial_support_affidavit",
+      "error": null,
+      "size": 361910
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/internal_only_NOT_FOR_UPLOAD/01_BP_DRAFT_v1_misaligned_with_locked_SoT.pdf",
+      "status": 200,
+      "ms": 9345,
+      "doc_type": "insurance_record",
+      "error": null,
+      "size": 43121
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b_arora_021326/petition_docs/04_i20_01_columbia_original.pdf",
+      "status": 200,
+      "ms": 30437,
+      "doc_type": "i20",
+      "error": null,
+      "size": 348142
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/internal_only_NOT_FOR_UPLOAD/02_MATERIALITY_DIFFERENCE_MEMO_DRAFT.pdf",
+      "status": 400,
+      "ms": 4658,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 53182
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/08_h1b_employer_questionnaire/01_employer_questionnaire_filled.pdf",
+      "status": 400,
+      "ms": 4376,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 30826
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/07_owner_yunhong/03_i94.pdf",
+      "status": 200,
+      "ms": 6269,
+      "doc_type": null,
+      "error": null,
+      "size": 51085
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/01_cv.pdf",
+      "status": 200,
+      "ms": 8279,
+      "doc_type": "resume",
+      "error": null,
+      "size": 52309
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/08_ead_stem_opt_approval.pdf",
+      "status": 0,
+      "ms": 5328,
+      "doc_type": null,
+      "error": null,
+      "size": 4142969
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/02c_w2_2024_prior_year.pdf",
+      "status": 200,
+      "ms": 14624,
+      "doc_type": "w2",
+      "error": null,
+      "size": 224103
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/04_wolff_li_offer_letter.pdf",
+      "status": 200,
+      "ms": 8455,
+      "doc_type": "employment_letter",
+      "error": null,
+      "size": 145159
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/05_wolff_li_i9_signed.pdf",
+      "status": 200,
+      "ms": 15645,
+      "doc_type": "i9",
+      "error": null,
+      "size": 927033
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/03_paystubs_wolff_li.pdf",
+      "status": 200,
+      "ms": 10329,
+      "doc_type": "paystub",
+      "error": null,
+      "size": 75135
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/02b_w2_2025_claudius.pdf",
+      "status": 200,
+      "ms": 19969,
+      "doc_type": null,
+      "error": null,
+      "size": 149320
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/02_w2_2025_wolffli_corrected.pdf",
+      "status": 200,
+      "ms": 7774,
+      "doc_type": "w2",
+      "error": null,
+      "size": 432723
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/09_business_plan/01_yangtze_5yr_business_plan_v2.pdf",
+      "status": 200,
+      "ms": 7262,
+      "doc_type": null,
+      "error": null,
+      "size": 50618
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/06_corporate_resolutions.pdf",
+      "status": 400,
+      "ms": 1727,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 102754
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/12_office_lease_signed.pdf",
+      "status": 200,
+      "ms": 8289,
+      "doc_type": "lease",
+      "error": null,
+      "size": 152368
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/03_ein_assignment_irs_fax.pdf",
+      "status": 400,
+      "ms": 2166,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 247841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/05_bylaws.pdf",
+      "status": 400,
+      "ms": 4188,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 796287
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/07_board_resolution_signing_authority.pdf",
+      "status": 400,
+      "ms": 1523,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 7188
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/10_soi_updated_041326_berkeley.pdf",
+      "status": 400,
+      "ms": 2119,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 133969
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/11_certificate_of_status_032826_compilation.pdf",
+      "status": 400,
+      "ms": 2497,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 299520
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/04_ein_cancellation_letter_dup_eIN.pdf",
+      "status": 200,
+      "ms": 9992,
+      "doc_type": "entity_notice",
+      "error": null,
+      "size": 180878
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/02_ein_cp575_notice.pdf",
+      "status": 200,
+      "ms": 6195,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/09_soi_initial_032826_sacramento.pdf",
+      "status": 400,
+      "ms": 2357,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 131798
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/08_governance_signed_includes_stock_cert.pdf",
+      "status": 400,
+      "ms": 4923,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 958776
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/01_articles_of_incorporation_ss4.pdf",
+      "status": 400,
+      "ms": 17632,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B07_i20_westcliff_transfer_pending.pdf",
+      "status": 400,
+      "ms": 3829,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 53753
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B12_i20_ciam_cpt_yangtze_apr2026.pdf",
+      "status": 200,
+      "ms": 9589,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B09_i20_ciam_transfer_pending_sep2025.pdf",
+      "status": 400,
+      "ms": 4690,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 104350
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B02_i20_columbia_travel_2022.pdf",
+      "status": 200,
+      "ms": 8857,
+      "doc_type": "i20",
+      "error": null,
+      "size": 155912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B10_i20_ciam_cpt_wolff_li_nov2025.pdf",
+      "status": 200,
+      "ms": 8859,
+      "doc_type": "i20",
+      "error": null,
+      "size": 121830
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B03_i20_columbia_travel_2023.pdf",
+      "status": 200,
+      "ms": 8938,
+      "doc_type": "i20",
+      "error": null,
+      "size": 227911
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B06_i20_columbia_stemopt_signed.pdf",
+      "status": 200,
+      "ms": 11203,
+      "doc_type": "i20",
+      "error": null,
+      "size": 903189
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B08_i20_westcliff_continued.pdf",
+      "status": 200,
+      "ms": 10223,
+      "doc_type": "i20",
+      "error": null,
+      "size": 78229
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B11_i20_ciam_current.pdf",
+      "status": 200,
+      "ms": 9170,
+      "doc_type": "i20",
+      "error": null,
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B01_i20_columbia_original.pdf",
+      "status": 200,
+      "ms": 8720,
+      "doc_type": "i20",
+      "error": null,
+      "size": 348142
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B04_i20_columbia_opt_jan2023.pdf",
+      "status": 200,
+      "ms": 9639,
+      "doc_type": "i20",
+      "error": null,
+      "size": 156365
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/06_beneficiary_i20_history/B05_i20_columbia_stemopt_jan2024.pdf",
+      "status": 200,
+      "ms": 9557,
+      "doc_type": "i20",
+      "error": null,
+      "size": 172891
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/03_beneficiary_personal/03_i94.pdf",
+      "status": 200,
+      "ms": 8478,
+      "doc_type": null,
+      "error": null,
+      "size": 50935
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/02_h1b_registrations_and_selection/01b_yangtze_h1br_submitted.pdf",
+      "status": 200,
+      "ms": 5899,
+      "doc_type": null,
+      "error": null,
+      "size": 37496
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/02_h1b_registrations_and_selection/01a_bsgc_h1br_submitted.pdf",
+      "status": 200,
+      "ms": 5777,
+      "doc_type": null,
+      "error": null,
+      "size": 37226
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/02_h1b_registrations_and_selection/02b_yangtze_selection_notice.pdf",
+      "status": 200,
+      "ms": 9801,
+      "doc_type": null,
+      "error": null,
+      "size": 32305
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/02_h1b_registrations_and_selection/02a_bsgc_selection_notice.pdf",
+      "status": 200,
+      "ms": 7697,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 32318
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/04_beneficiary_education/07_jlpt_n1_certificate.pdf",
+      "status": 200,
+      "ms": 17322,
+      "doc_type": null,
+      "error": null,
+      "size": 2657000
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/04_beneficiary_education/05_sjtu_bachelor_transcript_english.pdf",
+      "status": 200,
+      "ms": 11404,
+      "doc_type": "transcript",
+      "error": null,
+      "size": 292127
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/04_beneficiary_education/02_columbia_ms_transcript.pdf",
+      "status": 200,
+      "ms": 14481,
+      "doc_type": "transcript",
+      "error": null,
+      "size": 494359
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/04_beneficiary_education/06_sjtu_bachelor_grade_scale.pdf",
+      "status": 400,
+      "ms": 8882,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 292245
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/04_beneficiary_education/08_wes_credential_evaluation_applicant_copy.pdf",
+      "status": 200,
+      "ms": 19867,
+      "doc_type": null,
+      "error": null,
+      "size": 365139
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/04_beneficiary_education/01_columbia_ms_diploma.pdf",
+      "status": 200,
+      "ms": 23156,
+      "doc_type": null,
+      "error": null,
+      "size": 11540796
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/04_beneficiary_education/03_columbia_ecertification.pdf",
+      "status": 200,
+      "ms": 9693,
+      "doc_type": null,
+      "error": null,
+      "size": 474407
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/04_beneficiary_education/04_sjtu_bachelor_diploma_cert.pdf",
+      "status": 200,
+      "ms": 6565,
+      "doc_type": null,
+      "error": null,
+      "size": 470138
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/intake_042826/02_kbi_intro_to_h1b_lca_process_memo.docx",
+      "status": 200,
+      "ms": 4825,
+      "doc_type": null,
+      "error": null,
+      "size": 79297
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/intake_042826/03_h1b_employer_questionnaire_filled.pdf",
+      "status": 400,
+      "ms": 1845,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 30826
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/intake_042826/03_h1b_employer_questionnaire.pdf",
+      "status": 200,
+      "ms": 10994,
+      "doc_type": null,
+      "error": null,
+      "size": 236789
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/intake_042826/01_h1b_document_checklist.pdf",
+      "status": 200,
+      "ms": 6223,
+      "doc_type": null,
+      "error": null,
+      "size": 154652
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/09_columbia_degree.pdf",
+      "status": 400,
+      "ms": 5307,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 474407
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/08_cv_chenyu_li.pdf",
+      "status": 200,
+      "ms": 7344,
+      "doc_type": "resume",
+      "error": null,
+      "size": 52309
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/05_MISLABELED_was_yunhong_actually_chenyu_ciam_i20_affidavit.pdf",
+      "status": 200,
+      "ms": 8677,
+      "doc_type": "financial_support_affidavit",
+      "error": null,
+      "size": 361910
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/07_yangtze_office_lease_signed.pdf",
+      "status": 200,
+      "ms": 8245,
+      "doc_type": "lease",
+      "error": null,
+      "size": 152368
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/04_yangtze_5yr_business_plan.pdf",
+      "status": 200,
+      "ms": 7448,
+      "doc_type": "insurance_record",
+      "error": null,
+      "size": 43121
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/02_ein_cp575_notice.pdf",
+      "status": 200,
+      "ms": 6744,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/06_yangtze_employment_offer_letter.pdf",
+      "status": 200,
+      "ms": 8795,
+      "doc_type": "employment_letter",
+      "error": null,
+      "size": 54438
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/03_i20_current_cpt_yangtze.pdf",
+      "status": 200,
+      "ms": 9471,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/01_articles_of_incorporation_ss4.pdf",
+      "status": 400,
+      "ms": 5608,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/12_i20_columbia_original.pdf",
+      "status": 200,
+      "ms": 10716,
+      "doc_type": "i20",
+      "error": null,
+      "size": 348142
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/13_i20_columbia_travel_2022.pdf",
+      "status": 200,
+      "ms": 9047,
+      "doc_type": "i20",
+      "error": null,
+      "size": 155912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/06_corporate_resolutions.pdf",
+      "status": 400,
+      "ms": 1652,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 102754
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/22_i20_ciam_current.pdf",
+      "status": 200,
+      "ms": 10380,
+      "doc_type": "i20",
+      "error": null,
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/24_yangtze_capital_5yr_business_plan.pdf",
+      "status": 200,
+      "ms": 7522,
+      "doc_type": "insurance_record",
+      "error": null,
+      "size": 43121
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/26_yangtze_employment_offer_letter.pdf",
+      "status": 200,
+      "ms": 7481,
+      "doc_type": "employment_letter",
+      "error": null,
+      "size": 54438
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/20_i20_ciam_transfer_pending_sep2025.pdf",
+      "status": 400,
+      "ms": 3232,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 104350
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/25_MISLABELED_was_yunhong_actually_chenyu_ciam_i20_affidavit.pdf",
+      "status": 200,
+      "ms": 7648,
+      "doc_type": "financial_support_affidavit",
+      "error": null,
+      "size": 361910
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/05_bylaws.pdf",
+      "status": 400,
+      "ms": 4008,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 796287
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/10_soi_filed_041326_latest.pdf",
+      "status": 400,
+      "ms": 2507,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 133969
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/07_board_resolution_signing_authority.pdf",
+      "status": 400,
+      "ms": 1710,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 7188
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/27_ftb_withholding_notice.pdf",
+      "status": 200,
+      "ms": 7354,
+      "doc_type": "tax_notice",
+      "error": null,
+      "size": 1439209
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/14_i20_columbia_travel_2023.pdf",
+      "status": 200,
+      "ms": 9493,
+      "doc_type": "i20",
+      "error": null,
+      "size": 227911
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/15_i20_columbia_opt_jan2023.pdf",
+      "status": 200,
+      "ms": 10668,
+      "doc_type": "i20",
+      "error": null,
+      "size": 156365
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/11_key_documents_compilation.pdf",
+      "status": 400,
+      "ms": 2100,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 299520
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/17_i20_columbia_stemopt_signed.pdf",
+      "status": 200,
+      "ms": 10550,
+      "doc_type": "i20",
+      "error": null,
+      "size": 903189
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/23_i20_ciam_cpt_yangtze_apr2026.pdf",
+      "status": 200,
+      "ms": 9824,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/21_i20_ciam_cpt_wolff_li_nov2025.pdf",
+      "status": 200,
+      "ms": 11623,
+      "doc_type": "i20",
+      "error": null,
+      "size": 121830
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/03_ein_fax_notification.pdf",
+      "status": 400,
+      "ms": 9043,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 247841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/04_ein_cancellation_letter_dup_eIN.pdf",
+      "status": 200,
+      "ms": 5978,
+      "doc_type": "entity_notice",
+      "error": null,
+      "size": 180878
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/02_ein_cp575_notice.pdf",
+      "status": 200,
+      "ms": 7246,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/18_i20_westcliff_transfer_pending.pdf",
+      "status": 400,
+      "ms": 3213,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 53753
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/28_yangtze_office_lease_signed.pdf",
+      "status": 200,
+      "ms": 10471,
+      "doc_type": "lease",
+      "error": null,
+      "size": 152368
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/08_governance_signed_includes_stock_cert.pdf",
+      "status": 400,
+      "ms": 10872,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 958776
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/16_i20_columbia_stemopt_jan2024.pdf",
+      "status": 200,
+      "ms": 9303,
+      "doc_type": "i20",
+      "error": null,
+      "size": 172891
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/19_i20_westcliff_continued.pdf",
+      "status": 200,
+      "ms": 9440,
+      "doc_type": "i20",
+      "error": null,
+      "size": 78229
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/09_soi_goodstanding.pdf",
+      "status": 200,
+      "ms": 6461,
+      "doc_type": "certificate_of_good_standing",
+      "error": null,
+      "size": 131798
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs/01_articles_of_incorporation_ss4.pdf",
+      "status": 400,
+      "ms": 5409,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/03_business_plan/yangtze_capital_5yr_business_plan.pdf",
+      "status": 200,
+      "ms": 7750,
+      "doc_type": "insurance_record",
+      "error": null,
+      "size": 43121
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/06_corporate_resolutions.pdf",
+      "status": 400,
+      "ms": 1800,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 102754
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/05_bylaws.pdf",
+      "status": 400,
+      "ms": 3275,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 796287
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/10_soi_filed_041326_latest.pdf",
+      "status": 400,
+      "ms": 2428,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 133969
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/07_board_resolution_signing_authority.pdf",
+      "status": 400,
+      "ms": 1932,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 7188
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/11_key_documents_compilation.pdf",
+      "status": 400,
+      "ms": 2615,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 299520
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/03_ein_fax_notification.pdf",
+      "status": 400,
+      "ms": 2432,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 247841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/04_ein_cancellation_letter_dup_eIN.pdf",
+      "status": 200,
+      "ms": 5622,
+      "doc_type": "entity_notice",
+      "error": null,
+      "size": 180878
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/02_ein_cp575_notice.pdf",
+      "status": 200,
+      "ms": 6485,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/08_governance_signed_includes_stock_cert.pdf",
+      "status": 400,
+      "ms": 8564,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 958776
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/09_soi_goodstanding.pdf",
+      "status": 200,
+      "ms": 8068,
+      "doc_type": "certificate_of_good_standing",
+      "error": null,
+      "size": 131798
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/01_yangtze_corporate/01_articles_of_incorporation_ss4.pdf",
+      "status": 400,
+      "ms": 4379,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/05_office_lease/yangtze_office_lease_signed.pdf",
+      "status": 200,
+      "ms": 7355,
+      "doc_type": "lease",
+      "error": null,
+      "size": 152368
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B07_i20_westcliff_transfer_pending.pdf",
+      "status": 400,
+      "ms": 3487,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 53753
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B12_i20_ciam_cpt_yangtze_apr2026.pdf",
+      "status": 200,
+      "ms": 9798,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B09_i20_ciam_transfer_pending_sep2025.pdf",
+      "status": 400,
+      "ms": 3483,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 104350
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B02_i20_columbia_travel_2022.pdf",
+      "status": 200,
+      "ms": 9527,
+      "doc_type": "i20",
+      "error": null,
+      "size": 155912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B10_i20_ciam_cpt_wolff_li_nov2025.pdf",
+      "status": 200,
+      "ms": 9461,
+      "doc_type": "i20",
+      "error": null,
+      "size": 121830
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B03_i20_columbia_travel_2023.pdf",
+      "status": 200,
+      "ms": 9184,
+      "doc_type": "i20",
+      "error": null,
+      "size": 227911
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B06_i20_columbia_stemopt_signed.pdf",
+      "status": 200,
+      "ms": 9187,
+      "doc_type": "i20",
+      "error": null,
+      "size": 903189
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B08_i20_westcliff_continued.pdf",
+      "status": 200,
+      "ms": 7995,
+      "doc_type": "i20",
+      "error": null,
+      "size": 78229
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B11_i20_ciam_current.pdf",
+      "status": 200,
+      "ms": 8862,
+      "doc_type": "i20",
+      "error": null,
+      "size": 108072
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B01_i20_columbia_original.pdf",
+      "status": 200,
+      "ms": 9289,
+      "doc_type": "i20",
+      "error": null,
+      "size": 348142
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B04_i20_columbia_opt_jan2023.pdf",
+      "status": 200,
+      "ms": 8975,
+      "doc_type": "i20",
+      "error": null,
+      "size": 156365
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/02_i20_history/B05_i20_columbia_stemopt_jan2024.pdf",
+      "status": 200,
+      "ms": 9509,
+      "doc_type": "i20",
+      "error": null,
+      "size": 172891
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/04_ability_to_pay/01_MISLABELED_was_yunhong_actually_chenyu_ciam_i20_affidavit.pdf",
+      "status": 200,
+      "ms": 8106,
+      "doc_type": "financial_support_affidavit",
+      "error": null,
+      "size": 361910
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/04_ability_to_pay/02_yangtze_employment_offer_letter.pdf",
+      "status": 200,
+      "ms": 7459,
+      "doc_type": "employment_letter",
+      "error": null,
+      "size": 54438
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/kuck_baxter_intake_042726/04_ability_to_pay/03_ftb_withholding_notice.pdf",
+      "status": 200,
+      "ms": 6833,
+      "doc_type": "tax_notice",
+      "error": null,
+      "size": 1439209
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/01_registrations/01b_yangtze_h1br_submitted.pdf",
+      "status": 200,
+      "ms": 6198,
+      "doc_type": "h1b_registration",
+      "error": null,
+      "size": 37496
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/01_registrations/01a_bsgc_h1br_submitted.pdf",
+      "status": 200,
+      "ms": 6363,
+      "doc_type": "h1b_registration",
+      "error": null,
+      "size": 37226
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/01_registrations/02b_yangtze_selection_notice.pdf",
+      "status": 200,
+      "ms": 6665,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 32305
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_042726/01_registrations/02a_bsgc_selection_notice.pdf",
+      "status": 200,
+      "ms": 6690,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 32318
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_yearend_summary_schwab_xxx619.pdf",
+      "status": 200,
+      "ms": 6648,
+      "doc_type": null,
+      "error": null,
+      "size": 54390
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2023_w2_justworks_vcv.pdf",
+      "status": 200,
+      "ms": 11406,
+      "doc_type": "w2",
+      "error": null,
+      "size": 192423
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_1042s_schwab_xxx619.pdf",
+      "status": 200,
+      "ms": 10109,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 125242
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_w4_claudius.pdf",
+      "status": 200,
+      "ms": 14078,
+      "doc_type": null,
+      "error": null,
+      "size": 212240
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_1099int_citibank_bsgc.pdf",
+      "status": 400,
+      "ms": 2973,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 326781
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_w4_bitsync.pdf",
+      "status": 200,
+      "ms": 12403,
+      "doc_type": null,
+      "error": null,
+      "size": 212118
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2023_TaxReturn.pdf",
+      "status": 200,
+      "ms": 9471,
+      "doc_type": "tax_return",
+      "error": null,
+      "size": 515737
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_w2_bitsync.pdf",
+      "status": 200,
+      "ms": 7415,
+      "doc_type": "w2",
+      "error": null,
+      "size": 404987
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_TaxReturn.pdf",
+      "status": 200,
+      "ms": 9902,
+      "doc_type": "tax_return",
+      "error": null,
+      "size": 617644
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_1042s_tda_xxx619.pdf",
+      "status": 200,
+      "ms": 8120,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 73301
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2025_w2_gusto.pdf",
+      "status": 200,
+      "ms": 7651,
+      "doc_type": "w2",
+      "error": null,
+      "size": 420731
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/upload_for_cpa_021226/2024_w2_justworks_wolffli.pdf",
+      "status": 200,
+      "ms": 10130,
+      "doc_type": "w2",
+      "error": null,
+      "size": 224103
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2024_w4_claudius.pdf",
+      "status": 200,
+      "ms": 12520,
+      "doc_type": "w4",
+      "error": null,
+      "size": 212240
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_wolff_li_paystubs.pdf",
+      "status": 200,
+      "ms": 8913,
+      "doc_type": "paystub",
+      "error": null,
+      "size": 75135
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_w2_wolff_li_capital.pdf",
+      "status": 200,
+      "ms": 9553,
+      "doc_type": "w2",
+      "error": null,
+      "size": 432723
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-02-25.pdf",
+      "status": 200,
+      "ms": 7158,
+      "doc_type": "paystub",
+      "error": null,
+      "size": 21320
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025.pdf",
+      "status": 200,
+      "ms": 2748,
+      "doc_type": null,
+      "error": null,
+      "size": 29372
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/W2_Claudius_Legal_Intelligence_2025_unlocked.pdf",
+      "status": 200,
+      "ms": 8521,
+      "doc_type": "w2",
+      "error": null,
+      "size": 149320
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/schwab_llc_xxx239_2025_account_summary.pdf",
+      "status": 200,
+      "ms": 8305,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 143836
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-02-11.pdf",
+      "status": 200,
+      "ms": 6745,
+      "doc_type": "paystub",
+      "error": null,
+      "size": 21234
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2024_1042s_tda_xxx619.pdf",
+      "status": 200,
+      "ms": 8288,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 73301
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_1042s_schwab_xxx619.pdf",
+      "status": 200,
+      "ms": 10138,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 133428
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025_decrypted.pdf",
+      "status": 200,
+      "ms": 6170,
+      "doc_type": "tuition_statement",
+      "error": null,
+      "size": 28432
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-01-09.pdf",
+      "status": 200,
+      "ms": 6288,
+      "doc_type": "paystub",
+      "error": null,
+      "size": 20882
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/W2_Claudius_Legal_Intelligence_2025.pdf",
+      "status": 200,
+      "ms": 5469,
+      "doc_type": null,
+      "error": null,
+      "size": 153210
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_yearend_summary_schwab_xxx619.pdf",
+      "status": 200,
+      "ms": 11274,
+      "doc_type": "annual_account_summary",
+      "error": null,
+      "size": 54390
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2023_1042s_tda_xxx619.pdf",
+      "status": 200,
+      "ms": 8682,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 48482
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2023_w2_justworks_vcv.pdf",
+      "status": 200,
+      "ms": 10594,
+      "doc_type": "w2",
+      "error": null,
+      "size": 192423
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1042s_schwab_xxx619.pdf",
+      "status": 200,
+      "ms": 9386,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 125242
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1099b_schwab_xxx619_part1.pdf",
+      "status": 200,
+      "ms": 6950,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 32875
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1099int_citibank_bsgc.pdf",
+      "status": 400,
+      "ms": 2759,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 326781
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w4_bitsync.pdf",
+      "status": 200,
+      "ms": 12096,
+      "doc_type": "w4",
+      "error": null,
+      "size": 212118
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1099b_schwab_xxx619_part2.pdf",
+      "status": 200,
+      "ms": 8254,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 32875
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w2_bitsync.pdf",
+      "status": 200,
+      "ms": 7464,
+      "doc_type": "w2",
+      "error": null,
+      "size": 404987
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_TaxReturn.pdf",
+      "status": 200,
+      "ms": 15147,
+      "doc_type": "tax_return",
+      "error": null,
+      "size": 617644
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1042s_tda_xxx619.pdf",
+      "status": 200,
+      "ms": 8338,
+      "doc_type": "1042s",
+      "error": null,
+      "size": 73301
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w2_justworks_wolffli.pdf",
+      "status": 200,
+      "ms": 10436,
+      "doc_type": "w2",
+      "error": null,
+      "size": 224103
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2023/2023_TaxReturn.pdf",
+      "status": 200,
+      "ms": 13988,
+      "doc_type": "tax_return",
+      "error": null,
+      "size": 515737
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/poa_yunhong_to_chenyu.pdf",
+      "status": 200,
+      "ms": 7276,
+      "doc_type": null,
+      "error": null,
+      "size": 7287
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/yunhong_w8ben.pdf",
+      "status": 200,
+      "ms": 8143,
+      "doc_type": null,
+      "error": null,
+      "size": 194359
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/board_resolution_signing_authority.pdf",
+      "status": 400,
+      "ms": 1517,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 7188
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/lease_extract_2pages.pdf",
+      "status": 200,
+      "ms": 12739,
+      "doc_type": null,
+      "error": null,
+      "size": 577260
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/residency_confirmation_letter.pdf",
+      "status": 200,
+      "ms": 6719,
+      "doc_type": null,
+      "error": null,
+      "size": 3144
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/i94_yunhong_chen.pdf",
+      "status": 200,
+      "ms": 6323,
+      "doc_type": null,
+      "error": null,
+      "size": 51073
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/bsgc_formation_wyoming.pdf",
+      "status": 200,
+      "ms": 6962,
+      "doc_type": "articles_of_organization",
+      "error": null,
+      "size": 430479
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/ein_notice_cp575.pdf",
+      "status": 200,
+      "ms": 6253,
+      "doc_type": "ein_letter",
+      "error": null,
+      "size": 14065
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/operating_agreement.pdf",
+      "status": 200,
+      "ms": 7062,
+      "doc_type": "operating_agreement",
+      "error": null,
+      "size": 68548
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_capital_eminutes_docs_signed_033026.pdf",
+      "status": 400,
+      "ms": 5225,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 958776
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_capital_key_documents_2026.pdf",
+      "status": 400,
+      "ms": 3296,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 299520
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/ewb_signer_worksheet_FILLED.docx",
+      "status": 200,
+      "ms": 5204,
+      "doc_type": null,
+      "error": null,
+      "size": 20955
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/ewb_kyc_crossborder.pdf",
+      "status": 400,
+      "ms": 6539,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 2914368
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_capital_filings_soi_goodstanding_2026.pdf",
+      "status": 200,
+      "ms": 6796,
+      "doc_type": "certificate_of_good_standing",
+      "error": null,
+      "size": 131798
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_capital_articles_and_ss4.pdf",
+      "status": 400,
+      "ms": 5206,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/ewb_kyc_crossborder_FILLED.pdf",
+      "status": 400,
+      "ms": 5789,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 2924355
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/Yangtze Capital 2nd EIN Cancellation Letter.pdf",
+      "status": 200,
+      "ms": 6637,
+      "doc_type": "entity_notice",
+      "error": null,
+      "size": 180878
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/Fee Agreement - Signed Electronically.pdf",
+      "status": 200,
+      "ms": 6947,
+      "doc_type": null,
+      "error": null,
+      "size": 73844
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_capital_bylaws_032626.pdf",
+      "status": 400,
+      "ms": 3073,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 796287
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/ewb_signer_worksheet.docx",
+      "status": 200,
+      "ms": 5440,
+      "doc_type": null,
+      "error": null,
+      "size": 4610
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_capital_soi_041326.pdf",
+      "status": 400,
+      "ms": 2428,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 133969
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/ewb_cdd_questionnaire_FILLED.pdf",
+      "status": 200,
+      "ms": 9221,
+      "doc_type": null,
+      "error": null,
+      "size": 90851
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_materiality_difference_memo_042926_DRAFT.pdf",
+      "status": 400,
+      "ms": 2736,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 53182
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_i129_support_letter_outline_042926.pdf",
+      "status": 400,
+      "ms": 2620,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 60681
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_capital_ein_fax_notification.pdf",
+      "status": 400,
+      "ms": 2549,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 247841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/ewb_cdd_questionnaire.pdf",
+      "status": 200,
+      "ms": 7893,
+      "doc_type": null,
+      "error": null,
+      "size": 85826
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_5yr_business_plan_v2_042926.pdf",
+      "status": 200,
+      "ms": 6656,
+      "doc_type": "company_filing",
+      "error": null,
+      "size": 50618
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/corporate/yangtze_capital_corporate_resolutions_2026.pdf",
+      "status": 400,
+      "ms": 1699,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 102754
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/530674.PDF",
+      "status": 400,
+      "ms": 2720,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 70066
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/530671.PDF",
+      "status": 400,
+      "ms": 2607,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 70031
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/BSGC_engagement_letter_040626.pdf",
+      "status": 400,
+      "ms": 3119,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 341010
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/BSGC_engagement_letter_SIGNED_040626.pdf",
+      "status": 200,
+      "ms": 10456,
+      "doc_type": null,
+      "error": null,
+      "size": 866701
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/CL_personal_engagement_letter_SIGNED_040626.pdf",
+      "status": 400,
+      "ms": 3529,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 840141
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/CL_personal_engagement_letter_040626.pdf",
+      "status": 400,
+      "ms": 3460,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 425576
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_capital_ftb_withholding_notice_022526.pdf",
+      "status": 200,
+      "ms": 8599,
+      "doc_type": "tax_notice",
+      "error": null,
+      "size": 1439209
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/cpt_evidence_summary_041026.pdf",
+      "status": 200,
+      "ms": 6944,
+      "doc_type": "school_policy_notice",
+      "error": null,
+      "size": 8538
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/h1b_retainer_hibee.pdf",
+      "status": 200,
+      "ms": 6918,
+      "doc_type": null,
+      "error": null,
+      "size": 585182
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_h1b_registration_beneficiaries_031226.csv",
+      "status": 200,
+      "ms": 4641,
+      "doc_type": null,
+      "error": null,
+      "size": 160
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_capital_articles_and_ss4.pdf",
+      "status": 400,
+      "ms": 4457,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 1652556
+    }
+  ]
+}

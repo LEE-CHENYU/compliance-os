@@ -1,0 +1,1143 @@
+{
+  "started_at": "2026-04-30T18:52:31.612128+00:00",
+  "finished_at": "2026-04-30T19:02:26.522408+00:00",
+  "api_url": "http://127.0.0.1:8000",
+  "user_email": "eval-20260430@guardian.local",
+  "fixture_count": 52,
+  "scores": {
+    "ingest_reliability": 0.8269230769230769,
+    "classification_accuracy": 0.9302325581395349,
+    "classification_accuracy_by_type": {
+      "w2": 1.0,
+      "1042s": 1.0,
+      "1099": 0.0,
+      "tuition_statement": 1.0,
+      "w4": 1.0,
+      "tax_return": 1.0,
+      "paystub": 1.0,
+      "bank_statement": 1.0,
+      "payment_options_notice": 1.0,
+      "annual_account_summary": 0.5,
+      "legal_services_agreement": 0.6666666666666666,
+      "h1b_registration": 1.0,
+      "h1b_g28": 1.0,
+      "h1b_registration_worksheet": 1.0,
+      "employment_letter": 1.0,
+      "i94": 1.0,
+      "lease": 1.0,
+      "transcript": 1.0,
+      "degree_certificate": 1.0
+    },
+    "dedup_correctness": 1.0,
+    "index_coverage": 1.0,
+    "p50_latency_ms": 5658.364166971296,
+    "p95_latency_ms": 10155.450124992058,
+    "overall_auto": 0.6944543828264759
+  },
+  "confusion": {
+    "w2": {
+      "w2": 5
+    },
+    "1042s": {
+      "1042s": 4
+    },
+    "1099": {
+      "identity_document": 1
+    },
+    "tuition_statement": {
+      "tuition_statement": 2
+    },
+    "w4": {
+      "w4": 2
+    },
+    "tax_return": {
+      "tax_return": 2
+    },
+    "paystub": {
+      "paystub": 4
+    },
+    "bank_statement": {
+      "bank_statement": 5
+    },
+    "payment_options_notice": {
+      "payment_options_notice": 1
+    },
+    "annual_account_summary": {
+      "annual_account_summary": 1,
+      "identity_document": 1
+    },
+    "legal_services_agreement": {
+      "insurance_record": 1,
+      "legal_services_agreement": 2
+    },
+    "h1b_registration": {
+      "h1b_registration": 1
+    },
+    "h1b_g28": {
+      "h1b_g28": 2
+    },
+    "h1b_registration_worksheet": {
+      "h1b_registration_worksheet": 1
+    },
+    "employment_letter": {
+      "employment_letter": 1
+    },
+    "i94": {
+      "i94": 1
+    },
+    "lease": {
+      "lease": 2
+    },
+    "transcript": {
+      "transcript": 3
+    },
+    "degree_certificate": {
+      "degree_certificate": 1
+    }
+  },
+  "first_pass": [
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_w2_wolff_li_capital.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 5703.872500103898,
+      "document_id": "4324c4bf-d855-40a5-adcd-ae7b5c30bcdc",
+      "classified_doc_type": "w2",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/W2_Claudius_Legal_Intelligence_2025_unlocked.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 5658.364166971296,
+      "document_id": "925960e5-9237-4041-b764-f111206965ac",
+      "classified_doc_type": "w2",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w2_bitsync.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 6749.861459014937,
+      "document_id": "6d41fe70-e135-484c-a429-fd570ce51ed3",
+      "classified_doc_type": "w2",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w2_justworks_wolffli.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 6986.5258750505745,
+      "document_id": "0b852748-dd72-4514-b808-3e6641f9e805",
+      "classified_doc_type": "w2",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2023_w2_justworks_vcv.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 6926.076999981888,
+      "document_id": "163c797e-4ccc-4d06-8f9c-9162ff4cbb60",
+      "classified_doc_type": "w2",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_1042s_schwab_xxx619.pdf",
+      "expected_doc_type": "1042s",
+      "status_code": 200,
+      "duration_ms": 9747.347375028767,
+      "document_id": "5994cf00-3896-4932-95d2-93868acdacf2",
+      "classified_doc_type": "1042s",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2024_1042s_tda_xxx619.pdf",
+      "expected_doc_type": "1042s",
+      "status_code": 200,
+      "duration_ms": 6852.518250001594,
+      "document_id": "7276d446-0e24-4ec4-a293-58062bcc49c6",
+      "classified_doc_type": "1042s",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1042s_schwab_xxx619.pdf",
+      "expected_doc_type": "1042s",
+      "status_code": 200,
+      "duration_ms": 7058.811875060201,
+      "document_id": "bf9223ac-a17a-485a-a1ca-529cfffd0483",
+      "classified_doc_type": "1042s",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2023_1042s_tda_xxx619.pdf",
+      "expected_doc_type": "1042s",
+      "status_code": 200,
+      "duration_ms": 5754.870333010331,
+      "document_id": "290515a5-4aa4-4f86-be00-1c81709d2c5b",
+      "classified_doc_type": "1042s",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1099b_schwab_xxx619_part1.pdf",
+      "expected_doc_type": 1099,
+      "status_code": 200,
+      "duration_ms": 5022.705374984071,
+      "document_id": "512672b3-8b0f-4dbf-8d6b-b88595c78deb",
+      "classified_doc_type": "identity_document",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1099int_citibank_bsgc.pdf",
+      "expected_doc_type": 1099,
+      "status_code": 400,
+      "duration_ms": 2907.0681660668924,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025.pdf",
+      "expected_doc_type": "tuition_statement",
+      "status_code": 200,
+      "duration_ms": 662.7288330346346,
+      "document_id": "9319b5ef-724d-4372-9965-8d60d6207130",
+      "classified_doc_type": "tuition_statement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025_decrypted.pdf",
+      "expected_doc_type": "tuition_statement",
+      "status_code": 200,
+      "duration_ms": 3378.614000044763,
+      "document_id": "92188734-1786-45d4-9c3e-902b96e16822",
+      "classified_doc_type": "tuition_statement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2024_w4_claudius.pdf",
+      "expected_doc_type": "w4",
+      "status_code": 200,
+      "duration_ms": 10155.450124992058,
+      "document_id": "e79972f1-d8d7-4a8c-b191-219f3ac34ddf",
+      "classified_doc_type": "w4",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w4_bitsync.pdf",
+      "expected_doc_type": "w4",
+      "status_code": 200,
+      "duration_ms": 11100.231541902758,
+      "document_id": "d26cf7a2-85f1-434c-8d1c-e64aa815b040",
+      "classified_doc_type": "w4",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2023/2023_TaxReturn.pdf",
+      "expected_doc_type": "tax_return",
+      "status_code": 200,
+      "duration_ms": 8431.597333052196,
+      "document_id": "b17c7cd2-2b05-4bb1-9ed5-8c5badba84d8",
+      "classified_doc_type": "tax_return",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_TaxReturn.pdf",
+      "expected_doc_type": "tax_return",
+      "status_code": 200,
+      "duration_ms": 9312.459125067107,
+      "document_id": "e156b3a3-0364-4fa7-bb29-5c25aec5b98c",
+      "classified_doc_type": "tax_return",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-01-09.pdf",
+      "expected_doc_type": "paystub",
+      "status_code": 200,
+      "duration_ms": 3688.212790992111,
+      "document_id": "9401c0fb-5c7c-4169-8bc0-8c7531ee9fdd",
+      "classified_doc_type": "paystub",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-02-11.pdf",
+      "expected_doc_type": "paystub",
+      "status_code": 200,
+      "duration_ms": 2994.8636250337586,
+      "document_id": "8c198d63-57ac-4260-af89-57a6e392a3c8",
+      "classified_doc_type": "paystub",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-02-25.pdf",
+      "expected_doc_type": "paystub",
+      "status_code": 200,
+      "duration_ms": 3282.332167029381,
+      "document_id": "d0de9951-5643-4502-9717-15d42bea01ea",
+      "classified_doc_type": "paystub",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_wolff_li_paystubs.pdf",
+      "expected_doc_type": "paystub",
+      "status_code": 200,
+      "duration_ms": 7690.020167035982,
+      "document_id": "c1e524e8-f596-40ba-af55-938b3f83dde2",
+      "classified_doc_type": "paystub",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20251219_20260122.pdf",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 5463.8741669477895,
+      "document_id": "272143e9-8af2-4b6f-a82f-d25c0c7124b3",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20250920_20251021.pdf",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 6999.51700004749,
+      "document_id": "a602b63f-f317-4e0c-875a-49b9fb7ca1df",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20260221_20260319.pdf",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 4158.47262495663,
+      "document_id": "9403a7a7-d37e-403d-96c2-f0b5ddc44463",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_202307.pdf",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 3255.5135000729933,
+      "document_id": "6a8974ed-47a6-4111-b1ee-87caf248fc5f",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_personal_chk6544_20241021_20251006.csv",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 1325.8107090368867,
+      "document_id": "e0ff0118-a32e-4af9-a171-ff7ce01756c9",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/wells_fargo/wf_personal_20251023_20260209.csv",
+      "expected_doc_type": "bank_statement",
+      "status_code": 400,
+      "duration_ms": 46.66983301285654,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citizens_payment_options_2958.pdf",
+      "expected_doc_type": "payment_options_notice",
+      "status_code": 200,
+      "duration_ms": 5350.99462501239,
+      "document_id": "c183f638-2384-4a75-803f-8f5f9844aa3c",
+      "classified_doc_type": "payment_options_notice",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_yearend_summary_schwab_xxx619.pdf",
+      "expected_doc_type": "annual_account_summary",
+      "status_code": 200,
+      "duration_ms": 3904.331791913137,
+      "document_id": "3d1336df-f35b-4c5b-b564-7cb35e808e92",
+      "classified_doc_type": "annual_account_summary",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/schwab_llc_xxx239_2025_account_summary.pdf",
+      "expected_doc_type": "annual_account_summary",
+      "status_code": 200,
+      "duration_ms": 6147.66162505839,
+      "document_id": "22ab7281-db9f-4ab7-bbc9-0763d2cb4bf5",
+      "classified_doc_type": "identity_document",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/BSGC_engagement_letter_040626.pdf",
+      "expected_doc_type": "legal_services_agreement",
+      "status_code": 200,
+      "duration_ms": 7311.22283404693,
+      "document_id": "ba36299e-a78b-4d1c-94ba-69f85ea06d40",
+      "classified_doc_type": "insurance_record",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/CL_personal_engagement_letter_SIGNED_040626.pdf",
+      "expected_doc_type": "legal_services_agreement",
+      "status_code": 400,
+      "duration_ms": 3215.0936250109226,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/h1b_retainer_hibee.pdf",
+      "expected_doc_type": "legal_services_agreement",
+      "status_code": 200,
+      "duration_ms": 5528.345708968118,
+      "document_id": "8d7b2cc4-6a8d-42a4-8bc8-ca488883d977",
+      "classified_doc_type": "legal_services_agreement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B CAP Legal Services Agreement_LI, Chenyu.pdf",
+      "expected_doc_type": "legal_services_agreement",
+      "status_code": 200,
+      "duration_ms": 4460.819958010688,
+      "document_id": "bb6c214c-4383-47da-bc45-fa21b83a98fa",
+      "classified_doc_type": "legal_services_agreement",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/H-1B_registration-selection_notice-Li_Chenyu.pdf",
+      "expected_doc_type": "h1b_registration",
+      "status_code": 200,
+      "duration_ms": 3813.99341695942,
+      "document_id": "79e460af-f055-445c-8197-083f5e5fa58f",
+      "classified_doc_type": "h1b_registration",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/bsgc_h1b_g28_mt_law_031026.pdf",
+      "expected_doc_type": "h1b_g28",
+      "status_code": 200,
+      "duration_ms": 3473.4487500973046,
+      "document_id": "ab542bf2-0468-4e89-9fbe-a7f6db52a6c8",
+      "classified_doc_type": "h1b_g28",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_h1b_g28_arora_031026.pdf",
+      "expected_doc_type": "h1b_g28",
+      "status_code": 200,
+      "duration_ms": 7315.981167019345,
+      "document_id": "023061b8-26a6-4fc7-bef7-c3544c211c35",
+      "classified_doc_type": "h1b_g28",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B Part I_Registration Worksheet_Employee_BSGC_FILLED.docx",
+      "expected_doc_type": "h1b_registration_worksheet",
+      "status_code": 200,
+      "duration_ms": 2920.7609170116484,
+      "document_id": "ad0ca557-8b62-4014-8cde-fa2534e10fcb",
+      "classified_doc_type": "h1b_registration_worksheet",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/yangtze_cpt_offer_letter_031526.pdf",
+      "expected_doc_type": "employment_letter",
+      "status_code": 200,
+      "duration_ms": 4082.382582942955,
+      "document_id": "f17292bf-ecbd-4a6a-a519-9ed941c5e7ac",
+      "classified_doc_type": "employment_letter",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/i94_yunhong_chen.pdf",
+      "expected_doc_type": "i94",
+      "status_code": 200,
+      "duration_ms": 3061.264666961506,
+      "document_id": "1e1d9320-cfeb-41ab-a66d-fd2e7c05a919",
+      "classified_doc_type": "i94",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/lease_extract_2pages.pdf",
+      "expected_doc_type": "lease",
+      "status_code": 200,
+      "duration_ms": 5076.110875001177,
+      "document_id": "4541bd0d-f542-4be8-8ec1-56e7e1451ca0",
+      "classified_doc_type": "lease",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/07_yangtze_office_lease_signed.pdf",
+      "expected_doc_type": "lease",
+      "status_code": 200,
+      "duration_ms": 5833.001916995272,
+      "document_id": "c892e01a-8ed4-49e6-b8b6-e8bf445bf4ef",
+      "classified_doc_type": "lease",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/education/columbia_transcript.pdf",
+      "expected_doc_type": "transcript",
+      "status_code": 200,
+      "duration_ms": 6483.7324999971315,
+      "document_id": "a018d250-8db4-4479-8750-2f31b56d5819",
+      "classified_doc_type": "transcript",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/education/columbia_degree_certification.pdf",
+      "expected_doc_type": "degree_certificate",
+      "status_code": 400,
+      "duration_ms": 5306.538917007856,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/4_SJTU_Bachelor_Transcript_EN.pdf",
+      "expected_doc_type": "transcript",
+      "status_code": 200,
+      "duration_ms": 14476.356124971062,
+      "document_id": "f81fe891-5be0-4644-8563-79311a8dd271",
+      "classified_doc_type": "transcript",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/3_Diploma_Columbia_Masters.pdf",
+      "expected_doc_type": "degree_certificate",
+      "status_code": 200,
+      "duration_ms": 19156.41237492673,
+      "document_id": "643ad754-adc4-4ecd-af9d-f989b4013623",
+      "classified_doc_type": "degree_certificate",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/5_Waseda_University_Transcript.pdf",
+      "expected_doc_type": "transcript",
+      "status_code": 200,
+      "duration_ms": 736.9837500154972,
+      "document_id": "750c7fb4-b4e7-4705-a6e1-4edbdb852543",
+      "classified_doc_type": "transcript",
+      "duplicates": 0,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/docs/foster_consult_analysis_042726.md",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 40.694667026400566,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"File type application/octet-stream not allowed\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/docs/klasko_consultation_analysis_041026.txt",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 149.64862493798137,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/docs/business_description_alignment_040826.txt",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 90.59475001413375,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/concerns/deadlines.txt",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 162.44275006465614,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/docs/Account_Analysis_Summary.txt",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 123.1954590184614,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    }
+  ],
+  "second_pass": [
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_w2_wolff_li_capital.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 5533.385124988854,
+      "document_id": "a88e4289-261a-4e21-b0cc-30e3cee8fe1a",
+      "classified_doc_type": "w2",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/W2_Claudius_Legal_Intelligence_2025_unlocked.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 5357.038749963976,
+      "document_id": "cd35cfa5-3381-43e3-a6cc-d8bad7270821",
+      "classified_doc_type": "w2",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w2_bitsync.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 10204.582874896005,
+      "document_id": "2c436d2a-9ee3-4731-9439-e7b4c40aeed9",
+      "classified_doc_type": "w2",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w2_justworks_wolffli.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 7891.482625040226,
+      "document_id": "6e4ebbd4-1420-464f-920b-8cb0e6f3333c",
+      "classified_doc_type": "w2",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2023_w2_justworks_vcv.pdf",
+      "expected_doc_type": "w2",
+      "status_code": 200,
+      "duration_ms": 8794.148750021122,
+      "document_id": "0b992635-d833-4244-9ec0-d27ccdf70cc3",
+      "classified_doc_type": "w2",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_1042s_schwab_xxx619.pdf",
+      "expected_doc_type": "1042s",
+      "status_code": 200,
+      "duration_ms": 9174.400083022192,
+      "document_id": "b880ee31-a117-487d-a768-4b8a96cf8477",
+      "classified_doc_type": "1042s",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2024_1042s_tda_xxx619.pdf",
+      "expected_doc_type": "1042s",
+      "status_code": 200,
+      "duration_ms": 7170.968709047884,
+      "document_id": "9cf8eebe-ecfa-46a9-ba0e-1b98d40eec6d",
+      "classified_doc_type": "1042s",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1042s_schwab_xxx619.pdf",
+      "expected_doc_type": "1042s",
+      "status_code": 200,
+      "duration_ms": 6905.468209064566,
+      "document_id": "4db1e4e8-09d5-4d80-b117-3685be44bb23",
+      "classified_doc_type": "1042s",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2023_1042s_tda_xxx619.pdf",
+      "expected_doc_type": "1042s",
+      "status_code": 200,
+      "duration_ms": 6118.65212500561,
+      "document_id": "9e0ba92a-7208-4de6-a23c-f82fd87f4f27",
+      "classified_doc_type": "1042s",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1099b_schwab_xxx619_part1.pdf",
+      "expected_doc_type": 1099,
+      "status_code": 200,
+      "duration_ms": 4330.083917011507,
+      "document_id": "9bd87159-c214-4063-ab54-8c98544daadc",
+      "classified_doc_type": "identity_document",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_1099int_citibank_bsgc.pdf",
+      "expected_doc_type": 1099,
+      "status_code": 400,
+      "duration_ms": 2948.982333065942,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025.pdf",
+      "expected_doc_type": "tuition_statement",
+      "status_code": 200,
+      "duration_ms": 672.7171250386164,
+      "document_id": "bca37102-4715-4002-bdf6-e62bd7a3b86c",
+      "classified_doc_type": "tuition_statement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025_decrypted.pdf",
+      "expected_doc_type": "tuition_statement",
+      "status_code": 200,
+      "duration_ms": 4968.319959007204,
+      "document_id": "78be770a-f16d-4d17-b94a-20f13bf3df4a",
+      "classified_doc_type": "tuition_statement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2024_w4_claudius.pdf",
+      "expected_doc_type": "w4",
+      "status_code": 200,
+      "duration_ms": 10655.75695806183,
+      "document_id": "d775c3fa-e40d-417d-aac3-d804938dde9b",
+      "classified_doc_type": "w4",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_w4_bitsync.pdf",
+      "expected_doc_type": "w4",
+      "status_code": 200,
+      "duration_ms": 9874.431667034514,
+      "document_id": "a8b871db-5393-4038-9718-589c4fd38898",
+      "classified_doc_type": "w4",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2023/2023_TaxReturn.pdf",
+      "expected_doc_type": "tax_return",
+      "status_code": 200,
+      "duration_ms": 6072.9640000499785,
+      "document_id": "763ec2b0-4c05-450c-9a41-1597159435fa",
+      "classified_doc_type": "tax_return",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_TaxReturn.pdf",
+      "expected_doc_type": "tax_return",
+      "status_code": 200,
+      "duration_ms": 8591.657708049752,
+      "document_id": "9060f3da-301b-4deb-8ddb-eba45a554208",
+      "classified_doc_type": "tax_return",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-01-09.pdf",
+      "expected_doc_type": "paystub",
+      "status_code": 200,
+      "duration_ms": 3498.4991250094026,
+      "document_id": "15b3726d-f926-4b8c-ad98-3513964bb253",
+      "classified_doc_type": "paystub",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-02-11.pdf",
+      "expected_doc_type": "paystub",
+      "status_code": 200,
+      "duration_ms": 5195.176500012167,
+      "document_id": "47b81537-db48-4525-957e-765cfb9e46a5",
+      "classified_doc_type": "paystub",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-02-25.pdf",
+      "expected_doc_type": "paystub",
+      "status_code": 200,
+      "duration_ms": 5483.840917004272,
+      "document_id": "8e1bcfd0-4312-4942-8015-96e01a7e1f2d",
+      "classified_doc_type": "paystub",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/2025_wolff_li_paystubs.pdf",
+      "expected_doc_type": "paystub",
+      "status_code": 200,
+      "duration_ms": 7294.342083972879,
+      "document_id": "688a63ae-c8a9-46df-8bf5-e365e943dcef",
+      "classified_doc_type": "paystub",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20251219_20260122.pdf",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 4085.006000008434,
+      "document_id": "1bb3bf84-8c20-49f2-a5e1-35e3735cfd1f",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20250920_20251021.pdf",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 7301.93837499246,
+      "document_id": "3a9f0499-e8a4-452d-987d-04c184c247d1",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20260221_20260319.pdf",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 3998.645000043325,
+      "document_id": "302b5b47-7c19-4b63-b982-b9d8203c2c95",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_202307.pdf",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 4165.998583077453,
+      "document_id": "1be7d384-f0cc-4cbe-9413-ba87e38f915b",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citibank/citibank_personal_chk6544_20241021_20251006.csv",
+      "expected_doc_type": "bank_statement",
+      "status_code": 200,
+      "duration_ms": 1409.5530830090865,
+      "document_id": "c719319c-729f-4ce3-af54-91ce43a963c9",
+      "classified_doc_type": "bank_statement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/wells_fargo/wf_personal_20251023_20260209.csv",
+      "expected_doc_type": "bank_statement",
+      "status_code": 400,
+      "duration_ms": 80.80862509086728,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/bank_statements/citizens_payment_options_2958.pdf",
+      "expected_doc_type": "payment_options_notice",
+      "status_code": 200,
+      "duration_ms": 3580.3822089219466,
+      "document_id": "3c98b0b9-af7a-4baa-8039-3baeabf4799f",
+      "classified_doc_type": "payment_options_notice",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2024/2024_yearend_summary_schwab_xxx619.pdf",
+      "expected_doc_type": "annual_account_summary",
+      "status_code": 200,
+      "duration_ms": 8006.236790912226,
+      "document_id": "66932684-da5f-48f5-badb-d0a2f1287885",
+      "classified_doc_type": "annual_account_summary",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tax/2025/schwab_llc_xxx239_2025_account_summary.pdf",
+      "expected_doc_type": "annual_account_summary",
+      "status_code": 200,
+      "duration_ms": 6387.413250049576,
+      "document_id": "11e3665c-428c-4198-9456-bd08677524ed",
+      "classified_doc_type": "identity_document",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/BSGC_engagement_letter_040626.pdf",
+      "expected_doc_type": "legal_services_agreement",
+      "status_code": 400,
+      "duration_ms": 3061.749958898872,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/kaufman_rossin/CL_personal_engagement_letter_SIGNED_040626.pdf",
+      "expected_doc_type": "legal_services_agreement",
+      "status_code": 400,
+      "duration_ms": 3184.5315829850733,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/h1b_retainer_hibee.pdf",
+      "expected_doc_type": "legal_services_agreement",
+      "status_code": 200,
+      "duration_ms": 4641.919707995839,
+      "document_id": "6cc150d5-3baa-491a-b99c-2e4e13b2aa39",
+      "classified_doc_type": "legal_services_agreement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B CAP Legal Services Agreement_LI, Chenyu.pdf",
+      "expected_doc_type": "legal_services_agreement",
+      "status_code": 200,
+      "duration_ms": 4733.077874989249,
+      "document_id": "13ebe55d-e671-45fd-ab95-4a689e7db709",
+      "classified_doc_type": "legal_services_agreement",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/H-1B_registration-selection_notice-Li_Chenyu.pdf",
+      "expected_doc_type": "h1b_registration",
+      "status_code": 200,
+      "duration_ms": 4590.571542037651,
+      "document_id": "0d067100-ba55-445d-a534-2dc4f7914e9a",
+      "classified_doc_type": "h1b_registration",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/bsgc_h1b_g28_mt_law_031026.pdf",
+      "expected_doc_type": "h1b_g28",
+      "status_code": 200,
+      "duration_ms": 4276.076833019033,
+      "document_id": "b3e16bec-4d93-4291-b685-6ab249a19d0b",
+      "classified_doc_type": "h1b_g28",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_h1b_g28_arora_031026.pdf",
+      "expected_doc_type": "h1b_g28",
+      "status_code": 200,
+      "duration_ms": 5033.95437495783,
+      "document_id": "30943b3b-7a50-4029-b372-574ca4bb9182",
+      "classified_doc_type": "h1b_g28",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B Part I_Registration Worksheet_Employee_BSGC_FILLED.docx",
+      "expected_doc_type": "h1b_registration_worksheet",
+      "status_code": 200,
+      "duration_ms": 1640.358875039965,
+      "document_id": "ae7528f9-3b9c-4f5c-8a3c-6bc5264e4e14",
+      "classified_doc_type": "h1b_registration_worksheet",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/ciam/yangtze_cpt_offer_letter_031526.pdf",
+      "expected_doc_type": "employment_letter",
+      "status_code": 200,
+      "duration_ms": 3668.358291964978,
+      "document_id": "feffb4eb-81f4-40d7-8523-d7ad6cfb3d77",
+      "classified_doc_type": "employment_letter",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/i94_yunhong_chen.pdf",
+      "expected_doc_type": "i94",
+      "status_code": 200,
+      "duration_ms": 2957.5724999886006,
+      "document_id": "d1fc2179-8878-4a93-a2a9-bbc2b2d6c89a",
+      "classified_doc_type": "i94",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/printouts/dmv_041726/lease_extract_2pages.pdf",
+      "expected_doc_type": "lease",
+      "status_code": 200,
+      "duration_ms": 5075.338624999858,
+      "document_id": "07a24cc4-c8dc-4c1b-aec5-1030fc46734c",
+      "classified_doc_type": "lease",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/07_yangtze_office_lease_signed.pdf",
+      "expected_doc_type": "lease",
+      "status_code": 200,
+      "duration_ms": 6557.34141706489,
+      "document_id": "55581aa7-fa86-4610-9491-1270067fcf6e",
+      "classified_doc_type": "lease",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/education/columbia_transcript.pdf",
+      "expected_doc_type": "transcript",
+      "status_code": 200,
+      "duration_ms": 10621.500125038438,
+      "document_id": "ff7df841-9b21-41ad-96e0-d1db0dcfa236",
+      "classified_doc_type": "transcript",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/h1b1_intake_021226/education/columbia_degree_certification.pdf",
+      "expected_doc_type": "degree_certificate",
+      "status_code": 400,
+      "duration_ms": 10244.547624955885,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/4_SJTU_Bachelor_Transcript_EN.pdf",
+      "expected_doc_type": "transcript",
+      "status_code": 200,
+      "duration_ms": 10413.695457973517,
+      "document_id": "4f0ca867-04dd-4c3b-8f7d-718420c09290",
+      "classified_doc_type": "transcript",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/3_Diploma_Columbia_Masters.pdf",
+      "expected_doc_type": "degree_certificate",
+      "status_code": 200,
+      "duration_ms": 67423.6579160206,
+      "document_id": "e05e6a93-6ff4-4ee2-a8cb-5ad8e447b9aa",
+      "classified_doc_type": "degree_certificate",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/5_Waseda_University_Transcript.pdf",
+      "expected_doc_type": "transcript",
+      "status_code": 200,
+      "duration_ms": 553.3530830871314,
+      "document_id": "2555771f-7a8a-429f-8cb1-800f4a0e3921",
+      "classified_doc_type": "transcript",
+      "duplicates": 1,
+      "error": null
+    },
+    {
+      "path": "/Users/lichenyu/accounting/docs/foster_consult_analysis_042726.md",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 3.554833005182445,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"File type application/octet-stream not allowed\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/docs/klasko_consultation_analysis_041026.txt",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 65.44858310371637,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/docs/business_description_alignment_040826.txt",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 58.9362500468269,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/concerns/deadlines.txt",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 87.70991605706513,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    },
+    {
+      "path": "/Users/lichenyu/accounting/docs/Account_Analysis_Summary.txt",
+      "expected_doc_type": null,
+      "status_code": 400,
+      "duration_ms": 65.4201660072431,
+      "document_id": null,
+      "classified_doc_type": null,
+      "duplicates": 0,
+      "error": "{\"detail\": \"Could not determine document type; provide doc_type\"}"
+    }
+  ],
+  "notes": []
+}

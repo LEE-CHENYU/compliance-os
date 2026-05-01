@@ -1,0 +1,151 @@
+# Accounting eval fixture — pipeline rubric ground truth.
+#
+# Each entry is a real file under /Users/lichenyu/accounting that the
+# classifier *should* recognize. expected_doc_type is the hand-labeled
+# answer key. null means "classifier should refuse" — these are
+# negative controls (agent-generated analyses, prep notes) that must
+# not pollute the data room.
+#
+# This file is checked in; the actual fixture files are not (they are
+# real PII). Re-run scripts/run_pipeline_eval.py to score against this.
+#
+# created: 2026-04-30
+# source: /Users/lichenyu/accounting
+
+fixtures:
+  # ── tax: W-2 ───────────────────────────────────────────────
+  - path: /Users/lichenyu/accounting/tax/2025/2025_w2_wolff_li_capital.pdf
+    expected_doc_type: w2
+    notes: filename signal "_w2_"
+  - path: /Users/lichenyu/accounting/tax/2025/W2_Claudius_Legal_Intelligence_2025_unlocked.pdf
+    expected_doc_type: w2
+    notes: filename signal "W2_"
+  - path: /Users/lichenyu/accounting/tax/2024/2024_w2_bitsync.pdf
+    expected_doc_type: w2
+  - path: /Users/lichenyu/accounting/tax/2024/2024_w2_justworks_wolffli.pdf
+    expected_doc_type: w2
+  - path: /Users/lichenyu/accounting/tax/2024/2023_w2_justworks_vcv.pdf
+    expected_doc_type: w2
+
+  # ── tax: 1042-S ────────────────────────────────────────────
+  - path: /Users/lichenyu/accounting/tax/2025/2025_1042s_schwab_xxx619.pdf
+    expected_doc_type: 1042s
+  - path: /Users/lichenyu/accounting/tax/2025/2024_1042s_tda_xxx619.pdf
+    expected_doc_type: 1042s
+  - path: /Users/lichenyu/accounting/tax/2024/2024_1042s_schwab_xxx619.pdf
+    expected_doc_type: 1042s
+  - path: /Users/lichenyu/accounting/tax/2024/2023_1042s_tda_xxx619.pdf
+    expected_doc_type: 1042s
+
+  # ── tax: 1099 / 1098-T / W-4 / tax_return ─────────────────
+  - path: /Users/lichenyu/accounting/tax/2024/2024_1099b_schwab_xxx619_part1.pdf
+    expected_doc_type: 1099
+  - path: /Users/lichenyu/accounting/tax/2024/2024_1099int_citibank_bsgc.pdf
+    expected_doc_type: 1099
+  - path: /Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025.pdf
+    expected_doc_type: tuition_statement
+  - path: /Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025_decrypted.pdf
+    expected_doc_type: tuition_statement
+  - path: /Users/lichenyu/accounting/tax/2025/2024_w4_claudius.pdf
+    expected_doc_type: w4
+  - path: /Users/lichenyu/accounting/tax/2024/2024_w4_bitsync.pdf
+    expected_doc_type: w4
+  - path: /Users/lichenyu/accounting/tax/2023/2023_TaxReturn.pdf
+    expected_doc_type: tax_return
+  - path: /Users/lichenyu/accounting/tax/2024/2024_TaxReturn.pdf
+    expected_doc_type: tax_return
+
+  # ── tax: paystubs ─────────────────────────────────────────
+  - path: /Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-01-09.pdf
+    expected_doc_type: paystub
+  - path: /Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-02-11.pdf
+    expected_doc_type: paystub
+  - path: /Users/lichenyu/accounting/tax/2025/paystub_claudius_2025-02-25.pdf
+    expected_doc_type: paystub
+  - path: /Users/lichenyu/accounting/tax/2025/2025_wolff_li_paystubs.pdf
+    expected_doc_type: paystub
+
+  # ── bank statements (path-context driven) ─────────────────
+  - path: /Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20251219_20260122.pdf
+    expected_doc_type: bank_statement
+  - path: /Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20250920_20251021.pdf
+    expected_doc_type: bank_statement
+  - path: /Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_20260221_20260319.pdf
+    expected_doc_type: bank_statement
+  - path: /Users/lichenyu/accounting/bank_statements/citibank/citibank_llc_chk5039_202307.pdf
+    expected_doc_type: bank_statement
+  - path: /Users/lichenyu/accounting/bank_statements/citibank/citibank_personal_chk6544_20241021_20251006.csv
+    expected_doc_type: bank_statement
+  - path: /Users/lichenyu/accounting/bank_statements/wells_fargo/wf_personal_20251023_20260209.csv
+    expected_doc_type: bank_statement
+  - path: /Users/lichenyu/accounting/bank_statements/citizens_payment_options_2958.pdf
+    expected_doc_type: payment_options_notice
+
+  # ── annual account summary ────────────────────────────────
+  - path: /Users/lichenyu/accounting/tax/2024/2024_yearend_summary_schwab_xxx619.pdf
+    expected_doc_type: annual_account_summary
+  - path: /Users/lichenyu/accounting/tax/2025/schwab_llc_xxx239_2025_account_summary.pdf
+    expected_doc_type: annual_account_summary
+
+  # ── legal: engagement / retainer letters ──────────────────
+  - path: /Users/lichenyu/accounting/legal/kaufman_rossin/BSGC_engagement_letter_040626.pdf
+    expected_doc_type: legal_services_agreement
+  - path: /Users/lichenyu/accounting/legal/kaufman_rossin/CL_personal_engagement_letter_SIGNED_040626.pdf
+    expected_doc_type: legal_services_agreement
+  - path: /Users/lichenyu/accounting/legal/immigration/h1b_retainer_hibee.pdf
+    expected_doc_type: legal_services_agreement
+  - path: /Users/lichenyu/accounting/tmp/H-1B CAP Legal Services Agreement_LI, Chenyu.pdf
+    expected_doc_type: legal_services_agreement
+
+  # ── H-1B ──────────────────────────────────────────────────
+  - path: /Users/lichenyu/accounting/legal/immigration/H-1B_registration-selection_notice-Li_Chenyu.pdf
+    expected_doc_type: h1b_registration
+  - path: /Users/lichenyu/accounting/legal/immigration/bsgc_h1b_g28_mt_law_031026.pdf
+    expected_doc_type: h1b_g28
+  - path: /Users/lichenyu/accounting/legal/immigration/yangtze_h1b_g28_arora_031026.pdf
+    expected_doc_type: h1b_g28
+  - path: /Users/lichenyu/accounting/tmp/H-1B Part I_Registration Worksheet_Employee_BSGC_FILLED.docx
+    expected_doc_type: h1b_registration_worksheet
+
+  # ── employment letters ────────────────────────────────────
+  - path: /Users/lichenyu/accounting/outgoing/ciam/yangtze_cpt_offer_letter_031526.pdf
+    expected_doc_type: employment_letter
+
+  # ── identity / status documents ───────────────────────────
+  - path: /Users/lichenyu/accounting/printouts/dmv_041726/i94_yunhong_chen.pdf
+    expected_doc_type: i94
+  - path: /Users/lichenyu/accounting/printouts/dmv_041726/lease_extract_2pages.pdf
+    expected_doc_type: lease
+  - path: /Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/07_yangtze_office_lease_signed.pdf
+    expected_doc_type: lease
+
+  # ── transcripts / degree certificates ─────────────────────
+  - path: /Users/lichenyu/accounting/outgoing/h1b1_intake_021226/education/columbia_transcript.pdf
+    expected_doc_type: transcript
+  - path: /Users/lichenyu/accounting/outgoing/h1b1_intake_021226/education/columbia_degree_certification.pdf
+    expected_doc_type: degree_certificate
+  - path: /Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/4_SJTU_Bachelor_Transcript_EN.pdf
+    expected_doc_type: transcript
+  - path: /Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/3_Diploma_Columbia_Masters.pdf
+    expected_doc_type: degree_certificate
+  - path: /Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/5_Waseda_University_Transcript.pdf
+    expected_doc_type: transcript
+
+  # ── negative controls (must classify as null/None) ────────
+  # Agent-generated analyses, prep notes, voice transcripts —
+  # these should NOT enter the data room as "documents".
+  - path: /Users/lichenyu/accounting/docs/foster_consult_analysis_042726.md
+    expected_doc_type: null
+    notes: agent-generated consult analysis - classifier should refuse
+  - path: /Users/lichenyu/accounting/docs/klasko_consultation_analysis_041026.txt
+    expected_doc_type: null
+    notes: agent-generated consult analysis
+  - path: /Users/lichenyu/accounting/docs/business_description_alignment_040826.txt
+    expected_doc_type: null
+    notes: prep note - not a primary source doc
+  - path: /Users/lichenyu/accounting/concerns/deadlines.txt
+    expected_doc_type: null
+    notes: derived deadline tracker
+  - path: /Users/lichenyu/accounting/docs/Account_Analysis_Summary.txt
+    expected_doc_type: null
+    notes: agent-generated summary

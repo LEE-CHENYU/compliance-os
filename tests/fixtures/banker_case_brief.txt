@@ -1,0 +1,50 @@
+I'm a non-resident founder looking for a US business bank that can actually onboard our Delaware C-Corp without SSN gymnastics, handle cross-border wires reliably, and not freeze the account every time a foreign investor sends money. I've been burned twice already and I need a primary bank we can build on for the next 3-5 years.
+
+Background on me:
+- French citizen, currently based in Paris (will relocate to NYC in Q3 2026 on an O-1A, separate engagement)
+- No SSN; ITIN issued in 2023
+- Held a B-1/B-2 in 2024-2025 for investor meetings; no current US visa stamp
+- Personal credit: French (Banque de France clean), no US credit history
+- Prior US banking: opened personal Schwab Investor Checking with ITIN in 2024 (no issues)
+
+Background on the company (the account holder):
+- Delaware C-Corp, incorporated September 2025 (Stripe Atlas)
+- HQ for tax purposes: 16 Madison Square West, NYC (registered agent address; no physical office yet)
+- Federal EIN issued; California foreign-qualification pending (we have one US contractor in SF)
+- Cap table: I hold 78%, two French co-founders 10% each, 2% advisor pool
+- Beneficial owners: just me at >25% (FinCEN BOI report filed January 2026)
+- Just closed an $850K pre-seed (December 2025) — $600K from a Paris-based VC, $250K from US angel (rolling SAFEs)
+- Pre-revenue, B2B SaaS for compliance workflows (cross-border treaty filing automation)
+- Targeting first revenue Q2 2026 via Stripe; expecting ARR ~$200K by end of FY2026
+
+Current banking pain (what I need to escape):
+- Mercury closed our account in March 2026 with no warning after a $250K wire from our French VC. Compliance review took 22 days, funds eventually released, but they declined to keep us as a customer ("we are unable to continue this relationship at this time"). I have the closure letter on file. Suspect the issue was the foreign-source wire + my non-US address + no US visa on file.
+- Brex onboarding bounced at the SSN gate — they say ITIN is "case-by-case" but the case-by-case path never approved
+- Currently parking funds at Wise Business (UK entity), which works but: (a) not a US bank so we can't issue physical checks for vendor payments, (b) Stripe payouts incur an extra hop, (c) no relationship manager when issues arise
+
+What I need from a primary bank:
+1. Business checking on a US-domiciled, FDIC-insured bank (or a fintech with a clearly named FDIC-insured partner bank — no opaque sponsor stack)
+2. Onboarding without SSN — ITIN + passport + Articles of Incorporation + EIN letter must be sufficient. I will provide everything proactively.
+3. KYC/BOI process that explicitly accepts foreign beneficial owners. I'd rather pay more in fees than re-explain my passport every six months.
+4. Tolerance for international wires. Inbound from EU SEPA-connected banks (Société Générale, BNP) and outbound to French vendors (~$5-15K monthly). When a Series A wire comes in (probably $5-10M, late 2026), I need a bank that won't freeze the account or take three weeks to release funds.
+5. Stripe-compatible account details — ACH routing + account number that Stripe accepts as a payout destination, no Plaid pass-through weirdness
+6. Accounting exports for QuickBooks Online (we use it already) — CSV/OFX downloads at minimum, direct integration preferred
+7. Named relationship contact once balances cross some threshold (we'd hit $250K in deposit balances at close of seed). I don't need a private bank, but I do need a human who picks up the phone when compliance has questions.
+
+Nice-to-have but not required:
+- Multicurrency holding (USD + EUR primarily) — would simplify our French vendor payments, but I can also handle FX at Wise if the primary bank doesn't support it
+- API access for treasury automation (Modern Treasury / Increase-style) — useful but premature for our stage
+- Founder community / events — explicit no, I don't need a conference, I need an account that works
+
+Firm criteria for the search:
+- Must have a publicly documented foreign-founder onboarding path. If "we welcome international founders" only appears on the marketing page with no actual document checklist, deprioritize.
+- Founder-bank fit > brand prestige. JPMorgan Private Bank is not the answer here — I need an operating bank, not a wealth manager.
+- Bank or fintech-with-real-bank-partner. Anything where the FDIC partner isn't disclosed in the deposit agreement is a no.
+- Bonus weight if they have a published track record on Mercury-refugee / Brex-rejected accounts; I know I'm not the only one in this bucket.
+
+Out of scope for this engagement:
+- Personal banking (already handled via Schwab)
+- Investment / treasury management of seed funds (will engage a CPA + treasury platform separately)
+- Visa or immigration matters (engaging O-1 counsel separately)
+
+Timing: I want to open the account by mid-May 2026 so we can start collecting Stripe payouts to it before our first revenue lands. Two-week onboarding fine; six-week onboarding would push past our launch.
