@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Guardian — LinkedIn Cover (1128×191)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { margin: 0; background: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif; }
+  .cover {
+    width: 1128px; height: 191px;
+    background: linear-gradient(135deg, #e8eff6 0%, #dce4f0 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Single soft glow — keeps the gradient from looking flat */
+  .cover::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(620px 280px at 88% 50%, rgba(91,141,238,0.16), transparent 65%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="cover flex items-center justify-between px-16">
+
+  <!-- Left: headline only -->
+  <div class="relative z-10">
+    <h1 class="text-[40px] font-semibold leading-[1.05] text-[#0d1424] tracking-tight">
+      Reconcile every filing.<br/>
+      <span class="text-[#3d6bc5]">Match the right pro.</span>
+    </h1>
+  </div>
+
+  <!-- Right: logo mark only -->
+  <div class="relative z-10">
+    <svg width="100" height="100" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bar-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#5b8dee"/>
+          <stop offset="100%" stop-color="#4a74d4"/>
+        </linearGradient>
+      </defs>
+      <g transform="translate(12, 18)">
+        <rect x="2"  y="0"  width="40" height="7" rx="1.5" fill="url(#bar-grad)"/>
+        <rect x="-1" y="10" width="40" height="7" rx="1.5" fill="url(#bar-grad)"/>
+        <rect x="3"  y="20" width="40" height="7" rx="1.5" fill="url(#bar-grad)"/>
+      </g>
+    </svg>
+  </div>
+
+</div>
+</body>
+</html>

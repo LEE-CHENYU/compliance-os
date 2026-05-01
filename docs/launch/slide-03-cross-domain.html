@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Guardian — Slide 3: Cross-Domain Check</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  /* PH gallery exact dimensions: 1270x760 */
+  body { margin: 0; background: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif; }
+  .slide {
+    width: 1270px; height: 760px;
+    background: linear-gradient(135deg, #e8eff6 0%, #dce4f0 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  /* ambient glow */
+  .slide::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(800px 400px at 15% 10%, rgba(91,141,238,0.18), transparent 60%),
+      radial-gradient(700px 380px at 90% 90%, rgba(91,141,238,0.12), transparent 60%);
+    pointer-events: none;
+  }
+  .glass {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: 0 8px 30px rgba(13,20,36,0.06);
+  }
+  .doc-card { transition: transform .3s ease; }
+  .field-row { font-feature-settings: "tnum"; }
+  .conflict-line {
+    stroke-dasharray: 6 4;
+    animation: dash 1.5s linear infinite;
+  }
+  @keyframes dash { to { stroke-dashoffset: -100; } }
+</style>
+</head>
+<body>
+<div class="slide flex flex-col p-16">
+  <!-- Header -->
+  <div class="relative z-10 mb-8">
+    <div class="text-[14px] font-semibold tracking-[0.18em] uppercase text-[#3d6bc5]">
+      The Guardian Difference
+    </div>
+    <h1 class="mt-3 text-[52px] font-semibold leading-[1.05] text-[#0d1424] tracking-tight">
+      Cross-domain checks catch what<br/>
+      <span class="text-[#3d6bc5]">single-domain tools can't.</span>
+    </h1>
+    <p class="mt-4 text-[20px] text-[#556480] max-w-3xl">
+      Guardian compares your immigration, tax, and corporate documents in a single pass — flagging the contradictions that trigger RFEs, audits, and rejections.
+    </p>
+  </div>
+
+  <!-- Three-doc layout with conflict callout -->
+  <div class="relative z-10 flex-1 grid grid-cols-3 gap-6 items-stretch">
+    <!-- Doc 1: I-983 -->
+    <div class="glass rounded-2xl p-6 doc-card flex flex-col">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#3d6bc5] bg-[#5b8dee]/10 px-2.5 py-1 rounded-full">Immigration</span>
+        <span class="text-[12px] text-[#7b8ba5]">I-983</span>
+      </div>
+      <div class="mt-4 text-[14px] font-semibold text-[#0d1424]">STEM OPT Training Plan</div>
+      <div class="mt-3 space-y-2.5 field-row">
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">Job Title</div>
+          <div class="text-[#0d1424] font-medium">Software Engineer</div>
+        </div>
+        <div class="text-[13px] bg-red-50/80 -mx-3 px-3 py-2 rounded-lg border border-red-200/60">
+          <div class="text-red-600 text-[11px] uppercase tracking-wide font-semibold">Duties</div>
+          <div class="text-[#0d1424] font-medium">Develop ML pipelines and train deep learning models</div>
+        </div>
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">Hours/Week</div>
+          <div class="text-[#0d1424] font-medium">40</div>
+        </div>
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">Salary</div>
+          <div class="text-[#0d1424] font-medium">$165,000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doc 2: Offer Letter -->
+    <div class="glass rounded-2xl p-6 doc-card flex flex-col">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#3d6bc5] bg-[#5b8dee]/10 px-2.5 py-1 rounded-full">Corporate</span>
+        <span class="text-[12px] text-[#7b8ba5]">Offer Letter</span>
+      </div>
+      <div class="mt-4 text-[14px] font-semibold text-[#0d1424]">Employment Agreement</div>
+      <div class="mt-3 space-y-2.5 field-row">
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">Job Title</div>
+          <div class="text-[#0d1424] font-medium">Software Engineer</div>
+        </div>
+        <div class="text-[13px] bg-red-50/80 -mx-3 px-3 py-2 rounded-lg border border-red-200/60">
+          <div class="text-red-600 text-[11px] uppercase tracking-wide font-semibold">Duties</div>
+          <div class="text-[#0d1424] font-medium">Backend infrastructure & API design</div>
+        </div>
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">Start Date</div>
+          <div class="text-[#0d1424] font-medium">Jan 6, 2026</div>
+        </div>
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">Base Salary</div>
+          <div class="text-[#0d1424] font-medium">$165,000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doc 3: 1040 -->
+    <div class="glass rounded-2xl p-6 doc-card flex flex-col">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#3d6bc5] bg-[#5b8dee]/10 px-2.5 py-1 rounded-full">Tax</span>
+        <span class="text-[12px] text-[#7b8ba5]">Form 1040</span>
+      </div>
+      <div class="mt-4 text-[14px] font-semibold text-[#0d1424]">Individual Tax Return</div>
+      <div class="mt-3 space-y-2.5 field-row">
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">Filing Status</div>
+          <div class="text-[#0d1424] font-medium">Single</div>
+        </div>
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">W-2 Wages</div>
+          <div class="text-[#0d1424] font-medium">$148,500</div>
+        </div>
+        <div class="text-[13px] bg-amber-50/80 -mx-3 px-3 py-2 rounded-lg border border-amber-200/60">
+          <div class="text-amber-700 text-[11px] uppercase tracking-wide font-semibold">Self-Employment</div>
+          <div class="text-[#0d1424] font-medium">$22,000 (1099-NEC)</div>
+        </div>
+        <div class="text-[13px]">
+          <div class="text-[#7b8ba5] text-[11px] uppercase tracking-wide">Tax Year</div>
+          <div class="text-[#0d1424] font-medium">2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conflict callout strip -->
+  <div class="relative z-10 mt-8 glass rounded-2xl px-7 py-5 flex items-center gap-5 border-l-4 border-l-red-500">
+    <div class="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    </div>
+    <div class="flex-1">
+      <div class="text-[13px] font-semibold text-red-600 uppercase tracking-wide">2 conflicts detected</div>
+      <div class="text-[16px] text-[#0d1424] font-medium mt-0.5">
+        I-983 duties (<span class="font-mono text-[14px]">"ML pipelines"</span>) don't match offer letter (<span class="font-mono text-[14px]">"Backend infrastructure"</span>) — risk of STEM OPT RFE.
+      </div>
+      <div class="text-[14px] text-[#556480] mt-1">
+        1099-NEC income suggests outside work — verify employer authorization before filing.
+      </div>
+    </div>
+    <div class="flex-shrink-0 px-4 py-2 rounded-full bg-[#5b8dee] text-white text-[13px] font-semibold">
+      Fix with Guardian →
+    </div>
+  </div>
+</div>
+</body>
+</html>
