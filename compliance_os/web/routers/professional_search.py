@@ -1102,15 +1102,36 @@ def _render_firm_card(f: dict, e, vocab: dict[str, Any]) -> str:
     )
     fee_html = f'<dl class="fees">{"".join(fee_rows)}</dl>{basis_html}'
 
-    why_fits = f.get("_why_fits") or []
+    # `_why_fits` shape evolution: the current aggregator writes
+    # `[persona_id, text]` 2-lists, but older rows in firms_data have
+    # bare strings (the why_fit text alone, no persona tag). Normalize
+    # to (pid_or_None, text) tuples so the renderer survives both.
+    raw_why = f.get("_why_fits") or []
+    why_fits: list[tuple[str | None, str]] = []
+    for item in raw_why:
+        if isinstance(item, (list, tuple)):
+            if len(item) >= 2:
+                why_fits.append((item[0], item[1]))
+            elif len(item) == 1:
+                why_fits.append((None, item[0]))
+        elif isinstance(item, str):
+            why_fits.append((None, item))
+        elif isinstance(item, dict):
+            why_fits.append((item.get("persona_id"), item.get("text") or item.get("why_fit") or ""))
+
     why_html = ""
     if len(why_fits) == 1:
         why_html = f"<p>{e(why_fits[0][1])}</p>"
     elif len(why_fits) > 1:
-        why_html = "".join(
-            f"<div class='persona-take'><div class='persona-tag'>{e(_persona_label(pid))}</div><p>{e(text)}</p></div>"
-            for pid, text in why_fits
-        )
+        parts = []
+        for pid, text in why_fits:
+            if pid:
+                parts.append(
+                    f"<div class='persona-take'><div class='persona-tag'>{e(_persona_label(pid))}</div><p>{e(text)}</p></div>"
+                )
+            else:
+                parts.append(f"<div class='persona-take'><p>{e(text)}</p></div>")
+        why_html = "".join(parts)
 
     creds_html = ""
     if f.get("_credentials"):
