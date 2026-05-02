@@ -1,9 +1,9 @@
 {
   "api_url": "https://guardian-compliance.fly.dev",
-  "ok": 338,
-  "duplicates": 212,
-  "errors": 136,
-  "total": 254,
+  "ok": 383,
+  "duplicates": 236,
+  "errors": 145,
+  "total": 55,
   "results": [
     {
       "path": "/Users/lichenyu/accounting/bank_statements/citizens_payment_options_2958.pdf",
@@ -3804,6 +3804,446 @@
       "doc_type": null,
       "error": "Could not determine document type; provide doc_type",
       "size": 1652556
+    },
+    {
+      "path": "/Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/05_beneficiary_employment/08_ead_stem_opt_approval.pdf",
+      "status": 200,
+      "ms": 51662,
+      "doc_type": null,
+      "error": null,
+      "size": 4142969
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/H-1B_registration-selection_notice-Li_Chenyu.pdf",
+      "status": 200,
+      "ms": 8111,
+      "doc_type": "h1b_registration",
+      "error": null,
+      "size": 32318
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/i20_affidavit_financial_support.pdf",
+      "status": 200,
+      "ms": 11436,
+      "doc_type": "financial_support_affidavit",
+      "error": null,
+      "size": 361910
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_h1b_registration_beneficiaries_031026.csv",
+      "status": 200,
+      "ms": 5860,
+      "doc_type": "h1b_registration_roster",
+      "error": null,
+      "size": 160
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/h1b_2026_lottery_registration.docx",
+      "status": 200,
+      "ms": 8059,
+      "doc_type": "h1b_registration",
+      "error": null,
+      "size": 16439
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/bsgc_h1b_g28_mt_law_031026.pdf",
+      "status": 200,
+      "ms": 7397,
+      "doc_type": "h1b_g28",
+      "error": null,
+      "size": 59820
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_h1b_g28_arora_031026.pdf",
+      "status": 200,
+      "ms": 8096,
+      "doc_type": null,
+      "error": null,
+      "size": 59903
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/bsgc_h1b_registration_draft_031026.pdf",
+      "status": 200,
+      "ms": 6228,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 36883
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/i20_ciam_cpt_yangtze_su26.pdf",
+      "status": 200,
+      "ms": 10805,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_h1b_g28_arora_031226.pdf",
+      "status": 200,
+      "ms": 8726,
+      "doc_type": "h1b_g28",
+      "error": null,
+      "size": 59912
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/i20_ciam_cpt_yangtze_040326.pdf",
+      "status": 200,
+      "ms": 11752,
+      "doc_type": "i20",
+      "error": null,
+      "size": 135918
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/i94_most_recent.pdf",
+      "status": 200,
+      "ms": 6188,
+      "doc_type": "i94",
+      "error": null,
+      "size": 50321
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/bsgc_h1b_registration_beneficiaries_031026.csv",
+      "status": 200,
+      "ms": 4911,
+      "doc_type": null,
+      "error": null,
+      "size": 163
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/h1b_cap_legal_services_docusign.pdf",
+      "status": 200,
+      "ms": 9523,
+      "doc_type": "legal_services_agreement",
+      "error": null,
+      "size": 298948
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/h1b_cap_legal_services_agreement.pdf",
+      "status": 200,
+      "ms": 8320,
+      "doc_type": null,
+      "error": null,
+      "size": 314448
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_h1b_registration_draft_031026.pdf",
+      "status": 200,
+      "ms": 6479,
+      "doc_type": null,
+      "error": null,
+      "size": 36841
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/immigration/yangtze_h1b_registration_draft_031226.pdf",
+      "status": 200,
+      "ms": 6505,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 36840
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/travel_insurance/atlas_america_confirmation_100447682.pdf",
+      "status": 200,
+      "ms": 8073,
+      "doc_type": null,
+      "error": null,
+      "size": 121721
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/travel_insurance/atlas_america_important_notices.pdf",
+      "status": 200,
+      "ms": 7048,
+      "doc_type": null,
+      "error": null,
+      "size": 171035
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/travel_insurance/atlas_america_product_information.pdf",
+      "status": 200,
+      "ms": 7630,
+      "doc_type": null,
+      "error": null,
+      "size": 188014
+    },
+    {
+      "path": "/Users/lichenyu/accounting/legal/employment/claudius_termination_020525.pdf",
+      "status": 400,
+      "ms": 2290,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 109631
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/03-06-26 - CA - State Notice - Yangtze Capital.pdf",
+      "status": 200,
+      "ms": 18348,
+      "doc_type": "tax_notice",
+      "error": null,
+      "size": 1439209
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/Data_Sheet_H1B_Registration_2026_Yangtze_FILLED.docx",
+      "status": 200,
+      "ms": 5508,
+      "doc_type": null,
+      "error": null,
+      "size": 23823
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B Part I_Registration Worksheet_Employee_BSGC_FILLED.docx",
+      "status": 200,
+      "ms": 5492,
+      "doc_type": null,
+      "error": null,
+      "size": 22573
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/Beneficiary Questionnaire for H-1B, GENERAL.docx",
+      "status": 400,
+      "ms": 882,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 104775
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B Part I_Registration Worksheet_BSGC_FILLED.docx",
+      "status": 200,
+      "ms": 5629,
+      "doc_type": null,
+      "error": null,
+      "size": 24094
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/Invoice_Part I_LI, Chenyu_paid.pdf",
+      "status": 200,
+      "ms": 7314,
+      "doc_type": null,
+      "error": null,
+      "size": 159638
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B Part I_Registration Worksheet and Document Checklist_Employer.docx",
+      "status": 200,
+      "ms": 5559,
+      "doc_type": null,
+      "error": null,
+      "size": 32664
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/Invoice_Part I_LI, Chenyu_due.pdf",
+      "status": 200,
+      "ms": 7106,
+      "doc_type": null,
+      "error": null,
+      "size": 156446
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/Fact Sheet - Form W-7 ITIN Applications.pdf",
+      "status": 400,
+      "ms": 2849,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 158200
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/i983_tiger_cloud_material_change.pdf",
+      "status": 200,
+      "ms": 24803,
+      "doc_type": "i983",
+      "error": null,
+      "size": 2861298
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/Data Sheet for H1B Electronic Registration 2026.docx",
+      "status": 200,
+      "ms": 5910,
+      "doc_type": null,
+      "error": null,
+      "size": 25877
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/EmployER Questionnaire for H-1B GENERAL.docx",
+      "status": 200,
+      "ms": 6090,
+      "doc_type": null,
+      "error": null,
+      "size": 98382
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/fw7-prefilled for NGT-rev.12-24.pdf",
+      "status": 200,
+      "ms": 10061,
+      "doc_type": "identity_document",
+      "error": null,
+      "size": 121476
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B CAP Legal Services Agreement_LI, Chenyu.pdf",
+      "status": 200,
+      "ms": 9775,
+      "doc_type": "legal_services_agreement",
+      "error": null,
+      "size": 314448
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/Payment Options Citizens -2958 CN & EN.pdf",
+      "status": 200,
+      "ms": 9401,
+      "doc_type": "payment_options_notice",
+      "error": null,
+      "size": 574660
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/H-1B Part I_Registration Worksheet and Document Checklist_Employee.docx",
+      "status": 200,
+      "ms": 5763,
+      "doc_type": null,
+      "error": null,
+      "size": 27420
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/hop2_invoice/ETicket_151411369.pdf",
+      "status": 200,
+      "ms": 6297,
+      "doc_type": null,
+      "error": null,
+      "size": 38156
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/hop2_invoice/Invoice_151411369.pdf",
+      "status": 400,
+      "ms": 1221,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 33308
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/wolff-li-capital-inc-paystubs-2025-05-06.pdf",
+      "status": 200,
+      "ms": 9550,
+      "doc_type": null,
+      "error": null,
+      "size": 24266
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/wolff-li-capital-inc-payroll-summary-7757500971275864-2.pdf",
+      "status": 400,
+      "ms": 2377,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 25618
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/wolff-li-capital-inc-payroll-summary-7757500971275864-3.pdf",
+      "status": 400,
+      "ms": 2130,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 25587
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/wolff-li-capital-inc-payroll-summary-7757500974730858-2.pdf",
+      "status": 400,
+      "ms": 1841,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 25516
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/wolff-li-capital-inc-payroll-summary-7757500976935644-3.pdf",
+      "status": 400,
+      "ms": 1983,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 25461
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/US_941_7757616926033936.pdf",
+      "status": 200,
+      "ms": 10423,
+      "doc_type": null,
+      "error": null,
+      "size": 287376
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/blank_stock_check_payment.pdf",
+      "status": 200,
+      "ms": 7683,
+      "doc_type": "check_image",
+      "error": null,
+      "size": 81696
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/US_W-2_7757616926033936.pdf",
+      "status": 200,
+      "ms": 14311,
+      "doc_type": "w2",
+      "error": null,
+      "size": 432723
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/wolff-li-capital-inc-payroll-summary-7757500978097544-4.pdf",
+      "status": 400,
+      "ms": 2275,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 25640
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mendy_gusto_docs/CHK_6544_CURRENT_VIEW.csv",
+      "status": 200,
+      "ms": 5698,
+      "doc_type": "bank_statement",
+      "error": null,
+      "size": 6074
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/4_SJTU_Bachelor_Transcript_EN.pdf",
+      "status": 200,
+      "ms": 12928,
+      "doc_type": "transcript",
+      "error": null,
+      "size": 292245
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/1_Worksheet_Employee_FILLED.docx",
+      "status": 200,
+      "ms": 5939,
+      "doc_type": "h1b_registration_worksheet",
+      "error": null,
+      "size": 22573
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/3_Diploma_Columbia_Masters.pdf",
+      "status": 200,
+      "ms": 58088,
+      "doc_type": "degree_certificate",
+      "error": null,
+      "size": 11540796
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/2_Resume_Chenyu_Li.docx",
+      "status": 200,
+      "ms": 5298,
+      "doc_type": "resume",
+      "error": null,
+      "size": 19294
+    },
+    {
+      "path": "/Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/4_I20_All_After_Nov2023.pdf",
+      "status": 200,
+      "ms": 23522,
+      "doc_type": null,
+      "error": null,
+      "size": 1201868
+    },
+    {
+      "path": "/Users/lichenyu/accounting/reports/Master_Transaction_Ledger.csv",
+      "status": 400,
+      "ms": 1259,
+      "doc_type": null,
+      "error": "Could not determine document type; provide doc_type",
+      "size": 87363
     }
   ]
 }
