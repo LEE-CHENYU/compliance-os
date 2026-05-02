@@ -13,6 +13,12 @@ class Classification:
 
 
 AUTO_DOC_TYPE_VALUES = {"", "auto", "autodetect", "detect", "unknown"}
+TEXT_SPECIFICITY_TIE_DOC_TYPES = {
+    "articles_of_organization",
+    "cpt_application",
+    "ein_application",
+    "i983",
+}
 
 
 def _merge_pattern_maps(*pattern_maps: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -25,22 +31,47 @@ def _merge_pattern_maps(*pattern_maps: dict[str, list[str]]) -> dict[str, list[s
 
 FILENAME_PATTERNS: dict[str, list[str]] = {
     "account_security_setup": [r"treasury[_ -]?pass", r"security[_ -]?questions?"],
-    "articles_of_organization": [r"articles?[_ -]?of[_ -]?organization"],
-    "annual_account_summary": [r"year[_ -]?end[_ -]?summary", r"account[_ -]?summaries?"],
+    "articles_of_organization": [
+        r"articles?[_ -]?of[_ -]?(?:organization|incorporation)",
+        r"articles?[_ -]?(?:and|&)[_ -]?s?s[-_ ]?4",
+    ],
+    "annual_account_summary": [
+        r"year[_ -]?end[_ -]?summary",
+        r"account[_ -]?summary",
+        r"account[_ -]?summaries",
+    ],
     "bank_account_application": [r"\btda\d{3,}\b", r"treasurydirect"],
     "bank_account_record": [r"银行账户", r"对公账户", r"bank[_ -]?account"],
-    "bank_statement": [r"bank[_ -]?document", r"bank[_ -]?statement", r"current[_ -]?view"],
+    "bank_statement": [
+        r"bank[_ -]?document",
+        r"bank[_ -]?statement",
+        r"current[_ -]?view",
+        r"(?:^|[^a-z0-9])(?:schwab|citibank)_(?:llc|personal|brokerage)_[^.]*\.csv$",
+        r"(?:^|[^a-z0-9])(?:wf|wells[_ -]?fargo)_(?:llc|personal|brokerage)_[^.]*\.csv$",
+    ],
+    "brokerage_statement": [
+        r"brokerage[_ -]?(?:stmt|statement)",
+        r"(?:schwab|fidelity|vanguard)[^/]*(?:brokerage|account)[^/]*statement",
+    ],
     "payment_options_notice": [r"payment[_ -]?options?"],
     "business_license": [r"营业执照", r"business[_ -]?license"],
     "certificate_of_good_standing": [
         r"cert(?:ificate)?[_ -]?of[_ -]?good[_ -]?standing",
+        r"certificate[_ -]?of[_ -]?status",
         r"good[_ -]?standing",
     ],
     "company_filing": [r"initial[_ -]?filing", r"entity[_ -]?filing", r"formation[_ -]?filing"],
     "collection_notice": [r"collection", r"correspondence"],
     "cover_letter": [r"cover[_ -]?letter"],
     "debt_clearance_letter": [r"debt[_ -]?clear(?:a|e)nce"],
-    "degree_certificate": [r"diploma", r"degree[_ -]?certificate", r"学历认证", r"学位认证"],
+    "degree_certificate": [
+        r"diploma",
+        r"degree[_ -]?certificat(?:e|ion)",
+        r"_degree(?:\.|_)",
+        r"_diploma(?:_cert)?\.pdf$",
+        r"学历认证",
+        r"学位认证",
+    ],
     "financial_support_affidavit": [r"financial[_ -]?support", r"affidavit"],
     "drivers_license": [
         r"driver[’']?s[_ -]?license",
@@ -70,6 +101,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
         r"continued[_ -]?attend(?:ance|ence)",
         r"enrollment[_ -]?verification",
         r"continued[_ -]?enrollment",
+        r"(?:ciam|westcliff)[^/]*continued(?:[_ -]?cpt)?",
     ],
     "identity_document": [r"identification[_ -]?page", r"identity[_ -]?document", r"national[_ -]?id", r"mom[_ -]?id"],
     "immigration_reference": [r"guide", r"instructions?", r"samplefilled", r"(?:^|[^a-z0-9])sample(?:[^a-z0-9]|$)", r"攻略", r"i[_-]?983[_ -]?sample", r"i[_-]?983[_-]?template", r"i[_-]?983[_ -]?guide"],
@@ -77,6 +109,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "insurance_record": [r"insurance[_ -]?record"],
     "language_test_certificate": [r"jlpt", r"ielts", r"雅思", r"toefl"],
     "legal_services_agreement": [
+        r"engagement[_ -]?letter",
         r"fee[_ -]?agreement",
         r"legal[_ -]?services[_ -]?agreement",
         r"retainer",
@@ -143,11 +176,23 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
         r"vcv[_ -]?full[_ -]?time",
         r"vcv[_ -]?internship",
     ],
-    "i20": [r"(?:^|[^a-z0-9])i-?20(?:[^a-z0-9]|$)"],
+    "i20": [
+        r"(?:^|[^a-z0-9])i-?20(?:[^a-z0-9]|$)",
+        r"(?:columbia|ciam|westcliff)[^/]*(?:current|original|travel[_ -]?\d{2}|stemopt(?:[_ -]?(?:signed|jan\d{4}))?)(?:[^a-z0-9]|$)",
+    ],
     "i94": [r"(?:^|[^a-z0-9])i-?94(?:[^a-z0-9]|$)"],
     "ead": [r"(?:^|[^a-z0-9])ead(?:[^a-z0-9]|$)", r"employment[_ -]?authorization"],
-    "ein_letter": [r"cp[_ -]?575"],
-    "ein_application": [r"\bein[_ -]?(?:individual[_ -]?request|application)\b", r"online[_ -]?application"],
+    "ein_letter": [
+        r"cp[_ -]?575",
+        r"ein[_ -]?fax",
+        r"ein[_ -]?assignment",
+        r"irs[_ -]?fax",
+    ],
+    "ein_application": [
+        r"\bein[_ -]?(?:individual[_ -]?request|application)\b",
+        r"online[_ -]?application",
+        r"(?:^|[^a-z0-9])s?s[-_ ]?4(?:[^a-z0-9]|$)",
+    ],
     "social_security_card": [r"(?:^|[^a-z0-9])ssn(?:[^a-z0-9]|$)", r"social[_ -]?security"],
     "student_id": [r"student[_ -]?id", r"student[_ -]?identification"],
     "support_request": [
@@ -188,7 +233,7 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
     "passport": [r"(?:^|[^a-z0-9])passport(?:[^a-z0-9]|$)"],
     "1042s": [r"(?:^|[^a-z0-9])1042-?s(?:[^a-z0-9]|$)"],
     "tax_return": [r"tax[_ -]?return", r"(?:^|[^a-z0-9])1040(?:-nr)?(?:[^a-z0-9]|$)", r"(?:^|[^a-z0-9])1120(?:-s)?(?:[^a-z0-9]|$)", r"(?:^|[^a-z0-9])1065(?:[^a-z0-9]|$)"],
-    "1099": [r"(?:^|[^a-z0-9])1099(?:[^a-z0-9]|$)"],
+    "1099": [r"(?:^|[^a-z0-9])1099(?:[a-z]{0,4})(?:[^a-z0-9]|$)"],
     "lease": [r"(?:^|[^a-z0-9])sublease(?:[^a-z0-9]|$)", r"(?:^|[^a-z0-9])lease(?:[^a-z0-9]|$)"],
     "insurance_policy": [r"nomad[_ -]?insurance", r"(?:^|[^a-z0-9])insurance(?:[^a-z0-9]|$)"],
     "health_coverage_application": [r"coveredca", r"marketplace"],
@@ -220,6 +265,56 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
         r"screenshot[_ -]?from[_ -]?justwork",
         r"whatsapp[_ -]?image",
     ],
+    "corporate_resolution": [
+        r"(?:corporate|board|shareholder)[_ -]?resolutions?",
+        r"(?:^|[^a-z0-9])resolutions?(?:[^a-z0-9]|$)",
+    ],
+    "bylaws": [r"(?:^|[^a-z0-9])bylaws?(?:[^a-z0-9]|$)"],
+    "governance_packet": [
+        r"governance(?:[_ -]?docs?)?(?:[_ -]?signed)?",
+        r"eminutes[_ -]?docs",
+        r"governance[_ -]?signed[_ -]?includes[_ -]?stock[_ -]?cert",
+    ],
+    "statement_of_information": [
+        r"(?:^|[^a-z0-9])soi(?:[^a-z0-9]|$)",
+        r"statement[_ -]?of[_ -]?information",
+    ],
+    "payroll_summary": [r"payroll[_ -]?summary"],
+    "termination_letter": [
+        r"termination[_ -]?letter",
+        r"termination[_ -]?email[_ -]?thread",
+        r"terminat(?:ion|ed)",
+    ],
+    "h1b_employer_questionnaire": [
+        r"(?:h[_ -]?1b[_ -]?)?(?:employer|beneficiary)[_ -]?questionnaire",
+    ],
+    "itin_support_letter": [r"itin[_ -]?support[_ -]?letter"],
+    "itin_fact_sheet": [
+        r"itin[_ -]?fact[_ -]?sheet",
+        r"form[_ -]?w[-_ ]?7[_ -]?itin",
+        r"w[-_ ]?7[_ -]?itin",
+    ],
+    "demand_letter": [r"demand[_ -]?letter"],
+    "litigation_hold": [r"litigation[_ -]?hold"],
+    "attorney_intake_doc": [
+        r"firm[_ -]?intake",
+        r"consultation[_ -]?playbook",
+        r"intake[_ -]?shortlist",
+    ],
+    "litigation_exhibit": [
+        r"(?:^|[^a-z0-9])[a-z]_(?:thunderbird|dochub)[^/]*",
+        r"(?:^|[^a-z0-9])[a-z]_[^/]*(?:audit[_ -]?trail|reminder|delivered)[^/]*",
+    ],
+    "business_plan": [r"business[_ -]?plan", r"\b5yr[_ -]?business[_ -]?plan"],
+    "h1b_materiality_memo": [r"materiality[_ -]?difference[_ -]?memo"],
+    "bank_kyc_form": [r"(?:^|[^a-z0-9])kyc(?:[^a-z0-9]|$)", r"cdd[_ -]?questionnaire"],
+    "exhibit_index": [r"exhibit[_ -]?index", r"00[_ -]?readme[_ -]?exhibit"],
+    "i129_support_letter": [r"i[-_ ]?129[^/]*support[_ -]?letter"],
+    "transaction_ledger": [r"(?:master[_ -]?)?transaction[_ -]?ledger"],
+    "multi_doc_compilation": [
+        r"key[_ -]?documents?(?:[_ -]?compilation)?",
+        r"documents?[_ -]?compilation",
+    ],
 }
 
 PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
@@ -231,8 +326,11 @@ PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
         r"/w2/bank_document_",
         r"/bank_statements/(?:boa|citibank|wells_fargo)/[^/]+\.csv$",
         r"/bank_statements/schwab/[^/]+\.csv$",
-        r"/bank_statements/schwab/statements/[^/]+\.pdf$",
         r"/bank_statements/[^/]+/(?:boa|bank[_ -]?of[_ -]?america|citibank|wells[_ -]?fargo|schwab)[^/]*\.(?:csv|pdf)$",
+    ],
+    "brokerage_statement": [
+        r"/bank_statements/schwab/statements/[^/]+\.pdf$",
+        r"/bank_statements/(?:schwab|fidelity|vanguard)/statements/[^/]+\.pdf$",
     ],
     "payment_options_notice": [r"/bank_statements/[^/]*payment[_ -]?options?[^/]*\.pdf$"],
     "degree_certificate": [
@@ -270,6 +368,8 @@ PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
     ],
     "i20": [
         r"/i20/cu[_ -]?(?:original|opt|stemopt[_ -]?23(?:_signed)?|travel[_ -]?22|travel[_ -]?23)\.pdf$",
+        r"/i20/[^/]*(?:columbia|ciam|westcliff)[^/]*(?:current|original|travel[_ -]?\d{2}|stemopt(?:[_ -]?(?:signed|jan\d{4}))?)\.pdf$",
+        r"/i20[_ -]?history/[^/]*(?:columbia|ciam|westcliff)[^/]*(?:current|original|travel[_ -]?\d{2}|stemopt(?:[_ -]?(?:signed|jan\d{4}))?)\.pdf$",
         r"/i20/i20/\d+[^/]*\.pic\.png$",
         r"/i20/i20/i-20 travel\.rtfd/[^/]+\.(?:png|jpe?g)$",
     ],
@@ -277,7 +377,7 @@ PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
     "enrollment_verification": [r"/i20/(?:ciam|westcliff).*continued[_ -]?attend(?:ance|ence)\.pdf$"],
     "transfer_pending_letter": [r"/i20/(?:ciam|westcliff).*transfer[_ -]?pending\.pdf$"],
     "lease": [r"/lease/[^/]+_\d+\.pdf$"],
-    "1099": [r"/tax/\d{4}/document\.pdf$"],
+    "1099": [r"/tax/\d{4}/document\.pdf$", r"/tax/\d{4}/[^/]*1099[a-z]{0,4}[^/]*\.pdf$"],
     "non_disclosure_agreement": [
         r"/employment/rai/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$",
     ],
@@ -293,6 +393,16 @@ PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
         r"/cv & cover letters/cv\d{6}/samples/[^/]+\.(?:pdf|docx)$",
     ],
     "wire_transfer_record": [r"/bank_statements/wire_transfers?(?:_\d+)?/[^/]+\.(?:pdf|png|jpe?g)$"],
+    "corporate_resolution": [
+        r"/(?:corporate|business|entity|employer)[^/]*/[^/]*(?:corporate|board)?[_ -]?resolutions?[^/]*\.pdf$",
+    ],
+    "bylaws": [r"/(?:corporate|business|entity|employer)[^/]*/[^/]*bylaws?[^/]*\.pdf$"],
+    "statement_of_information": [
+        r"/(?:corporate|business|entity|employer)[^/]*/[^/]*(?:soi|statement[_ -]?of[_ -]?information)[^/]*\.pdf$",
+    ],
+    "governance_packet": [
+        r"/(?:corporate|business|entity|employer)[^/]*/[^/]*governance[^/]*\.pdf$",
+    ],
 }
 
 
@@ -338,6 +448,7 @@ PATTERNS: dict[str, list[str]] = {
     ],
     "articles_of_organization": [
         r"Articles of Organization",
+        r"Articles of Incorporation",
         r"Limited Liability Company Articles of Organization",
         r"The name of the limited liability company is",
     ],
@@ -367,6 +478,13 @@ PATTERNS: dict[str, list[str]] = {
         r"Fees\s*&\s*Comm",
         r"MoneyLink Transfer",
     ],
+    "brokerage_statement": [
+        r"Brokerage Statement",
+        r"Holdings",
+        r"Activity Detail",
+        r"Account Value",
+        r"Investment Detail",
+    ],
     "payment_options_notice": [
         r"Payment Options",
         r"choose a payment option",
@@ -380,6 +498,7 @@ PATTERNS: dict[str, list[str]] = {
     ],
     "certificate_of_good_standing": [
         r"good standing",
+        r"Certificate of Status",
         r"Secretary of State",
         r"entity identification number",
     ],
@@ -417,6 +536,7 @@ PATTERNS: dict[str, list[str]] = {
         r"sponsor",
     ],
     "cpt_application": [
+        r"CPT Application",
         r"Experiential Internship Courses",
         r"CPT authorization",
         r"International students will receive CPT authorization",
@@ -564,7 +684,13 @@ PATTERNS: dict[str, list[str]] = {
         r"USCIS#",
     ],
     "passport": [r"\bPASSPORT\b", r"PASSEPORT", r"Nationality", r"P<[A-Z]{3}"],
-    "ein_letter": [r"Employer Identification Number", r"EIN.*assigned", r"CP\s*575"],
+    "ein_letter": [
+        r"Employer Identification Number",
+        r"EIN.*assigned",
+        r"CP\s*575",
+        r"IRS Fax",
+        r"Date Filed",
+    ],
     "ein_application": [
         r"receive your EIN",
         r"Summary of your information",
@@ -697,6 +823,7 @@ PATTERNS: dict[str, list[str]] = {
     "legal_services_agreement": [
         r"Legal Services Agreement",
         r"Fee Agreement",
+        r"Engagement Letter",
         r"Retainer Agreement",
         r"Attorney",
     ],
@@ -851,6 +978,129 @@ PATTERNS: dict[str, list[str]] = {
         r"WhatsApp",
         r"Will Communications",
     ],
+    "corporate_resolution": [
+        r"\bRESOLVED\b",
+        r"Board of Directors",
+        r"Sole Shareholder",
+        r"corporate resolutions?",
+    ],
+    "bylaws": [
+        r"\bBylaws\b",
+        r"ARTICLE I",
+        r"shareholders?",
+        r"directors?",
+    ],
+    "governance_packet": [
+        r"Governance",
+        r"eMinutes",
+        r"stock certificate",
+        r"organizational actions",
+        r"minutes of the",
+    ],
+    "statement_of_information": [
+        r"Statement of Information",
+        r"Form SI[- ]?550",
+        r"Form LLC[- ]?12",
+        r"Entity Number",
+    ],
+    "payroll_summary": [
+        r"Payroll Summary",
+        r"Total Gross",
+        r"Total Net",
+        r"Pay Period Range",
+    ],
+    "termination_letter": [
+        r"Termination Letter",
+        r"employment (?:is )?terminated",
+        r"termination of employment",
+        r"last day of employment",
+        r"separation date",
+    ],
+    "h1b_employer_questionnaire": [
+        r"Employer Questionnaire",
+        r"Beneficiary Questionnaire",
+        r"position offered",
+        r"job duties",
+        r"Required Company Information",
+    ],
+    "itin_support_letter": [
+        r"ITIN",
+        r"support letter",
+        r"Certifying Acceptance Agent",
+        r"CAA",
+    ],
+    "itin_fact_sheet": [
+        r"Form W[- ]?7",
+        r"ITIN Applications",
+        r"Fact Sheet",
+        r"Individual Taxpayer Identification Number",
+    ],
+    "demand_letter": [
+        r"Demand Letter",
+        r"settlement demand",
+        r"demand is hereby made",
+    ],
+    "litigation_hold": [
+        r"Litigation Hold",
+        r"preserve",
+        r"electronically stored information",
+        r"anticipated litigation",
+    ],
+    "attorney_intake_doc": [
+        r"Attorney Intake",
+        r"firm intake",
+        r"consultation playbook",
+        r"shortlist",
+    ],
+    "litigation_exhibit": [
+        r"Exhibit",
+        r"DocHub",
+        r"audit trail",
+        r"delivered",
+        r"reminder",
+    ],
+    "business_plan": [
+        r"Business Plan",
+        r"Executive Summary",
+        r"Market Analysis",
+        r"Five[- ]Year Projections",
+        r"Capitalization",
+    ],
+    "h1b_materiality_memo": [
+        r"Materiality Difference",
+        r"material changes?",
+        r"materiality memo",
+        r"registration vs petition",
+    ],
+    "bank_kyc_form": [
+        r"Know Your Customer",
+        r"\bKYC\b",
+        r"cross[- ]border",
+        r"sanctions screening",
+        r"Customer Due Diligence",
+    ],
+    "exhibit_index": [
+        r"Exhibit Index",
+        r"index of exhibits",
+        r"document bundle",
+    ],
+    "i129_support_letter": [
+        r"Form I[- ]?129",
+        r"support letter",
+        r"petition letter",
+        r"H[- ]?1B",
+    ],
+    "transaction_ledger": [
+        r"Transaction Ledger",
+        r"Transaction Date",
+        r"Transaction ID",
+    ],
+    "multi_doc_compilation": [
+        r"Key Documents",
+        r"Document Compilation",
+        r"compiled documents",
+        r"table of contents",
+    ],
 }
 
 
@@ -861,6 +1111,7 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "bank_account_application": 2,
     "bank_account_record": 2,
     "bank_statement": 2,
+    "brokerage_statement": 2,
     "business_license": 2,
     "certificate_of_good_standing": 2,
     "collection_notice": 2,
@@ -945,6 +1196,26 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "h1b_filing_fee_receipt": 2,
     "employment_screenshot": 1,
     "wire_transfer_record": 2,
+    "corporate_resolution": 2,
+    "bylaws": 2,
+    "governance_packet": 2,
+    "statement_of_information": 2,
+    "payroll_summary": 2,
+    "termination_letter": 2,
+    "h1b_employer_questionnaire": 2,
+    "itin_support_letter": 2,
+    "itin_fact_sheet": 2,
+    "demand_letter": 2,
+    "litigation_hold": 2,
+    "attorney_intake_doc": 2,
+    "litigation_exhibit": 2,
+    "business_plan": 2,
+    "h1b_materiality_memo": 2,
+    "bank_kyc_form": 3,
+    "exhibit_index": 2,
+    "i129_support_letter": 2,
+    "transaction_ledger": 2,
+    "multi_doc_compilation": 2,
 }
 
 OCR_TEXT_MIN_MATCH_OVERRIDES: dict[str, int] = {
@@ -967,14 +1238,20 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "1042s": "1042s",
     "account_security_setup": "account_security_setup",
     "articles_of_organization": "articles_of_organization",
+    "articles_of_incorporation": "articles_of_organization",
     "annual_account_summary": "annual_account_summary",
     "bank_account_application": "bank_account_application",
     "bank_account_record": "bank_account_record",
+    "bank_statement": "bank_statement",
+    "brokerage_statement": "brokerage_statement",
     "business_license": "business_license",
     "chat_export_asset": "chat_export_asset",
     "check_image": "check_image",
     "certificate_of_good_standing": "certificate_of_good_standing",
+    "certificate_of_status": "certificate_of_good_standing",
     "company_filing": "company_filing",
+    "corporate_resolution": "corporate_resolution",
+    "board_resolution": "corporate_resolution",
     "cover_letter": "cover_letter",
     "cpt_application": "cpt_application",
     "cp_575": "ein_letter",
@@ -985,6 +1262,8 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "ead": "ead",
     "ein_application": "ein_application",
     "ein_application_instructions": "ein_application_instructions",
+    "ein_fax": "ein_letter",
+    "ein_fax_notification": "ein_letter",
     "ein_letter": "ein_letter",
     "employment_agreement": "employment_contract",
     "employment_contract": "employment_contract",
@@ -997,6 +1276,9 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "filing_confirmation": "filing_confirmation",
     "identifier_record": "identifier_record",
     "good_standing_certificate": "certificate_of_good_standing",
+    "governance_doc": "governance_packet",
+    "governance_docs": "governance_packet",
+    "governance_packet": "governance_packet",
     "health_coverage_application": "health_coverage_application",
     "identity_document": "identity_document",
     "immigration_guide": "immigration_reference",
@@ -1016,6 +1298,7 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "i765": "i765",
     "i_765": "i765",
     "lease": "lease",
+    "engagement_letter": "legal_services_agreement",
     "offer_letter": "employment_letter",
     "passport": "passport",
     "paystub": "paystub",
@@ -1043,7 +1326,6 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "registered_agent_consent": "registered_agent_consent",
     "signature_page": "signature_page",
     "operating_agreement": "operating_agreement",
-    "bank_statement": "bank_statement",
     "payment_options_notice": "payment_options_notice",
     "collection_notice": "collection_notice",
     "debt_clearance_letter": "debt_clearance_letter",
@@ -1088,6 +1370,32 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "h1b_receipt": "h1b_filing_fee_receipt",
     "h_1b_receipt": "h1b_filing_fee_receipt",
     "employment_screenshot": "employment_screenshot",
+    "attorney_intake_doc": "attorney_intake_doc",
+    "bank_kyc_doc": "bank_kyc_form",
+    "bank_kyc_form": "bank_kyc_form",
+    "business_plan": "business_plan",
+    "bylaws": "bylaws",
+    "demand_letter": "demand_letter",
+    "employment_termination": "termination_letter",
+    "employer_questionnaire": "h1b_employer_questionnaire",
+    "beneficiary_questionnaire": "h1b_employer_questionnaire",
+    "exhibit_index": "exhibit_index",
+    "h1b_employer_questionnaire": "h1b_employer_questionnaire",
+    "h1b_materiality_memo": "h1b_materiality_memo",
+    "i129_support_letter": "i129_support_letter",
+    "i_129_support_letter": "i129_support_letter",
+    "itin_fact_sheet": "itin_fact_sheet",
+    "itin_support_letter": "itin_support_letter",
+    "litigation_exhibit": "litigation_exhibit",
+    "litigation_hold": "litigation_hold",
+    "materiality_difference_memo": "h1b_materiality_memo",
+    "multi_doc_compilation": "multi_doc_compilation",
+    "compilation": "multi_doc_compilation",
+    "payroll_summary": "payroll_summary",
+    "statement_of_information": "statement_of_information",
+    "soi": "statement_of_information",
+    "termination_letter": "termination_letter",
+    "transaction_ledger": "transaction_ledger",
     "1099": "1099",
     "w2": "w2",
     "w4": "w4",
@@ -1165,6 +1473,19 @@ def _pattern_scores(text: str, pattern_map: dict[str, list[str]]) -> dict[str, i
     return scores
 
 
+def _pattern_match_lengths(text: str, pattern_map: dict[str, list[str]]) -> dict[str, int]:
+    lengths: dict[str, int] = {}
+    for doc_type, patterns in pattern_map.items():
+        matched_lengths = [
+            match.end() - match.start()
+            for pattern in patterns
+            if (match := re.search(pattern, text, re.IGNORECASE))
+        ]
+        if matched_lengths:
+            lengths[doc_type] = max(matched_lengths)
+    return lengths
+
+
 def _best_scored_match(
     text: str,
     pattern_map: dict[str, list[str]],
@@ -1180,7 +1501,13 @@ def _best_scored_match(
     best_score = max(scores.values())
     winners = [doc_type for doc_type, score in scores.items() if score == best_score]
     if len(winners) != 1:
-        return Classification(doc_type=None, confidence=None)
+        if source != "filename" and not set(winners).issubset(TEXT_SPECIFICITY_TIE_DOC_TYPES):
+            return Classification(doc_type=None, confidence=None)
+        match_lengths = _pattern_match_lengths(text, pattern_map)
+        best_length = max(match_lengths.get(doc_type, 0) for doc_type in winners)
+        winners = [doc_type for doc_type in winners if match_lengths.get(doc_type, 0) == best_length]
+        if len(winners) != 1:
+            return Classification(doc_type=None, confidence=None)
 
     best_doc_type = winners[0]
     required_matches = (min_matches or {}).get(best_doc_type, 1)

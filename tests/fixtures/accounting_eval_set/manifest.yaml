@@ -39,9 +39,9 @@ fixtures:
 
   # ── tax: 1099 / 1098-T / W-4 / tax_return ─────────────────
   - path: /Users/lichenyu/accounting/tax/2024/2024_1099b_schwab_xxx619_part1.pdf
-    expected_doc_type: 1099
+    expected_doc_type: "1099"
   - path: /Users/lichenyu/accounting/tax/2024/2024_1099int_citibank_bsgc.pdf
-    expected_doc_type: 1099
+    expected_doc_type: "1099"
   - path: /Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025.pdf
     expected_doc_type: tuition_statement
   - path: /Users/lichenyu/accounting/tax/2025/1098T_CIAM_2025_decrypted.pdf
@@ -130,6 +130,92 @@ fixtures:
     expected_doc_type: degree_certificate
   - path: /Users/lichenyu/accounting/tmp/mt_law_dropbox_upload/5_Waseda_University_Transcript.pdf
     expected_doc_type: transcript
+
+  # ── classifier gaps 2026-05-01: brokerage, corporate, H-1B, litigation ──
+  - path: /Users/lichenyu/accounting/bank_statements/schwab/schwab_llc_xxx239_20250225_20260212.csv
+    expected_doc_type: bank_statement
+  - path: /Users/lichenyu/accounting/bank_statements/schwab/schwab_personal_xxx619_20230120_20260107.csv
+    expected_doc_type: bank_statement
+  - path: /Users/lichenyu/accounting/bank_statements/schwab/statements/schwab_brokerage_stmt_xxx239_2025-07.pdf
+    expected_doc_type: brokerage_statement
+  - path: /Users/lichenyu/accounting/bank_statements/schwab/statements/schwab_brokerage_stmt_xxx239_2025-09.pdf
+    expected_doc_type: brokerage_statement
+  - path: /Users/lichenyu/accounting/outgoing/kaufman_rossin/data_room/03_2024_1099int_citibank_llc.pdf
+    expected_doc_type: "1099"
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D1_articles_of_incorporation_ss4.pdf
+    expected_doc_type: articles_of_organization
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D2_bylaws.pdf
+    expected_doc_type: bylaws
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D3_corporate_resolutions.pdf
+    expected_doc_type: corporate_resolution
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D5_governance_docs_signed.pdf
+    expected_doc_type: governance_packet
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D6_key_documents_compilation.pdf
+    expected_doc_type: multi_doc_compilation
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/D_Corporate/D8_ein_fax_notification.pdf
+    expected_doc_type: ein_letter
+  - path: /Users/lichenyu/accounting/outgoing/foster_llp_042426/meeting_materials/01_yangtze_corporate/10_soi_filed_041326_latest.pdf
+    expected_doc_type: statement_of_information
+  - path: /Users/lichenyu/accounting/outgoing/kuck_baxter/upload_docketwise_042926/01_employer_yangtze_corporate/11_certificate_of_status_032826_compilation.pdf
+    expected_doc_type: certificate_of_good_standing
+  - path: /Users/lichenyu/accounting/legal/corporate/yangtze_capital_bylaws_032626.pdf
+    expected_doc_type: bylaws
+  - path: /Users/lichenyu/accounting/legal/corporate/yangtze_capital_corporate_resolutions_2026.pdf
+    expected_doc_type: corporate_resolution
+  - path: /Users/lichenyu/accounting/legal/corporate/yangtze_capital_soi_041326.pdf
+    expected_doc_type: statement_of_information
+  - path: /Users/lichenyu/accounting/legal/corporate/yangtze_capital_key_documents_2026.pdf
+    expected_doc_type: multi_doc_compilation
+  - path: /Users/lichenyu/accounting/legal/corporate/yangtze_materiality_difference_memo_042926_DRAFT.pdf
+    expected_doc_type: h1b_materiality_memo
+  - path: /Users/lichenyu/accounting/legal/corporate/yangtze_i129_support_letter_outline_042926.pdf
+    expected_doc_type: i129_support_letter
+  - path: /Users/lichenyu/accounting/legal/corporate/ewb_kyc_crossborder.pdf
+    expected_doc_type: bank_kyc_form
+  - path: /Users/lichenyu/accounting/reports/Master_Transaction_Ledger.csv
+    expected_doc_type: transaction_ledger
+  - path: /Users/lichenyu/accounting/tmp/mendy_gusto_docs/wolff-li-capital-inc-payroll-summary-7757500971275864-2.pdf
+    expected_doc_type: payroll_summary
+  - path: /Users/lichenyu/accounting/tmp/mendy_gusto_docs/wolff-li-capital-inc-payroll-summary-7757500978097544-4.pdf
+    expected_doc_type: payroll_summary
+  - path: /Users/lichenyu/accounting/outgoing/h1b1_intake_021226/employment/claudius_termination_020525.pdf
+    expected_doc_type: termination_letter
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/F_Employment_History/F2_claudius_termination_letter.pdf
+    expected_doc_type: termination_letter
+  - path: /Users/lichenyu/accounting/outgoing/litwin_smith/Beneficiary_Questionnaire_FILLED.docx
+    expected_doc_type: h1b_employer_questionnaire
+  - path: /Users/lichenyu/accounting/outgoing/kuck_baxter/intake_042826/03_h1b_employer_questionnaire_filled.pdf
+    expected_doc_type: h1b_employer_questionnaire
+  - path: /Users/lichenyu/accounting/outgoing/tarlson/itin_support_letter_042126.pdf
+    expected_doc_type: itin_support_letter
+  - path: /Users/lichenyu/accounting/outgoing/tarlson/tarlson_itin_fact_sheet.pdf
+    expected_doc_type: itin_fact_sheet
+  - path: /Users/lichenyu/accounting/tmp/Fact Sheet - Form W-7 ITIN Applications.pdf
+    expected_doc_type: itin_fact_sheet
+  - path: /Users/lichenyu/accounting/outgoing/rai_demand/2026-04-28_demand_letter_v1.pdf
+    expected_doc_type: demand_letter
+  - path: /Users/lichenyu/accounting/outgoing/rai_demand/2026-04-28_litigation_hold_v1.pdf
+    expected_doc_type: litigation_hold
+  - path: /Users/lichenyu/accounting/outgoing/rai_demand/firm_intake_shortlist.pdf
+    expected_doc_type: attorney_intake_doc
+  - path: /Users/lichenyu/accounting/outgoing/rai_demand/consultation_playbook.pdf
+    expected_doc_type: attorney_intake_doc
+  - path: /Users/lichenyu/accounting/outgoing/rai_demand/exhibits/E_thunderbird_deck_delivered_2024-12-11.pdf
+    expected_doc_type: litigation_exhibit
+  - path: /Users/lichenyu/accounting/outgoing/rai_demand/exhibits/G_dochub_finalized_audit_trail_2024-12-05.pdf
+    expected_doc_type: litigation_exhibit
+  - path: /Users/lichenyu/accounting/outgoing/rai_demand/exhibits/00_README_exhibit_index.pdf
+    expected_doc_type: exhibit_index
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/G_Business_Plans/G2_guardian_ai_business_plan_v1.pdf
+    expected_doc_type: business_plan
+  - path: /Users/lichenyu/accounting/outgoing/kuck_baxter/docs_essentials/04_yangtze_5yr_business_plan.pdf
+    expected_doc_type: business_plan
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B07_i20_westcliff_transfer_pending.pdf
+    expected_doc_type: transfer_pending_letter
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/B_I20_History/B11_i20_ciam_current.pdf
+    expected_doc_type: i20
+  - path: /Users/lichenyu/accounting/outgoing/klasko/upload_041626/C_CPT_Evidence/C2_ciam_cpt_application_training_plan.pdf
+    expected_doc_type: cpt_application
 
   # ── negative controls (must classify as null/None) ────────
   # Agent-generated analyses, prep notes, voice transcripts —

@@ -5,6 +5,7 @@ from zipfile import ZipFile
 
 import compliance_os.web.services.extractor as extractor
 import compliance_os.web.services.pdf_reader as pdf_reader
+from compliance_os.web.routers.dashboard import _resolve_doc_type_for_upload_file
 from compliance_os.web.services.classifier import (
     PATH_EXCEPTION_PATTERNS,
     classify_file,
@@ -274,7 +275,7 @@ def test_batch_56_accounting_bank_and_transfer_classification_regressions():
         classify_filename(
             "/tmp/bank_statements/schwab/statements/schwab_brokerage_stmt_xxx239_2025-07.pdf"
         ).doc_type
-        == "bank_statement"
+        == "brokerage_statement"
     )
     assert classify_filename("/tmp/bank_statements/citizens_payment_options_2958.pdf").doc_type == "payment_options_notice"
     assert (
@@ -283,6 +284,79 @@ def test_batch_56_accounting_bank_and_transfer_classification_regressions():
         ).doc_type
         == "wire_transfer_record"
     )
+    assert classify_filename("/tmp/schwab_llc_xxx239_2025_account_summary.pdf").doc_type == "annual_account_summary"
+
+
+def test_classifier_gap_filename_regressions_2026_05_01():
+    cases = {
+        # A: existing doc_type, narrow filename patterns.
+        "/tmp/.preflight_x_2024_1099int_citibank_bsgc.pdf": "1099",
+        "/tmp/.preflight_x_2024_1099b_schwab_xxx619_part1.pdf": "1099",
+        "/tmp/.preflight_x_schwab_llc_xxx239_20250225_20260212.csv": "bank_statement",
+        "/tmp/.preflight_x_wf_personal_20251023_20260209.csv": "bank_statement",
+        "/tmp/.preflight_x_schwab_brokerage_stmt_xxx239_2025-07.pdf": "brokerage_statement",
+        "/tmp/.preflight_x_A3_columbia_degree.pdf": "degree_certificate",
+        "/tmp/.preflight_x_04_sjtu_bachelor_diploma_cert.pdf": "degree_certificate",
+        "/tmp/.preflight_x_BSGC_engagement_letter_040626.pdf": "legal_services_agreement",
+        "/tmp/.preflight_x_11_certificate_of_status_032826_compilation.pdf": "certificate_of_good_standing",
+        # B: specificity ties.
+        "/tmp/.preflight_x_B07_i20_westcliff_transfer_pending.pdf": "transfer_pending_letter",
+        "/tmp/.preflight_x_C2_ciam_cpt_application_training_plan.pdf": "cpt_application",
+        "/tmp/.preflight_x_01_BSGC_articles_and_ss4.pdf": "articles_of_organization",
+        # C/D/E: new doc types and composite buckets.
+        "/tmp/.preflight_x_04_yangtze_resolutions.pdf": "corporate_resolution",
+        "/tmp/.preflight_x_D2_bylaws.pdf": "bylaws",
+        "/tmp/.preflight_x_D8_ein_fax_notification.pdf": "ein_letter",
+        "/tmp/.preflight_x_D5_governance_docs_signed.pdf": "governance_packet",
+        "/tmp/.preflight_x_10_soi_filed_041326_latest.pdf": "statement_of_information",
+        "/tmp/.preflight_x_wolff-li-capital-inc-payroll-summary-7757500971275864-2.pdf": "payroll_summary",
+        "/tmp/.preflight_x_F2_claudius_termination_letter.pdf": "termination_letter",
+        "/tmp/.preflight_x_03_h1b_employer_questionnaire_filled.pdf": "h1b_employer_questionnaire",
+        "/tmp/.preflight_x_itin_support_letter_042126.pdf": "itin_support_letter",
+        "/tmp/.preflight_x_Fact Sheet - Form W-7 ITIN Applications.pdf": "itin_fact_sheet",
+        "/tmp/.preflight_x_2026-04-28_demand_letter_v1.pdf": "demand_letter",
+        "/tmp/.preflight_x_2026-04-28_litigation_hold_v1.pdf": "litigation_hold",
+        "/tmp/.preflight_x_E_thunderbird_deck_delivered_2024-12-11.pdf": "litigation_exhibit",
+        "/tmp/.preflight_x_guardian_business_plan_v1.pdf": "business_plan",
+        "/tmp/.preflight_x_firm_intake_shortlist.pdf": "attorney_intake_doc",
+        "/tmp/.preflight_x_yangtze_materiality_difference_memo_042926_DRAFT.pdf": "h1b_materiality_memo",
+        "/tmp/.preflight_x_ewb_kyc_crossborder.pdf": "bank_kyc_form",
+        "/tmp/.preflight_x_00_README_exhibit_index.pdf": "exhibit_index",
+        "/tmp/.preflight_x_yangtze_i129_support_letter_outline_042926.pdf": "i129_support_letter",
+        "/tmp/.preflight_x_Master_Transaction_Ledger.csv": "transaction_ledger",
+        "/tmp/.preflight_x_D6_key_documents_compilation.pdf": "multi_doc_compilation",
+    }
+
+    for path, expected in cases.items():
+        assert classify_filename(path).doc_type == expected
+
+
+def test_classifier_gap_text_regressions_2026_05_01():
+    assert classify_text("Brokerage Statement Holdings Activity Detail Account Value").doc_type == "brokerage_statement"
+    assert classify_text("RESOLVED by the Board of Directors in these corporate resolutions.").doc_type == "corporate_resolution"
+    assert classify_text("Bylaws ARTICLE I shareholders directors").doc_type == "bylaws"
+    assert classify_text("Statement of Information Form SI-550 Entity Number").doc_type == "statement_of_information"
+    assert classify_text("Payroll Summary Total Gross Total Net Pay Period Range").doc_type == "payroll_summary"
+    assert classify_text("Termination Letter employment is terminated last day of employment").doc_type == "termination_letter"
+    assert classify_text("Employer Questionnaire H-1B position offered job duties").doc_type == "h1b_employer_questionnaire"
+    assert classify_text("Form W-7 ITIN Applications Fact Sheet Individual Taxpayer Identification Number").doc_type == "itin_fact_sheet"
+    assert classify_text("Litigation Hold preserve electronically stored information anticipated litigation").doc_type == "litigation_hold"
+    assert classify_text("Business Plan Executive Summary Market Analysis Capitalization").doc_type == "business_plan"
+    assert classify_text("Know Your Customer KYC cross-border sanctions screening").doc_type == "bank_kyc_form"
+
+
+def test_dashboard_upload_uses_source_path_for_generic_temp_names(tmp_path):
+    result = _resolve_doc_type_for_upload_file(
+        upload_dir=tmp_path,
+        file_name="current.pdf",
+        source_path="outgoing/h1b1_intake_021226/i20/11_ciam_current.pdf",
+        content=b"fake pdf bytes",
+        mime_type="application/pdf",
+        provided_doc_type=None,
+    )
+
+    assert result.doc_type == "i20"
+    assert result.source == "source_path"
 
 
 def test_batch_57_accounting_legal_and_h1b_packet_classification_regressions():

@@ -143,6 +143,7 @@ def _resolve_doc_type_for_upload_file(
     *,
     upload_dir: Path,
     file_name: str,
+    source_path: str | None = None,
     content: bytes,
     mime_type: str,
     provided_doc_type: str | None,
@@ -158,6 +159,15 @@ def _resolve_doc_type_for_upload_file(
             provided_doc_type=provided_doc_type,
             allow_ocr=False,
         )
+        if not result.doc_type and source_path:
+            result = resolve_document_type(
+                source_path,
+                mime_type,
+                provided_doc_type=None,
+                allow_ocr=False,
+            )
+            if result.doc_type:
+                result.source = "source_path"
         if not result.doc_type:
             result = resolve_document_type(
                 str(temp_path),
@@ -398,6 +408,7 @@ def upload_to_dataroom(
         resolved_doc_type = _resolve_doc_type_for_upload_file(
             upload_dir=upload_dir,
             file_name=file.filename or "upload",
+            source_path=source_path,
             content=content,
             mime_type=file.content_type or "application/octet-stream",
             provided_doc_type=doc_type,
@@ -618,6 +629,7 @@ def prepare_dataroom_upload(
             resolved = _resolve_doc_type_for_upload_file(
                 upload_dir=upload_dir,
                 file_name=upload.filename or "upload",
+                source_path=source_path,
                 content=content,
                 mime_type=upload.content_type or "application/octet-stream",
                 provided_doc_type=doc_type,
