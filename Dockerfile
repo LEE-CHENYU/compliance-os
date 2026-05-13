@@ -37,8 +37,9 @@ RUN printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\nAcquire::https:
 RUN curl -fsSL "https://caddyserver.com/api/download?os=linux&arch=amd64" -o /usr/local/bin/caddy && \
     chmod +x /usr/local/bin/caddy
 
-# Install Python deps
-RUN pip install --no-cache-dir \
+# Install Python deps. Fly remote/local builders can have brief PyPI stalls;
+# use longer pip timeouts so deploys do not fail on a single slow wheel.
+RUN pip install --no-cache-dir --timeout 120 --retries 10 \
     fastapi uvicorn sqlalchemy python-multipart pymupdf openai \
     "psycopg[binary]" \
     python-dotenv pydantic pydantic-settings pyyaml python-dateutil \
