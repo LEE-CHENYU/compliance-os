@@ -465,6 +465,10 @@ PERSONA_LABELS = {
     "employment_green_card": "Employment green-card counsel",
     "family_humanitarian": "Family / humanitarian counsel",
     "student_opt_status": "Student / OPT status counsel",
+    # O-1 / NIW set
+    "niw_eb1_profile": "NIW / EB-1 profile counsel",
+    "o1_extraordinary_ability": "O-1 extraordinary-ability counsel",
+    "talent_rfe_appeals": "Talent-petition RFE / appeal counsel",
     # EB-5 set
     "eb5_specialist": "EB-5 specialists",
     "securities_sophisticated": "Securities-sophisticated",
@@ -2777,6 +2781,8 @@ def claim_search(
         # to immigration (the most common path through find-lawyer).
         _VERTICAL_TO_WORKFLOW = {
             "immigration_attorney": "immigration",
+            "immigration_h1b": "immigration",
+            "immigration_o1_niw": "immigration",
             "immigration_eb5": "immigration",
             "tax_attorney": "tax",
             "cpa": "tax",

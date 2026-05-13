@@ -34,6 +34,8 @@ from compliance_os.web.services.product_catalog import (
 # the startup-categorized 83(b) product if the brief asks for it).
 _VERTICAL_CATEGORIES: dict[str, list[str]] = {
     "immigration_attorney": ["immigration"],
+    "immigration_h1b": ["immigration"],
+    "immigration_o1_niw": [],  # No Guardian product for O-1/NIW yet; no generic H-1B upsell.
     "immigration_eb5": [],  # No Guardian product for EB-5; no upsell.
     "tax_attorney": ["tax"],
     "cpa": ["tax"],

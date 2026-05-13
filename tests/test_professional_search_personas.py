@@ -36,6 +36,8 @@ def test_every_configured_professional_search_vertical_has_personas() -> None:
 def test_public_attorney_and_cpa_personas_are_case_selective() -> None:
     public_verticals = {
         "immigration_attorney",
+        "immigration_h1b",
+        "immigration_o1_niw",
         "immigration_eb5",
         "tax_attorney",
         "corporate_attorney",
@@ -127,7 +129,7 @@ def test_cpa_persona_selection_runs_accounting_when_books_are_in_scope() -> None
 
 def test_immigration_persona_selection_targets_status_issue_without_broad_run() -> None:
     selection = select_personas(
-        "immigration_attorney",
+        "immigration_h1b",
         purpose="F-1 OPT status risk consult",
         case_brief=(
             "Need an immigration attorney for an F-1 student who used CPT, "
@@ -138,8 +140,26 @@ def test_immigration_persona_selection_targets_status_issue_without_broad_run() 
 
     selected_ids = {p.id for p in selection.selected}
     assert "student_opt_status" in selected_ids
+    assert "startup_founder" not in selected_ids
     assert "family_humanitarian" not in selected_ids
     assert "employment_green_card" not in selected_ids
+
+
+def test_o1_niw_persona_selection_targets_talent_track() -> None:
+    selection = select_personas(
+        "immigration_o1_niw",
+        purpose="O-1 and NIW attorney search",
+        case_brief=(
+            "Need an immigration attorney to compare O-1 and NIW strategy for "
+            "a founder with publications, citations, press, awards, critical "
+            "roles, recommendation letters, and possible EB-1A timing."
+        ),
+    )
+
+    selected_ids = {p.id for p in selection.selected}
+    assert "o1_extraordinary_ability" in selected_ids
+    assert "niw_eb1_profile" in selected_ids
+    assert "talent_rfe_appeals" not in selected_ids
 
 
 def test_enrichment_normalization_protects_client_from_model_shape_drift() -> None:

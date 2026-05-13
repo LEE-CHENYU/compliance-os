@@ -1,0 +1,59 @@
+id: startup_founder
+vertical: immigration_h1b
+title: "Startup and founder H-1B firms"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "founder"
+    - "startup"
+    - "owner-beneficiary"
+    - "owner beneficiary"
+    - "self-sponsor"
+    - "self sponsor"
+    - "small employer"
+    - "pre-revenue"
+    - "entrepreneur"
+    - "related entity"
+    - "cap table"
+  weak_signals:
+    - "H-1B"
+    - "H1B"
+    - "new company"
+    - "LLC"
+    - "C-corp"
+    - "single founder"
+  exclude_signals:
+    - "not a founder"
+    - "large employer"
+    - "routine transfer"
+
+search_angle: |
+  Find firms that specialize in founder-beneficiary and owner-adjacent H-1B
+  petitions. Prioritize counsel who understands the 2024 H-1B Final Rule,
+  beneficiary-centric selection, related-entity multi-registration risk, board
+  control, founder supervision, and small-employer or pre-revenue scrutiny.
+
+  The ideal candidate has explicitly written about entrepreneur H-1Bs or
+  handled comparable small-company filings. Thought leadership is useful only
+  when it cites regulations or policy guidance, not when it is generic
+  marketing copy.
+
+must_weight:
+  - "Published analytical articles on founder or owner-beneficiary H-1B issues"
+  - "Demonstrated entrepreneur, startup, or small-employer petition record"
+  - "Experience with under-10-employee or pre-revenue petitioners"
+  - "Ability to coordinate corporate governance evidence with immigration strategy"
+  - "AILA membership or chapter activity"
+
+also_value:
+  - "Experience with related-entity or family-controlled petitioners"
+  - "Willingness to take single-petition retainers"
+  - "Can coordinate with corporate counsel on board control or employment documentation"
+
+deprioritize:
+  - "Firms whose main business is big-employer transfer work"
+  - "Firms with no public position on founder H-1B issues"
+
+fee_range_expected_usd: "$3,500-$9,000 for founder H-1B strategy and filing; RFEs separate"
+target_count: 6

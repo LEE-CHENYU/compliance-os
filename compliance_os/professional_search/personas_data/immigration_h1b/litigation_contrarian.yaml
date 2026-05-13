@@ -1,0 +1,58 @@
+id: litigation_contrarian
+vertical: immigration_h1b
+title: "H-1B federal-court and AAO litigators"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "mandamus"
+    - "federal court"
+    - "APA"
+    - "lawsuit"
+    - "sue USCIS"
+    - "USCIS delay"
+    - "unreasonable delay"
+    - "denial"
+    - "denied"
+    - "NOID"
+    - "NOIR"
+    - "AAO"
+    - "appeal"
+    - "litigation"
+    - "specialty occupation"
+  weak_signals:
+    - "RFE"
+    - "challenge"
+    - "delay"
+    - "stuck"
+  exclude_signals:
+    - "no litigation"
+    - "not looking to sue"
+    - "routine filing"
+
+search_angle: |
+  Find firms and solo practitioners whose H-1B practice includes AAO appeals,
+  APA suits, mandamus, denial challenges, and regulatory-overreach litigation.
+  The target profile is a former DOJ Office of Immigration Litigation attorney,
+  a federal court clerk, or named co-counsel in reported H-1B policy challenges
+  such as the ITServe lineage.
+
+  This persona is deliberately contrarian: these firms may be more expensive
+  and less interested in routine filing, but they are the right choice when
+  the H-1B matter may need to be defended after a difficult RFE, NOID, denial,
+  or delay.
+
+must_weight:
+  - "Former DOJ OIL, USCIS, or federal-court clerkship background"
+  - "Named counsel in reported AAO or federal-court H-1B decision"
+  - "Documented PACER filings as counsel of record"
+  - "ITServe lineage or similar H-1B regulatory challenge experience"
+  - "Ability to separate petition strategy from litigation posture"
+
+also_value:
+  - "Published articles on H-1B litigation, specialty occupation, or USCIS policy"
+  - "IMMpact Litigation or similar immigration litigation network participation"
+
+litigation_capability_required: true
+fee_range_expected_usd: "$8,000-$30,000+ for complex petition or litigation phases"
+target_count: 5

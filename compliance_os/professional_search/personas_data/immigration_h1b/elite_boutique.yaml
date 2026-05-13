@@ -1,0 +1,62 @@
+id: elite_boutique
+vertical: immigration_h1b
+title: "Elite H-1B boutiques"
+
+activation:
+  fallback: true
+  threshold: 4
+  strong_signals:
+    - "H-1B"
+    - "H1B"
+    - "specialty occupation"
+    - "LCA"
+    - "prevailing wage"
+    - "wage level"
+    - "cap registration"
+    - "cap-gap"
+    - "change of status"
+    - "consular processing"
+    - "complex immigration"
+    - "second opinion"
+  weak_signals:
+    - "immigration"
+    - "attorney"
+    - "lawyer"
+    - "strategy"
+    - "employer"
+  exclude_signals:
+    - "O-1 only"
+    - "NIW only"
+    - "family-based"
+
+search_angle: |
+  Find boutique to mid-sized immigration firms with strong externally
+  verifiable H-1B credentials. Prioritize firms where partners still review
+  petitions personally and can handle unusual H-1B facts such as small
+  employers, wage-level disputes, specialty-occupation evidence, amendment
+  timing, and change-of-status or consular timing.
+
+  The ideal candidate combines Chambers, AILA, or state-bar credentials with
+  practical H-1B filing judgment. Avoid volume practices that cannot explain
+  how they would document the actual employer-employee relationship, duties,
+  wage, and worksite facts for this case.
+
+must_weight:
+  - "Chambers USA Immigration ranking or other third-party immigration credential"
+  - "Published H-1B analysis, especially on specialty occupation, wage, or cap-registration issues"
+  - "Named attorneys with business immigration or H-1B practice focus"
+  - "Clear process for employer documents, LCA, job duties, and RFE response"
+  - "Willingness to take single-petition or founder-adjacent matters"
+
+also_value:
+  - "AILA leadership or committee activity"
+  - "Experience with cap-gap, travel, amendment, transfer, or change-of-status timing"
+  - "Transparent consult and filing fee structure"
+
+deprioritize:
+  - "Volume H-1B mills with thin partner attention"
+  - "Practices focused only on large enterprise transfer programs"
+  - "Marketing-heavy firms with no public H-1B substance"
+
+fee_range_expected_usd: "$2,500-$8,000 for H-1B strategy and filing; complex RFEs or litigation separate"
+target_count: 6

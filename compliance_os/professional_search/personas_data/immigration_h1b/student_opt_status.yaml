@@ -1,0 +1,63 @@
+id: student_opt_status
+vertical: immigration_h1b
+title: "F-1, OPT/STEM OPT, and H-1B bridge counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "F-1"
+    - "J-1"
+    - "OPT"
+    - "STEM OPT"
+    - "CPT"
+    - "SEVIS"
+    - "I-20"
+    - "DSO"
+    - "unlawful presence"
+    - "status violation"
+    - "reinstatement"
+    - "change of status"
+    - "cap-gap"
+    - "travel while pending"
+    - "H-1B"
+    - "H1B"
+  weak_signals:
+    - "student"
+    - "school"
+    - "program"
+    - "unemployment days"
+    - "visa stamp"
+  exclude_signals:
+    - "no student issue"
+    - "not F-1"
+    - "not OPT"
+
+search_angle: |
+  Find immigration attorneys who routinely advise students and early-career
+  professionals on F-1/J-1 status, CPT, OPT/STEM OPT, SEVIS errors, cap-gap,
+  reinstatement, change of status, travel timing, and H-1B transition strategy.
+
+  The ideal counsel is careful about school and DSO boundaries: they do not
+  merely repeat school guidance, but can analyze immigration consequences,
+  evidence files, and whether a status issue should be corrected, disclosed,
+  or routed into the H-1B filing strategy.
+
+must_weight:
+  - "Published student visa, OPT/STEM OPT, CPT, SEVIS, or cap-gap guidance"
+  - "Experience coordinating with DSOs without substituting for school authority"
+  - "Ability to analyze unlawful-presence, travel, and change-of-status risk"
+  - "Named attorney with employment/student immigration practice focus"
+  - "Clear consult model for narrow status questions"
+
+also_value:
+  - "Experience with founder work authorization, startup employment, or contractor-work risk"
+  - "Can coordinate student-status facts with H-1B petition timing"
+  - "Multilingual intake for students and recent graduates"
+
+deprioritize:
+  - "School-only resources without attorney review"
+  - "Practices focused only on employer-volume H-1Bs"
+  - "Content that glosses over unauthorized employment or unemployment-day risk"
+
+fee_range_expected_usd: "$250-$750 consultation; $1,500-$5,000+ for reinstatement or change-of-status packages"
+target_count: 6

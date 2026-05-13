@@ -1,0 +1,63 @@
+id: niw_eb1_profile
+vertical: immigration_o1_niw
+title: "NIW and EB-1A profile strategy counsel"
+
+activation:
+  fallback: true
+  threshold: 4
+  strong_signals:
+    - "NIW"
+    - "National Interest Waiver"
+    - "EB-1"
+    - "EB1"
+    - "EB-1A"
+    - "EB1A"
+    - "I-140"
+    - "extraordinary ability"
+    - "advanced degree"
+    - "publications"
+    - "citations"
+    - "recommendation letters"
+    - "profile evaluation"
+  weak_signals:
+    - "green card"
+    - "petition"
+    - "research"
+    - "awards"
+    - "media"
+    - "impact"
+  exclude_signals:
+    - "only H-1B"
+    - "family-based"
+    - "EB-5"
+
+search_angle: |
+  Find attorneys with a serious NIW and EB-1A evidence-strategy practice.
+  Prioritize counsel who can assess whether the user's record supports NIW,
+  EB-1A, or a staged path, and who can explain how they would document field
+  impact, endeavor merit, citations, publications, patents, press, awards,
+  critical roles, recommendation letters, and comparable evidence.
+
+  The right firm should not just sell a petition package. It should identify
+  evidence gaps, timeline risk, and whether an O-1 bridge or later EB-1A filing
+  makes more sense than filing immediately.
+
+must_weight:
+  - "Published NIW, EB-1A, or I-140 evidence-strategy analysis"
+  - "Named attorneys with employment-based immigrant petition focus"
+  - "Clear framework for recommendation letters and objective evidence"
+  - "Experience with researchers, founders, engineers, artists, or nontraditional profiles"
+  - "Transparent scope for eligibility review versus full drafting"
+
+also_value:
+  - "AAO appeal or federal-court record for I-140 denials"
+  - "Can coordinate O-1 nonimmigrant timing with NIW or EB-1A strategy"
+  - "Can handle adjustment-of-status or consular-processing timing"
+
+deprioritize:
+  - "Firms that advertise guaranteed NIW or EB-1A approval"
+  - "Form-filling practices with no evidence-strategy content"
+  - "Pure family immigration practices with incidental employment work"
+
+fee_range_expected_usd: "$4,000-$12,000 for NIW/EB-1A strategy and filing; appeals separate"
+target_count: 6

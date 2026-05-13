@@ -215,8 +215,16 @@ export const FIND_LAWYER_STRINGS: Record<Lang, Dict> = {
 export const VERTICAL_LABELS: Record<Lang, Record<string, { label: string; helper: string }>> = {
   en: {
     immigration_attorney: {
-      label: "Immigration attorney — H-1B / general",
-      helper: "H-1B, OPT, employment-based, family-based, asylum",
+      label: "Immigration attorney — general",
+      helper: "OPT, employment-based, family-based, asylum",
+    },
+    immigration_h1b: {
+      label: "Immigration attorney — H-1B",
+      helper: "H-1B cap, transfer, amendment, founder / small-employer petitions, OPT bridge",
+    },
+    immigration_o1_niw: {
+      label: "Immigration attorney — O-1 / NIW",
+      helper: "O-1, NIW, EB-1A, extraordinary ability, profile evidence, RFE / appeal strategy",
     },
     immigration_eb5: {
       label: "Immigration attorney — EB-5",
@@ -230,8 +238,16 @@ export const VERTICAL_LABELS: Record<Lang, Record<string, { label: string; helpe
   },
   zh: {
     immigration_attorney: {
-      label: "移民律师 — H-1B / 综合",
-      helper: "H-1B、OPT、雇主担保、家庭担保、政治庇护",
+      label: "移民律师 — 综合",
+      helper: "OPT、雇主担保、家庭担保、政治庇护",
+    },
+    immigration_h1b: {
+      label: "移民律师 — H-1B",
+      helper: "H-1B 抽签、transfer、amendment、创始人 / 小雇主 petition、OPT 衔接",
+    },
+    immigration_o1_niw: {
+      label: "移民律师 — O-1 / NIW",
+      helper: "O-1、NIW、EB-1A、杰出人才、证据策略、RFE / appeal 策略",
     },
     immigration_eb5: {
       label: "移民律师 — EB-5 投资移民",
@@ -253,6 +269,9 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
     employment_green_card: "Employment Green Card",
     family_humanitarian: "Family / Humanitarian",
     student_opt_status: "Student / OPT Status",
+    niw_eb1_profile: "NIW / EB-1 Profile",
+    o1_extraordinary_ability: "O-1 Extraordinary Ability",
+    talent_rfe_appeals: "Talent RFE / Appeals",
     eb5_specialist: "EB-5 Specialist",
     securities_sophisticated: "Securities Sophisticated",
     source_of_funds: "Source-of-Funds Specialist",
@@ -292,6 +311,9 @@ export const PERSONA_LABELS_I18N: Record<Lang, Record<string, string>> = {
     employment_green_card: "职业绿卡 / 杰出人才",
     family_humanitarian: "家庭 / 人道移民",
     student_opt_status: "学生 / OPT 身份",
+    niw_eb1_profile: "NIW / EB-1 背景策略",
+    o1_extraordinary_ability: "O-1 杰出人才",
+    talent_rfe_appeals: "人才类 RFE / 上诉",
     eb5_specialist: "EB-5 专家",
     securities_sophisticated: "证券法精通",
     source_of_funds: "资金来源专家",
@@ -342,6 +364,38 @@ type PersonaPreview = { title: string; body: string };
 
 export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPreview[]>> = {
   en: {
+    immigration_h1b: [
+      {
+        title: "H-1B boutiques",
+        body: "Business-immigration firms with specialty-occupation, wage, amendment, and transfer judgment.",
+      },
+      {
+        title: "Startup + founder H-1B",
+        body: "Counsel for owner-beneficiary, small-employer, pre-revenue, and cap-table-sensitive petitions.",
+      },
+      {
+        title: "H-1B litigators",
+        body: "AAO, APA, mandamus, denial, NOID, and difficult RFE strategy for high-risk filings.",
+      },
+      {
+        title: "F-1 / OPT bridge counsel",
+        body: "SEVIS, CPT, OPT/STEM OPT, cap-gap, travel, and change-of-status timing before H-1B.",
+      },
+    ],
+    immigration_o1_niw: [
+      {
+        title: "NIW + EB-1A strategy",
+        body: "Profile evaluation, field-impact evidence, recommendation letters, citations, publications, and I-140 timing.",
+      },
+      {
+        title: "O-1 petition counsel",
+        body: "O-1A/O-1B criteria, advisory opinions, agent petitioners, itineraries, and extension strategy.",
+      },
+      {
+        title: "Talent-petition appeals",
+        body: "RFE, NOID, denial, AAO, refile, and federal-court judgment for O-1, NIW, and EB-1A cases.",
+      },
+    ],
     immigration_attorney: [
       {
         title: "Elite boutiques",
@@ -506,6 +560,38 @@ export const PERSONA_PREVIEWS_BY_VERTICAL: Record<Lang, Record<string, PersonaPr
     ],
   },
   zh: {
+    immigration_h1b: [
+      {
+        title: "H-1B 精品律所",
+        body: "处理 specialty occupation、工资水平、amendment、transfer 和雇主材料判断的商务移民律所。",
+      },
+      {
+        title: "初创 / 创始人 H-1B",
+        body: "适合 owner-beneficiary、小雇主、pre-revenue、cap table 敏感的 petition。",
+      },
+      {
+        title: "H-1B 诉讼律师",
+        body: "处理 AAO、APA、mandamus、denial、NOID 和高风险 RFE 策略。",
+      },
+      {
+        title: "F-1 / OPT 衔接",
+        body: "SEVIS、CPT、OPT/STEM OPT、cap-gap、旅行和 H-1B change-of-status 时点。",
+      },
+    ],
+    immigration_o1_niw: [
+      {
+        title: "NIW + EB-1A 策略",
+        body: "背景评估、领域影响证据、推荐信、引用、发表记录和 I-140 时点。",
+      },
+      {
+        title: "O-1 petition 律师",
+        body: "O-1A/O-1B 标准、advisory opinion、agent petitioner、itinerary 和延期策略。",
+      },
+      {
+        title: "人才类 petition 上诉",
+        body: "O-1、NIW、EB-1A 的 RFE、NOID、denial、AAO、重新递交和联邦法院判断。",
+      },
+    ],
     immigration_attorney: [
       {
         title: "精英精品律所",

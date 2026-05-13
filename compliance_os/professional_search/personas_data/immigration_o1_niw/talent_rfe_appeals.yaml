@@ -1,0 +1,62 @@
+id: talent_rfe_appeals
+vertical: immigration_o1_niw
+title: "O-1, NIW, and EB-1A RFE/appeal counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "RFE"
+    - "NOID"
+    - "denial"
+    - "denied"
+    - "AAO"
+    - "appeal"
+    - "motion to reopen"
+    - "motion to reconsider"
+    - "federal court"
+  weak_signals:
+    - "O-1"
+    - "NIW"
+    - "EB-1"
+    - "I-140"
+    - "challenge"
+    - "weak evidence"
+    - "prior filing"
+    - "refile"
+    - "litigation"
+  exclude_signals:
+    - "routine filing"
+    - "no RFE"
+    - "only H-1B"
+
+search_angle: |
+  Find attorneys who can rescue or defensibly refile O-1, NIW, EB-1A, or
+  related I-140 petitions after RFE, NOID, denial, weak prior counsel work,
+  or adverse USCIS reasoning. These firms should be comfortable reading the
+  government record, separating fixable evidence gaps from bad legal framing,
+  and deciding whether to respond, refile, appeal to AAO, or consider federal
+  court.
+
+  This axis is for higher-risk cases. It should not prioritize ordinary filing
+  volume over proven analytical writing and appeal/litigation judgment.
+
+must_weight:
+  - "Documented AAO, motion, or federal-court experience for O-1, NIW, EB-1A, or I-140 matters"
+  - "Published analysis of extraordinary-ability or national-interest evidence standards"
+  - "Ability to diagnose prior counsel record problems and refile strategy"
+  - "Named attorney with appeal, litigation, or complex petition focus"
+  - "Clear fee model for RFE response versus appeal or litigation"
+
+also_value:
+  - "Former government, federal clerkship, or immigration litigation background"
+  - "Can coordinate expert letters, evidence audits, and field-impact narratives"
+  - "Experience with premium-processing timing and travel/status constraints"
+
+deprioritize:
+  - "Firms that only sell first-time petition packages"
+  - "Practices with no appeal or RFE writing samples"
+  - "Guaranteed-approval marketing"
+
+litigation_capability_required: true
+fee_range_expected_usd: "$3,000-$15,000+ for RFE/NOID response; appeals and litigation separate"
+target_count: 5

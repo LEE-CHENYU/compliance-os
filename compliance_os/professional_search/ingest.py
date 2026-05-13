@@ -66,6 +66,8 @@ from compliance_os.professional_search.db import (
 
 VERTICAL_DEFAULTS: dict[str, dict[str, str]] = {
     "immigration_attorney": {"vendor_type": "attorney", "category": "immigration"},
+    "immigration_h1b":      {"vendor_type": "attorney", "category": "immigration_h1b"},
+    "immigration_o1_niw":   {"vendor_type": "attorney", "category": "immigration_o1_niw"},
     "immigration_eb5":      {"vendor_type": "attorney", "category": "immigration_eb5"},
     "tax_attorney":         {"vendor_type": "attorney", "category": "tax"},
     "corporate_attorney":   {"vendor_type": "attorney", "category": "corporate"},

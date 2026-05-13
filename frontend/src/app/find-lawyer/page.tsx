@@ -14,7 +14,8 @@ import { trackProfessionalSearchEvent } from "@/lib/analytics";
 import { professionalSearchVocabulary } from "@/lib/professionalSearchCopy";
 
 const VERTICAL_KEYS = [
-  "immigration_attorney",
+  "immigration_h1b",
+  "immigration_o1_niw",
   "immigration_eb5",
   "tax_attorney",
   "corporate_attorney",
@@ -52,7 +53,7 @@ function FindLawyer() {
 
   const [caseBrief, setCaseBrief] = useState("");
   const [purpose, setPurpose] = useState("");
-  const [vertical, setVertical] = useState("immigration_attorney");
+  const [vertical, setVertical] = useState("immigration_h1b");
   const [files, setFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -83,7 +84,9 @@ function FindLawyer() {
         setCaseBrief((current) => current || draft.brief);
         setPurpose((current) => current || draft.suggested_purpose);
         setVertical((current) =>
-          current === "immigration_attorney" ? draft.suggested_vertical : current,
+          current === "immigration_h1b"
+            ? normalizeIntakeVertical(draft.suggested_vertical)
+            : current,
         );
         setPrefillState("ready");
       })
@@ -485,4 +488,9 @@ function FindLawyer() {
       </div>
     </div>
   );
+}
+
+function normalizeIntakeVertical(vertical: string) {
+  if (vertical === "immigration_attorney") return "immigration_h1b";
+  return vertical;
 }

@@ -1,0 +1,62 @@
+id: o1_extraordinary_ability
+vertical: immigration_o1_niw
+title: "O-1 extraordinary-ability petition counsel"
+
+activation:
+  threshold: 4
+  strong_signals:
+    - "O-1"
+    - "O1"
+    - "O-1A"
+    - "O-1B"
+    - "extraordinary ability"
+    - "advisory opinion"
+    - "peer group"
+    - "agent petitioner"
+    - "itinerary"
+    - "artist"
+    - "founder"
+    - "researcher"
+    - "critical role"
+  weak_signals:
+    - "awards"
+    - "press"
+    - "media"
+    - "judging"
+    - "original contribution"
+    - "high salary"
+  exclude_signals:
+    - "only H-1B"
+    - "routine transfer"
+    - "family-based"
+
+search_angle: |
+  Find attorneys with a focused O-1A/O-1B petition practice. Prioritize
+  counsel who can build category-by-category evidence, handle advisory
+  opinion or peer-review issues, structure agent or employer petitioners,
+  and explain itinerary, consultation, work authorization, and extension
+  strategy.
+
+  The ideal attorney should know how to translate messy founder, researcher,
+  engineer, artist, or media evidence into USCIS-recognized criteria without
+  overstating the record.
+
+must_weight:
+  - "Published O-1A or O-1B evidence criteria analysis"
+  - "Experience with advisory opinions, agent petitioners, or itinerary-heavy O-1s"
+  - "Named attorney with talent-visa practice focus"
+  - "Evidence strategy for awards, press, judging, critical roles, salary, or original contributions"
+  - "Clear distinction between O-1 eligibility review and full petition drafting"
+
+also_value:
+  - "Experience with founders, engineers, researchers, artists, or creators"
+  - "Ability to coordinate O-1 bridge timing with NIW or EB-1A strategy"
+  - "Track record handling RFEs for extraordinary-ability criteria"
+
+deprioritize:
+  - "General business immigration practices with no O-1-specific content"
+  - "Firms promising approval before reviewing evidence"
+  - "Practices focused only on employer-volume H-1Bs"
+
+fee_range_expected_usd: "$4,000-$12,000 for O-1 strategy and filing; RFEs or appeals separate"
+target_count: 6

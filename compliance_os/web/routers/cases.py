@@ -177,18 +177,35 @@ class DraftBrief(BaseModel):
 
 _TRACK_VERTICAL = {
     "tax": "tax_attorney",
-    "immigration": "immigration_attorney",
+    "immigration": "immigration_h1b",
     "corporate": "corporate_attorney",
 }
 
 
 def _suggest_vertical(workflow_type: str, answers: dict[str, Any]) -> str:
-    base = _TRACK_VERTICAL.get(workflow_type, "immigration_attorney")
-    if base == "immigration_attorney":
+    base = _TRACK_VERTICAL.get(workflow_type, "immigration_h1b")
+    if base in {"immigration_attorney", "immigration_h1b"}:
         cat = (answers.get("imm_visa_category") or "").lower()
         sub = " ".join(answers.get("imm_subdomain") or []).lower()
         if "eb-5" in cat or "eb5" in cat or "eb-5" in sub or "eb5" in sub:
             return "immigration_eb5"
+        if (
+            "o-1" in cat
+            or "o1" in cat
+            or "o-1" in sub
+            or "o1" in sub
+            or "niw" in cat
+            or "niw" in sub
+            or "national interest waiver" in cat
+            or "national interest waiver" in sub
+            or "eb-1" in cat
+            or "eb1" in cat
+            or "eb-1" in sub
+            or "eb1" in sub
+            or "extraordinary ability" in cat
+            or "extraordinary ability" in sub
+        ):
+            return "immigration_o1_niw"
     return base
 
 
