@@ -61,7 +61,6 @@ MANIFEST = {
                 "GUARDIAN_TOKEN": "${USER_CONFIG.token}",
             },
         },
-        "pip_install": ["compliance-os[agent]>=1.0.0"],
     },
     "user_config": {
         "token": {
@@ -121,7 +120,9 @@ MANIFEST = {
     "compatibility": {
         "claude_desktop": ">=0.9.0",
         "platforms": ["darwin", "linux", "win32"],
-        "python": ">=3.11",
+        "runtimes": {
+            "python": ">=3.11",
+        },
     },
 }
 
