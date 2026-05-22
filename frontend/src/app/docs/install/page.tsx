@@ -109,7 +109,7 @@ export default function InstallDocsPage() {
               <div className="text-[10px] uppercase tracking-[0.18em] text-[#b35d3f] mb-2">One click · Claude Desktop</div>
               <h2 className="text-xl font-semibold mb-3 text-[#0d1424]">Download the desktop extension</h2>
               <p className="text-sm text-[#556480] leading-relaxed mb-4">
-                Download the <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">guardian.dxt</code> file and double-click it. Claude Desktop handles the pip install, prompts you for your token, and wires up the MCP server. No terminal.
+                Download the <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">guardian.dxt</code> file. Claude Desktop bundles uv, so the first time you call a tool it fetches Python and Guardian automatically — no terminal, no config file editing.
               </p>
               <a
                 href="/guardian.dxt"
@@ -119,9 +119,27 @@ export default function InstallDocsPage() {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Download guardian.dxt
               </a>
+
+              <ol className="mt-6 space-y-3 text-sm text-[#556480] leading-relaxed list-decimal pl-5 marker:text-[#b35d3f] marker:font-semibold">
+                <li>
+                  Double-click <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">guardian.dxt</code> to install it in Claude Desktop.
+                </li>
+                <li>
+                  Generate your token: open <a href="/connect" className="text-[#b35d3f] underline underline-offset-2 font-medium">guardiancompliance.app/connect</a>, sign in, click <strong>Generate token</strong>. Copy the <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">gdn_oc_…</code> value.
+                </li>
+                <li>
+                  In Claude Desktop, go to <strong>Settings → Extensions → Guardian Compliance → Configure</strong> and paste the token into the <strong>Guardian API token</strong> field. Leave the <strong>Guardian API URL</strong> at its default (<code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">https://guardiancompliance.app</code>). Click Save.
+                </li>
+                <li>
+                  Open a chat and ask Guardian anything — the extension will spin up on the first tool call.
+                </li>
+              </ol>
+              <p className="text-[11px] text-[#8b97ad] mt-4">
+                Do <strong>not</strong> edit <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">claude_desktop_config.json</code> for the desktop extension — the Configure panel is the only place Claude Desktop reads the token from.
+              </p>
             </div>
             <div className="text-[11px] text-[#8b97ad] pt-7 max-w-[200px]">
-              Requires Claude Desktop 0.9+ with Extensions enabled (Settings → Extensions → Developer mode).
+              Requires Claude Desktop 0.10+ with Extensions enabled (Settings → Extensions).
             </div>
           </div>
         </section>
