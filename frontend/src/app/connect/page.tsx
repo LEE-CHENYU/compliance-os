@@ -117,7 +117,7 @@ export default function ConnectPage() {
       const data = await resp.json();
       setToken(data.token);
       setConnection(data);
-      setStep(3);
+      setStep(Math.max(step, 2));
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
@@ -157,40 +157,15 @@ export default function ConnectPage() {
         {/* Steps */}
         <div className="space-y-8">
 
-          {/* Step 1: Choose your app */}
+          {/* Step 1: Generate token (app-agnostic — same token works for every client) */}
           <section className="bg-white/90 backdrop-blur-xl rounded-2xl border border-blue-100/30 shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step >= 1 ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-gray-100 text-gray-400"}`}>1</div>
-              <h2 className="text-sm font-semibold text-[#0d1424]">Choose your app</h2>
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              {APPS.map((app) => (
-                <button
-                  key={app.id}
-                  data-testid={`connect-app-${app.id}`}
-                  data-graph-edge={`connect:select-app:${app.id}`}
-                  onClick={() => { setSelectedApp(app.id); setStep(Math.max(step, 2)); }}
-                  className={`rounded-xl border p-4 text-center transition-all ${
-                    selectedApp === app.id
-                      ? "border-[#5b8dee] bg-blue-50/50 shadow-sm"
-                      : "border-blue-100/30 bg-white hover:border-blue-200/50"
-                  }`}
-                >
-                  <div className={`w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center text-lg font-bold ${
-                    selectedApp === app.id ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-gray-100 text-gray-500"
-                  }`}>{app.icon}</div>
-                  <div className="text-xs font-medium text-[#0d1424]">{app.label}</div>
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {/* Step 2: Generate token */}
-          <section className={`bg-white/90 backdrop-blur-xl rounded-2xl border border-blue-100/30 shadow-sm p-6 transition-opacity ${step >= 2 ? "opacity-100" : "opacity-40 pointer-events-none"}`}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step >= 2 ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-gray-100 text-gray-400"}`}>2</div>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white">1</div>
               <h2 className="text-sm font-semibold text-[#0d1424]">Get your token</h2>
             </div>
+            <p className="text-[11px] text-[#7b8ba5] mb-4 ml-10">
+              One token works for every Guardian client below. You only need to generate it once.
+            </p>
 
             {!authReady ? (
               <div className="rounded-xl border border-blue-100/40 bg-[#f7f9fd] px-3 py-3 text-xs text-[#556480]">
@@ -244,6 +219,37 @@ export default function ConnectPage() {
                 {error && <div className="text-[11px] text-red-500">{error}</div>}
               </div>
             )}
+          </section>
+
+          {/* Step 2: Choose your client app */}
+          <section className="bg-white/90 backdrop-blur-xl rounded-2xl border border-blue-100/30 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white">2</div>
+              <h2 className="text-sm font-semibold text-[#0d1424]">Choose your app</h2>
+            </div>
+            <p className="text-[11px] text-[#7b8ba5] mb-4 ml-10">
+              The token above works in any of these — pick one to see its install steps.
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+              {APPS.map((app) => (
+                <button
+                  key={app.id}
+                  data-testid={`connect-app-${app.id}`}
+                  data-graph-edge={`connect:select-app:${app.id}`}
+                  onClick={() => { setSelectedApp(app.id); setStep(Math.max(step, 3)); }}
+                  className={`rounded-xl border p-4 text-center transition-all ${
+                    selectedApp === app.id
+                      ? "border-[#5b8dee] bg-blue-50/50 shadow-sm"
+                      : "border-blue-100/30 bg-white hover:border-blue-200/50"
+                  }`}
+                >
+                  <div className={`w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center text-lg font-bold ${
+                    selectedApp === app.id ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white" : "bg-gray-100 text-gray-500"
+                  }`}>{app.icon}</div>
+                  <div className="text-xs font-medium text-[#0d1424]">{app.label}</div>
+                </button>
+              ))}
+            </div>
           </section>
 
           {/* Step 3: Add config */}

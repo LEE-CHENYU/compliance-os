@@ -2087,9 +2087,6 @@ export default function DashboardPage() {
                         <div className="text-[11px] text-[#556480] break-all">
                           API: <code className="bg-white/80 px-1 rounded text-[#3a5a8c]">{openClawConnection.api_url}</code>
                         </div>
-                        <div className="text-[11px] text-[#556480] mt-1">
-                          Scope: <code className="bg-white/80 px-1 rounded text-[#3a5a8c]">{openClawConnection.scope}</code>
-                        </div>
                         {openClawConnection.active_token && (
                           <div className="text-[11px] text-[#556480] mt-1">
                             Active token prefix: <code className="bg-white/80 px-1 rounded text-[#3a5a8c]">{openClawConnection.active_token.token_prefix}</code>
