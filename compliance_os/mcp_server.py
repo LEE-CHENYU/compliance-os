@@ -55,6 +55,7 @@ import threading
 # (status, deadlines, gmail, ...) is unaffected by the download.
 _EMBED_READY = threading.Event()
 _EMBED_ERROR: Exception | None = None
+_EMBED_LOCK = threading.Lock()
 
 
 def _prewarm_embedding_model_bg() -> None:
@@ -74,35 +75,57 @@ def _prewarm_embedding_model_bg() -> None:
         from compliance_os.query.engine import resolve_embed_model
         resolve_embed_model()
     except Exception as exc:  # pragma: no cover — best-effort prewarm
-        _EMBED_ERROR = exc
+        with _EMBED_LOCK:
+            _EMBED_ERROR = exc
         import sys
         print(f"[guardian] embedding prewarm failed: {exc}", file=sys.stderr)
     finally:
         _EMBED_READY.set()
 
 
-def _ensure_embeddings_ready(wait_timeout: float = 60.0) -> str | None:
+def _embedding_error_message(exc: Exception) -> str:
+    return (
+        "Embeddings unavailable: "
+        f"{type(exc).__name__}: {exc}. "
+        "Set OPENAI_API_KEY in the extension's Configure panel "
+        "to use cloud embeddings, or check the server logs."
+    )
+
+
+def _retry_embedding_model_after_error() -> tuple[str, str] | None:
+    global _EMBED_ERROR
+    with _EMBED_LOCK:
+        if _EMBED_ERROR is None:
+            return None
+        try:
+            from compliance_os.query.engine import resolve_embed_model
+            resolve_embed_model()
+        except Exception as exc:
+            _EMBED_ERROR = exc
+            return ("embeddings_unavailable", _embedding_error_message(exc))
+        _EMBED_ERROR = None
+    return None
+
+
+def _ensure_embeddings_ready(wait_timeout: float = 60.0) -> tuple[str, str] | None:
     """Block until the prewarm finishes (or short-circuit if already done).
 
-    Returns None on success, or an error message string the caller should
+    Returns None on success, or (error_code, message) the caller should
     surface as the tool result. Search-dependent tools call this before
     touching the index so users get a clear "still warming up" message
     instead of a silent stall.
     """
     if _EMBED_READY.wait(timeout=wait_timeout):
-        if _EMBED_ERROR is not None:
-            return (
-                "Embeddings unavailable: "
-                f"{type(_EMBED_ERROR).__name__}: {_EMBED_ERROR}. "
-                "Set OPENAI_API_KEY in the extension's Configure panel "
-                "to use cloud embeddings, or check the server logs."
-            )
+        retry_result = _retry_embedding_model_after_error()
+        if retry_result is not None:
+            return retry_result
         return None
     return (
+        "embeddings_warming",
         "Embeddings are still downloading in the background "
         f"(timed out after {wait_timeout:.0f}s). "
         "Try again in a moment — first-time setup needs to fetch the "
-        "model weights once."
+        "model weights once.",
     )
 
 
@@ -1277,9 +1300,10 @@ def query_documents(
         smart: If True (default), return ranked chunks. If False, run the
             legacy single-tier RAG + LLM synthesis.
     """
-    warmup_msg = _ensure_embeddings_ready(wait_timeout=60.0)
-    if warmup_msg:
-        return json.dumps({"error": "embeddings_warming", "message": warmup_msg})
+    warmup_result = _ensure_embeddings_ready(wait_timeout=60.0)
+    if warmup_result:
+        error_code, warmup_msg = warmup_result
+        return json.dumps({"error": error_code, "message": warmup_msg})
     try:
         from compliance_os.query.engine import ComplianceQueryEngine
 
@@ -1370,9 +1394,10 @@ def index_documents(
             Other options: "data/uploads", "data/marketplace".
         force: If true, re-index everything from scratch.
     """
-    warmup_msg = _ensure_embeddings_ready(wait_timeout=120.0)
-    if warmup_msg:
-        return json.dumps({"error": "embeddings_warming", "message": warmup_msg})
+    warmup_result = _ensure_embeddings_ready(wait_timeout=120.0)
+    if warmup_result:
+        error_code, warmup_msg = warmup_result
+        return json.dumps({"error": error_code, "message": warmup_msg})
     try:
         from compliance_os.indexer.index import DocumentIndexer
         from compliance_os.web.models.database import DATA_DIR

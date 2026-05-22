@@ -67,6 +67,10 @@ class IntegrityResolutionRequest(BaseModel):
     chain_key: str | None = None
 
 
+class BulkDeleteDocumentsRequest(BaseModel):
+    document_ids: list[str]
+
+
 def _get_user(authorization: str = Header(None), db: Session = Depends(get_session)) -> UserRow:
     payload = get_bearer_payload(authorization, db)
     user = db.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
@@ -352,6 +356,57 @@ def view_document(
         filename=doc.filename,
         media_type=doc.mime_type or "application/octet-stream",
     )
+
+
+@router.post("/documents/delete")
+def bulk_delete_documents(
+    request: BulkDeleteDocumentsRequest,
+    authorization: str = Header(None),
+    db: Session = Depends(get_session),
+):
+    """Delete one or more dashboard documents owned by the current user."""
+    user = _get_user(authorization, db)
+    document_ids = list(dict.fromkeys(request.document_ids))
+    if not document_ids:
+        raise HTTPException(400, "document_ids must not be empty")
+    if len(document_ids) > 100:
+        raise HTTPException(400, "delete at most 100 documents at a time")
+
+    docs = (
+        db.query(DocumentRow)
+        .join(CheckRow, CheckRow.id == DocumentRow.check_id)
+        .filter(
+            CheckRow.user_id == user.id,
+            DocumentRow.id.in_(document_ids),
+        )
+        .all()
+    )
+    if len(docs) != len(document_ids):
+        raise HTTPException(404, "One or more documents were not found")
+
+    affected: dict[str, tuple[CheckRow, set[str]]] = {}
+    deleted_ids: list[str] = []
+    for doc in docs:
+        check = doc.check or db.get(CheckRow, doc.check_id)
+        if check is not None:
+            affected.setdefault(check.id, (check, set()))[1].add(doc.doc_type)
+        if doc.file_path:
+            try:
+                Path(doc.file_path).unlink(missing_ok=True)
+            except OSError:
+                pass
+        deleted_ids.append(doc.id)
+        db.delete(doc)
+
+    db.flush()
+
+    from compliance_os.web.services.document_store import reindex_documents_for_doc_types
+
+    for check, doc_types in affected.values():
+        reindex_documents_for_doc_types(check, doc_types, db=db)
+
+    db.commit()
+    return {"ok": True, "deleted": len(deleted_ids), "document_ids": deleted_ids}
 
 
 @router.post("/upload")

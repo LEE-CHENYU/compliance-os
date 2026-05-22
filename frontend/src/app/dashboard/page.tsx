@@ -252,6 +252,11 @@ interface DashboardDocumentLink {
   category: string;
 }
 
+interface DashboardDocument extends DashboardDocumentLink {
+  file_size: number;
+  uploaded_at: string;
+}
+
 interface ProcessingIndicatorState {
   progress: number;
   title: string;
@@ -669,8 +674,11 @@ export default function DashboardPage() {
     unfilledCount: number;
     originalFile: File;
   } | null>(null);
-  const [documents, setDocuments] = useState<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string; category: string }[]>([]);
+  const [documents, setDocuments] = useState<DashboardDocument[]>([]);
   const [documentOpenError, setDocumentOpenError] = useState<string | null>(null);
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState<Set<string>>(new Set());
+  const [deletingDocuments, setDeletingDocuments] = useState(false);
+  const [documentDeleteError, setDocumentDeleteError] = useState<string | null>(null);
   const [showToken, setShowToken] = useState(false);
   const [tokenCopied, setTokenCopied] = useState(false);
   const [openClawConnection, setOpenClawConnection] = useState<OpenClawConnectionStatus | null>(null);
@@ -714,6 +722,11 @@ export default function DashboardPage() {
       ? documents.filter((document) => normalizeDashboardCategory(document.category) === selectedCategory)
       : documents
   ), [documents, selectedCategory]);
+  const selectedVisibleDocumentIds = useMemo(
+    () => visibleDocuments.filter((document) => selectedDocumentIds.has(document.id)).map((document) => document.id),
+    [selectedDocumentIds, visibleDocuments],
+  );
+  const allVisibleDocumentsSelected = visibleDocuments.length > 0 && selectedVisibleDocumentIds.length === visibleDocuments.length;
   const visibleTimelineEvents = useMemo(() => {
     const events = timeline?.events ?? [];
     return events.filter((event) => {
@@ -802,7 +815,7 @@ export default function DashboardPage() {
       const [tl, st, docs, mySearches, myEngagements, casesResp] = await Promise.all([
         fetchDashboardJson<TimelineData>("/timeline", "Could not load dashboard timeline"),
         fetchDashboardJson<Stats>("/stats", "Could not load dashboard stats"),
-        fetchDashboardJson<Array<{ id: string; filename: string; doc_type: string; file_size: number; uploaded_at: string; category: string }>>(
+        fetchDashboardJson<DashboardDocument[]>(
           "/documents",
           "Could not load dashboard documents",
         ),
@@ -845,6 +858,71 @@ export default function DashboardPage() {
       setLoading(false);
     }
   }, [router]);
+
+  const toggleDocumentSelection = useCallback((docId: string) => {
+    setDocumentDeleteError(null);
+    setSelectedDocumentIds((selected) => {
+      const next = new Set(selected);
+      if (next.has(docId)) {
+        next.delete(docId);
+      } else {
+        next.add(docId);
+      }
+      return next;
+    });
+  }, []);
+
+  const toggleVisibleDocumentSelection = useCallback(() => {
+    setDocumentDeleteError(null);
+    const visibleIds = visibleDocuments.map((document) => document.id);
+    setSelectedDocumentIds((selected) => {
+      const next = new Set(selected);
+      const shouldClearVisible = visibleIds.length > 0 && visibleIds.every((id) => next.has(id));
+      for (const id of visibleIds) {
+        if (shouldClearVisible) {
+          next.delete(id);
+        } else {
+          next.add(id);
+        }
+      }
+      return next;
+    });
+  }, [visibleDocuments]);
+
+  const deleteSelectedDocuments = useCallback(async () => {
+    const documentIds = Array.from(selectedDocumentIds);
+    if (documentIds.length === 0 || deletingDocuments) {
+      return;
+    }
+    const confirmed = window.confirm(`Delete ${documentIds.length} selected document${documentIds.length === 1 ? "" : "s"}? This cannot be undone.`);
+    if (!confirmed) {
+      return;
+    }
+
+    setDeletingDocuments(true);
+    setDocumentDeleteError(null);
+    try {
+      const resp = await fetch(`${API}/documents/delete`, {
+        method: "POST",
+        headers: {
+          ...authHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ document_ids: documentIds }),
+      });
+      const body = await resp.json().catch(() => null);
+      if (!resp.ok) {
+        throw new Error(body?.detail || body?.message || "Could not delete selected documents");
+      }
+      setDocuments((current) => current.filter((document) => !documentIds.includes(document.id)));
+      setSelectedDocumentIds(new Set());
+      await refreshDashboard();
+    } catch (error) {
+      setDocumentDeleteError(error instanceof Error ? error.message : "Could not delete selected documents");
+    } finally {
+      setDeletingDocuments(false);
+    }
+  }, [deletingDocuments, refreshDashboard, selectedDocumentIds]);
 
   const openDashboardDocument = useCallback(async (docId: string) => {
     setDocumentOpenError(null);
@@ -971,6 +1049,14 @@ export default function DashboardPage() {
     }
     refreshDashboard();
   }, [refreshDashboard, router]);
+
+  useEffect(() => {
+    const currentIds = new Set(documents.map((document) => document.id));
+    setSelectedDocumentIds((selected) => {
+      const next = new Set(Array.from(selected).filter((id) => currentIds.has(id)));
+      return next.size === selected.size ? selected : next;
+    });
+  }, [documents]);
 
   useEffect(() => {
     if (!folderRef.current) {
@@ -2433,10 +2519,60 @@ export default function DashboardPage() {
           {/* Documents View */}
           {view === "documents" && (
             <div data-testid="dashboard-documents-view">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-[#0d1424]">All Documents</h2>
-                <button type="button" data-testid="dashboard-upload-documents-view" data-graph-edge="open-upload-panel" onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">+ Upload</button>
+              <div className="flex flex-col gap-3 mb-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-[#0d1424]">All Documents</h2>
+                  {selectedDocumentIds.size > 0 && (
+                    <div className="mt-1 text-[12px] text-[#556480]">
+                      {selectedDocumentIds.size} selected
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {visibleDocuments.length > 0 && (
+                    <button
+                      type="button"
+                      data-testid="dashboard-documents-select-visible"
+                      onClick={toggleVisibleDocumentSelection}
+                      className="text-[12px] font-medium text-[#556480] hover:text-[#0d1424]"
+                    >
+                      {allVisibleDocumentsSelected ? "Clear visible" : "Select visible"}
+                    </button>
+                  )}
+                  {selectedDocumentIds.size > 0 && (
+                    <>
+                      <button
+                        type="button"
+                        data-testid="dashboard-documents-clear-selection"
+                        onClick={() => {
+                          setSelectedDocumentIds(new Set());
+                          setDocumentDeleteError(null);
+                        }}
+                        className="text-[12px] font-medium text-[#556480] hover:text-[#0d1424]"
+                      >
+                        Clear
+                      </button>
+                      <button
+                        type="button"
+                        data-testid="dashboard-documents-delete-selected"
+                        onClick={() => {
+                          void deleteSelectedDocuments();
+                        }}
+                        disabled={deletingDocuments}
+                        className="px-3 py-1.5 rounded-lg text-[12px] font-semibold bg-[#fef2f2] text-[#dc2626] border border-[#fecaca] disabled:opacity-60"
+                      >
+                        {deletingDocuments ? "Deleting..." : "Delete selected"}
+                      </button>
+                    </>
+                  )}
+                  <button type="button" data-testid="dashboard-upload-documents-view" data-graph-edge="open-upload-panel" onClick={() => setShowUploadPanel(true)} className="text-[13px] font-medium text-[#5b8dee]">+ Upload</button>
+                </div>
               </div>
+              {documentDeleteError && (
+                <div className="mb-4 rounded-xl border border-[#fecaca] bg-[#fef2f2] px-4 py-3 text-[12px] font-medium text-[#dc2626]">
+                  {documentDeleteError}
+                </div>
+              )}
               {(() => {
                 const DOC_TO_CAT: Record<string, string> = {
                   i20: "Student Status", i94: "Student Status",
@@ -2460,7 +2596,15 @@ export default function DashboardPage() {
                     <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">{category}</div>
                     <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
                       {docs.map((doc, i) => (
-                        <div key={doc.id} className={`flex items-center gap-3 px-5 py-3.5 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
+                        <div key={doc.id} className={`flex items-center gap-3 px-5 py-3.5 ${selectedDocumentIds.has(doc.id) ? "bg-[#5b8dee]/8" : ""} ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
+                          <input
+                            type="checkbox"
+                            aria-label={`Select ${doc.filename}`}
+                            checked={selectedDocumentIds.has(doc.id)}
+                            onChange={() => toggleDocumentSelection(doc.id)}
+                            data-testid={`dashboard-document-select-${doc.id}`}
+                            className="h-4 w-4 flex-shrink-0 rounded border-[#c7d2e5] text-[#5b8dee] focus:ring-[#5b8dee]/35"
+                          />
                           <div className="w-8 h-8 rounded-lg bg-[#5b8dee]/6 flex items-center justify-center text-xs font-bold text-[#5b8dee]">
                             {(DOC_LABELS[doc.doc_type] || doc.doc_type).charAt(0)}
                           </div>

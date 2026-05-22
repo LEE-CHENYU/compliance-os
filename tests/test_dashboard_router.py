@@ -95,6 +95,106 @@ def test_dashboard_upload_can_infer_doc_type_when_omitted(client, monkeypatch):
         session.close()
 
 
+def test_dashboard_bulk_delete_removes_owned_documents(client, tmp_path):
+    register = client.post("/api/auth/register", json={"email": "dashboard-delete@example.com", "password": "secure123"})
+    token = register.json()["token"]
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        from compliance_os.web.models.auth import UserRow
+
+        user = session.query(UserRow).filter_by(email="dashboard-delete@example.com").one()
+        check = CheckRow(track="data_room", status="reviewed", user_id=user.id, answers={})
+        session.add(check)
+        session.flush()
+        delete_path = tmp_path / "delete-me.pdf"
+        keep_path = tmp_path / "keep-me.pdf"
+        delete_path.write_bytes(b"delete")
+        keep_path.write_bytes(b"keep")
+        delete_doc = DocumentRow(
+            check_id=check.id,
+            doc_type="tax_return",
+            filename="delete-me.pdf",
+            file_path=str(delete_path),
+            file_size=6,
+            mime_type="application/pdf",
+            content_hash=hashlib.sha256(b"delete").hexdigest(),
+            uploaded_at=datetime.now(timezone.utc),
+        )
+        keep_doc = DocumentRow(
+            check_id=check.id,
+            doc_type="w2",
+            filename="keep-me.pdf",
+            file_path=str(keep_path),
+            file_size=4,
+            mime_type="application/pdf",
+            content_hash=hashlib.sha256(b"keep").hexdigest(),
+            uploaded_at=datetime.now(timezone.utc),
+        )
+        session.add_all([delete_doc, keep_doc])
+        session.commit()
+        delete_id = delete_doc.id
+        keep_id = keep_doc.id
+    finally:
+        session.close()
+
+    resp = client.post(
+        "/api/dashboard/documents/delete",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"document_ids": [delete_id]},
+    )
+
+    assert resp.status_code == 200
+    assert resp.json()["deleted"] == 1
+    assert not delete_path.exists()
+    assert keep_path.exists()
+
+    docs_resp = client.get("/api/dashboard/documents", headers={"Authorization": f"Bearer {token}"})
+    assert docs_resp.status_code == 200
+    assert {doc["id"] for doc in docs_resp.json()} == {keep_id}
+
+
+def test_dashboard_bulk_delete_rejects_other_users_documents(client, tmp_path):
+    first = client.post("/api/auth/register", json={"email": "dashboard-owner@example.com", "password": "secure123"})
+    first_token = first.json()["token"]
+    client.post("/api/auth/register", json={"email": "dashboard-other@example.com", "password": "secure123"})
+
+    session = next(app.dependency_overrides[get_session]())
+    try:
+        from compliance_os.web.models.auth import UserRow
+
+        other = session.query(UserRow).filter_by(email="dashboard-other@example.com").one()
+        check = CheckRow(track="data_room", status="reviewed", user_id=other.id, answers={})
+        session.add(check)
+        session.flush()
+        other_path = tmp_path / "other-user.pdf"
+        other_path.write_bytes(b"private")
+        other_doc = DocumentRow(
+            check_id=check.id,
+            doc_type="passport",
+            filename="other-user.pdf",
+            file_path=str(other_path),
+            file_size=7,
+            mime_type="application/pdf",
+            content_hash=hashlib.sha256(b"private").hexdigest(),
+            uploaded_at=datetime.now(timezone.utc),
+        )
+        session.add(other_doc)
+        session.commit()
+        other_id = other_doc.id
+    finally:
+        session.close()
+
+    resp = client.post(
+        "/api/dashboard/documents/delete",
+        headers={"Authorization": f"Bearer {first_token}"},
+        json={"document_ids": [other_id]},
+    )
+
+    assert resp.status_code == 404
+    assert other_path.exists()
+
+
 def test_dashboard_upload_persists_ingestion_issue_summary_for_generic_image(client, monkeypatch):
     monkeypatch.setattr(
         dashboard_mod,

@@ -287,11 +287,22 @@ class ComplianceQueryEngine:
         """
         t0 = time.time()
 
-        filters = _build_filters(
+        semantic_filters = _build_filters(
             doc_type=doc_type,
             category=category,
             subcategory=subcategory,
         )
+        scope_filters = _build_allowed_path_filter(allowed_file_paths)
+        if allowed_file_paths is not None and scope_filters is None:
+            return {
+                "tier_used": 1,
+                "tier1_count": 0,
+                "results": [],
+                "note": "No active documents are available for this search scope.",
+                "latency_ms": int((time.time() - t0) * 1000),
+            }
+
+        filters = _combine_metadata_filters(semantic_filters, scope_filters)
         candidate_k = max(top_k, 50) if (file_name_contains or allowed_file_paths) else top_k
 
         tier1 = self.retrieve(query, top_k=candidate_k, filters=filters)
@@ -301,7 +312,7 @@ class ComplianceQueryEngine:
             allowed_file_paths=allowed_file_paths,
         )[:top_k]
         n1 = len(tier1)
-        if n1 >= min_tier1_results or not filters:
+        if n1 >= min_tier1_results or semantic_filters is None:
             # Either Tier 1 was sufficient, or there were no filters to relax
             # (an open query that hit Tier 1 thin would just rerun the same
             # search in Tier 2, so short-circuit).
@@ -314,9 +325,9 @@ class ComplianceQueryEngine:
                 "latency_ms": int((time.time() - t0) * 1000),
             }
 
-        # Tier 2: drop the filters, broaden the candidate pool, then rerank
-        # by similarity * recency-decay.
-        tier2 = self.retrieve(query, top_k=max(top_k * 5, 50), filters=None)
+        # Tier 2: drop the semantic filters, keep the caller's visibility
+        # scope, broaden the candidate pool, then rerank by recency.
+        tier2 = self.retrieve(query, top_k=max(top_k * 5, 50), filters=scope_filters)
         tier2 = _apply_result_guards(
             tier2,
             file_name_contains=file_name_contains,
@@ -369,6 +380,35 @@ def _build_filters(
         parts.append(MetadataFilter(key="category", value=category, operator=FilterOperator.EQ))
     if subcategory:
         parts.append(MetadataFilter(key="subcategory", value=subcategory, operator=FilterOperator.EQ))
+    return MetadataFilters(filters=parts) if parts else None
+
+
+def _build_allowed_path_filter(allowed_file_paths: set[str] | None) -> MetadataFilters | None:
+    """Build a vector-store filter for the caller's visible document paths."""
+    if allowed_file_paths is None:
+        return None
+    values = sorted({str(path) for path in allowed_file_paths if path})
+    if not values:
+        return None
+    return MetadataFilters(
+        filters=[
+            MetadataFilter(
+                key="file_path",
+                value=values,
+                operator=FilterOperator.IN,
+            )
+        ]
+    )
+
+
+def _combine_metadata_filters(
+    *filter_sets: MetadataFilters | None,
+) -> MetadataFilters | None:
+    parts = []
+    for filter_set in filter_sets:
+        if filter_set is None:
+            continue
+        parts.extend(filter_set.filters)
     return MetadataFilters(filters=parts) if parts else None
 
 

@@ -1,6 +1,7 @@
 import json
 
 import pytest
+from llama_index.core.vector_stores import FilterOperator, MetadataFilters
 
 from compliance_os.query.engine import (
     ComplianceQueryEngine,
@@ -12,8 +13,10 @@ from compliance_os.settings import settings
 class DummySearchEngine(ComplianceQueryEngine):
     def __init__(self, results: list[dict]):
         self.results = results
+        self.calls = []
 
     def retrieve(self, query: str, top_k: int | None = None, filters=None) -> list[dict]:
+        self.calls.append({"query": query, "top_k": top_k, "filters": filters})
         return self.results[:top_k]
 
 
@@ -27,6 +30,18 @@ def _result(file_path: str, file_name: str) -> dict:
             "doc_type": "immigration",
         },
     }
+
+
+def _metadata_filters_for_key(filters: MetadataFilters | None, key: str):
+    if filters is None:
+        return []
+    matches = []
+    for item in filters.filters:
+        if isinstance(item, MetadataFilters):
+            matches.extend(_metadata_filters_for_key(item, key))
+        elif item.key == key:
+            matches.append(item)
+    return matches
 
 
 def test_smart_search_filters_file_name_by_substring():
@@ -57,6 +72,47 @@ def test_smart_search_filters_to_allowed_file_paths():
     )
 
     assert [r["metadata"]["file_path"] for r in result["results"]] == ["uploads/b.pdf"]
+    path_filters = _metadata_filters_for_key(engine.calls[0]["filters"], "file_path")
+    assert len(path_filters) == 1
+    assert path_filters[0].operator == FilterOperator.IN
+    assert set(path_filters[0].value) == {"uploads/b.pdf"}
+
+
+def test_smart_search_skips_retrieval_when_allowed_file_paths_empty():
+    engine = DummySearchEngine([
+        _result("uploads/a.pdf", "a.pdf"),
+    ])
+
+    result = engine.smart_search(
+        "document",
+        allowed_file_paths=set(),
+        prefer_recent=False,
+    )
+
+    assert result["results"] == []
+    assert engine.calls == []
+
+
+def test_smart_search_tier2_keeps_allowed_file_path_filter():
+    engine = DummySearchEngine([
+        _result("uploads/a.pdf", "a.pdf"),
+    ])
+
+    engine.smart_search(
+        "document",
+        doc_type="tax",
+        allowed_file_paths={"uploads/a.pdf"},
+        min_tier1_results=2,
+        prefer_recent=False,
+    )
+
+    assert len(engine.calls) == 2
+    tier2_filters = engine.calls[1]["filters"]
+    assert _metadata_filters_for_key(tier2_filters, "doc_type") == []
+    path_filters = _metadata_filters_for_key(tier2_filters, "file_path")
+    assert len(path_filters) == 1
+    assert path_filters[0].operator == FilterOperator.IN
+    assert set(path_filters[0].value) == {"uploads/a.pdf"}
 
 
 def test_embedding_manifest_mismatch_requires_reindex(tmp_path, monkeypatch):
