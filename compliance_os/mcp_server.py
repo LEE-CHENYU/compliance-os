@@ -1192,27 +1192,70 @@ def gmail_download_attachment(
 def query_documents(
     question: str,
     doc_type: str = "",
+    category: str = "",
     top_k: int = 5,
+    smart: bool = True,
 ) -> str:
-    """RAG query against locally indexed compliance documents.
+    """Search locally indexed compliance documents.
 
-    Retrieves relevant document chunks from the ChromaDB vector store
-    and synthesizes an answer using LLM. Requires documents to have
-    been indexed first (via the compliance-os indexer).
+    By default uses smart_search — Tier 1 filtered RAG (doc_type / category
+    metadata pre-filter) auto-escalates to Tier 2 open RAG with recency
+    rerank when Tier 1 is thin. Pass smart=False to get the legacy
+    LLM-synthesized RAG answer instead.
 
     Args:
         question: The question to answer from your documents.
-        doc_type: Filter by document type (optional, e.g., "tax_form", "immigration").
-        top_k: Number of document chunks to retrieve (default 5).
+        doc_type: Filter by document type (immigration, tax, deadline, ...).
+        category: Filter by top-level corpus category (immigration, tax, ...).
+        top_k: Number of chunks/docs to return (default 5).
+        smart: If True (default), return ranked chunks. If False, run the
+            legacy single-tier RAG + LLM synthesis.
     """
     try:
         from compliance_os.query.engine import ComplianceQueryEngine
 
         engine = ComplianceQueryEngine()
+
+        if smart:
+            res = engine.smart_search(
+                query=question,
+                doc_type=doc_type or None,
+                category=category or None,
+                top_k=top_k,
+                prefer_recent=True,
+            )
+            chunks = res["results"]
+            sources = []
+            seen = set()
+            for c in chunks:
+                fp = c["metadata"].get("file_path", "unknown")
+                if fp in seen:
+                    continue
+                seen.add(fp)
+                sources.append({
+                    "file_path": fp,
+                    "file_name": c["metadata"].get("file_name"),
+                    "doc_type": c["metadata"].get("doc_type"),
+                    "category": c["metadata"].get("category"),
+                    "score": c.get("final_score") or c.get("score"),
+                    "snippet": (c.get("text") or "")[:280],
+                    "tier2_match": c.get("tier2_match", False),
+                })
+            return json.dumps(
+                {
+                    "tier_used": res["tier_used"],
+                    "tier1_count": res["tier1_count"],
+                    "sources": sources,
+                    "note": res["note"],
+                    "latency_ms": res["latency_ms"],
+                },
+                default=str,
+                indent=2,
+            )
+
         filters = None
         if doc_type:
             filters = engine.parse_filters([f"doc_type={doc_type}"])
-
         result = engine.query(question, top_k=top_k, filters=filters)
         return json.dumps(result, default=str, indent=2)
     except Exception as exc:

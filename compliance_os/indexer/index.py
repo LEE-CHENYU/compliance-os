@@ -18,7 +18,8 @@ from llama_index.core import (
     Document,
 )
 from llama_index.core.node_parser import SentenceSplitter
-from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.embeddings.openai import OpenAIEmbedding  # noqa: F401  (kept for backwards-compat import paths)
+from compliance_os.query.engine import resolve_embed_model
 from llama_index.vector_stores.chroma import ChromaVectorStore
 
 from compliance_os.settings import settings
@@ -156,11 +157,9 @@ class DocumentIndexer:
         if verbose:
             print(f"Indexing {len(to_index)} documents...")
 
-        # Configure LlamaIndex
-        LlamaSettings.embed_model = OpenAIEmbedding(
-            model=settings.embedding_model,
-            dimensions=settings.embedding_dimensions,
-        )
+        # Configure LlamaIndex — embed_model picks OpenAI vs local based on
+        # GUARDIAN_EMBEDDING_PROVIDER + OPENAI_API_KEY presence.
+        LlamaSettings.embed_model = resolve_embed_model()
         LlamaSettings.chunk_size = settings.chunk_size
         LlamaSettings.chunk_overlap = settings.chunk_overlap
 

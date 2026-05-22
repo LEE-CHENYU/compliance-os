@@ -42,6 +42,16 @@ class Settings(BaseSettings):
     embedding_dimensions: int = 1536
     llm_model: str = "gpt-4o-mini"
 
+    # Local embedding fallback — used when OPENAI_API_KEY is not set, OR when
+    # GUARDIAN_EMBEDDING_PROVIDER=local is forced. HuggingFace model id; first
+    # use downloads weights into ~/.cache/huggingface (~100-500MB depending on
+    # choice). Default is set by the embedding bakeoff in tests/eval.
+    embedding_provider: str = Field(default="auto", alias="GUARDIAN_EMBEDDING_PROVIDER")
+    local_embedding_model: str = Field(
+        default="intfloat/e5-small-v2",
+        alias="GUARDIAN_LOCAL_EMBEDDING_MODEL",
+    )
+
     # Stripe (paywall on professional-search reports)
     stripe_secret_key: str = Field(default="", alias="STRIPE_SECRET_KEY")
     stripe_webhook_secret: str = Field(default="", alias="STRIPE_WEBHOOK_SECRET")

@@ -29,7 +29,7 @@ MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": (
         "Compliance copilot for nonresidents, STEM OPT / H-1B workers, "
         "international students, and foreign-owned US entities. Exposes "
@@ -69,6 +69,7 @@ MANIFEST = {
             "env": {
                 "GUARDIAN_API_URL": "${user_config.api_url}",
                 "GUARDIAN_TOKEN": "${user_config.token}",
+                "OPENAI_API_KEY": "${user_config.openai_api_key}",
             },
         },
     },
@@ -89,6 +90,17 @@ MANIFEST = {
             "description": "Production: https://guardiancompliance.app — or your local dev server.",
             "default": "https://guardiancompliance.app",
             "required": False,
+        },
+        "openai_api_key": {
+            "type": "string",
+            "title": "OpenAI API key (optional — improves search quality)",
+            "description": (
+                "If provided, document search uses OpenAI text-embedding-3-small "
+                "for highest quality. Leave empty to use a local model that runs "
+                "on your machine with no API cost."
+            ),
+            "required": False,
+            "sensitive": True,
         },
     },
     "tools": [
