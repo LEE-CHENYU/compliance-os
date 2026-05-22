@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     # choice). Default is set by the embedding bakeoff in tests/eval.
     embedding_provider: str = Field(default="auto", alias="GUARDIAN_EMBEDDING_PROVIDER")
     local_embedding_model: str = Field(
-        default="intfloat/e5-small-v2",
+        default="BAAI/bge-small-en-v1.5",
         alias="GUARDIAN_LOCAL_EMBEDDING_MODEL",
     )
 

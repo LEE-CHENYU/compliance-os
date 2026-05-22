@@ -1,9 +1,11 @@
 """Query engine — retrieves and synthesizes answers from indexed documents."""
 
+import json
 import math
 import os
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 import chromadb
 from llama_index.core import VectorStoreIndex, Settings as LlamaSettings
@@ -19,38 +21,110 @@ from llama_index.vector_stores.chroma import ChromaVectorStore
 from compliance_os.settings import settings
 
 
-def resolve_embed_model():
-    """Pick the embedding model based on settings + env.
-
-    Decision tree:
-      - GUARDIAN_EMBEDDING_PROVIDER=openai → OpenAI (errors out without a key)
-      - GUARDIAN_EMBEDDING_PROVIDER=local  → HuggingFace local model
-      - auto (default): OpenAI if OPENAI_API_KEY is set, else local
-
-    Local model defaults to BAAI/bge-small-en-v1.5 (winner of the bakeoff;
-    overridable via GUARDIAN_LOCAL_EMBEDDING_MODEL).
-    """
+def resolved_embedding_config() -> dict[str, str | int | None]:
+    """Return the embedding provider/model settings for the current process."""
     provider = (settings.embedding_provider or "auto").lower()
     has_key = bool(os.environ.get("OPENAI_API_KEY") or settings.openai_api_key)
 
     if provider == "openai" or (provider == "auto" and has_key):
+        return {
+            "provider": "openai",
+            "model": settings.embedding_model,
+            "dimensions": settings.embedding_dimensions,
+        }
+
+    if provider == "huggingface":
+        return {
+            "provider": "huggingface",
+            "model": settings.local_embedding_model,
+            "dimensions": None,
+        }
+
+    return {
+        "provider": "fastembed",
+        "model": settings.local_embedding_model,
+        "dimensions": None,
+    }
+
+
+def resolve_embed_model():
+    """Pick the embedding model based on settings + env.
+
+    Decision tree:
+      - GUARDIAN_EMBEDDING_PROVIDER=openai     → OpenAI cloud
+      - GUARDIAN_EMBEDDING_PROVIDER=fastembed  → fastembed (ONNX, local)
+      - GUARDIAN_EMBEDDING_PROVIDER=huggingface→ HuggingFace (torch, local)
+      - GUARDIAN_EMBEDDING_PROVIDER=local      → fastembed (legacy alias)
+      - auto (default): OpenAI if a key is set, else fastembed
+
+    fastembed is the default local runtime — runs ONNX models via a ~50 MB
+    onnxruntime install instead of pulling ~1.5 GB of torch + transformers.
+    Override the model name via GUARDIAN_LOCAL_EMBEDDING_MODEL.
+    """
+    config = resolved_embedding_config()
+
+    if config["provider"] == "openai":
         return OpenAIEmbedding(
-            model=settings.embedding_model,
-            dimensions=settings.embedding_dimensions,
+            model=str(config["model"]),
+            dimensions=int(config["dimensions"] or settings.embedding_dimensions),
         )
 
-    # Local fallback. Import lazily so users on the openai path don't have to
-    # install huggingface deps.
+    # huggingface path is kept as a fallback for users who explicitly opt
+    # into it (e.g. they already have torch installed and want to use a
+    # model fastembed doesn't ship).
+    if config["provider"] == "huggingface":
+        try:
+            from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+        except ImportError as exc:  # pragma: no cover
+            raise RuntimeError(
+                "HuggingFace provider requested but "
+                "llama-index-embeddings-huggingface is not installed."
+            ) from exc
+        return HuggingFaceEmbedding(model_name=str(config["model"]))
+
+    # Default local path: fastembed.
     try:
-        from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-    except ImportError as exc:  # pragma: no cover — surfaced at runtime
+        from compliance_os.query.fastembed_adapter import FastEmbedEmbedding
+    except ImportError as exc:  # pragma: no cover
         raise RuntimeError(
-            "Local embedding requested but llama-index-embeddings-huggingface "
-            "is not installed. Install with: pip install "
-            "'compliance-os[local-embed]' — or set OPENAI_API_KEY and use the "
-            "openai provider."
+            "fastembed is not installed. Install with: pip install fastembed — "
+            "or set OPENAI_API_KEY and use the openai provider."
         ) from exc
-    return HuggingFaceEmbedding(model_name=settings.local_embedding_model)
+    return FastEmbedEmbedding(model_name=str(config["model"]))
+
+
+def validate_index_embedding_config(chroma_dir: Path | str | None = None) -> None:
+    """Refuse to query an index built with a different embedding model."""
+    path = Path(chroma_dir or settings.chroma_dir) / "index_manifest.json"
+    if not path.exists():
+        return
+
+    try:
+        manifest = json.loads(path.read_text())
+    except Exception as exc:
+        raise RuntimeError(
+            f"Unable to read index manifest at {path}. Rebuild the index with "
+            "index_documents(force=True)."
+        ) from exc
+
+    if not manifest.get("indexed_files"):
+        return
+
+    expected = resolved_embedding_config()
+    actual = manifest.get("embedding")
+    if actual == expected:
+        return
+
+    if actual is None:
+        detail = "the index was built before embedding metadata was recorded"
+    else:
+        detail = f"index uses {actual}, current runtime uses {expected}"
+    raise RuntimeError(
+        "Embedding configuration mismatch: "
+        f"{detail}. Rebuild with index_documents(force=True), or restore the "
+        "same OPENAI_API_KEY/GUARDIAN_EMBEDDING_PROVIDER settings used when "
+        "the index was built."
+    )
 
 
 SYSTEM_PROMPT = """You are a compliance assistant helping an individual manage tax,
@@ -81,6 +155,7 @@ class ComplianceQueryEngine:
         if self._index is not None:
             return self._index
 
+        validate_index_embedding_config(self.chroma_dir)
         LlamaSettings.embed_model = resolve_embed_model()
 
         chroma_client = chromadb.PersistentClient(path=str(self.chroma_dir))
@@ -186,6 +261,7 @@ class ComplianceQueryEngine:
         category: str | None = None,
         subcategory: str | None = None,
         file_name_contains: str | None = None,
+        allowed_file_paths: set[str] | None = None,
         top_k: int = 10,
         min_tier1_results: int = 3,
         prefer_recent: bool = True,
@@ -215,10 +291,15 @@ class ComplianceQueryEngine:
             doc_type=doc_type,
             category=category,
             subcategory=subcategory,
-            file_name_contains=file_name_contains,
         )
+        candidate_k = max(top_k, 50) if (file_name_contains or allowed_file_paths) else top_k
 
-        tier1 = self.retrieve(query, top_k=top_k, filters=filters)
+        tier1 = self.retrieve(query, top_k=candidate_k, filters=filters)
+        tier1 = _apply_result_guards(
+            tier1,
+            file_name_contains=file_name_contains,
+            allowed_file_paths=allowed_file_paths,
+        )[:top_k]
         n1 = len(tier1)
         if n1 >= min_tier1_results or not filters:
             # Either Tier 1 was sufficient, or there were no filters to relax
@@ -235,7 +316,12 @@ class ComplianceQueryEngine:
 
         # Tier 2: drop the filters, broaden the candidate pool, then rerank
         # by similarity * recency-decay.
-        tier2 = self.retrieve(query, top_k=max(top_k * 2, 20), filters=None)
+        tier2 = self.retrieve(query, top_k=max(top_k * 5, 50), filters=None)
+        tier2 = _apply_result_guards(
+            tier2,
+            file_name_contains=file_name_contains,
+            allowed_file_paths=allowed_file_paths,
+        )
         if prefer_recent:
             tier2 = _recency_rerank(tier2, half_life_days=recency_half_life_days)
 
@@ -270,14 +356,11 @@ def _build_filters(
     doc_type: str | None = None,
     category: str | None = None,
     subcategory: str | None = None,
-    file_name_contains: str | None = None,
 ) -> MetadataFilters | None:
     """Build a LlamaIndex MetadataFilters from user-facing arguments.
 
-    file_name_contains is rendered as an EQ filter on file_name; LlamaIndex
-    doesn't expose a substring operator across all vector stores, and Chroma's
-    `where_document` is content-only. Callers that need substring matching
-    should filter the results post-hoc.
+    Filename substring matching is applied after retrieval because LlamaIndex
+    does not expose a portable metadata-substring operator for Chroma.
     """
     parts = []
     if doc_type:
@@ -286,9 +369,28 @@ def _build_filters(
         parts.append(MetadataFilter(key="category", value=category, operator=FilterOperator.EQ))
     if subcategory:
         parts.append(MetadataFilter(key="subcategory", value=subcategory, operator=FilterOperator.EQ))
-    if file_name_contains:
-        parts.append(MetadataFilter(key="file_name", value=file_name_contains, operator=FilterOperator.EQ))
     return MetadataFilters(filters=parts) if parts else None
+
+
+def _apply_result_guards(
+    results: list[dict],
+    *,
+    file_name_contains: str | None = None,
+    allowed_file_paths: set[str] | None = None,
+) -> list[dict]:
+    """Apply caller-side filters that Chroma cannot express safely."""
+    needle = (file_name_contains or "").strip().lower()
+    guarded = []
+    for result in results:
+        metadata = result.get("metadata") or {}
+        file_path = str(metadata.get("file_path") or "")
+        file_name = str(metadata.get("file_name") or "")
+        if allowed_file_paths is not None and file_path not in allowed_file_paths:
+            continue
+        if needle and needle not in file_name.lower() and needle not in file_path.lower():
+            continue
+        guarded.append(result)
+    return guarded
 
 
 def _recency_rerank(

@@ -137,6 +137,9 @@ export default function InstallDocsPage() {
               <p className="text-[11px] text-[#8b97ad] mt-4">
                 Do <strong>not</strong> edit <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">claude_desktop_config.json</code> for the desktop extension — the Configure panel is the only place Claude Desktop reads the token from.
               </p>
+              <p className="text-[11px] text-[#8b97ad] mt-2">
+                <strong>About document search:</strong> Guardian uses semantic search over your uploaded documents. The Configure panel has an optional <strong>OpenAI API key</strong> field — paste a key for cloud embeddings (small local footprint, per-call cost), or leave it blank to run a local ONNX model on your machine (no API cost, with a first-time model download in the background when you enable the extension).
+              </p>
             </div>
             <div className="text-[11px] text-[#8b97ad] pt-7 max-w-[200px]">
               Requires Claude Desktop 0.10+ with Extensions enabled (Settings → Extensions).

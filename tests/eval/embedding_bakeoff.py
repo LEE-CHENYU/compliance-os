@@ -43,12 +43,16 @@ from tests.eval.search_eval import QUESTIONS, _dedup_by_stem, score  # noqa: E40
 
 
 CANDIDATES: list[tuple[str, str]] = [
-    # (label, "provider:model")
-    ("openai_3small", "openai:text-embedding-3-small"),
-    ("bge_small",     "local:BAAI/bge-small-en-v1.5"),
-    ("bge_base",      "local:BAAI/bge-base-en-v1.5"),
-    ("minilm_l6",     "local:sentence-transformers/all-MiniLM-L6-v2"),
-    ("e5_small",      "local:intfloat/e5-small-v2"),
+    # (label, "provider:model"). Providers:
+    #   openai     — cloud, needs OPENAI_API_KEY (baseline)
+    #   fastembed  — ONNX runtime, ~50 MB install
+    #   huggingface — torch + transformers, ~1.5 GB install (for parity check)
+    ("openai_3small",     "openai:text-embedding-3-small"),
+    ("fe_bge_small",      "fastembed:BAAI/bge-small-en-v1.5"),
+    ("fe_arctic_xs",      "fastembed:snowflake/snowflake-arctic-embed-xs"),
+    ("fe_arctic_s",       "fastembed:snowflake/snowflake-arctic-embed-s"),
+    ("fe_jina_small",     "fastembed:jinaai/jina-embeddings-v2-small-en"),
+    ("fe_minilm_l6",      "fastembed:sentence-transformers/all-MiniLM-L6-v2"),
 ]
 
 
@@ -59,9 +63,16 @@ def _configure(provider_spec: str) -> None:
         default_settings.embedding_provider = "openai"
         default_settings.embedding_model = model_name
         default_settings.embedding_dimensions = 1536
-    elif provider == "local":
-        default_settings.embedding_provider = "local"
+    elif provider in ("fastembed", "local"):
+        default_settings.embedding_provider = "fastembed"
         default_settings.local_embedding_model = model_name
+        # Force the local path regardless of any OPENAI_API_KEY the bakeoff
+        # operator might have set in their shell.
+        default_settings.openai_api_key = ""
+    elif provider == "huggingface":
+        default_settings.embedding_provider = "huggingface"
+        default_settings.local_embedding_model = model_name
+        default_settings.openai_api_key = ""
     else:
         raise ValueError(f"unknown provider: {provider}")
 

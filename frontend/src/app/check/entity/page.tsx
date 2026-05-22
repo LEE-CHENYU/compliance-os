@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
 import { trackOnboardingEvent } from "@/lib/analytics";
+import { markOnboardingSkipped, ONBOARDING_SKIP_DASHBOARD_HREF } from "@/lib/onboarding-skip";
 
 const ENTITY_TYPES = [
   { value: "smllc", label: "Single-member LLC" },
@@ -98,6 +99,11 @@ export default function EntityInfo() {
     }
   }
 
+  function handleSkipToDashboard() {
+    markOnboardingSkipped();
+    router.push(ONBOARDING_SKIP_DASHBOARD_HREF);
+  }
+
   function ChipGroup({ label, options, field }: { label: string; options: { value: string; label: string }[]; field: string }) {
     return (
       <div className="mb-6">
@@ -129,7 +135,7 @@ export default function EntityInfo() {
           <button onClick={() => router.push("/")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             &larr; Back
           </button>
-          <button onClick={() => router.push("/dashboard")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
+          <button onClick={handleSkipToDashboard} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             Skip &rarr; Dashboard
           </button>
         </div>

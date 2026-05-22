@@ -11,6 +11,7 @@ import {
   listMySearches,
   listMyEngagements,
 } from "@/lib/api";
+import { markOnboardingSkipped, ONBOARDING_SKIP_DASHBOARD_HREF } from "@/lib/onboarding-skip";
 
 export default function CheckSelect() {
   const router = useRouter();
@@ -109,6 +110,11 @@ export default function CheckSelect() {
     router.push(href);
   }
 
+  function handleSkipToDashboard() {
+    markOnboardingSkipped();
+    router.push(ONBOARDING_SKIP_DASHBOARD_HREF);
+  }
+
   useEffect(() => {
     if (typeof window === "undefined") {
       return;
@@ -146,7 +152,7 @@ export default function CheckSelect() {
           <button onClick={() => router.push("/")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             &larr; Back
           </button>
-          <button onClick={() => router.push("/dashboard")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
+          <button onClick={handleSkipToDashboard} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             Skip &rarr; Dashboard
           </button>
         </div>

@@ -47,6 +47,72 @@ GUARDIAN_API_URL = os.environ.get("GUARDIAN_API_URL", "http://localhost:8000")
 GUARDIAN_TOKEN = os.environ.get("GUARDIAN_TOKEN", "")
 
 
+import threading
+
+# Background prewarm state. The MCP server returns its tool list
+# immediately; only the search-dependent tools (query_documents,
+# index_documents) wait on _EMBED_READY before running. Everything else
+# (status, deadlines, gmail, ...) is unaffected by the download.
+_EMBED_READY = threading.Event()
+_EMBED_ERROR: Exception | None = None
+
+
+def _prewarm_embedding_model_bg() -> None:
+    """Resolve the embedding model in the background so the first local
+    model download doesn't block server startup or non-search tools.
+
+    Subsequent calls to resolve_embed_model() are near-instant because
+    embedding runtimes cache weights on disk; we don't need to share a
+    model handle.
+    Skipped when GUARDIAN_DISABLE_PREWARM=1 (eval harness, tests).
+    """
+    global _EMBED_ERROR
+    if os.environ.get("GUARDIAN_DISABLE_PREWARM") == "1":
+        _EMBED_READY.set()
+        return
+    try:
+        from compliance_os.query.engine import resolve_embed_model
+        resolve_embed_model()
+    except Exception as exc:  # pragma: no cover — best-effort prewarm
+        _EMBED_ERROR = exc
+        import sys
+        print(f"[guardian] embedding prewarm failed: {exc}", file=sys.stderr)
+    finally:
+        _EMBED_READY.set()
+
+
+def _ensure_embeddings_ready(wait_timeout: float = 60.0) -> str | None:
+    """Block until the prewarm finishes (or short-circuit if already done).
+
+    Returns None on success, or an error message string the caller should
+    surface as the tool result. Search-dependent tools call this before
+    touching the index so users get a clear "still warming up" message
+    instead of a silent stall.
+    """
+    if _EMBED_READY.wait(timeout=wait_timeout):
+        if _EMBED_ERROR is not None:
+            return (
+                "Embeddings unavailable: "
+                f"{type(_EMBED_ERROR).__name__}: {_EMBED_ERROR}. "
+                "Set OPENAI_API_KEY in the extension's Configure panel "
+                "to use cloud embeddings, or check the server logs."
+            )
+        return None
+    return (
+        "Embeddings are still downloading in the background "
+        f"(timed out after {wait_timeout:.0f}s). "
+        "Try again in a moment — first-time setup needs to fetch the "
+        "model weights once."
+    )
+
+
+threading.Thread(
+    target=_prewarm_embedding_model_bg,
+    daemon=True,
+    name="guardian-embed-prewarm",
+).start()
+
+
 def _is_local_api() -> bool:
     return any(h in GUARDIAN_API_URL for h in ("localhost", "127.0.0.1", "0.0.0.0"))
 
@@ -1211,6 +1277,9 @@ def query_documents(
         smart: If True (default), return ranked chunks. If False, run the
             legacy single-tier RAG + LLM synthesis.
     """
+    warmup_msg = _ensure_embeddings_ready(wait_timeout=60.0)
+    if warmup_msg:
+        return json.dumps({"error": "embeddings_warming", "message": warmup_msg})
     try:
         from compliance_os.query.engine import ComplianceQueryEngine
 
@@ -1291,18 +1360,19 @@ def index_documents(
 ) -> str:
     """Build or update the ChromaDB vector index for RAG queries.
 
-    Scans uploaded documents, embeds them with OpenAI embeddings, and
-    stores in ChromaDB. Incremental by default — only re-indexes
-    new or changed files. Run this after uploading documents to
-    enable the query_documents tool.
-
-    Requires OPENAI_API_KEY for embeddings.
+    Scans uploaded documents, embeds them (OpenAI if a key is configured,
+    otherwise a local model), and stores in ChromaDB. Incremental by
+    default — only re-indexes new or changed files. Run this after
+    uploading documents to enable the query_documents tool.
 
     Args:
         directory: Subdirectory to scan (default: "uploads").
             Other options: "data/uploads", "data/marketplace".
         force: If true, re-index everything from scratch.
     """
+    warmup_msg = _ensure_embeddings_ready(wait_timeout=120.0)
+    if warmup_msg:
+        return json.dumps({"error": "embeddings_warming", "message": warmup_msg})
     try:
         from compliance_os.indexer.index import DocumentIndexer
         from compliance_os.web.models.database import DATA_DIR

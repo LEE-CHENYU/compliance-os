@@ -22,14 +22,14 @@ import zipfile
 from pathlib import Path
 
 
-COMPLIANCE_OS_VERSION = ">=1.0.0"
+COMPLIANCE_OS_VERSION = "==1.0.3"
 
 
 MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": (
         "Compliance copilot for nonresidents, STEM OPT / H-1B workers, "
         "international students, and foreign-owned US entities. Exposes "
@@ -93,11 +93,12 @@ MANIFEST = {
         },
         "openai_api_key": {
             "type": "string",
-            "title": "OpenAI API key (optional — improves search quality)",
+            "title": "OpenAI API key (optional)",
             "description": (
-                "If provided, document search uses OpenAI text-embedding-3-small "
-                "for highest quality. Leave empty to use a local model that runs "
-                "on your machine with no API cost."
+                "With a key: cloud embeddings via OpenAI text-embedding-3-small "
+                "(small local footprint, per-call API cost). "
+                "Without a key: a local ONNX model runs on your machine — no API "
+                "cost, with a first-time model download into your home directory."
             ),
             "required": False,
             "sensitive": True,
@@ -140,7 +141,7 @@ MANIFEST = {
 
 PYPROJECT_TOML = f"""[project]
 name = "guardian-dxt"
-version = "1.0.0"
+version = "1.0.3"
 description = "Guardian Compliance DXT runtime — pulls compliance-os from PyPI"
 requires-python = ">=3.11"
 dependencies = [

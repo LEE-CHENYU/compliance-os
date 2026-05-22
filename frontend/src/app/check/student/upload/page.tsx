@@ -4,6 +4,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument, getCheck } from "@/lib/api-v2";
 import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
+import { markOnboardingSkipped, ONBOARDING_SKIP_DASHBOARD_HREF } from "@/lib/onboarding-skip";
 
 export const dynamic = "force-dynamic";
 
@@ -94,6 +95,11 @@ function StudentUpload() {
     }
   }, [checkId, isForm8843Flow, slots]);
 
+  function handleSkipToDashboard() {
+    markOnboardingSkipped();
+    router.push(ONBOARDING_SKIP_DASHBOARD_HREF);
+  }
+
   if (error && !slots.length) {
     return <div data-testid="student-upload-error" className="min-h-screen flex items-center justify-center px-6 text-center text-red-700">{error}</div>;
   }
@@ -105,7 +111,7 @@ function StudentUpload() {
       <div className="w-full max-w-lg py-20">
         <div className="flex items-center justify-between mb-8">
           <button onClick={() => router.back()} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">&larr; Back</button>
-          <button onClick={() => router.push("/dashboard")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">Skip &rarr; Dashboard</button>
+          <button onClick={handleSkipToDashboard} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">Skip &rarr; Dashboard</button>
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight text-[#0d1424] mb-2">Upload your documents</h1>
         <p className="text-[15px] text-[#556480] mb-8">We&apos;ll check your I-20 authorization against your employment records.</p>

@@ -19,7 +19,11 @@ from llama_index.core import (
 )
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.embeddings.openai import OpenAIEmbedding  # noqa: F401  (kept for backwards-compat import paths)
-from compliance_os.query.engine import resolve_embed_model
+from compliance_os.query.engine import (
+    resolve_embed_model,
+    resolved_embedding_config,
+    validate_index_embedding_config,
+)
 from llama_index.vector_stores.chroma import ChromaVectorStore
 
 from compliance_os.settings import settings
@@ -78,7 +82,10 @@ class DocumentIndexer:
 
     def _load_manifest(self) -> dict:
         if self.manifest_path.exists():
-            return json.loads(self.manifest_path.read_text())
+            manifest = json.loads(self.manifest_path.read_text())
+            manifest.setdefault("indexed_files", {})
+            manifest.setdefault("last_run", None)
+            return manifest
         return {"indexed_files": {}, "last_run": None}
 
     def _save_manifest(self, manifest: dict):
@@ -140,6 +147,9 @@ class DocumentIndexer:
 
         manifest = self._load_manifest()
         indexed = manifest["indexed_files"]
+        embedding_config = resolved_embedding_config()
+        if not force:
+            validate_index_embedding_config(self.chroma_dir)
 
         # Determine what needs indexing
         to_index = []
@@ -227,6 +237,7 @@ class DocumentIndexer:
 
         # Save manifest
         manifest["indexed_files"] = indexed
+        manifest["embedding"] = embedding_config
         manifest["last_run"] = datetime.now().isoformat()
         manifest["total_documents"] = len(indexed)
         manifest["total_chunks"] = len(all_nodes)

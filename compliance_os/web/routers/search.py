@@ -8,8 +8,16 @@ synthesis) so the caller decides how to present them.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from pathlib import Path
+
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+from compliance_os.web.models.auth import UserRow
+from compliance_os.web.models.database import DATA_DIR, get_session
+from compliance_os.web.models.tables_v2 import CheckRow, DocumentRow
+from compliance_os.web.services.auth_service import get_bearer_payload
 
 router = APIRouter(prefix="/api/search", tags=["search"])
 
@@ -43,13 +51,60 @@ class SearchResponse(BaseModel):
     sources: list[SearchSource]
 
 
+def _get_user(authorization: str | None = Header(None), db: Session = Depends(get_session)) -> UserRow:
+    payload = get_bearer_payload(authorization, db)
+    user = db.query(UserRow).filter(UserRow.id == payload["user_id"]).first()
+    if not user:
+        raise HTTPException(401, "User not found")
+    return user
+
+
+def _path_variants(file_path: str | None) -> set[str]:
+    if not file_path:
+        return set()
+
+    raw = Path(file_path)
+    variants = {file_path, raw.name}
+    try:
+        variants.add(str(raw.resolve()))
+    except Exception:
+        pass
+    try:
+        variants.add(str(raw.relative_to(DATA_DIR)))
+    except ValueError:
+        pass
+    return variants
+
+
+def _allowed_user_file_paths(user: UserRow, db: Session) -> set[str]:
+    rows = (
+        db.query(DocumentRow)
+        .join(CheckRow, CheckRow.id == DocumentRow.check_id)
+        .filter(
+            CheckRow.user_id == user.id,
+            DocumentRow.is_active.is_(True),
+        )
+        .all()
+    )
+    allowed: set[str] = set()
+    for doc in rows:
+        allowed.update(_path_variants(doc.file_path))
+        allowed.update(_path_variants(doc.source_path))
+    return allowed
+
+
 @router.post("", response_model=SearchResponse)
-def search_documents(req: SearchRequest) -> SearchResponse:
+def search_documents(
+    req: SearchRequest,
+    user: UserRow = Depends(_get_user),
+    db: Session = Depends(get_session),
+) -> SearchResponse:
     # Import locally so the route only pulls llama-index when actually called
     # — keeps the cold-start cost off endpoints that don't need it.
     from compliance_os.query.engine import ComplianceQueryEngine
 
     engine = ComplianceQueryEngine()
+    allowed_file_paths = _allowed_user_file_paths(user, db)
     try:
         res = engine.smart_search(
             query=req.query,
@@ -57,6 +112,7 @@ def search_documents(req: SearchRequest) -> SearchResponse:
             category=req.category,
             subcategory=req.subcategory,
             file_name_contains=req.file_name_contains,
+            allowed_file_paths=allowed_file_paths,
             top_k=req.top_k,
             min_tier1_results=req.min_tier1_results,
             prefer_recent=req.prefer_recent,
@@ -71,6 +127,8 @@ def search_documents(req: SearchRequest) -> SearchResponse:
                     "and run index_documents first."
                 ),
             )
+        if "Embedding configuration mismatch" in msg:
+            raise HTTPException(status_code=409, detail=msg)
         raise HTTPException(status_code=500, detail=msg)
 
     sources: list[SearchSource] = []

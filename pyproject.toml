@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "compliance-os"
-version = "1.0.0"
+version = "1.0.3"
 description = "Guardian — compliance copilot for visas, tax, and foreign-owned entities. MCP server with 23 tools for Claude Code / Desktop / Codex."
 readme = "guardian-mcp/README.md"
 license = { text = "MIT" }
@@ -34,10 +34,10 @@ requires-python = ">=3.11"
 dependencies = [
     "llama-index>=0.14",
     "llama-index-embeddings-openai>=0.5",
-    "llama-index-embeddings-huggingface>=0.4",
     "llama-index-llms-openai>=0.6",
     "llama-index-vector-stores-chroma>=0.5",
     "chromadb>=1.5",
+    "fastembed>=0.4",
     "openai>=2.0",
     "python-dotenv>=1.0",
     "pydantic>=2.0",
@@ -68,6 +68,9 @@ gmail = [
     "google-auth>=2.0",
     "google-auth-oauthlib>=1.0",
     "google-api-python-client>=2.0",
+]
+local-huggingface = [
+    "llama-index-embeddings-huggingface>=0.4",
 ]
 agent = [
     "mcp[cli]>=1.0",

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
 import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 import { deriveYearsInUs, inferStemOptStage, readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
+import { markOnboardingSkipped, ONBOARDING_SKIP_DASHBOARD_HREF } from "@/lib/onboarding-skip";
 
 const STAGES = [
   { value: "pre_completion", label: "CPT (Pre-completion)", sub: "Curricular Practical Training while enrolled" },
@@ -137,6 +138,11 @@ export default function StemOptStage() {
     }
   }
 
+  function handleSkipToDashboard() {
+    markOnboardingSkipped();
+    router.push(ONBOARDING_SKIP_DASHBOARD_HREF);
+  }
+
   function ChipSelect({ label, options, value, onChange }: {
     label: string;
     options: { value: string; label: string }[];
@@ -181,7 +187,7 @@ export default function StemOptStage() {
           <button onClick={() => router.push("/check")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             &larr; Back
           </button>
-          <button onClick={() => router.push("/dashboard")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
+          <button onClick={handleSkipToDashboard} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             Skip &rarr; Dashboard
           </button>
         </div>

@@ -4,6 +4,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadDocument, getCheck } from "@/lib/api-v2";
 import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
+import { markOnboardingSkipped, ONBOARDING_SKIP_DASHBOARD_HREF } from "@/lib/onboarding-skip";
 
 export const dynamic = "force-dynamic";
 
@@ -137,6 +138,11 @@ function StemOptUpload() {
     }
   }, [checkId, isForm8843Flow, slots, stage]);
 
+  function handleSkipToDashboard() {
+    markOnboardingSkipped();
+    router.push(ONBOARDING_SKIP_DASHBOARD_HREF);
+  }
+
   const STAGE_LABELS: Record<string, string> = {
     stem_opt: "STEM OPT",
     opt: "Post-completion OPT",
@@ -163,7 +169,7 @@ function StemOptUpload() {
           <button onClick={() => router.back()} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             &larr; Back
           </button>
-          <button onClick={() => router.push("/dashboard")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
+          <button onClick={handleSkipToDashboard} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             Skip &rarr; Dashboard
           </button>
         </div>

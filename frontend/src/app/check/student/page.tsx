@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createCheck } from "@/lib/api-v2";
 import { trackForm8843FunnelEvent, trackOnboardingEvent } from "@/lib/analytics";
 import { readForm8843OnboardingHandoff } from "@/lib/form8843-handoff";
+import { markOnboardingSkipped, ONBOARDING_SKIP_DASHBOARD_HREF } from "@/lib/onboarding-skip";
 
 const STUDENT_STATUS = [
   { value: "enrolled_cpt", label: "Enrolled with CPT", sub: "Currently working on Curricular Practical Training" },
@@ -151,6 +152,11 @@ export default function StudentIntake() {
     }
   }
 
+  function handleSkipToDashboard() {
+    markOnboardingSkipped();
+    router.push(ONBOARDING_SKIP_DASHBOARD_HREF);
+  }
+
     return (
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="w-full max-w-lg py-20">
@@ -158,7 +164,7 @@ export default function StudentIntake() {
           <button onClick={() => router.push("/check")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             &larr; Back
           </button>
-          <button onClick={() => router.push("/dashboard")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
+          <button onClick={handleSkipToDashboard} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
             Skip &rarr; Dashboard
           </button>
         </div>

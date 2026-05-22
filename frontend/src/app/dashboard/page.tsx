@@ -21,6 +21,7 @@ import {
   listMyEngagements,
   type ExtractionQuotaExceededDetail,
 } from "@/lib/api";
+import { shouldBypassOnboardingRedirect } from "@/lib/onboarding-skip";
 import { useTheme } from "@/lib/theme";
 
 interface TimelineEvent {
@@ -825,7 +826,8 @@ export default function DashboardPage() {
       const hasLawyerContent = mySearches.length > 0 || myEngagements.length > 0;
       const hasCaseContent = (casesResp?.cases ?? []).length > 0;
       if (
-        docs.length === 0
+        !shouldBypassOnboardingRedirect()
+        && docs.length === 0
         && (!tl.events || tl.events.length <= 1)
         && !hasServiceContent
         && !hasLawyerContent
