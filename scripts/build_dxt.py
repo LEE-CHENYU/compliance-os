@@ -22,14 +22,14 @@ import zipfile
 from pathlib import Path
 
 
-COMPLIANCE_OS_VERSION = "==1.0.3"
+COMPLIANCE_OS_VERSION = "==1.0.4"
 
 
 MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": (
         "Compliance copilot for nonresidents, STEM OPT / H-1B workers, "
         "international students, and foreign-owned US entities. Exposes "
@@ -141,7 +141,7 @@ MANIFEST = {
 
 PYPROJECT_TOML = f"""[project]
 name = "guardian-dxt"
-version = "1.0.3"
+version = "1.0.4"
 description = "Guardian Compliance DXT runtime — pulls compliance-os from PyPI"
 requires-python = ">=3.11"
 dependencies = [

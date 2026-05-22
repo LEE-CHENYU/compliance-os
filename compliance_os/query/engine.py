@@ -155,6 +155,13 @@ class ComplianceQueryEngine:
         if self._index is not None:
             return self._index
 
+        # Chroma's persistent client needs the parent directory to exist
+        # before it can open the SQLite file. uv-installed extensions land
+        # compliance_os in a read-only cache dir, so the chroma_dir default
+        # must be under the user's home; mkdir here guards against partial
+        # state where the dir was deleted between runs.
+        Path(self.chroma_dir).mkdir(parents=True, exist_ok=True)
+
         validate_index_embedding_config(self.chroma_dir)
         LlamaSettings.embed_model = resolve_embed_model()
 

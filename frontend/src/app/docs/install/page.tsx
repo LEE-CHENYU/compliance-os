@@ -125,7 +125,7 @@ export default function InstallDocsPage() {
                   Double-click <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">guardian.dxt</code> to install it in Claude Desktop.
                 </li>
                 <li>
-                  Generate your token: open <a href="/connect" className="text-[#b35d3f] underline underline-offset-2 font-medium">guardiancompliance.app/connect</a>, sign in, click <strong>Generate token</strong>. Copy the <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">gdn_oc_…</code> value.
+                  Click <a href="/connect" className="text-[#b35d3f] underline underline-offset-2 font-medium">Get token →</a> in the top right and copy the generated value.
                 </li>
                 <li>
                   In Claude Desktop, go to <strong>Settings → Extensions → Guardian Compliance → Configure</strong> and paste the token into the <strong>Guardian API token</strong> field. Leave the <strong>Guardian API URL</strong> at its default (<code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">https://guardiancompliance.app</code>). Click Save.

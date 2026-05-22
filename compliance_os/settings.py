@@ -22,13 +22,32 @@ def _persistent_data_dir() -> Path:
     return Path(os.environ.get("DATA_DIR", str(_PROJECT_ROOT / "data")))
 
 
+def _user_state_dir() -> Path:
+    """Writable per-user state dir for the MCP server's local artifacts.
+
+    Required because the DXT/uv install lands compliance_os in a
+    read-only cache directory, so the legacy `<package>/chroma_db`
+    default fails with "unable to open database file". Resolution
+    order:
+      1. GUARDIAN_HOME — explicit override
+      2. DATA_DIR     — honored on Fly (mounted volume)
+      3. ~/.guardian  — user-writable default everywhere else
+    """
+    explicit = os.environ.get("GUARDIAN_HOME")
+    if explicit:
+        return Path(explicit)
+    if "DATA_DIR" in os.environ:
+        return Path(os.environ["DATA_DIR"])
+    return Path.home() / ".guardian"
+
+
 class Settings(BaseSettings):
     """Application configuration."""
 
     # Paths
     project_root: Path = _PROJECT_ROOT
-    data_dir: Path = Field(default_factory=lambda: _PROJECT_ROOT / "user_data")
-    chroma_dir: Path = Field(default_factory=lambda: _PROJECT_ROOT / "chroma_db")
+    data_dir: Path = Field(default_factory=lambda: _user_state_dir() / "uploads", alias="GUARDIAN_DATA_DIR")
+    chroma_dir: Path = Field(default_factory=lambda: _user_state_dir() / "chroma_db", alias="GUARDIAN_CHROMA_DIR")
     diligence_db_path: Path = Field(
         default_factory=lambda: _persistent_data_dir() / "diligence.db"
     )

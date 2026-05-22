@@ -253,36 +253,58 @@ export default function ConnectPage() {
               <h2 className="text-sm font-semibold text-[#0d1424]">Add to {APPS.find((a) => a.id === selectedApp)?.label}</h2>
             </div>
 
-            <div className="space-y-3">
-              <div className="rounded-lg border border-blue-100/40 bg-[#f7f9fd] px-3 py-2">
-                <div className="text-[10px] uppercase tracking-[0.14em] text-[#8b97ad] mb-1">Config file</div>
-                <code className="text-[11px] text-[#3a5a8c] font-mono">{configPath(selectedApp)}</code>
+            {selectedApp === "claude-desktop" ? (
+              <div className="space-y-4">
+                <div className="text-[12px] text-[#556480] leading-relaxed">
+                  Claude Desktop has a built-in extension installer — no config file editing required.
+                </div>
+                <ol className="space-y-3 text-[12px] text-[#556480] leading-relaxed list-decimal pl-5 marker:text-[#5b8dee] marker:font-semibold">
+                  <li>
+                    Download <a href="/guardian.dxt" download="guardian.dxt" className="text-[#3a5a8c] underline underline-offset-2 font-medium">guardian.dxt</a> and double-click to install it.
+                  </li>
+                  <li>
+                    In Claude Desktop, open <strong>Settings → Extensions → Guardian Compliance → Configure</strong>.
+                  </li>
+                  <li>
+                    Paste your token (above) into the <strong>Guardian API token</strong> field. Leave <strong>Guardian API URL</strong> at its default. Click <strong>Save</strong>.
+                  </li>
+                </ol>
+                <div className="text-[11px] text-[#7b8ba5]">
+                  Do <strong>not</strong> edit <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c] font-mono">claude_desktop_config.json</code> — the Configure panel is the only place Claude Desktop reads the token from.
+                </div>
               </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="rounded-lg border border-blue-100/40 bg-[#f7f9fd] px-3 py-2">
+                  <div className="text-[10px] uppercase tracking-[0.14em] text-[#8b97ad] mb-1">Config file</div>
+                  <code className="text-[11px] text-[#3a5a8c] font-mono">{configPath(selectedApp)}</code>
+                </div>
 
-              <div className="text-[11px] text-[#556480]">
-                {selectedApp === "codex"
-                  ? "Add this to your Codex config file:"
-                  : "Merge this into your config file (add the \"guardian\" entry inside \"mcpServers\"):"}
-              </div>
+                <div className="text-[11px] text-[#556480]">
+                  {selectedApp === "codex"
+                    ? "Add this to your Codex config file:"
+                    : "Merge this into your config file (add the \"guardian\" entry inside \"mcpServers\"):"}
+                </div>
 
-              <div className="relative">
-                <pre className="text-[11px] bg-[#f0f3f8] rounded-lg p-4 text-[#3a5a8c] overflow-x-auto font-mono leading-relaxed">
-                  {configSnippet(selectedApp, token, apiHost)}
-                </pre>
-                <button
-                  onClick={() => copyToClipboard(configSnippet(selectedApp, token, apiHost), "config")}
-                  data-testid="connect-copy-config"
-                  data-graph-edge="connect:copy-config"
-                  className="absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-semibold bg-white/90 border border-blue-100/50 text-[#3a5a8c] hover:bg-white transition-colors"
-                >
-                  {copied === "config" ? "Copied" : "Copy"}
-                </button>
-              </div>
+                <div className="relative">
+                  <pre className="text-[11px] bg-[#f0f3f8] rounded-lg p-4 text-[#3a5a8c] overflow-x-auto font-mono leading-relaxed">
+                    {configSnippet(selectedApp, token, apiHost)}
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard(configSnippet(selectedApp, token, apiHost), "config")}
+                    data-testid="connect-copy-config"
+                    data-graph-edge="connect:copy-config"
+                    className="absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-semibold bg-white/90 border border-blue-100/50 text-[#3a5a8c] hover:bg-white transition-colors"
+                  >
+                    {copied === "config" ? "Copied" : "Copy"}
+                  </button>
+                </div>
 
-              <div className="text-[11px] text-[#7b8ba5]">
-                After pasting, restart {APPS.find((a) => a.id === selectedApp)?.label} to load Guardian tools.
+                <div className="text-[11px] text-[#7b8ba5]">
+                  After pasting, restart {APPS.find((a) => a.id === selectedApp)?.label} to load Guardian tools.
+                </div>
               </div>
-            </div>
+            )}
           </section>
 
           {/* Step 4: Verify */}
