@@ -127,9 +127,17 @@ MANIFEST = {
 }
 
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+ICON_SOURCE = REPO_ROOT / "frontend" / "public" / "assets" / "guardian-logo-512.png"
+
+
 def build(output: Path) -> Path:
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("manifest.json", json.dumps(MANIFEST, indent=2))
+        if ICON_SOURCE.exists():
+            zf.write(ICON_SOURCE, "icon.png")
+        else:
+            print(f"WARNING: icon not found at {ICON_SOURCE} — bundle has no icon")
     return output
 
 
