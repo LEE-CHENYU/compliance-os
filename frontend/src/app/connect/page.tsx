@@ -199,7 +199,7 @@ export default function ConnectPage() {
             ) : !isLoggedIn ? (
               <div className="rounded-xl border border-amber-200/50 bg-amber-50/50 p-4">
                 <p className="text-xs text-amber-800 mb-2">Sign in to generate a token.</p>
-                <a href="/login" className="inline-block px-4 py-2 rounded-lg text-xs font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white">
+                <a href="/login?next=/connect" className="inline-block px-4 py-2 rounded-lg text-xs font-semibold bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white">
                   Sign in
                 </a>
               </div>

@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-ICON_SOURCE = REPO_ROOT / "frontend" / "public" / "assets" / "guardian-logo-512.png"
+ICON_SOURCE = REPO_ROOT / "frontend" / "public" / "assets" / "guardian-icon-white-512.png"
 
 
 def build(output: Path) -> Path:

@@ -310,8 +310,8 @@ export default function Home() {
             <button onClick={() => router.push("/check")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',whiteSpace:'nowrap'}}>
               Find my risks
             </button>
-            <a href="#cloud" style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',textDecoration:'none',backdropFilter:'blur(12px)',whiteSpace:'nowrap',display:'inline-block'}}>
-              See what we check
+            <a href="/docs/install" style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',textDecoration:'none',backdropFilter:'blur(12px)',whiteSpace:'nowrap',display:'inline-block'}}>
+              Download Claude Extension
             </a>
             <button onClick={() => router.push("/services")} style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',cursor:'pointer',backdropFilter:'blur(12px)',whiteSpace:'nowrap'}}>
               Browse services

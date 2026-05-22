@@ -67,9 +67,14 @@ function EntityUpload() {
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
       <div className="w-full max-w-lg">
-        <button onClick={() => router.back()} className="text-sm text-[#7b8ba5] mb-8 hover:text-[#1a2036]">
-          &larr; Back
-        </button>
+        <div className="flex items-center justify-between mb-8">
+          <button onClick={() => router.back()} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
+            &larr; Back
+          </button>
+          <button onClick={() => router.push("/dashboard")} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
+            Skip &rarr; Dashboard
+          </button>
+        </div>
 
         <h1 className="text-3xl font-extrabold tracking-tight text-[#0d1424] mb-2">
           Upload your tax return

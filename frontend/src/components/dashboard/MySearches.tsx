@@ -51,8 +51,7 @@ export default function MySearches() {
               My professional searches
             </div>
             <h2 className="mt-2 text-[24px] font-bold leading-tight text-[#0d1424]">
-              Access your reports, manage your docs, and keep track of ongoing
-              communications
+              Access your reports
             </h2>
             <p className="mt-3 text-[14px] leading-7 text-[#556480]">
               Re-download any professional search you&rsquo;ve purchased, organize

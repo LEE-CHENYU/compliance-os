@@ -673,6 +673,8 @@ export default function DashboardPage() {
   const [showToken, setShowToken] = useState(false);
   const [tokenCopied, setTokenCopied] = useState(false);
   const [openClawConnection, setOpenClawConnection] = useState<OpenClawConnectionStatus | null>(null);
+  const [connectModalDismissed, setConnectModalDismissed] = useState(false);
+  const [activityTab, setActivityTab] = useState<"cases" | "searches" | "talk">("cases");
   const [openClawToken, setOpenClawToken] = useState<string | null>(null);
   const [openClawLoading, setOpenClawLoading] = useState(false);
   const [openClawError, setOpenClawError] = useState<string | null>(null);
@@ -1969,7 +1971,7 @@ export default function DashboardPage() {
               }}
               className="px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-[#556480] dark:text-[#8e9ab5] hover:bg-white/60 dark:hover:bg-white/5 transition-all border border-transparent hover:border-blue-100/30 dark:hover:border-white/10"
             >
-              Connect to OpenClaw
+              Connect to Claude
             </button>
             {showToken && (
               <>
@@ -1978,11 +1980,11 @@ export default function DashboardPage() {
                 {/* Popover: centered fixed on mobile, absolute dropdown on desktop */}
                 <div data-testid="dashboard-openclaw-popover" className="fixed inset-x-4 top-20 z-50 md:absolute md:inset-auto md:right-0 md:top-full md:mt-2 md:w-80 bg-white/95 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-blue-100/30 p-4">
                   <div className="flex items-center justify-between mb-1">
-                    <div className="text-xs font-semibold text-[#0d1424]">Connect Guardian to OpenClaw</div>
+                    <div className="text-xs font-semibold text-[#0d1424]">Connect Guardian to Claude</div>
                     <button onClick={() => setShowToken(false)} className="text-[#8e9ab5] text-sm md:hidden">&times;</button>
                   </div>
                   <div className="text-[11px] text-[#7b8ba5] mb-3">
-                    OpenClaw uses a scoped Guardian token, not your web session. Generate or rotate that token here.
+                    Install the Guardian extension in Claude Desktop, then paste this token when prompted. <a href="/docs/install" className="underline text-[#3a5a8c]">View install guide</a>.
                   </div>
                   {openClawLoading && (
                     <div className="text-[11px] text-[#7b8ba5] py-2">Loading connection status...</div>
@@ -2042,7 +2044,7 @@ export default function DashboardPage() {
                     </div>
                   )}
                   <div className="text-[10px] text-[#7b8ba5] mt-3">
-                    In OpenClaw: <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c]">{openClawConnection?.install_command || "openclaw skills install guardian-compliance"}</code> then set the generated value as <code className="bg-[#f0f3f8] px-1 rounded text-[#3a5a8c]">{openClawConnection?.env_var || "GUARDIAN_TOKEN"}</code>.
+                    Download <a href="/guardian.dxt" className="underline text-[#3a5a8c]">guardian.dxt</a> and double-click to install in Claude Desktop, then paste the token above into the extension settings.
                   </div>
                 </div>
               </>
@@ -2254,17 +2256,38 @@ export default function DashboardPage() {
             </section>
           )}
 
-          {/* MySearches + MyEngagements are timeline-only — they're
-              cross-case status panels, not artifacts. The Documents /
-              Deadlines / Key Facts views are artifact-focused and
-              stay clean without these panels. */}
+          {/* Tabbed activity panel — cases, searches, and live voice
+              live in a single switch so the timeline view stays focused.
+              Documents / Deadlines / Key Facts views skip this panel. */}
           {view === "timeline" && (
-            <>
-              <MySearches />
-              <MyEngagements />
-            </>
+            <div className="mb-2 flex gap-1.5 overflow-x-auto rounded-2xl border border-white/60 bg-white/55 backdrop-blur-xl p-1.5 shadow-[0_6px_20px_rgba(91,141,238,0.06)]">
+              {([
+                ["cases", "My cases"],
+                ["searches", "My professional searches"],
+                ["talk", "Talk to Guardian"],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  data-testid={`dashboard-activity-tab-${key}`}
+                  aria-pressed={activityTab === key}
+                  onClick={() => setActivityTab(key)}
+                  className={`flex-1 whitespace-nowrap rounded-xl px-4 py-2 text-[12px] font-semibold transition-colors ${
+                    activityTab === key
+                      ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white shadow-[0_6px_18px_rgba(91,141,238,0.22)]"
+                      : "text-[#556480] hover:bg-white/60"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           )}
 
+          {view === "timeline" && activityTab === "cases" && <MyEngagements />}
+          {view === "timeline" && activityTab === "searches" && <MySearches />}
+
+          {view === "timeline" && activityTab === "talk" && (
           <section className="mb-8 overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(234,241,251,0.92))] backdrop-blur-xl shadow-[0_10px_36px_rgba(91,141,238,0.08)]">
             <div className="p-5 md:p-7">
               <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
@@ -2384,6 +2407,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </section>
+          )}
 
           {/* Mobile view toggle */}
           <div className="flex md:hidden gap-1.5 mb-4 overflow-x-auto">
@@ -3124,11 +3148,50 @@ export default function DashboardPage() {
           setPaywallDetail(null);
           // Refresh the badge in case the user upgraded in the modal —
           // the upgrade flow redirects to Stripe and then back, but if
-          // the user dismissed and came back with a fresh sub the badge
+          // the user dismissed and came back with a fresh sub the basket
           // should still update.
           setQuotaRefreshKey((k) => k + 1);
         }}
       />
+      {!connectModalDismissed && openClawConnection !== null && openClawConnection.active_token === null && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" data-testid="dashboard-connect-modal">
+          <div className="w-full max-w-md rounded-3xl border border-white/60 bg-white/95 backdrop-blur-2xl shadow-[0_24px_72px_rgba(13,20,36,0.18)] p-8">
+            <div className="flex justify-center mb-5">
+              <div className="flex flex-col gap-[3px]" style={{transform:'perspective(200px) rotateX(-8deg) rotateY(12deg)'}}>
+                <div className="h-[6px] w-9 rounded-sm" style={{background:'linear-gradient(135deg, #5b8dee, #4a74d4)',transform:'translateX(3px)'}} />
+                <div className="h-[6px] w-9 rounded-sm" style={{background:'linear-gradient(135deg, #5b8dee, #4a74d4)',transform:'translateX(-1px)'}} />
+                <div className="h-[6px] w-9 rounded-sm" style={{background:'linear-gradient(135deg, #5b8dee, #4a74d4)',transform:'translateX(4px)'}} />
+              </div>
+            </div>
+            <h2 className="text-center text-[22px] font-bold text-[#0d1424] mb-2">
+              Connect Guardian to start
+            </h2>
+            <p className="text-center text-[14px] text-[#556480] leading-relaxed mb-7">
+              Run Guardian inside Claude Desktop for full agent access, or upload documents directly here in the browser.
+            </p>
+            <div className="grid gap-3">
+              <a
+                href="/docs/install"
+                data-testid="dashboard-connect-modal-install"
+                className="block w-full text-center px-5 py-3.5 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white text-[14px] font-semibold shadow-[0_14px_30px_rgba(91,141,238,0.28)]"
+              >
+                Install Claude extension
+              </a>
+              <button
+                type="button"
+                data-testid="dashboard-connect-modal-upload"
+                onClick={() => {
+                  setConnectModalDismissed(true);
+                  setShowUploadPanel(true);
+                }}
+                className="block w-full text-center px-5 py-3.5 rounded-xl border border-blue-100/60 bg-white/70 text-[#3a5a8c] text-[14px] font-semibold hover:bg-white"
+              >
+                Upload via web instead
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
