@@ -109,7 +109,7 @@ export default function InstallDocsPage() {
               <div className="text-[10px] uppercase tracking-[0.18em] text-[#b35d3f] mb-2">One click · Claude Desktop</div>
               <h2 className="text-xl font-semibold mb-3 text-[#0d1424]">Download the desktop extension</h2>
               <p className="text-sm text-[#556480] leading-relaxed mb-4">
-                Download the <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">guardian.dxt</code> file, install it in Claude Desktop, and paste your token. That&rsquo;s it &mdash; no terminal, no config file editing.
+                Download the <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">guardian.dxt</code> file, install it in Claude Desktop, and paste your token.
               </p>
               <a
                 href="/guardian.dxt"
