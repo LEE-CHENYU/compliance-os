@@ -29,7 +29,7 @@ MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": (
         "Compliance copilot for nonresidents, STEM OPT / H-1B workers, "
         "international students, and foreign-owned US entities. Exposes "
@@ -67,8 +67,8 @@ MANIFEST = {
             "command": "uv",
             "args": ["run", "--directory", "${__dirname}", "src/server.py"],
             "env": {
-                "GUARDIAN_API_URL": "${USER_CONFIG.api_url}",
-                "GUARDIAN_TOKEN": "${USER_CONFIG.token}",
+                "GUARDIAN_API_URL": "${user_config.api_url}",
+                "GUARDIAN_TOKEN": "${user_config.token}",
             },
         },
     },

@@ -1216,7 +1216,17 @@ def query_documents(
         result = engine.query(question, top_k=top_k, filters=filters)
         return json.dumps(result, default=str, indent=2)
     except Exception as exc:
-        return json.dumps({"error": str(exc)})
+        msg = str(exc)
+        if "does not exist" in msg or "Collection" in msg:
+            return json.dumps({
+                "error": "no_index",
+                "message": (
+                    "No documents indexed yet. Upload documents in the "
+                    "Guardian dashboard (or via batch_upload), then run "
+                    "index_documents to enable RAG search."
+                ),
+            })
+        return json.dumps({"error": msg})
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
