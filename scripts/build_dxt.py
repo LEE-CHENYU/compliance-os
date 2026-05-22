@@ -1,8 +1,15 @@
 """Build the Guardian DXT (Desktop Extension) package.
 
-DXT is Anthropic's one-click install format for Claude Desktop — a
-zip archive with a manifest.json that Claude Desktop parses to pip-
-install the server, prompt for auth, and wire the MCP client config.
+DXT is Anthropic's one-click install format for Claude Desktop. We use
+the `uv` runtime so Claude Desktop downloads Python and resolves
+`compliance-os[agent]` from PyPI on first launch — no user Python
+install, no manual pip, no conda env required.
+
+Bundle contents:
+  manifest.json   — DXT manifest, manifest_version 0.4, server.type uv
+  pyproject.toml  — declares the compliance-os runtime dependency
+  src/server.py   — entry-point wrapper that runs compliance_os.mcp_server
+  icon.png        — Guardian wordmark (512x512)
 
 Output: frontend/public/guardian.dxt
 """
@@ -15,8 +22,11 @@ import zipfile
 from pathlib import Path
 
 
+COMPLIANCE_OS_VERSION = ">=1.0.0"
+
+
 MANIFEST = {
-    "dxt_version": "0.1",
+    "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
     "version": "1.0.0",
@@ -51,11 +61,11 @@ MANIFEST = {
     ],
     "license": "MIT",
     "server": {
-        "type": "python",
-        "entry_point": "compliance_os.mcp_server",
+        "type": "uv",
+        "entry_point": "src/server.py",
         "mcp_config": {
-            "command": "${USER_CONFIG.python}",
-            "args": ["-m", "compliance_os.mcp_server"],
+            "command": "uv",
+            "args": ["run", "--directory", "${__dirname}", "src/server.py"],
             "env": {
                 "GUARDIAN_API_URL": "${USER_CONFIG.api_url}",
                 "GUARDIAN_TOKEN": "${USER_CONFIG.token}",
@@ -78,17 +88,6 @@ MANIFEST = {
             "title": "Guardian API URL",
             "description": "Production: https://guardiancompliance.app — or your local dev server.",
             "default": "https://guardiancompliance.app",
-            "required": False,
-        },
-        "python": {
-            "type": "string",
-            "title": "Python interpreter path",
-            "description": (
-                "Absolute path to a Python 3.11+ interpreter that will "
-                "host the MCP server. Use `which python3` on Unix or "
-                "`where python` on Windows."
-            ),
-            "default": "python3",
             "required": False,
         },
     },
@@ -118,13 +117,39 @@ MANIFEST = {
         {"name": "gmail_download_attachment", "description": "Save an attachment locally"},
     ],
     "compatibility": {
-        "claude_desktop": ">=0.9.0",
+        "claude_desktop": ">=0.10.0",
         "platforms": ["darwin", "linux", "win32"],
         "runtimes": {
             "python": ">=3.11",
         },
     },
 }
+
+
+PYPROJECT_TOML = f"""[project]
+name = "guardian-dxt"
+version = "1.0.0"
+description = "Guardian Compliance DXT runtime — pulls compliance-os from PyPI"
+requires-python = ">=3.11"
+dependencies = [
+    "compliance-os[agent]{COMPLIANCE_OS_VERSION}",
+]
+"""
+
+
+SERVER_PY = '''"""Guardian DXT entry point.
+
+Imported and run by Claude Desktop via uv. Delegates to the
+compliance_os.mcp_server module (installed from PyPI by uv on first
+run, per pyproject.toml).
+"""
+
+from compliance_os.mcp_server import mcp
+
+
+if __name__ == "__main__":
+    mcp.run()
+'''
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -134,6 +159,8 @@ ICON_SOURCE = REPO_ROOT / "frontend" / "public" / "assets" / "guardian-logo-512.
 def build(output: Path) -> Path:
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("manifest.json", json.dumps(MANIFEST, indent=2))
+        zf.writestr("pyproject.toml", PYPROJECT_TOML)
+        zf.writestr("src/server.py", SERVER_PY)
         if ICON_SOURCE.exists():
             zf.write(ICON_SOURCE, "icon.png")
         else:
