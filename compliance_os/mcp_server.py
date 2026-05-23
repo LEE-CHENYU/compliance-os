@@ -37,7 +37,27 @@ mcp = FastMCP(
         "- Lead with the most urgent item.\n"
         "- Note that Guardian provides compliance risk detection, not legal advice.\n"
         "- For critical issues, recommend consulting an immigration attorney.\n"
-        "- For tax issues, recommend a CPA experienced with nonresident filings."
+        "- For tax issues, recommend a CPA experienced with nonresident filings.\n\n"
+        "Ingest-intent detection (no magic word required):\n"
+        "- When the user expresses intent to save, file, record, add, "
+        "ingest, remember, or pin a document, image, attachment, or "
+        "piece of evidence they just provided or referenced, call "
+        "upload_document with the file path. Examples of intent (not "
+        "exhaustive): 'save this', 'file this', 'add this to my data "
+        "room', 'remember this', 'for the record', 'ingest this', "
+        "'pin this as current', 'supersede the old one with this'.\n"
+        "- upload_document defaults to ingest (extract facts → write "
+        "to user_facts). Only pass defer_ingest=True when the user "
+        "explicitly asks to upload without parsing.\n\n"
+        "User-facts SoT (use get_user_facts before guessing a value):\n"
+        "- The user has a per-user 'facts' table — the source of truth "
+        "for things like current employer, H-1B end date, SEVIS ID, "
+        "entity EIN. Always call get_user_facts before answering a "
+        "factual question. If a fact is missing or stale, say so "
+        "instead of inventing.\n"
+        "- When the user explicitly states a value as decided ('my "
+        "salary is now $135K', 'use this address going forward'), "
+        "call set_user_fact to lock it. Don't lock implicit values."
     ),
 )
 
@@ -726,6 +746,132 @@ def batch_upload(
         "summary": f"{uploaded} uploaded, {failed} failed out of {len(files)} files",
         "results": results,
     }, indent=2)
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  USER FACTS — source of truth for distilled compliance facts
+#  (see docs/architecture/context-management.md). Always call
+#  get_user_facts before guessing a value.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Get user facts (SoT)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        openWorldHint=False,
+    ),
+)
+async def get_user_facts(
+    category: str = "",
+    track: str = "",
+) -> str:
+    """Return the user's active SoT facts (current employer, visa end
+    date, EIN, etc.).
+
+    Facts are the distilled, authoritative version of what's in the
+    user's documents — derived by extraction and surviving document
+    supersession. Always check this first before asking the user or
+    inferring from a single document.
+
+    Args:
+        category: Optional category filter (immigration | tax |
+            corporate | personal | employment | education).
+        track: Optional track filter (young_professional | student |
+            entrepreneur). Returns shared facts in addition to track-
+            specific ones.
+    """
+    params = []
+    if category:
+        params.append(f"category={category}")
+    if track:
+        params.append(f"track={track}")
+    path = "/api/facts" + (("?" + "&".join(params)) if params else "")
+    try:
+        result = await _api_get(path)
+        return json.dumps(result, default=str, indent=2)
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Set / lock a user fact",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+    ),
+)
+async def set_user_fact(
+    fact_key: str,
+    value: str,
+    notes: str = "",
+    label: str = "",
+) -> str:
+    """Record a user-locked SoT fact.
+
+    Call this when the user explicitly states a value as decided —
+    "my salary is $135K now", "use this address going forward",
+    "the LCA case number is I-200-26139-927332". Don't lock
+    implicitly-mentioned values.
+
+    The previous value (if any) is preserved as a superseded row;
+    history is queryable via /api/facts/<key>/history.
+
+    Args:
+        fact_key: Canonical key (see vocabulary in
+            compliance_os.facts.vocabulary) or "custom:<slug>".
+        value: The new value. Pass scalars as strings; the backend
+            wraps in the {"v": ...} JSON envelope.
+        notes: Optional long-form qualifiers (e.g., "Decision-locked
+            2026-05-22 after Kuck Baxter consultation").
+        label: Override the human label (only needed for custom keys
+            or when correcting a default).
+    """
+    payload: dict = {"fact_key": fact_key, "value": value}
+    if notes:
+        payload["notes"] = notes
+    if label:
+        payload["label"] = label
+    try:
+        result = await _api_post("/api/facts", payload)
+        return json.dumps(result, default=str, indent=2)
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Resolve a fact conflict",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+    ),
+)
+async def resolve_fact_conflict(
+    fact_id: str,
+    choice: str,
+    user_value: str = "",
+) -> str:
+    """Apply a user decision to a fact's detected_conflicts list.
+
+    Use this when get_user_facts returned a fact with non-empty
+    detected_conflicts and the user has told you how to resolve.
+
+    Args:
+        fact_id: The fact row UUID (from get_user_facts).
+        choice: One of "use_new" | "keep_current" | "user_value".
+        user_value: Required when choice == "user_value".
+    """
+    payload: dict = {"choice": choice}
+    if user_value:
+        payload["user_value"] = user_value
+    try:
+        result = await _api_post(f"/api/facts/{fact_id}/resolve", payload)
+        return json.dumps(result, default=str, indent=2)
+    except Exception as exc:
+        return json.dumps({"error": str(exc)})
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

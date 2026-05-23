@@ -64,7 +64,7 @@ def create_engine_and_tables(db_path: str | None = None) -> Engine:
         QuestionnaireConfigRow,
         QuestionnaireResponseRow,
     )
-    from compliance_os.web.models.tables_v2 import Base as BaseV2  # noqa: F401
+    from compliance_os.web.models.tables_v2 import Base as BaseV2, UserFactRow  # noqa: F401
     BaseV2.metadata.create_all(engine)
     _ensure_v2_columns(engine)
     _ensure_auth_columns(engine)

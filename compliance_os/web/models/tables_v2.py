@@ -216,3 +216,50 @@ class FindingRow(Base):
     source_comparison_id = Column(String, ForeignKey("comparisons.id"), nullable=True)
 
     check = relationship("CheckRow", back_populates="findings")
+
+
+class UserFactRow(Base):
+    """User-facts SoT table.
+
+    Per the design in docs/architecture/context-management.md §4, this is
+    Guardian's distilled-facts layer — semi-structured, JSON-valued, with
+    provenance + decision-lock + supersession metadata. One active row per
+    (user_id, fact_key); superseded rows stay around with is_active=False
+    so the history is preserved (NEVER delete — always archive).
+
+    fact_key is either a canonical vocabulary entry (see
+    compliance_os.facts.vocabulary) or a free-form "custom:<slug>" key.
+    """
+
+    __tablename__ = "user_facts"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    user_id = Column(String, nullable=False, index=True)
+
+    fact_key = Column(String, nullable=False, index=True)
+    label = Column(String, nullable=False)
+    category = Column(String)
+    track = Column(String)
+
+    # Semi-structured payload — always wrap as a JSON object so we can
+    # attach metadata (e.g., {"v": "Acme Robotics Inc.", "as_of":
+    # "2026-04-15"}) without column churn later.
+    value = Column(JSON, nullable=False)
+    notes = Column(Text)
+
+    # Provenance.
+    source_type = Column(String, nullable=False)  # document | decision_lock | gmail | external_api | user_input
+    source_ref = Column(JSON)  # {document_id, page, field} or {locked_at, note} or ...
+
+    # Lock / supersession.
+    locked_at = Column(DateTime, nullable=False, default=_now)
+    superseded_by_id = Column(String, ForeignKey("user_facts.id"), nullable=True)
+    is_active = Column(Boolean, default=True)
+
+    # Auto-detected conflicts — populated by the post-upload hook when a
+    # new document claims a different value for an active fact whose
+    # source is a different document.
+    detected_conflicts = Column(JSON, default=list)
+
+    created_at = Column(DateTime, default=_now)
+    updated_at = Column(DateTime, default=_now, onupdate=_now)
