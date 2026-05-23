@@ -31,6 +31,10 @@ class SearchRequest(BaseModel):
     top_k: int = Field(10, ge=1, le=50)
     min_tier1_results: int = Field(3, ge=1, le=20)
     prefer_recent: bool = True
+    # Mirror of accounting's archive policy (docs/architecture/
+    # context-management.md §9): superseded docs stay queryable for
+    # history, but they don't show up in default searches.
+    include_archived: bool = False
 
 
 class SearchSource(BaseModel):
@@ -76,18 +80,21 @@ def _path_variants(file_path: str | None) -> set[str]:
     return variants
 
 
-def _allowed_user_file_paths(user: UserRow, db: Session) -> set[str]:
-    rows = (
+def _allowed_user_file_paths(
+    user: UserRow,
+    db: Session,
+    *,
+    include_archived: bool = False,
+) -> set[str]:
+    q = (
         db.query(DocumentRow)
         .join(CheckRow, CheckRow.id == DocumentRow.check_id)
-        .filter(
-            CheckRow.user_id == user.id,
-            DocumentRow.is_active.is_(True),
-        )
-        .all()
+        .filter(CheckRow.user_id == user.id)
     )
+    if not include_archived:
+        q = q.filter(DocumentRow.is_active.is_(True))
     allowed: set[str] = set()
-    for doc in rows:
+    for doc in q.all():
         allowed.update(_path_variants(doc.file_path))
         allowed.update(_path_variants(doc.source_path))
     return allowed
@@ -104,7 +111,9 @@ def search_documents(
     from compliance_os.query.engine import ComplianceQueryEngine
 
     engine = ComplianceQueryEngine()
-    allowed_file_paths = _allowed_user_file_paths(user, db)
+    allowed_file_paths = _allowed_user_file_paths(
+        user, db, include_archived=req.include_archived,
+    )
     try:
         res = engine.smart_search(
             query=req.query,

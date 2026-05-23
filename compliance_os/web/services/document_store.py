@@ -623,11 +623,128 @@ def _upsert_extracted_field(
                 raw_text=raw_text,
             )
         )
+    else:
+        row.field_value = value
+        row.confidence = confidence
+        row.raw_text = raw_text
+
+    # SoT projection: if this extraction field maps to a canonical
+    # fact_key, mirror it into user_facts so the distilled view
+    # survives document supersession. Confidence < 0.5 stays in
+    # ExtractedFieldRow only — too noisy for SoT.
+    if value in (None, "") or (confidence is not None and confidence < 0.5):
+        return
+    _project_to_user_facts(
+        db, doc=doc, field_name=field_name, value=value, confidence=confidence,
+    )
+
+
+def _project_to_user_facts(
+    db: Session,
+    *,
+    doc: DocumentRow,
+    field_name: str,
+    value: str,
+    confidence: float | None,
+) -> None:
+    """Mirror a high-confidence extracted field into user_facts.
+
+    Looks up the (doc_type, field_name) → fact_key mapping. If
+    matched, finds the document's owning user (via check) and either
+    inserts or supersedes the matching SoT row. Conflicts (active row
+    sourced from a *different* document) are recorded — not silently
+    overwritten — so the user can resolve.
+    """
+    from compliance_os.facts.extraction_map import fact_key_for
+    from compliance_os.web.services.user_facts import (
+        record_conflict,
+        upsert_fact,
+    )
+
+    fact_key = fact_key_for(doc.doc_type, field_name)
+    if not fact_key:
         return
 
-    row.field_value = value
-    row.confidence = confidence
-    row.raw_text = raw_text
+    user_id = _resolve_user_id_for_document(db, doc)
+    if not user_id:
+        return  # legacy/orphan document with no owner
+
+    source_ref = {
+        "document_id": doc.id,
+        "field_name": field_name,
+        "confidence": confidence,
+    }
+
+    # Is there an active row from a different document?
+    #   - If that older document is no longer is_active (it was just
+    #     superseded by this upload via _reindex_documents_for_type),
+    #     the new doc is the natural successor — supersede silently.
+    #   - If the older doc is still active (parallel evidence, e.g.,
+    #     I-797 and W-2 both claim an employer name), record a
+    #     conflict so the user decides which to trust.
+    # If the active row is locked by a user decision (source_type =
+    # decision_lock) NEVER overwrite — record conflict and let them
+    # resolve.
+    from compliance_os.web.models.tables_v2 import UserFactRow
+
+    existing = (
+        db.query(UserFactRow)
+        .filter(
+            UserFactRow.user_id == user_id,
+            UserFactRow.fact_key == fact_key,
+            UserFactRow.is_active.is_(True),
+        )
+        .one_or_none()
+    )
+    if existing is None or existing.value.get("v") == value:
+        upsert_fact(
+            db, user_id=user_id, fact_key=fact_key, value=value,
+            source_type="document", source_ref=source_ref,
+        )
+        return
+
+    if existing.source_type == "decision_lock":
+        record_conflict(
+            db, user_id=user_id, fact_key=fact_key,
+            claimed_value=value, source_ref=source_ref,
+        )
+        return
+
+    other_doc_id = (existing.source_ref or {}).get("document_id")
+    if other_doc_id and other_doc_id != doc.id:
+        other_doc = (
+            db.query(DocumentRow)
+            .filter(DocumentRow.id == other_doc_id)
+            .one_or_none()
+        )
+        if other_doc is not None and other_doc.is_active is False:
+            # Old source got superseded — promote new value silently.
+            upsert_fact(
+                db, user_id=user_id, fact_key=fact_key, value=value,
+                source_type="document", source_ref=source_ref,
+            )
+            return
+        # Parallel evidence from a still-active different doc → conflict.
+        record_conflict(
+            db, user_id=user_id, fact_key=fact_key,
+            claimed_value=value, source_ref=source_ref,
+        )
+        return
+
+    upsert_fact(
+        db, user_id=user_id, fact_key=fact_key, value=value,
+        source_type="document", source_ref=source_ref,
+    )
+
+
+def _resolve_user_id_for_document(db: Session, doc: DocumentRow) -> str | None:
+    """Walk doc → check → user_id. Legacy docs may have null check.user_id."""
+    if doc.check is not None and getattr(doc.check, "user_id", None):
+        return doc.check.user_id
+    if doc.check_id is None:
+        return None
+    check = db.query(CheckRow).filter(CheckRow.id == doc.check_id).one_or_none()
+    return getattr(check, "user_id", None) if check else None
 
 
 def _record_i9_cross_check(

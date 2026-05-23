@@ -3,6 +3,7 @@
 import Vapi from "@vapi-ai/web";
 import type { ClientMessageTranscript, CreateAssistantDTO, OpenAIModel, VapiVoice } from "@vapi-ai/web/dist/api";
 import { useCallback, useEffect, useMemo, useState, useRef, type ChangeEvent, type ComponentPropsWithoutRef, type DragEvent as ReactDragEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, authHeaders, getUser, logout } from "@/lib/auth";
 import ReactMarkdown from "react-markdown";
@@ -99,6 +100,25 @@ interface ChatReferenceDoc {
   filename: string;
   doc_type: string;
   score?: number;
+}
+
+interface UserFactRow {
+  id: string;
+  fact_key: string;
+  label: string;
+  category: string | null;
+  track: string | null;
+  value: { v: unknown; [k: string]: unknown };
+  notes: string | null;
+  source_type: string;
+  source_ref: { document_id?: string; field_name?: string; [k: string]: unknown } | null;
+  locked_at: string | null;
+  is_active: boolean;
+  detected_conflicts: Array<{
+    claimed_value: { v: unknown };
+    source_ref: { document_id?: string } | null;
+    detected_at: string;
+  }>;
 }
 
 interface ChatMessage {
@@ -684,6 +704,8 @@ export default function DashboardPage() {
   const [openClawConnection, setOpenClawConnection] = useState<OpenClawConnectionStatus | null>(null);
   const [connectModalDismissed, setConnectModalDismissed] = useState(false);
   const [activityTab, setActivityTab] = useState<"cases" | "searches" | "talk">("searches");
+  const [userFacts, setUserFacts] = useState<UserFactRow[] | null>(null);
+  const [resolvingFactId, setResolvingFactId] = useState<string | null>(null);
   const [openClawToken, setOpenClawToken] = useState<string | null>(null);
   const [openClawLoading, setOpenClawLoading] = useState(false);
   const [openClawError, setOpenClawError] = useState<string | null>(null);
@@ -853,11 +875,43 @@ export default function DashboardPage() {
       setStats(st);
       setDocuments(docs);
       setLoading(false);
+      // Fire-and-forget: user_facts are independent of the rest of
+      // the dashboard load. A 404 here just means the v1.0.5+ table
+      // hasn't been deployed yet — we silently degrade.
+      fetch(`${API}/facts`, { headers: authHeaders() })
+        .then((r) => (r.ok ? r.json() : { facts: [] }))
+        .then((data) => setUserFacts(Array.isArray(data?.facts) ? data.facts : []))
+        .catch(() => setUserFacts([]));
     } catch (error) {
       setLoadError(error instanceof Error ? error.message : "Could not load dashboard");
       setLoading(false);
     }
   }, [router]);
+
+  const resolveFactConflict = useCallback(
+    async (factId: string, choice: "use_new" | "keep_current") => {
+      setResolvingFactId(factId);
+      try {
+        const resp = await fetch(`${API}/facts/${factId}/resolve`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({ choice }),
+        });
+        if (!resp.ok) throw new Error(`Resolve failed (${resp.status})`);
+        // Refresh facts in place — simpler than splicing.
+        const refresh = await fetch(`${API}/facts`, { headers: authHeaders() });
+        if (refresh.ok) {
+          const data = await refresh.json();
+          setUserFacts(Array.isArray(data?.facts) ? data.facts : []);
+        }
+      } catch {
+        // Surface nothing for now — keep retry UX cheap.
+      } finally {
+        setResolvingFactId(null);
+      }
+    },
+    [],
+  );
 
   const toggleDocumentSelection = useCallback((docId: string) => {
     setDocumentDeleteError(null);
@@ -1917,13 +1971,12 @@ export default function DashboardPage() {
             {activeServicePreview.map((order) => {
               const urgent = order.attention_state === "urgent";
               return (
-                <button
+                <Link
                   key={order.order_id}
-                  type="button"
+                  href={order.href}
                   aria-label={`Open service order: ${order.product_name}`}
                   data-testid={mobile ? `dashboard-service-order-${order.product_sku}-mobile` : `dashboard-service-order-${order.product_sku}`}
                   data-graph-edge={`open-service-order:${order.product_sku}`}
-                  onClick={() => router.push(order.href)}
                   className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left shadow-[0_8px_18px_rgba(61,84,128,0.05)] transition hover:bg-white"
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -1943,10 +1996,10 @@ export default function DashboardPage() {
                       Deadline {order.filing_deadline}
                       {order.deadline_days != null
                         ? ` · ${order.deadline_days >= 0 ? `${order.deadline_days}d left` : `${Math.abs(order.deadline_days)}d overdue`}`
-                        : ""}
+                      : ""}
                     </div>
                   ) : null}
-                </button>
+                </Link>
               );
             })}
             {activeServiceOrders.length > activeServicePreview.length ? (
@@ -1960,13 +2013,12 @@ export default function DashboardPage() {
         {!hasActiveServiceOrders && hasServiceRecommendations ? (
           <div className="mt-4 space-y-3">
             {recommendedServicePreview.map((service) => (
-              <button
+              <Link
                 key={service.sku}
-                type="button"
+                href={service.href}
                 aria-label={`Open recommended service: ${service.name}`}
                 data-testid={mobile ? `dashboard-recommended-service-${service.sku}-mobile` : `dashboard-recommended-service-${service.sku}`}
                 data-graph-edge={`open-recommended-service:${service.sku}`}
-                onClick={() => router.push(service.href)}
                 className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left transition hover:bg-white"
               >
                 <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
@@ -1974,7 +2026,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-1 text-[13px] font-semibold leading-5 text-[#0d1424]">{service.name}</div>
                 <div className="mt-2 text-[12px] leading-5 text-[#556480]">{service.reason}</div>
-              </button>
+              </Link>
             ))}
           </div>
         ) : null}
@@ -1982,13 +2034,12 @@ export default function DashboardPage() {
         {!hasActiveServiceOrders && !hasServiceRecommendations && hasRecentDeliverables ? (
           <div className="mt-4 space-y-3">
             {recentCompletedPreview.map((order) => (
-              <button
+              <Link
                 key={order.order_id}
-                type="button"
+                href={order.href}
                 aria-label={`Open completed service: ${order.product_name}`}
                 data-testid={mobile ? `dashboard-completed-service-${order.product_sku}-mobile` : `dashboard-completed-service-${order.product_sku}`}
                 data-graph-edge={`open-completed-service:${order.product_sku}`}
-                onClick={() => router.push(order.href)}
                 className="w-full rounded-[18px] border border-[#dbe5f2] bg-white/86 px-4 py-3 text-left transition hover:bg-white"
               >
                 <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7b8ba5]">
@@ -1996,7 +2047,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-1 text-[13px] font-semibold leading-5 text-[#0d1424]">{order.product_name}</div>
                 <div className="mt-2 text-[12px] leading-5 text-[#556480]">{order.summary || "Result ready."}</div>
-              </button>
+              </Link>
             ))}
           </div>
         ) : null}
@@ -2008,24 +2059,22 @@ export default function DashboardPage() {
         ) : null}
 
         <div className={`mt-4 grid gap-2 ${mobile ? "sm:grid-cols-2" : ""}`}>
-          <button
-            type="button"
+          <Link
+            href="/account/orders"
             data-testid={mobile ? "dashboard-open-orders-mobile" : "dashboard-open-orders"}
             data-graph-edge="open-orders"
-            onClick={() => router.push("/account/orders")}
             className="inline-flex items-center justify-center rounded-full border border-blue-100/50 bg-white/85 px-4 py-2 text-[12px] font-semibold text-[#3a5a8c] transition hover:bg-white"
           >
             Open orders
-          </button>
-          <button
-            type="button"
+          </Link>
+          <Link
+            href="/services"
             data-testid={mobile ? "dashboard-browse-services-mobile" : "dashboard-browse-services"}
             data-graph-edge="browse-services"
-            onClick={() => router.push("/services")}
             className="inline-flex items-center justify-center rounded-full bg-[#5b8dee] px-4 py-2 text-[12px] font-semibold text-white shadow-[0_10px_20px_rgba(91,141,238,0.18)] transition hover:bg-[#4f82de]"
           >
             Browse services
-          </button>
+          </Link>
         </div>
       </div>
     </section>
@@ -2692,6 +2741,108 @@ export default function DashboardPage() {
           {view === "profile" && (
             <div data-testid="dashboard-profile-view">
               <h2 className="text-lg font-bold text-[#0d1424] mb-6">Key Facts</h2>
+
+              {/* User-facts SoT — surfaced above the legacy timeline-
+                  derived Key Facts so the user sees the authoritative,
+                  versioned values first. Each row shows the source
+                  document; conflicts get a banner with use-new / keep
+                  buttons. See docs/architecture/context-management.md. */}
+              {userFacts !== null && userFacts.length > 0 && (() => {
+                const SOT_CAT_LABELS: Record<string, string> = {
+                  immigration: "Immigration",
+                  tax: "Tax",
+                  corporate: "Business",
+                  personal: "Personal",
+                  employment: "Employment",
+                  education: "Education",
+                };
+                const SOT_CAT_ORDER = ["immigration", "tax", "corporate", "employment", "personal", "education"];
+                const sotGrouped: Record<string, UserFactRow[]> = {};
+                for (const f of userFacts) {
+                  const cat = f.category || "personal";
+                  if (!sotGrouped[cat]) sotGrouped[cat] = [];
+                  sotGrouped[cat].push(f);
+                }
+                const renderValue = (raw: unknown): string => {
+                  if (raw === null || raw === undefined) return "—";
+                  if (typeof raw === "object") return JSON.stringify(raw);
+                  return String(raw);
+                };
+                return (
+                  <div className="mb-8 rounded-2xl border border-blue-100/40 bg-gradient-to-br from-white via-[#f5faff] to-[#eef4fd] p-5 shadow-[0_8px_28px_rgba(91,141,238,0.08)]">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#5b8dee]">Source of truth</div>
+                        <div className="text-[14px] font-bold text-[#0d1424]">Your locked facts ({userFacts.length})</div>
+                      </div>
+                      <div className="text-[11px] text-[#7b8ba5]">
+                        Survives document supersession · linked to source
+                      </div>
+                    </div>
+                    {SOT_CAT_ORDER.map((cat) => {
+                      const facts = sotGrouped[cat];
+                      if (!facts || facts.length === 0) return null;
+                      return (
+                        <div key={cat} className="mt-4 first:mt-0">
+                          <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">{SOT_CAT_LABELS[cat] || cat}</div>
+                          <div className="bg-white/65 backdrop-blur rounded-xl border border-white/60 overflow-hidden">
+                            {facts.map((f, i) => {
+                              const hasConflicts = (f.detected_conflicts || []).length > 0;
+                              return (
+                                <div key={f.id} className={`px-4 py-3 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
+                                  <div className="flex justify-between items-start gap-3">
+                                    <div className="text-[13px] text-[#556480] pt-0.5">{f.label}</div>
+                                    <div className="flex flex-col items-end max-w-[60%] gap-0.5">
+                                      <span className="text-[13px] font-semibold text-[#0d1424] text-right truncate w-full">
+                                        {renderValue(f.value?.v)}
+                                      </span>
+                                      {f.source_type === "decision_lock" ? (
+                                        <span className="text-[10.5px] text-[#5b8dee] font-medium">user-locked</span>
+                                      ) : f.source_ref?.document_id ? (
+                                        <span className="text-[10.5px] text-[#8e9ab5] truncate w-full text-right" title={`Source document: ${f.source_ref.document_id}`}>
+                                          from document
+                                        </span>
+                                      ) : null}
+                                    </div>
+                                  </div>
+                                  {hasConflicts && (
+                                    <div className="mt-3 rounded-lg border border-amber-200/60 bg-amber-50/70 px-3 py-2">
+                                      <div className="text-[11px] text-amber-900 mb-1.5">
+                                        A newer document claims a different value:{" "}
+                                        <code className="bg-white/80 px-1 py-0.5 rounded">{renderValue((f.detected_conflicts[0] as { claimed_value: { v: unknown } }).claimed_value?.v)}</code>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <button
+                                          type="button"
+                                          data-testid={`fact-conflict-use-new-${f.id}`}
+                                          disabled={resolvingFactId === f.id}
+                                          onClick={() => void resolveFactConflict(f.id, "use_new")}
+                                          className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold bg-[#5b8dee] text-white disabled:opacity-50"
+                                        >
+                                          Use new value
+                                        </button>
+                                        <button
+                                          type="button"
+                                          data-testid={`fact-conflict-keep-${f.id}`}
+                                          disabled={resolvingFactId === f.id}
+                                          onClick={() => void resolveFactConflict(f.id, "keep_current")}
+                                          className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold border border-amber-200/70 text-amber-900 bg-white/70 disabled:opacity-50"
+                                        >
+                                          Keep current
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
               {(() => {
                 const CAT_LABELS: Record<string, string> = {
