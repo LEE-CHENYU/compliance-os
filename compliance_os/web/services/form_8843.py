@@ -8,7 +8,7 @@ from pathlib import Path
 import fitz
 
 
-TEMPLATE_PATH = Path(__file__).resolve().parents[3] / "templates" / "pdfs" / "form_8843_template.pdf"
+TEMPLATE_PATH = Path(__file__).resolve().parents[2] / "templates" / "pdfs" / "form_8843_template.pdf"
 
 
 def _coerce_text(value: object) -> str:

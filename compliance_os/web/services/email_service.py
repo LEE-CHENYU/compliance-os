@@ -10,7 +10,7 @@ from pathlib import Path
 from urllib import error, request
 
 
-EMAIL_TEMPLATE_DIR = Path(__file__).resolve().parents[3] / "templates" / "emails"
+EMAIL_TEMPLATE_DIR = Path(__file__).resolve().parents[2] / "templates" / "emails"
 RESEND_API_URL = "https://api.resend.com/emails"
 
 

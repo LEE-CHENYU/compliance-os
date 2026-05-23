@@ -22,7 +22,7 @@ from compliance_os.web.services.pdf_builder import build_text_pdf
 
 
 ATTORNEY_CHECKLIST_DIR = Path(__file__).resolve().parents[3] / "config" / "attorney_checklists"
-AGREEMENT_TEMPLATE_DIR = Path(__file__).resolve().parents[3] / "templates" / "agreements"
+AGREEMENT_TEMPLATE_DIR = Path(__file__).resolve().parents[2] / "templates" / "agreements"
 ATTORNEY_ARTIFACT_DIR = DATA_DIR / "marketplace" / "attorney_workflow"
 SERVICE_ALIASES = {
     "opt_execution": "opt_execution",

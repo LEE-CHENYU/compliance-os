@@ -683,7 +683,7 @@ export default function DashboardPage() {
   const [tokenCopied, setTokenCopied] = useState(false);
   const [openClawConnection, setOpenClawConnection] = useState<OpenClawConnectionStatus | null>(null);
   const [connectModalDismissed, setConnectModalDismissed] = useState(false);
-  const [activityTab, setActivityTab] = useState<"cases" | "searches" | "talk">("cases");
+  const [activityTab, setActivityTab] = useState<"cases" | "searches" | "talk">("searches");
   const [openClawToken, setOpenClawToken] = useState<string | null>(null);
   const [openClawLoading, setOpenClawLoading] = useState(false);
   const [openClawError, setOpenClawError] = useState<string | null>(null);
@@ -2347,8 +2347,8 @@ export default function DashboardPage() {
           {view === "timeline" && (
             <div className="mb-2 flex gap-1.5 overflow-x-auto rounded-2xl border border-white/60 bg-white/55 backdrop-blur-xl p-1.5 shadow-[0_6px_20px_rgba(91,141,238,0.06)]">
               {([
-                ["cases", "My cases"],
                 ["searches", "My professional searches"],
+                ["cases", "My cases"],
                 ["talk", "Talk to Guardian"],
               ] as const).map(([key, label]) => (
                 <button
