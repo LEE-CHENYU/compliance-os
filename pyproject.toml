@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "compliance-os"
-version = "1.0.5"
+version = "1.0.6"
 description = "Guardian — compliance copilot for visas, tax, and foreign-owned entities. MCP server with 23 tools for Claude Code / Desktop / Codex."
 readme = "guardian-mcp/README.md"
 license = { text = "MIT" }
