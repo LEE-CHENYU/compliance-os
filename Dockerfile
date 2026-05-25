@@ -46,10 +46,10 @@ RUN pip install --no-cache-dir --timeout 120 --retries 10 \
     rapidfuzz bcrypt pyjwt anthropic mistralai google-generativeai \
     weasyprint stripe
 
-# Copy application code
+# Copy application code. templates/ moved into compliance_os/templates/
+# in commit 18ec873 so it ships inside the wheel; no separate COPY needed.
 COPY compliance_os/ ./compliance_os/
 COPY config/ ./config/
-COPY templates/ ./templates/
 COPY scripts/ ./scripts/
 
 # Copy built frontend
