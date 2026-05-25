@@ -44,6 +44,13 @@ def _wrap_value(value: Any, **metadata: Any) -> dict:
     return payload
 
 
+def _decision_source_ref(source_ref: dict | None, *, resolution: str) -> dict:
+    ref = dict(source_ref or {})
+    ref["resolution"] = resolution
+    ref["resolved_at"] = _now().isoformat()
+    return ref
+
+
 def upsert_fact(
     db: Session,
     *,
@@ -96,6 +103,10 @@ def upsert_fact(
         # Same value? Refresh metadata in place; no supersession.
         if existing.value == wrapped:
             existing.locked_at = now
+            existing.source_type = source_type
+            existing.label = final_label
+            existing.category = final_category
+            existing.track = final_track
             if source_ref:
                 existing.source_ref = source_ref
             if notes is not None:
@@ -236,6 +247,11 @@ def resolve_conflict(
 
     if choice == "keep_current":
         row.detected_conflicts = []
+        row.source_type = "decision_lock"
+        row.source_ref = _decision_source_ref(
+            row.source_ref,
+            resolution="keep_current",
+        )
         row.updated_at = _now()
         db.flush()
         return row
@@ -249,8 +265,11 @@ def resolve_conflict(
             user_id=user_id,
             fact_key=row.fact_key,
             value=first["claimed_value"],
-            source_type="document",
-            source_ref=first.get("source_ref"),
+            source_type="decision_lock",
+            source_ref=_decision_source_ref(
+                first.get("source_ref"),
+                resolution=f"use_new:{fact_id}",
+            ),
         )
         return new_row
 
@@ -260,8 +279,11 @@ def resolve_conflict(
             user_id=user_id,
             fact_key=row.fact_key,
             value=user_value,
-            source_type="user_input",
-            source_ref={"resolved_from": fact_id},
+            source_type="decision_lock",
+            source_ref=_decision_source_ref(
+                {"resolved_from": fact_id},
+                resolution="user_value",
+            ),
         )
         return new_row
 

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:e2e": "playwright test",
+    "test:e2e": "PLAYWRIGHT_SERVER_MODE=prod playwright test",
     "test:graph": "PLAYWRIGHT_SERVER_MODE=prod playwright test tests/graph/guardian-graph.spec.ts"
   },
   "dependencies": {

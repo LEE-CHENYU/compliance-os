@@ -173,6 +173,19 @@ export const graphEdges: GraphEdge[] = [
     expect: { testId: "dashboard-documents-view", pressed: true },
   },
   {
+    id: "dashboard.documents.delete-selected",
+    node: "dashboard",
+    route: "/dashboard",
+    selector: "[data-testid='dashboard-documents-delete-selected']",
+    risk: "mutating",
+    before: [
+      { selector: "[data-testid='dashboard-view-documents']" },
+      { selector: "[data-testid='dashboard-documents-select-visible']" },
+    ],
+    dialogAction: "accept",
+    expect: { hiddenTestId: "dashboard-documents-delete-selected" },
+  },
+  {
     id: "dashboard.switch-view.deadlines",
     node: "dashboard",
     route: "/dashboard",
@@ -186,7 +199,16 @@ export const graphEdges: GraphEdge[] = [
     route: "/dashboard",
     selector: "[data-testid='dashboard-view-profile']",
     risk: "safe",
-    expect: { testId: "dashboard-profile-view", pressed: true },
+    expect: { testId: "dashboard-profile-summary", text: /Guardian summary/i, pressed: true },
+  },
+  {
+    id: "dashboard.profile.open-form-filler",
+    node: "dashboard",
+    route: "/dashboard",
+    selector: "[data-testid='dashboard-profile-mode-form-filler']",
+    risk: "safe",
+    before: [{ selector: "[data-testid='dashboard-view-profile']" }],
+    expect: { testId: "dashboard-chat-messages", text: /Upload a fillable PDF/i },
   },
   {
     id: "dashboard.mobile.switch-view.documents",
@@ -318,7 +340,7 @@ export const graphEdges: GraphEdge[] = [
     route: "/dashboard",
     selector: "[data-testid='dashboard-openclaw-toggle']",
     risk: "safe",
-    expect: { testId: "dashboard-openclaw-popover", text: /OpenClaw/i },
+    expect: { testId: "dashboard-openclaw-popover", text: /Claude|guardian\.dxt/i },
   },
   {
     id: "dashboard.document-open.timeline-error",
@@ -346,7 +368,8 @@ export const graphEdges: GraphEdge[] = [
     selector: "[data-testid='dashboard-chat-submit']",
     risk: "mutating",
     before: [
-      { selector: "[data-testid='dashboard-chat-toggle']" },
+      { selector: "[data-testid='dashboard-view-profile']" },
+      { selector: "[data-testid='dashboard-profile-ask-guardian']" },
       { selector: "[data-testid='dashboard-chat-input']", action: "fill", value: "What should I do next?" },
     ],
     expect: { testId: "dashboard-chat-messages", text: /Graph assistant reply/i },
@@ -358,8 +381,8 @@ export const graphEdges: GraphEdge[] = [
     selector: "[data-testid='form-filler-submit']",
     risk: "mutating",
     before: [
-      { selector: "[data-testid='dashboard-chat-toggle']" },
-      { selector: "[data-testid='chat-mode-form-filler']" },
+      { selector: "[data-testid='dashboard-view-profile']" },
+      { selector: "[data-testid='dashboard-profile-mode-form-filler']" },
       { selector: "[data-testid='form-filler-file-input']", action: "setInputFiles", files: ["tests/fixtures/graph-document.pdf"] },
       { selector: "[data-testid='form-filler-instruction']", action: "fill", value: "Fill with graph data" },
     ],
@@ -372,8 +395,8 @@ export const graphEdges: GraphEdge[] = [
     selector: "[data-testid='form-preview-generate']",
     risk: "mutating",
     before: [
-      { selector: "[data-testid='dashboard-chat-toggle']" },
-      { selector: "[data-testid='chat-mode-form-filler']" },
+      { selector: "[data-testid='dashboard-view-profile']" },
+      { selector: "[data-testid='dashboard-profile-mode-form-filler']" },
       { selector: "[data-testid='form-filler-file-input']", action: "setInputFiles", files: ["tests/fixtures/graph-document.pdf"] },
       { selector: "[data-testid='form-filler-submit']" },
       { selector: "[data-testid='form-preview-card']", action: "waitForSelector" },
@@ -388,8 +411,8 @@ export const graphEdges: GraphEdge[] = [
     action: "none",
     risk: "safe",
     before: [
-      { selector: "[data-testid='dashboard-chat-toggle']" },
-      { selector: "[data-testid='chat-mode-form-filler']" },
+      { selector: "[data-testid='dashboard-view-profile']" },
+      { selector: "[data-testid='dashboard-profile-mode-form-filler']" },
       { selector: "[data-testid='form-filler-file-input']", action: "setInputFiles", files: ["tests/fixtures/synthetic/synthetic-brief.txt"] },
     ],
     expect: { testId: "form-filler-error", text: /Please upload a PDF file/i },
@@ -755,7 +778,7 @@ export const graphEdges: GraphEdge[] = [
       { selector: "[data-testid='find-lawyer-paid-email']", action: "fill", value: "graph@example.com" },
       { selector: "[data-testid='find-lawyer-paid-password']", action: "fill", value: "password123" },
     ],
-    expect: { urlPath: "/case/case-graph" },
+    expect: { testId: "find-lawyer-paid-saved", text: /linked to your Guardian account/i },
   },
   {
     id: "find-lawyer.paid.claim-login-error",
@@ -1511,6 +1534,7 @@ export const graphEdges: GraphEdge[] = [
     route: "/dashboard",
     selector: "[data-testid='dashboard-voice-toggle']",
     risk: "safe",
+    before: [{ selector: "[data-testid='dashboard-activity-tab-talk']" }],
     expect: { text: /Mock voice review started/i },
   },
   {
@@ -1621,7 +1645,8 @@ export const graphEdges: GraphEdge[] = [
     risk: "mutating",
     mockFailure: "dashboard-chat",
     before: [
-      { selector: "[data-testid='dashboard-chat-toggle']" },
+      { selector: "[data-testid='dashboard-view-profile']" },
+      { selector: "[data-testid='dashboard-profile-ask-guardian']" },
       { selector: "[data-testid='dashboard-chat-input']", action: "fill", value: "What should I do next?" },
     ],
     expect: { testId: "dashboard-chat-messages", text: /Graph forced dashboard chat failure/i, failedResponsePath: "/api/chat" },
@@ -1634,8 +1659,8 @@ export const graphEdges: GraphEdge[] = [
     risk: "mutating",
     mockFailure: "dashboard-form-fill-extract",
     before: [
-      { selector: "[data-testid='dashboard-chat-toggle']" },
-      { selector: "[data-testid='chat-mode-form-filler']" },
+      { selector: "[data-testid='dashboard-view-profile']" },
+      { selector: "[data-testid='dashboard-profile-mode-form-filler']" },
       { selector: "[data-testid='form-filler-file-input']", action: "setInputFiles", files: ["tests/fixtures/graph-document.pdf"] },
     ],
     expect: { testId: "dashboard-chat-messages", text: /Graph forced form-fill extract failure/i, failedResponsePath: "/api/form-fill/extract" },
@@ -1648,8 +1673,8 @@ export const graphEdges: GraphEdge[] = [
     risk: "mutating",
     mockFailure: "dashboard-form-fill-generate",
     before: [
-      { selector: "[data-testid='dashboard-chat-toggle']" },
-      { selector: "[data-testid='chat-mode-form-filler']" },
+      { selector: "[data-testid='dashboard-view-profile']" },
+      { selector: "[data-testid='dashboard-profile-mode-form-filler']" },
       { selector: "[data-testid='form-filler-file-input']", action: "setInputFiles", files: ["tests/fixtures/graph-document.pdf"] },
       { selector: "[data-testid='form-filler-submit']" },
       { selector: "[data-testid='form-preview-card']", action: "waitForSelector" },

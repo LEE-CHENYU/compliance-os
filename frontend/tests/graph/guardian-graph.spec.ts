@@ -183,6 +183,45 @@ const baseDashboardTimeline = {
   ],
 };
 
+const dashboardFacts = {
+  facts: [
+    {
+      id: "fact-visa-status",
+      fact_key: "current_immigration_status",
+      label: "Current immigration status",
+      category: "immigration",
+      track: "shared",
+      value: { v: "F-1" },
+      notes: null,
+      source_type: "document",
+      source_ref: { document_id: "doc-i20", field_name: "class_of_admission" },
+      locked_at: "2026-04-01T12:00:00Z",
+      is_active: true,
+      superseded_by_id: null,
+      detected_conflicts: [],
+      created_at: "2026-04-01T12:00:00Z",
+      updated_at: "2026-04-01T12:00:00Z",
+    },
+    {
+      id: "fact-tax-residency",
+      fact_key: "tax_residency_classification",
+      label: "Tax residency classification",
+      category: "tax",
+      track: "shared",
+      value: { v: "Nonresident alien" },
+      notes: null,
+      source_type: "decision_lock",
+      source_ref: { ui_path: "/dashboard/facts" },
+      locked_at: "2026-04-02T12:00:00Z",
+      is_active: true,
+      superseded_by_id: null,
+      detected_conflicts: [],
+      created_at: "2026-04-02T12:00:00Z",
+      updated_at: "2026-04-02T12:00:00Z",
+    },
+  ],
+};
+
 const recommendedDashboardTimeline = {
   ...baseDashboardTimeline,
   service_summary: {
@@ -1070,6 +1109,13 @@ async function installGraphMocks(page: Page, edge: GraphEdge) {
     next_deadline_days: 51,
   }))
   ));
+  await page.route("**/api/facts/summary", (route) => route.fulfill(jsonResponse({
+    summary: "Guardian summary: you appear to be in F-1 status with nonresident tax treatment and a Form 8843 deadline coming up.",
+    generated_by: "llm",
+  })));
+  await page.route("**/api/facts", (route) => route.fulfill(jsonResponse(dashboardFacts)));
+  await page.route("**/api/facts/*/resolve", (route) => route.fulfill(jsonResponse({ ok: true, facts: [] })));
+  await page.route("**/api/dashboard/documents/delete", (route) => route.fulfill(jsonResponse({ ok: true, deleted: ["doc-tax-return", "doc-i20"] })));
   await page.route("**/api/dashboard/documents", (route) => (
     shouldFail(edge, "dashboard-documents")
       ? route.fulfill(failureResponse("dashboard-documents"))
@@ -2380,7 +2426,8 @@ test.describe("Guardian synthetic new-user process", () => {
     await uploadByTestId(page, "dashboard-upload-file-input", "synthetic-i20.pdf");
     await expect(page.locator("body")).toContainText(/Dashboard updated|uploaded/i);
 
-    await clickByTestId(page, "dashboard-chat-toggle");
+    await clickByTestId(page, "dashboard-view-profile");
+    await clickByTestId(page, "dashboard-profile-ask-guardian");
     await fillByTestId(page, "dashboard-chat-input", "Use my synthetic documents to tell me the next compliance action.");
     await clickByTestId(page, "dashboard-chat-submit");
     await expect(page.getByTestId("dashboard-chat-messages")).toContainText(/Graph assistant reply/i);

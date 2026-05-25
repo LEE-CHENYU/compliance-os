@@ -121,6 +121,27 @@ interface UserFactRow {
   }>;
 }
 
+interface TimelineKeyFact {
+  label: string;
+  value: string;
+  category?: string;
+  source_document?: {
+    id: string;
+    filename: string;
+    doc_type: string;
+    uploaded_at?: string | null;
+  };
+}
+
+interface ProfileFact {
+  id: string;
+  label: string;
+  value: string;
+  category: DashboardCategoryKey;
+  sourceType: "sot" | "timeline";
+  conflicts: UserFactRow["detected_conflicts"];
+}
+
 interface ChatMessage {
   id: string;
   role: "assistant" | "user";
@@ -168,17 +189,7 @@ interface TimelineData {
   integrity_issues: IntegrityIssue[];
   assistant_prompts: AssistantPrompt[];
   upload_prompts: UploadPrompt[];
-  key_facts: {
-    label: string;
-    value: string;
-    category?: string;
-    source_document?: {
-      id: string;
-      filename: string;
-      doc_type: string;
-      uploaded_at?: string | null;
-    };
-  }[];
+  key_facts: TimelineKeyFact[];
   deadlines: { title: string; date: string; days: number; category: string; severity: string; action: string }[];
   service_summary?: DashboardServiceSummary;
 }
@@ -286,6 +297,9 @@ interface ProcessingIndicatorState {
 const API = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://127.0.0.1:8000/api/dashboard"
   : "/api/dashboard";
+const FACTS_API = typeof window !== "undefined" && window.location.hostname === "localhost"
+  ? "http://127.0.0.1:8000/api/facts"
+  : "/api/facts";
 const FORM_FILL_API = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://127.0.0.1:8000/api/form-fill"
   : "/api/form-fill";
@@ -367,12 +381,65 @@ type DashboardCategoryKey = typeof DASHBOARD_CATEGORY_KEYS[number];
 type DashboardRiskFilter = "needs_attention" | "potential_risks";
 
 function normalizeDashboardCategory(category?: string | null): DashboardCategoryKey {
+  if (category === "corporate") return "business";
   if (category === "entity") return "business";
   if (category === "work_auth") return "employment";
   if (DASHBOARD_CATEGORY_KEYS.includes(category as DashboardCategoryKey)) {
     return category as DashboardCategoryKey;
   }
   return "other";
+}
+
+function formatFactValue(raw: unknown): string {
+  if (raw === null || raw === undefined) return "Unknown";
+  if (Array.isArray(raw)) {
+    return raw.map((item) => formatFactValue(item)).filter((item) => item !== "Unknown").join(", ");
+  }
+  if (typeof raw === "object") {
+    if ("v" in (raw as Record<string, unknown>)) {
+      return formatFactValue((raw as { v: unknown }).v);
+    }
+    return Object.entries(raw as Record<string, unknown>)
+      .map(([key, value]) => `${key}: ${formatFactValue(value)}`)
+      .join("; ");
+  }
+  return String(raw);
+}
+
+function buildProfileFallbackSummary({
+  profileFacts,
+  timeline,
+  stats,
+  documents,
+}: {
+  profileFacts: ProfileFact[];
+  timeline: TimelineData | null;
+  stats: Stats | null;
+  documents: DashboardDocument[];
+}): string {
+  const headlineFacts = profileFacts
+    .slice(0, 5)
+    .map((fact) => `${fact.label}: ${fact.value}`)
+    .join("; ");
+  const nextDeadline = (timeline?.deadlines || [])
+    .slice()
+    .sort((a, b) => a.days - b.days)[0];
+  const openQuestions = profileFacts.reduce((count, fact) => count + fact.conflicts.length, 0)
+    + (timeline?.integrity_issues?.length || 0);
+  const parts = [
+    headlineFacts
+      ? `Guardian's current read: ${headlineFacts}.`
+      : `Guardian has ${documents.length} document${documents.length === 1 ? "" : "s"} on file, but not enough extracted facts to summarize the profile yet.`,
+  ];
+  if (nextDeadline) {
+    parts.push(`The next timing item is ${nextDeadline.title} on ${nextDeadline.date}.`);
+  } else if (stats?.next_deadline_days !== null && stats?.next_deadline_days !== undefined) {
+    parts.push(`The next deadline is in ${stats.next_deadline_days} days.`);
+  }
+  if (openQuestions > 0) {
+    parts.push(`There ${openQuestions === 1 ? "is" : "are"} ${openQuestions} open profile question${openQuestions === 1 ? "" : "s"} to settle.`);
+  }
+  return parts.join(" ");
 }
 
 function clampProgress(progress: number): number {
@@ -705,6 +772,9 @@ export default function DashboardPage() {
   const [connectModalDismissed, setConnectModalDismissed] = useState(false);
   const [activityTab, setActivityTab] = useState<"cases" | "searches" | "talk">("searches");
   const [userFacts, setUserFacts] = useState<UserFactRow[] | null>(null);
+  const [profileSummary, setProfileSummary] = useState<{ summary: string; generated_by: string } | null>(null);
+  const [profileSummaryLoading, setProfileSummaryLoading] = useState(false);
+  const [profileSummaryError, setProfileSummaryError] = useState<string | null>(null);
   const [resolvingFactId, setResolvingFactId] = useState<string | null>(null);
   const [openClawToken, setOpenClawToken] = useState<string | null>(null);
   const [openClawLoading, setOpenClawLoading] = useState(false);
@@ -724,9 +794,6 @@ export default function DashboardPage() {
   const guardianMessages = chatMessages.filter((message) => message.mode !== "form-filler");
   const formFillerMessages = chatMessages.filter((message) => message.mode === "form-filler");
   const visibleChatMessages = chatMode === "guardian" ? guardianMessages : formFillerMessages;
-  const hasGuardianQuestion = guardianMessages.some(
-    (message) => message.role === "assistant" && Boolean(message.chips?.length),
-  );
   const voiceReady = Boolean(VAPI_PUBLIC_KEY);
   const voiceBusy = voiceCallState === "connecting";
   const voiceActive = voiceCallState === "active";
@@ -769,6 +836,57 @@ export default function DashboardPage() {
     }
     return timeline?.advisories ?? [];
   }, [selectedCategory, selectedRiskFilter, timeline?.advisories]);
+  const profileFacts = useMemo<ProfileFact[]>(() => {
+    const byKey = new Map<string, ProfileFact>();
+    for (const fact of userFacts || []) {
+      const value = formatFactValue(fact.value?.v);
+      if (!value || value === "Unknown") continue;
+      byKey.set(fact.fact_key, {
+        id: fact.id,
+        label: fact.label,
+        value,
+        category: normalizeDashboardCategory(fact.category),
+        sourceType: "sot",
+        conflicts: fact.detected_conflicts || [],
+      });
+    }
+    for (const fact of timeline?.key_facts || []) {
+      const key = `${fact.category || "legacy"}:${fact.label}`;
+      if (Array.from(byKey.values()).some((item) => item.label === fact.label)) {
+        continue;
+      }
+      byKey.set(key, {
+        id: key,
+        label: fact.label,
+        value: fact.value,
+        category: normalizeDashboardCategory(fact.category || "immigration"),
+        sourceType: "timeline",
+        conflicts: [],
+      });
+    }
+    const categoryRank: Record<DashboardCategoryKey, number> = {
+      immigration: 0,
+      student_status: 1,
+      employment: 2,
+      tax: 3,
+      business: 4,
+      personal: 5,
+      other: 6,
+    };
+    return Array.from(byKey.values()).sort((a, b) => (
+      categoryRank[a.category] - categoryRank[b.category]
+      || a.label.localeCompare(b.label)
+    ));
+  }, [timeline?.key_facts, userFacts]);
+  const profileHighlights = useMemo(() => profileFacts.slice(0, 8), [profileFacts]);
+  const profileOpenQuestion = useMemo(
+    () => guardianMessages.find((message) => message.role === "assistant" && Boolean(message.chips?.length)),
+    [guardianMessages],
+  );
+  const localProfileSummary = useMemo(
+    () => buildProfileFallbackSummary({ profileFacts, timeline, stats, documents }),
+    [documents, profileFacts, stats, timeline],
+  );
   const activeFilterLabel = selectedRiskFilter === "needs_attention"
     ? "Needs attention"
     : selectedRiskFilter === "potential_risks"
@@ -785,6 +903,11 @@ export default function DashboardPage() {
   const clearDashboardFilters = useCallback(() => {
     setSelectedCategory(null);
     setSelectedRiskFilter(null);
+  }, []);
+
+  const openAssistantPanel = useCallback((mode: ChatMode) => {
+    setChatMode(mode);
+    setChatOpen(true);
   }, []);
 
   const activateCategoryFilter = useCallback((category: DashboardCategoryKey) => {
@@ -874,11 +997,13 @@ export default function DashboardPage() {
       setTimeline(tl);
       setStats(st);
       setDocuments(docs);
+      setProfileSummary(null);
+      setProfileSummaryError(null);
       setLoading(false);
       // Fire-and-forget: user_facts are independent of the rest of
       // the dashboard load. A 404 here just means the v1.0.5+ table
       // hasn't been deployed yet — we silently degrade.
-      fetch(`${API}/facts`, { headers: authHeaders() })
+      fetch(FACTS_API, { headers: authHeaders() })
         .then((r) => (r.ok ? r.json() : { facts: [] }))
         .then((data) => setUserFacts(Array.isArray(data?.facts) ? data.facts : []))
         .catch(() => setUserFacts([]));
@@ -892,18 +1017,20 @@ export default function DashboardPage() {
     async (factId: string, choice: "use_new" | "keep_current") => {
       setResolvingFactId(factId);
       try {
-        const resp = await fetch(`${API}/facts/${factId}/resolve`, {
+        const resp = await fetch(`${FACTS_API}/${factId}/resolve`, {
           method: "POST",
           headers: { "Content-Type": "application/json", ...authHeaders() },
           body: JSON.stringify({ choice }),
         });
         if (!resp.ok) throw new Error(`Resolve failed (${resp.status})`);
         // Refresh facts in place — simpler than splicing.
-        const refresh = await fetch(`${API}/facts`, { headers: authHeaders() });
+        const refresh = await fetch(FACTS_API, { headers: authHeaders() });
         if (refresh.ok) {
           const data = await refresh.json();
           setUserFacts(Array.isArray(data?.facts) ? data.facts : []);
         }
+        setProfileSummary(null);
+        setProfileSummaryError(null);
       } catch {
         // Surface nothing for now — keep retry UX cheap.
       } finally {
@@ -1131,6 +1258,42 @@ export default function DashboardPage() {
   useEffect(() => {
     guardianMessagesRef.current = guardianMessages;
   }, [guardianMessages]);
+
+  useEffect(() => {
+    if (view !== "profile" || profileSummary || profileSummaryLoading) {
+      return;
+    }
+    let cancelled = false;
+    setProfileSummaryLoading(true);
+    setProfileSummaryError(null);
+    fetch(`${FACTS_API}/summary`, { headers: authHeaders() })
+      .then(async (response) => {
+        const body = await response.json().catch(() => null);
+        if (!response.ok) {
+          throw new Error(body?.detail || "Could not summarize facts");
+        }
+        if (!cancelled) {
+          setProfileSummary({
+            summary: String(body?.summary || localProfileSummary),
+            generated_by: String(body?.generated_by || "local"),
+          });
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setProfileSummaryError(error instanceof Error ? error.message : "Could not summarize facts");
+          setProfileSummary({ summary: localProfileSummary, generated_by: "local" });
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setProfileSummaryLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [localProfileSummary, profileSummary, profileSummaryLoading, view]);
 
   function resetUploadState() {
     setPreparedUploads([]);
@@ -2740,173 +2903,162 @@ export default function DashboardPage() {
           {/* Key Facts View */}
           {view === "profile" && (
             <div data-testid="dashboard-profile-view">
-              <h2 className="text-lg font-bold text-[#0d1424] mb-6">Key Facts</h2>
+              <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7b8ba5]">Guardian profile</div>
+                  <h2 className="mt-2 text-[22px] font-bold leading-tight text-[#0d1424]">Current state</h2>
+                  <p className="mt-2 max-w-2xl text-[13px] leading-6 text-[#556480]">
+                    A readable briefing for you, with the structured facts kept as machine context underneath.
+                  </p>
+                </div>
+                <div data-testid="dashboard-profile-mode-toggle" className="inline-flex self-start rounded-2xl border border-white/70 bg-white/60 p-1 shadow-[0_6px_20px_rgba(91,141,238,0.06)]">
+                  {([
+                    ["guardian", "Guardian"],
+                    ["form-filler", "Form Filler"],
+                  ] as const).map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      data-testid={`dashboard-profile-mode-${mode}`}
+                      aria-pressed={chatMode === mode && chatOpen}
+                      onClick={() => openAssistantPanel(mode)}
+                      className={`rounded-xl px-3.5 py-2 text-[12px] font-semibold transition-colors ${
+                        chatMode === mode && chatOpen
+                          ? "bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] text-white"
+                          : "text-[#556480] hover:bg-white/70"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-              {/* User-facts SoT — surfaced above the legacy timeline-
-                  derived Key Facts so the user sees the authoritative,
-                  versioned values first. Each row shows the source
-                  document; conflicts get a banner with use-new / keep
-                  buttons. See docs/architecture/context-management.md. */}
-              {userFacts !== null && userFacts.length > 0 && (() => {
-                const SOT_CAT_LABELS: Record<string, string> = {
-                  immigration: "Immigration",
-                  tax: "Tax",
-                  corporate: "Business",
-                  personal: "Personal",
-                  employment: "Employment",
-                  education: "Education",
-                };
-                const SOT_CAT_ORDER = ["immigration", "tax", "corporate", "employment", "personal", "education"];
-                const sotGrouped: Record<string, UserFactRow[]> = {};
-                for (const f of userFacts) {
-                  const cat = f.category || "personal";
-                  if (!sotGrouped[cat]) sotGrouped[cat] = [];
-                  sotGrouped[cat].push(f);
-                }
-                const renderValue = (raw: unknown): string => {
-                  if (raw === null || raw === undefined) return "—";
-                  if (typeof raw === "object") return JSON.stringify(raw);
-                  return String(raw);
-                };
-                return (
-                  <div className="mb-8 rounded-2xl border border-blue-100/40 bg-gradient-to-br from-white via-[#f5faff] to-[#eef4fd] p-5 shadow-[0_8px_28px_rgba(91,141,238,0.08)]">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#5b8dee]">Source of truth</div>
-                        <div className="text-[14px] font-bold text-[#0d1424]">Your locked facts ({userFacts.length})</div>
-                      </div>
-                      <div className="text-[11px] text-[#7b8ba5]">
-                        Survives document supersession · linked to source
-                      </div>
+              <section data-testid="dashboard-profile-summary" className="mb-5 rounded-[24px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.82),rgba(239,246,255,0.94))] p-5 shadow-[0_10px_30px_rgba(91,141,238,0.08)]">
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#5b8dee]">
+                      {profileSummary?.generated_by === "llm" ? "LLM summary" : "Guardian summary"}
                     </div>
-                    {SOT_CAT_ORDER.map((cat) => {
-                      const facts = sotGrouped[cat];
-                      if (!facts || facts.length === 0) return null;
+                    {profileSummaryLoading ? (
+                      <div className="mt-4 flex gap-1.5">
+                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "300ms" }} />
+                      </div>
+                    ) : (
+                      <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#0d1424]">
+                        {profileSummary?.summary || localProfileSummary}
+                      </p>
+                    )}
+                    {profileSummaryError && (
+                      <p className="mt-3 text-[11px] text-[#7b8ba5]">Using the local summary while Guardian is unavailable.</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    data-testid="dashboard-profile-ask-guardian"
+                    onClick={() => openAssistantPanel("guardian")}
+                    className="shrink-0 rounded-xl border border-blue-100/40 bg-white/75 px-3.5 py-2 text-[12px] font-semibold text-[#3a5a8c] hover:bg-white"
+                  >
+                    Ask Guardian
+                  </button>
+                </div>
+              </section>
+
+              {profileOpenQuestion && (
+                <section data-testid="dashboard-profile-question-card" className="mb-5 rounded-[24px] border border-white/60 bg-white/55 p-5 shadow-[0_8px_24px_rgba(91,141,238,0.06)]">
+                  <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#5b8dee]">Question to settle the profile</div>
+                  <p className="mt-2 text-[14px] leading-6 text-[#0d1424]">{profileOpenQuestion.text}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {profileOpenQuestion.chips?.map((chip) => (
+                      <button
+                        key={`${profileOpenQuestion.id}-${chip.label}`}
+                        type="button"
+                        onClick={() => void handleChatChip(chip)}
+                        className="rounded-xl border border-blue-100/60 bg-white/80 px-3.5 py-2 text-[12px] font-semibold text-[#3a5a8c] hover:bg-white"
+                      >
+                        {chip.label}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {profileHighlights.length > 0 ? (
+                <section className="mb-5">
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {profileHighlights.map((fact) => {
+                      const colors = categoryPalette[fact.category] || categoryPalette.other;
                       return (
-                        <div key={cat} className="mt-4 first:mt-0">
-                          <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">{SOT_CAT_LABELS[cat] || cat}</div>
-                          <div className="bg-white/65 backdrop-blur rounded-xl border border-white/60 overflow-hidden">
-                            {facts.map((f, i) => {
-                              const hasConflicts = (f.detected_conflicts || []).length > 0;
-                              return (
-                                <div key={f.id} className={`px-4 py-3 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
-                                  <div className="flex justify-between items-start gap-3">
-                                    <div className="text-[13px] text-[#556480] pt-0.5">{f.label}</div>
-                                    <div className="flex flex-col items-end max-w-[60%] gap-0.5">
-                                      <span className="text-[13px] font-semibold text-[#0d1424] text-right truncate w-full">
-                                        {renderValue(f.value?.v)}
-                                      </span>
-                                      {f.source_type === "decision_lock" ? (
-                                        <span className="text-[10.5px] text-[#5b8dee] font-medium">user-locked</span>
-                                      ) : f.source_ref?.document_id ? (
-                                        <span className="text-[10.5px] text-[#8e9ab5] truncate w-full text-right" title={`Source document: ${f.source_ref.document_id}`}>
-                                          from document
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  </div>
-                                  {hasConflicts && (
-                                    <div className="mt-3 rounded-lg border border-amber-200/60 bg-amber-50/70 px-3 py-2">
-                                      <div className="text-[11px] text-amber-900 mb-1.5">
-                                        A newer document claims a different value:{" "}
-                                        <code className="bg-white/80 px-1 py-0.5 rounded">{renderValue((f.detected_conflicts[0] as { claimed_value: { v: unknown } }).claimed_value?.v)}</code>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <button
-                                          type="button"
-                                          data-testid={`fact-conflict-use-new-${f.id}`}
-                                          disabled={resolvingFactId === f.id}
-                                          onClick={() => void resolveFactConflict(f.id, "use_new")}
-                                          className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold bg-[#5b8dee] text-white disabled:opacity-50"
-                                        >
-                                          Use new value
-                                        </button>
-                                        <button
-                                          type="button"
-                                          data-testid={`fact-conflict-keep-${f.id}`}
-                                          disabled={resolvingFactId === f.id}
-                                          onClick={() => void resolveFactConflict(f.id, "keep_current")}
-                                          className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold border border-amber-200/70 text-amber-900 bg-white/70 disabled:opacity-50"
-                                        >
-                                          Keep current
-                                        </button>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            })}
+                        <div key={fact.id} className="rounded-2xl border border-white/60 bg-white/55 px-4 py-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <div className="text-[12px] font-semibold text-[#556480]">{fact.label}</div>
+                              <div className="mt-1 break-words text-[14px] font-bold leading-6 text-[#0d1424]">{fact.value}</div>
+                            </div>
+                            <span
+                              className="shrink-0 rounded-lg px-2 py-1 text-[10px] font-semibold capitalize"
+                              style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}
+                            >
+                              {colors.label}
+                            </span>
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                );
-              })()}
-
-              {(() => {
-                const CAT_LABELS: Record<string, string> = {
-                  student_status: "Student Status",
-                  immigration: "Immigration",
-                  employment: "Employment",
-                  tax: "Tax",
-                  entity: "Business",
-                };
-                const CAT_ORDER = ["student_status", "immigration", "employment", "tax", "entity"];
-                const grouped: Record<string, { label: string; value: string }[]> = {};
-
-                type KeyFact = {
-                  label: string;
-                  value: string;
-                  category?: string;
-                  source_document?: {
-                    id: string;
-                    filename: string;
-                    doc_type: string;
-                    uploaded_at?: string | null;
-                  };
-                };
-
-                for (const fact of (timeline?.key_facts || []) as KeyFact[]) {
-                  const cat = fact.category || "immigration";
-                  if (!grouped[cat]) grouped[cat] = [];
-                  grouped[cat].push(fact);
-                }
-
-                return CAT_ORDER.map((cat) => {
-                  const facts = grouped[cat] as KeyFact[] | undefined;
-                  if (!facts || facts.length === 0) return null;
-                  return (
-                    <div key={cat} className="mb-5">
-                      <div className="text-[11px] font-semibold text-[#7b8ba5] uppercase tracking-widest mb-2">{CAT_LABELS[cat] || cat}</div>
-                      <div className="bg-white/45 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden">
-                        {facts.map((fact, i) => (
-                          <div key={`${fact.label}-${i}`} className={`flex justify-between items-start px-5 py-3.5 ${i > 0 ? "border-t border-blue-50/40" : ""}`}>
-                            <span className="text-[13px] text-[#556480] pt-0.5">{fact.label}</span>
-                            <div className="flex flex-col items-end max-w-[60%] gap-0.5">
-                              <span className="text-[13px] font-semibold text-[#0d1424] text-right truncate w-full">{fact.value}</span>
-                              {fact.source_document?.filename && (
-                                <span
-                                  className="text-[10.5px] text-[#8e9ab5] truncate w-full text-right"
-                                  title={`Extracted from ${fact.source_document.filename}${fact.source_document.uploaded_at ? ` (uploaded ${fact.source_document.uploaded_at.slice(0, 10)})` : ""}`}
-                                >
-                                  from {fact.source_document.filename}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                });
-              })()}
-
-              {(!timeline?.key_facts || timeline.key_facts.length === 0) && (
-                <div className="text-center py-12">
-                  <div className="text-[#8e9ab5] text-sm mb-3">No facts extracted yet</div>
-                  <div className="text-[12px] text-[#7b8ba5]">Run a check or upload documents to populate your key facts</div>
+                </section>
+              ) : (
+                <div className="rounded-[24px] border border-white/60 bg-white/55 px-5 py-10 text-center">
+                  <div className="text-[14px] font-semibold text-[#0d1424]">No facts extracted yet</div>
+                  <div className="mt-2 text-[12px] text-[#7b8ba5]">Upload documents or answer Guardian&apos;s questions to build the profile.</div>
                 </div>
+              )}
+
+              {profileFacts.filter((fact) => fact.conflicts.length > 0).map((fact) => (
+                <section key={`conflict-${fact.id}`} className="mb-5 rounded-[24px] border border-amber-200/70 bg-white/75 p-5">
+                  <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-amber-700">Needs decision</div>
+                  <p className="mt-2 text-[13px] leading-6 text-[#556480]">
+                    {fact.label} is currently <strong className="font-semibold text-[#0d1424]">{fact.value}</strong>, but a document claims{" "}
+                    <code className="rounded-md bg-amber-50 px-1.5 py-0.5 text-amber-900">{formatFactValue(fact.conflicts[0]?.claimed_value)}</code>.
+                  </p>
+                  {fact.sourceType === "sot" && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        data-testid={`fact-conflict-use-new-${fact.id}`}
+                        disabled={resolvingFactId === fact.id}
+                        onClick={() => void resolveFactConflict(fact.id, "use_new")}
+                        className="rounded-xl bg-[#5b8dee] px-3.5 py-2 text-[12px] font-semibold text-white disabled:opacity-50"
+                      >
+                        Use new value
+                      </button>
+                      <button
+                        type="button"
+                        data-testid={`fact-conflict-keep-${fact.id}`}
+                        disabled={resolvingFactId === fact.id}
+                        onClick={() => void resolveFactConflict(fact.id, "keep_current")}
+                        className="rounded-xl border border-amber-200/80 bg-white/80 px-3.5 py-2 text-[12px] font-semibold text-amber-900 disabled:opacity-50"
+                      >
+                        Keep current
+                      </button>
+                    </div>
+                  )}
+                </section>
+              ))}
+
+              {profileFacts.length > 0 && (
+                <details data-testid="dashboard-profile-structured-facts" className="rounded-2xl border border-white/60 bg-white/45 px-4 py-3">
+                  <summary className="cursor-pointer text-[12px] font-semibold text-[#3a5a8c]">Structured context ({profileFacts.length})</summary>
+                  <div className="mt-3 grid gap-2 text-[12px] text-[#556480] md:grid-cols-2">
+                    {profileFacts.map((fact) => (
+                      <div key={`structured-${fact.id}`} className="rounded-xl bg-white/55 px-3 py-2">
+                        <span className="font-semibold text-[#0d1424]">{fact.label}:</span> {fact.value}
+                      </div>
+                    ))}
+                  </div>
+                </details>
               )}
             </div>
           )}
@@ -3411,30 +3563,6 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Chat toggle button — fixed bottom-right when panel is closed */}
-      {!chatOpen && (
-        <button
-          onClick={() => setChatOpen(true)}
-          data-testid="dashboard-chat-toggle"
-          className="fixed bottom-5 right-5 z-40 flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(91,141,238,0.1)] hover:shadow-[0_8px_32px_rgba(91,141,238,0.15)] transition-all hover:-translate-y-0.5 group"
-        >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#5b8dee] to-[#4a74d4] flex items-center justify-center flex-shrink-0 p-1.5">
-            <div className="flex flex-col gap-[2px] w-full">
-              <div className="h-[3px] rounded-sm bg-white" style={{width:'100%',transform:'translateX(1px)'}} />
-              <div className="h-[3px] rounded-sm bg-white" style={{width:'100%',transform:'translateX(-0.5px)'}} />
-              <div className="h-[3px] rounded-sm bg-white" style={{width:'100%',transform:'translateX(1.5px)'}} />
-            </div>
-          </div>
-          <span className="text-[12px] font-medium text-[#3a5a8c] hidden md:inline">
-            {chatMode === "guardian"
-              ? (hasGuardianQuestion ? "We have a question for you" : "Guardian Assistant")
-              : "Form Filler"}
-          </span>
-          {chatMode === "guardian" && hasGuardianQuestion && (
-            <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
-          )}
-        </button>
-      )}
       <ExtractionPaywallModal
         open={paywallDetail !== null}
         detail={paywallDetail}

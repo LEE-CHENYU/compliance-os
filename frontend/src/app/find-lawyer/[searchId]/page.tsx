@@ -6,8 +6,10 @@ import {
   createEngagement,
   downloadProfessionalSearchUrl,
   Engagement,
+  getMarketplaceMatch,
   getProfessionalSearch,
   listCaseEngagements,
+  type MarketplaceMatch,
   startCheckout,
   type ProfessionalSearch,
 } from "@/lib/api";
@@ -494,6 +496,7 @@ export default function SearchStatus() {
   const [engagements, setEngagements] = useState<Engagement[]>([]);
   const [tracking, setTracking] = useState<string | null>(null);
   const [batchTracking, setBatchTracking] = useState(false);
+  const [marketplaceMatches, setMarketplaceMatches] = useState<MarketplaceMatch[]>([]);
   const stopped = useRef(false);
   const viewedRef = useRef(false);
   const completedSeenRef = useRef(false);
@@ -636,6 +639,27 @@ export default function SearchStatus() {
     }
   }, [tailHiddenCount, row, lang]);
 
+  const rowId = row?.id ?? null;
+  const rowStatus = row?.status ?? null;
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!rowId || rowStatus !== "complete") {
+      setMarketplaceMatches([]);
+      return;
+    }
+    getMarketplaceMatch(rowId)
+      .then((matches) => {
+        if (!cancelled) setMarketplaceMatches(matches);
+      })
+      .catch(() => {
+        if (!cancelled) setMarketplaceMatches([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [rowId, rowStatus]);
+
   const bgClass =
     "min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(91,141,238,0.18),_transparent_32%),linear-gradient(180deg,#edf3f9_0%,#e6eef6_42%,#f4f7fb_100%)] px-6 py-10";
 
@@ -748,6 +772,9 @@ export default function SearchStatus() {
                   ? "本次搜索未能完成。请重试,或在面板中联系 Guardian 支持。"
                   : "This search did not complete. Please retry or contact Guardian support from your dashboard."}
               </div>
+              <div className="mt-2 text-[12px] leading-5">
+                {row.error}
+              </div>
             </div>
           )}
           {error ? (
@@ -756,6 +783,38 @@ export default function SearchStatus() {
             </div>
           ) : null}
         </header>
+
+        {marketplaceMatches.length > 0 && (
+          <section className="rounded-[32px] border border-white/70 bg-white/72 p-6 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7b8ba5]">
+              {isZh ? "下一步服务" : "Next step services"}
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {marketplaceMatches.slice(0, 4).map((match) => {
+                const href = match.path || `/services/${match.sku}`;
+                return (
+                  <button
+                    key={match.sku}
+                    type="button"
+                    onClick={() => router.push(href)}
+                    data-testid={`find-lawyer-marketplace-${safeName(match.sku).toLowerCase()}`}
+                    className="rounded-2xl border border-[#dbe5f2] bg-white/82 p-4 text-left shadow-[0_10px_30px_rgba(61,84,128,0.05)] transition hover:border-[#5b8dee] hover:shadow-[0_14px_34px_rgba(91,141,238,0.12)]"
+                  >
+                    <div className="text-[14px] font-semibold text-[#0d1424]">
+                      {match.public_name || match.name}
+                    </div>
+                    <p className="mt-1 text-[12px] leading-5 text-[#556480]">
+                      {match.match_reason || match.public_headline || match.headline || match.public_description || match.description}
+                    </p>
+                    <div className="mt-3 text-[11px] font-semibold text-[#5b8dee]">
+                      {match.public_cta_label || match.cta_label || (isZh ? "查看服务" : "Open service")}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         <section className="rounded-[32px] border border-white/70 bg-white/72 p-8 shadow-[0_24px_70px_rgba(56,85,131,0.08)] backdrop-blur">
           <div className="mb-5 flex items-baseline justify-between">

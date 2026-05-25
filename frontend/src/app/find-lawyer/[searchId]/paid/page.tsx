@@ -657,7 +657,7 @@ function PaidPage() {
         )}
 
         {claimed && (
-          <section className="rounded-[32px] border border-[#cfe8d5] bg-[#eaf6ec]/80 p-6 backdrop-blur">
+          <section data-testid="find-lawyer-paid-saved" className="rounded-[32px] border border-[#cfe8d5] bg-[#eaf6ec]/80 p-6 backdrop-blur">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <div className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#2f7a45]">

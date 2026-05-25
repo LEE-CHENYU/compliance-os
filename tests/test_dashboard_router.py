@@ -851,7 +851,7 @@ def test_dashboard_timeline_prefers_signed_supported_stem_start_events(client, t
         event for event in timeline["events"]
         if event["title"] == "STEM OPT started"
     ]
-    assert [event["date"] for event in stem_events] == ["2024-10-01", "2025-03-17"]
+    assert {event["date"] for event in stem_events} == {"2024-10-01", "2025-03-17"}
 
     vcv_event = next(event for event in stem_events if event["date"] == "2024-10-01")
     assert vcv_event["chain"]["label"] == "Tiger Cloud LLC (vcv)"

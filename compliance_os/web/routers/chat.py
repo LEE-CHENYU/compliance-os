@@ -16,6 +16,7 @@ from compliance_os.web.services.query_helpers import light_user_checks_query
 from compliance_os.web.services.retrieval import build_check_retrieval_context, retrieve_documents_for_query
 from compliance_os.web.services.subject_chains import list_user_subject_chains, serialize_subject_chain
 from compliance_os.web.services.timeline_builder import build_timeline, canonical_documents_for_checks
+from compliance_os.web.services.user_facts import get_active_facts
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
@@ -40,6 +41,19 @@ def _newest_extracted_fields(check, doc_types: tuple[str, ...]) -> dict[str, str
     if best is None:
         return {}
     return {f.field_name: f.field_value for f in best.extracted_fields}
+
+
+def _fact_value(value) -> str:
+    if isinstance(value, dict) and "v" in value:
+        return _fact_value(value.get("v"))
+    if value is None:
+        return ""
+    if isinstance(value, (list, tuple)):
+        return ", ".join(_fact_value(item) for item in value if _fact_value(item))
+    if isinstance(value, dict):
+        parts = [f"{key}: {_fact_value(item)}" for key, item in value.items() if _fact_value(item)]
+        return "; ".join(parts)
+    return str(value)
 
 
 class ChatRequest(BaseModel):
@@ -85,6 +99,18 @@ def _build_context(user_id: str, db: Session, query: str | None = None) -> tuple
     parts = ["# User's Compliance Profile\n"]
 
     # Key facts
+    user_facts = get_active_facts(db, user_id=user_id)
+    if user_facts:
+        parts.append("## User Facts Source Of Truth")
+        for fact in user_facts:
+            conflicts = fact.detected_conflicts or []
+            conflict_suffix = f" ({len(conflicts)} unresolved conflict{'s' if len(conflicts) != 1 else ''})" if conflicts else ""
+            parts.append(
+                f"- {fact.label}: {_fact_value(fact.value)} "
+                f"[category={fact.category or 'unknown'}, source={fact.source_type}]{conflict_suffix}"
+            )
+        parts.append("")
+
     if timeline.get("key_facts"):
         parts.append("## Key Facts")
         for fact in timeline["key_facts"]:

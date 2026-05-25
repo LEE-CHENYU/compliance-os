@@ -696,7 +696,7 @@ def _project_to_user_facts(
         )
         .one_or_none()
     )
-    if existing is None or existing.value.get("v") == value:
+    if existing is None:
         upsert_fact(
             db, user_id=user_id, fact_key=fact_key, value=value,
             source_type="document", source_ref=source_ref,
@@ -704,9 +704,17 @@ def _project_to_user_facts(
         return
 
     if existing.source_type == "decision_lock":
-        record_conflict(
-            db, user_id=user_id, fact_key=fact_key,
-            claimed_value=value, source_ref=source_ref,
+        if existing.value.get("v") != value:
+            record_conflict(
+                db, user_id=user_id, fact_key=fact_key,
+                claimed_value=value, source_ref=source_ref,
+            )
+        return
+
+    if existing.value.get("v") == value:
+        upsert_fact(
+            db, user_id=user_id, fact_key=fact_key, value=value,
+            source_type="document", source_ref=source_ref,
         )
         return
 

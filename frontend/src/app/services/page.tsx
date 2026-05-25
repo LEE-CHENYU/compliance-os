@@ -47,7 +47,7 @@ function ProductCard({ product }: { product: MarketplaceProduct }) {
       </ul>
 
       <div className="mt-8">
-        <Link
+        <a
           href={href}
           data-testid={`services-product-${product.sku}`}
           data-graph-edge={`open-service:${product.sku}`}
@@ -58,7 +58,7 @@ function ProductCard({ product }: { product: MarketplaceProduct }) {
           }`}
         >
           {ctaLabel}
-        </Link>
+        </a>
       </div>
     </article>
   );

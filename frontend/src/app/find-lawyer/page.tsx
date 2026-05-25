@@ -161,7 +161,7 @@ function FindLawyer() {
         files,
         case_id: caseId,
       });
-      router.replace(`/find-lawyer/${row.id}`);
+      window.location.replace(`/find-lawyer/${row.id}`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       trackProfessionalSearchEvent("professional_search_submission_failed", {
