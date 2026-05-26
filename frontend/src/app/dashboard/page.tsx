@@ -2922,7 +2922,7 @@ export default function DashboardPage() {
                   <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7b8ba5]">Guardian profile</div>
                   <h2 className="mt-2 text-[22px] font-bold leading-tight text-[#0d1424]">Current state</h2>
                   <p className="mt-2 max-w-2xl text-[13px] leading-6 text-[#556480]">
-                    A readable briefing for you, with the structured facts kept as machine context underneath.
+                    A plain-English snapshot of your visa, work, and tax status today — and what&rsquo;s next.
                   </p>
                 </div>
                 <div data-testid="dashboard-profile-mode-toggle" className="inline-flex self-start rounded-2xl border border-white/70 bg-white/60 p-1 shadow-[0_6px_20px_rgba(91,141,238,0.06)]">
