@@ -82,31 +82,97 @@ def _fact_value(value: Any) -> str:
 
 
 def _fallback_summary(facts: list, timeline: dict) -> str:
-    fact_lines = [
-        f"{row.label}: {_fact_value(row.value)}"
-        for row in facts
-        if _fact_value(row.value)
-    ][:6]
-    conflicts = sum(len(row.detected_conflicts or []) for row in facts)
-    deadlines = sorted(timeline.get("deadlines") or [], key=lambda item: item.get("days", 999))[:2]
-    issues = (timeline.get("integrity_issues") or [])[:2]
+    """Brief-report style summary for when the LLM call isn't available.
 
-    parts = []
-    if fact_lines:
-        parts.append("Guardian sees these current facts: " + "; ".join(fact_lines) + ".")
-    else:
-        parts.append("Guardian does not have enough locked facts yet; upload documents or answer the next question to build the profile.")
-    if deadlines:
-        deadline_text = "; ".join(
-            f"{item.get('title')} on {item.get('date')} ({item.get('days')} days)"
-            for item in deadlines
+    Reads like a one-paragraph status briefing — current immigration
+    status + employer + the single most-urgent deadline + any open
+    decision. Avoids dumping the whole fact table; the SoT panel in
+    the UI already shows that.
+    """
+    if not facts and not timeline.get("deadlines") and not timeline.get("integrity_issues"):
+        return (
+            "Not enough information yet to brief you on your compliance "
+            "state. Upload a document or answer Guardian's next question "
+            "to get started."
         )
-        parts.append(f"Next timing item: {deadline_text}.")
+
+    by_key = {row.fact_key: _fact_value(row.value).rstrip(".") for row in facts}
+
+    # Headline: current status + how long it's good for.
+    headline: str | None = None
+    status = by_key.get("current_immigration_status")
+    end_date = (
+        by_key.get("current_status_end_date")
+        or by_key.get("h1b_classification_end_date")
+        or by_key.get("stem_opt_end_date")
+        or by_key.get("i20_program_end_date")
+    )
+    if status and end_date:
+        headline = f"You're on {status} through {end_date}."
+    elif status:
+        headline = f"You're on {status}."
+    elif end_date:
+        headline = f"Your current authorization runs through {end_date}."
+
+    # Employment line.
+    employment: str | None = None
+    employer = by_key.get("current_employer_legal_name")
+    title = by_key.get("current_position_title")
+    if employer and title:
+        employment = f"Employed as {title} at {employer}."
+    elif employer:
+        employment = f"Employer of record is {employer}."
+
+    # Entity (for entrepreneur track).
+    entity_line: str | None = None
+    entity = by_key.get("entity_legal_name")
+    if entity:
+        ein = by_key.get("entity_ein")
+        entity_line = (
+            f"Entity on file: {entity} (EIN {ein})." if ein else f"Entity on file: {entity}."
+        )
+
+    # Next deadline.
+    deadlines = sorted(
+        timeline.get("deadlines") or [],
+        key=lambda item: item.get("days", 999),
+    )
+    deadline_line: str | None = None
+    if deadlines:
+        d = deadlines[0]
+        days = d.get("days")
+        if isinstance(days, (int, float)) and days <= 30:
+            urgency = "Most urgent"
+        elif isinstance(days, (int, float)) and days <= 90:
+            urgency = "Next deadline"
+        else:
+            urgency = "Upcoming"
+        title_text = d.get("title") or "deadline"
+        date_text = d.get("date")
+        deadline_line = (
+            f"{urgency}: {title_text} on {date_text}"
+            + (f" ({int(days)} days out)." if isinstance(days, (int, float)) else ".")
+        )
+
+    # Open decision / data quality flag.
+    conflicts = sum(len(row.detected_conflicts or []) for row in facts)
+    decision_line: str | None = None
     if conflicts:
-        parts.append(f"{conflicts} fact conflict needs a user decision before Guardian treats the profile as settled.")
-    elif issues:
-        parts.append(f"Most useful next check: {issues[0].get('title')}.")
-    return " ".join(parts)
+        n = conflicts
+        decision_line = (
+            f"{n} fact{'s' if n != 1 else ''} need{'' if n != 1 else 's'} "
+            "a quick decision in the conflicts panel before Guardian "
+            "treats the profile as settled."
+        )
+    else:
+        issues = (timeline.get("integrity_issues") or [])[:1]
+        if issues:
+            decision_line = f"Useful next check: {issues[0].get('title')}."
+
+    return " ".join(
+        part for part in (headline, employment, entity_line, deadline_line, decision_line)
+        if part
+    ) or "Profile state is partial — upload a document to fill it in."
 
 
 def _summary_context(facts: list, timeline: dict) -> str:
@@ -148,15 +214,23 @@ def facts_summary(
     try:
         summary = chat_completion(
             system_prompt=(
-                "You are Guardian. Write a concise current-state summary for the user's dashboard. "
-                "Use natural prose, no table, no legal advice, and at most one short follow-up question. "
-                "Treat user_facts rows as the structured source of truth."
+                "You are Guardian. Write a brief executive-style status report "
+                "for the user's compliance dashboard — like the opening "
+                "paragraph of an attorney briefing memo, not a fact list. "
+                "Lead with the current immigration status and how long it's "
+                "valid. Mention the employer / entity / role only if it's "
+                "relevant context. Call out the single most urgent deadline. "
+                "Flag any unresolved conflict as a decision needed. End with "
+                "one concrete next action. Plain prose only, no bullets, no "
+                "headers, no tables. 3-5 short sentences. No legal advice "
+                "framing — just the operational state."
             ),
             messages=[{
                 "role": "user",
                 "content": (
-                    "Summarize the current compliance state from this context in 3-5 sentences. "
-                    "Mention the most relevant facts, any unresolved conflict, and the next useful action.\n\n"
+                    "Brief me on my current compliance state from this "
+                    "context. Treat user_facts as the source of truth; "
+                    "ignore anything that contradicts them.\n\n"
                     f"{context}"
                 ),
             }],

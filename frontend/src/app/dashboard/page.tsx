@@ -3037,18 +3037,6 @@ export default function DashboardPage() {
                 </section>
               ))}
 
-              {profileFacts.length > 0 && (
-                <details data-testid="dashboard-profile-structured-facts" className="rounded-2xl border border-white/60 bg-white/45 px-4 py-3">
-                  <summary className="cursor-pointer text-[12px] font-semibold text-[#3a5a8c]">Structured context ({profileFacts.length})</summary>
-                  <div className="mt-3 grid gap-2 text-[12px] text-[#556480] md:grid-cols-2">
-                    {profileFacts.map((fact) => (
-                      <div key={`structured-${fact.id}`} className="rounded-xl bg-white/55 px-3 py-2">
-                        <span className="font-semibold text-[#0d1424]">{fact.label}:</span> {fact.value}
-                      </div>
-                    ))}
-                  </div>
-                </details>
-              )}
             </div>
           )}
 
