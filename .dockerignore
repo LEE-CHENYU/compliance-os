@@ -1,8 +1,12 @@
 node_modules
 frontend/node_modules
-frontend/.next
+# frontend/.next is INCLUDED in the build context — we prebuild on
+# the host (arm64 native, ~5 min) and copy the artifacts in, instead
+# of running `npm run build` inside the linux/amd64 QEMU-emulated
+# stage. The Next.js compile under QEMU has been observed to hang
+# 25+ min on Apple Silicon. The .next bundle is portable JS + static
+# assets, so an arm64-built artifact runs fine on the amd64 server.
 frontend/.next.broken*
-.next
 __pycache__
 *.pyc
 .git

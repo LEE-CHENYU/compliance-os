@@ -1,13 +1,19 @@
-# === Stage 1: Build Next.js frontend ===
-# Pin to bookworm — node:20-slim is a rolling tag that recently moved to
-# trixie, where some Debian package names changed (see stage 2 below).
-FROM node:20-bookworm-slim AS frontend-build
+# === Stage 1: Install Next.js production dependencies ===
+# We DON'T run `next build` inside this stage anymore — Next's compile
+# step hangs 25+ minutes under QEMU amd64-on-arm64 emulation on Apple
+# Silicon. Instead, the developer runs `cd frontend && npm run build`
+# on the host (arm64 native, ~5 min), and we copy the prebuilt
+# .next/ + public/ into the runtime stage. .next contains portable JS
+# only — no native binaries — so an arm64-built bundle runs on amd64.
+#
+# This stage exists solely to install the linux/amd64 node_modules
+# (which DO have native binaries: SWC, sharp, esbuild, etc.) that
+# `next start` needs at runtime.
+FROM node:20-bookworm-slim AS frontend-deps
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci --omit=dev
 RUN npm install --no-save @next/swc-linux-x64-gnu@14.2.33
-COPY frontend/ ./
-RUN npm run build
 
 # === Stage 2: Python backend + serve everything ===
 # Pin to bookworm — python:3.11-slim recently rolled to trixie, where
@@ -52,12 +58,14 @@ COPY compliance_os/ ./compliance_os/
 COPY config/ ./config/
 COPY scripts/ ./scripts/
 
-# Copy built frontend
-COPY --from=frontend-build /app/frontend/.next ./frontend/.next
-COPY --from=frontend-build /app/frontend/public ./frontend/public
-COPY --from=frontend-build /app/frontend/package*.json ./frontend/
-COPY --from=frontend-build /app/frontend/node_modules ./frontend/node_modules
-COPY --from=frontend-build /app/frontend/next.config.mjs ./frontend/
+# Copy frontend artifacts. .next and public come from the host-prebuilt
+# directory (build context); node_modules + linux/amd64 SWC come from
+# the frontend-deps stage above.
+COPY frontend/.next ./frontend/.next
+COPY frontend/public ./frontend/public
+COPY frontend/package*.json ./frontend/
+COPY frontend/next.config.mjs ./frontend/
+COPY --from=frontend-deps /app/frontend/node_modules ./frontend/node_modules
 
 # Create directories
 RUN mkdir -p /data /uploads
