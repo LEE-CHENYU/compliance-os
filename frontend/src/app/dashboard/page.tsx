@@ -1264,34 +1264,48 @@ export default function DashboardPage() {
       return;
     }
     let cancelled = false;
+    const controller = new AbortController();
+    // 8s frontend timeout — the LLM-backed /api/facts/summary can stall
+    // when the upstream model is slow. Drop to local fallback rather
+    // than spin the UI forever.
+    const timer = setTimeout(() => controller.abort(), 8000);
+
+    // Render the local fallback IMMEDIATELY so the section never sits
+    // empty. The LLM result swaps in below if/when it arrives.
+    setProfileSummary({ summary: localProfileSummary, generated_by: "local" });
     setProfileSummaryLoading(true);
     setProfileSummaryError(null);
-    fetch(`${FACTS_API}/summary`, { headers: authHeaders() })
+
+    fetch(`${FACTS_API}/summary`, { headers: authHeaders(), signal: controller.signal })
       .then(async (response) => {
         const body = await response.json().catch(() => null);
         if (!response.ok) {
           throw new Error(body?.detail || "Could not summarize facts");
         }
-        if (!cancelled) {
+        if (!cancelled && body?.summary) {
           setProfileSummary({
-            summary: String(body?.summary || localProfileSummary),
+            summary: String(body.summary),
             generated_by: String(body?.generated_by || "local"),
           });
         }
       })
       .catch((error) => {
         if (!cancelled) {
-          setProfileSummaryError(error instanceof Error ? error.message : "Could not summarize facts");
-          setProfileSummary({ summary: localProfileSummary, generated_by: "local" });
+          const aborted = (error as Error)?.name === "AbortError";
+          setProfileSummaryError(aborted ? "Summary timed out — showing local fallback." : (error instanceof Error ? error.message : "Could not summarize facts"));
+          // profileSummary is already populated with localProfileSummary above
         }
       })
       .finally(() => {
+        clearTimeout(timer);
         if (!cancelled) {
           setProfileSummaryLoading(false);
         }
       });
     return () => {
       cancelled = true;
+      clearTimeout(timer);
+      controller.abort();
     };
   }, [localProfileSummary, profileSummary, profileSummaryLoading, view]);
 
@@ -2937,22 +2951,21 @@ export default function DashboardPage() {
               <section data-testid="dashboard-profile-summary" className="mb-5 rounded-[24px] border border-white/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.82),rgba(239,246,255,0.94))] p-5 shadow-[0_10px_30px_rgba(91,141,238,0.08)]">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div>
-                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#5b8dee]">
-                      {profileSummary?.generated_by === "llm" ? "LLM summary" : "Guardian summary"}
+                    <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#5b8dee]">
+                      <span>Guardian summary</span>
+                      {profileSummaryLoading && (
+                        <span className="inline-flex gap-1">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#5b8dee]/60 animate-bounce" style={{ animationDelay: "0ms" }} />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#5b8dee]/60 animate-bounce" style={{ animationDelay: "150ms" }} />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#5b8dee]/60 animate-bounce" style={{ animationDelay: "300ms" }} />
+                        </span>
+                      )}
                     </div>
-                    {profileSummaryLoading ? (
-                      <div className="mt-4 flex gap-1.5">
-                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "0ms" }} />
-                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <div className="h-2 w-2 rounded-full bg-[#5b8dee] animate-bounce" style={{ animationDelay: "300ms" }} />
-                      </div>
-                    ) : (
-                      <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#0d1424]">
-                        {profileSummary?.summary || localProfileSummary}
-                      </p>
-                    )}
-                    {profileSummaryError && (
-                      <p className="mt-3 text-[11px] text-[#7b8ba5]">Using the local summary while Guardian is unavailable.</p>
+                    <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#0d1424] whitespace-pre-line">
+                      {profileSummary?.summary || localProfileSummary}
+                    </p>
+                    {profileSummaryError && !profileSummaryLoading && (
+                      <p className="mt-3 text-[11px] text-[#7b8ba5]">{profileSummaryError}</p>
                     )}
                   </div>
                   <button
@@ -2985,31 +2998,7 @@ export default function DashboardPage() {
                 </section>
               )}
 
-              {profileHighlights.length > 0 ? (
-                <section className="mb-5">
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {profileHighlights.map((fact) => {
-                      const colors = categoryPalette[fact.category] || categoryPalette.other;
-                      return (
-                        <div key={fact.id} className="rounded-2xl border border-white/60 bg-white/55 px-4 py-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <div className="text-[12px] font-semibold text-[#556480]">{fact.label}</div>
-                              <div className="mt-1 break-words text-[14px] font-bold leading-6 text-[#0d1424]">{fact.value}</div>
-                            </div>
-                            <span
-                              className="shrink-0 rounded-lg px-2 py-1 text-[10px] font-semibold capitalize"
-                              style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}
-                            >
-                              {colors.label}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </section>
-              ) : (
+              {profileHighlights.length === 0 && (
                 <div className="rounded-[24px] border border-white/60 bg-white/55 px-5 py-10 text-center">
                   <div className="text-[14px] font-semibold text-[#0d1424]">No facts extracted yet</div>
                   <div className="mt-2 text-[12px] text-[#7b8ba5]">Upload documents or answer Guardian&apos;s questions to build the profile.</div>
