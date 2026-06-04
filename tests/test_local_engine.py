@@ -7,6 +7,22 @@ from pathlib import Path
 import pytest
 
 
+def _run_async(coro):
+    """Run a coroutine without leaving the global event loop closed/None.
+
+    asyncio.run() calls set_event_loop(None) on exit, which breaks tests that
+    rely on asyncio.get_event_loop() (e.g. tests/test_mcp_server.py). Installing
+    a fresh open loop afterward keeps the suite order-independent.
+    """
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        return loop.run_until_complete(coro)
+    finally:
+        loop.close()
+        asyncio.set_event_loop(asyncio.new_event_loop())
+
+
 def test_local_mode_db_url_points_at_guardian_home(monkeypatch, tmp_path):
     monkeypatch.setenv("GUARDIAN_MODE", "local")
     monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
@@ -107,7 +123,7 @@ def test_mcp_get_user_facts_uses_local_path(local_db):
     local_engine.local_set_fact("sevis_id", "N0001234567")
 
     # The MCP tool (async) must return the seeded fact without any HTTP
-    result = asyncio.run(mcp_server.get_user_facts())
+    result = _run_async(mcp_server.get_user_facts())
     import json
     payload = json.loads(result)
     keys = {f["fact_key"] for f in payload["facts"]}
