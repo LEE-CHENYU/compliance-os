@@ -71,3 +71,27 @@ def test_get_local_user_id_is_stable_and_singleton(local_db):
         assert db.query(UserRow).count() == 1
     finally:
         db.close()
+
+
+def test_serialize_fact_matches_router_contract(local_db):
+    from compliance_os.web.services.user_facts import serialize_fact, upsert_fact
+    from compliance_os import local_engine
+
+    db = next(local_db.get_session())
+    try:
+        user_id = local_engine.get_local_user_id(db)
+        row, _ = upsert_fact(
+            db, user_id=user_id, fact_key="legal_name", value="Jane Q",
+            source_type="decision_lock", source_ref={"ui_path": "test"},
+        )
+        db.commit()
+        out = serialize_fact(row)
+        assert set(out) == {
+            "id", "fact_key", "label", "category", "track", "value",
+            "notes", "source_type", "source_ref", "locked_at", "is_active",
+            "superseded_by_id", "detected_conflicts", "created_at", "updated_at",
+        }
+        assert out["fact_key"] == "legal_name"
+        assert out["detected_conflicts"] == []
+    finally:
+        db.close()
