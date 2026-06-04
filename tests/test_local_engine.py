@@ -73,6 +73,30 @@ def test_get_local_user_id_is_stable_and_singleton(local_db):
         db.close()
 
 
+def test_local_set_then_get_roundtrips(local_db):
+    from compliance_os import local_engine
+
+    set_out = local_engine.local_set_fact(
+        "current_annual_salary", "135000", notes="locked in test",
+    )
+    assert set_out["fact"]["fact_key"] == "current_annual_salary"
+    assert set_out["fact"]["source_type"] == "decision_lock"
+    assert set_out["superseded"] is None
+
+    get_out = local_engine.local_get_facts()
+    keys = {f["fact_key"] for f in get_out["facts"]}
+    assert "current_annual_salary" in keys
+
+
+def test_local_set_fact_supersedes_previous(local_db):
+    from compliance_os import local_engine
+
+    local_engine.local_set_fact("current_employer_legal_name", "Acme Inc")
+    second = local_engine.local_set_fact("current_employer_legal_name", "Beta LLC")
+    assert second["superseded"] is not None
+    assert second["superseded"]["value"] != second["fact"]["value"]
+
+
 def test_serialize_fact_matches_router_contract(local_db):
     from compliance_os.web.services.user_facts import serialize_fact, upsert_fact
     from compliance_os import local_engine
