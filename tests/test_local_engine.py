@@ -27,3 +27,47 @@ def test_hosted_mode_db_url_unchanged(monkeypatch, tmp_path):
 
     url = database.configured_database_url()
     assert url.endswith("copilot.db")
+
+
+@pytest.fixture
+def local_db(monkeypatch, tmp_path):
+    """Fresh local SQLite engine rooted at a temp ~/.guardian.
+
+    No module reload: we reset the lazily-cached globals so the next
+    get_engine()/get_session() rebuilds against the temp guardian.db.
+    Resetting (not reloading) keeps local_engine's imported get_session
+    pointing at the same function object whose globals we reset.
+    """
+    monkeypatch.setenv("GUARDIAN_MODE", "local")
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+
+    from compliance_os.web.models import database
+    database._engine = None
+    database._SessionLocal = None
+    yield database
+    database._engine = None
+    database._SessionLocal = None
+
+
+def test_is_local_mode_reads_env(monkeypatch):
+    from compliance_os import local_engine
+    monkeypatch.setenv("GUARDIAN_MODE", "local")
+    assert local_engine.is_local_mode() is True
+    monkeypatch.setenv("GUARDIAN_MODE", "hosted")
+    assert local_engine.is_local_mode() is False
+    monkeypatch.delenv("GUARDIAN_MODE", raising=False)
+    assert local_engine.is_local_mode() is False
+
+
+def test_get_local_user_id_is_stable_and_singleton(local_db):
+    from compliance_os import local_engine
+    db = next(local_db.get_session())
+    try:
+        id1 = local_engine.get_local_user_id(db)
+        id2 = local_engine.get_local_user_id(db)
+        assert id1 == id2
+        from compliance_os.web.models.auth import UserRow
+        assert db.query(UserRow).count() == 1
+    finally:
+        db.close()
