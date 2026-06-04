@@ -21,6 +21,14 @@ from urllib import error, request
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 
+from compliance_os.local_engine import (
+    force_local_embeddings,
+    is_local_mode,
+    local_get_facts,
+    local_resolve_conflict,
+    local_set_fact,
+)
+
 mcp = FastMCP(
     "guardian",
     instructions=(
@@ -154,6 +162,9 @@ threading.Thread(
     daemon=True,
     name="guardian-embed-prewarm",
 ).start()
+
+if is_local_mode():
+    force_local_embeddings()
 
 
 def _is_local_api() -> bool:
@@ -782,6 +793,8 @@ async def get_user_facts(
             entrepreneur). Returns shared facts in addition to track-
             specific ones.
     """
+    if is_local_mode():
+        return json.dumps(local_get_facts(category, track), default=str, indent=2)
     params = []
     if category:
         params.append(f"category={category}")
@@ -829,6 +842,11 @@ async def set_user_fact(
         label: Override the human label (only needed for custom keys
             or when correcting a default).
     """
+    if is_local_mode():
+        return json.dumps(
+            local_set_fact(fact_key, value, notes=notes, label=label),
+            default=str, indent=2,
+        )
     payload: dict = {"fact_key": fact_key, "value": value}
     if notes:
         payload["notes"] = notes
@@ -864,6 +882,11 @@ async def resolve_fact_conflict(
         choice: One of "use_new" | "keep_current" | "user_value".
         user_value: Required when choice == "user_value".
     """
+    if is_local_mode():
+        return json.dumps(
+            local_resolve_conflict(fact_id, choice, user_value=user_value),
+            default=str, indent=2,
+        )
     payload: dict = {"choice": choice}
     if user_value:
         payload["user_value"] = user_value

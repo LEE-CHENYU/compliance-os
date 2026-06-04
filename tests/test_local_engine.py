@@ -73,6 +73,20 @@ def test_get_local_user_id_is_stable_and_singleton(local_db):
         db.close()
 
 
+def test_mcp_get_user_facts_uses_local_path(local_db):
+    from compliance_os import local_engine, mcp_server
+
+    # Seed via the local adapter
+    local_engine.local_set_fact("sevis_id", "N0001234567")
+
+    # The MCP tool (async) must return the seeded fact without any HTTP
+    result = asyncio.run(mcp_server.get_user_facts())
+    import json
+    payload = json.loads(result)
+    keys = {f["fact_key"] for f in payload["facts"]}
+    assert "sevis_id" in keys
+
+
 def test_local_set_then_get_roundtrips(local_db):
     from compliance_os import local_engine
 
