@@ -73,6 +73,24 @@ def test_get_local_user_id_is_stable_and_singleton(local_db):
         db.close()
 
 
+def test_local_facts_shape_matches_hosted_router_shape(local_db):
+    """The local adapter and the hosted router must emit the same envelope:
+    GET → {"facts": [...]}, POST → {"fact": {...}, "superseded": ...}."""
+    from compliance_os import local_engine
+
+    set_out = local_engine.local_set_fact("country_of_citizenship", "India")
+    assert set(set_out) == {"fact", "superseded"}
+
+    get_out = local_engine.local_get_facts(category="personal")
+    assert set(get_out) == {"facts"}
+    assert all(set(f) >= {"fact_key", "value", "source_type"} for f in get_out["facts"])
+
+    # Conflict resolution envelope
+    fact_id = set_out["fact"]["id"]
+    resolved = local_engine.local_resolve_conflict(fact_id, "keep_current")
+    assert set(resolved) == {"fact"}
+
+
 def test_force_local_embeddings_sets_provider(monkeypatch):
     from compliance_os import local_engine
     monkeypatch.setenv("OPENAI_API_KEY", "sk-should-be-ignored")
