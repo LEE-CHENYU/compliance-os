@@ -73,6 +73,15 @@ def test_get_local_user_id_is_stable_and_singleton(local_db):
         db.close()
 
 
+def test_force_local_embeddings_sets_provider(monkeypatch):
+    from compliance_os import local_engine
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-should-be-ignored")
+    monkeypatch.delenv("GUARDIAN_EMBEDDING_PROVIDER", raising=False)
+
+    local_engine.force_local_embeddings()
+    assert os.environ["GUARDIAN_EMBEDDING_PROVIDER"] == "local"
+
+
 def test_mcp_get_user_facts_uses_local_path(local_db):
     from compliance_os import local_engine, mcp_server
 
