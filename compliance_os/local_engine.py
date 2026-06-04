@@ -66,7 +66,7 @@ def local_get_facts(category: str = "", track: str = "") -> dict:
 
 
 def local_set_fact(
-    fact_key: str, value, notes: str = "", label: str = "",
+    fact_key: str, value: str, notes: str = "", label: str = "",
 ) -> dict:
     """In-process equivalent of POST /api/facts (a user-locked decision)."""
     db = next(get_session())
