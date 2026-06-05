@@ -171,3 +171,34 @@ def test_cli_import_subcommand(local_env, tmp_path, monkeypatch):
     monkeypatch.setattr("sys.argv", ["guardian-mcp", "import", str(zip_path)])
     mcp_install.main()
     assert called["path"] == str(zip_path)
+
+
+def test_full_export_import_roundtrip(local_env, tmp_path):
+    from compliance_os import migration, local_engine
+    from compliance_os.web.models import database
+    from compliance_os.web.models.tables_v2 import UserFactRow
+
+    db, user_id = _make_source_db(tmp_path)
+    blob = migration.export_user_data(db, user_id); db.close()
+    zp = tmp_path / "rt.zip"; zp.write_bytes(blob)
+
+    first = migration.import_data(str(zp))
+    second = migration.import_data(str(zp))  # idempotent: skip-existing
+    assert first["user_facts"] == 1
+    assert second["user_facts"] == 0  # nothing re-inserted
+
+    ldb = next(database.get_session())
+    try:
+        uid = local_engine.get_local_user_id(ldb)
+        assert ldb.query(UserFactRow).filter(UserFactRow.user_id == uid).count() == 1
+    finally:
+        ldb.close()
+
+
+def test_package_version_is_2():
+    import tomllib  # py311 stdlib
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    meta = tomllib.loads((root / "pyproject.toml").read_text())
+    assert meta["project"]["version"] == "2.0.0"
