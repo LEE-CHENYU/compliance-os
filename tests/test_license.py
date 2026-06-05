@@ -128,3 +128,81 @@ def test_offline_grace_then_expiry(monkeypatch, tmp_path):
     licensing._write_cache({"valid": True, "status": "active", "tier": "free",
                             "features": ["extraction"], "grace_until": past})
     assert licensing.activation_state() == "expired_offline"
+
+
+# ─── Task 3: GatedMCP gate ────────────────────────────────────────────────────
+
+def _extract_text(result) -> str:
+    """Extract text from a FastMCP call_tool result robustly.
+
+    FastMCP 1.27 returns a tuple (list[TextContent], structured) rather than
+    a plain list[TextContent], so we peel the outer tuple/list one extra level
+    when the first element is itself a list.
+    """
+    # Unwrap outer tuple → list[TextContent]
+    if isinstance(result, tuple):
+        result = result[0]
+    # result is now list[TextContent] or TextContent or similar
+    if isinstance(result, list):
+        item = result[0]
+        if hasattr(item, "text"):
+            return item.text
+        # item is itself a list (FastMCP nested shape)
+        if isinstance(item, list) and item:
+            return item[0].text
+    if hasattr(result, "text"):
+        return result.text
+    return json.dumps(result)
+
+
+def test_gate_blocks_unconfigured_standalone(monkeypatch, tmp_path):
+    """In standalone mode with no key, dispatching any tool returns the
+    activation message instead of running the tool."""
+    import asyncio
+
+    monkeypatch.delenv("GUARDIAN_LICENSE_KEY", raising=False)
+    monkeypatch.delenv("GUARDIAN_TOKEN", raising=False)
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    from compliance_os import mcp_server
+
+    def _run(coro):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            return loop.run_until_complete(coro)
+        finally:
+            loop.close()
+            asyncio.set_event_loop(asyncio.new_event_loop())
+
+    result = _run(mcp_server.mcp.call_tool("get_extraction_schema", {"doc_type": "i20"}))
+    text = _extract_text(result)
+    assert "activation_required" in text
+
+
+def test_gate_allows_when_active(monkeypatch, tmp_path):
+    import asyncio
+
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", "gdn_oc_aa_bb")
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    from compliance_os import licensing, mcp_server
+
+    monkeypatch.setattr(
+        licensing, "validate_online",
+        lambda key: {"valid": True, "status": "active", "tier": "free",
+                     "features": ["extraction", "chat", "facts", "documents"],
+                     "grace_until": None},
+    )
+
+    def _run(coro):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            return loop.run_until_complete(coro)
+        finally:
+            loop.close()
+            asyncio.set_event_loop(asyncio.new_event_loop())
+
+    result = _run(mcp_server.mcp.call_tool("get_extraction_schema", {"doc_type": "i20"}))
+    text = _extract_text(result)
+    assert "activation_required" not in text
+    assert "sevis_id" in text  # the real tool ran
