@@ -303,6 +303,8 @@ def main():
         if len(args) < 2:
             print("Usage: guardian-mcp import <export.zip>")
             return
+        # Late module import (not `from ... import import_data`) so tests can
+        # monkeypatch migration.import_data on the module object.
         import compliance_os.migration as _migration
 
         summary = _migration.import_data(args[1])

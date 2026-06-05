@@ -146,9 +146,20 @@ def test_export_endpoint_streams_zip(tmp_path):
             async for chunk in resp.body_iterator:
                 chunks.append(chunk)
             return b"".join(chunks)
-        body = asyncio.run(_drain())
+        # Loop-safe drain: a new loop, then reinstall a fresh one — bare
+        # asyncio.run() would leave the global loop closed and contaminate any
+        # test that later calls asyncio.get_event_loop() (see test_local_engine).
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            body = loop.run_until_complete(_drain())
+        finally:
+            loop.close()
+            asyncio.set_event_loop(asyncio.new_event_loop())
         zf = zipfile.ZipFile(io.BytesIO(body))
         assert "data.json" in zf.namelist()
+        # Not vacuous: confirm the endpoint exported THIS user's data room.
+        assert len(json.loads(zf.read("data.json"))["checks"]) == 1
     finally:
         db.close()
 

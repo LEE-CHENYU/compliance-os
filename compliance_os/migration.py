@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import io
 import json
+import os
 import zipfile
 from datetime import datetime
 from pathlib import Path
@@ -85,7 +86,11 @@ def export_user_data(db: Session, user_id: str) -> bytes:
 
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("data.json", json.dumps(data, indent=2, default=str))
+        # No default= serializer: _row_to_dict already converts datetimes, and
+        # every other column is JSON-native — so json.dumps fails loudly if a
+        # future column ever produces a non-serializable value, rather than
+        # silently stringifying it into a value that won't round-trip.
+        zf.writestr("data.json", json.dumps(data, indent=2))
         for d in documents:
             src = Path(d.file_path) if d.file_path else None
             if src and src.exists():
@@ -95,8 +100,6 @@ def export_user_data(db: Session, user_id: str) -> bytes:
 
 
 def _uploads_root() -> Path:
-    import os
-
     home = Path(os.environ.get("GUARDIAN_HOME") or (Path.home() / ".guardian"))
     return Path(os.environ.get("GUARDIAN_DATA_DIR") or (home / "uploads"))
 
@@ -108,9 +111,12 @@ def import_data(zip_path: str) -> dict:
     singleton user. Rebases each document's file_path under the local uploads
     root and copies the bundled file. Skips rows whose id already exists, so
     re-import is safe. Returns a count summary.
-    """
-    import os
 
+    CLI-ONLY: this mutates process-global state — it sets GUARDIAN_MODE=local
+    and resets the cached DB engine to point at ~/.guardian/guardian.db. Never
+    call it from the long-running hosted server process; doing so would
+    redirect all subsequent DB connections to the local SQLite file.
+    """
     os.environ["GUARDIAN_MODE"] = "local"
     from compliance_os.web.models import database
 
@@ -138,18 +144,23 @@ def import_data(zip_path: str) -> dict:
             for d in data.get("documents", []):
                 if db.get(DocumentRow, d["id"]) is not None:
                     continue
-                src_name = Path(d["file_path"]).name if d.get("file_path") else None
+                src_name = Path(str(d["file_path"])).name if d.get("file_path") else None
                 new_path = d.get("file_path")
                 if src_name:
-                    dest_dir = uploads_root / d["check_id"]
-                    dest_dir.mkdir(parents=True, exist_ok=True)
+                    # Guard against zip-slip: strip path components from the
+                    # check_id dir and filename, and refuse to write outside the
+                    # uploads root even if a tampered export tries to escape.
+                    safe_check_id = Path(str(d.get("check_id", ""))).name or "_"
+                    dest_dir = uploads_root / safe_check_id
                     dest = dest_dir / src_name
-                    arc = f"uploads/{d['check_id']}/{src_name}"
-                    try:
-                        dest.write_bytes(zf.read(arc))
-                    except KeyError:
-                        pass  # file missing from the export — keep the row, rebased path
-                    new_path = str(dest)
+                    if uploads_root.resolve() in dest.resolve().parents:
+                        dest_dir.mkdir(parents=True, exist_ok=True)
+                        arc = f"uploads/{d['check_id']}/{src_name}"
+                        try:
+                            dest.write_bytes(zf.read(arc))
+                        except KeyError:
+                            pass  # file missing from the export — keep the row
+                        new_path = str(dest)
                 db.add(DocumentRow(**_kwargs_from_dict(DocumentRow, d, {"file_path": new_path})))
                 counts["documents"] += 1
 
