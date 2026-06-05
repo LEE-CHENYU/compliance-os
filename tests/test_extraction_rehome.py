@@ -72,3 +72,43 @@ def test_mcp_upload_document_uses_local_path(local_db):
     src.write_text("SEVIS ID: N0009999999\n")
     out = json.loads(mcp_server.upload_document(str(src), doc_type="i20"))
     assert out["doc_type"] == "i20" and "doc_id" in out
+
+
+def test_record_extracted_facts_projects_to_sot(local_db):
+    from compliance_os import local_engine
+
+    src = Path(os.environ["GUARDIAN_HOME"]) / "i20.txt"
+    src.write_text("SEVIS ID: N0001234567\n")
+    up = local_engine.local_upload_document(str(src), doc_type="i20")
+    doc_id = up["doc_id"]
+
+    result = local_engine.local_record_extracted_facts(
+        doc_id,
+        [{"field_name": "sevis_number", "value": "N0001234567", "confidence": 0.95}],
+    )
+    assert "sevis_number" in result["recorded_fields"]
+
+    # The deterministic projection mapped (i20, sevis_number) -> sevis_id in the SoT.
+    facts = {f["fact_key"]: f["value"] for f in local_engine.local_get_facts()["facts"]}
+    assert "sevis_id" in facts
+
+
+def test_record_extracted_facts_unknown_doc_returns_error(local_db):
+    from compliance_os import local_engine
+
+    out = local_engine.local_record_extracted_facts("no-such-id", [])
+    assert "error" in out
+
+
+def test_mcp_record_extracted_facts_tool(local_db):
+    from compliance_os import local_engine, mcp_server
+
+    src = Path(os.environ["GUARDIAN_HOME"]) / "i20b.txt"
+    src.write_text("SEVIS ID: N0002223333\n")
+    doc_id = local_engine.local_upload_document(str(src), doc_type="i20")["doc_id"]
+    out = json.loads(
+        mcp_server.record_extracted_facts(
+            doc_id, [{"field_name": "sevis_number", "value": "N0002223333"}]
+        )
+    )
+    assert "sevis_number" in out["recorded_fields"]

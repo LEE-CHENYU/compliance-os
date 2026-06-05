@@ -25,6 +25,7 @@ from compliance_os.local_engine import (
     force_local_embeddings,
     is_local_mode,
     local_get_facts,
+    local_record_extracted_facts,
     local_resolve_conflict,
     local_set_fact,
     local_upload_document,
@@ -625,6 +626,37 @@ def get_extraction_schema(doc_type: str) -> str:
     from compliance_os.facts.extraction_map import schema_for_doc_type
 
     return json.dumps(schema_for_doc_type(doc_type), indent=2)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Record extracted facts",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+    ),
+)
+def record_extracted_facts(doc_id: str, facts: list) -> str:
+    """Submit the field values you read from a document into the SoT.
+
+    Call this after parse_document + get_extraction_schema: read each
+    schema field's value out of the document text, then submit them here.
+    The engine writes them with provenance to the stored document and
+    projects mapped fields into the user-facts source-of-truth, detecting
+    conflicts with existing facts. Local mode only.
+
+    Args:
+        doc_id: The id returned by upload_document.
+        facts: List of {"field_name": str, "value": str,
+            "confidence": number (optional), "raw_text": str (optional)}.
+    """
+    if not is_local_mode():
+        return json.dumps(
+            {"error": "record_extracted_facts is only available in local mode."}
+        )
+    return json.dumps(
+        local_record_extracted_facts(doc_id, facts), default=str, indent=2
+    )
 
 
 def _upload_single_file(file_path: Path, doc_type: str = "") -> dict:

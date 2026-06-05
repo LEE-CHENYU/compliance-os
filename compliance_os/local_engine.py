@@ -217,3 +217,51 @@ def local_upload_document(file_path: str, doc_type: str = "") -> dict:
         }
     finally:
         db.close()
+
+
+def local_record_extracted_facts(doc_id: str, facts: list) -> dict:
+    """Project Claude-extracted fields into the SoT for a stored document.
+
+    `facts` is a list of {"field_name": <raw extractor field>, "value": str,
+    "confidence": float (optional, default 1.0), "raw_text": str (optional)}.
+    Each is written as an ExtractedFieldRow and — when it maps to a canonical
+    fact_key and clears the confidence bar — projected into user_facts with
+    supersession + conflict detection, reusing the deterministic
+    _upsert_extracted_field path (no LLM). Returns the recorded field names,
+    the resulting active facts, and any detected conflicts.
+    """
+    from compliance_os.web.models.tables_v2 import DocumentRow
+    from compliance_os.web.services.document_store import _upsert_extracted_field
+
+    db = next(get_session())
+    try:
+        doc = db.get(DocumentRow, doc_id)
+        if doc is None:
+            return {"error": f"document not found: {doc_id}"}
+
+        recorded: list[str] = []
+        for f in facts:
+            field_name = f.get("field_name") or f.get("source_field")
+            if not field_name:
+                continue
+            value = f.get("value")
+            _upsert_extracted_field(
+                db,
+                doc=doc,
+                field_name=field_name,
+                value=str(value) if value is not None else None,
+                confidence=f.get("confidence", 1.0),
+                raw_text=f.get("raw_text"),
+            )
+            recorded.append(field_name)
+        db.commit()
+
+        user_id = get_local_user_id(db)
+        rows = get_active_facts(db, user_id=user_id)
+        return {
+            "recorded_fields": recorded,
+            "facts": [serialize_fact(r) for r in rows],
+            "conflicts": [serialize_fact(r) for r in rows if r.detected_conflicts],
+        }
+    finally:
+        db.close()
