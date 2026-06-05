@@ -85,3 +85,46 @@ def test_export_user_data_produces_zip(tmp_path):
     assert len(data["extracted_fields"]) == 1
     assert len(data["user_facts"]) == 1
     assert data["user_facts"][0]["fact_key"] == "sevis_id"
+
+
+@pytest.fixture
+def local_env(monkeypatch, tmp_path):
+    monkeypatch.setenv("GUARDIAN_MODE", "local")
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path / "home"))
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    from compliance_os.web.models import database
+    database._engine = None
+    database._SessionLocal = None
+    yield tmp_path
+    database._engine = None
+    database._SessionLocal = None
+
+
+def test_import_lands_data_under_local_user(local_env, tmp_path):
+    from compliance_os import migration
+    from compliance_os.web.models import database
+    from compliance_os.web.models.tables_v2 import DocumentRow, UserFactRow
+    from compliance_os import local_engine
+
+    # Build an export from a standalone source DB.
+    db, user_id = _make_source_db(tmp_path)
+    blob = migration.export_user_data(db, user_id)
+    db.close()
+    zip_path = tmp_path / "export.zip"
+    zip_path.write_bytes(blob)
+
+    summary = migration.import_data(str(zip_path))
+    assert summary["checks"] == 1 and summary["documents"] == 1 and summary["user_facts"] == 1
+
+    ldb = next(database.get_session())
+    try:
+        local_uid = local_engine.get_local_user_id(ldb)
+        facts = ldb.query(UserFactRow).filter(UserFactRow.user_id == local_uid).all()
+        assert any(f.fact_key == "sevis_id" for f in facts)
+        doc = ldb.query(DocumentRow).first()
+        # file rebased under the local home and actually copied
+        assert str(tmp_path / "home") in doc.file_path
+        assert Path(doc.file_path).exists()
+        assert Path(doc.file_path).read_text() == "SEVIS ID: N0001234567"
+    finally:
+        ldb.close()
