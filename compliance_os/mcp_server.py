@@ -27,6 +27,7 @@ from compliance_os.local_engine import (
     local_get_facts,
     local_resolve_conflict,
     local_set_fact,
+    local_upload_document,
 )
 
 mcp = FastMCP(
@@ -706,6 +707,9 @@ def upload_document(
         file_path: Absolute path to the document file.
         doc_type: Document type override (e.g., "w2", "i20"). Auto-detected if blank.
     """
+    if is_local_mode():
+        return json.dumps(local_upload_document(file_path, doc_type), default=str, indent=2)
+
     path = Path(file_path)
     if not path.exists():
         return json.dumps({"error": f"File not found: {file_path}"})

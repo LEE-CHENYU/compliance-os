@@ -44,3 +44,31 @@ def test_get_extraction_schema_tool_returns_json():
 
     out = json.loads(mcp_server.get_extraction_schema("i20"))
     assert any(e["fact_key"] == "sevis_id" for e in out)
+
+
+def test_local_upload_document_stores_and_returns_schema(local_db):
+    from compliance_os import local_engine
+
+    # A plain-text "I-20" so OCR is a trivial local read (no PDF fixture needed).
+    src = Path(os.environ["GUARDIAN_HOME"]) / "sample_i20.txt"
+    src.write_text("SEVIS ID: N0001234567\nSchool: Test University\n")
+
+    result = local_engine.local_upload_document(str(src), doc_type="i20")
+    assert "doc_id" in result and result["doc_type"] == "i20"
+    assert "N0001234567" in result["text"]
+    # the schema for this doc type rides along so Claude knows what to extract
+    assert any(e["fact_key"] == "sevis_id" for e in result["extraction_schema"])
+
+    # File was copied into the local data dir, and NO facts exist yet
+    # (extraction is Claude's job, not the upload's).
+    facts = local_engine.local_get_facts()
+    assert facts["facts"] == []
+
+
+def test_mcp_upload_document_uses_local_path(local_db):
+    from compliance_os import mcp_server
+
+    src = Path(os.environ["GUARDIAN_HOME"]) / "doc.txt"
+    src.write_text("SEVIS ID: N0009999999\n")
+    out = json.loads(mcp_server.upload_document(str(src), doc_type="i20"))
+    assert out["doc_type"] == "i20" and "doc_id" in out

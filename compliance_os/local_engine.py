@@ -108,3 +108,112 @@ def force_local_embeddings() -> None:
     """Pin embeddings to the local provider so no OpenAI key is ever used
     in local mode (privacy + $0 cost). Idempotent."""
     os.environ["GUARDIAN_EMBEDDING_PROVIDER"] = "local"
+
+
+def _get_local_check(db, user_id: str):
+    """Find-or-create the singleton local 'check' that documents attach to.
+
+    Mirrors dashboard._ensure_dashboard_check, replicated here so the
+    local engine doesn't import the FastAPI router. One saved check per
+    local user is enough for single-user local mode.
+    """
+    from compliance_os.web.models.tables_v2 import CheckRow
+
+    check = (
+        db.query(CheckRow)
+        .filter(CheckRow.user_id == user_id, CheckRow.status == "saved")
+        .first()
+    )
+    if check is None:
+        check = CheckRow(track="stem_opt", status="saved", user_id=user_id, answers={})
+        db.add(check)
+        db.flush()
+    return check
+
+
+def _local_ocr_text(path) -> str:
+    """Extract document text locally (no API). PDF→PyMuPDF, DOCX→python-docx,
+    everything else→plain read. Returns "" on failure."""
+    suffix = path.suffix.lower()
+    if suffix == ".pdf":
+        from compliance_os.web.services.extractor import extract_pdf_text_with_provenance
+
+        return extract_pdf_text_with_provenance(str(path)).text or ""
+    if suffix in {".docx", ".doc"}:
+        from compliance_os.web.services.docx_reader import extract_text
+
+        return extract_text(str(path)) or ""
+    try:
+        return path.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return ""
+
+
+def local_upload_document(file_path: str, doc_type: str = "") -> dict:
+    """Store a document into the local data room WITHOUT extracting facts.
+
+    Deterministic + in-process: classify (if needed), copy the file under
+    ~/.guardian/uploads/<check_id>/, create the DocumentRow, run versioning
+    (register_uploaded_document), and read the text locally. Returns the
+    doc_id, the parsed text, and the extraction schema so the caller's
+    Claude can read the field values and submit record_extracted_facts.
+    No server LLM, no HTTP.
+    """
+    import mimetypes
+    import uuid as _uuid
+    from pathlib import Path
+
+    from compliance_os.facts.extraction_map import schema_for_doc_type
+    from compliance_os.web.models.tables_v2 import DocumentRow
+    from compliance_os.web.services.classifier import classify_file
+    from compliance_os.web.services.document_store import register_uploaded_document
+
+    path = Path(file_path)
+    if not path.exists():
+        return {"error": f"File not found: {file_path}"}
+    content = path.read_bytes()
+    mime_type = mimetypes.guess_type(str(path))[0] or "application/octet-stream"
+    if not doc_type:
+        doc_type = classify_file(str(path), mime_type, allow_ocr=False).doc_type or "unknown"
+
+    db = next(get_session())
+    try:
+        user_id = get_local_user_id(db)
+        check = _get_local_check(db, user_id)
+        # Resolve the uploads root from env LIVE (not settings, which is a
+        # frozen singleton) so it honors GUARDIAN_HOME/GUARDIAN_DATA_DIR the
+        # same way database.py resolves the DB path.
+        guardian_home = Path(os.environ.get("GUARDIAN_HOME") or (Path.home() / ".guardian"))
+        upload_root = Path(os.environ.get("GUARDIAN_DATA_DIR") or (guardian_home / "uploads"))
+        upload_dir = upload_root / check.id
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        dest = upload_dir / f"{_uuid.uuid4()}_{path.name}"
+        dest.write_bytes(content)
+
+        doc = DocumentRow(
+            check_id=check.id,
+            doc_type=doc_type,
+            filename=path.name,
+            file_path=str(dest),
+            file_size=len(content),
+            mime_type=mime_type,
+            provenance={"classification": {"doc_type": doc_type, "source": "local_upload"}},
+        )
+        db.add(doc)
+        db.flush()
+        register_uploaded_document(check, doc, content, source_path=None, db=db)
+        db.commit()
+        db.refresh(doc)
+
+        text = _local_ocr_text(dest)
+        doc.ocr_text = text
+        db.commit()
+
+        return {
+            "doc_id": doc.id,
+            "doc_type": doc.doc_type,
+            "text": text[:50_000],
+            "extraction_schema": schema_for_doc_type(doc.doc_type),
+        }
+    finally:
+        db.close()
