@@ -35,6 +35,9 @@ def test_is_gmail_configured_reflects_files(monkeypatch, tmp_path):
 def test_gmail_search_redirects_when_unconfigured(monkeypatch):
     from compliance_os import gmail_client, mcp_server
 
+    # Patch on gmail_client (not mcp_server) because _gmail_guard() does a
+    # deferred per-call import: `from compliance_os.gmail_client import
+    # is_gmail_configured`, which re-reads the attribute on the module object.
     monkeypatch.setattr(gmail_client, "is_gmail_configured", lambda: False)
     out = json.loads(mcp_server.gmail_search("is:unread"))
     assert out["error"] == "gmail_not_configured"

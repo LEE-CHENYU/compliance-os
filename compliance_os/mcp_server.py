@@ -133,8 +133,9 @@ def _embedding_error_message(exc: Exception) -> str:
     return (
         "Embeddings unavailable: "
         f"{type(exc).__name__}: {exc}. "
-        "Set OPENAI_API_KEY in the extension's Configure panel "
-        "to use cloud embeddings, or check the server logs."
+        "Guardian uses a local on-device embedding model by default — no API "
+        "key needed. The first run downloads it (~100-130MB); if that failed, "
+        "check your network and the server logs, then restart the extension."
     )
 
 
