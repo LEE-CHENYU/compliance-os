@@ -27,6 +27,28 @@ from compliance_os.web.models.tables_v2 import UserFactRow
 SOURCE_TYPES = {"document", "decision_lock", "gmail", "external_api", "user_input"}
 
 
+def serialize_fact(row) -> dict:
+    """Canonical JSON shape for a UserFactRow — shared by the HTTP router
+    and the in-process local adapter so both surfaces emit identical output."""
+    return {
+        "id": row.id,
+        "fact_key": row.fact_key,
+        "label": row.label,
+        "category": row.category,
+        "track": row.track,
+        "value": row.value,
+        "notes": row.notes,
+        "source_type": row.source_type,
+        "source_ref": row.source_ref,
+        "locked_at": row.locked_at.isoformat() if row.locked_at else None,
+        "is_active": row.is_active,
+        "superseded_by_id": row.superseded_by_id,
+        "detected_conflicts": row.detected_conflicts or [],
+        "created_at": row.created_at.isoformat() if row.created_at else None,
+        "updated_at": row.updated_at.isoformat() if row.updated_at else None,
+    }
+
+
 def _now() -> datetime:
     return datetime.now(timezone.utc)
 

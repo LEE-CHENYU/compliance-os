@@ -22,6 +22,7 @@ from compliance_os.web.services.user_facts import (
     get_active_facts,
     get_fact_history,
     resolve_conflict,
+    serialize_fact,
     upsert_fact,
 )
 
@@ -37,23 +38,7 @@ def _get_user(authorization: str | None = Header(None), db: Session = Depends(ge
 
 
 def _serialize(row) -> dict:
-    return {
-        "id": row.id,
-        "fact_key": row.fact_key,
-        "label": row.label,
-        "category": row.category,
-        "track": row.track,
-        "value": row.value,
-        "notes": row.notes,
-        "source_type": row.source_type,
-        "source_ref": row.source_ref,
-        "locked_at": row.locked_at.isoformat() if row.locked_at else None,
-        "is_active": row.is_active,
-        "superseded_by_id": row.superseded_by_id,
-        "detected_conflicts": row.detected_conflicts or [],
-        "created_at": row.created_at.isoformat() if row.created_at else None,
-        "updated_at": row.updated_at.isoformat() if row.updated_at else None,
-    }
+    return serialize_fact(row)
 
 
 class UpsertFactRequest(BaseModel):

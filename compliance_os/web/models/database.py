@@ -24,6 +24,13 @@ def configured_database_url(db_path: str | None = None) -> str:
             return db_path
         return f"sqlite:///{db_path}"
 
+    if (os.environ.get("GUARDIAN_MODE") or "").strip().lower() == "local":
+        guardian_home = Path(
+            os.environ.get("GUARDIAN_HOME") or (Path.home() / ".guardian")
+        )
+        guardian_home.mkdir(parents=True, exist_ok=True)
+        return f"sqlite:///{guardian_home / 'guardian.db'}"
+
     database_url = (os.environ.get("DATABASE_URL") or "").strip()
     if database_url:
         if database_url.startswith("postgres://"):
