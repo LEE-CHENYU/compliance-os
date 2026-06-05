@@ -22,20 +22,20 @@ import zipfile
 from pathlib import Path
 
 
-COMPLIANCE_OS_VERSION = "==1.0.6"
+COMPLIANCE_OS_VERSION = "==2.0.0"
 
 
 MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "1.0.6",
+    "version": "2.0.0",
     "description": (
-        "Compliance copilot for nonresidents, STEM OPT / H-1B workers, "
-        "international students, and foreign-owned US entities. Exposes "
-        "23 MCP tools for immigration/tax document cross-checks, case "
-        "template matching (H-1B, CPA), form filing (Form 8843, 1040-NR, "
-        "FBAR, Form 5472), and Gmail integration."
+        "Local-first compliance copilot for nonresidents, STEM OPT / H-1B "
+        "workers, international students, and foreign-owned US entities. Runs "
+        "entirely on your machine — document extraction, a personal facts "
+        "source-of-truth, deadlines/risk checks, and form filing (Form 8843, "
+        "1040-NR, FBAR, Form 5472). Your documents never leave your computer."
     ),
     "long_description": (
         "Guardian scans a local folder against reusable case templates "
@@ -67,40 +67,22 @@ MANIFEST = {
             "command": "uv",
             "args": ["run", "--directory", "${__dirname}", "src/server.py"],
             "env": {
-                "GUARDIAN_API_URL": "${user_config.api_url}",
-                "GUARDIAN_TOKEN": "${user_config.token}",
-                "OPENAI_API_KEY": "${user_config.openai_api_key}",
+                "GUARDIAN_LICENSE_KEY": "${user_config.license_key}",
+                "GUARDIAN_MODE": "local",
             },
         },
     },
     "user_config": {
-        "token": {
+        "license_key": {
             "type": "string",
-            "title": "Guardian API token",
+            "title": "Guardian license key",
             "description": (
                 "Get yours at https://guardiancompliance.app/connect "
-                "(sign in, click Generate token). Starts with gdn_oc_."
+                "(sign in, click Generate). Starts with gdn_oc_. Required to "
+                "activate the extension; nothing else to configure — everything "
+                "runs locally."
             ),
             "required": True,
-            "sensitive": True,
-        },
-        "api_url": {
-            "type": "string",
-            "title": "Guardian API URL",
-            "description": "Production: https://guardiancompliance.app — or your local dev server.",
-            "default": "https://guardiancompliance.app",
-            "required": False,
-        },
-        "openai_api_key": {
-            "type": "string",
-            "title": "OpenAI API key (optional)",
-            "description": (
-                "With a key: cloud embeddings via OpenAI text-embedding-3-small "
-                "(small local footprint, per-call API cost). "
-                "Without a key: a local ONNX model runs on your machine — no API "
-                "cost, with a first-time model download into your home directory."
-            ),
-            "required": False,
             "sensitive": True,
         },
     },
