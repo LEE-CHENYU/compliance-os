@@ -145,3 +145,28 @@ def test_mcp_guardian_ask_local_returns_grounding(local_db):
 
     out = json.loads(_run(mcp_server.guardian_ask("what documents do I have")))
     assert "context" in out and "references" in out
+
+
+def test_full_local_extraction_loop(local_db):
+    """parse → schema → upload → record → facts: the whole local loop."""
+    from compliance_os import local_engine, mcp_server
+
+    src = Path(os.environ["GUARDIAN_HOME"]) / "full_i20.txt"
+    src.write_text("SEVIS ID: N0004445555\nProgram start: 2025-08-20\n")
+
+    # 1. schema tells us what to read
+    schema = json.loads(mcp_server.get_extraction_schema("i20"))
+    assert any(e["source_field"] == "sevis_number" for e in schema)
+
+    # 2. upload stores the doc + returns text for the model to read
+    up = local_engine.local_upload_document(str(src), doc_type="i20")
+    assert "N0004445555" in up["text"]
+
+    # 3. record the value the model "read"
+    local_engine.local_record_extracted_facts(
+        up["doc_id"], [{"field_name": "sevis_number", "value": "N0004445555"}]
+    )
+
+    # 4. it shows up in the SoT
+    facts = {f["fact_key"]: f["value"] for f in local_engine.local_get_facts()["facts"]}
+    assert "sevis_id" in facts
