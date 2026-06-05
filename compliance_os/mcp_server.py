@@ -19,8 +19,9 @@ from pathlib import Path
 from urllib import error, request
 
 from mcp.server.fastmcp import FastMCP
-from mcp.types import ToolAnnotations
+from mcp.types import TextContent, ToolAnnotations
 
+from compliance_os.licensing import activation_block, feature_for_tool
 from compliance_os.local_engine import (
     force_local_embeddings,
     is_local_mode,
@@ -32,7 +33,21 @@ from compliance_os.local_engine import (
     local_upload_document,
 )
 
-mcp = FastMCP(
+class GatedMCP(FastMCP):
+    """FastMCP that gates every tool dispatch on license activation when
+    running as the standalone local extension. The hosted /mcp mount
+    (where users authenticate per-request) is never gated, and direct
+    function calls (tests, internal use) bypass this entirely."""
+
+    async def call_tool(self, name, arguments):
+        if not _is_hosted():
+            block = activation_block(feature_for_tool(name))
+            if block is not None:
+                return [TextContent(type="text", text=json.dumps(block))]
+        return await super().call_tool(name, arguments)
+
+
+mcp = GatedMCP(
     "guardian",
     instructions=(
         "You are Guardian, an immigration, tax, and business compliance assistant. "
