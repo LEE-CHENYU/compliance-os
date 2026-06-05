@@ -299,6 +299,18 @@ def main():
     if "--help" in args or "-h" in args:
         print(__doc__)
         return
+    if args and args[0] == "import":
+        if len(args) < 2:
+            print("Usage: guardian-mcp import <export.zip>")
+            return
+        import compliance_os.migration as _migration
+
+        summary = _migration.import_data(args[1])
+        print(
+            f"  Imported: {summary['checks']} checks, {summary['documents']} documents, "
+            f"{summary['user_facts']} facts → ~/.guardian"
+        )
+        return
     if "uninstall" in args or "--uninstall" in args:
         uninstall()
         return

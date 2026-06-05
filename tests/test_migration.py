@@ -128,3 +128,46 @@ def test_import_lands_data_under_local_user(local_env, tmp_path):
         assert Path(doc.file_path).read_text() == "SEVIS ID: N0001234567"
     finally:
         ldb.close()
+
+
+def test_export_endpoint_streams_zip(tmp_path):
+    import asyncio
+    from compliance_os.web.routers import dashboard
+
+    db, user_id = _make_source_db(tmp_path)
+    try:
+        # call the endpoint function directly with a stubbed user
+        from compliance_os.web.models.auth import UserRow
+        user = db.query(UserRow).filter(UserRow.id == user_id).first()
+        resp = dashboard.export_data(_user=user, db=db)
+        # StreamingResponse.body_iterator is an async generator — drain it.
+        async def _drain():
+            chunks = []
+            async for chunk in resp.body_iterator:
+                chunks.append(chunk)
+            return b"".join(chunks)
+        body = asyncio.run(_drain())
+        zf = zipfile.ZipFile(io.BytesIO(body))
+        assert "data.json" in zf.namelist()
+    finally:
+        db.close()
+
+
+def test_cli_import_subcommand(local_env, tmp_path, monkeypatch):
+    from compliance_os import migration, mcp_install
+
+    db, user_id = _make_source_db(tmp_path)
+    blob = migration.export_user_data(db, user_id); db.close()
+    zip_path = tmp_path / "export.zip"
+    zip_path.write_bytes(blob)
+
+    called = {}
+
+    def _fake_import(p):
+        called["path"] = p
+        return {"checks": 1, "documents": 0, "extracted_fields": 0, "user_facts": 0}
+
+    monkeypatch.setattr(migration, "import_data", _fake_import)
+    monkeypatch.setattr("sys.argv", ["guardian-mcp", "import", str(zip_path)])
+    mcp_install.main()
+    assert called["path"] == str(zip_path)
