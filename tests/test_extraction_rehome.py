@@ -112,3 +112,36 @@ def test_mcp_record_extracted_facts_tool(local_db):
         )
     )
     assert "sevis_number" in out["recorded_fields"]
+
+
+def test_local_ask_grounding_returns_context_and_refs(local_db):
+    from compliance_os import local_engine
+
+    src = Path(os.environ["GUARDIAN_HOME"]) / "i20c.txt"
+    src.write_text("SEVIS ID: N0007778888\nSchool: Grounding University\n")
+    doc_id = local_engine.local_upload_document(str(src), doc_type="i20")["doc_id"]
+    local_engine.local_record_extracted_facts(
+        doc_id, [{"field_name": "sevis_number", "value": "N0007778888"}]
+    )
+
+    out = local_engine.local_ask_grounding("what is my sevis id")
+    assert set(out) >= {"question", "context", "references"}
+    assert isinstance(out["context"], str)
+    assert isinstance(out["references"], list)
+
+
+def test_mcp_guardian_ask_local_returns_grounding(local_db):
+    import asyncio
+    from compliance_os import mcp_server
+
+    def _run(coro):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            return loop.run_until_complete(coro)
+        finally:
+            loop.close()
+            asyncio.set_event_loop(asyncio.new_event_loop())
+
+    out = json.loads(_run(mcp_server.guardian_ask("what documents do I have")))
+    assert "context" in out and "references" in out

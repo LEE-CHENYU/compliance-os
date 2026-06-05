@@ -24,6 +24,7 @@ from mcp.types import ToolAnnotations
 from compliance_os.local_engine import (
     force_local_embeddings,
     is_local_mode,
+    local_ask_grounding,
     local_get_facts,
     local_record_extracted_facts,
     local_resolve_conflict,
@@ -513,6 +514,9 @@ async def guardian_ask(question: str) -> str:
     Args:
         question: The compliance question to ask.
     """
+    if is_local_mode():
+        return json.dumps(local_ask_grounding(question), default=str, indent=2)
+
     try:
         result = await _api_post("/api/chat", {"message": question, "history": []})
         return result.get("reply", "No response received.")

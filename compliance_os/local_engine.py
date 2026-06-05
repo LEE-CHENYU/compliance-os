@@ -265,3 +265,26 @@ def local_record_extracted_facts(doc_id: str, facts: list) -> dict:
         }
     finally:
         db.close()
+
+
+def local_ask_grounding(question: str) -> dict:
+    """Gather local grounding for a question — chunks + facts — with NO model.
+
+    Returns the retrieved document context and references so the caller's
+    Claude composes the answer itself. This replaces the server-side
+    RAG+LLM `guardian_ask` in local mode: retrieval stays local, the
+    answer moves to the user's Claude.
+    """
+    from compliance_os.web.routers.chat import _build_context
+
+    db = next(get_session())
+    try:
+        user_id = get_local_user_id(db)
+        context_text, references = _build_context(user_id, db, query=question)
+        return {
+            "question": question,
+            "context": context_text,
+            "references": references,
+        }
+    finally:
+        db.close()
