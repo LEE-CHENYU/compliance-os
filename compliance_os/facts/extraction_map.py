@@ -128,3 +128,30 @@ def fact_key_for(doc_type: str | None, field_name: str | None) -> str | None:
     if not doc_type or not field_name:
         return None
     return EXTRACTION_TO_FACT_KEY.get((doc_type, field_name))
+
+
+def schema_for_doc_type(doc_type: str) -> list[dict]:
+    """Return the SoT-tracked extraction targets for a document type.
+
+    Reverse of EXTRACTION_TO_FACT_KEY, enriched with each fact's
+    human label and value shape from the vocabulary. This is exactly
+    what the extraction-schema tool hands the model: which fields to
+    read out of this document, and where each lands in the SoT.
+    """
+    from compliance_os.facts.vocabulary import resolve_fact_def
+
+    out: list[dict] = []
+    for (dt, field_name), fact_key in EXTRACTION_TO_FACT_KEY.items():
+        if dt != doc_type:
+            continue
+        fact_def = resolve_fact_def(fact_key)
+        out.append(
+            {
+                "source_field": field_name,
+                "fact_key": fact_key,
+                "label": fact_def.label if fact_def else fact_key,
+                "shape": fact_def.shape if fact_def else "string",
+            }
+        )
+    out.sort(key=lambda e: e["source_field"])
+    return out

@@ -601,6 +601,31 @@ def classify_document(file_path: str) -> str:
     )
 
 
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Get extraction schema",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def get_extraction_schema(doc_type: str) -> str:
+    """List the fields to extract from a document of this type.
+
+    Returns the SoT-tracked targets — each with the raw `source_field`
+    to read, the canonical `fact_key` it maps to, a human `label`, and
+    the value `shape` (string|number|date|object|list). After parsing a
+    document, read these fields out of the text and submit them with
+    record_extracted_facts. Runs locally with no token cost.
+
+    Args:
+        doc_type: The document type (e.g. "i20", "i797", "w2").
+    """
+    from compliance_os.facts.extraction_map import schema_for_doc_type
+
+    return json.dumps(schema_for_doc_type(doc_type), indent=2)
+
+
 def _upload_single_file(file_path: Path, doc_type: str = "") -> dict:
     """Upload one file to Guardian API. Returns result dict."""
     mime_type = mimetypes.guess_type(str(file_path))[0] or "application/octet-stream"
