@@ -79,13 +79,13 @@ def _python_path() -> str:
     return sys.executable
 
 
-def _mcp_server_config(api_url: str, token: str) -> dict:
+def _mcp_server_config(license_key: str) -> dict:
     return {
         "command": _python_path(),
         "args": ["-m", "compliance_os.mcp_server"],
         "env": {
-            "GUARDIAN_API_URL": api_url,
-            "GUARDIAN_TOKEN": token,
+            "GUARDIAN_LICENSE_KEY": license_key,
+            "GUARDIAN_MODE": "local",
         },
     }
 
@@ -108,7 +108,7 @@ def _write_json_config(path: Path, server_config: dict) -> bool:
     return True
 
 
-def _write_toml_config(path: Path, api_url: str, token: str) -> bool:
+def _write_toml_config(path: Path, license_key: str) -> bool:
     content = ""
     if path.exists():
         content = path.read_text(encoding="utf-8")
@@ -140,8 +140,8 @@ command = "{python}"
 args = ["-m", "compliance_os.mcp_server"]
 
 [mcp_servers.guardian.env]
-GUARDIAN_API_URL = "{api_url}"
-GUARDIAN_TOKEN = "{token}"
+GUARDIAN_LICENSE_KEY = "{license_key}"
+GUARDIAN_MODE = "local"
 '''
 
     content += toml_block
@@ -149,33 +149,17 @@ GUARDIAN_TOKEN = "{token}"
     return True
 
 
-# ─── Token setup ─────────────────────────────────────────────────
+# ─── License key setup ───────────────────────────────────────────
 
-def _prompt_token() -> tuple[str, str]:
+def _prompt_license_key() -> str:
     print()
-    print("  Guardian API connection")
-    print("  -----------------------")
+    print("  Guardian activation")
+    print("  -------------------")
     print()
-    print("  Where is your Guardian server?")
+    print("  Everything runs locally on your machine — your documents never leave.")
+    print("  Get your license key: guardiancompliance.app/connect  (sign in → Generate).")
     print()
-    print("  1. Local development  (http://localhost:8000 — auto-auth)")
-    print("  2. Production         (https://guardiancompliance.app)")
-    print("  3. Custom URL")
-    print()
-
-    choice = input("  Choose [1]: ").strip() or "1"
-
-    if choice == "1":
-        return "http://localhost:8000", ""
-    elif choice == "2":
-        print()
-        print("  Get your token: guardiancompliance.app → Dashboard → Connect to OpenClaw")
-        token = input("  Paste Guardian token: ").strip()
-        return "https://guardiancompliance.app", token
-    else:
-        url = input("  Guardian API URL: ").strip()
-        token = input("  Guardian token (blank for none): ").strip()
-        return url, token
+    return input("  Paste Guardian license key: ").strip()
 
 
 # ─── Main installer ──────────────────────────────────────────────
@@ -227,15 +211,15 @@ def install(auto_all: bool = False, local: bool = False):
             except (ValueError, IndexError):
                 selected = apps
 
-    # Get token
+    # Get license key (local-first: no server URL needed)
     if local:
-        api_url, token = "http://localhost:8000", ""
+        license_key = os.environ.get("GUARDIAN_LICENSE_KEY", "")
     else:
-        api_url, token = _prompt_token()
+        license_key = _prompt_license_key()
 
     # Write configs
     print()
-    server_config = _mcp_server_config(api_url, token)
+    server_config = _mcp_server_config(license_key)
 
     for app in selected:
         path = app["path"]
@@ -243,8 +227,7 @@ def install(auto_all: bool = False, local: bool = False):
             if app["format"] == "json":
                 _write_json_config(path, server_config)
             elif app["format"] == "toml":
-                _write_toml_config(path, api_url, token)
-
+                _write_toml_config(path, license_key)
             print(f"  [ok] {app['name']}  →  {path}")
         except Exception as exc:
             print(f"  [!!] {app['name']}  →  {exc}")
@@ -260,10 +243,6 @@ def install(auto_all: bool = False, local: bool = False):
     print("    - generate_form_8843, run_compliance_check")
     print("    - gmail_search, gmail_draft, gmail_send, ...")
     print()
-    if api_url == "http://localhost:8000":
-        print("  For context tools, start the Guardian server:")
-        print("    uvicorn compliance_os.web.app:app")
-        print()
     print("  Gmail setup (optional):")
     print("    python scripts/guardian_mcp_setup.py")
     print()
