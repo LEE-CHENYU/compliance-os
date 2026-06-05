@@ -110,6 +110,18 @@ def force_local_embeddings() -> None:
     os.environ["GUARDIAN_EMBEDDING_PROVIDER"] = "local"
 
 
+def local_uploads_root():
+    """The on-device uploads root in local mode: GUARDIAN_DATA_DIR, else
+    GUARDIAN_HOME/uploads. Resolved from env LIVE (not the frozen settings
+    singleton). Documents land under <root>/<check_id>/. Shared by
+    local_upload_document and the index/query tools so the vector index
+    points at the same place the data room writes to."""
+    from pathlib import Path
+
+    guardian_home = Path(os.environ.get("GUARDIAN_HOME") or (Path.home() / ".guardian"))
+    return Path(os.environ.get("GUARDIAN_DATA_DIR") or (guardian_home / "uploads"))
+
+
 def _get_local_check(db, user_id: str):
     """Find-or-create the singleton local 'check' that documents attach to.
 
@@ -182,12 +194,10 @@ def local_upload_document(file_path: str, doc_type: str = "") -> dict:
     try:
         user_id = get_local_user_id(db)
         check = _get_local_check(db, user_id)
-        # Resolve the uploads root from env LIVE (not settings, which is a
-        # frozen singleton) so it honors GUARDIAN_HOME/GUARDIAN_DATA_DIR the
-        # same way database.py resolves the DB path.
-        guardian_home = Path(os.environ.get("GUARDIAN_HOME") or (Path.home() / ".guardian"))
-        upload_root = Path(os.environ.get("GUARDIAN_DATA_DIR") or (guardian_home / "uploads"))
-        upload_dir = upload_root / check.id
+        # Uploads root resolved from env LIVE (shared with the index/query
+        # tools via local_uploads_root) so the vector index scans the same
+        # place the data room writes to.
+        upload_dir = local_uploads_root() / check.id
         upload_dir.mkdir(parents=True, exist_ok=True)
         dest = upload_dir / f"{_uuid.uuid4()}_{path.name}"
         dest.write_bytes(content)

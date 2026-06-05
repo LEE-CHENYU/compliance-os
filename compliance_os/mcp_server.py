@@ -1686,6 +1686,25 @@ def index_documents(
         return json.dumps({"error": error_code, "message": warmup_msg})
     try:
         from compliance_os.indexer.index import DocumentIndexer
+
+        # Local mode: index the on-device data room (<uploads_root>/<check_id>/),
+        # the same place local_upload_document writes to. The project-root /
+        # DATA_DIR heuristic below is for the hosted server only.
+        if is_local_mode():
+            from compliance_os.local_engine import local_uploads_root
+
+            data_dir = local_uploads_root()
+            indexer = DocumentIndexer(data_dir=data_dir)
+            result = indexer.build_index(force=force, directories=None, verbose=False)
+            return json.dumps({
+                "status": "success",
+                "data_dir": str(data_dir),
+                "indexed": result.get("indexed", 0),
+                "skipped": result.get("skipped", 0),
+                "chunks": result.get("chunks", 0),
+                "up_to_date": result.get("up_to_date", False),
+            })
+
         from compliance_os.web.models.database import DATA_DIR
 
         # Try project root first (real uploads), fall back to DATA_DIR
