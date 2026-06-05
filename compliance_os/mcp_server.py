@@ -24,9 +24,12 @@ from mcp.types import ToolAnnotations
 from compliance_os.local_engine import (
     force_local_embeddings,
     is_local_mode,
+    local_ask_grounding,
     local_get_facts,
+    local_record_extracted_facts,
     local_resolve_conflict,
     local_set_fact,
+    local_upload_document,
 )
 
 mcp = FastMCP(
@@ -511,6 +514,9 @@ async def guardian_ask(question: str) -> str:
     Args:
         question: The compliance question to ask.
     """
+    if is_local_mode():
+        return json.dumps(local_ask_grounding(question), default=str, indent=2)
+
     try:
         result = await _api_post("/api/chat", {"message": question, "history": []})
         return result.get("reply", "No response received.")
@@ -601,6 +607,62 @@ def classify_document(file_path: str) -> str:
     )
 
 
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Get extraction schema",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def get_extraction_schema(doc_type: str) -> str:
+    """List the fields to extract from a document of this type.
+
+    Returns the SoT-tracked targets — each with the raw `source_field`
+    to read, the canonical `fact_key` it maps to, a human `label`, and
+    the value `shape` (string|number|date|object|list). After parsing a
+    document, read these fields out of the text and submit them with
+    record_extracted_facts. Runs locally with no token cost.
+
+    Args:
+        doc_type: The document type (e.g. "i20", "i797", "w2").
+    """
+    from compliance_os.facts.extraction_map import schema_for_doc_type
+
+    return json.dumps(schema_for_doc_type(doc_type), indent=2)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Record extracted facts",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+    ),
+)
+def record_extracted_facts(doc_id: str, facts: list) -> str:
+    """Submit the field values you read from a document into the SoT.
+
+    Call this after parse_document + get_extraction_schema: read each
+    schema field's value out of the document text, then submit them here.
+    The engine writes them with provenance to the stored document and
+    projects mapped fields into the user-facts source-of-truth, detecting
+    conflicts with existing facts. Local mode only.
+
+    Args:
+        doc_id: The id returned by upload_document.
+        facts: List of {"field_name": str, "value": str,
+            "confidence": number (optional), "raw_text": str (optional)}.
+    """
+    if not is_local_mode():
+        return json.dumps(
+            {"error": "record_extracted_facts is only available in local mode."}
+        )
+    return json.dumps(
+        local_record_extracted_facts(doc_id, facts), default=str, indent=2
+    )
+
+
 def _upload_single_file(file_path: Path, doc_type: str = "") -> dict:
     """Upload one file to Guardian API. Returns result dict."""
     mime_type = mimetypes.guess_type(str(file_path))[0] or "application/octet-stream"
@@ -681,6 +743,9 @@ def upload_document(
         file_path: Absolute path to the document file.
         doc_type: Document type override (e.g., "w2", "i20"). Auto-detected if blank.
     """
+    if is_local_mode():
+        return json.dumps(local_upload_document(file_path, doc_type), default=str, indent=2)
+
     path = Path(file_path)
     if not path.exists():
         return json.dumps({"error": f"File not found: {file_path}"})
