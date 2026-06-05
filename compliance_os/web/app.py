@@ -29,6 +29,7 @@ from compliance_os.web.routers import subscription as subscription_router
 from compliance_os.web.routers import me as me_router
 from compliance_os.web.routers import search as search_router
 from compliance_os.web.routers import user_facts as user_facts_router
+from compliance_os.web.routers import license as license_router
 
 
 @asynccontextmanager
@@ -114,6 +115,7 @@ app.include_router(subscription_router.router)
 app.include_router(me_router.router)
 app.include_router(search_router.router)
 app.include_router(user_facts_router.router)
+app.include_router(license_router.router)
 
 
 # Mount hosted MCP endpoint (SSE transport for Claude Desktop / Codex)
