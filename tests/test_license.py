@@ -206,3 +206,29 @@ def test_gate_allows_when_active(monkeypatch, tmp_path):
     text = _extract_text(result)
     assert "activation_required" not in text
     assert "sevis_id" in text  # the real tool ran
+
+
+# ─── Task 4: End-to-end ───────────────────────────────────────────────────────
+
+def test_license_end_to_end(local_db, monkeypatch, tmp_path):
+    """Server issues entitlements for a real key; client caches + activates;
+    the gate then lets a tool run."""
+    import asyncio
+    from compliance_os import licensing
+    from compliance_os.web.routers.license import ValidateRequest, validate
+
+    # Server side: a real user + key resolves to active/free entitlements.
+    db = next(local_db.get_session())
+    try:
+        _user, key = _make_user_with_token(db)
+        server_out = validate(ValidateRequest(license_key=key), db=db)
+    finally:
+        db.close()
+    assert server_out["valid"] and "extraction" in server_out["features"]
+
+    # Client side: point validate_online at the in-process server result.
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", key)
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    monkeypatch.setattr(licensing, "validate_online", lambda k: server_out)
+    assert licensing.activation_state() == "active"
+    assert licensing.activation_block() is None
