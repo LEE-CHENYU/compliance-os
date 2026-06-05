@@ -133,8 +133,9 @@ def _embedding_error_message(exc: Exception) -> str:
     return (
         "Embeddings unavailable: "
         f"{type(exc).__name__}: {exc}. "
-        "Set OPENAI_API_KEY in the extension's Configure panel "
-        "to use cloud embeddings, or check the server logs."
+        "Guardian uses a local on-device embedding model by default — no API "
+        "key needed. The first run downloads it (~100-130MB); if that failed, "
+        "check your network and the server logs, then restart the extension."
     )
 
 
@@ -1157,6 +1158,30 @@ def get_filing_guidance(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
+def _gmail_guard() -> str | None:
+    """Return a redirect message (JSON) if Guardian's own Gmail isn't
+    configured, else None. In the local-first default the user's assistant
+    Gmail connector (or a Gmail MCP plugin) is the intended path — Guardian
+    ships no Gmail OAuth of its own."""
+    from compliance_os.gmail_client import is_gmail_configured
+
+    if is_gmail_configured():
+        return None
+    return json.dumps(
+        {
+            "error": "gmail_not_configured",
+            "message": (
+                "Guardian isn't managing Gmail here. Use your assistant's own "
+                "Gmail connector (or a Gmail MCP plugin) to read or draft email, "
+                "then save any attachment and call upload_document to bring it "
+                "into your data room. To use Guardian's built-in Gmail "
+                "integration instead, add OAuth credentials at "
+                "~/.config/guardian/gmail_credentials.json."
+            ),
+        }
+    )
+
+
 def _get_gmail_service():
     from compliance_os.gmail_client import get_service
 
@@ -1179,6 +1204,8 @@ def gmail_search(query: str, max_results: int = 10) -> str:
             "is:unread label:compliance", "has:attachment newer_than:7d").
         max_results: Maximum messages to return (default 10).
     """
+    if (msg := _gmail_guard()) is not None:
+        return msg
     try:
         service = _get_gmail_service()
         results = (
@@ -1236,6 +1263,8 @@ def gmail_read(message_id: str) -> str:
     Args:
         message_id: The message ID (from gmail_search results).
     """
+    if (msg := _gmail_guard()) is not None:
+        return msg
     try:
         service = _get_gmail_service()
         msg = (
@@ -1323,6 +1352,8 @@ def gmail_draft(
         cc: CC recipients (comma-separated, optional).
         attachment_path: Path to file to attach (optional).
     """
+    if (msg := _gmail_guard()) is not None:
+        return msg
     import email.encoders
     import email.mime.base
     import email.mime.multipart
@@ -1386,6 +1417,8 @@ def gmail_send(draft_id: str) -> str:
     Args:
         draft_id: The draft ID (from gmail_draft result).
     """
+    if (msg := _gmail_guard()) is not None:
+        return msg
     try:
         service = _get_gmail_service()
         result = (
@@ -1418,6 +1451,8 @@ def gmail_reply(message_id: str, body: str) -> str:
         message_id: The message ID to reply to.
         body: Reply body (plain text).
     """
+    if (msg := _gmail_guard()) is not None:
+        return msg
     import email.mime.text
 
     try:
@@ -1492,6 +1527,8 @@ def gmail_download_attachment(
         attachment_id: The attachment ID (from gmail_read results).
         save_path: Local path to save the attachment.
     """
+    if (msg := _gmail_guard()) is not None:
+        return msg
     try:
         service = _get_gmail_service()
         att = (
