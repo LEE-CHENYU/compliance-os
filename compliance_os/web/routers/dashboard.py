@@ -1,13 +1,14 @@
 """Dashboard API — timeline, stats, upload, documents."""
 from __future__ import annotations
 
+import io
 import json
 import uuid
 from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -713,3 +714,20 @@ def prepare_dataroom_upload(
         results.append(entry)
 
     return {"files": results}
+
+
+@router.get("/export")
+def export_data(
+    _user: UserRow = Depends(_get_user),
+    db: Session = Depends(get_session),
+):
+    """Download the caller's data room + facts SoT as a zip, for migrating
+    to the local extension (guardian-mcp import)."""
+    from compliance_os.migration import export_user_data
+
+    blob = export_user_data(db, _user.id)
+    return StreamingResponse(
+        io.BytesIO(blob),
+        media_type="application/zip",
+        headers={"Content-Disposition": 'attachment; filename="guardian_export.zip"'},
+    )
