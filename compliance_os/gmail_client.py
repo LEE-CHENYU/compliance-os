@@ -24,6 +24,14 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.modify",
 ]
 
+
+def is_gmail_configured() -> bool:
+    """True if Guardian's own Gmail OAuth is set up locally (a credentials
+    or token file is present). When False, the local-first extension defers
+    Gmail to the user's own assistant connector rather than managing it."""
+    return CREDENTIALS_PATH.exists() or TOKEN_PATH.exists()
+
+
 _service = None
 
 
