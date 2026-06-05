@@ -5,6 +5,15 @@ Guardian's tiny /api/license/validate endpoint on startup and when the
 cache is stale, cache the entitlements under ~/.guardian/license.json,
 and honor an offline grace window so brief offline use still works. The
 only thing sent out is the key + extension version — never user data.
+
+Threat model (intentional — see the spec's "soft-gate rule"): this gate is
+SOFT. The cache lives in a user-writable directory, so a determined local
+user can hand-edit ~/.guardian/license.json (or patch this module) to fake
+an active/pro tier. That is acceptable because the free tier is generous by
+design and bypassing it costs us nothing. Anything we ever want to HARD-gate
+(e.g. a paid cloud report, data-room sync) must keep a server-side
+deliverable the client cannot fabricate — never rely on this cache for hard
+enforcement.
 """
 from __future__ import annotations
 

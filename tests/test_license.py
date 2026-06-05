@@ -152,7 +152,8 @@ def _extract_text(result) -> str:
             return item[0].text
     if hasattr(result, "text"):
         return result.text
-    return json.dumps(result)
+    # Fail loudly rather than pass vacuously if FastMCP's shape changes again.
+    raise ValueError(f"unrecognized call_tool result shape: {type(result)!r}")
 
 
 def test_gate_blocks_unconfigured_standalone(monkeypatch, tmp_path):
