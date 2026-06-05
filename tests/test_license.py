@@ -66,3 +66,65 @@ def test_license_route_is_registered():
 
     paths = {r.path for r in app.routes}
     assert "/api/license/validate" in paths
+
+
+# ─── Task 2: Client activation module ────────────────────────────────────────
+
+def test_unconfigured_without_key(monkeypatch, tmp_path):
+    monkeypatch.delenv("GUARDIAN_LICENSE_KEY", raising=False)
+    monkeypatch.delenv("GUARDIAN_TOKEN", raising=False)
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    from compliance_os import licensing
+
+    assert licensing.activation_state() == "unconfigured"
+    block = licensing.activation_block()
+    assert block is not None and block["state"] == "unconfigured"
+
+
+def test_active_when_online_validates(monkeypatch, tmp_path):
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", "gdn_oc_aa_bb")
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    from compliance_os import licensing
+
+    monkeypatch.setattr(
+        licensing, "validate_online",
+        lambda key: {"valid": True, "status": "active", "tier": "free",
+                     "features": ["extraction", "chat"], "grace_until": None},
+    )
+    assert licensing.activation_state() == "active"
+    assert licensing.activation_block() is None
+
+
+def test_inactive_when_server_says_invalid(monkeypatch, tmp_path):
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", "gdn_oc_aa_bb")
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    from compliance_os import licensing
+
+    monkeypatch.setattr(
+        licensing, "validate_online",
+        lambda key: {"valid": False, "status": "invalid", "tier": "free",
+                     "features": [], "grace_until": None},
+    )
+    assert licensing.activation_state() == "inactive"
+    assert licensing.activation_block()["state"] == "inactive"
+
+
+def test_offline_grace_then_expiry(monkeypatch, tmp_path):
+    from datetime import datetime, timedelta, timezone
+
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", "gdn_oc_aa_bb")
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    from compliance_os import licensing
+
+    # Offline: validate_online returns None; fall back to cache.
+    monkeypatch.setattr(licensing, "validate_online", lambda key: None)
+
+    future = (datetime.now(timezone.utc) + timedelta(days=3)).isoformat()
+    licensing._write_cache({"valid": True, "status": "active", "tier": "free",
+                            "features": ["extraction"], "grace_until": future})
+    assert licensing.activation_state() == "active"   # within grace
+
+    past = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+    licensing._write_cache({"valid": True, "status": "active", "tier": "free",
+                            "features": ["extraction"], "grace_until": past})
+    assert licensing.activation_state() == "expired_offline"
