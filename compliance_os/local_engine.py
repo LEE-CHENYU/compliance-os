@@ -133,17 +133,19 @@ def _get_local_check(db, user_id: str):
 
 def _local_ocr_text(path) -> str:
     """Extract document text locally (no API). PDF→PyMuPDF, DOCX→python-docx,
-    everything else→plain read. Returns "" on failure."""
+    everything else→plain read. Returns "" on ANY failure so a corrupt file
+    never propagates an unhandled exception through local_upload_document
+    (which would skip the ocr_text commit and break the {"error": ...} contract)."""
     suffix = path.suffix.lower()
-    if suffix == ".pdf":
-        from compliance_os.web.services.extractor import extract_pdf_text_with_provenance
-
-        return extract_pdf_text_with_provenance(str(path)).text or ""
-    if suffix in {".docx", ".doc"}:
-        from compliance_os.web.services.docx_reader import extract_text
-
-        return extract_text(str(path)) or ""
     try:
+        if suffix == ".pdf":
+            from compliance_os.web.services.extractor import extract_pdf_text_with_provenance
+
+            return extract_pdf_text_with_provenance(str(path)).text or ""
+        if suffix in {".docx", ".doc"}:
+            from compliance_os.web.services.docx_reader import extract_text
+
+            return extract_text(str(path)) or ""
         return path.read_text(encoding="utf-8", errors="replace")
     except Exception:
         return ""
@@ -275,6 +277,10 @@ def local_ask_grounding(question: str) -> dict:
     RAG+LLM `guardian_ask` in local mode: retrieval stays local, the
     answer moves to the user's Claude.
     """
+    # Direct import from the chat router is verified safe in local mode:
+    # chat_completion (the only LLM dependency) is imported lazily inside the
+    # endpoint, so loading this module triggers no model/key side effects. If
+    # that ever changes, extract _build_context into a service module.
     from compliance_os.web.routers.chat import _build_context
 
     db = next(get_session())
