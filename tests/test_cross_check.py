@@ -59,3 +59,29 @@ def test_contributions_maps_fields_to_canonical_keys(local_db):
         assert "Acme Inc" in [v for (_d, _id, v) in contrib["current_employer_legal_name"]]
     finally:
         db.close()
+
+
+def test_mismatch_flags_employer_name_not_salary_format(local_db):
+    from compliance_os.compliance import cross_check
+    db = next(local_db.get_session())
+    try:
+        uid = _seed(db, [
+            ("i983", {"employer_name": "Acme Inc", "compensation": "$135,000"}),
+            ("employment_letter", {"employer_name": "Acme Incorporated", "compensation": "135000"}),
+        ])
+        contrib = cross_check._contributions(db, uid)
+        # employer name differs after normalization -> mismatch
+        keys = ["current_employer_legal_name", "current_annual_salary"]
+        findings = cross_check._mismatches(keys, contrib)
+        facts = {f["fact"] for f in findings}
+        assert "current_employer_legal_name" in facts       # "Acme Inc" != "Acme Incorporated"
+        assert "current_annual_salary" not in facts          # 135000 == 135000 after normalize
+    finally:
+        db.close()
+
+
+def test_normalize_examples():
+    from compliance_os.compliance.cross_check import _normalize
+    assert _normalize("current_annual_salary", "$135,000") == _normalize("current_annual_salary", "135000")
+    assert _normalize("current_employer_ein", "37-2222933") == _normalize("current_employer_ein", "372222933")
+    assert _normalize("legal_name", "Jane Q ") == _normalize("legal_name", "jane q")

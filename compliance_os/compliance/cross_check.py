@@ -61,3 +61,52 @@ def _present_doc_types(db, user_id: str) -> set:
         .all()
     )
     return {r[0] for r in rows}
+
+
+import re
+
+_DIGIT_KEYS = {"current_employer_ein", "entity_ein", "ssn_last4", "sevis_id",
+               "i94_admission_number", "h1b_receipt_number"}
+_MONEY_KEYS = {"current_annual_salary", "foreign_account_aggregate_high"}
+_HIGH_SEVERITY = {"legal_name", "sevis_id", "current_employer_ein", "entity_ein",
+                  "entity_legal_name", "current_employer_legal_name"}
+
+
+def _normalize(fact_key: str, value: str) -> str:
+    v = (value or "").strip()
+    if fact_key in _DIGIT_KEYS:
+        return re.sub(r"\D", "", v)
+    if fact_key in _MONEY_KEYS:
+        digits = re.sub(r"[^\d.]", "", v)
+        try:
+            return str(int(round(float(digits)))) if digits else ""
+        except ValueError:
+            return digits
+    # names / addresses / titles: case-fold, collapse whitespace, drop common
+    # corporate-suffix punctuation so "Acme Inc." == "Acme Inc" but "Acme Inc"
+    # != "Acme Incorporated".
+    v = re.sub(r"\s+", " ", v).strip().casefold().rstrip(".")
+    return v
+
+
+def _mismatches(keys, contributions) -> list:
+    """For each key, if ≥2 distinct normalized values appear across its
+    contributing documents, emit a mismatch finding citing every source."""
+    findings = []
+    for key in keys:
+        items = contributions.get(key, [])
+        groups: dict = {}
+        for doc_type, doc_id, value in items:
+            groups.setdefault(_normalize(key, value), []).append(
+                {"value": value, "doc": doc_type, "doc_id": doc_id})
+        groups.pop("", None)
+        if len(groups) >= 2:
+            findings.append({
+                "category": "mismatch",
+                "severity": "high" if key in _HIGH_SEVERITY else "medium",
+                "fact": key,
+                "values": [g[0] for g in groups.values()],  # one representative per distinct value
+                "message": f"'{key}' differs across your documents — these should match.",
+                "recommended_action": "Confirm the correct value and fix the document that's wrong.",
+            })
+    return findings
