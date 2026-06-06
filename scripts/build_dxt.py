@@ -22,14 +22,14 @@ import zipfile
 from pathlib import Path
 
 
-COMPLIANCE_OS_VERSION = "==2.0.1"
+COMPLIANCE_OS_VERSION = "==2.0.2"
 
 
 MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": (
         "Local-first compliance copilot for nonresidents, STEM OPT / H-1B "
         "workers, international students, and foreign-owned US entities. Runs "
@@ -104,6 +104,7 @@ MANIFEST = {
         {"name": "generate_form_8843",   "description": "Fill Form 8843 with filing guidance"},
         {"name": "run_compliance_check", "description": "H-1B doc check, FBAR, 83(b), ..."},
         {"name": "cross_check_filings",  "description": "Cross-check your filings for mismatches, missing forms, deadlines"},
+        {"name": "share_data_room",      "description": "Upload your data room to Guardian cloud (with your approval)"},
         {"name": "get_filing_guidance",  "description": "Deadlines, mailing addresses, steps"},
         {"name": "gmail_search",         "description": "Find compliance-related emails"},
         {"name": "gmail_read",           "description": "Read a Gmail message"},

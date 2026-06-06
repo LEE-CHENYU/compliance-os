@@ -212,4 +212,4 @@ def test_package_version_is_2():
 
     root = Path(__file__).resolve().parents[1]
     meta = tomllib.loads((root / "pyproject.toml").read_text())
-    assert meta["project"]["version"] == "2.0.0"
+    assert meta["project"]["version"] == "2.0.2"
