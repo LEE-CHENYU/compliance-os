@@ -1,0 +1,49 @@
+chains:
+  stem_opt:
+    name: "STEM OPT"
+    detect_when_any: [i20, ead, i983]
+    documents:
+      - {doc_type: i20, required: true, label: "Form I-20 (STEM)"}
+      - {doc_type: ead, required: true, label: "EAD / I-766"}
+      - {doc_type: i983, required: true, label: "I-983 Training Plan"}
+      - {doc_type: employment_letter, required: true, label: "Employment/offer letter"}
+      - {doc_type: i94, required: false, label: "I-94"}
+      - {doc_type: passport, required: false, label: "Passport"}
+    must_agree: [legal_name, sevis_id, current_employer_legal_name, current_employer_ein, current_position_title, worksite_address, current_annual_salary]
+    relationships: []
+    deadlines: [stem_opt_end_date]
+
+  h1b:
+    name: "H-1B"
+    detect_when_any: [i797]
+    documents:
+      - {doc_type: i797, required: true, label: "I-797 Approval"}
+      - {doc_type: employment_letter, required: false, label: "Offer/support letter"}
+      - {doc_type: passport, required: false, label: "Passport"}
+    must_agree: [legal_name, current_employer_legal_name, current_immigration_status]
+    relationships:
+      - {id: h1b_after_opt, op: date_order, before: stem_opt_end_date, after: h1b_classification_start_date, message: "H-1B start should not precede the STEM OPT end (cap-gap aside)."}
+    deadlines: [h1b_classification_end_date, i94_admit_until_date]
+
+  tax:
+    name: "Federal + State Tax"
+    detect_when_any: [w2, "1040_nr", form_8843, fbar]
+    documents:
+      - {doc_type: "1040_nr", required: false, label: "Form 1040-NR"}
+      - {doc_type: w2, required: false, label: "W-2"}
+      - {doc_type: form_8843, required: false, label: "Form 8843"}
+      - {doc_type: fbar, required: false, label: "FBAR / FinCEN 114"}
+    must_agree: [legal_name, ssn_last4, current_employer_legal_name, current_employer_ein]
+    relationships: []
+    deadlines: []
+
+  corporate:
+    name: "Corporate / Governance"
+    detect_when_any: [articles, ein_letter, form_5472]
+    documents:
+      - {doc_type: articles, required: false, label: "Articles of Incorporation"}
+      - {doc_type: ein_letter, required: false, label: "EIN / CP575"}
+      - {doc_type: form_5472, required: false, label: "Form 5472"}
+    must_agree: [entity_legal_name, entity_ein, entity_hq_address]
+    relationships: []
+    deadlines: []
