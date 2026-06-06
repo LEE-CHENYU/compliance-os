@@ -324,13 +324,11 @@ export default function Home() {
               Browse services
             </button>
           </div>
-          <p style={{display:'inline-flex',alignItems:'center',gap:7,fontSize:13,color:'#8e9ab5',fontWeight:500,marginBottom:40}}>
+          <p style={{display:'flex',alignItems:'center',gap:7,fontSize:13,color:'#8e9ab5',fontWeight:500,marginBottom:40,maxWidth:480}}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5b8dee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            One-click install into the{' '}
-            <span style={{fontFamily:'Georgia, "Times New Roman", serif',fontStyle:'italic',color:'#3a5a8c',fontWeight:600}}>Claude Desktop</span>
-            {' '}app — no setup, runs on your machine.
+            <span>One-click install into the <span style={{fontFamily:'Georgia, "Times New Roman", serif',fontStyle:'italic',color:'#3a5a8c',fontWeight:600}}>Claude Desktop</span> app — no setup, runs on your machine.</span>
           </p>
           <div style={{display:'flex',gap:28}}>
             {[["47","Forms tracked"],["23","Deadlines"],["156","Key phrases"]].map(([n,l]) => (
