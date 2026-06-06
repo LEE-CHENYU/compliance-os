@@ -133,3 +133,63 @@ def _missing(chain_id: str, present_doc_types: set) -> list:
                 "recommended_action": f"Upload your {d.get('label', d['doc_type'])}.",
             })
     return findings
+
+
+from datetime import date, datetime
+
+
+def _fact_values(db, user_id: str) -> dict:
+    """Active SoT facts as {fact_key: scalar_value}."""
+    from compliance_os.web.services.user_facts import get_active_facts
+
+    out = {}
+    for row in get_active_facts(db, user_id=user_id):
+        v = row.value
+        if isinstance(v, dict) and "v" in v:
+            v = v["v"]
+        out[row.fact_key] = v
+    return out
+
+
+def _as_date(value):
+    try:
+        return datetime.fromisoformat(str(value)[:10]).date()
+    except (ValueError, TypeError):
+        return None
+
+
+def _deadlines(keys, facts, horizon_days: int = 180) -> list:
+    findings = []
+    today = date.today()
+    for key in keys:
+        d = _as_date(facts.get(key))
+        if d is None:
+            continue
+        days = (d - today).days
+        if days <= horizon_days:
+            findings.append({
+                "category": "deadline",
+                "severity": "high" if days < 0 else "medium",
+                "fact": key,
+                "date": d.isoformat(),
+                "days_out": days,
+                "message": (f"{key} is past ({d.isoformat()})." if days < 0
+                            else f"{key} is {days} days away ({d.isoformat()})."),
+                "recommended_action": "Review and act before this date.",
+            })
+    return findings
+
+
+def _relationships(rules, facts) -> list:
+    findings = []
+    for r in rules:
+        if r.get("op") == "date_order":
+            before = _as_date(facts.get(r["before"]))
+            after = _as_date(facts.get(r["after"]))
+            if before and after and after < before:  # 'after' should be >= 'before'
+                findings.append({
+                    "category": "mismatch", "severity": "high", "rule": r["id"],
+                    "message": r.get("message", f"{r['after']} precedes {r['before']}."),
+                    "recommended_action": "Verify these dates against the source documents.",
+                })
+    return findings

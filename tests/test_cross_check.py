@@ -101,3 +101,34 @@ def test_detect_and_missing(local_db):
         assert "i20" not in missing_types       # present
     finally:
         db.close()
+
+
+def test_deadlines_and_relationship(local_db):
+    from datetime import date, timedelta
+    from compliance_os.compliance import cross_check
+    from compliance_os.web.services.user_facts import upsert_fact
+
+    db = next(local_db.get_session())
+    try:
+        from compliance_os import local_engine
+        uid = local_engine.get_local_user_id(db)
+        soon = (date.today() + timedelta(days=60)).isoformat()
+        far = (date.today() + timedelta(days=900)).isoformat()
+        for k, v in [("stem_opt_end_date", soon), ("h1b_classification_end_date", far),
+                     ("h1b_classification_start_date", "2025-01-01")]:
+            upsert_fact(db, user_id=uid, fact_key=k, value=v, source_type="document", source_ref={})
+        db.commit()
+        facts = cross_check._fact_values(db, uid)
+
+        dls = cross_check._deadlines(["stem_opt_end_date", "h1b_classification_end_date"], facts, horizon_days=180)
+        keys = {d["fact"] for d in dls}
+        assert "stem_opt_end_date" in keys          # 60 days out -> surfaced
+        assert "h1b_classification_end_date" not in keys  # 900 days -> beyond horizon
+
+        rel = cross_check._relationships(
+            [{"id": "h1b_after_opt", "op": "date_order", "before": "stem_opt_end_date",
+              "after": "h1b_classification_start_date", "message": "..."}], facts)
+        # stem_opt_end (60d future) is AFTER h1b start (2025) -> violation
+        assert any(f["rule"] == "h1b_after_opt" for f in rel)
+    finally:
+        db.close()
