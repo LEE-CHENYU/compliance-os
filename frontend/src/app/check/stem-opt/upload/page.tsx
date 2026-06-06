@@ -74,7 +74,7 @@ function StemOptUpload() {
   const [error, setError] = useState<string | null>(null);
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
   const uploadViewTrackedRef = useRef(false);
-  const consent = useEgressConsent({
+  const { ensure: ensureConsent, modal: consentModal } = useEgressConsent({
     egressType: "web_doc_upload",
     purpose: "extraction",
     destination: "Guardian's server",
@@ -117,7 +117,7 @@ function StemOptUpload() {
   const requiredUploaded = slots.filter((s) => s.required).every((s) => s.uploaded);
 
   const handleFile = useCallback(async (index: number, file: File) => {
-    if (!(await consent.ensure())) return; // <-- gate: no upload without approval
+    if (!(await ensureConsent())) return; // <-- gate: no upload without approval
     const slot = slots[index];
     setError(null);
     setSlots((prev) => prev.map((s, i) => i === index ? { ...s, file, uploading: true } : s));
@@ -144,7 +144,7 @@ function StemOptUpload() {
       setSlots((prev) => prev.map((s, i) => i === index ? { ...s, uploading: false, uploaded: false } : s));
       setError(nextError instanceof Error ? nextError.message : "Could not upload this document");
     }
-  }, [checkId, isForm8843Flow, slots, stage, consent]);
+  }, [checkId, isForm8843Flow, slots, stage, ensureConsent]);
 
   function handleSkipToDashboard() {
     markOnboardingSkipped();
@@ -172,7 +172,7 @@ function StemOptUpload() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
-      {consent.modal}
+      {consentModal}
       <div className="w-full max-w-lg py-20">
         <div className="flex items-center justify-between mb-8">
           <button onClick={() => router.back()} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">

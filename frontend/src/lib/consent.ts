@@ -50,6 +50,7 @@ export function grant(record: ConsentRecord): void {
 
 export function revoke(egressType: string, purpose: string): void {
   sessionGrants.delete(k(egressType, purpose));
+  if (typeof localStorage === "undefined") return;
   const all = loadAlways();
   delete all[k(egressType, purpose)];
   try {
