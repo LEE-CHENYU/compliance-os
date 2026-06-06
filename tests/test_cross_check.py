@@ -76,6 +76,10 @@ def test_mismatch_flags_employer_name_not_salary_format(local_db):
         facts = {f["fact"] for f in findings}
         assert "current_employer_legal_name" in facts       # "Acme Inc" != "Acme Incorporated"
         assert "current_annual_salary" not in facts          # 135000 == 135000 after normalize
+        emp = next(f for f in findings if f["fact"] == "current_employer_legal_name")
+        assert all(isinstance(v, str) for v in emp["values"])
+        assert set(emp["values"]) == {"Acme Inc", "Acme Incorporated"}
+        assert isinstance(emp["sources"], list) and emp["sources"]
     finally:
         db.close()
 

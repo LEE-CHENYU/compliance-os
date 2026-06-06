@@ -105,7 +105,11 @@ def _mismatches(keys, contributions) -> list:
                 "category": "mismatch",
                 "severity": "high" if key in _HIGH_SEVERITY else "medium",
                 "fact": key,
-                "values": [g[0] for g in groups.values()],  # one representative per distinct value
+                "values": [members[0]["value"] for members in groups.values()],
+                "sources": [
+                    {"value": members[0]["value"], "docs": sorted({m["doc"] for m in members})}
+                    for members in groups.values()
+                ],
                 "message": f"'{key}' differs across your documents — these should match.",
                 "recommended_action": "Confirm the correct value and fix the document that's wrong.",
             })
@@ -189,6 +193,7 @@ def _relationships(rules, facts) -> list:
             if before and after and after < before:  # 'after' should be >= 'before'
                 findings.append({
                     "category": "mismatch", "severity": "high", "rule": r["id"],
+                    "fact": f"{r['before']} → {r['after']}",
                     "message": r.get("message", f"{r['after']} precedes {r['before']}."),
                     "recommended_action": "Verify these dates against the source documents.",
                 })

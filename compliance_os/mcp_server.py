@@ -2131,7 +2131,7 @@ def cross_check_filings(chain: str = "") -> str:
         chain: Optional chain id — "stem_opt", "h1b", "tax", or "corporate".
     """
     if not is_local_mode():
-        return json.dumps({"error": "cross_check_filings is available in local mode."})
+        return json.dumps({"error": "cross_check_filings is only available in local mode."})
     return json.dumps(local_cross_check(chain), default=str, indent=2)
 
 
