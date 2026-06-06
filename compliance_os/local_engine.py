@@ -316,3 +316,74 @@ def local_cross_check(chain: str = "") -> dict:
         return cross_check(db, user_id, chain=chain or None)
     finally:
         db.close()
+
+
+GUARDIAN_CLOUD_URL = os.environ.get("GUARDIAN_CLOUD_URL", "https://guardian-compliance.fly.dev")
+
+_SHARE_DATA_CATEGORIES = ["sot_facts", "documents"]
+
+
+def _resolve_license_token() -> str:
+    """The license key is the bearer token for cloud egress."""
+    return os.environ.get("GUARDIAN_LICENSE_KEY", "")
+
+
+def _post_context_share(zip_bytes: bytes, purpose: str, token: str) -> dict:
+    """POST the export zip to the cloud context-share endpoint. Real network."""
+    import json
+    import uuid
+    from urllib import request
+
+    boundary = uuid.uuid4().hex
+    parts = []
+    parts.append(f"--{boundary}\r\nContent-Disposition: form-data; name=\"purpose\"\r\n\r\n{purpose}\r\n".encode())
+    parts.append(
+        f"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; "
+        f"filename=\"data_room.zip\"\r\nContent-Type: application/zip\r\n\r\n".encode()
+    )
+    parts.append(zip_bytes)
+    parts.append(f"\r\n--{boundary}--\r\n".encode())
+    body = b"".join(parts)
+    headers = {"Content-Type": f"multipart/form-data; boundary={boundary}"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = request.Request(f"{GUARDIAN_CLOUD_URL}/api/context/share", data=body, headers=headers, method="POST")
+    with request.urlopen(req, timeout=120) as resp:
+        return json.loads(resp.read().decode())
+
+
+def local_share_data_room(purpose: str, confirm: bool = False, remember: str = "once") -> dict:
+    """Consent-gated upload of the local SoT + documents to Guardian cloud."""
+    from compliance_os import consent
+    from compliance_os.migration import export_user_data
+
+    def _do_share() -> dict:
+        db = next(get_session())
+        try:
+            user_id = get_local_user_id(db)
+            zip_bytes = export_user_data(db, user_id)
+        finally:
+            db.close()
+        result = _post_context_share(zip_bytes, purpose, _resolve_license_token())
+        return {"status": "shared", "purpose": purpose,
+                "reference_id": result.get("reference_id"),
+                "message": f"Shared your data room for '{purpose}'."}
+
+    if consent.has_consent(purpose):
+        return _do_share()
+    if not confirm:
+        return {
+            "status": "consent_required",
+            "purpose": purpose,
+            "destination": "Guardian cloud",
+            "data_categories": _SHARE_DATA_CATEGORIES,
+            "message": (
+                f"This will upload your facts source-of-truth and your documents to "
+                f"Guardian's cloud for '{purpose}'. Nothing is sent unless you approve. "
+                f"To proceed, call again with confirm=true and remember set to "
+                f"'once', 'session', or 'always'. To decline, do nothing."
+            ),
+        }
+    consent.record_consent(purpose, remember, destination="guardian_cloud",
+                           data_categories=_SHARE_DATA_CATEGORIES)
+    return _do_share()
