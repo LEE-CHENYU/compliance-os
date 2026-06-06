@@ -315,7 +315,7 @@ export default function Home() {
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
-            <span><span style={{color:'#5b8dee',fontWeight:600}}>Private by design.</span> Everything runs locally on your machine — your documents never leave your computer.</span>
+            <span><span style={{color:'#5b8dee',fontWeight:600}}>Private by design.</span> Your documents never leave your computer before you approve it — and with the local extension, never at all.</span>
           </p>
           <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}>
             <button onClick={() => router.push("/check")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',whiteSpace:'nowrap'}}>
@@ -409,7 +409,7 @@ export default function Home() {
           ["03","See what we found","Side-by-side comparison. Matches, mismatches, and missing items.","~15 sec"],
           ["04","Answer 3 quick questions","Only about the issues we found. Each one explains why it matters.","1 min"],
           ["05","Get your case snapshot","Timeline, findings, next steps, and things to watch \u2014 all in one view.","Instant"],
-          ["06","Save to your data room","Your documents, timeline, and risks \u2014 stored securely. We\u2019ll prompt you when something new needs checking.","Ongoing"],
+          ["06","Save to your data room","Your documents, timeline, and risks \u2014 kept in your data room, never shared without your approval. We\u2019ll prompt you when something new needs checking.","Ongoing"],
         ].map(([num,title,desc,time]) => (
           <div key={num} style={{display:'flex',gap:20,padding:'22px 0',borderBottom:'1px solid rgba(91,141,238,0.06)',alignItems:'flex-start'}}>
             <span style={{fontSize:13,fontWeight:700,color:'#c0cde0',minWidth:28,paddingTop:3}}>{num}</span>
@@ -621,8 +621,8 @@ export default function Home() {
       </section>
 
       <footer style={{position:'relative',zIndex:1,padding:48,textAlign:'center',fontSize:13,color:'#8e9ab5',lineHeight:1.7}}>
-        Your documents are stored securely and used only for compliance checking.<br />
-        Start free — no account needed for your first check. Create an account to save your case.
+        Local-first by design — your documents never leave your computer before you approve it.<br />
+        Free to use. No account required.
       </footer>
     </>
   );
