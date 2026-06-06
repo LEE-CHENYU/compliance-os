@@ -85,3 +85,19 @@ def test_normalize_examples():
     assert _normalize("current_annual_salary", "$135,000") == _normalize("current_annual_salary", "135000")
     assert _normalize("current_employer_ein", "37-2222933") == _normalize("current_employer_ein", "372222933")
     assert _normalize("legal_name", "Jane Q ") == _normalize("legal_name", "jane q")
+
+
+def test_detect_and_missing(local_db):
+    from compliance_os.compliance import cross_check
+    db = next(local_db.get_session())
+    try:
+        uid = _seed(db, [("i20", {"sevis_number": "N1"}), ("ead", {"valid_to": "2027-05-14"})])
+        present = cross_check._present_doc_types(db, uid)
+        detected = cross_check._detect_chains(present)
+        assert "stem_opt" in detected and "tax" not in detected
+        missing = cross_check._missing("stem_opt", present)
+        missing_types = {m["doc_type"] for m in missing}
+        assert "i983" in missing_types          # required, absent
+        assert "i20" not in missing_types       # present
+    finally:
+        db.close()

@@ -110,3 +110,26 @@ def _mismatches(keys, contributions) -> list:
                 "recommended_action": "Confirm the correct value and fix the document that's wrong.",
             })
     return findings
+
+
+def _detect_chains(present_doc_types: set) -> list:
+    chains = load_chains()
+    return [cid for cid, c in chains.items()
+            if any(dt in present_doc_types for dt in c.get("detect_when_any", []))]
+
+
+def _missing(chain_id: str, present_doc_types: set) -> list:
+    chain = load_chains()[chain_id]
+    findings = []
+    for d in chain.get("documents", []):
+        if d.get("required") and d["doc_type"] not in present_doc_types:
+            findings.append({
+                "category": "missing",
+                "severity": "high",
+                "chain": chain_id,
+                "doc_type": d["doc_type"],
+                "label": d.get("label", d["doc_type"]),
+                "message": f"{chain['name']}: required document missing — {d.get('label', d['doc_type'])}.",
+                "recommended_action": f"Upload your {d.get('label', d['doc_type'])}.",
+            })
+    return findings
