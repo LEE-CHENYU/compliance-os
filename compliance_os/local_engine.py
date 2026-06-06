@@ -332,7 +332,7 @@ def _post_context_share(zip_bytes: bytes, purpose: str, token: str) -> dict:
     """POST the export zip to the cloud context-share endpoint. Real network."""
     import json
     import uuid
-    from urllib import request
+    from urllib import error, request
 
     boundary = uuid.uuid4().hex
     parts = []
@@ -348,8 +348,16 @@ def _post_context_share(zip_bytes: bytes, purpose: str, token: str) -> dict:
     if token:
         headers["Authorization"] = f"Bearer {token}"
     req = request.Request(f"{GUARDIAN_CLOUD_URL}/api/context/share", data=body, headers=headers, method="POST")
-    with request.urlopen(req, timeout=120) as resp:
-        return json.loads(resp.read().decode())
+    try:
+        with request.urlopen(req, timeout=120) as resp:
+            payload = json.loads(resp.read().decode())
+    except error.HTTPError as exc:
+        raise RuntimeError(f"context/share failed ({exc.code}): {exc.read().decode()[:200]}") from exc
+    except (error.URLError, ValueError) as exc:
+        raise RuntimeError(f"context/share failed: {exc}") from exc
+    if not payload.get("reference_id"):
+        raise RuntimeError(f"context/share returned no reference_id: {payload}")
+    return payload
 
 
 def local_share_data_room(purpose: str, confirm: bool = False, remember: str = "once") -> dict:

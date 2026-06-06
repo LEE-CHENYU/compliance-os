@@ -71,3 +71,27 @@ def test_share_stores_blob_and_row(client):
         assert Path(row.path).exists()
     finally:
         db.close()
+
+
+def test_share_rejects_path_traversal_purpose(client):
+    uid, token = _make_user_and_token()
+    r = client.post(
+        "/api/context/share",
+        headers={"Authorization": f"Bearer {token}"},
+        data={"purpose": "../../etc/evil"},
+        files={"file": ("d.zip", _zip_bytes(), "application/zip")},
+    )
+    assert r.status_code == 400
+
+
+def test_share_rejects_oversize(client, monkeypatch):
+    uid, token = _make_user_and_token()
+    from compliance_os.web.routers import context as ctx
+    monkeypatch.setattr(ctx, "MAX_SHARE_BYTES", 10)
+    r = client.post(
+        "/api/context/share",
+        headers={"Authorization": f"Bearer {token}"},
+        data={"purpose": "lawyer-matching"},
+        files={"file": ("d.zip", _zip_bytes(), "application/zip")},
+    )
+    assert r.status_code == 413

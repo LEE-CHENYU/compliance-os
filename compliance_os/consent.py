@@ -12,6 +12,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 _SESSION: set[str] = set()
+# NOTE: process-global; session-scope consent is for the single-user local
+# extension only. Not safe for a multi-user process (the hosted app never
+# imports this module).
 
 
 def _home() -> Path:
@@ -20,6 +23,14 @@ def _home() -> Path:
 
 def _store_path() -> Path:
     return _home() / "consent.json"
+
+
+def _atomic_write(data: dict) -> None:
+    home = _home()
+    home.mkdir(parents=True, exist_ok=True)
+    tmp = _store_path().with_suffix(".tmp")
+    tmp.write_text(json.dumps(data, indent=2))
+    tmp.replace(_store_path())
 
 
 def _load() -> dict:
@@ -49,9 +60,7 @@ def record_consent(purpose: str, scope: str, *, destination: str, data_categorie
             "scope": "always",
             "granted_at": datetime.now(timezone.utc).isoformat(),
         }
-        home = _home()
-        home.mkdir(parents=True, exist_ok=True)
-        _store_path().write_text(json.dumps(store, indent=2))
+        _atomic_write(store)
     elif scope == "session":
         _SESSION.add(purpose)
     # "once" / "deny": nothing stored.
@@ -62,7 +71,7 @@ def revoke_consent(purpose: str) -> None:
     store = _load()
     if purpose in store:
         del store[purpose]
-        _store_path().write_text(json.dumps(store, indent=2))
+        _atomic_write(store)
 
 
 def list_consents() -> list[dict]:

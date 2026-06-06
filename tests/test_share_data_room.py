@@ -46,3 +46,12 @@ def test_share_requires_consent_then_uploads(local_env, monkeypatch):
     res3 = local_engine.local_share_data_room("lawyer-matching", confirm=False, remember="once")
     assert res3["status"] == "shared"
     assert posted["purpose"] == "lawyer-matching"
+
+
+def test_share_errors_when_server_returns_no_reference(local_env, monkeypatch):
+    from compliance_os import local_engine
+    monkeypatch.setattr(local_engine, "_post_context_share",
+                        lambda b, p, t: (_ for _ in ()).throw(RuntimeError("context/share returned no reference_id: {}")))
+    import pytest
+    with pytest.raises(RuntimeError):
+        local_engine.local_share_data_room("lawyer-matching", confirm=True, remember="once")
