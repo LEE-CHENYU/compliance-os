@@ -1914,6 +1914,10 @@ def lawyer_search_plan(
             personas=personas,
             output_dir=_P(output_dir) if output_dir else None,
         )
+        plan["privacy_note"] = (
+            "Claude will search the web using generic persona queries; your "
+            "personal facts are not included."
+        )
         return json.dumps(plan, indent=2)
     except (FileNotFoundError, ValueError) as exc:
         return json.dumps({"error": str(exc)})
