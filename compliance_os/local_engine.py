@@ -304,3 +304,15 @@ def local_ask_grounding(question: str) -> dict:
         }
     finally:
         db.close()
+
+
+def local_cross_check(chain: str = "") -> dict:
+    """Run the chain-aware cross-check over the local data room."""
+    from compliance_os.compliance.cross_check import cross_check
+
+    db = next(get_session())
+    try:
+        user_id = get_local_user_id(db)
+        return cross_check(db, user_id, chain=chain or None)
+    finally:
+        db.close()

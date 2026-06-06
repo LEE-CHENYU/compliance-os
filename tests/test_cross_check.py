@@ -132,3 +132,42 @@ def test_deadlines_and_relationship(local_db):
         assert any(f["rule"] == "h1b_after_opt" for f in rel)
     finally:
         db.close()
+
+
+def test_cross_check_end_to_end(local_db):
+    from compliance_os.compliance import cross_check
+    from compliance_os import local_engine
+
+    db = next(local_db.get_session())
+    try:
+        # messy data room: employer-name mismatch + missing I-983 + (no EAD date)
+        uid = _seed(db, [
+            ("i20", {"student_name": "Jane Q", "sevis_number": "N0001234567"}),
+            ("offer_letter", {"employer_name": "Acme Inc"}),
+            ("employment_letter", {"employee_name": "Jane Q", "employer_name": "Acme Incorporated"}),
+            ("ead", {"valid_to": "2099-01-01"}),
+        ])
+        report = cross_check.cross_check(db, uid)
+        assert "stem_opt" in report["chains_detected"]
+        cats = {f["category"] for f in report["findings"]}
+        assert "mismatch" in cats          # Acme Inc vs Acme Incorporated
+        assert "missing" in cats           # I-983 required, absent
+        assert report["summary"]["mismatches"] >= 1
+        # scoping to a non-detected chain returns no findings
+        only_tax = cross_check.cross_check(db, uid, chain="tax")
+        assert only_tax["chains_detected"] == []
+    finally:
+        db.close()
+
+
+def test_mcp_cross_check_filings_tool(local_db):
+    import json
+    from compliance_os import local_engine, mcp_server
+
+    db = next(local_db.get_session())
+    try:
+        _seed(db, [("i20", {"sevis_number": "N1"}), ("ead", {"valid_to": "2099-01-01"})])
+    finally:
+        db.close()
+    out = json.loads(mcp_server.cross_check_filings())
+    assert "findings" in out and "chains_detected" in out

@@ -193,3 +193,41 @@ def _relationships(rules, facts) -> list:
                     "recommended_action": "Verify these dates against the source documents.",
                 })
     return findings
+
+
+def cross_check(db, user_id: str, chain: str | None = None) -> dict:
+    """Run the full cross-check over the user's data room. If `chain` is given,
+    only that chain is considered (and only if its docs are present)."""
+    chains = load_chains()
+    present = _present_doc_types(db, user_id)
+    detected = _detect_chains(present)
+    if chain:
+        detected = [c for c in detected if c == chain]
+
+    contributions = _contributions(db, user_id)
+    facts = _fact_values(db, user_id)
+
+    findings = []
+    # Mismatches: union of must_agree keys across detected chains, compared
+    # across ALL contributing docs (catches cross-chain name/EIN drift). One
+    # finding per key.
+    agree_keys = sorted({k for cid in detected for k in chains[cid].get("must_agree", [])})
+    findings += _mismatches(agree_keys, contributions)
+
+    seen_dl = set()
+    for cid in detected:
+        findings += _missing(cid, present)
+        findings += _relationships(chains[cid].get("relationships", []), facts)
+        dl_keys = [k for k in chains[cid].get("deadlines", []) if k not in seen_dl]
+        seen_dl.update(dl_keys)
+        findings += _deadlines(dl_keys, facts)
+
+    sev_rank = {"high": 0, "medium": 1, "low": 2}
+    findings.sort(key=lambda f: sev_rank.get(f.get("severity"), 9))
+    summary = {
+        "mismatches": sum(1 for f in findings if f["category"] == "mismatch"),
+        "missing": sum(1 for f in findings if f["category"] == "missing"),
+        "deadlines": sum(1 for f in findings if f["category"] == "deadline"),
+        "high_severity": sum(1 for f in findings if f.get("severity") == "high"),
+    }
+    return {"chains_detected": detected, "summary": summary, "findings": findings}

@@ -26,6 +26,7 @@ from compliance_os.local_engine import (
     force_local_embeddings,
     is_local_mode,
     local_ask_grounding,
+    local_cross_check,
     local_get_facts,
     local_record_extracted_facts,
     local_resolve_conflict,
@@ -2109,6 +2110,29 @@ def vendor_detail(name: str) -> str:
         return json.dumps(result, indent=2, default=str)
     except Exception as exc:
         return json.dumps({"error": str(exc)})
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Cross-check filings",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def cross_check_filings(chain: str = "") -> str:
+    """Cross-check the user's uploaded filings for mismatches, missing forms,
+    and deadline risks — entirely on-device. With no argument, auto-detects and
+    checks every document chain your data room implies (STEM OPT, H-1B, tax,
+    corporate); pass a chain id to scope to one. Returns a structured risk
+    report to summarize for the user. Runs no model and sends no data off-device.
+
+    Args:
+        chain: Optional chain id — "stem_opt", "h1b", "tax", or "corporate".
+    """
+    if not is_local_mode():
+        return json.dumps({"error": "cross_check_filings is available in local mode."})
+    return json.dumps(local_cross_check(chain), default=str, indent=2)
 
 
 # ─── Entry point ─────────────────────────────────────────────────
