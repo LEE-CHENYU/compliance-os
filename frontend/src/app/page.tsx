@@ -268,6 +268,10 @@ export default function Home() {
           </button>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <a href="/docs/install" style={{padding:'9px 18px',borderRadius:10,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontSize:13,fontWeight:600,border:'1px solid rgba(91,141,238,0.15)',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:6,whiteSpace:'nowrap'}}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5b8dee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+            <span style={{fontFamily:'Georgia, "Times New Roman", serif',fontStyle:'italic',fontWeight:600}}>Claude Extension</span>
+          </a>
           {loggedIn ? (
             <>
               <span style={{fontSize:13,color:'#556480'}}>{userEmail}</span>
@@ -328,7 +332,7 @@ export default function Home() {
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5b8dee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            <span>One-click install into the <span style={{fontFamily:'Georgia, "Times New Roman", serif',fontStyle:'italic',color:'#3a5a8c',fontWeight:600}}>Claude Desktop</span> app — no setup, runs on your machine.</span>
+            <span>One-click install into the <span style={{fontFamily:'Georgia, "Times New Roman", serif',fontStyle:'italic',color:'#3a5a8c',fontWeight:600}}>Claude Desktop</span> app.</span>
           </p>
           <div style={{display:'flex',gap:28}}>
             {[["47","Forms tracked"],["23","Deadlines"],["156","Key phrases"]].map(([n,l]) => (
