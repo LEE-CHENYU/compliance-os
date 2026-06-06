@@ -300,7 +300,7 @@ export default function Home() {
         <div style={{maxWidth:500}}>
           <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 16px',borderRadius:24,fontSize:12,fontWeight:600,color:'#5b8dee',marginBottom:24,background:'rgba(255,255,255,0.6)',backdropFilter:'blur(12px)',border:'1px solid rgba(91,141,238,0.12)'}}>
             <span style={{width:6,height:6,borderRadius:'50%',background:'#5b8dee',boxShadow:'0 0 8px rgba(91,141,238,0.4)'}} />
-            Your compliance memory
+            Your agent&apos;s compliance memory
           </div>
           <h1 style={{fontSize:50,fontWeight:800,letterSpacing:'-0.04em',lineHeight:1.06,marginBottom:20,color:'#0d1424'}}>
             Check your documents before{' '}
