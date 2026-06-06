@@ -821,6 +821,28 @@ def batch_upload(
     if not files:
         return json.dumps({"error": f"No files found matching {extensions} in {directory}"})
 
+    # Local mode: store each file on-device via the in-process upload path
+    # (the hosted _upload_single_file POSTs to the Guardian API, which a local
+    # extension has no account for). Lets a folder upload in one tool call.
+    if is_local_mode():
+        results = []
+        for f in files:
+            try:
+                r = local_upload_document(str(f))
+                if "error" in r:
+                    results.append({"file": f.name, "status": "failed", "error": r["error"]})
+                else:
+                    results.append({"file": f.name, "status": "uploaded",
+                                    "doc_id": r.get("doc_id"), "doc_type": r.get("doc_type")})
+            except Exception as exc:
+                results.append({"file": f.name, "status": "failed", "error": str(exc)})
+        uploaded = sum(1 for r in results if r["status"] == "uploaded")
+        failed = sum(1 for r in results if r["status"] == "failed")
+        return json.dumps({
+            "summary": f"{uploaded} uploaded, {failed} failed out of {len(files)} files",
+            "results": results,
+        }, indent=2)
+
     results = []
     for f in files:
         try:
