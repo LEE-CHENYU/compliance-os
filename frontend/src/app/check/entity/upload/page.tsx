@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getCheck, uploadDocument } from "@/lib/api-v2";
 import { trackOnboardingEvent } from "@/lib/analytics";
 import { markOnboardingSkipped, ONBOARDING_SKIP_DASHBOARD_HREF } from "@/lib/onboarding-skip";
+import { useEgressConsent } from "@/lib/useEgressConsent";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,12 @@ function EntityUpload() {
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const consent = useEgressConsent({
+    egressType: "web_doc_upload",
+    purpose: "extraction",
+    destination: "Guardian's server",
+    dataCategories: ["documents"],
+  });
 
   useEffect(() => {
     if (!checkId) {
@@ -45,6 +52,7 @@ function EntityUpload() {
   }, [checkId]);
 
   const handleFile = useCallback(async (f: File) => {
+    if (!(await consent.ensure())) return; // <-- gate: no upload without approval
     setFile(f);
     setUploading(true);
     setError(null);
@@ -63,7 +71,7 @@ function EntityUpload() {
     } finally {
       setUploading(false);
     }
-  }, [checkId]);
+  }, [checkId, consent]);
 
   function handleSkipToDashboard() {
     markOnboardingSkipped();
@@ -72,6 +80,7 @@ function EntityUpload() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
+      {consent.modal}
       <div className="w-full max-w-lg">
         <div className="flex items-center justify-between mb-8">
           <button onClick={() => router.back()} className="text-sm text-[#7b8ba5] hover:text-[#1a2036]">
