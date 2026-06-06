@@ -313,7 +313,7 @@ export default function Home() {
             </svg>
             <span><span style={{color:'#5b8dee',fontWeight:600}}>Private by design.</span> Everything runs locally on your machine — your documents never leave your computer.</span>
           </p>
-          <div style={{display:'flex',gap:12,marginBottom:48,alignItems:'center',flexWrap:'wrap'}}>
+          <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}>
             <button onClick={() => router.push("/check")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',whiteSpace:'nowrap'}}>
               Find my risks
             </button>
@@ -324,6 +324,14 @@ export default function Home() {
               Browse services
             </button>
           </div>
+          <p style={{display:'inline-flex',alignItems:'center',gap:7,fontSize:13,color:'#8e9ab5',fontWeight:500,marginBottom:40}}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5b8dee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            One-click install into the{' '}
+            <span style={{fontFamily:'Georgia, "Times New Roman", serif',fontStyle:'italic',color:'#3a5a8c',fontWeight:600}}>Claude Desktop</span>
+            {' '}app — no setup, runs on your machine.
+          </p>
           <div style={{display:'flex',gap:28}}>
             {[["47","Forms tracked"],["23","Deadlines"],["156","Key phrases"]].map(([n,l]) => (
               <div key={l}>
@@ -570,7 +578,7 @@ export default function Home() {
             </div>
             <h3 style={{fontSize:20,fontWeight:800,color:'#0d1424',letterSpacing:'-0.02em',marginBottom:6}}>Your coding agent, compliance-aware</h3>
             <p style={{fontSize:13,color:'#556480',lineHeight:1.6,marginBottom:16}}>
-              Claude Code, Claude Desktop, Codex CLI — Guardian as 23 MCP tools right next to your editor. Best for document triage, case templates, form filing, and Gmail.
+              The <span style={{fontFamily:'Georgia, "Times New Roman", serif',fontStyle:'italic',color:'#3a5a8c',fontWeight:600}}>Claude Desktop</span> app, Claude Code, and Codex CLI — Guardian as 23 MCP tools right where you work. Best for document triage, case templates, form filing, and Gmail.
             </p>
             <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:16,flex:1}}>
               {[
