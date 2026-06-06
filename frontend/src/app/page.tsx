@@ -530,7 +530,7 @@ export default function Home() {
             Guardian, wherever you already work
           </h2>
           <p style={{fontSize:15,color:'#556480',maxWidth:560,margin:'0 auto',lineHeight:1.6}}>
-            Ask Guardian questions from your chat apps, or connect it directly to your coding agent — same data room, same 23 tools, two surfaces.
+            Ask Guardian questions from your chat apps, or connect it directly to your daily AI agent — same data room, same 23 tools, two surfaces.
           </p>
           <p style={{display:'inline-flex',alignItems:'center',gap:8,fontSize:13,color:'#3a5a8c',fontWeight:500,marginTop:16,padding:'7px 16px',borderRadius:20,background:'rgba(91,141,238,0.07)',border:'1px solid rgba(91,141,238,0.12)',lineHeight:1.5}}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5b8dee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
@@ -571,10 +571,14 @@ export default function Home() {
           {/* CODE — MCP */}
           <div style={{background:'rgba(255,255,255,0.55)',backdropFilter:'blur(18px)',borderRadius:20,padding:'28px',border:'1px solid rgba(255,255,255,0.7)',boxShadow:'0 4px 20px rgba(0,0,0,0.04)',display:'flex',flexDirection:'column'}}>
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
-              <div style={{width:28,height:28,borderRadius:8,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:14,fontWeight:700}}>{'</>'}</div>
-              <div style={{fontSize:10,fontWeight:700,color:'#5b8dee',letterSpacing:'0.1em'}}>CODE · MCP</div>
+              <div style={{width:28,height:28,borderRadius:8,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',display:'flex',alignItems:'center',justifyContent:'center',color:'white'}}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
             </div>
-            <h3 style={{fontSize:20,fontWeight:800,color:'#0d1424',letterSpacing:'-0.02em',marginBottom:6}}>Your coding agent, compliance-aware</h3>
+              <div style={{fontSize:10,fontWeight:700,color:'#5b8dee',letterSpacing:'0.1em'}}>AGENT · MCP</div>
+            </div>
+            <h3 style={{fontSize:20,fontWeight:800,color:'#0d1424',letterSpacing:'-0.02em',marginBottom:6}}>Your daily agent, compliance-aware</h3>
             <p style={{fontSize:13,color:'#556480',lineHeight:1.6,marginBottom:16}}>
               The <span style={{fontFamily:'Georgia, "Times New Roman", serif',fontStyle:'italic',color:'#3a5a8c',fontWeight:600}}>Claude Desktop</span> app, Claude Code, and Codex CLI — Guardian as 23 MCP tools right where you work. Best for document triage, case templates, form filing, and Gmail.
             </p>
