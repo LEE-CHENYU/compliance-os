@@ -31,6 +31,7 @@ from compliance_os.local_engine import (
     local_record_extracted_facts,
     local_resolve_conflict,
     local_set_fact,
+    local_share_data_room,
     local_upload_document,
 )
 
@@ -2133,6 +2134,59 @@ def cross_check_filings(chain: str = "") -> str:
     if not is_local_mode():
         return json.dumps({"error": "cross_check_filings is only available in local mode."})
     return json.dumps(local_cross_check(chain), default=str, indent=2)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Share data room (cloud)",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+    ),
+)
+def share_data_room(purpose: str, confirm: bool = False, remember: str = "once") -> str:
+    """Upload your local facts source-of-truth + documents to Guardian's cloud
+    for a named purpose (e.g. a lawyer-matching service) — ONLY with your explicit
+    approval. With no prior 'always' grant and confirm=false, this returns a consent
+    request describing exactly what will be sent and where; show it to the user and,
+    if they approve, call again with confirm=true and remember='once'|'session'|'always'.
+    Nothing leaves the device until confirm=true (or a prior 'always' grant exists).
+
+    Args:
+        purpose: The service/purpose the data is shared for (e.g. "lawyer-matching").
+        confirm: Set true only after the user has approved this upload.
+        remember: How long to remember approval — "once", "session", or "always".
+    """
+    if not is_local_mode():
+        return json.dumps({"error": "share_data_room is only available in local mode."})
+    return json.dumps(local_share_data_room(purpose, confirm=confirm, remember=remember), default=str, indent=2)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(title="List egress consents", readOnlyHint=True, destructiveHint=False, idempotentHint=True),
+)
+def list_egress_consents() -> str:
+    """List the purposes you've approved for sharing your data room to Guardian cloud."""
+    if not is_local_mode():
+        return json.dumps({"error": "list_egress_consents is only available in local mode."})
+    from compliance_os import consent
+    return json.dumps({"consents": consent.list_consents()}, default=str, indent=2)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(title="Revoke egress consent", readOnlyHint=False, destructiveHint=False, idempotentHint=True),
+)
+def revoke_egress_consent(purpose: str) -> str:
+    """Revoke a previously granted data-room sharing consent for a purpose.
+
+    Args:
+        purpose: The purpose to revoke (e.g. "lawyer-matching").
+    """
+    if not is_local_mode():
+        return json.dumps({"error": "revoke_egress_consent is only available in local mode."})
+    from compliance_os import consent
+    consent.revoke_consent(purpose)
+    return json.dumps({"revoked": purpose}, default=str, indent=2)
 
 
 # ─── Entry point ─────────────────────────────────────────────────
