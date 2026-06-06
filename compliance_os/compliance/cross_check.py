@@ -3,7 +3,8 @@
 Reads the on-device facts SoT + each document's extracted fields and reports
 cross-document fact mismatches, missing-from-chain documents, and deadline
 risks. Deterministic and local — no model call, no network. Chain knowledge
-lives in config/document_chains.yaml; this module is chain-agnostic.
+lives in document_chains.yaml next to this module (shipped as package data so
+it resolves inside an installed wheel); this module is chain-agnostic.
 """
 from __future__ import annotations
 
@@ -12,7 +13,7 @@ from pathlib import Path
 
 import yaml
 
-_CONFIG = Path(__file__).resolve().parents[2] / "config" / "document_chains.yaml"
+_CONFIG = Path(__file__).resolve().parent / "document_chains.yaml"
 
 
 @lru_cache(maxsize=1)
