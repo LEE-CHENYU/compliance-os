@@ -303,15 +303,22 @@ export default function Home() {
             <span key={partyIndex} style={{color:'#5b8dee',display:'inline-block',animation:'slideIn 0.4s ease-out'}}>{PARTIES[partyIndex]}</span>
             {' '}does
           </h1>
-          <p style={{fontSize:17,color:'#556480',lineHeight:1.65,marginBottom:36}}>
+          <p style={{fontSize:17,color:'#556480',lineHeight:1.65,marginBottom:14}}>
             We cross-check your immigration and tax filings to find mismatches, missing forms, and deadline risks you don&apos;t know about yet.
+          </p>
+          <p style={{display:'inline-flex',alignItems:'center',gap:9,fontSize:15,color:'#3a5a8c',lineHeight:1.6,marginBottom:36,fontWeight:500}}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5b8dee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <span><span style={{color:'#5b8dee',fontWeight:600}}>Private by design.</span> Everything runs locally on your machine — your documents never leave your computer.</span>
           </p>
           <div style={{display:'flex',gap:12,marginBottom:48,alignItems:'center',flexWrap:'wrap'}}>
             <button onClick={() => router.push("/check")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',whiteSpace:'nowrap'}}>
               Find my risks
             </button>
             <a href="/docs/install" style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',textDecoration:'none',backdropFilter:'blur(12px)',whiteSpace:'nowrap',display:'inline-block'}}>
-              Download Claude Extension
+              Download <span style={{fontStyle:'italic',fontFamily:'Georgia, "Times New Roman", serif'}}>Claude Extension</span>
             </a>
             <button onClick={() => router.push("/services")} style={{padding:'15px 32px',borderRadius:12,background:'rgba(255,255,255,0.7)',color:'#3a5a8c',fontWeight:500,fontSize:15,border:'1px solid rgba(91,141,238,0.1)',cursor:'pointer',backdropFilter:'blur(12px)',whiteSpace:'nowrap'}}>
               Browse services
@@ -518,6 +525,13 @@ export default function Home() {
           </h2>
           <p style={{fontSize:15,color:'#556480',maxWidth:560,margin:'0 auto',lineHeight:1.6}}>
             Ask Guardian questions from your chat apps, or connect it directly to your coding agent — same data room, same 23 tools, two surfaces.
+          </p>
+          <p style={{display:'inline-flex',alignItems:'center',gap:8,fontSize:13,color:'#3a5a8c',fontWeight:500,marginTop:16,padding:'7px 16px',borderRadius:20,background:'rgba(91,141,238,0.07)',border:'1px solid rgba(91,141,238,0.12)',lineHeight:1.5}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5b8dee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <span><span style={{color:'#5b8dee',fontWeight:600}}>Local-first.</span> The data room lives on your machine — your filings never leave your device.</span>
           </p>
         </div>
 
