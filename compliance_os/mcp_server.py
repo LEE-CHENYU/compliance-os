@@ -41,6 +41,42 @@ class GatedMCP(FastMCP):
     (where users authenticate per-request) is never gated, and direct
     function calls (tests, internal use) bypass this entirely."""
 
+    def add_tool(
+        self,
+        fn,
+        name=None,
+        title=None,
+        description=None,
+        annotations=None,
+        icons=None,
+        meta=None,
+        structured_output=None,
+    ):
+        """Register every tool as UNSTRUCTURED by default.
+
+        Newer FastMCP (mcp >= 1.10) auto-generates an outputSchema
+        ({"result": str}) for any ``-> str`` tool. Our tools return plain JSON
+        text, and the license-gate block path returns bare TextContent with no
+        structured content — a declared outputSchema with no structuredContent
+        makes Claude Desktop reject EVERY tool call ("outputSchema defined but
+        no structured output returned"). Forcing structured_output=False drops
+        the schema so both the block path and the normal passthrough are
+        client-valid. A future tool that genuinely returns structured data can
+        still opt in with @mcp.tool(structured_output=True).
+        """
+        if structured_output is None:
+            structured_output = False
+        return super().add_tool(
+            fn,
+            name=name,
+            title=title,
+            description=description,
+            annotations=annotations,
+            icons=icons,
+            meta=meta,
+            structured_output=structured_output,
+        )
+
     async def call_tool(self, name, arguments):
         if not _is_hosted():
             block = activation_block(feature_for_tool(name))
@@ -85,7 +121,26 @@ mcp = GatedMCP(
         "instead of inventing.\n"
         "- When the user explicitly states a value as decided ('my "
         "salary is now $135K', 'use this address going forward'), "
-        "call set_user_fact to lock it. Don't lock implicit values."
+        "call set_user_fact to lock it. Don't lock implicit values.\n\n"
+        "Trigger topics (engage proactively, but don't name yourself):\n"
+        "- When the user raises an immigration, tax, or corporate-compliance "
+        "topic, quietly orient yourself before answering: call get_user_facts "
+        "and guardian_status first (or cross_check_filings / "
+        "run_compliance_check when the question is about a specific filing or "
+        "check). Answer from their actual facts, not generic web knowledge.\n"
+        "- Immigration triggers: immigration, visa, green card, STEM OPT, OPT, "
+        "CPT, H-1B, I-140, I-20, I-94, EAD, SEVIS, DSO, USCIS, RFE.\n"
+        "- Tax triggers: 1040-NR, FBAR, FinCEN 114, Form 8843, W-2, ITIN, "
+        "substantial presence, tax treaty.\n"
+        "- Corporate triggers: LLC, C-Corp, foreign-owned entity, Form 5472, "
+        "EIN, registered agent, BOI, articles of organization/incorporation.\n"
+        "- Also engage when the user says 'guardian' or 'guardian extension'.\n"
+        "- Use judgment: only orient like this when the topic is the point of "
+        "the user's message (a question, a decision, a deadline, a document). "
+        "Do NOT fire get_user_facts/guardian_status on an incidental, passing "
+        "mention (e.g. 'my friend is on an H-1B'), and do NOT announce "
+        "'Guardian' or these tools by name — just be helpful with the right "
+        "context."
     ),
 )
 
@@ -250,23 +305,57 @@ def _is_hosted() -> bool:
         return False
 
 
+_LOCAL_API_TOKEN: str | None = None
+
+
+def _local_token() -> str:
+    """Mint (and cache) a bearer token for the single local user so in-process
+    API calls authenticate in the standalone local extension."""
+    global _LOCAL_API_TOKEN
+    if _LOCAL_API_TOKEN is None:
+        from compliance_os.local_engine import get_local_user_id, get_session
+        from compliance_os.web.models.auth import UserRow
+        from compliance_os.web.services.auth_service import create_token
+
+        db = next(get_session())
+        try:
+            uid = get_local_user_id(db)
+            user = db.query(UserRow).filter(UserRow.id == uid).first()
+            _LOCAL_API_TOKEN = create_token(user.id, user.email)
+        finally:
+            db.close()
+    return _LOCAL_API_TOKEN
+
+
 async def _api_get(path: str) -> dict | list:
-    """GET from the Guardian API — async for both hosted and standalone."""
-    if _is_hosted():
+    """GET from the Guardian API — async for both hosted and standalone.
+
+    Hosted and local-extension modes both run the FastAPI app in-process via an
+    ASGI transport (against the local SQLite in local mode); only a *remote*
+    standalone setup (GUARDIAN_API_URL pointing at a real server) uses HTTP.
+    """
+    if _is_hosted() or is_local_mode():
         import httpx
 
-        from compliance_os.mcp_hosted import get_mcp_client_token
         from compliance_os.web.app import app
 
-        token = get_mcp_client_token()
+        if _is_hosted():
+            from compliance_os.mcp_hosted import get_mcp_client_token
+
+            token = get_mcp_client_token()
+        else:
+            token = _local_token()
         transport = httpx.ASGITransport(app=app)  # type: ignore[arg-type]
         async with httpx.AsyncClient(transport=transport, base_url="http://internal") as client:
             headers = {"Authorization": f"Bearer {token}"} if token else {}
             resp = await client.get(path, headers=headers)
-            resp.raise_for_status()
+            try:
+                resp.raise_for_status()
+            except httpx.HTTPStatusError as exc:
+                raise RuntimeError(f"Guardian API {resp.status_code}: {resp.text[:200]}") from exc
             return resp.json()
 
-    # Standalone: blocking HTTP (OK for stdio — runs in its own process)
+    # Remote standalone: blocking HTTP (OK for stdio — runs in its own process)
     req = request.Request(f"{GUARDIAN_API_URL}{path}", headers=_headers())
     try:
         with request.urlopen(req, timeout=30) as resp:
@@ -278,19 +367,30 @@ async def _api_get(path: str) -> dict | list:
 
 
 async def _api_post(path: str, payload: dict) -> dict:
-    """POST to the Guardian API — async for both hosted and standalone."""
-    if _is_hosted():
+    """POST to the Guardian API — async for both hosted and standalone.
+
+    Hosted and local-extension modes run the FastAPI app in-process via ASGI;
+    only a remote standalone setup uses HTTP.
+    """
+    if _is_hosted() or is_local_mode():
         import httpx
 
-        from compliance_os.mcp_hosted import get_mcp_client_token
         from compliance_os.web.app import app
 
-        token = get_mcp_client_token()
+        if _is_hosted():
+            from compliance_os.mcp_hosted import get_mcp_client_token
+
+            token = get_mcp_client_token()
+        else:
+            token = _local_token()
         transport = httpx.ASGITransport(app=app)  # type: ignore[arg-type]
         async with httpx.AsyncClient(transport=transport, base_url="http://internal") as client:
             headers = {"Authorization": f"Bearer {token}"} if token else {}
             resp = await client.post(path, json=payload, headers=headers)
-            resp.raise_for_status()
+            try:
+                resp.raise_for_status()
+            except httpx.HTTPStatusError as exc:
+                raise RuntimeError(f"Guardian API {resp.status_code}: {resp.text[:200]}") from exc
             return resp.json()
 
     req = request.Request(

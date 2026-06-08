@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "compliance-os"
-version = "2.0.2"
+version = "2.0.3"
 description = "Guardian — compliance copilot for visas, tax, and foreign-owned entities. MCP server for Claude Code / Desktop / Codex."
 readme = "guardian-mcp/README.md"
 license = { text = "MIT" }
@@ -73,7 +73,7 @@ local-huggingface = [
     "llama-index-embeddings-huggingface>=0.4",
 ]
 agent = [
-    "mcp[cli]>=1.0",
+    "mcp[cli]>=1.10",  # structured_output kwarg (GatedMCP relies on it) lands in 1.10.0
     "google-auth>=2.0",
     "google-auth-oauthlib>=1.0",
     "google-api-python-client>=2.0",

@@ -23,7 +23,12 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib import request as _urlrequest
 
-EXT_VERSION = "2.0.0"
+try:  # keep telemetry version in lockstep with the installed package
+    from importlib.metadata import PackageNotFoundError, version as _pkg_version
+
+    EXT_VERSION = _pkg_version("compliance-os")
+except (PackageNotFoundError, Exception):  # pragma: no cover - metadata absent
+    EXT_VERSION = "0.0.0"
 DEFAULT_VALIDATE_URL = "https://guardiancompliance.app/api/license/validate"
 _REFRESH_AFTER_HOURS = 24
 
@@ -135,8 +140,12 @@ def activation_state() -> str:
             _write_cache(fresh)
     ent = fresh if fresh is not None else cache
     if ent is None:
-        # Key set but never validated and currently offline.
-        return "expired_offline"
+        # Key configured but never validated and currently offline (no cache to
+        # consult). The gate is intentionally SOFT (see module docstring) — do
+        # NOT brick a configured user on a transient network failure. Fail open
+        # and re-validate on the next refresh; a server that explicitly says
+        # valid:false still returns 'inactive' below.
+        return "active"
     if not ent.get("valid"):
         return "inactive"
     if fresh is not None:
@@ -155,8 +164,8 @@ def activation_state() -> str:
 
 _MESSAGES = {
     "unconfigured": "Configure your Guardian license key (GUARDIAN_LICENSE_KEY) to activate. Get one at https://guardiancompliance.app/connect.",
-    "inactive": "Your Guardian license is inactive. Reactivate at https://guardiancompliance.app/account.",
-    "expired_offline": "Reconnect to the internet to reactivate Guardian (offline grace expired).",
+    "inactive": "Your Guardian license key wasn't recognized or has expired. Generate a fresh one at https://guardiancompliance.app/connect (sign in, click Generate) and set it as GUARDIAN_LICENSE_KEY.",
+    "expired_offline": "Reconnect to the internet to re-validate your Guardian license, or generate a new key at https://guardiancompliance.app/connect.",
 }
 
 
@@ -177,6 +186,6 @@ def activation_block(feature: str | None = None) -> dict | None:
             return {
                 "error": "feature_locked",
                 "feature": feature,
-                "message": f"'{feature}' requires an upgrade. See https://guardiancompliance.app/account.",
+                "message": f"'{feature}' requires an upgrade. See https://guardiancompliance.app/connect.",
             }
     return None

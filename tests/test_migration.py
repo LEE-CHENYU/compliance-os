@@ -212,4 +212,10 @@ def test_package_version_is_2():
 
     root = Path(__file__).resolve().parents[1]
     meta = tomllib.loads((root / "pyproject.toml").read_text())
-    assert meta["project"]["version"] == "2.0.2"
+    version = meta["project"]["version"]
+    # Stay on the 2.x line; don't pin an exact patch so routine bumps don't
+    # break this test. __init__ must agree with pyproject.
+    assert version.startswith("2."), version
+    import compliance_os
+
+    assert compliance_os.__version__ == version

@@ -22,14 +22,14 @@ import zipfile
 from pathlib import Path
 
 
-COMPLIANCE_OS_VERSION = "==2.0.2"
+COMPLIANCE_OS_VERSION = "==2.0.3"
 
 
 MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "description": (
         "Local-first compliance copilot for nonresidents, STEM OPT / H-1B "
         "workers, international students, and foreign-owned US entities. Runs "
@@ -55,9 +55,10 @@ MANIFEST = {
     "support": "mailto:fretin13@gmail.com",
     "icon": "icon.png",
     "keywords": [
-        "compliance", "immigration", "tax", "h1b", "stem-opt",
-        "form-8843", "form-1040-nr", "fbar", "form-5472",
-        "mcp", "nonresident",
+        "compliance", "corporate-compliance", "immigration", "tax",
+        "h1b", "stem-opt", "opt", "cpt", "i-20",
+        "form-8843", "form-1040-nr", "1040-nr", "fbar", "form-5472",
+        "ein", "entity", "boi", "mcp", "nonresident",
     ],
     "license": "MIT",
     "server": {
