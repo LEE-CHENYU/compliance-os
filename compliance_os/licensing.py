@@ -23,12 +23,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib import request as _urlrequest
 
-try:  # keep telemetry version in lockstep with the installed package
-    from importlib.metadata import PackageNotFoundError, version as _pkg_version
+from compliance_os import __version__ as EXT_VERSION  # single source of truth
 
-    EXT_VERSION = _pkg_version("compliance-os")
-except (PackageNotFoundError, Exception):  # pragma: no cover - metadata absent
-    EXT_VERSION = "0.0.0"
 DEFAULT_VALIDATE_URL = "https://guardiancompliance.app/api/license/validate"
 _REFRESH_AFTER_HOURS = 24
 
