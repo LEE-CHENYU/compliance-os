@@ -22,14 +22,14 @@ import zipfile
 from pathlib import Path
 
 
-COMPLIANCE_OS_VERSION = "==2.0.3"
+COMPLIANCE_OS_VERSION = "==2.0.4"
 
 
 MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "description": (
         "Local-first compliance copilot for nonresidents, STEM OPT / H-1B "
         "workers, international students, and foreign-owned US entities. Runs "

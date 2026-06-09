@@ -49,10 +49,15 @@ class Settings(BaseSettings):
     data_dir: Path = Field(default_factory=lambda: _user_state_dir() / "uploads", alias="GUARDIAN_DATA_DIR")
     chroma_dir: Path = Field(default_factory=lambda: _user_state_dir() / "chroma_db", alias="GUARDIAN_CHROMA_DIR")
     diligence_db_path: Path = Field(
-        default_factory=lambda: _persistent_data_dir() / "diligence.db"
+        # _user_state_dir (GUARDIAN_HOME / DATA_DIR / ~/.guardian) — NOT
+        # _persistent_data_dir, whose <repo>/data fallback is read-only/absent
+        # in a DXT/uv install (e.g. on Windows). Mirrors chroma_db's resolution.
+        default_factory=lambda: _user_state_dir() / "diligence.db"
     )
     professional_search_output_dir: Path = Field(
-        default_factory=lambda: _persistent_data_dir() / "output" / "professional_search"
+        # _user_state_dir for the same reason as diligence_db_path: the
+        # <repo>/data fallback is not writable in a DXT/uv install (Windows).
+        default_factory=lambda: _user_state_dir() / "output" / "professional_search"
     )
 
     # OpenAI

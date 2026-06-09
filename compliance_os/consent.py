@@ -29,7 +29,7 @@ def _atomic_write(data: dict) -> None:
     home = _home()
     home.mkdir(parents=True, exist_ok=True)
     tmp = _store_path().with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=2))
+    tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
     tmp.replace(_store_path())
 
 
@@ -38,7 +38,7 @@ def _load() -> dict:
     if not p.exists():
         return {}
     try:
-        return json.loads(p.read_text())
+        return json.loads(p.read_text(encoding="utf-8"))
     except (ValueError, OSError):
         return {}
 

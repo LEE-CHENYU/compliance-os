@@ -76,7 +76,7 @@ def validate_online(key: str) -> dict | None:
 
 def _read_cache() -> dict | None:
     try:
-        return json.loads(_cache_path().read_text())
+        return json.loads(_cache_path().read_text(encoding="utf-8"))
     except Exception:
         return None
 
@@ -87,7 +87,7 @@ def _write_cache(entitlements: dict) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         data = dict(entitlements)
         data["_cached_at"] = _now().isoformat()
-        path.write_text(json.dumps(data, indent=2))
+        path.write_text(json.dumps(data, indent=2), encoding="utf-8")
     except Exception:
         pass
 

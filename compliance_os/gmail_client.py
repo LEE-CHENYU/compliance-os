@@ -78,7 +78,7 @@ def get_service():
             creds = flow.run_local_server(port=0)
 
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-        TOKEN_PATH.write_text(creds.to_json())
+        TOKEN_PATH.write_text(creds.to_json(), encoding="utf-8")
 
     _service = build("gmail", "v1", credentials=creds)
     return _service

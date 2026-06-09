@@ -1923,10 +1923,12 @@ def download_search(
         # Lazy import — WeasyPrint pulls in cairo/pango at import time.
         try:
             from weasyprint import HTML as _WeasyHTML
-        except ImportError:
+        except (ImportError, OSError):
+            # OSError: weasyprint imports but can't load GTK (cairo/pango/
+            # gdk-pixbuf) — common on a Windows host without the GTK runtime.
             raise HTTPException(
                 status_code=503,
-                detail="PDF rendering not available — server missing weasyprint",
+                detail="PDF rendering not available — server missing weasyprint or its GTK libraries",
             )
         html_body = _render_html(row)
         pdf_bytes = _WeasyHTML(string=html_body).write_pdf()

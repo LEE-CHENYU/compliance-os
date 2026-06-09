@@ -82,7 +82,7 @@ class DocumentIndexer:
 
     def _load_manifest(self) -> dict:
         if self.manifest_path.exists():
-            manifest = json.loads(self.manifest_path.read_text())
+            manifest = json.loads(self.manifest_path.read_text(encoding="utf-8"))
             manifest.setdefault("indexed_files", {})
             manifest.setdefault("last_run", None)
             return manifest
@@ -90,7 +90,7 @@ class DocumentIndexer:
 
     def _save_manifest(self, manifest: dict):
         self.manifest_path.parent.mkdir(parents=True, exist_ok=True)
-        self.manifest_path.write_text(json.dumps(manifest, indent=2))
+        self.manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
     def _read_file(self, filepath: Path) -> str | None:
         """Read file content, handling different formats.

@@ -100,7 +100,7 @@ def validate_index_embedding_config(chroma_dir: Path | str | None = None) -> Non
         return
 
     try:
-        manifest = json.loads(path.read_text())
+        manifest = json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
         raise RuntimeError(
             f"Unable to read index manifest at {path}. Rebuild the index with "
