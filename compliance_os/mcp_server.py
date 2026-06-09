@@ -430,8 +430,16 @@ async def guardian_status() -> str:
         timeline = await _api_get("/api/dashboard/timeline")
         stats = await _api_get("/api/dashboard/stats")
         chains = await _api_get("/api/dashboard/chains")
-    except RuntimeError as exc:
-        return f"Error: {exc}"
+    except RuntimeError:
+        return (
+            "# Guardian Compliance Status\n\n"
+            "_Guardian's local store isn't reachable yet — nothing has been set up "
+            "on this machine, or the local app isn't running — so there's no status "
+            "to show._\n\n"
+            "That's normal on a fresh start. Tell me what you're trying to figure out "
+            "(for example: an F-1 internship, a Form 5472 question, an 83(b) clock), or "
+            "point me at a document, and I'll work from that directly."
+        )
 
     lines = [
         "# Guardian Compliance Status",

@@ -161,7 +161,9 @@ class TestContextToolsOffline:
     @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock, side_effect=RuntimeError("Connection refused"))
     def test_status_offline(self, mock_get):
         result = _run(guardian_status())
-        assert "Error" in result
+        assert "Error:" not in result
+        assert "Guardian Compliance Status" in result
+        assert "isn't reachable" in result
 
     @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock, side_effect=RuntimeError("Connection refused"))
     def test_deadlines_offline(self, mock_get):
