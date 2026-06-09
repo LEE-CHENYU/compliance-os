@@ -34,3 +34,12 @@ def test_income_keeps_1040nr_package_and_april_15(monkeypatch, tmp_path):
     filenames = [a["filename"] for a in result["artifacts"]]
     assert "1040nr-package-summary.pdf" in filenames
     assert "form-8843.pdf" in filenames
+
+
+def test_scholarship_only_income_requires_1040nr(monkeypatch, tmp_path):
+    result = _run(monkeypatch, tmp_path, scholarship_income_usd=12000)
+
+    assert result["requires_1040nr"] is True
+    assert result["filing_deadline"] == "2026-04-15"
+    filenames = [a["filename"] for a in result["artifacts"]]
+    assert "1040nr-package-summary.pdf" in filenames

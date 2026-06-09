@@ -445,43 +445,6 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
     form_8843_path = artifacts_dir / "form-8843.pdf"
     form_8843_path.write_bytes(generate_form_8843(form_8843_inputs))
 
-    package_lines = [
-        f"Student tax package for {tax_year}",
-        "",
-        f"Client: {full_name}",
-        f"School: {school_name}",
-        f"Visa status: {visa_type}",
-        f"Citizenship: {country_citizenship}",
-        "",
-        "Income summary",
-        f"- Wage income: ${wage_income:,.2f}",
-        f"- Scholarship income: ${scholarship_income:,.2f}",
-        f"- Other income: ${other_income:,.2f}",
-        f"- Federal withholding: ${federal_withholding:,.2f}",
-        f"- State withholding: ${state_withholding:,.2f}",
-        f"- Total income reviewed: ${total_income:,.2f}",
-        "",
-        "Filing posture",
-        "- Form 8843 should be included with the 1040-NR package.",
-        f"- Filing deadline: {deadline.isoformat()}",
-        "- Review treaty eligibility before claiming any exemption or reduced withholding benefit.",
-        "",
-        "Guardian checks",
-    ]
-    package_lines.extend(
-        [f"- {finding['title']}: {finding['action']}" for finding in findings]
-        or ["- No major nonresident-student filing flags were detected from the intake you entered."]
-    )
-    package_lines.extend(
-        [
-            "",
-            "Next steps",
-            "- Review the package summary against your W-2 and any 1042-S statements.",
-            "- Complete the 1040-NR return using the same tax-year figures reflected here.",
-            "- Attach Form 8843 to the return package before filing.",
-        ]
-    )
-
     if not requires_1040nr:
         # Zero income → standalone Form 8843 only. Don't generate a 1040-NR
         # package the user doesn't need.
@@ -493,6 +456,42 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
             },
         ]
     else:
+        package_lines = [
+            f"Student tax package for {tax_year}",
+            "",
+            f"Client: {full_name}",
+            f"School: {school_name}",
+            f"Visa status: {visa_type}",
+            f"Citizenship: {country_citizenship}",
+            "",
+            "Income summary",
+            f"- Wage income: ${wage_income:,.2f}",
+            f"- Scholarship income: ${scholarship_income:,.2f}",
+            f"- Other income: ${other_income:,.2f}",
+            f"- Federal withholding: ${federal_withholding:,.2f}",
+            f"- State withholding: ${state_withholding:,.2f}",
+            f"- Total income reviewed: ${total_income:,.2f}",
+            "",
+            "Filing posture",
+            "- Form 8843 should be included with the 1040-NR package.",
+            f"- Filing deadline: {deadline.isoformat()}",
+            "- Review treaty eligibility before claiming any exemption or reduced withholding benefit.",
+            "",
+            "Guardian checks",
+        ]
+        package_lines.extend(
+            [f"- {finding['title']}: {finding['action']}" for finding in findings]
+            or ["- No major nonresident-student filing flags were detected from the intake you entered."]
+        )
+        package_lines.extend(
+            [
+                "",
+                "Next steps",
+                "- Review the package summary against your W-2 and any 1042-S statements.",
+                "- Complete the 1040-NR return using the same tax-year figures reflected here.",
+                "- Attach Form 8843 to the return package before filing.",
+            ]
+        )
         package_path = artifacts_dir / "1040nr-package-summary.pdf"
         package_path.write_bytes(
             build_text_pdf(
@@ -562,6 +561,11 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
     else:
         package_name = "nonresident tax package"
 
+    artifacts_desc = (
+        "the Form 8843 attachment and a 1040-NR package summary"
+        if requires_1040nr
+        else "your standalone Form 8843"
+    )
     if has_blockers:
         summary = (
             f"Your {package_name} for tax year {tax_year} has been prepared, but Guardian found "
@@ -571,20 +575,20 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
     elif warning_count > 0:
         summary = (
             f"Your {package_name} for tax year {tax_year} is ready. "
-            f"Guardian prepared the Form 8843 attachment, a 1040-NR package summary, and "
+            f"Guardian prepared {artifacts_desc} and "
             f"flagged {warning_count} issue{'s' if warning_count != 1 else ''} worth checking before filing"
             f"{f', plus {info_count} optimization tip' if info_count == 1 else (f', plus {info_count} optimization tips' if info_count else '')}."
         )
     elif info_count > 0:
         summary = (
             f"Your {package_name} for tax year {tax_year} is ready. "
-            f"Guardian prepared the Form 8843 attachment and a 1040-NR package summary, and surfaced "
+            f"Guardian prepared {artifacts_desc}, and surfaced "
             f"{info_count} tip{'s' if info_count != 1 else ''} that could save you money or clarify next steps."
         )
     else:
         summary = (
             f"Your {package_name} for tax year {tax_year} is ready. "
-            f"Guardian prepared the Form 8843 attachment and a 1040-NR package summary. No issues flagged."
+            f"Guardian prepared {artifacts_desc}. No issues flagged."
         )
 
     next_steps = []
