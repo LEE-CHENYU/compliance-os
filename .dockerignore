@@ -7,8 +7,14 @@ frontend/node_modules
 # 25+ min on Apple Silicon. The .next bundle is portable JS + static
 # assets, so an arm64-built artifact runs fine on the amd64 server.
 frontend/.next.broken*
+# .next/cache is the webpack build cache (~150MB) — NOT needed by `next
+# start` at runtime; excluding it keeps the build context tiny so it
+# uploads reliably on a slow/flaky link.
+frontend/.next/cache
 __pycache__
 *.pyc
+# chroma_db is a local vector index — not used by the server build.
+chroma_db/
 .git
 .playwright-cli/
 .playwright-mcp/
