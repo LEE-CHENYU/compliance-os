@@ -57,6 +57,7 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
     federal_withholding = _as_float(intake_data.get("federal_withholding_usd"))
     state_withholding = _as_float(intake_data.get("state_withholding_usd"))
     total_income = wage_income + scholarship_income + other_income
+    requires_1040nr = total_income > 0
 
     claim_treaty_benefit = bool(intake_data.get("claim_treaty_benefit"))
     treaty_country = str(intake_data.get("treaty_country") or "").strip()
@@ -426,10 +427,17 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         "days_present_current": intake_data.get("days_present_current") or 0,
         "days_present_year_1_ago": intake_data.get("days_present_year_1_ago") or 0,
         "days_present_year_2_ago": intake_data.get("days_present_year_2_ago") or 0,
-        "filing_with_tax_return": True,
-        "has_us_income": True,
+        "filing_with_tax_return": requires_1040nr,
+        "has_us_income": requires_1040nr,
     }
     filing_context = build_form_8843_filing_context(form_8843_inputs)
+    # A true zero-income filer mails a standalone Form 8843 (due June 15),
+    # not a 1040-NR package (due April 15). build_form_8843_filing_context
+    # already computes the correct deadline from has_us_income, so adopt it
+    # as the single source of truth.
+    _ctx_deadline = filing_context.get("filing_deadline")
+    if isinstance(_ctx_deadline, date):
+        deadline = _ctx_deadline
 
     artifacts_dir = STUDENT_TAX_DIR / order_id / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -474,44 +482,54 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         ]
     )
 
-    package_path = artifacts_dir / "1040nr-package-summary.pdf"
-    package_path.write_bytes(
-        build_text_pdf(
-            "Student Tax Package Summary",
-            package_lines,
-            subtitle=f"Tax year {tax_year}",
-        )
-    )
-
-    if spt_crossover_warning:
-        # When SPT crossover fires, the user is likely a RESIDENT alien and
-        # neither 1040-NR nor Form 8843 applies. Relabel artifacts as
-        # advisor-review-only to prevent the user from filing the wrong form.
+    if not requires_1040nr:
+        # Zero income → standalone Form 8843 only. Don't generate a 1040-NR
+        # package the user doesn't need.
         artifacts = [
             {
-                "label": "Download 1040-NR package summary (REVIEW ONLY — wrong form if you are a resident alien)",
-                "filename": package_path.name,
-                "path": str(package_path),
-            },
-            {
-                "label": "Download Form 8843 (REVIEW ONLY — does not apply to resident aliens)",
+                "label": "Download Form 8843 (mail standalone — no 1040-NR needed)",
                 "filename": form_8843_path.name,
                 "path": str(form_8843_path),
             },
         ]
     else:
-        artifacts = [
-            {
-                "label": "Download 1040-NR package summary",
-                "filename": package_path.name,
-                "path": str(package_path),
-            },
-            {
-                "label": "Download Form 8843",
-                "filename": form_8843_path.name,
-                "path": str(form_8843_path),
-            },
-        ]
+        package_path = artifacts_dir / "1040nr-package-summary.pdf"
+        package_path.write_bytes(
+            build_text_pdf(
+                "Student Tax Package Summary",
+                package_lines,
+                subtitle=f"Tax year {tax_year}",
+            )
+        )
+        if spt_crossover_warning:
+            # When SPT crossover fires, the user is likely a RESIDENT alien and
+            # neither 1040-NR nor Form 8843 applies. Relabel artifacts as
+            # advisor-review-only to prevent the user from filing the wrong form.
+            artifacts = [
+                {
+                    "label": "Download 1040-NR package summary (REVIEW ONLY — wrong form if you are a resident alien)",
+                    "filename": package_path.name,
+                    "path": str(package_path),
+                },
+                {
+                    "label": "Download Form 8843 (REVIEW ONLY — does not apply to resident aliens)",
+                    "filename": form_8843_path.name,
+                    "path": str(form_8843_path),
+                },
+            ]
+        else:
+            artifacts = [
+                {
+                    "label": "Download 1040-NR package summary",
+                    "filename": package_path.name,
+                    "path": str(package_path),
+                },
+                {
+                    "label": "Download Form 8843",
+                    "filename": form_8843_path.name,
+                    "path": str(form_8843_path),
+                },
+            ]
 
     if claim_treaty_benefit:
         treaty_lines = [
@@ -583,11 +601,18 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
     if other_income > 0:
         income_docs.append("1099 / 1042-S")
     docs_phrase = " and ".join(income_docs) if income_docs else "any tax statements you received"
-    next_steps.extend([
-        f"Review the 1040-NR package summary against your {docs_phrase}.",
-        "Prepare the 1040-NR using nonresident-aware software (Sprintax or GLACIER Tax Prep) or a CPA familiar with nonresident filings — standard consumer software (TurboTax, H&R Block, FreeTaxUSA) cannot produce a valid 1040-NR.",
-        f"File the return package by {deadline.isoformat()} and attach Form 8843.",
-    ])
+    if requires_1040nr:
+        next_steps.extend([
+            f"Review the 1040-NR package summary against your {docs_phrase}.",
+            "Prepare the 1040-NR using nonresident-aware software (Sprintax or GLACIER Tax Prep) or a CPA familiar with nonresident filings — standard consumer software (TurboTax, H&R Block, FreeTaxUSA) cannot produce a valid 1040-NR.",
+            f"File the return package by {deadline.isoformat()} and attach Form 8843.",
+        ])
+    else:
+        next_steps.extend([
+            "You reported no U.S. income, so you likely only need to mail a standalone Form 8843 — not a 1040-NR return.",
+            "Print the Form 8843, sign and date it, and mail it to the IRS in Austin, TX (see the filing guidance below).",
+            f"Mail it by the standalone deadline, {deadline.isoformat()}. Use USPS Certified Mail for proof of filing.",
+        ])
     if claim_treaty_benefit:
         next_steps.insert(
             -1,
@@ -613,4 +638,5 @@ def process_student_tax_check(order_id: str, intake_data: dict[str, Any]) -> dic
         "suggested_treaty_country": suggested_treaty_country,
         "suggested_treaty_article": suggested_treaty_article,
         "total_income_usd": total_income,
+        "requires_1040nr": requires_1040nr,
     }
