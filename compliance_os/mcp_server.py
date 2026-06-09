@@ -813,7 +813,7 @@ def save_artifact(content_base64: str, output_path: str, is_text: bool = False) 
         else:
             data = base64.b64decode(content_base64, validate=True)
     except Exception as exc:
-        return json.dumps({"status": "error", "error": f"Invalid base64: {exc}"})
+        return json.dumps({"status": "error", "error": f"Could not read artifact content: {exc}"})
     try:
         dest = Path(output_path).expanduser()
         dest.parent.mkdir(parents=True, exist_ok=True)
