@@ -200,6 +200,41 @@ GUARDIAN_INSTRUCTIONS = (
 
 mcp = GatedMCP("guardian", instructions=GUARDIAN_INSTRUCTIONS)
 
+
+@mcp.prompt(title="Start Guardian")
+def guardian(situation: str = "") -> str:
+    """Deterministically start Guardian's cold-start onboarding.
+
+    Invoke this (e.g. /guardian) to engage Guardian on purpose instead of
+    relying on topic detection. Optionally pass your situation to route
+    immediately — e.g. "F-1 student, paid internship in 2 weeks" or
+    "foreign-owned US LLC, just heard about a 5472 penalty".
+
+    Args:
+        situation: Optional one-line description of what you're dealing with.
+    """
+    situation = (situation or "").strip()
+    if situation:
+        return (
+            f"Engage Guardian for this: {situation}\n\n"
+            "Follow Guardian's cold-start rules: answer my actual worry in ONE "
+            "line first (label it as your read of the rules if no Guardian check "
+            "computes it); confirm it's in scope, or tell me honestly if it isn't; "
+            "then ask only the single question that decides the path. Don't open "
+            "with a form, and don't call read-state tools yet — they're empty at a "
+            "cold start."
+        )
+    return (
+        "Engage Guardian and run the cold-start onboarding now: (1) reassure me in "
+        "one line and note you run locally on my machine; (2) state what Guardian "
+        "covers — F-1/J-1/H-1B/green-card-stage status, foreign-owned US entities "
+        "(Form 5472), startup equity tax (83(b)), and FBAR — and that you'll say so "
+        "honestly if my question is out of scope; (3) ask, in a sentence, what I'm "
+        "dealing with, and invite any date or dollar figure. Don't open with a form, "
+        "and don't call read-state tools yet (they're empty at a cold start)."
+    )
+
+
 # ─── Configuration ───────────────────────────────────────────────
 
 GUARDIAN_API_URL = os.environ.get("GUARDIAN_API_URL", "http://localhost:8000")

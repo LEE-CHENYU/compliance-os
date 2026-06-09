@@ -43,7 +43,10 @@ MANIFEST = {
         "report — coverage by section, missing required slots, lineage "
         "issues. Also handles Form 8843 generation, FBAR aggregation, "
         "I-983 STEM OPT training plan review, and tokenized data-room "
-        "share links for external collaborators like attorneys and CPAs."
+        "share links for external collaborators like attorneys and CPAs. "
+        "Run the /guardian command to start it deterministically — or "
+        "/guardian <your situation> (e.g. 'F-1 student, paid internship in "
+        "2 weeks') to route straight to your case."
     ),
     "author": {
         "name": "Guardian",

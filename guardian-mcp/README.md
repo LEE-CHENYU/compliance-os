@@ -104,9 +104,25 @@ python scripts/guardian_mcp_setup.py
 
 Requires a one-time Google Cloud OAuth setup. See the setup script for instructions.
 
+## Starting Guardian — the `/guardian` command
+
+Guardian engages automatically when you raise a compliance topic, but you can also start it **deterministically** with the built-in `/guardian` prompt — for when you want to begin on purpose instead of relying on topic detection:
+
+- **Claude Desktop:** type `/` (or open the prompt/command menu) and pick **Guardian → Start Guardian**.
+- **Claude Code:** run `/mcp__guardian__guardian`.
+
+It runs Guardian's cold-start onboarding: a one-line reassurance, what Guardian covers (and an honest "that's outside what I'm built for" if your question is out of scope), then a single question to route you — no intake form.
+
+**Pass your situation to route immediately:**
+
+- `/guardian F-1 student, paid internship starting in 2 weeks`
+- `/guardian foreign-owned US LLC, just heard about a 5472 penalty`
+- `/guardian early-exercised startup stock, 30-day clock`
+- `/guardian green card pending and I need to travel next month`
+
 ## Usage Examples
 
-Once connected, just talk naturally:
+Once connected, just talk naturally — or run `/guardian` to start deterministically:
 
 - "What's my compliance status?"
 - "Process these tax documents" (with file paths)
