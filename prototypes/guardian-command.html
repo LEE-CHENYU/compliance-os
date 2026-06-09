@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>/guardian — agentic prototype</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#5b8dee; --blue-deep:#4a74d4; --accent:#3d6bc5;
+    --ink:#0d1424; --ink-2:#556480; --ink-3:#7b8ba5;
+    --line:rgba(91,141,238,.16); --amber:#b07a1e;
+    --hi:rgba(255,255,255,.85);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--ink);
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 8%, rgba(91,141,238,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 78% 22%, rgba(120,150,210,.10) 0%, transparent 55%),
+      linear-gradient(180deg,#cdd7e8 0%, #d9e2ef 28%, #e6eef6 62%, #eef3f9 100%);
+    background-attachment:fixed;
+    display:flex; align-items:center; justify-content:center; min-height:100%; padding:36px 20px; overflow:hidden;
+  }
+  body::before{content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:radial-gradient(rgba(91,141,238,.06) 1px, transparent 1px); background-size:32px 32px;}
+
+  /* floating colour orbs the glass card frosts over — gives the blur something to refract */
+  .orb{position:fixed; border-radius:50%; z-index:0; pointer-events:none; filter:blur(54px); will-change:transform}
+  .orb-1{width:360px; height:360px; left:3%;  top:9%;   background:radial-gradient(circle at 50% 50%, rgba(91,141,238,.55), transparent 68%);  animation:float1 15s ease-in-out infinite}
+  .orb-2{width:320px; height:320px; right:1%; bottom:5%; background:radial-gradient(circle at 50% 50%, rgba(108,154,230,.46), transparent 68%); animation:float2 18s ease-in-out infinite}
+  .orb-3{width:260px; height:260px; left:46%; top:60%;  background:radial-gradient(circle at 50% 50%, rgba(149,131,232,.32), transparent 70%); animation:float1 22s ease-in-out infinite reverse}
+  @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(22px,-26px)}}
+  @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-26px,18px)}}
+
+  .wrap{position:relative; z-index:1; width:100%; max-width:560px}
+  .caption{text-align:center; margin:0 0 18px; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:rgba(50,90,170,.62)}
+
+  .card{
+    position:relative;
+    background:linear-gradient(180deg, rgba(255,255,255,.60) 0%, rgba(244,248,253,.46) 100%);
+    border:1px solid rgba(255,255,255,.55); border-radius:26px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.9),
+      inset 0 0 0 1px rgba(255,255,255,.10),
+      0 34px 60px -22px rgba(38,66,128,.34),
+      0 14px 34px -14px rgba(38,66,128,.22),
+      0 2px 6px rgba(18,38,78,.05);
+    overflow:hidden; backdrop-filter:blur(30px) saturate(1.7); -webkit-backdrop-filter:blur(30px) saturate(1.7);
+  }
+  /* diagonal sheen sweeping across the glass */
+  .card::before{content:''; position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit;
+    background:linear-gradient(125deg, rgba(255,255,255,.5) 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 68%, rgba(255,255,255,.20) 100%);}
+  .transcript{position:relative; z-index:1; padding:20px 20px 6px; min-height:296px; display:flex; flex-direction:column; gap:13px}
+
+  .item{opacity:0; transform:translateY(7px); transition:opacity .35s ease, transform .35s ease}
+  .item.in{opacity:1; transform:none}
+
+  .user-chip{position:relative; align-self:flex-end; max-width:88%; font-size:14px; padding:9px 14px; border-radius:15px; border-bottom-right-radius:5px;
+    background:linear-gradient(135deg,var(--blue),var(--blue-deep)); color:#fff; overflow:hidden;
+    box-shadow:0 10px 22px -6px rgba(74,116,212,.5), inset 0 1px 0 rgba(255,255,255,.4)}
+  .user-chip::after{content:''; position:absolute; inset:0 0 52% 0; background:linear-gradient(180deg,rgba(255,255,255,.22),transparent); pointer-events:none}
+  .user-chip b{font-weight:600; opacity:.92; position:relative}
+
+  .think{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-3); font-style:italic}
+  .think .spark{font-style:normal; color:var(--blue); animation:tw 1.6s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.45}50%{opacity:1}}
+
+  .step{display:flex; gap:11px}
+  .bullet{flex:0 0 18px; width:18px; height:18px; margin-top:1px; position:relative}
+  .bullet .ring{position:absolute; inset:0; border-radius:50%; border:2px solid rgba(91,141,238,.25); border-top-color:var(--blue); animation:spin .7s linear infinite}
+  .bullet .chk{position:absolute; inset:0; opacity:0; transition:opacity .2s; filter:drop-shadow(0 1px 2px rgba(40,70,130,.15))}
+  .bullet.done .ring{display:none}
+  .bullet.done .chk{opacity:1}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .step-body{flex:1; min-width:0}
+  .step-action{font-size:13.5px; color:var(--ink); font-weight:500}
+  .step-action .tool{font-family:"JetBrains Mono",ui-monospace,monospace; font-size:11.5px; font-weight:600; color:var(--accent);
+    background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.65); padding:1px 7px; border-radius:6px; margin-left:7px; vertical-align:1px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 1px 3px rgba(40,70,130,.10); backdrop-filter:blur(6px)}
+  .step-result{display:flex; gap:7px; margin-top:4px; font-size:12.5px; color:var(--ink-2); opacity:0; transform:translateY(-3px); transition:opacity .3s, transform .3s}
+  .step-result.show{opacity:1; transform:none}
+  .step-result .corner{color:var(--ink-3); flex:0 0 auto}
+  .step-result.risk{color:var(--amber)}
+  .step-result.risk .pill{background:linear-gradient(180deg,rgba(255,247,232,.72),rgba(252,240,214,.56)); border:1px solid rgba(176,122,30,.28);
+    border-radius:8px; padding:3px 9px; font-weight:500; backdrop-filter:blur(6px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.65), 0 2px 9px rgba(176,122,30,.12)}
+
+  .answer{display:flex; gap:11px; max-width:96%}
+  .avatar{flex:0 0 28px; width:28px; height:28px; border-radius:9px; margin-top:1px;
+    background:linear-gradient(135deg,rgba(234,241,255,.82),rgba(219,230,251,.6)); border:1px solid rgba(255,255,255,.7);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 3px 8px -2px rgba(40,70,130,.18); display:flex; align-items:center; justify-content:center; backdrop-filter:blur(6px)}
+  .avatar svg{width:15px; height:15px}
+  .answer .bubble{background:linear-gradient(180deg,rgba(255,255,255,.64),rgba(255,255,255,.44)); border:1px solid rgba(255,255,255,.6);
+    border-radius:16px; border-bottom-left-radius:5px; padding:12px 15px; font-size:14.5px; line-height:1.55; color:var(--ink);
+    backdrop-filter:blur(12px) saturate(1.4); box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 8px 22px -8px rgba(40,70,130,.22)}
+  .answer .bubble .ask{color:var(--accent); font-weight:600}
+
+  /* status + composer — a recessed frosted base layer below the transcript */
+  .footer{position:relative; z-index:1; border-top:1px solid rgba(255,255,255,.55);
+    background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.46)); box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+  .status{display:flex; align-items:center; gap:9px; padding:11px 20px 0; font-size:12.5px; color:var(--ink-2); height:0; opacity:0; overflow:hidden; transition:opacity .25s, height .25s, padding .25s}
+  .status.on{opacity:1; height:34px; padding:11px 20px 0}
+  .status .dot{width:7px; height:7px; border-radius:50%; background:var(--blue); box-shadow:0 0 8px rgba(91,141,238,.6); animation:pp 1s ease-in-out infinite}
+  @keyframes pp{0%,100%{opacity:.35; transform:scale(.8)}50%{opacity:1; transform:scale(1)}}
+  .status .label{font-weight:500}
+
+  .composer-area{position:relative; padding:14px 16px 16px}
+  .slash-menu{position:absolute; left:16px; right:16px; bottom:calc(100% - 4px);
+    background:rgba(255,255,255,.72); backdrop-filter:blur(26px) saturate(1.8); -webkit-backdrop-filter:blur(26px) saturate(1.8);
+    border:1px solid rgba(255,255,255,.65); border-radius:14px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 0 20px 54px -12px rgba(38,66,128,.32); padding:6px; opacity:0; transform:translateY(8px) scale(.98);
+    transition:opacity .2s ease, transform .2s ease; pointer-events:none; transform-origin:bottom}
+  .slash-menu.show{opacity:1; transform:none}
+  .slash-head{font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); padding:7px 9px 5px}
+  .cmd{display:flex; align-items:center; gap:10px; padding:8px 9px; border-radius:10px; transition:opacity .2s}
+  .cmd.dim{opacity:.4}
+  .cmd.active{background:rgba(91,141,238,.13); box-shadow:inset 2px 0 0 var(--blue), inset 0 1px 0 rgba(255,255,255,.5)}
+  .cmd .ic{width:24px; height:24px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,rgba(234,241,255,.85),rgba(219,230,251,.6)); border:1px solid rgba(255,255,255,.7); box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+  .cmd .ic svg{width:13px; height:13px}
+  .cmd .name{font-family:"JetBrains Mono",ui-monospace,monospace; font-size:12.5px; font-weight:600; color:var(--accent)}
+  .cmd .desc{font-size:11.5px; color:var(--ink-2); margin-left:auto}
+
+  .composer{display:flex; align-items:center; gap:10px; border-radius:16px; padding:11px 11px 11px 15px;
+    background:linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.42)); border:1px solid rgba(255,255,255,.6);
+    backdrop-filter:blur(12px) saturate(1.5); -webkit-backdrop-filter:blur(12px) saturate(1.5);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 4px 16px -4px rgba(40,70,130,.14); transition:border-color .2s, box-shadow .2s}
+  .composer.focus{border-color:rgba(91,141,238,.5);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 0 0 4px rgba(91,141,238,.14), 0 6px 20px -4px rgba(40,70,130,.18)}
+  .field{flex:1; font-size:15px; line-height:1.4; min-height:21px; white-space:pre-wrap; word-break:break-word}
+  .field .ph{color:var(--ink-3)}
+  .field .cmd-token{color:var(--accent); font-weight:600}
+  .caret{display:inline-block; width:2px; height:17px; background:var(--blue); vertical-align:-3px; margin-left:1px; border-radius:1px; animation:blink 1.05s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+  .send{flex:0 0 36px; width:36px; height:36px; border-radius:11px; border:none; background:rgba(91,141,238,.16); color:#9fb4dd;
+    display:flex; align-items:center; justify-content:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.45); transition:.2s}
+  .send.on{background:linear-gradient(135deg,var(--blue),var(--blue-deep)); color:#fff; box-shadow:0 8px 20px -4px rgba(74,116,212,.5), inset 0 1px 0 rgba(255,255,255,.4)}
+  .send.pulse{animation:pulse .35s ease}
+  @keyframes pulse{50%{transform:scale(.9)}}
+  .send svg{width:17px; height:17px}
+
+  .hint{text-align:center; margin:16px 0 0; font-size:12.5px; color:var(--ink-3)}
+  .hint b{color:var(--accent); font-weight:600}
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="wrap">
+  <p class="caption">Start Guardian, on purpose</p>
+
+  <div class="card">
+    <div class="transcript" id="transcript"></div>
+
+    <div class="footer">
+      <div class="status" id="status"><span class="dot"></span><span class="label" id="status-label">Working…</span></div>
+      <div class="composer-area">
+        <div class="slash-menu" id="menu">
+          <div class="slash-head">Commands</div>
+          <div class="cmd active">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5 4.5 5.5v5.4c0 4.6 3.1 8 7.5 9.6 4.4-1.6 7.5-5 7.5-9.6V5.5L12 2.5Z" fill="#5b8dee" fill-opacity=".18" stroke="#5b8dee" stroke-width="1.5" stroke-linejoin="round"/><path d="m8.8 12 2.3 2.3 4.1-4.6" stroke="#4a74d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="name">/guardian</span><span class="desc">Start Guardian</span>
+          </div>
+          <div class="cmd dim" id="cmd-other">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="4" stroke="#7b8ba5" stroke-width="1.5"/></svg></span>
+            <span class="name">/clear</span><span class="desc">Clear conversation</span>
+          </div>
+        </div>
+        <div class="composer" id="composer">
+          <div class="field" id="field"><span class="ph" id="ph">Message Guardian…</span><span id="typed"></span><span class="caret" id="caret"></span></div>
+          <button class="send" id="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint">Type <b>/guardian</b> anytime — or <b>/guardian &lt;your situation&gt;</b> to route straight to your case.</p>
+</div>
+
+<script>
+const $=s=>document.querySelector(s); const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const T=$('#transcript'), typed=$('#typed'), ph=$('#ph'), caret=$('#caret'), menu=$('#menu'),
+      composer=$('#composer'), send=$('#send'), other=$('#cmd-other'),
+      status=$('#status'), statusLabel=$('#status-label');
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const SHIELD='<svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5 4.5 5.5v5.4c0 4.6 3.1 8 7.5 9.6 4.4-1.6 7.5-5 7.5-9.6V5.5L12 2.5Z" fill="#5b8dee" fill-opacity=".18" stroke="#5b8dee" stroke-width="1.5" stroke-linejoin="round"/><path d="m8.8 12 2.3 2.3 4.1-4.6" stroke="#4a74d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHECK='<svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" fill="#eaf1ff" stroke="#5b8dee" stroke-width="1.3"/><path d="m5.6 9 2.2 2.2 4.6-5" stroke="#4a74d4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+let value='';
+function render(){
+  const m=value.match(/^(\/\S*)([\s\S]*)$/);
+  typed.innerHTML=m?'<span class="cmd-token">'+esc(m[1])+'</span>'+esc(m[2]):esc(value);
+  ph.style.display=value?'none':'inline';
+}
+async function typeStr(str,sp){ for(const ch of str){ value+=ch; render(); await sleep(sp+Math.random()*28);} }
+
+function add(cls,html){ const e=document.createElement('div'); e.className='item '+cls; e.innerHTML=html;
+  T.appendChild(e); requestAnimationFrame(()=>e.classList.add('in')); return e; }
+function setStatus(t){ statusLabel.textContent=t; status.classList.add('on'); }
+function hideStatus(){ status.classList.remove('on'); }
+
+// an agentic tool step: spinner → action → result (resolves to a check)
+async function step(action, tool, result, opts={}){
+  const e=add('step',
+    '<span class="bullet"><span class="ring"></span><span class="chk">'+CHECK+'</span></span>'+
+    '<div class="step-body"><div class="step-action">'+esc(action)+'<span class="tool">'+esc(tool)+'</span></div>'+
+    '<div class="step-result'+(opts.risk?' risk':'')+'"><span class="corner">⎿</span>'+
+       (opts.risk?'<span class="pill">'+esc(result)+'</span>':'<span>'+esc(result)+'</span>')+'</div></div>');
+  await sleep(opts.work||780);
+  e.querySelector('.bullet').classList.add('done');
+  e.querySelector('.step-result').classList.add('show');
+  await sleep(opts.after||360);
+}
+
+function reset(){
+  T.innerHTML=''; value=''; render();
+  menu.classList.remove('show'); other.style.display='flex';
+  composer.classList.remove('focus'); send.classList.remove('on','pulse');
+  caret.style.display='inline-block'; hideStatus();
+}
+
+async function run(){
+  while(true){
+    reset();
+    await sleep(800);
+    composer.classList.add('focus'); await sleep(400);
+
+    // type the command
+    await typeStr('/',70); menu.classList.add('show'); await sleep(170);
+    await typeStr('guardian',64); other.style.display='none'; await sleep(520);
+    await typeStr(' ',90); menu.classList.remove('show'); await sleep(130);
+    await typeStr('F-1 internship in 2 weeks',46);
+
+    // send
+    await sleep(560); send.classList.add('on'); await sleep(430); send.classList.add('pulse'); await sleep(170);
+    caret.style.display='none';
+    add('user-chip','<b>/guardian</b> F-1 internship in 2 weeks');
+    value=''; render(); composer.classList.remove('focus'); send.classList.remove('on','pulse');
+    await sleep(520);
+
+    // agentic response — search history → validate SoT → assess risk → answer
+    add('think','<span class="spark">✦</span> Let me pull your documents and check this against the CPT rules before I answer.');
+    await sleep(900);
+
+    setStatus('Searching your data room…');
+    await step('Searched your data room', 'guardian_documents', 'I-20 (current) · internship offer letter', {work:820});
+
+    setStatus('Validating against your facts…');
+    await step('Cross-checked your source-of-truth facts', 'get_user_facts', 'F-1 · program started Aug 2024 · 2 terms complete · DSO on file', {work:880});
+
+    setStatus('Assessing risk…');
+    await step('Ran the CPT eligibility & timing check', 'run_compliance_check', 'Risk: no work before CPT is authorized on a new I-20 = unauthorized employment', {risk:true, work:900});
+
+    setStatus('Writing…'); await sleep(500); hideStatus();
+
+    // grounded answer
+    const a=add('answer','<span class="avatar">'+SHIELD+'</span><div class="bubble"></div>');
+    const bub=a.querySelector('.bubble');
+    const ANSWER="You're CPT-eligible — 2 terms done — and a paid internship is fine. The one hard rule: don't work a single day before CPT is authorized on a new I-20, and you start in 2 weeks, so email your DSO today. ";
+    const ASK="One fork so I route you right: is this someone else's company, or one you co-founded?";
+    for(const ch of ANSWER){ bub.textContent+=ch; await sleep(13); }
+    const span=document.createElement('span'); span.className='ask'; bub.appendChild(span);
+    for(const ch of ASK){ span.textContent+=ch; await sleep(13); }
+
+    await sleep(4200);
+  }
+}
+run();
+</script>
+</body>
+</html>
