@@ -8,7 +8,7 @@ from compliance_os.case_templates.validator import resolve_template
 @pytest.mark.parametrize("alias,template_id,sections", [
     ("founder_h1b", "founder_h1b_petition", {"A", "B", "C", "D", "E", "F"}),
     ("form_5472", "form_5472_dre", {"0", "1", "2", "3", "4"}),
-    ("eb1a", "eb1a_evidence", {"0", "1", "2", "3", "4", "5", "6", "7"}),
+    ("eb1a", "eb1a_evidence", {"0", "1", "2", "3", "4", "5", "6", "7", "8"}),
     ("dependent_status", "dependent_status", {"A", "B", "C", "D"}),
 ])
 def test_new_template_resolves_and_is_sound(alias, template_id, sections):

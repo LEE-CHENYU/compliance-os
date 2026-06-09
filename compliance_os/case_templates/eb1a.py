@@ -10,7 +10,8 @@ _SECTIONS = {
     "4": "Judging",
     "5": "Original Contributions",
     "6": "Scholarly Articles",
-    "7": "High Remuneration",
+    "7": "Critical / Leading Role",
+    "8": "High Remuneration",
 }
 
 _SLOTS = [
@@ -38,7 +39,10 @@ _SLOTS = [
     Slot(id="C6", section="6", section_name="Scholarly Articles", title="Authorship of scholarly articles",
          description="Beneficiary's authored scholarly articles (criterion vi).",
          required=False, keywords=["publication", "scholarly", "journal", "paper"], filename_patterns=[r"(publication|journal|paper)", r"^C6[_-]"]),
-    Slot(id="C8", section="7", section_name="High Remuneration", title="High salary / remuneration evidence",
+    Slot(id="C7", section="7", section_name="Critical / Leading Role", title="Leading or critical role evidence",
+         description="Evidence of a leading or critical role for distinguished organizations (criterion vii).",
+         required=False, keywords=["leading role", "critical role", "director", "head"], filename_patterns=[r"(leading|critical|director).*role", r"^C7[_-]"]),
+    Slot(id="C8", section="8", section_name="High Remuneration", title="High salary / remuneration evidence",
          description="Evidence of high salary or remuneration relative to the field (criterion viii).",
          required=False, keywords=["salary", "compensation", "remuneration"], filename_patterns=[r"(salary|compensation|remuneration)", r"^C8[_-]"]),
 ]
