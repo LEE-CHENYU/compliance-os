@@ -204,6 +204,9 @@
   .track-grid {
     grid-template-columns: 1fr !important;
   }
+  .pain-grid {
+    grid-template-columns: 1fr !important;
+  }
   .vault-grid {
     grid-template-columns: 1fr !important;
   }

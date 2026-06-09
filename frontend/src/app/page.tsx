@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, getUser, logout } from "@/lib/auth";
 import { LandingSchema } from "@/components/SchemaOrg";
+import GuardianDemo from "@/components/GuardianDemo";
 
 function useScrollReveal(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
@@ -26,6 +27,35 @@ const DEADLINES = ["FBAR (FinCEN 114)","DE Annual Report","60-day Grace Period",
 const PHRASES = ["Substantial Presence Test","Effectively Connected Income","Disregarded Entity","Duration of Status","Material Change","Unauthorized Employment","Cap-Gap Extension","Corporate Veil","SEVIS Termination","Treaty Rate","Adjustment of Status","Concurrent Filing"];
 const SLAB_LABELS = ["I-983","Form 5472","1040-NR","FBAR","EAD","AR-11","I-797"];
 
+// The pain points Guardian solves — written for a normal person, not a lawyer.
+// Each card: the way it quietly goes wrong, then how Guardian catches it.
+const PAINS = [
+  {
+    tag: "Source of truth",
+    pain: "Your facts live in 30 different places",
+    body: "Your status, your dates, your history — scattered across an I-20, an I-797, passport stamps, and old emails. Every form re-asks the same things, and one wrong date quietly cascades into the next.",
+    fix: "keeps one source of truth — your real facts, verified once and reused by every check, form, and deadline, so nothing contradicts itself.",
+  },
+  {
+    tag: "Rule check",
+    pain: "The rules are bright-line — and unforgiving",
+    body: "Work one day before your CPT is authorized and it’s “unauthorized employment.” File a 1040 instead of a 1040-NR and you’ve filed the wrong return entirely. Forums and chatbots answer for “a student,” not for you.",
+    fix: "checks your real documents and facts against the actual rules — the same bright lines USCIS and the IRS use — so the answer fits your case, not a generic FAQ.",
+  },
+  {
+    tag: "Hidden risk",
+    pain: "You can’t Google a risk you’ve never heard of",
+    body: "FBAR. Form 5472. The 60-day grace period. The 30-day 83(b) clock. The scariest deadline is always the one nobody mentioned — until the penalty notice shows up.",
+    fix: "surfaces the deadlines and risks that actually apply to you before they become violations, and re-checks every time something changes.",
+  },
+  {
+    tag: "Document mismatch",
+    pain: "Your own documents don’t agree",
+    body: "Your offer letter says one job title, your I-983 says another. Your I-20 end date doesn’t match what you filed. Those quiet mismatches are exactly what triggers an RFE or a denial.",
+    fix: "cross-checks your documents against each other and against your facts, and flags the mismatch before a reviewer does.",
+  },
+];
+
 export default function Home() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -35,7 +65,7 @@ export default function Home() {
 
   // Scroll-triggered reveal for each section
   const formCloud = useScrollReveal(0.1);
-  const trackSelect = useScrollReveal(0.1);
+  const painPoints = useScrollReveal(0.1);
   const vault = useScrollReveal(0.15);
   const penaltySection = useScrollReveal(0.1);
   const openclawSection = useScrollReveal(0.1);
@@ -373,50 +403,60 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Two Tracks */}
-      <div ref={trackSelect.ref} className={`section-panel scroll-section${trackSelect.revealed ? ' revealed' : ''}`}>
-        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>Pick your check</h2>
-        <p style={{fontSize:16,color:'#556480',textAlign:'center',marginBottom:40}}>Three focused tracks. Upload documents, get answers.</p>
-        <div className="track-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
-          {[
-            {letter:'A',title:'Young Professional',desc:'Upload your I-983 and employment letter. We cross-check every field and tell you what doesn\'t match.',checks:["Job title consistency","Work location vs I-983","Salary match","Duties vs STEM degree","Employer name vs E-Verify","12-month evaluation status"],href:'/check/stem-opt'},
-            {letter:'B',title:'Entrepreneur',desc:'Answer 5 questions and upload your tax return. We check if your entity structure matches what was filed.',checks:["S-Corp eligibility for NRAs","Form 5472 filing status","Entity type vs tax return","Foreign capital documentation","Schedule C on OPT/STEM","1040 vs 1040-NR"],href:'/check/entity'},
-            {letter:'C',title:'International Student',desc:'Upload your I-20 and offer letter. We check CPT authorization, travel readiness, and document consistency.',checks:["CPT employer match","Authorization dates","Travel signature","Full-time vs part-time","OPT eligibility","Program end date"],href:'/check/student'},
-          ].map(card => (
-            <button key={card.title} onClick={() => router.push(card.href)} style={{textAlign:'left',background:'rgba(255,255,255,0.6)',backdropFilter:'blur(16px)',borderRadius:20,padding:36,border:'1px solid rgba(255,255,255,0.7)',cursor:'pointer',transition:'all 0.3s'}}>
-              <div style={{width:44,height:44,borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:800,color:'#5b8dee',marginBottom:18,background:'rgba(91,141,238,0.06)'}}>{card.letter}</div>
-              <h3 style={{fontSize:20,fontWeight:700,marginBottom:8,letterSpacing:'-0.02em'}}>{card.title}</h3>
-              <p style={{fontSize:14,color:'#556480',lineHeight:1.6,marginBottom:20}}>{card.desc}</p>
-              <div style={{display:'flex',flexDirection:'column',gap:7,fontSize:13,color:'#4a5f80'}}>
-                {card.checks.map(c => <span key={c} style={{display:'flex',alignItems:'center',gap:10}}>
-                  <span style={{width:4,height:4,borderRadius:1,background:'#b0c4e8',flexShrink:0}} />{c}
-                </span>)}
+      {/* The problem — what actually trips people up */}
+      <div ref={painPoints.ref} className={`section-panel scroll-section${painPoints.revealed ? ' revealed' : ''}`}>
+        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>
+          The hard part isn&apos;t the paperwork
+        </h2>
+        <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:560,margin:'0 auto 44px',lineHeight:1.6}}>
+          It&apos;s keeping your own facts straight and catching the rules nobody warned you about. Four things quietly go wrong — here&apos;s each one, and how Guardian catches it.
+        </p>
+        <div className="pain-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,maxWidth:900,margin:'0 auto'}}>
+          {PAINS.map(p => (
+            <div key={p.tag} style={{display:'flex',flexDirection:'column',background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:18,padding:26,border:'1px solid rgba(255,255,255,0.65)',boxShadow:'inset 0 1px 0 rgba(255,255,255,0.6)'}}>
+              <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.07em',textTransform:'uppercase',color:'#5b8dee',marginBottom:12}}>{p.tag}</span>
+              <h3 style={{fontSize:18,fontWeight:700,letterSpacing:'-0.02em',marginBottom:10,color:'#0d1424',lineHeight:1.3}}>{p.pain}</h3>
+              <p style={{fontSize:14,color:'#556480',lineHeight:1.6,marginBottom:18}}>{p.body}</p>
+              <div style={{marginTop:'auto',display:'flex',gap:10,alignItems:'flex-start',paddingTop:16,borderTop:'1px solid rgba(91,141,238,0.1)'}}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{flexShrink:0,marginTop:1}}>
+                  <path d="M12 2.5 4.5 5.5v5.4c0 4.6 3.1 8 7.5 9.6 4.4-1.6 7.5-5 7.5-9.6V5.5L12 2.5Z" fill="#5b8dee" fillOpacity="0.18" stroke="#5b8dee" strokeWidth="1.5" strokeLinejoin="round"/>
+                  <path d="m8.8 12 2.3 2.3 4.1-4.6" stroke="#4a74d4" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <p style={{fontSize:13.5,color:'#3a5a8c',lineHeight:1.55,fontWeight:500,margin:0}}>
+                  <span style={{color:'#3d6bc5',fontWeight:700}}>Guardian </span>{p.fix}
+                </p>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* How it works */}
-      <section id="how" style={{maxWidth:680,margin:'0 auto',padding:'80px 48px',position:'relative',zIndex:1}}>
-        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:48,color:'#0d1424'}}>How it works</h2>
+      {/* How it works — the demo and the loop it runs, step by step */}
+      <section id="how" style={{maxWidth:760,margin:'0 auto',padding:'40px 24px 80px',position:'relative',zIndex:1}}>
+        <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>How it works</h2>
+        <GuardianDemo />
+        <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:520,margin:'4px auto 30px',lineHeight:1.6}}>
+          One line in. Guardian does the rest \u2014 pulling your documents, checking them against your own facts, and surfacing the risk that actually matters. That\u2019s the loop above, step by step.
+        </p>
+        <div style={{maxWidth:640,margin:'0 auto'}}>
         {[
-          ["01","Choose your check","STEM OPT document cross-check or entity compliance check.","10 sec"],
-          ["02","Upload 1\u20132 documents","I-983 + employment letter, or your tax return. We extract every field.","30 sec"],
-          ["03","See what we found","Side-by-side comparison. Matches, mismatches, and missing items.","~15 sec"],
-          ["04","Answer 3 quick questions","Only about the issues we found. Each one explains why it matters.","1 min"],
-          ["05","Get your case snapshot","Timeline, findings, next steps, and things to watch \u2014 all in one view.","Instant"],
-          ["06","Save to your data room","Your documents, timeline, and risks \u2014 kept in your data room, never shared without your approval. We\u2019ll prompt you when something new needs checking.","Ongoing"],
-        ].map(([num,title,desc,time]) => (
+          {num:"01",title:"Start with one line",desc:"Type /guardian and your situation in plain English \u2014 \u201cF-1, paid internship in 2 weeks.\u201d No intake form, no track to pick.",tag:"/guardian",mono:true},
+          {num:"02",title:"Guardian pulls your documents",desc:"It searches your data room and history for what\u2019s relevant \u2014 your I-20, offer letter, prior filings \u2014 instead of making you dig them up.",tag:"guardian_documents",mono:true},
+          {num:"03",title:"Checks them against your facts",desc:"Cross-references your source-of-truth \u2014 status, program dates, terms completed \u2014 so the answer fits your case, not a generic FAQ.",tag:"get_user_facts",mono:true},
+          {num:"04",title:"Runs the real compliance check",desc:"Bright-line rules, deadlines, and risk \u2014 e.g. no work before CPT is authorized on a new I-20. It tells you what\u2019s actually at stake.",tag:"run_compliance_check",mono:true},
+          {num:"05",title:"Answers \u2014 with the one next step",desc:"A grounded answer and the single action that matters today (email your DSO), then it routes you deeper only if your case needs it.",tag:"grounded",mono:false},
+          {num:"06",title:"Keeps your case current",desc:"Everything lands in your data room. New documents and approaching deadlines trigger an automatic re-check \u2014 and nothing leaves your machine.",tag:"ongoing",mono:false},
+        ].map(({num,title,desc,tag,mono}) => (
           <div key={num} style={{display:'flex',gap:20,padding:'22px 0',borderBottom:'1px solid rgba(91,141,238,0.06)',alignItems:'flex-start'}}>
             <span style={{fontSize:13,fontWeight:700,color:'#c0cde0',minWidth:28,paddingTop:3}}>{num}</span>
             <div style={{flex:1}}>
               <h4 style={{fontSize:16,fontWeight:600,marginBottom:4}}>{title}</h4>
               <p style={{fontSize:14,color:'#556480',lineHeight:1.5}}>{desc}</p>
             </div>
-            <span style={{fontSize:12,fontWeight:500,color:'#5b8dee',background:'rgba(91,141,238,0.06)',padding:'4px 12px',borderRadius:8,whiteSpace:'nowrap'}}>{time}</span>
+            <span style={{fontSize:mono?11.5:12,fontWeight:mono?600:500,fontFamily:mono?'ui-monospace,SFMono-Regular,Menlo,monospace':'inherit',color:mono?'#3d6bc5':'#5b8dee',background:'rgba(91,141,238,0.06)',border:mono?'1px solid rgba(91,141,238,0.12)':'none',padding:'4px 12px',borderRadius:8,whiteSpace:'nowrap',marginTop:2}}>{tag}</span>
           </div>
         ))}
+        </div>
       </section>
 
       {/* Data Room */}
