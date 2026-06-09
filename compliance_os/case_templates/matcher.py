@@ -80,7 +80,7 @@ def _score_slot(slot: Slot, path: Path) -> tuple[float, list[str]]:
     # Ignore patterns that just re-encode the slot-id prefix — those
     # are handled by the prefix logic below and would otherwise act
     # as self-corroboration (e.g. slot D14's pattern ^D14[_-] shouldn't
-    # vouch for D14_yangtze_employment_letter.pdf on its own).
+    # vouch for D14_employer_employment_letter.pdf on its own).
     slot_id_lower = slot.id.lower()
     pattern_hit = False
     for pat in slot.filename_patterns:
@@ -123,7 +123,7 @@ def _score_slot(slot: Slot, path: Path) -> tuple[float, list[str]]:
     # content (pattern or keyword). A folder hint alone isn't enough,
     # because prefix conventions are usually per-section, so the
     # section folder is a near-tautology for a prefix match.
-    # Example: D14_yangtze_employment_letter.pdf has the D14 prefix
+    # Example: D14_employer_employment_letter.pdf has the D14 prefix
     # and sits in D_Corporate/, but its content is an employment
     # letter, not the bank statement D14 represents.
     if prefix_hit:

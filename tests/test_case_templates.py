@@ -50,7 +50,7 @@ class TestTemplateSchema:
 class TestScoring:
 
     def test_perfect_filename_match_scores_high(self, tmp_path):
-        f = tmp_path / "A1_passport_chenyu_E71722932.jpeg"
+        f = tmp_path / "A1_passport_applicant.jpeg"
         f.write_bytes(b"fake")
         slot = H1B_TEMPLATE.slot_by_id("A1")
         score, reasons = _score_slot(slot, f)
@@ -60,7 +60,7 @@ class TestScoring:
     def test_prefix_alone_does_not_corroborate(self, tmp_path):
         # Slot D14 = bank statement. File uses D14_ prefix but is
         # an employment letter — should NOT claim D14 strongly.
-        f = tmp_path / "D14_yangtze_employment_letter.pdf"
+        f = tmp_path / "D14_employer_employment_letter.pdf"
         f.write_bytes(b"fake")
         slot = H1B_TEMPLATE.slot_by_id("D14")
         score, _ = _score_slot(slot, f)
