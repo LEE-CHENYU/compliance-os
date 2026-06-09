@@ -22,14 +22,14 @@ import zipfile
 from pathlib import Path
 
 
-COMPLIANCE_OS_VERSION = "==2.0.4"
+COMPLIANCE_OS_VERSION = "==2.0.5"
 
 
 MANIFEST = {
     "manifest_version": "0.4",
     "name": "guardian",
     "display_name": "Guardian Compliance",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "description": (
         "Local-first compliance copilot for nonresidents, STEM OPT / H-1B "
         "workers, international students, and foreign-owned US entities. Runs "
@@ -103,6 +103,7 @@ MANIFEST = {
         {"name": "query_documents",      "description": "RAG search over indexed docs"},
         {"name": "index_documents",      "description": "Build/update ChromaDB vector index"},
         {"name": "generate_form_8843",   "description": "Fill Form 8843 with filing guidance"},
+        {"name": "save_artifact",        "description": "Save a generated artifact (form, letter) to a local file path"},
         {"name": "run_compliance_check", "description": "H-1B doc check, FBAR, 83(b), ..."},
         {"name": "cross_check_filings",  "description": "Cross-check your filings for mismatches, missing forms, deadlines"},
         {"name": "get_extraction_schema", "description": "Fields to extract for a given document type"},
