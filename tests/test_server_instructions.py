@@ -50,3 +50,12 @@ def test_instructions_forbid_simulated_tool_returns():
     # case_active_search advertises the new generic templates (not just h1b/cpa).
     for tpl in ("founder_h1b", "form_5472", "eb1a", "dependent_status"):
         assert tpl in instr
+
+
+def test_instructions_forbid_pre_running_a_real_check():
+    # The targeted re-confirm found Leo still narrating "I ran the 83(b) check, it
+    # confirms" with no actual call — because run_compliance_check is a REAL tool the
+    # model rationalizes "pre-running from memory." The real-check clause closes it.
+    low = mcp_server.GUARDIAN_INSTRUCTIONS.lower()
+    assert "only if a real call to that exact check appears in this turn" in low
+    assert "do not narrate a completed result" in low
