@@ -15,6 +15,10 @@ from pathlib import Path
 
 from compliance_os.case_templates.h1b import H1B_TEMPLATE
 from compliance_os.case_templates.cpa import CPA_TEMPLATE
+from compliance_os.case_templates.founder_h1b import FOUNDER_H1B_TEMPLATE
+from compliance_os.case_templates.form_5472 import FORM_5472_TEMPLATE
+from compliance_os.case_templates.eb1a import EB1A_TEMPLATE
+from compliance_os.case_templates.dependent_status import DEPENDENT_STATUS_TEMPLATE
 from compliance_os.case_templates.matcher import (
     Report,
     format_report,
@@ -28,6 +32,13 @@ TEMPLATES: dict[str, Template] = {
     "h1b_petition": H1B_TEMPLATE,
     "cpa": CPA_TEMPLATE,
     "cpa_nr_entity": CPA_TEMPLATE,
+    "founder_h1b": FOUNDER_H1B_TEMPLATE,
+    "founder_h1b_petition": FOUNDER_H1B_TEMPLATE,
+    "form_5472": FORM_5472_TEMPLATE,
+    "form_5472_dre": FORM_5472_TEMPLATE,
+    "eb1a": EB1A_TEMPLATE,
+    "eb1a_evidence": EB1A_TEMPLATE,
+    "dependent_status": DEPENDENT_STATUS_TEMPLATE,
 }
 
 
