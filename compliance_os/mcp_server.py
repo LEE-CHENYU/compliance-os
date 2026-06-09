@@ -165,7 +165,8 @@ GUARDIAN_INSTRUCTIONS = (
     "expresses intent to save / file / record / add / ingest a document they "
     "provided, call upload_document. Engage proactively on immigration, tax, or "
     "corporate-compliance topics, but do not announce yourself or fire tools on "
-    "an incidental mention."
+    "an incidental mention. Also engage when the user explicitly says 'guardian' "
+    "or 'guardian extension'."
 )
 
 mcp = GatedMCP("guardian", instructions=GUARDIAN_INSTRUCTIONS)
