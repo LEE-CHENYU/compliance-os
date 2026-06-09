@@ -120,16 +120,30 @@ GUARDIAN_INSTRUCTIONS = (
     "scholarship-or-stipend / truly nothing -- treat any scholarship or stipend "
     "as a 1040-NR signal, and route a genuinely zero-income student to a "
     "standalone Form 8843, not a 1040-NR package.\n\n"
-    "HONESTY ABOUT TOOLS (critical): NEVER narrate a tool call you did not make "
-    "or fabricate tool output. The ONLY compliance checks that exist are "
-    "run_compliance_check('h1b_doc_check' | 'fbar' | 'student_tax' | "
-    "'83b_election'); get_filing_guidance supports only form_type='form_8843'. "
-    "There is NO check for 5472, RCL/reinstatement, AOS/Advance-Parole, EB-1A, "
-    "founder eligibility, or dependents -- for those, give your reasoned read "
-    "and LABEL it as such ('here's my read of the rules, not a number my tools "
-    "compute'). parse_document returns raw text only -- read facts out of it, "
-    "do not claim structured fields it did not emit. classify_document returns "
-    "a type label with confidence 'high' or none (never a percentage).\n\n"
+    "HONESTY ABOUT TOOLS (critical): NEVER narrate a tool call you did not make, "
+    "fabricate tool output, or AUTHOR a tool RETURN you did not actually receive "
+    "-- do not write an example/simulated return and then treat its contents as "
+    "fact. NEVER state a specific identifier or field value (a SEVIS ID, DSO "
+    "name, receipt/case number, draft ID, plan ID, date, or dollar amount) as if "
+    "read from a document or returned by a tool unless it came from a REAL tool "
+    "result; if you have not received a parse_document result yet, say 'once you "
+    "point me at the file I'll read what's actually on it' instead of inventing "
+    "values. The ONLY compliance checks that exist are run_compliance_check("
+    "'h1b_doc_check' | 'fbar' | 'student_tax' | '83b_election'); "
+    "get_filing_guidance supports only form_type='form_8843'. There is NO check "
+    "for 5472, RCL/reinstatement, AOS/Advance-Parole, EB-1A, founder eligibility, "
+    "or dependents -- for those, give your reasoned read and LABEL it as such "
+    "('here's my read of the rules, not a number my tools compute'). REAL return "
+    "shapes (do not invent others): parse_document returns a bare first-page text "
+    "string; classify_document returns {file, doc_type, confidence} with "
+    "confidence 'high' or none (never a percentage); case_active_search returns a "
+    "coverage / missing-required / missing-optional / unmatched-files gap report "
+    "for a registered template (h1b, cpa, founder_h1b, form_5472, eb1a, "
+    "dependent_status) -- it is a FILE SCANNER over a folder, NOT a legal or "
+    "eligibility verdict; lawyer_search_plan only BUILDS dispatch prompts (status: "
+    "planned, not yet run) and returns NO firm names -- do not claim a shortlist "
+    "is 'running' or 'finishing' until you have dispatched the searches and called "
+    "lawyer_search_ingest.\n\n"
     "DOCUMENTS FIRST where a document is the source of truth (forms, audits, "
     "extraction): ask the user to point you at the file with an OS-correct "
     "copy-path how-to (ask Mac or Windows first; on a Mac: right-click + hold "
@@ -1964,9 +1978,18 @@ def case_active_search(
     by section, missing required/optional slots, lineage issues,
     misplaced files, and unmatched extras.
 
+    This is a FILE SCANNER over a folder: it reports document
+    coverage and gaps for the chosen template. It does NOT render an
+    eligibility or legal verdict.
+
     Args:
-        template: Template key — "h1b" (H-1B petition package),
-            "cpa" (CPA tax engagement w/ NR + disregarded entity).
+        template: Template key — one of: "h1b" (H-1B petition package),
+            "cpa" (CPA tax engagement, nonresident + disregarded
+            entity), "founder_h1b" (founder / owner-beneficiary H-1B:
+            E-Verify, controlling interest, governance), "form_5472"
+            (foreign-owned single-member LLC), "eb1a" (EB-1A
+            extraordinary-ability evidence), or "dependent_status"
+            (F-2 / J-2 / H-4). All templates are generic and PII-free.
         folder: Absolute path to the folder to scan.
         verbose: Include match reasons and alternate matches per slot.
         as_json: Return structured JSON instead of formatted text.

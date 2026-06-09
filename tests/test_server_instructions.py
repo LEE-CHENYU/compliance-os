@@ -35,3 +35,18 @@ def test_instructions_cover_human_referral_and_tracks():
     assert "lawyer_search_plan" in instr
     assert "set_user_fact" in instr
     assert "foreign_owned_llc" in instr
+
+
+def test_instructions_forbid_simulated_tool_returns():
+    # The e2e re-test found the surviving failure mode: the model authoring a
+    # fake tool return and narrating its invented contents as fact.
+    instr = mcp_server.GUARDIAN_INSTRUCTIONS
+    low = instr.lower()
+    assert "author a tool return" in low
+    assert "sevis id" in low  # the specific-identifier prohibition
+    # Real return shapes are pinned so the model stops inventing schemas.
+    assert "file scanner" in low
+    assert "no firm names" in low
+    # case_active_search advertises the new generic templates (not just h1b/cpa).
+    for tpl in ("founder_h1b", "form_5472", "eb1a", "dependent_status"):
+        assert tpl in instr
