@@ -26,7 +26,11 @@ def _redirect_dir(tmp_path, monkeypatch):
 
 def _intake(**overrides) -> dict:
     base = {
-        "grant_date": (date(2026, 4, 1)).isoformat(),
+        # Anchor to today so the deadline is always in the future for tests that
+        # don't pass an explicit `today`. A hardcoded date silently flips these
+        # to a "block" verdict (no cover sheet) once the wall clock passes the
+        # 30-day deadline, breaking the service-center / two-artifact tests.
+        "grant_date": (date.today() - timedelta(days=5)).isoformat(),
         "taxpayer_name": "Test User",
         "taxpayer_address": "1 Market St, Palo Alto, CA 94301",
         "company_name": "Acme Startup",

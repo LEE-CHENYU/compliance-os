@@ -68,3 +68,6 @@ case-urls.txt
 .playwright-cli/
 .playwright-mcp/
 .qwen/
+
+# Local scratch workspace (subagent/tool output — never commit)
+guardian_workspace/
