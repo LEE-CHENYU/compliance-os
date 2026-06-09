@@ -1,12 +1,12 @@
 """H-1B petition case template.
 
-Derived from the Klasko upload_041626 package structure. Covers the full
+Derived from a standard H-1B petition package structure. Covers the full
 F-1 → OPT → STEM OPT → CPT → H-1B lineage plus petitioner corporate
 formation, registration, and business plan evidence.
 
 Section layout:
   A — Beneficiary (passport, I-94, degrees, EADs, transcripts, CV)
-  B — I-20 History (chronological, Columbia → Westcliff → CIAM)
+  B — I-20 History (chronological, by school/transfer)
   C — CPT Academic Evidence
   D — Corporate (petitioner entity formation, governance, finance)
   E — H-1B Registration (FY lottery selection, G-28s)
@@ -50,19 +50,19 @@ _SLOTS: list[Slot] = [
     ),
     Slot(
         id="A3", section="A", section_name="Beneficiary",
-        title="Columbia MS degree",
-        description="Columbia University MS Applied Analytics diploma.",
+        title="Graduate degree diploma",
+        description="Master's qualifying-degree diploma.",
         doc_types=["diploma", "degree"],
-        keywords=["columbia", "degree", "diploma", "master"],
-        filename_patterns=[r"columbia.*(degree|diploma)", r"^A3[_-]"],
+        keywords=["degree", "diploma", "master", "ms"],
+        filename_patterns=[r"(degree|diploma)", r"^A3[_-]"],
     ),
     Slot(
         id="A4", section="A", section_name="Beneficiary",
-        title="Columbia MS transcript",
-        description="Official Columbia transcript.",
+        title="Graduate transcript",
+        description="Official graduate-level transcript.",
         doc_types=["transcript"],
-        keywords=["columbia", "transcript"],
-        filename_patterns=[r"columbia.*transcript", r"^A4[_-]"],
+        keywords=["transcript", "graduate"],
+        filename_patterns=[r"transcript", r"^A4[_-]"],
     ),
     Slot(
         id="A5", section="A", section_name="Beneficiary",
@@ -83,7 +83,7 @@ _SLOTS: list[Slot] = [
     Slot(
         id="A7", section="A", section_name="Beneficiary",
         title="OPT EAD card",
-        description="Post-completion OPT EAD card (IOE9041477055).",
+        description="Post-completion OPT EAD card.",
         doc_types=["ead"],
         keywords=["ead", "opt"],
         filename_patterns=[r"ead.*opt(?!.*stem)", r"opt.*ead(?!.*stem)", r"^A7[_-]"],
@@ -91,37 +91,37 @@ _SLOTS: list[Slot] = [
     Slot(
         id="A8", section="A", section_name="Beneficiary",
         title="STEM OPT EAD card",
-        description="STEM OPT EAD card (IOE9733115480).",
+        description="STEM OPT EAD card.",
         doc_types=["ead"],
         keywords=["ead", "stem", "stemopt", "stem opt"],
         filename_patterns=[r"stem.*ead", r"ead.*stem", r"^A8[_-]"],
     ),
     Slot(
         id="A9", section="A", section_name="Beneficiary",
-        title="CIAM enrollment letter",
-        description="Proof of current enrollment at CIAM.",
+        title="Current school enrollment letter",
+        description="Proof of current enrollment at current school.",
         required=False,
         doc_types=["enrollment_letter"],
-        keywords=["ciam", "enrollment"],
-        filename_patterns=[r"ciam.*enroll", r"enroll.*ciam", r"^A9[_-]"],
+        keywords=["enrollment"],
+        filename_patterns=[r"enroll", r"^A9[_-]"],
     ),
     Slot(
         id="A10", section="A", section_name="Beneficiary",
-        title="SJTU bachelor's transcript",
-        description="Shanghai Jiao Tong University undergraduate transcript.",
+        title="Bachelor's transcript",
+        description="Undergraduate transcript.",
         required=False,
         doc_types=["transcript"],
-        keywords=["sjtu", "shanghai jiao tong", "jiao tong"],
-        filename_patterns=[r"sjtu", r"jiao[_ -]?tong", r"^A10[_-]"],
+        keywords=["bachelor", "undergraduate", "transcript"],
+        filename_patterns=[r"(bachelor|undergrad).*transcript", r"^A10[_-]"],
     ),
     Slot(
         id="A11", section="A", section_name="Beneficiary",
-        title="Waseda exchange transcript",
-        description="Waseda University exchange program transcript.",
+        title="Exchange/study-abroad transcript",
+        description="Exchange or study-abroad program transcript.",
         required=False,
         doc_types=["transcript"],
-        keywords=["waseda"],
-        filename_patterns=[r"waseda", r"^A11[_-]"],
+        keywords=["exchange", "study abroad", "transcript"],
+        filename_patterns=[r"exchange.*transcript", r"^A11[_-]"],
     ),
 
     # ─── B: I-20 History (chronological) ──────────────────────────
@@ -135,36 +135,36 @@ _SLOTS: list[Slot] = [
             order=n, phase=phase,
         )
         for n, title, desc, kw, pat, phase in [
-            (1, "I-20 Columbia original",       "Initial Columbia issuance.",      ["columbia", "original"],        "columbia.*(orig|initial)", "columbia"),
-            (2, "I-20 Columbia travel 2022",     "Travel signature 2022.",           ["columbia", "travel", "2022"],  "columbia.*travel.*2022",     "columbia"),
-            (3, "I-20 Columbia travel 2023",     "Travel signature 2023.",           ["columbia", "travel", "2023"],  "columbia.*travel.*2023",     "columbia"),
-            (4, "I-20 Columbia OPT Jan 2023",    "OPT endorsement.",                 ["columbia", "opt", "2023"],     "columbia.*opt",              "opt"),
-            (5, "I-20 Columbia STEM OPT",        "STEM OPT endorsement.",            ["columbia", "stem", "2024"],    "columbia.*stem",             "stem_opt"),
-            (6, "I-20 Columbia STEM OPT signed", "Signed/updated STEM OPT version.", ["columbia", "stem", "signed"],  "columbia.*stem.*sign",       "stem_opt"),
-            (7, "I-20 Westcliff transfer pending","Westcliff transfer pending.",     ["westcliff", "transfer"],       "westcliff.*transfer",        "westcliff"),
-            (8, "I-20 Westcliff continued",      "Westcliff continuation.",          ["westcliff", "continued"],      "westcliff.*continu",         "westcliff"),
-            (9, "I-20 CIAM transfer Sep 2025",   "Transfer to CIAM.",                ["ciam", "transfer", "2025"],    "ciam.*transfer",             "ciam"),
-            (10,"I-20 CIAM CPT Wolff & Li",      "CIAM CPT with Wolff & Li.",        ["ciam", "cpt", "wolff"],        "ciam.*cpt.*wolff",           "cpt_wolff"),
-            (11,"I-20 CIAM current",             "Most recent CIAM I-20.",           ["ciam", "current"],             "ciam.*current",              "ciam"),
-            (12,"I-20 CIAM CPT Yangtze",         "CPT endorsement for Yangtze.",     ["ciam", "cpt", "yangtze"],      "ciam.*cpt.*yangtze",         "cpt_yangtze"),
+            (1, "I-20 initial issuance",              "Initial school I-20 issuance.",              ["initial", "original"],           "initial|orig",             "school1"),
+            (2, "I-20 travel signature (first)",      "Travel signature, first instance.",           ["travel"],                        "travel",                   "school1"),
+            (3, "I-20 travel signature (second)",     "Travel signature, second instance.",          ["travel"],                        "travel",                   "school1"),
+            (4, "I-20 OPT endorsement",               "OPT endorsement.",                            ["opt"],                           "opt",                      "opt"),
+            (5, "I-20 STEM OPT endorsement",          "STEM OPT endorsement.",                       ["stem"],                          "stem",                     "stem_opt"),
+            (6, "I-20 STEM OPT endorsement (signed)", "Signed/updated STEM OPT version.",            ["stem", "signed"],                "stem.*sign",               "stem_opt"),
+            (7, "I-20 transfer to new school (pending)","Transfer to new school pending.",           ["transfer"],                      "transfer",                 "new_school"),
+            (8, "I-20 new school continuation",       "New school continuation.",                    ["continued"],                     "continu",                  "new_school"),
+            (9, "I-20 transfer to current school",    "Transfer to current school.",                 ["transfer", "current"],           "transfer.*current|current.*transfer", "current"),
+            (10,"I-20 CPT endorsement (employer A)",  "CPT endorsement for employer A.",             ["cpt"],                           "cpt",                      "cpt_employer_a"),
+            (11,"I-20 current school",                "Most recent current-school I-20.",            ["current"],                       "current",                  "current"),
+            (12,"I-20 CPT endorsement (employer B)",  "CPT endorsement for employer B.",             ["cpt"],                           "cpt",                      "cpt_employer_b"),
         ]
     ],
     # B13 is forward-looking (not yet issued at filing time); optional
     Slot(
         id="B13", section="B", section_name="I-20 History",
-        title="I-20 CIAM CPT Fall 2026",
-        description="Fall 2026 CPT I-20 (needed to bridge Aug 14 – Oct 1 gap).",
+        title="I-20 CPT (forward-looking) to bridge a status gap (if applicable)",
+        description="Forward-looking CPT I-20 needed to bridge a status gap, if applicable.",
         required=False,
         doc_types=["i20"],
-        keywords=["i-20", "i20", "ciam", "cpt", "fall", "2026"],
-        filename_patterns=[r"^B13[_-]", r"ciam.*cpt.*fall", r"fall.*2026.*cpt"],
-        order=13, phase="cpt_fall2026",
+        keywords=["i-20", "i20", "cpt", "forward"],
+        filename_patterns=[r"^B13[_-]", r"cpt.*forward", r"forward.*cpt"],
+        order=13, phase="cpt_forward",
     ),
 
     # ─── C: CPT Academic Evidence ─────────────────────────────────
     Slot(
         id="C1", section="C", section_name="CPT Academic Evidence",
-        title="CIAM Canvas evidence summary",
+        title="CPT academic evidence summary",
         description="Compiled exhibit: enrollments, grades, submissions.",
         doc_types=["academic_evidence"],
         keywords=["canvas", "cpt", "evidence", "academic"],
@@ -172,7 +172,7 @@ _SLOTS: list[Slot] = [
     ),
     Slot(
         id="C2", section="C", section_name="CPT Academic Evidence",
-        title="CIAM CPT training plan / application",
+        title="CPT training plan / application",
         description="CPT training plan form from DSO.",
         doc_types=["cpt_training_plan"],
         keywords=["cpt", "training plan", "application"],
@@ -180,17 +180,17 @@ _SLOTS: list[Slot] = [
     ),
     Slot(
         id="C3", section="C", section_name="CPT Academic Evidence",
-        title="INT599 course syllabus",
+        title="Internship course syllabus",
         description="Internship course syllabus demonstrating course integration.",
         required=False,
         doc_types=["syllabus"],
-        keywords=["int599", "syllabus", "internship"],
-        filename_patterns=[r"int\s*599", r"syllabus", r"^C3[_-]"],
+        keywords=["syllabus", "internship"],
+        filename_patterns=[r"int\s*\d{3}", r"syllabus", r"^C3[_-]"],
     ),
 
     # ─── D: Corporate (Petitioner) ────────────────────────────────
     Slot(
-        id="D1", section="D", section_name="Corporate",
+        id="D1", section="D", section_name="Corporate (Petitioner)",
         title="Articles of Incorporation + SS-4",
         description="Formation docs + EIN application.",
         doc_types=["articles_incorporation"],
@@ -198,21 +198,21 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"articles.*incorp", r"ss[-_]?4", r"^D1[_-]"],
     ),
     Slot(
-        id="D2", section="D", section_name="Corporate",
+        id="D2", section="D", section_name="Corporate (Petitioner)",
         title="Bylaws",
         doc_types=["bylaws"],
         keywords=["bylaws"],
         filename_patterns=[r"bylaws", r"^D2[_-]"],
     ),
     Slot(
-        id="D3", section="D", section_name="Corporate",
+        id="D3", section="D", section_name="Corporate (Petitioner)",
         title="Corporate resolutions",
         doc_types=["corporate_resolution"],
         keywords=["corporate resolution", "resolutions"],
         filename_patterns=[r"corporate.*resolution", r"^D3[_-]"],
     ),
     Slot(
-        id="D4", section="D", section_name="Corporate",
+        id="D4", section="D", section_name="Corporate (Petitioner)",
         title="SOI + Good Standing",
         description="Statement of Information + certificate of good standing.",
         doc_types=["soi", "good_standing"],
@@ -220,14 +220,14 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"soi", r"good.*standing", r"^D4[_-]"],
     ),
     Slot(
-        id="D5", section="D", section_name="Corporate",
+        id="D5", section="D", section_name="Corporate (Petitioner)",
         title="Governance documents (signed)",
         doc_types=["governance"],
         keywords=["governance", "signed"],
         filename_patterns=[r"governance", r"^D5[_-]"],
     ),
     Slot(
-        id="D6", section="D", section_name="Corporate",
+        id="D6", section="D", section_name="Corporate (Petitioner)",
         title="Key documents compilation",
         required=False,
         doc_types=["corporate_compilation"],
@@ -235,7 +235,7 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"key.*documents", r"compilation", r"^D6[_-]"],
     ),
     Slot(
-        id="D7", section="D", section_name="Corporate",
+        id="D7", section="D", section_name="Corporate (Petitioner)",
         title="EIN cancellation letter",
         description="Duplicate EIN cancellation.",
         required=False,
@@ -244,7 +244,7 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"ein.*cancel", r"^D7[_-]"],
     ),
     Slot(
-        id="D8", section="D", section_name="Corporate",
+        id="D8", section="D", section_name="Corporate (Petitioner)",
         title="EIN fax notification",
         required=False,
         doc_types=["ein_notice"],
@@ -252,15 +252,15 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"ein.*fax", r"^D8[_-]"],
     ),
     Slot(
-        id="D9", section="D", section_name="Corporate",
+        id="D9", section="D", section_name="Corporate (Petitioner)",
         title="Office lease",
         description="Commercial lease agreement (extract or full).",
         doc_types=["lease"],
-        keywords=["lease", "office", "frontier", "commercial"],
-        filename_patterns=[r"lease", r"frontier", r"^D9[_-]"],
+        keywords=["lease", "office", "commercial", "sublease"],
+        filename_patterns=[r"lease", r"^D9[_-]"],
     ),
     Slot(
-        id="D10", section="D", section_name="Corporate",
+        id="D10", section="D", section_name="Corporate (Petitioner)",
         title="FTB withholding notice",
         required=False,
         doc_types=["ftb_notice"],
@@ -268,7 +268,7 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"ftb", r"withholding", r"^D10[_-]"],
     ),
     Slot(
-        id="D11", section="D", section_name="Corporate",
+        id="D11", section="D", section_name="Corporate (Petitioner)",
         title="Board resolution — signing authority",
         description="Establishes hire/fire authority (employer-employee).",
         doc_types=["board_resolution"],
@@ -276,14 +276,14 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"board.*resolution", r"signing.*authority", r"^D11[_-]"],
     ),
     Slot(
-        id="D12", section="D", section_name="Corporate",
+        id="D12", section="D", section_name="Corporate (Petitioner)",
         title="EIN CP575 notice",
         doc_types=["ein_notice"],
         keywords=["cp575", "ein"],
         filename_patterns=[r"cp[-_]?575", r"^D12[_-]"],
     ),
     Slot(
-        id="D13", section="D", section_name="Corporate",
+        id="D13", section="D", section_name="Corporate (Petitioner)",
         title="Affidavit of financial support",
         required=False,
         doc_types=["affidavit"],
@@ -291,7 +291,7 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"affidavit.*financial", r"^D13[_-]"],
     ),
     Slot(
-        id="D14", section="D", section_name="Corporate",
+        id="D14", section="D", section_name="Corporate (Petitioner)",
         title="Corporate bank statement",
         description="Petitioner ability-to-pay evidence.",
         doc_types=["bank_statement"],
@@ -299,7 +299,7 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"bank.*statement", r"^D14[_-]"],
     ),
     Slot(
-        id="D15", section="D", section_name="Corporate",
+        id="D15", section="D", section_name="Corporate (Petitioner)",
         title="Full commercial lease",
         required=False,
         doc_types=["lease"],
@@ -328,7 +328,7 @@ _SLOTS: list[Slot] = [
         id="E3", section="E", section_name="H-1B Registration",
         title="Primary registration draft/confirmation",
         doc_types=["h1b_registration"],
-        keywords=["registration", "draft", "yangtze"],
+        keywords=["registration", "draft", "confirmation"],
         filename_patterns=[r"registration.*(draft|confirm)", r"^E3[_-]"],
     ),
     Slot(
@@ -336,16 +336,16 @@ _SLOTS: list[Slot] = [
         title="G-28 (secondary, if dual registered)",
         required=False,
         doc_types=["g28"],
-        keywords=["g-28", "g28", "bsgc"],
-        filename_patterns=[r"g[-_]?28.*(bsgc|secondary)", r"^E4[_-]"],
+        keywords=["g-28", "g28", "secondary"],
+        filename_patterns=[r"g[-_]?28.*secondary", r"^E4[_-]"],
     ),
     Slot(
         id="E5", section="E", section_name="H-1B Registration",
         title="Secondary registration draft",
         required=False,
         doc_types=["h1b_registration"],
-        keywords=["registration", "bsgc"],
-        filename_patterns=[r"registration.*(bsgc|secondary)", r"^E5[_-]"],
+        keywords=["registration", "secondary"],
+        filename_patterns=[r"registration.*secondary", r"^E5[_-]"],
     ),
 
     # ─── F: Employment History ────────────────────────────────────
@@ -372,7 +372,7 @@ _SLOTS: list[Slot] = [
         description="Formation doc for unrelated entity (to establish non-relatedness).",
         required=False,
         doc_types=["llc_formation"],
-        keywords=["formation", "wyoming", "llc"],
+        keywords=["formation", "llc", "entity"],
         filename_patterns=[r"formation", r"^F3[_-]"],
     ),
     Slot(
@@ -381,32 +381,32 @@ _SLOTS: list[Slot] = [
         description="Signed I-983 training plan.",
         required=False,
         doc_types=["i983"],
-        keywords=["i-983", "i983", "tiger"],
-        filename_patterns=[r"i[-_]?983.*tiger", r"tiger.*i[-_]?983", r"^F4a[_-]"],
+        keywords=["i-983", "i983"],
+        filename_patterns=[r"i[-_]?983", r"^F4a[_-]"],
     ),
     Slot(
         id="F4b", section="F", section_name="Employment History",
         title="I-983 — STEM OPT employer #2",
         required=False,
         doc_types=["i983"],
-        keywords=["i-983", "claudius"],
-        filename_patterns=[r"i[-_]?983.*claudius", r"claudius.*i[-_]?983", r"^F4b[_-]"],
+        keywords=["i-983", "i983"],
+        filename_patterns=[r"i[-_]?983", r"^F4b[_-]"],
     ),
     Slot(
         id="F4c", section="F", section_name="Employment History",
         title="I-983 — STEM OPT employer #3",
         required=False,
         doc_types=["i983"],
-        keywords=["i-983", "clinipulse"],
-        filename_patterns=[r"i[-_]?983.*clinipulse", r"clinipulse.*i[-_]?983", r"^F4c[_-]"],
+        keywords=["i-983", "i983"],
+        filename_patterns=[r"i[-_]?983", r"^F4c[_-]"],
     ),
     Slot(
         id="F4d", section="F", section_name="Employment History",
         title="I-983 — STEM OPT employer #4",
         required=False,
         doc_types=["i983"],
-        keywords=["i-983", "wolff"],
-        filename_patterns=[r"i[-_]?983.*wolff", r"wolff.*i[-_]?983", r"^F4d[_-]"],
+        keywords=["i-983", "i983"],
+        filename_patterns=[r"i[-_]?983", r"^F4d[_-]"],
     ),
     Slot(
         id="F5a", section="F", section_name="Employment History",
@@ -414,16 +414,16 @@ _SLOTS: list[Slot] = [
         description="Evidence that employer refused to sign I-983.",
         required=False,
         doc_types=["correspondence"],
-        keywords=["bitsync", "refused", "i-983"],
-        filename_patterns=[r"refused.*i[-_]?983", r"bitsync.*refuse", r"^F5a[_-]"],
+        keywords=["refused", "i-983", "i983"],
+        filename_patterns=[r"refused.*i[-_]?983", r"^F5a[_-]"],
     ),
     Slot(
         id="F5b", section="F", section_name="Employment History",
         title="Unauthorized employer evidence — offer",
         required=False,
         doc_types=["offer_letter"],
-        keywords=["bitsync", "offer letter"],
-        filename_patterns=[r"bitsync.*offer", r"offer.*bitsync", r"^F5b[_-]"],
+        keywords=["offer letter", "offer"],
+        filename_patterns=[r"offer.*letter", r"^F5b[_-]"],
     ),
 
     # ─── G: Business Plans ────────────────────────────────────────
@@ -432,7 +432,7 @@ _SLOTS: list[Slot] = [
         title="Petitioner business plan",
         description="Current business plan for petitioning entity.",
         doc_types=["business_plan"],
-        keywords=["business plan", "yangtze"],
+        keywords=["business plan"],
         filename_patterns=[r"business.*plan", r"^G1[_-]"],
     ),
     Slot(
@@ -441,8 +441,8 @@ _SLOTS: list[Slot] = [
         description="Secondary plan (e.g. flagship product) reinforcing going concern.",
         required=False,
         doc_types=["business_plan"],
-        keywords=["business plan", "guardian", "product"],
-        filename_patterns=[r"guardian.*business.*plan", r"^G2[_-]"],
+        keywords=["business plan", "product"],
+        filename_patterns=[r"product.*business.*plan", r"^G2[_-]"],
     ),
     Slot(
         id="G3", section="G", section_name="Business Plans",

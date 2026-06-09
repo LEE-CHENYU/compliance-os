@@ -1,8 +1,8 @@
 """CPA / tax engagement case template.
 
-Derived from the Kaufman Rossin `data_room/` gold-standard structure
-for a nonresident alien with a foreign-owned US disregarded entity
-(BSGC LLC) triggering Form 5472 + pro forma 1120 reporting.
+Derived from a standard nonresident-alien / foreign-owned disregarded-entity
+(Form 5472) data-room structure for a nonresident alien with a foreign-owned
+US disregarded entity triggering Form 5472 + pro forma 1120 reporting.
 
 Section layout:
   0 — Case Summary (narrative + scope + issues brief)
@@ -43,7 +43,7 @@ _SLOTS: list[Slot] = [
         filename_patterns=[r"^00[_-].*(summary|brief|memo)", r"case[_\s-]?summary"],
     ),
 
-    # ─── 1: Entity (BSGC LLC) ────────────────────────────────────
+    # ─── 1: Entity ───────────────────────────────────────────────
     Slot(
         id="01_articles_ss4", section="1", section_name="Entity",
         title="Articles of Organization + SS-4",
@@ -65,8 +65,8 @@ _SLOTS: list[Slot] = [
         title="State formation filing",
         description="State-of-formation certificate / filing evidence.",
         doc_types=["formation"],
-        keywords=["formation", "wyoming", "state filing"],
-        filename_patterns=[r"formation", r"wyoming"],
+        keywords=["formation", "state filing", "certificate"],
+        filename_patterns=[r"formation", r"certificate.*formation"],
     ),
     Slot(
         id="01_operating_agreement", section="1", section_name="Entity",
@@ -107,110 +107,110 @@ _SLOTS: list[Slot] = [
     # ─── 3: Income Documents ─────────────────────────────────────
     # 2023
     Slot(
-        id="03_2023_w2_vcv", section="3", section_name="Income Documents",
-        title="2023 W-2 — VCV",
+        id="03_2023_w2_a", section="3", section_name="Income Documents",
+        title="2023 W-2 — employer A",
         doc_types=["w2"],
-        keywords=["2023", "w2", "w-2", "vcv"],
-        filename_patterns=[r"2023.*w[-_]?2.*vcv", r"w[-_]?2.*vcv.*2023"],
+        keywords=["2023", "w2", "w-2"],
+        filename_patterns=[r"2023.*w[-_]?2"],
     ),
     Slot(
-        id="03_2023_1042s_tda", section="3", section_name="Income Documents",
-        title="2023 1042-S — TD Ameritrade",
+        id="03_2023_1042s_brokerage_a", section="3", section_name="Income Documents",
+        title="2023 1042-S — brokerage A",
         doc_types=["1042s"],
-        keywords=["2023", "1042s", "1042-s", "tda", "ameritrade"],
-        filename_patterns=[r"2023.*1042[-_]?s.*tda", r"1042[-_]?s.*tda.*2023"],
+        keywords=["2023", "1042s", "1042-s"],
+        filename_patterns=[r"2023.*1042[-_]?s"],
     ),
 
     # 2024
     Slot(
-        id="03_2024_w2_vcv", section="3", section_name="Income Documents",
-        title="2024 W-2 — VCV",
+        id="03_2024_w2_a", section="3", section_name="Income Documents",
+        title="2024 W-2 — employer A",
         doc_types=["w2"],
-        keywords=["2024", "w2", "w-2", "vcv"],
-        filename_patterns=[r"2024.*w[-_]?2.*vcv"],
+        keywords=["2024", "w2", "w-2"],
+        filename_patterns=[r"2024.*w[-_]?2"],
     ),
     Slot(
-        id="03_2024_w2_bitsync", section="3", section_name="Income Documents",
-        title="2024 W-2 — BitSync",
+        id="03_2024_w2_b", section="3", section_name="Income Documents",
+        title="2024 W-2 — employer B",
         doc_types=["w2"],
-        keywords=["2024", "w2", "w-2", "bitsync"],
-        filename_patterns=[r"2024.*w[-_]?2.*bitsync"],
+        keywords=["2024", "w2", "w-2"],
+        filename_patterns=[r"2024.*w[-_]?2"],
     ),
     Slot(
-        id="03_2024_1042s_tda", section="3", section_name="Income Documents",
-        title="2024 1042-S — TD Ameritrade",
+        id="03_2024_1042s_brokerage_a", section="3", section_name="Income Documents",
+        title="2024 1042-S — brokerage A",
         doc_types=["1042s"],
-        keywords=["2024", "1042s", "1042-s", "tda"],
-        filename_patterns=[r"2024.*1042[-_]?s.*tda(?!.*updated)"],
+        keywords=["2024", "1042s", "1042-s"],
+        filename_patterns=[r"2024.*1042[-_]?s(?!.*updated)"],
     ),
     Slot(
-        id="03_2024_1042s_tda_updated", section="3", section_name="Income Documents",
-        title="2024 1042-S — TD Ameritrade (corrected)",
+        id="03_2024_1042s_brokerage_a_updated", section="3", section_name="Income Documents",
+        title="2024 1042-S — brokerage A (corrected)",
         required=False,
         doc_types=["1042s"],
-        keywords=["2024", "1042s", "1042-s", "tda", "updated", "corrected"],
-        filename_patterns=[r"2024.*1042[-_]?s.*tda.*updated", r"tda.*updated"],
+        keywords=["2024", "1042s", "1042-s", "updated", "corrected"],
+        filename_patterns=[r"2024.*1042[-_]?s.*updated", r"updated.*1042[-_]?s"],
     ),
     Slot(
-        id="03_2024_1042s_schwab", section="3", section_name="Income Documents",
-        title="2024 1042-S — Schwab",
+        id="03_2024_1042s_brokerage_b", section="3", section_name="Income Documents",
+        title="2024 1042-S — brokerage B",
         doc_types=["1042s"],
-        keywords=["2024", "1042s", "1042-s", "schwab"],
-        filename_patterns=[r"2024.*1042[-_]?s.*schwab"],
+        keywords=["2024", "1042s", "1042-s"],
+        filename_patterns=[r"2024.*1042[-_]?s"],
     ),
     Slot(
-        id="03_2024_1099b_schwab", section="3", section_name="Income Documents",
-        title="2024 1099-B — Schwab",
+        id="03_2024_1099b_brokerage_b", section="3", section_name="Income Documents",
+        title="2024 1099-B — brokerage B",
         description="May be split across multiple part files.",
         doc_types=["1099b"],
-        keywords=["2024", "1099b", "1099-b", "schwab"],
-        filename_patterns=[r"2024.*1099[-_]?b.*schwab"],
+        keywords=["2024", "1099b", "1099-b"],
+        filename_patterns=[r"2024.*1099[-_]?b"],
     ),
     Slot(
-        id="03_2024_1099int_citibank", section="3", section_name="Income Documents",
-        title="2024 1099-INT — Citibank LLC",
+        id="03_2024_1099int_bank_a", section="3", section_name="Income Documents",
+        title="2024 1099-INT — bank A",
         doc_types=["1099int"],
-        keywords=["2024", "1099int", "1099-int", "citibank"],
-        filename_patterns=[r"2024.*1099[-_]?int.*citi"],
+        keywords=["2024", "1099int", "1099-int"],
+        filename_patterns=[r"2024.*1099[-_]?int"],
     ),
     Slot(
-        id="03_2024_yearend_schwab", section="3", section_name="Income Documents",
-        title="2024 year-end summary — Schwab",
+        id="03_2024_yearend_brokerage_b", section="3", section_name="Income Documents",
+        title="2024 year-end summary — brokerage B",
         required=False,
         doc_types=["yearend_summary"],
-        keywords=["2024", "year-end", "yearend", "schwab"],
-        filename_patterns=[r"2024.*year[-_]?end.*schwab"],
+        keywords=["2024", "year-end", "yearend"],
+        filename_patterns=[r"2024.*year[-_]?end"],
     ),
 
     # 2025
     Slot(
-        id="03_2025_w2_claudius", section="3", section_name="Income Documents",
-        title="2025 W-2 — Claudius",
+        id="03_2025_w2_c", section="3", section_name="Income Documents",
+        title="2025 W-2 — employer C",
         doc_types=["w2"],
-        keywords=["2025", "w2", "w-2", "claudius"],
-        filename_patterns=[r"2025.*w[-_]?2.*claudius"],
+        keywords=["2025", "w2", "w-2"],
+        filename_patterns=[r"2025.*w[-_]?2"],
     ),
     Slot(
-        id="03_2025_w2_wolffli", section="3", section_name="Income Documents",
-        title="2025 W-2 — Wolff & Li",
+        id="03_2025_w2_d", section="3", section_name="Income Documents",
+        title="2025 W-2 — employer D",
         doc_types=["w2"],
-        keywords=["2025", "w2", "w-2", "wolffli", "wolff"],
-        filename_patterns=[r"2025.*w[-_]?2.*wolff"],
+        keywords=["2025", "w2", "w-2"],
+        filename_patterns=[r"2025.*w[-_]?2"],
     ),
     Slot(
-        id="03_2025_1042s_schwab", section="3", section_name="Income Documents",
-        title="2025 1042-S — Schwab",
+        id="03_2025_1042s_brokerage_b", section="3", section_name="Income Documents",
+        title="2025 1042-S — brokerage B",
         doc_types=["1042s"],
-        keywords=["2025", "1042s", "1042-s", "schwab"],
-        filename_patterns=[r"2025.*1042[-_]?s.*schwab"],
+        keywords=["2025", "1042s", "1042-s"],
+        filename_patterns=[r"2025.*1042[-_]?s"],
     ),
     Slot(
-        id="03_2025_1098t_ciam", section="3", section_name="Income Documents",
-        title="2025 1098-T — CIAM",
+        id="03_2025_1098t_school", section="3", section_name="Income Documents",
+        title="2025 1098-T — school",
         required=False,
         doc_types=["1098t"],
-        keywords=["2025", "1098t", "1098-t", "ciam"],
-        filename_patterns=[r"2025.*1098[-_]?t.*ciam"],
+        keywords=["2025", "1098t", "1098-t"],
+        filename_patterns=[r"2025.*1098[-_]?t"],
     ),
 
     # ─── 4: Tax Compliance Issues ────────────────────────────────
@@ -243,26 +243,26 @@ _SLOTS: list[Slot] = [
 
     # ─── 6: Bank / Brokerage Statements ──────────────────────────
     Slot(
-        id="06_citibank_transactions", section="6", section_name="Bank Statements",
-        title="Citibank LLC transactions (CSV)",
+        id="06_bank_a_transactions", section="6", section_name="Bank Statements",
+        title="Bank A LLC transactions (CSV)",
         doc_types=["bank_transactions"],
-        keywords=["citibank", "transactions"],
-        filename_patterns=[r"citibank.*transactions", r"citi.*llc.*transactions"],
+        keywords=["bank", "transactions"],
+        filename_patterns=[r"bank.*transactions", r"transactions.*bank"],
     ),
     Slot(
-        id="06_schwab_transactions", section="6", section_name="Bank Statements",
-        title="Schwab LLC transactions (CSV)",
+        id="06_brokerage_b_transactions", section="6", section_name="Bank Statements",
+        title="Brokerage B LLC transactions (CSV)",
         doc_types=["brokerage_transactions"],
-        keywords=["schwab", "transactions"],
-        filename_patterns=[r"schwab.*llc.*transactions", r"schwab.*transactions"],
+        keywords=["brokerage", "transactions"],
+        filename_patterns=[r"brokerage.*transactions", r"transactions.*brokerage"],
     ),
     Slot(
-        id="06_schwab_account_summary", section="6", section_name="Bank Statements",
-        title="Schwab LLC 2025 account summary",
+        id="06_brokerage_b_account_summary", section="6", section_name="Bank Statements",
+        title="Brokerage B LLC 2025 account summary",
         required=False,
         doc_types=["account_summary"],
-        keywords=["schwab", "account summary", "account_summary"],
-        filename_patterns=[r"schwab.*llc.*2025.*summary", r"schwab.*account[_\s-]?summary"],
+        keywords=["brokerage", "account summary", "account_summary"],
+        filename_patterns=[r"brokerage.*2025.*summary", r"brokerage.*account[_\s-]?summary"],
     ),
 ]
 
