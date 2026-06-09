@@ -781,6 +781,52 @@ def record_extracted_facts(doc_id: str, facts: list) -> str:
     )
 
 
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Save artifact to disk",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def save_artifact(content_base64: str, output_path: str, is_text: bool = False) -> str:
+    """Write a generated artifact (PDF, form, letter) to a path on disk.
+
+    Use this to land an artifact returned by another tool — e.g. the
+    `pdf_base64` from generate_form_8843 — at a real, user-visible
+    location. Runs locally; nothing leaves the machine. Parent
+    directories are created if missing. Tell the user the returned
+    `path` so they can find the file.
+
+    Args:
+        content_base64: The artifact bytes, base64-encoded. When
+            is_text=True this is instead treated as raw UTF-8 text.
+        output_path: Absolute or ~-relative path to write to.
+        is_text: When True, write content_base64 as plain UTF-8 text
+            rather than base64-decoding it.
+    """
+    if not output_path or not output_path.strip():
+        return json.dumps({"status": "error", "error": "output_path is empty"})
+    try:
+        if is_text:
+            data = content_base64.encode("utf-8")
+        else:
+            data = base64.b64decode(content_base64, validate=True)
+    except Exception as exc:
+        return json.dumps({"status": "error", "error": f"Invalid base64: {exc}"})
+    try:
+        dest = Path(output_path).expanduser()
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(data)
+        return json.dumps({
+            "status": "success",
+            "path": str(dest.resolve()),
+            "bytes_written": len(data),
+        })
+    except Exception as exc:
+        return json.dumps({"status": "error", "error": str(exc)})
+
+
 def _upload_single_file(file_path: Path, doc_type: str = "") -> dict:
     """Upload one file to Guardian API. Returns result dict."""
     mime_type = mimetypes.guess_type(str(file_path))[0] or "application/octet-stream"
