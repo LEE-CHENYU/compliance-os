@@ -845,29 +845,58 @@ def record_extracted_facts(doc_id: str, facts: list) -> str:
     )
 
 
+# save_artifact is exposed to the model, which can be steered by untrusted
+# document content (prompt injection). Contain every write to a dedicated
+# artifacts directory so it can never become an arbitrary-file-write sink.
+_SAVE_ARTIFACT_SENSITIVE = (
+    ".ssh", ".aws", ".gnupg", "authorized_keys", "id_rsa", "id_ed25519",
+    "credentials", "launchagents", "launchdaemons", "claude_desktop_config",
+    ".bashrc", ".zshrc", ".bash_profile", ".profile", "known_hosts",
+)
+
+
+def _artifacts_root() -> Path:
+    """The only directory save_artifact may write into.
+
+    Defaults to ~/Guardian/artifacts; override with GUARDIAN_ARTIFACTS_DIR.
+    """
+    env = os.environ.get("GUARDIAN_ARTIFACTS_DIR")
+    base = Path(env).expanduser() if env else Path.home() / "Guardian" / "artifacts"
+    return base.resolve()
+
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Save artifact to disk",
         readOnlyHint=False,
         destructiveHint=False,
-        idempotentHint=True,
+        idempotentHint=False,
     ),
 )
-def save_artifact(content_base64: str, output_path: str, is_text: bool = False) -> str:
-    """Write a generated artifact (PDF, form, letter) to a path on disk.
+def save_artifact(
+    content_base64: str,
+    output_path: str,
+    is_text: bool = False,
+    overwrite: bool = False,
+) -> str:
+    """Write a generated artifact (PDF, form, letter) into the Guardian
+    artifacts directory.
 
-    Use this to land an artifact returned by another tool — e.g. the
-    `pdf_base64` from generate_form_8843 — at a real, user-visible
-    location. Runs locally; nothing leaves the machine. Parent
-    directories are created if missing. Tell the user the returned
-    `path` so they can find the file.
+    For safety this writes ONLY inside ~/Guardian/artifacts (override with
+    GUARDIAN_ARTIFACTS_DIR) — it refuses absolute paths elsewhere and path
+    traversal. Pass a filename or relative subpath (e.g. "form-8843.pdf"
+    or "2026/8843.pdf"); the returned `path` is the real location to tell
+    the user. Runs locally; nothing leaves the machine.
 
     Args:
         content_base64: The artifact bytes, base64-encoded. When
             is_text=True this is instead treated as raw UTF-8 text.
-        output_path: Absolute or ~-relative path to write to.
+        output_path: A filename or path RELATIVE to the Guardian artifacts
+            directory. Absolute paths are accepted only if they already
+            resolve inside that directory.
         is_text: When True, write content_base64 as plain UTF-8 text
             rather than base64-decoding it.
+        overwrite: Must be True to replace an existing file.
     """
     if not output_path or not output_path.strip():
         return json.dumps({"status": "error", "error": "output_path is empty"})
@@ -878,13 +907,37 @@ def save_artifact(content_base64: str, output_path: str, is_text: bool = False) 
             data = base64.b64decode(content_base64, validate=True)
     except Exception as exc:
         return json.dumps({"status": "error", "error": f"Could not read artifact content: {exc}"})
+
+    root = _artifacts_root()
+    requested = Path(output_path).expanduser()
+    candidate = requested if requested.is_absolute() else (root / requested)
     try:
-        dest = Path(output_path).expanduser()
+        dest = candidate.resolve()
+    except (OSError, RuntimeError) as exc:
+        return json.dumps({"status": "error", "error": f"Invalid path: {exc}"})
+
+    # Containment: the resolved path (symlinks followed) must live under root.
+    if dest != root and root not in dest.parents:
+        return json.dumps({
+            "status": "error",
+            "error": (
+                f"Refused: save_artifact only writes inside {root}. Pass a "
+                "filename or relative subpath, not an absolute path elsewhere."
+            ),
+        })
+    if any(frag in str(dest).lower() for frag in _SAVE_ARTIFACT_SENSITIVE):
+        return json.dumps({"status": "error", "error": "Refused: path targets a sensitive location."})
+    if dest == root or dest.is_dir():
+        return json.dumps({"status": "error", "error": "output_path must name a file, not a directory."})
+    if dest.exists() and not overwrite:
+        return json.dumps({"status": "error", "error": "File exists; pass overwrite=True to replace it."})
+
+    try:
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(data)
         return json.dumps({
             "status": "success",
-            "path": str(dest.resolve()),
+            "path": str(dest),
             "bytes_written": len(data),
         })
     except Exception as exc:
