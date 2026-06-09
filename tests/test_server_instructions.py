@@ -59,3 +59,13 @@ def test_instructions_forbid_pre_running_a_real_check():
     low = mcp_server.GUARDIAN_INSTRUCTIONS.lower()
     assert "only if a real call to that exact check appears in this turn" in low
     assert "do not narrate a completed result" in low
+
+
+def test_instructions_close_the_loop_and_persist_facts():
+    # The e2e flagged two follow-ups: document-first loop set up but never closed,
+    # and set_user_fact persistence treated as optional.
+    low = mcp_server.GUARDIAN_INSTRUCTIONS.lower()
+    assert "close the loop" in low
+    assert "make getting one file your single next ask" in low
+    assert "persist as you go" in low
+    assert "in the same turn -- do not defer it" in low
