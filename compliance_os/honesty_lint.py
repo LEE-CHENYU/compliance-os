@@ -47,6 +47,8 @@ _FUTURE_CUES: list[str] = [
     "as soon as",
     "when you",
     "if you",
+    "if your",
+    "if the",
     "ready to",
     "happy to",
     "let me know",
@@ -60,11 +62,21 @@ _FUTURE_CUES: list[str] = [
 
 LEFT_WINDOW = 60  # characters to scan left of a match for future cues
 
+_SENT_BOUNDARY_RE = re.compile(r"[.\n;!?]")
+
 
 def _has_future_cue(text_lower: str, match_start: int) -> bool:
-    """Return True if a future/conditional/offer cue appears in the left context."""
+    """Return True if a future/conditional/offer cue appears in the left context.
+
+    The window is clipped at the nearest sentence boundary so that a cue in a
+    PRIOR sentence (e.g. a sign-off like "Let me know.") does not suppress a
+    genuine claim in the current sentence.
+    """
     window_start = max(0, match_start - LEFT_WINDOW)
     left_ctx = text_lower[window_start:match_start]
+    boundaries = [m.end() for m in _SENT_BOUNDARY_RE.finditer(left_ctx)]
+    if boundaries:
+        left_ctx = left_ctx[boundaries[-1]:]
     return any(cue in left_ctx for cue in _FUTURE_CUES)
 
 
@@ -105,6 +117,23 @@ def _has_reasoning_label(text: str, match_start: int, match_end: int) -> bool:
     return bool(_REASONING_RE.search(sentence))
 
 
+# Read-document non-claim cues: when the assistant is INSTRUCTING the user to read
+# a field, disclaiming that it read the doc, or speaking conditionally, it is not
+# asserting an extracted value — suppress the read_document rule for that sentence.
+_READ_NONCLAIM_RE = re.compile(
+    "|".join([
+        r"i haven'?t opened", r"haven'?t read", r"i can'?t see", r"without reading",
+        r"you enter", r"transcrib", r"tell me", r"read it to me", r"you'?ll need",
+        r"check the top", r"let me know", r"if your", r"if the", r"point me", r"send me",
+    ]),
+    re.IGNORECASE,
+)
+
+
+def _is_read_nonclaim(text: str, match_start: int, match_end: int) -> bool:
+    return bool(_READ_NONCLAIM_RE.search(_extract_sentence(text, match_start, match_end)))
+
+
 # ---------------------------------------------------------------------------
 # Rule definitions
 # Each rule: (claim_type, [compiled regexes], required_any_tools, reason_text)
@@ -131,8 +160,11 @@ _RULES: list[_Rule] = [
                 r"[\w().\-]*?\s*\bcheck\b"),
             # "the check confirms / returns / shows / says"
             _cp(r"\bthe\s+check\s+(confirms|returns|shows|says)\b"),
-            # "from the check" — implies a result was retrieved
+            # "from the check" / "per the check" — implies a result was retrieved
             _cp(r"\bfrom\s+the\s+check\b"),
+            _cp(r"\bper\s+the\s+check\b"),
+            # "the check came back (clean)" — a completed check result
+            _cp(r"\bcheck\s+came\s+back\b"),
             # "It confirms the 30-day window" when following a check statement
             _cp(r"\bit\s+(confirms|returns)\s+(the\s+)?\d"),
             # Bare "it confirms" (sentence-level — will be guarded by context)
@@ -149,12 +181,17 @@ _RULES: list[_Rule] = [
     _Rule(
         claim_type="read_document",
         patterns=[
-            # "Your I-20 shows X", "your EAD says", "your document has"
-            _cp(r"\byour\s+(i-?20|ead|document|passport|i-?983|lca|file)\s+(shows|says|lists|has)\b"),
-            # "read/parsed/pulled off from your document/I-20/file"
-            _cp(r"\b(read|parsed|pulled)\s+(it\s+|them\s+)?(off|from)\s+your\s+(document|i-?20|file)\b"),
-            # "from your I-20" / "from your document" followed by apparent value
-            _cp(r"\bfrom\s+your\s+(i-?20|document|file)\b"),
+            # "Your I-20 shows X", "your EAD says", "your document lists/has"
+            _cp(r"\byour\s+(i-?20|ead|document|passport|i-?983|lca|file|card)\s+(shows|says|lists|has)\b"),
+            # "I read/pulled/lifted <field> (straight) off your/the document/I-20/card"
+            _cp(r"\b(read|parsed|pulled|lifted|got)\b[\w\s'-]{0,40}?\b(straight\s+)?off\s+"
+                r"(your|the)\s+(document|i-?20|ead|card|file)\b"),
+            # "read/parsed/pulled it off/from your document/I-20/file"
+            _cp(r"\b(read|parsed|pulled|lifted|got)\s+(it\s+|them\s+)?(off|from)\s+"
+                r"your\s+(document|i-?20|file|card)\b"),
+            # "From your I-20, <value>" — value asserted off the document. Guarded
+            # below by the non-claim filter so instructing/disclaiming uses don't fire.
+            _cp(r"\bfrom\s+your\s+(i-?20|document|file|ead|card)\b"),
         ],
         required_any=("parse_document",),
         reason=(
@@ -166,7 +203,7 @@ _RULES: list[_Rule] = [
         claim_type="saved_file",
         patterns=[
             # "I've saved the form / file / PDF / it / this to ..."
-            _cp(r"\b(i'?ve\s+|i\s+)?saved\s+(it|the\s+file|the\s+pdf|the\s+form|this|your|the\s+completed)\b"),
+            _cp(r"\b(i'?ve\s+|i\s+)?saved\s+(it|the\s+file|the\s+pdf|the\s+form|the\s+document|this|your|the\s+completed)\b"),
             # "saved it to your/~//"
             _cp(r"\bsaved\s+(it\s+)?to\s+(your|~|/)"),
             # "saved to your folder"
@@ -187,6 +224,9 @@ _RULES: list[_Rule] = [
             _cp(r"\bhere\s+are\s+the\s+(named\s+)?(firms|attorneys)\b"),
             # "I found these firms / I have the attorneys"
             _cp(r"\bi\s+(found|have)\s+(these\s+|the\s+)?(firms|attorneys)\b"),
+            # "your (vetted) shortlist" / verbless "shortlist: <names>"
+            _cp(r"\byour\s+(vetted\s+)?shortlist\b"),
+            _cp(r"\b(vetted\s+)?shortlist\s*[:\-]"),
         ],
         required_any=("lawyer_search_ingest",),
         reason=(
@@ -237,6 +277,12 @@ def flag_unbacked_tool_claims(message: str, tools_called: list[str]) -> list[Fla
 
                 # Guard 2: labeled-reasoning (ran_check only)
                 if rule.claim_type == "ran_check" and _has_reasoning_label(
+                    message, m.start(), m.end()
+                ):
+                    continue
+
+                # Guard 3: read_document non-claim (instructing / disclaiming / conditional)
+                if rule.claim_type == "read_document" and _is_read_nonclaim(
                     message, m.start(), m.end()
                 ):
                     continue
