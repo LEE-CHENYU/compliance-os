@@ -99,6 +99,21 @@ export default function InstallDocsPage() {
           </div>
         </section>
 
+        {/* Demo video */}
+        <section>
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[#8b97ad] mb-2">Watch · 60-second install</div>
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-md border border-blue-100/40 bg-[#0d1424]">
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube.com/embed/gW22YRrNYYk"
+              title="Install Guardian in Claude Desktop"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </section>
+
         {/* MCP anchor */}
         <div id="mcp" className="-mt-4" />
 
