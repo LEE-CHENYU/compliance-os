@@ -120,6 +120,33 @@ EXTRACTION_TO_FACT_KEY: dict[tuple[str, str], str] = {
     ("passport", "date_of_birth"):         "date_of_birth",
     ("passport", "country_of_citizenship"):"country_of_citizenship",
     ("passport", "expiry_date"):           "passport_expiry",
+
+    # ─── I-130 (petition for alien relative) ─────────────
+    ("i130", "receipt_number"):            "i130_receipt_number",
+    ("i130", "beneficiary_name"):          "legal_name",
+    ("i130", "priority_date"):             "priority_date",
+    # ─── I-485 (adjustment of status) ────────────────────
+    ("i485", "receipt_number"):            "aos_receipt_number",
+    ("i485", "applicant_name"):            "legal_name",
+    ("i485", "priority_date"):             "priority_date",
+    # ─── LCA (ETA-9035) ──────────────────────────────────
+    ("lca",  "case_number"):               "lca_case_number",
+    ("lca",  "soc_code"):                  "lca_soc_code",
+    ("lca",  "job_title"):                 "lca_job_title",
+    ("lca",  "wage_level"):                "lca_wage_level",
+    ("lca",  "prevailing_wage"):           "lca_prevailing_wage",
+    ("lca",  "worksite_address"):          "worksite_address",
+    ("lca",  "employer_name"):             "current_employer_legal_name",
+    # ─── DS-2019 (J-1 exchange visitor) ──────────────────
+    ("ds2019", "student_name"):            "legal_name",
+    ("ds2019", "sevis_number"):            "sevis_id",
+    ("ds2019", "program_sponsor"):         "ds2019_program_sponsor",
+    ("ds2019", "program_end_date"):        "ds2019_program_end_date",
+    ("ds2019", "category"):                "exchange_visitor_category",
+    # ─── Advance Parole (I-512) ──────────────────────────
+    ("advance_parole", "valid_to"):        "advance_parole_expiry",
+    ("advance_parole", "document_number"): "advance_parole_document_number",
+    ("advance_parole", "holder_name"):     "legal_name",
 }
 
 

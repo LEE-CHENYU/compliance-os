@@ -369,6 +369,75 @@ CANONICAL_FACTS: dict[str, FactDef] = {
         "personal", "shared",
         typical_doc_types=("engagement_letter",),
     ),
+
+    # ─── I-130 / I-485 (adjustment of status) ───────────────────
+    "i130_receipt_number": FactDef(
+        "I-130 receipt number",
+        "immigration", "shared",
+        typical_doc_types=("i130",),
+    ),
+    "aos_receipt_number": FactDef(
+        "I-485 (adjustment of status) receipt number",
+        "immigration", "shared",
+        typical_doc_types=("i485",),
+    ),
+    "priority_date": FactDef(
+        "Priority date",
+        "immigration", "shared",
+        typical_doc_types=("i130", "i485"),
+        shape="date",
+    ),
+    # ─── LCA (ETA-9035) ─────────────────────────────────────────
+    "lca_soc_code": FactDef(
+        "LCA SOC/O*NET occupation code",
+        "immigration", "young_professional",
+        typical_doc_types=("lca",),
+    ),
+    "lca_job_title": FactDef(
+        "LCA job title",
+        "immigration", "young_professional",
+        typical_doc_types=("lca",),
+    ),
+    "lca_wage_level": FactDef(
+        "LCA prevailing-wage level",
+        "immigration", "young_professional",
+        typical_doc_types=("lca",),
+    ),
+    "lca_prevailing_wage": FactDef(
+        "LCA prevailing wage (annual USD)",
+        "immigration", "young_professional",
+        typical_doc_types=("lca",),
+        shape="number",
+    ),
+    # ─── DS-2019 (J-1 exchange visitor) ─────────────────────────
+    "ds2019_program_sponsor": FactDef(
+        "DS-2019 program sponsor",
+        "immigration", "student",
+        typical_doc_types=("ds2019",),
+    ),
+    "ds2019_program_end_date": FactDef(
+        "DS-2019 program end date",
+        "immigration", "student",
+        typical_doc_types=("ds2019",),
+        shape="date",
+    ),
+    "exchange_visitor_category": FactDef(
+        "J-1 exchange visitor category",
+        "immigration", "student",
+        typical_doc_types=("ds2019",),
+    ),
+    # ─── Advance Parole (I-512) — own expiry, NOT ead's valid_to ─
+    "advance_parole_expiry": FactDef(
+        "Advance Parole (I-512) expiration date",
+        "immigration", "shared",
+        typical_doc_types=("advance_parole",),
+        shape="date",
+    ),
+    "advance_parole_document_number": FactDef(
+        "Advance Parole (I-512) document number",
+        "immigration", "shared",
+        typical_doc_types=("advance_parole",),
+    ),
 }
 
 

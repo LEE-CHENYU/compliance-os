@@ -315,6 +315,12 @@ FILENAME_PATTERNS: dict[str, list[str]] = {
         r"key[_ -]?documents?(?:[_ -]?compilation)?",
         r"documents?[_ -]?compilation",
     ],
+    "i797": [r"(?:^|[^a-z0-9])i-?797(?:[^a-z0-9]|$)", r"notice[_ -]?of[_ -]?action", r"approval[_ -]?notice"],
+    "i130": [r"(?:^|[^a-z0-9])i-?130(?:[^a-z0-9]|$)", r"petition[_ -]?for[_ -]?alien[_ -]?relative"],
+    "i485": [r"(?:^|[^a-z0-9])i-?485(?:[^a-z0-9]|$)", r"adjust(?:ment)?[_ -]?of[_ -]?status", r"register[_ -]?permanent[_ -]?residence"],
+    "lca": [r"(?:^|[^a-z0-9])lca(?:[^a-z0-9]|$)", r"eta[_ -]?9035e?", r"labor[_ -]?condition[_ -]?application"],
+    "ds2019": [r"(?:^|[^a-z0-9])ds-?2019(?:[^a-z0-9]|$)", r"exchange[_ -]?visitor", r"certificate[_ -]?of[_ -]?eligibility[_ -]?for[_ -]?exchange"],
+    "advance_parole": [r"advance[_ -]?parole", r"(?:^|[^a-z0-9])i-?512[a-z]?(?:[^a-z0-9]|$)"],
 }
 
 PATH_CONTEXT_PATTERNS: dict[str, list[str]] = {
@@ -1101,6 +1107,46 @@ PATTERNS: dict[str, list[str]] = {
         r"compiled documents",
         r"table of contents",
     ],
+    "i797": [
+        r"Notice of Action",
+        r"Form I-797",
+        r"I-797[A-C]?",
+        r"Receipt Number",
+        r"Notice Type",
+    ],
+    "i130": [
+        r"Petition for Alien Relative",
+        r"Form I-130",
+        r"I-130",
+    ],
+    "i485": [
+        r"Application to Register Permanent Residence",
+        r"Adjust(?:ment)?(?: of)? Status",
+        r"Form I-485",
+        r"Priority Date",
+    ],
+    "lca": [
+        r"Labor Condition Application",
+        r"ETA[- ]?9035",
+        r"ETA Case Number",
+        r"SOC Code",
+        r"Prevailing Wage",
+        r"Wage Level",
+    ],
+    "ds2019": [
+        r"Certificate of Eligibility for Exchange Visitor",
+        r"Form DS-2019",
+        r"DS-?2019",
+        r"Exchange Visitor",
+        r"Program Sponsor",
+    ],
+    "advance_parole": [
+        r"Advance Parole",
+        r"Authorization for Parole",
+        r"Form I-512",
+        r"I-512[A-Z]?",
+        r"travel authorization",
+    ],
 }
 
 
@@ -1216,6 +1262,12 @@ TEXT_MIN_MATCHES: dict[str, int] = {
     "i129_support_letter": 2,
     "transaction_ledger": 2,
     "multi_doc_compilation": 2,
+    "i797": 2,
+    "i130": 2,
+    "i485": 2,
+    "lca": 2,
+    "ds2019": 2,
+    "advance_parole": 2,
 }
 
 OCR_TEXT_MIN_MATCH_OVERRIDES: dict[str, int] = {
@@ -1400,6 +1452,29 @@ DOC_TYPE_ALIASES: dict[str, str] = {
     "w2": "w2",
     "w4": "w4",
     "w_2": "w2",
+    "i797": "i797",
+    "i_797": "i797",
+    "i797a": "i797",
+    "i797c": "i797",
+    "notice_of_action": "i797",
+    "i130": "i130",
+    "i_130": "i130",
+    "petition_for_alien_relative": "i130",
+    "i485": "i485",
+    "i_485": "i485",
+    "adjustment_of_status": "i485",
+    "aos": "i485",
+    "lca": "lca",
+    "eta_9035": "lca",
+    "eta_9035e": "lca",
+    "labor_condition_application": "lca",
+    "ds2019": "ds2019",
+    "ds_2019": "ds2019",
+    "exchange_visitor": "ds2019",
+    "advance_parole": "advance_parole",
+    "i512": "advance_parole",
+    "i_512": "advance_parole",
+    "travel_authorization": "advance_parole",
 }
 
 SUPPORTED_DOC_TYPES = set(FILENAME_PATTERNS) | set(PATTERNS) | set(PATH_PATTERNS)
