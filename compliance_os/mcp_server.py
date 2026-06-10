@@ -403,7 +403,10 @@ def _ver_tuple(v: str) -> tuple:
 
 def _check_for_update_bg() -> None:
     global _UPDATE_LATEST
-    if os.environ.get("GUARDIAN_DISABLE_PREWARM") == "1":
+    # Gated by the prewarm flag (eval/tests run offline) and a dedicated knob
+    # for users who want prewarm but no network update check.
+    if (os.environ.get("GUARDIAN_DISABLE_PREWARM") == "1"
+            or os.environ.get("GUARDIAN_DISABLE_UPDATE_CHECK") == "1"):
         return
     try:
         req = request.Request(
@@ -411,7 +414,9 @@ def _check_for_update_bg() -> None:
             headers={"User-Agent": f"guardian/{__version__}"},
         )
         with request.urlopen(req, timeout=8) as resp:
-            latest = json.loads(resp.read().decode()).get("info", {}).get("version", "")
+            # Bound the read — PyPI metadata is well under 1 MB; a hostile body
+            # can't be slurped wholesale.
+            latest = json.loads(resp.read(1_000_000).decode()).get("info", {}).get("version", "")
         if latest and _ver_tuple(latest) > _ver_tuple(__version__):
             _UPDATE_LATEST = latest
     except Exception:  # pragma: no cover — best-effort, offline-safe

@@ -51,10 +51,11 @@ def test_format_cascade_renders_new_findings_and_suggestions():
         ],
         "suggested_checks": [{"check": "fbar", "reason": "you now have your foreign-account aggregate balance"}],
     })
-    assert "This triggered" in out
+    assert "This triggered" in out                 # real findings section
     assert "current_employer_legal_name" in out
     assert "EAD / I-766" in out
     assert "22 days away" in out
+    assert "Now available to run" in out            # offers are a separate section
     assert "fbar" in out and "want me to run" in out
 
 
@@ -71,7 +72,7 @@ def test_wedge_appends_cascade():
             {"check": "fbar", "reason": "you now have your foreign-account aggregate balance"}]},
     })
     assert "Locked into your source of truth" in wedge
-    assert "This triggered" in wedge
+    assert "Now available to run" in wedge   # offer-only (no real finding here)
     assert "fbar" in wedge
 
 
@@ -106,7 +107,7 @@ def test_set_fact_cascade_integration(local_db):
     assert any(s["check"] == "fbar" for s in res["cascade"]["suggested_checks"])
     # and it renders in the wedge card the tool returns
     card = P.format_fact_wedge(res)
-    assert "This triggered" in card and "fbar" in card
+    assert "Now available to run" in card and "fbar" in card
 
 
 def test_set_fact_no_trigger_no_cascade(local_db):
@@ -115,3 +116,13 @@ def test_set_fact_no_trigger_no_cascade(local_db):
     # an unmapped fact suggests nothing and (on an empty room) finds nothing new
     assert res["cascade"]["suggested_checks"] == []
     assert "This triggered" not in P.format_fact_wedge(res)
+    assert "Now available to run" not in P.format_fact_wedge(res)
+
+
+def test_set_fact_idempotent_reset_does_not_reoffer(local_db):
+    from compliance_os import local_engine
+    local_engine.local_set_fact("foreign_account_aggregate_high", "63500")
+    # re-locking the SAME value must not re-fire the offer
+    res2 = local_engine.local_set_fact("foreign_account_aggregate_high", "63500")
+    assert res2["cascade"]["suggested_checks"] == []
+    assert "Now available to run" not in P.format_fact_wedge(res2)

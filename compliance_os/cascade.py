@@ -77,12 +77,15 @@ def cascade_after_write(
     """After a SoT write, return the NEW cross-check findings (vs before_keys)
     plus rule checks the changed facts make runnable. Best-effort: any failure
     yields an empty cascade so the write/wedge is never broken."""
+    suggested = suggested_checks(changed_fact_keys)
+    # A new cross-check finding can only arise from a fact change; on a no-op
+    # write (nothing actually changed) skip the cross_check re-run entirely.
+    if not changed_fact_keys:
+        return {"new_findings": [], "suggested_checks": suggested}
     new_findings: list[dict] = []
-    chains: list[str] = []
     from compliance_os.compliance.cross_check import cross_check
     try:
         res = cross_check(db, user_id, chain=None)
-        chains = res.get("chains_detected", []) or []
         if before_keys is not None:
             new_findings = [
                 f for f in res.get("findings", [])
@@ -90,8 +93,4 @@ def cascade_after_write(
             ]
     except Exception:
         pass
-    return {
-        "new_findings": new_findings,
-        "suggested_checks": suggested_checks(changed_fact_keys),
-        "chains": chains,
-    }
+    return {"new_findings": new_findings, "suggested_checks": suggested}

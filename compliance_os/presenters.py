@@ -62,9 +62,10 @@ def _fmt(value: Any) -> str:
 
 def _cell(text: Any) -> str:
     """Escape a value so it can't break out of a Markdown TABLE cell — every
-    line separator (\\n, \\r, U+2028/2029) collapsed and the pipe escaped."""
+    line separator (\\n, \\r, U+2028/2029) collapsed, the pipe escaped, and
+    backticks neutralized (in case a value ever carries document-derived text)."""
     s = _LINE_SEP.sub(" ", str(text if text is not None else ""))
-    return s.replace("|", "\\|").strip()
+    return s.replace("|", "\\|").replace("`", "\\`").strip()
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -148,25 +149,33 @@ def format_cascade(cascade: dict) -> str:
     sugg = cascade.get("suggested_checks") or []
     if not new and not sugg:
         return ""
-    lines = ["**↻ This triggered:**"]
-    for f in new:
-        cat = f.get("category")
-        if cat == "mismatch":
+    lines: list[str] = []
+    # "Triggered" is reserved for things that actually happened (real new
+    # cross-check findings). Runnable rule checks are a separate offer.
+    if new:
+        lines.append("**↻ This triggered:**")
+        for f in new:
+            cat = f.get("category")
+            if cat == "mismatch":
+                lines.append(
+                    f"- 🟠 **{_cell(f.get('fact') or f.get('rule'))}** now differs across your documents"
+                )
+            elif cat == "missing":
+                lines.append(
+                    f"- 🟠 missing **{_cell(f.get('label') or f.get('doc_type'))}** "
+                    f"for the {_cell(f.get('chain'))} chain"
+                )
+            elif cat == "deadline":
+                lines.append(f"- 🔵 {_cell(f.get('message'))}")
+    if sugg:
+        if new:
+            lines.append("")
+        lines.append("**▶ Now available to run:**")
+        for s in sugg:
             lines.append(
-                f"- 🟠 **{_cell(f.get('fact') or f.get('rule'))}** now differs across your documents"
+                f"- {_cell(s.get('reason'))} — want me to run the "
+                f"**{_cell(s.get('check'))}** check?"
             )
-        elif cat == "missing":
-            lines.append(
-                f"- 🟠 missing **{_cell(f.get('label') or f.get('doc_type'))}** "
-                f"for the {_cell(f.get('chain'))} chain"
-            )
-        elif cat == "deadline":
-            lines.append(f"- 🔵 {_cell(f.get('message'))}")
-    for s in sugg:
-        lines.append(
-            f"- ▶ {_cell(s.get('reason'))} — want me to run the "
-            f"**{_cell(s.get('check'))}** check?"
-        )
     return "\n".join(lines)
 
 

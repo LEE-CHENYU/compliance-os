@@ -75,6 +75,9 @@ def local_set_fact(
     try:
         user_id = get_local_user_id(db)
         before_cc = crosscheck_keys(db, user_id)
+        existed_before = any(
+            r.fact_key == fact_key for r in get_active_facts(db, user_id=user_id)
+        )
         new_row, superseded = upsert_fact(
             db, user_id=user_id, fact_key=fact_key, value=value,
             source_type="decision_lock",
@@ -82,7 +85,12 @@ def local_set_fact(
             notes=notes or None, label=label or None,
         )
         db.commit()
-        cascade = cascade_after_write(db, user_id, [new_row.fact_key], before_cc)
+        # Only cascade on a real change (new fact or changed value), not an
+        # idempotent re-set — mirrors the document path's diff-based behavior.
+        changed = (superseded is not None) or (not existed_before)
+        cascade = cascade_after_write(
+            db, user_id, [new_row.fact_key] if changed else [], before_cc
+        )
         return {
             "fact": serialize_fact(new_row),
             "superseded": serialize_fact(superseded) if superseded else None,
