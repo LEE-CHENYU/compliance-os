@@ -462,16 +462,16 @@ export default function Home() {
       {/* Data Room */}
       <section ref={vault.ref} className={`section-panel scroll-section${vault.revealed ? ' revealed' : ''}`} style={{maxWidth:900,margin:'0 auto 40px'}}>
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>
-          Your personal compliance vault
+          Your data room lives on your machine
         </h2>
-        <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:540,margin:'0 auto 40px',lineHeight:1.6}}>
-          After your first check, Guardian becomes your living case record. Documents organized by timeline, risks tracked automatically, and prompts when something needs attention.
+        <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:560,margin:'0 auto 40px',lineHeight:1.6}}>
+          The extension keeps your documents, timeline, and a facts source-of-truth in a local vault — on your computer, not a server. Guardian reads it every time you ask, so every answer stays grounded in your real record.
         </p>
         <div className="vault-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
           {[
-            {num:'1',title:'Timeline view',desc:'Your immigration journey on one screen. Past events, today, upcoming deadlines — with documents attached to each moment.'},
-            {num:'2',title:'Smart upload prompts',desc:'We tell you exactly what to upload next and why it matters. Each new document triggers automatic re-checking.'},
-            {num:'3',title:'Risk monitoring',desc:'New risks surface as deadlines approach or documents change. Resolved issues get cleared automatically.'},
+            {num:'1',title:'Local-first, by default',desc:"Your I-20, EAD, and returns — and the facts extracted from them — sit in a vault on your machine. The extension reads them in place; nothing is uploaded unless you explicitly share it."},
+            {num:'2',title:'The agent keeps it current',desc:"Drop in a new document and Guardian extracts the fields, updates your source-of-truth, and re-runs the affected checks — no dashboard to maintain, nothing to re-enter."},
+            {num:'3',title:'Just ask, inside Claude',desc:"No separate app to open. Type /guardian in Claude and it answers from your own timeline, deadlines, and risks — pulled straight from your record, not a generic FAQ."},
           ].map((item) => (
             <div key={item.title} style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:16,padding:24,border:'1px solid rgba(255,255,255,0.6)'}}>
               <div style={{fontSize:28,fontWeight:800,color:'#5b8dee',marginBottom:12,opacity:0.4}}>{item.num}</div>
