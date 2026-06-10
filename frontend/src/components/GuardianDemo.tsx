@@ -50,11 +50,15 @@ const CSS = `
     0 34px 60px -22px rgba(38,66,128,.34),
     0 14px 34px -14px rgba(38,66,128,.22),
     0 2px 6px rgba(18,38,78,.05);
+  height:600px; display:flex; flex-direction:column;
   overflow:hidden; backdrop-filter:blur(30px) saturate(1.7); -webkit-backdrop-filter:blur(30px) saturate(1.7);
 }
 .gd-root .card::before{content:''; position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit;
   background:linear-gradient(125deg, rgba(255,255,255,.5) 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 68%, rgba(255,255,255,.2) 100%)}
-.gd-root .transcript{position:relative; z-index:1; padding:20px 20px 6px; min-height:296px; display:flex; flex-direction:column; gap:13px}
+/* The card is a fixed-height flex column; the transcript flexes to absorb any
+   change (e.g. the status line toggling) so the card — and the content below
+   it on the page — never moves across the loop. */
+.gd-root .transcript{position:relative; z-index:1; padding:20px 20px 6px; flex:1 1 auto; min-height:0; overflow:hidden; display:flex; flex-direction:column; gap:13px}
 
 .gd-root .item{opacity:0; transform:translateY(7px); transition:opacity .35s ease, transform .35s ease}
 .gd-root .item.in{opacity:1; transform:none}
@@ -101,8 +105,10 @@ const CSS = `
 
 .gd-root .footer{position:relative; z-index:1; border-top:1px solid rgba(255,255,255,.55);
   background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.46)); box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
-.gd-root .status{display:flex; align-items:center; gap:9px; padding:11px 20px 0; font-size:12.5px; color:#556480; height:0; opacity:0; overflow:hidden; transition:opacity .25s, height .25s, padding .25s}
-.gd-root .status.on{opacity:1; height:34px; padding:11px 20px 0}
+/* status always reserves its height (only opacity animates) so the footer —
+   and therefore the whole card — stays a constant height across the loop. */
+.gd-root .status{display:flex; align-items:center; gap:9px; padding:11px 20px 0; font-size:12.5px; color:#556480; height:34px; opacity:0; overflow:hidden; transition:opacity .25s}
+.gd-root .status.on{opacity:1}
 .gd-root .status .dot{width:7px; height:7px; border-radius:50%; background:#5b8dee; box-shadow:0 0 8px rgba(91,141,238,.6); animation:gd-pp 1s ease-in-out infinite}
 @keyframes gd-pp{0%,100%{opacity:.35; transform:scale(.8)}50%{opacity:1; transform:scale(1)}}
 .gd-root .status .label{font-weight:500}
