@@ -18,10 +18,13 @@ def test_start_guardian_tool_is_registered():
 
 
 def test_start_guardian_matches_prompt_byte_for_byte():
-    # The tool and the prompt must behave identically (shared kickoff).
-    assert start_guardian("") == guardian("") == _guardian_kickoff("")
+    # The tool and the prompt share the kickoff. The tool may prepend a one-line
+    # "update available" notice, so assert the kickoff is the suffix.
+    assert guardian("") == _guardian_kickoff("")
+    assert start_guardian("").endswith(_guardian_kickoff(""))
     sit = "F-1 internship in 2 weeks"
-    assert start_guardian(sit) == guardian(sit) == _guardian_kickoff(sit)
+    assert guardian(sit) == _guardian_kickoff(sit)
+    assert start_guardian(sit).endswith(_guardian_kickoff(sit))
 
 
 def test_start_guardian_no_situation_runs_cold_start():

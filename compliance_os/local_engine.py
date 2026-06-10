@@ -69,9 +69,12 @@ def local_set_fact(
     fact_key: str, value: str, notes: str = "", label: str = "",
 ) -> dict:
     """In-process equivalent of POST /api/facts (a user-locked decision)."""
+    from compliance_os.cascade import cascade_after_write, crosscheck_keys
+
     db = next(get_session())
     try:
         user_id = get_local_user_id(db)
+        before_cc = crosscheck_keys(db, user_id)
         new_row, superseded = upsert_fact(
             db, user_id=user_id, fact_key=fact_key, value=value,
             source_type="decision_lock",
@@ -79,9 +82,11 @@ def local_set_fact(
             notes=notes or None, label=label or None,
         )
         db.commit()
+        cascade = cascade_after_write(db, user_id, [new_row.fact_key], before_cc)
         return {
             "fact": serialize_fact(new_row),
             "superseded": serialize_fact(superseded) if superseded else None,
+            "cascade": cascade,
         }
     finally:
         db.close()
@@ -254,14 +259,18 @@ def local_record_extracted_facts(doc_id: str, facts: list) -> dict:
         if doc is None:
             return {"error": f"document not found: {doc_id}"}
 
+        from compliance_os.cascade import cascade_after_write, crosscheck_keys
+
         user_id = get_local_user_id(db)
         # Snapshot canonical facts BEFORE recording so we can report a precise
         # before→after diff (the wedge) without threading deltas through the
-        # document_store projection.
+        # document_store projection. Also snapshot the cross-check findings so
+        # the cascade can report only what THIS document newly triggered.
         before = {
             r.fact_key: {"value": _unwrap(r.value), "label": r.label}
             for r in get_active_facts(db, user_id=user_id)
         }
+        before_cc = crosscheck_keys(db, user_id)
 
         recorded: list[str] = []
         for f in facts:
@@ -291,9 +300,13 @@ def local_record_extracted_facts(doc_id: str, facts: list) -> dict:
             elif prior["value"] != new_v:
                 changes.append({"fact_key": r.fact_key, "label": r.label,
                                 "old": prior["value"], "new": new_v})
+        cascade = cascade_after_write(
+            db, user_id, [c["fact_key"] for c in changes], before_cc
+        )
         return {
             "recorded_fields": recorded,
             "changes": changes,
+            "cascade": cascade,
             "facts": [serialize_fact(r) for r in rows],
             "conflicts": [serialize_fact(r) for r in rows if r.detected_conflicts],
         }

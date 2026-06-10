@@ -95,7 +95,9 @@ def test_local_facts_shape_matches_hosted_router_shape(local_db):
     from compliance_os import local_engine
 
     set_out = local_engine.local_set_fact("country_of_citizenship", "India")
-    assert set(set_out) == {"fact", "superseded"}
+    # Core envelope matches the hosted router; local mode additionally returns a
+    # "cascade" key (the reactive-cascade enrichment hosted /api/facts omits).
+    assert {"fact", "superseded"} <= set(set_out) <= {"fact", "superseded", "cascade"}
 
     get_out = local_engine.local_get_facts(category="personal")
     assert set(get_out) == {"facts"}

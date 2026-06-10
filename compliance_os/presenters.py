@@ -95,7 +95,7 @@ def format_fact_wedge(result: dict) -> str:
             lines.append(
                 f"🟠 a document claims **{_fmt(c.get('claimed_value'))}** — want me to reconcile?"
             )
-    return "\n".join(lines)
+    return _with_cascade("\n".join(lines), result)
 
 
 def format_record_wedge(result: dict) -> str:
@@ -136,7 +136,45 @@ def format_record_wedge(result: dict) -> str:
                     f"- **{label}**: your record says _{cur}_, a document says "
                     f"_{_fmt(c.get('claimed_value'))}_"
                 )
+    return _with_cascade("\n".join(lines), result)
+
+
+def format_cascade(cascade: dict) -> str:
+    """The '↻ This triggered:' section — the NEW cross-check findings a SoT
+    write surfaced (mismatch / missing doc / upcoming deadline) plus rule
+    checks the new facts make runnable (offer-only). Empty when nothing new."""
+    cascade = cascade or {}
+    new = cascade.get("new_findings") or []
+    sugg = cascade.get("suggested_checks") or []
+    if not new and not sugg:
+        return ""
+    lines = ["**↻ This triggered:**"]
+    for f in new:
+        cat = f.get("category")
+        if cat == "mismatch":
+            lines.append(
+                f"- 🟠 **{_cell(f.get('fact') or f.get('rule'))}** now differs across your documents"
+            )
+        elif cat == "missing":
+            lines.append(
+                f"- 🟠 missing **{_cell(f.get('label') or f.get('doc_type'))}** "
+                f"for the {_cell(f.get('chain'))} chain"
+            )
+        elif cat == "deadline":
+            lines.append(f"- 🔵 {_cell(f.get('message'))}")
+    for s in sugg:
+        lines.append(
+            f"- ▶ {_cell(s.get('reason'))} — want me to run the "
+            f"**{_cell(s.get('check'))}** check?"
+        )
     return "\n".join(lines)
+
+
+def _with_cascade(card: str, result: dict) -> str:
+    """Append the cascade section to a wedge card when the write triggered
+    something new."""
+    casc = format_cascade((result or {}).get("cascade"))
+    return card + ("\n\n" + casc if casc else "")
 
 
 # ──────────────────────────────────────────────────────────────────

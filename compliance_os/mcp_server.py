@@ -21,6 +21,7 @@ from urllib import error, request
 from mcp.server.fastmcp import FastMCP
 from mcp.types import TextContent, ToolAnnotations
 
+from compliance_os import __version__
 from compliance_os.licensing import activation_block, feature_for_tool
 from compliance_os.local_engine import (
     force_local_embeddings,
@@ -287,7 +288,7 @@ def start_guardian(situation: str = "") -> str:
     Args:
         situation: Everything the user typed after `/guardian` (optional).
     """
-    return _guardian_kickoff(situation)
+    return _update_notice() + _guardian_kickoff(situation)
 
 
 # ─── Configuration ───────────────────────────────────────────────
@@ -383,6 +384,55 @@ threading.Thread(
     target=_prewarm_embedding_model_bg,
     daemon=True,
     name="guardian-embed-prewarm",
+).start()
+
+
+# ─── Update check ────────────────────────────────────────────────
+# A side-loaded DXT pins an exact compliance-os version and never auto-updates,
+# so check PyPI once at startup and let the entry-point tools nudge the user to
+# reinstall when they're behind. Best-effort, fail-silent, sends no user data.
+_UPDATE_LATEST: str | None = None
+
+
+def _ver_tuple(v: str) -> tuple:
+    try:
+        return tuple(int(x) for x in str(v).split(".")[:3])
+    except Exception:
+        return (0, 0, 0)
+
+
+def _check_for_update_bg() -> None:
+    global _UPDATE_LATEST
+    if os.environ.get("GUARDIAN_DISABLE_PREWARM") == "1":
+        return
+    try:
+        req = request.Request(
+            "https://pypi.org/pypi/compliance-os/json",
+            headers={"User-Agent": f"guardian/{__version__}"},
+        )
+        with request.urlopen(req, timeout=8) as resp:
+            latest = json.loads(resp.read().decode()).get("info", {}).get("version", "")
+        if latest and _ver_tuple(latest) > _ver_tuple(__version__):
+            _UPDATE_LATEST = latest
+    except Exception:  # pragma: no cover — best-effort, offline-safe
+        pass
+
+
+def _update_notice() -> str:
+    """A one-line 'newer version available' nudge, or '' when current."""
+    if _UPDATE_LATEST:
+        return (
+            f"ℹ️ Guardian {_UPDATE_LATEST} is available (you're on {__version__}). "
+            "Update when convenient — re-download guardian.dxt from "
+            "guardiancompliance.app and reinstall the extension.\n\n"
+        )
+    return ""
+
+
+threading.Thread(
+    target=_check_for_update_bg,
+    daemon=True,
+    name="guardian-update-check",
 ).start()
 
 if is_local_mode():
@@ -577,7 +627,7 @@ async def guardian_status() -> str:
         stats = await _api_get("/api/dashboard/stats")
         chains = await _api_get("/api/dashboard/chains")
     except RuntimeError:
-        return (
+        return _update_notice() + (
             "# Guardian Compliance Status\n\n"
             "_Guardian's local store isn't reachable yet — nothing has been set up "
             "on this machine, or the local app isn't running — so there's no status "
@@ -645,7 +695,7 @@ async def guardian_status() -> str:
         for f in facts:
             lines.append(f"- **{f.get('label', '')}:** {f.get('value', '')}")
 
-    return "\n".join(lines)
+    return _update_notice() + "\n".join(lines)
 
 
 @mcp.tool(
