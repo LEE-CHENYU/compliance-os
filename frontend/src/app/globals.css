@@ -233,3 +233,31 @@
     font-size: 40px !important;
   }
 }
+
+/* Phone nav: the desktop links are already hidden < 768; below 520 the
+   right-side actions ("Sign in" + the long "Download Claude Extension" CTA)
+   stop fitting, so compact them — drop the email, shorten the CTA to
+   "Download", and tighten paddings. */
+@media (max-width: 520px) {
+  .nav-email {
+    display: none !important;
+  }
+  .nav-cta-full {
+    display: none !important;
+  }
+  .nav-cta {
+    padding: 8px 12px !important;
+    gap: 5px !important;
+  }
+  .nav-signin {
+    padding: 7px 10px !important;
+  }
+}
+
+/* Tiniest phones (< 375px): logo + Sign in + Download no longer all fit on
+   one line, so drop the secondary "Sign in" — the Download CTA stays. */
+@media (max-width: 374px) {
+  .nav-signin {
+    display: none !important;
+  }
+}

@@ -300,7 +300,7 @@ export default function Home() {
         <div style={{display:'flex',alignItems:'center',gap:12}}>
           {loggedIn ? (
             <>
-              <span style={{fontSize:13,color:'#556480'}}>{userEmail}</span>
+              <span className="nav-email" style={{fontSize:13,color:'#556480'}}>{userEmail}</span>
               <button onClick={() => router.push("/dashboard")} style={{padding:'9px 22px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer'}}>
                 Dashboard
               </button>
@@ -310,12 +310,12 @@ export default function Home() {
             </>
           ) : (
             <>
-              <button onClick={() => router.push("/login")} style={{padding:'9px 22px',borderRadius:10,background:'transparent',color:'#5b8dee',fontSize:13,fontWeight:600,border:'none',cursor:'pointer'}}>
+              <button className="nav-signin" onClick={() => router.push("/login")} style={{padding:'9px 22px',borderRadius:10,background:'transparent',color:'#5b8dee',fontSize:13,fontWeight:600,border:'none',cursor:'pointer',whiteSpace:'nowrap'}}>
                 Sign in
               </button>
-              <a href="/docs/install" style={{padding:'9px 18px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,0.1)',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:6,whiteSpace:'nowrap'}}>
+              <a className="nav-cta" href="/docs/install" style={{padding:'9px 18px',borderRadius:10,background:'#1a2036',color:'white',fontSize:13,fontWeight:600,border:'none',cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,0.1)',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:6,whiteSpace:'nowrap'}}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
-                Download <span style={{fontStyle:'italic',fontFamily:'Georgia, "Times New Roman", serif'}}>Claude Extension</span>
+                Download<span className="nav-cta-full" style={{fontStyle:'italic',fontFamily:'Georgia, "Times New Roman", serif',marginLeft:5}}> Claude Extension</span>
               </a>
             </>
           )}
