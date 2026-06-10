@@ -436,16 +436,16 @@ export default function Home() {
         <h2 style={{fontSize:36,fontWeight:800,letterSpacing:'-0.03em',textAlign:'center',marginBottom:12,color:'#0d1424'}}>How it works</h2>
         <GuardianDemo />
         <p style={{fontSize:16,color:'#556480',textAlign:'center',maxWidth:520,margin:'4px auto 30px',lineHeight:1.6}}>
-          One line in. Guardian does the rest \u2014 pulling your documents, checking them against your own facts, and surfacing the risk that actually matters. That\u2019s the loop above, step by step.
+          One line in. Guardian does the rest — pulling your documents, checking them against your own facts, and surfacing the risk that actually matters. That’s the loop above, step by step.
         </p>
         <div style={{maxWidth:640,margin:'0 auto'}}>
         {[
-          {num:"01",title:"Start with one line",desc:"Type /guardian and your situation in plain English \u2014 \u201cF-1, paid internship in 2 weeks.\u201d No intake form, no track to pick.",tag:"/guardian",mono:true},
-          {num:"02",title:"Guardian pulls your documents",desc:"It searches your data room and history for what\u2019s relevant \u2014 your I-20, offer letter, prior filings \u2014 instead of making you dig them up.",tag:"guardian_documents",mono:true},
-          {num:"03",title:"Checks them against your facts",desc:"Cross-references your source-of-truth \u2014 status, program dates, terms completed \u2014 so the answer fits your case, not a generic FAQ.",tag:"get_user_facts",mono:true},
-          {num:"04",title:"Runs the real compliance check",desc:"Bright-line rules, deadlines, and risk \u2014 e.g. no work before CPT is authorized on a new I-20. It tells you what\u2019s actually at stake.",tag:"run_compliance_check",mono:true},
-          {num:"05",title:"Answers \u2014 with the one next step",desc:"A grounded answer and the single action that matters today (email your DSO), then it routes you deeper only if your case needs it.",tag:"grounded",mono:false},
-          {num:"06",title:"Keeps your case current",desc:"Everything lands in your data room. New documents and approaching deadlines trigger an automatic re-check \u2014 and nothing leaves your machine.",tag:"ongoing",mono:false},
+          {num:"01",title:"Start with one line",desc:"Type /guardian and your situation in plain English — “F-1, paid internship in 2 weeks.” No intake form, no track to pick.",tag:"/guardian",mono:true},
+          {num:"02",title:"Guardian pulls your documents",desc:"It searches your data room and history for what’s relevant — your I-20, offer letter, prior filings — instead of making you dig them up.",tag:"guardian_documents",mono:true},
+          {num:"03",title:"Checks them against your facts",desc:"Cross-references your source-of-truth — status, program dates, terms completed — so the answer fits your case, not a generic FAQ.",tag:"get_user_facts",mono:true},
+          {num:"04",title:"Runs the real compliance check",desc:"Bright-line rules, deadlines, and risk — e.g. no work before CPT is authorized on a new I-20. It tells you what’s actually at stake.",tag:"run_compliance_check",mono:true},
+          {num:"05",title:"Answers — with the one next step",desc:"A grounded answer and the single action that matters today (email your DSO), then it routes you deeper only if your case needs it.",tag:"grounded",mono:false},
+          {num:"06",title:"Keeps your case current",desc:"Everything lands in your data room. New documents and approaching deadlines trigger an automatic re-check — and nothing leaves your machine.",tag:"ongoing",mono:false},
         ].map(({num,title,desc,tag,mono}) => (
           <div key={num} style={{display:'flex',gap:20,padding:'22px 0',borderBottom:'1px solid rgba(91,141,238,0.06)',alignItems:'flex-start'}}>
             <span style={{fontSize:13,fontWeight:700,color:'#c0cde0',minWidth:28,paddingTop:3}}>{num}</span>
@@ -469,7 +469,7 @@ export default function Home() {
         </p>
         <div className="vault-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
           {[
-            {num:'1',title:'Timeline view',desc:'Your immigration journey on one screen. Past events, today, upcoming deadlines \u2014 with documents attached to each moment.'},
+            {num:'1',title:'Timeline view',desc:'Your immigration journey on one screen. Past events, today, upcoming deadlines — with documents attached to each moment.'},
             {num:'2',title:'Smart upload prompts',desc:'We tell you exactly what to upload next and why it matters. Each new document triggers automatic re-checking.'},
             {num:'3',title:'Risk monitoring',desc:'New risks surface as deadlines approach or documents change. Resolved issues get cleared automatically.'},
           ].map((item) => (
@@ -504,7 +504,7 @@ export default function Home() {
             {consequence:'50% of your foreign savings',short:'Family bank accounts abroad over $10K? TurboTax defaults to "No."',tag:'FBAR'},
             {consequence:'$25,000 per year, retroactively',short:'Foreign-owned LLC? Required every year, even with $0 revenue.',tag:'Form 5472'},
             {consequence:'25% of every family transfer',short:'Parents sent money for tuition? Over $100K requires reporting.*',tag:'Form 3520'},
-            {consequence:'Your visa status contradicted',short:'Filing as a resident when you\u2019re not. Affects future applications.',tag:'Wrong form'},
+            {consequence:'Your visa status contradicted',short:'Filing as a resident when you’re not. Affects future applications.',tag:'Wrong form'},
             {consequence:'$10,000+ in additional penalties',short:'Foreign assets over $50K need a separate form from FBAR.',tag:'FATCA'},
           ].map((item) => (
             <div key={item.tag} className="penalty-card" style={{background:'rgba(255,255,255,0.5)',backdropFilter:'blur(16px)',borderRadius:14,padding:'14px 18px',border:'1px solid rgba(255,255,255,0.6)',boxShadow:'0 2px 12px rgba(79,70,229,0.03)'}}>
