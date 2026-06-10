@@ -106,12 +106,13 @@ Requires a one-time Google Cloud OAuth setup. See the setup script for instructi
 
 ## Starting Guardian — the `/guardian` command
 
-Guardian engages automatically when you raise a compliance topic, but you can also start it **deterministically** with the built-in `/guardian` prompt — for when you want to begin on purpose instead of relying on topic detection:
+Guardian engages automatically when you raise a compliance topic, but you can also start it **deterministically** — for when you want to begin on purpose instead of relying on topic detection. How depends on the surface:
 
-- **Claude Desktop:** type `/` (or open the prompt/command menu) and pick **Guardian → Start Guardian**.
-- **Claude Code:** run `/mcp__guardian__guardian`.
+- **Cowork / Claude Desktop (agentic):** just type **`/guardian`** (optionally `/guardian <your situation>`) as a normal message. There's a `start_guardian` **tool** plus a "deterministic start" instruction, so the agent fires onboarding the moment it sees a typed `/guardian` — even though MCP prompts aren't typeable there.
+- **Claude Code:** run the prompt directly — `/mcp__guardian__guardian` (MCP prompts are namespaced; a bare `/guardian` is a custom-command name Claude Code reserves).
+- **Claude Desktop (classic chat):** open the `+` / prompt menu and pick **Guardian → Start Guardian**.
 
-It runs Guardian's cold-start onboarding: a one-line reassurance, what Guardian covers (and an honest "that's outside what I'm built for" if your question is out of scope), then a single question to route you — no intake form.
+It runs Guardian's cold-start onboarding: a one-line reassurance, what Guardian covers (and an honest "that's outside what I'm built for" if your question is out of scope), then a single question to route you — no intake form. The same kickoff runs whichever way you start, so the experience is identical.
 
 **Pass your situation to route immediately:**
 

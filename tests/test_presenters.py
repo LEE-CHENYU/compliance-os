@@ -94,7 +94,8 @@ def test_compliance_card_student_tax_table_and_verdict():
     assert "🔴" in out and "🔵" in out           # severity glyphs
     assert "Resident software" in out
     assert "2026-04-15" in out
-    assert "/tmp/p.pdf" in out
+    assert "p.pdf" in out          # basename only — never the absolute path
+    assert "/tmp/" not in out
 
 
 def test_compliance_card_fbar_verdict_from_bool():
@@ -181,3 +182,53 @@ def test_cross_check_pipe_in_value_is_escaped():
                       "sources": [{"value": "A|B", "docs": ["d1"]}]}],
     })
     assert "A\\|B" in out
+
+
+# ── security regressions (untrusted document content) ──────────────
+
+def test_cross_check_carriage_return_cannot_break_table_row():
+    # a \r in an untrusted document value must not inject a new table row
+    out = P.format_cross_check({
+        "chains_detected": [], "summary": {"mismatches": 1},
+        "findings": [{"category": "mismatch", "fact": "x", "severity": "high",
+                      "sources": [{"value": "Acme\rInc | x | injected", "docs": ["d1"]}]}],
+    })
+    # the value's line separators are collapsed and its pipes escaped
+    assert "\r" not in out
+    # the source row stays a single row: the injected pipes are neutralized
+    assert "x \\| injected" in out or "Acme Inc \\| x \\| injected" in out
+
+
+def test_compliance_card_never_leaks_absolute_path():
+    # 83(b) supplies only an absolute `path`; the card must show the basename
+    out = P.format_compliance_result("83b_election", {
+        "verdict": "pass",
+        "artifacts": [{"label": "Download 83(b) letter",
+                       "path": "/Users/someone/.guardian/marketplace/election_83b/mcp-abc123/artifacts/83b-election-letter.pdf"}],
+    })
+    assert "83b-election-letter.pdf" in out
+    assert "/Users/someone" not in out
+    assert "mcp-abc123" not in out
+
+
+def test_fact_wedge_value_newline_cannot_inject_markdown():
+    out = P.format_fact_wedge({
+        "fact": {"label": "Notes", "value": {"v": "ok\n# Fake heading"}, "detected_conflicts": []},
+        "superseded": None,
+    })
+    # the newline is collapsed — no injected heading line
+    assert "\n# Fake heading" not in out
+    assert "# Fake heading" in out  # text preserved, just on the same line
+
+
+def test_deadlines_none_days_does_not_raise():
+    # docstring promises never-raise even on a present-but-None days
+    out = P.format_deadlines([{"title": "A", "days": 5, "action": "x"},
+                              {"title": "B", "days": None, "action": "y"}])
+    assert "A" in out and "B" in out
+
+
+def test_cross_check_pluralizes_counts():
+    out = P.format_cross_check({"chains_detected": [], "summary": {"mismatches": 3, "deadlines": 2}, "findings": []})
+    assert "3 mismatches" in out
+    assert "2 deadlines" in out

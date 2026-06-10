@@ -17,7 +17,15 @@ Design notes:
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
 from typing import Any
+
+# Untrusted document content flows into these cards, and the "SHOW WHAT YOU DID"
+# instruction tells the model to echo them verbatim — so collapse every line /
+# format separator (\n, \r, U+2028/2029) that could break a table row or inject
+# a new Markdown line.
+_LINE_SEP = re.compile("[\r\n\u2028\u2029]+")
 
 # Restrained severity glyphs. Many callers use different vocabularies
 # (critical/warning/advisory vs high/medium/low vs requires/info) — map them
@@ -43,16 +51,20 @@ def _unwrap(value: Any) -> Any:
 
 
 def _fmt(value: Any) -> str:
-    """Render a fact value for display; em-dash for empty."""
+    """Render a fact value for INLINE display; em-dash for empty. Untrusted
+    document text gets line separators collapsed and backticks neutralized so
+    a poisoned value can't inject a new Markdown line or code span."""
     v = _unwrap(value)
     if v is None or v == "":
         return "—"
-    return str(v)
+    return _LINE_SEP.sub(" ", str(v)).replace("`", "\\`").strip()
 
 
 def _cell(text: Any) -> str:
-    """Escape a value so it can't break out of a Markdown table cell."""
-    return str(text if text is not None else "").replace("|", "\\|").replace("\n", " ").strip()
+    """Escape a value so it can't break out of a Markdown TABLE cell — every
+    line separator (\\n, \\r, U+2028/2029) collapsed and the pipe escaped."""
+    s = _LINE_SEP.sub(" ", str(text if text is not None else ""))
+    return s.replace("|", "\\|").strip()
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -74,7 +86,7 @@ def format_fact_wedge(result: dict) -> str:
         lines.append(f"**{label}** → {new}  ·  _was: {_fmt(superseded.get('value'))}_")
     else:
         lines.append(f"**{label}** → {new}")
-    lines.append("🔒 you locked this — now reused by every check, form, and deadline")
+    lines.append("🔒 you locked this — checks, forms, and deadlines will use this value when they run")
 
     conflicts = fact.get("detected_conflicts") or []
     if conflicts:
@@ -178,8 +190,11 @@ def format_compliance_result(check_type: str, result: dict) -> str:
         lines += ["", "**Next**"] + [f"- {s}" for s in steps[:4]]
 
     for art in (result.get("artifacts") or []):
-        path = art.get("path") or art.get("filename") or ""
-        lines.append(f"📄 {art.get('label', 'Download')} → `{path}`")
+        # Show only the basename — never the absolute, DATA_DIR-rooted path,
+        # which would leak the home-dir layout and an internal order UUID.
+        name = art.get("filename") or Path(str(art.get("path") or "")).name
+        if name:
+            lines.append(f"📄 {_cell(art.get('label', 'Download'))} → `{_cell(name)}`")
     return "\n".join(lines)
 
 
@@ -209,7 +224,10 @@ def format_deadlines(deadlines: list) -> str:
     deadlines = deadlines or []
     if not deadlines:
         return "✓ No upcoming deadlines."
-    deadlines = sorted(deadlines, key=lambda d: d.get("days", 9999))
+    deadlines = sorted(
+        deadlines,
+        key=lambda d: d["days"] if isinstance(d.get("days"), (int, float)) else 9999,
+    )
     lines = ["### Deadlines", "", "| When | Item | Do |", "|---|---|---|"]
     for d in deadlines:
         days = d.get("days")
@@ -241,11 +259,13 @@ def format_cross_check(result: dict) -> str:
 
     counts = []
     if summary.get("mismatches"):
-        counts.append(f"{summary['mismatches']} mismatch")
+        n = summary["mismatches"]
+        counts.append(f"{n} mismatch{'es' if n != 1 else ''}")
     if summary.get("missing"):
         counts.append(f"{summary['missing']} missing")
     if summary.get("deadlines"):
-        counts.append(f"{summary['deadlines']} deadline")
+        n = summary["deadlines"]
+        counts.append(f"{n} deadline{'s' if n != 1 else ''}")
     if counts:
         lines.append("**" + " · ".join(counts) + "**")
     elif not findings:

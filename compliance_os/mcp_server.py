@@ -200,9 +200,9 @@ GUARDIAN_INSTRUCTIONS = (
     "employer-vs-petitioner, EAD date, operating system), call set_user_fact on "
     "the workflow track in the SAME turn -- do not defer it, or the data room "
     "stays empty across turns and you will re-ask.\n\n"
-    "SHOW WHAT YOU DID: several tools (start_guardian, set_user_fact, "
-    "record_extracted_facts, run_compliance_check, cross_check_filings, "
-    "guardian_risks, guardian_deadlines) now return a ready-to-display Markdown "
+    "SHOW WHAT YOU DID: several tools (set_user_fact, record_extracted_facts, "
+    "run_compliance_check, cross_check_filings, guardian_risks, "
+    "guardian_deadlines) now return a ready-to-display Markdown "
     "card -- a source-of-truth wedge (what locked, old -> new, from which "
     "document), a result table, a risk/deadline list, or a mismatch diff. When a "
     "tool returns such a card, SHOW IT to the user as-is (keep its headings and "
@@ -2471,7 +2471,10 @@ def cross_check_filings(chain: str = "") -> str:
     """
     if not is_local_mode():
         return json.dumps({"error": "cross_check_filings is only available in local mode."})
-    return format_cross_check(local_cross_check(chain))
+    res = local_cross_check(chain)
+    if isinstance(res, dict) and "error" in res:
+        return json.dumps(res, default=str, indent=2)
+    return format_cross_check(res)
 
 
 @mcp.tool(
