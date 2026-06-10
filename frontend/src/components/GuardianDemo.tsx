@@ -58,7 +58,8 @@ const CSS = `
 /* The card is a fixed-height flex column; the transcript flexes to absorb any
    change (e.g. the status line toggling) so the card — and the content below
    it on the page — never moves across the loop. */
-.gd-root .transcript{position:relative; z-index:1; padding:20px 20px 6px; flex:1 1 auto; min-height:0; overflow:hidden; display:flex; flex-direction:column; gap:13px}
+.gd-root .transcript{position:relative; z-index:1; padding:20px 20px 6px; flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; scrollbar-width:none; -ms-overflow-style:none; display:flex; flex-direction:column; gap:13px}
+.gd-root .transcript::-webkit-scrollbar{display:none}
 
 .gd-root .item{opacity:0; transform:translateY(7px); transition:opacity .35s ease, transform .35s ease}
 .gd-root .item.in{opacity:1; transform:none}
@@ -203,9 +204,12 @@ export default function GuardianDemo() {
       e.className = "item " + cls;
       e.innerHTML = html;
       T.appendChild(e);
-      requestAnimationFrame(() => e.classList.add("in"));
+      requestAnimationFrame(() => { e.classList.add("in"); T.scrollTop = T.scrollHeight; });
+      T.scrollTop = T.scrollHeight;
       return e;
     }
+    // keep the newest content (and the composer) in view; older items scroll up
+    function scrollDown() { T.scrollTop = T.scrollHeight; }
     function setStatus(t: string) {
       statusLabel.textContent = t;
       status.classList.add("on");
@@ -241,6 +245,7 @@ export default function GuardianDemo() {
       await sleep(opts.work || 780);
       e.querySelector(".bullet")!.classList.add("done");
       e.querySelector(".step-result")!.classList.add("show");
+      scrollDown();
       await sleep(opts.after || 360);
     }
 
@@ -306,7 +311,7 @@ export default function GuardianDemo() {
           await step(
             "Cross-checked your source-of-truth facts",
             "get_user_facts",
-            "F-1 · program started Aug 2024 · 2 terms complete · DSO on file",
+            "F-1 · started Aug 2024 · 2 terms done · DSO on file",
             { work: 880 }
           );
 
@@ -314,7 +319,7 @@ export default function GuardianDemo() {
           await step(
             "Ran the CPT eligibility & timing check",
             "run_compliance_check",
-            "Risk: no work before CPT is authorized on a new I-20 = unauthorized employment",
+            "Risk: working before CPT is authorized = unauthorized employment",
             { risk: true, work: 900 }
           );
 
@@ -328,11 +333,12 @@ export default function GuardianDemo() {
           );
           const bub = a.querySelector(".bubble") as HTMLElement;
           const ANSWER =
-            "You're CPT-eligible — 2 terms done — and a paid internship is fine. The one hard rule: don't work a single day before CPT is authorized on a new I-20, and you start in 2 weeks, so email your DSO today. ";
+            "You're CPT-eligible — 2 terms done — so a paid internship is fine. The hard rule: no work before CPT is authorized on a new I-20. You start in 2 weeks, so email your DSO today. ";
           const ASK =
-            "One fork so I route you right: is this someone else's company, or one you co-founded?";
+            "One fork so I route you right: someone else's company, or one you co-founded?";
           for (const ch of ANSWER) {
             bub.textContent += ch;
+            scrollDown();
             await sleep(13);
           }
           const span = document.createElement("span");
@@ -340,6 +346,7 @@ export default function GuardianDemo() {
           bub.appendChild(span);
           for (const ch of ASK) {
             span.textContent += ch;
+            scrollDown();
             await sleep(13);
           }
 
