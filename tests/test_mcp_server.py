@@ -133,13 +133,13 @@ class TestFormFilingTools:
                 {"institution_name": "MUFG", "country": "Japan", "max_balance_usd": 8000},
             ]
         }
-        result = json.loads(
-            run_compliance_check(
-                check_type="fbar",
-                inputs_json=json.dumps(inputs),
-            )
+        # run_compliance_check now returns a ready-to-show Markdown card.
+        card = run_compliance_check(
+            check_type="fbar",
+            inputs_json=json.dumps(inputs),
         )
-        assert result.get("aggregate_max_balance_usd") == 13000.0
+        assert "FBAR check" in card
+        assert "13,000" in card  # aggregate balance surfaced in the card
 
     def test_run_compliance_check_unknown_type(self):
         result = json.loads(
@@ -223,11 +223,13 @@ class TestContextToolsMocked:
                 {"title": "Tax return", "date": "2026-10-15", "days": 183},
             ],
         }
+        # guardian_deadlines now returns a ready-to-show Markdown table card.
         result = _run(guardian_deadlines())
-        lines = result.strip().split("\n")
-        assert "OVERDUE" in lines[2]
-        assert "30 days" in lines[3]
-        assert "183 days" in lines[4]
+        assert "15d overdue" in result
+        assert "30d" in result
+        assert "2026-10-15" in result  # far-out item shows its date
+        # sorted by urgency: overdue → soon → later
+        assert result.index("I-983") < result.index("FBAR") < result.index("Tax return")
 
     @patch("compliance_os.mcp_server._api_get", new_callable=AsyncMock)
     def test_documents_empty(self, mock_get):

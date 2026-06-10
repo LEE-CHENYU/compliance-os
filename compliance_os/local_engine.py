@@ -245,11 +245,23 @@ def local_record_extracted_facts(doc_id: str, facts: list) -> dict:
     from compliance_os.web.models.tables_v2 import DocumentRow
     from compliance_os.web.services.document_store import _upsert_extracted_field
 
+    def _unwrap(v):
+        return v["v"] if isinstance(v, dict) and "v" in v else v
+
     db = next(get_session())
     try:
         doc = db.get(DocumentRow, doc_id)
         if doc is None:
             return {"error": f"document not found: {doc_id}"}
+
+        user_id = get_local_user_id(db)
+        # Snapshot canonical facts BEFORE recording so we can report a precise
+        # before→after diff (the wedge) without threading deltas through the
+        # document_store projection.
+        before = {
+            r.fact_key: {"value": _unwrap(r.value), "label": r.label}
+            for r in get_active_facts(db, user_id=user_id)
+        }
 
         recorded: list[str] = []
         for f in facts:
@@ -268,10 +280,20 @@ def local_record_extracted_facts(doc_id: str, facts: list) -> dict:
             recorded.append(field_name)
         db.commit()
 
-        user_id = get_local_user_id(db)
         rows = get_active_facts(db, user_id=user_id)
+        changes = []
+        for r in rows:
+            new_v = _unwrap(r.value)
+            prior = before.get(r.fact_key)
+            if prior is None:
+                changes.append({"fact_key": r.fact_key, "label": r.label,
+                                "old": None, "new": new_v})
+            elif prior["value"] != new_v:
+                changes.append({"fact_key": r.fact_key, "label": r.label,
+                                "old": prior["value"], "new": new_v})
         return {
             "recorded_fields": recorded,
+            "changes": changes,
             "facts": [serialize_fact(r) for r in rows],
             "conflicts": [serialize_fact(r) for r in rows if r.detected_conflicts],
         }

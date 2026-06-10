@@ -91,6 +91,7 @@ MANIFEST = {
         },
     },
     "tools": [
+        {"name": "start_guardian",       "description": "Deterministically begin Guardian onboarding (type /guardian)"},
         {"name": "guardian_status",      "description": "Compliance findings, deadlines, key facts"},
         {"name": "guardian_deadlines",   "description": "Upcoming deadlines sorted by urgency"},
         {"name": "guardian_risks",       "description": "Active compliance findings by severity"},

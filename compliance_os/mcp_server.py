@@ -34,6 +34,14 @@ from compliance_os.local_engine import (
     local_share_data_room,
     local_upload_document,
 )
+from compliance_os.presenters import (
+    format_compliance_result,
+    format_cross_check,
+    format_deadlines,
+    format_fact_wedge,
+    format_record_wedge,
+    format_risks,
+)
 
 class GatedMCP(FastMCP):
     """FastMCP that gates every tool dispatch on license activation when
@@ -98,6 +106,12 @@ GUARDIAN_INSTRUCTIONS = (
     "matters -- for those say honestly 'that's outside what I'm built for; "
     "you'd want an immigration attorney or USCIS.gov' rather than guessing. "
     "Fail closed, never into the nearest box.\n\n"
+    "DETERMINISTIC START: if the user's message is exactly `/guardian` or begins "
+    "with `/guardian ` (e.g. `/guardian F-1 internship in 2 weeks`), IMMEDIATELY "
+    "call the start_guardian tool, passing everything the user typed after "
+    "`/guardian ` as `situation`, before any other tool and without asking a "
+    "clarifying question first. A typed `/guardian` is an explicit command to "
+    "begin -- do not treat it as ordinary prose.\n\n"
     "COLD START (first interaction): you are a blank slate -- you cannot see "
     "the user's files, email, or situation until they tell you or point you at "
     "a document. Do NOT call read-state tools (guardian_status / "
@@ -186,6 +200,15 @@ GUARDIAN_INSTRUCTIONS = (
     "employer-vs-petitioner, EAD date, operating system), call set_user_fact on "
     "the workflow track in the SAME turn -- do not defer it, or the data room "
     "stays empty across turns and you will re-ask.\n\n"
+    "SHOW WHAT YOU DID: several tools (start_guardian, set_user_fact, "
+    "record_extracted_facts, run_compliance_check, cross_check_filings, "
+    "guardian_risks, guardian_deadlines) now return a ready-to-display Markdown "
+    "card -- a source-of-truth wedge (what locked, old -> new, from which "
+    "document), a result table, a risk/deadline list, or a mismatch diff. When a "
+    "tool returns such a card, SHOW IT to the user as-is (keep its headings and "
+    "tables) rather than re-summarizing it into prose or JSON; you may add a "
+    "one-line lead-in or a follow-up question, but do not hide or restate the "
+    "card. This is how the user sees, concretely, what Guardian just did.\n\n"
     "GENERAL RULES: be calm and procedural, never alarmist; use plain English "
     "and briefly explain terms like SEVIS, DSO, FBAR; lead with the most urgent "
     "item; Guardian provides compliance risk detection, not legal advice; "
@@ -201,18 +224,9 @@ GUARDIAN_INSTRUCTIONS = (
 mcp = GatedMCP("guardian", instructions=GUARDIAN_INSTRUCTIONS)
 
 
-@mcp.prompt(title="Start Guardian")
-def guardian(situation: str = "") -> str:
-    """Deterministically start Guardian's cold-start onboarding.
-
-    Invoke this (e.g. /guardian) to engage Guardian on purpose instead of
-    relying on topic detection. Optionally pass your situation to route
-    immediately — e.g. "F-1 student, paid internship in 2 weeks" or
-    "foreign-owned US LLC, just heard about a 5472 penalty".
-
-    Args:
-        situation: Optional one-line description of what you're dealing with.
-    """
+def _guardian_kickoff(situation: str = "") -> str:
+    """The cold-start onboarding kickoff text. Shared by the /guardian prompt
+    and the start_guardian tool so both entry points behave identically."""
     situation = (situation or "").strip()
     if situation:
         return (
@@ -233,6 +247,47 @@ def guardian(situation: str = "") -> str:
         "dealing with, and invite any date or dollar figure. Don't open with a form, "
         "and don't call read-state tools yet (they're empty at a cold start)."
     )
+
+
+@mcp.prompt(title="Start Guardian")
+def guardian(situation: str = "") -> str:
+    """Deterministically start Guardian's cold-start onboarding.
+
+    Invoke this (e.g. /guardian) to engage Guardian on purpose instead of
+    relying on topic detection. Optionally pass your situation to route
+    immediately — e.g. "F-1 student, paid internship in 2 weeks" or
+    "foreign-owned US LLC, just heard about a 5472 penalty".
+
+    Args:
+        situation: Optional one-line description of what you're dealing with.
+    """
+    return _guardian_kickoff(situation)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Start Guardian",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def start_guardian(situation: str = "") -> str:
+    """Begin Guardian's cold-start onboarding. CALL THIS IMMEDIATELY — before
+    any other tool — the moment the user's message is `/guardian` or begins
+    with `/guardian ` (for example `/guardian F-1 internship in 2 weeks`).
+    Pass everything the user typed after `/guardian ` as `situation`. Also call
+    it when the user explicitly asks to start, launch, or open Guardian. Do not
+    ask a clarifying question first — just start.
+
+    This is the deterministic entry point for tool-only surfaces (e.g. Cowork)
+    where the /guardian prompt is not typeable. It returns the onboarding
+    kickoff for you to carry out; follow it and proceed.
+
+    Args:
+        situation: Everything the user typed after `/guardian` (optional).
+    """
+    return _guardian_kickoff(situation)
 
 
 # ─── Configuration ───────────────────────────────────────────────
@@ -611,21 +666,7 @@ async def guardian_deadlines() -> str:
     except RuntimeError as exc:
         return f"Error: {exc}"
 
-    deadlines = timeline.get("deadlines", [])
-    if not deadlines:
-        return "No upcoming deadlines."
-
-    lines = ["# Upcoming Deadlines", ""]
-    for d in sorted(deadlines, key=lambda x: x.get("days", 999)):
-        days = d.get("days", 0)
-        title, date_str = d.get("title", ""), d.get("date", "")
-        if days < 0:
-            lines.append(f"- OVERDUE ({-days}d ago): {title} -- {date_str}")
-        elif days <= 30:
-            lines.append(f"- **{days} days:** {title} -- {date_str}")
-        else:
-            lines.append(f"- {days} days: {title} -- {date_str}")
-    return "\n".join(lines)
+    return format_deadlines(timeline.get("deadlines", []))
 
 
 @mcp.tool(
@@ -645,25 +686,7 @@ async def guardian_risks() -> str:
     except RuntimeError as exc:
         return f"Error: {exc}"
 
-    findings = timeline.get("findings", [])
-    if not findings:
-        return "No active compliance findings."
-
-    by_severity: dict[str, list[dict]] = {}
-    for f in findings:
-        by_severity.setdefault(f.get("severity", "info"), []).append(f)
-
-    lines = ["# Compliance Findings", ""]
-    for sev in ["critical", "warning", "advisory", "info"]:
-        group = by_severity.get(sev, [])
-        if group:
-            lines.append(f"## {sev.title()} ({len(group)})")
-            for f in group:
-                lines.append(f"- **{f.get('title', '')}**")
-                if f.get("action"):
-                    lines.append(f"  Action: {f['action']}")
-            lines.append("")
-    return "\n".join(lines)
+    return format_risks(timeline.get("findings", []))
 
 
 @mcp.tool(
@@ -875,9 +898,10 @@ def record_extracted_facts(doc_id: str, facts: list) -> str:
         return json.dumps(
             {"error": "record_extracted_facts is only available in local mode."}
         )
-    return json.dumps(
-        local_record_extracted_facts(doc_id, facts), default=str, indent=2
-    )
+    res = local_record_extracted_facts(doc_id, facts)
+    if isinstance(res, dict) and "error" in res:
+        return json.dumps(res, default=str, indent=2)
+    return format_record_wedge(res)
 
 
 # save_artifact is exposed to the model, which can be steered by untrusted
@@ -1246,10 +1270,11 @@ async def set_user_fact(
             or when correcting a default).
     """
     if is_local_mode():
-        return json.dumps(
-            local_set_fact(fact_key, value, notes=notes, label=label),
-            default=str, indent=2,
-        )
+        res = local_set_fact(fact_key, value, notes=notes, label=label)
+        # Return a ready-to-show wedge (old→new) instead of raw JSON, so the
+        # user sees what just changed. Fall back to JSON on an unexpected shape.
+        return format_fact_wedge(res) if isinstance(res, dict) and res.get("fact") \
+            else json.dumps(res, default=str, indent=2)
     payload: dict = {"fact_key": fact_key, "value": value}
     if notes:
         payload["notes"] = notes
@@ -1433,7 +1458,9 @@ def run_compliance_check(
     try:
         order_id = f"mcp-{uuid.uuid4().hex[:12]}"
         result = func(order_id, inputs)
-        return json.dumps(result, default=str)
+        # Render a ready-to-show result card; the structured detail (verdict,
+        # findings, deadline, artifacts) all lands in the card.
+        return format_compliance_result(check_type, result)
     except Exception as exc:
         return json.dumps({"error": str(exc)})
 
@@ -2444,7 +2471,7 @@ def cross_check_filings(chain: str = "") -> str:
     """
     if not is_local_mode():
         return json.dumps({"error": "cross_check_filings is only available in local mode."})
-    return json.dumps(local_cross_check(chain), default=str, indent=2)
+    return format_cross_check(local_cross_check(chain))
 
 
 @mcp.tool(

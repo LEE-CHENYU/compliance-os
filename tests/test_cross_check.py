@@ -165,7 +165,6 @@ def test_cross_check_end_to_end(local_db):
 
 
 def test_mcp_cross_check_filings_tool(local_db):
-    import json
     from compliance_os import local_engine, mcp_server
 
     db = next(local_db.get_session())
@@ -173,5 +172,9 @@ def test_mcp_cross_check_filings_tool(local_db):
         _seed(db, [("i20", {"sevis_number": "N1"}), ("ead", {"valid_to": "2099-01-01"})])
     finally:
         db.close()
-    out = json.loads(mcp_server.cross_check_filings())
-    assert "findings" in out and "chains_detected" in out
+    # cross_check_filings now returns a ready-to-show Markdown card.
+    out = mcp_server.cross_check_filings()
+    assert "Cross-check" in out
+    # and the structured engine still returns the raw shape underneath
+    raw = local_engine.local_cross_check("")
+    assert "findings" in raw and "chains_detected" in raw

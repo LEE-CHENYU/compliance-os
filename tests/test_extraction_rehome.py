@@ -106,12 +106,12 @@ def test_mcp_record_extracted_facts_tool(local_db):
     src = Path(os.environ["GUARDIAN_HOME"]) / "i20b.txt"
     src.write_text("SEVIS ID: N0002223333\n")
     doc_id = local_engine.local_upload_document(str(src), doc_type="i20")["doc_id"]
-    out = json.loads(
-        mcp_server.record_extracted_facts(
-            doc_id, [{"field_name": "sevis_number", "value": "N0002223333"}]
-        )
+    # record_extracted_facts now returns a ready-to-show Markdown wedge.
+    out = mcp_server.record_extracted_facts(
+        doc_id, [{"field_name": "sevis_number", "value": "N0002223333"}]
     )
-    assert "sevis_number" in out["recorded_fields"]
+    assert "source of truth" in out.lower()
+    assert "N0002223333" in out  # the captured value appears in the wedge
 
 
 def test_local_ask_grounding_returns_context_and_refs(local_db):
