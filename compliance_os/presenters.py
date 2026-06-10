@@ -281,11 +281,11 @@ def format_cross_check(result: dict) -> str:
                 docs = ", ".join(f"`{_cell(d)}`" for d in (s.get("docs") or []))
                 lines.append(f"| {_cell(s.get('value'))} | {docs} |")
             if f.get("recommended_action"):
-                lines.append(f"→ {f['recommended_action']}")
+                lines.append(f"→ {_cell(f.get('recommended_action'))}")
         elif cat == "mismatch":  # date-order relationship — no sources table
             lines.append(f"{glyph} {_cell(f.get('message') or f.get('fact'))}")
             if f.get("recommended_action"):
-                lines.append(f"→ {f['recommended_action']}")
+                lines.append(f"→ {_cell(f.get('recommended_action'))}")
         elif cat == "missing":
             lines.append(
                 f"{glyph} Missing: **{_cell(f.get('label') or f.get('doc_type'))}** — "
