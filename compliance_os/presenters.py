@@ -180,10 +180,61 @@ def format_cascade(cascade: dict) -> str:
 
 
 def _with_cascade(card: str, result: dict) -> str:
-    """Append the cascade section to a wedge card when the write triggered
-    something new."""
-    casc = format_cascade((result or {}).get("cascade"))
-    return card + ("\n\n" + casc if casc else "")
+    """Append the cascade section (and a data-room sync line) to a wedge card."""
+    result = result or {}
+    casc = format_cascade(result.get("cascade"))
+    out = card + ("\n\n" + casc if casc else "")
+    dr = result.get("data_room")
+    if isinstance(dr, dict) and dr.get("total"):
+        out += (
+            f"\n\n📁 Data room synced — {dr['total']} file"
+            f"{'s' if dr['total'] != 1 else ''} filed in `{_cell(dr.get('root'))}`"
+        )
+    return out
+
+
+# ──────────────────────────────────────────────────────────────────
+#  ⑤ Canonical data room (build_data_room / publish_data_room)
+# ──────────────────────────────────────────────────────────────────
+
+def format_data_room(summary: dict) -> str:
+    """Card for a data-room sync: the canonical tree + the file↔data manifest."""
+    summary = summary or {}
+    total = summary.get("total", 0)
+    lines = ["### 📁 Data room"]
+    if not total:
+        lines.append("Empty so far — upload a document and it will be filed automatically.")
+        return "\n".join(lines)
+    cats = summary.get("categories") or {}
+    cat_str = " · ".join(f"{c} {n}" for c, n in sorted(cats.items()))
+    lines += [
+        "",
+        f"**{total} file{'s' if total != 1 else ''}** — {cat_str}",
+        f"copied {summary.get('copied', 0)} · refreshed {summary.get('updated', 0)} "
+        f"· unchanged {summary.get('unchanged', 0)}"
+        + (f" · ⚠ {summary['missing_source']} missing on disk" if summary.get("missing_source") else ""),
+        "",
+        f"Tree: `{_cell(summary.get('root'))}` (files are copies — originals stay in the upload store)",
+        f"Mapping: `manifest.json` + `INDEX.md` link every file to its extracted fields and facts",
+    ]
+    return "\n".join(lines)
+
+
+def format_publish_result(result: dict) -> str:
+    """Card for a published data room: the live share URL."""
+    result = result or {}
+    lines = ["### 🔗 Data room published", ""]
+    if result.get("url"):
+        lines.append(f"**{result['url']}**")
+        lines.append("")
+        details = [
+            f"template `{_cell(result.get('template_id'))}`" if result.get("template_id") else "",
+            f"{result['files']} files" if result.get("files") else "",
+            f"expires in {result['expires_in_days']} days" if result.get("expires_in_days") else "",
+        ]
+        lines.append(" · ".join(d for d in details if d))
+        lines.append("Anyone with this link can view (read-only) until it expires — share it deliberately.")
+    return "\n".join(lines)
 
 
 # ──────────────────────────────────────────────────────────────────

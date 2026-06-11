@@ -115,6 +115,8 @@ MANIFEST = {
         {"name": "get_user_facts",       "description": "Read your facts source-of-truth"},
         {"name": "set_user_fact",        "description": "Lock a decided value into your facts source-of-truth"},
         {"name": "resolve_fact_conflict", "description": "Resolve a conflicting fact"},
+        {"name": "build_data_room",      "description": "File documents into the canonical data-room folder tree + manifest"},
+        {"name": "publish_data_room",    "description": "Publish your data room as a private share URL (with your approval)"},
         {"name": "share_data_room",      "description": "Upload your data room to Guardian cloud (with your approval)"},
         {"name": "list_egress_consents", "description": "List approved data-room sharing consents"},
         {"name": "revoke_egress_consent", "description": "Revoke a data-room sharing consent"},

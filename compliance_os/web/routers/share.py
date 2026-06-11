@@ -15,7 +15,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 
-from compliance_os.case_templates import CPA_TEMPLATE, H1B_TEMPLATE, match_folder
+from compliance_os.case_templates import TEMPLATES, match_folder
 from compliance_os.case_templates.schema import Template
 from compliance_os.web.services.case_summary import build_summary
 from compliance_os.web.services.share_tokens import decode_share_token
@@ -23,10 +23,10 @@ from compliance_os.web.services.share_tokens import decode_share_token
 router = APIRouter(prefix="/api/share", tags=["share"])
 
 
-_TEMPLATES: dict[str, Template] = {
-    "h1b_petition": H1B_TEMPLATE,
-    "cpa_nr_entity": CPA_TEMPLATE,
-}
+# The full case-template registry (h1b, cpa, founder_h1b, form_5472, eb1a,
+# dependent_status + aliases) — any registered template id in a share token
+# renders.
+_TEMPLATES: dict[str, Template] = TEMPLATES
 
 
 def _resolve(token: str) -> tuple[dict, Path, Template]:
@@ -34,7 +34,7 @@ def _resolve(token: str) -> tuple[dict, Path, Template]:
     folder = Path(payload["folder"]).expanduser().resolve()
     if not folder.is_dir():
         raise HTTPException(404, "Shared folder no longer exists")
-    template = _TEMPLATES.get(payload["template_id"])
+    template = _TEMPLATES.get(str(payload["template_id"]).lower())
     if template is None:
         raise HTTPException(400, f"Unknown template '{payload['template_id']}'")
     return payload, folder, template

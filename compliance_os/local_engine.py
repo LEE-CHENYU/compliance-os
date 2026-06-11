@@ -234,11 +234,20 @@ def local_upload_document(file_path: str, doc_type: str = "") -> dict:
         doc.ocr_text = text
         db.commit()
 
+        # Actively maintain the canonical data-room mirror (copy, never move).
+        # Best-effort: a sync failure must never break the upload contract.
+        try:
+            from compliance_os.dataroom import sync_data_room
+            data_room = sync_data_room(db, user_id)
+        except Exception:
+            data_room = None
+
         return {
             "doc_id": doc.id,
             "doc_type": doc.doc_type,
             "text": text[:50_000],
             "extraction_schema": schema_for_doc_type(doc.doc_type),
+            "data_room": data_room,
         }
     finally:
         db.close()
@@ -311,10 +320,18 @@ def local_record_extracted_facts(doc_id: str, facts: list) -> dict:
         cascade = cascade_after_write(
             db, user_id, [c["fact_key"] for c in changes], before_cc
         )
+        # Refresh the canonical mirror so manifest.json / INDEX.md pick up the
+        # newly recorded file→data mapping. Best-effort.
+        try:
+            from compliance_os.dataroom import sync_data_room
+            data_room = sync_data_room(db, user_id)
+        except Exception:
+            data_room = None
         return {
             "recorded_fields": recorded,
             "changes": changes,
             "cascade": cascade,
+            "data_room": data_room,
             "facts": [serialize_fact(r) for r in rows],
             "conflicts": [serialize_fact(r) for r in rows if r.detected_conflicts],
         }
@@ -438,3 +455,132 @@ def local_share_data_room(purpose: str, confirm: bool = False, remember: str = "
     consent.record_consent(purpose, remember, destination="guardian_cloud",
                            data_categories=_SHARE_DATA_CATEGORIES)
     return _do_share()
+
+
+def local_build_data_room() -> dict:
+    """Run the canonical data-room sync (copy-mirror + manifest) on demand."""
+    from compliance_os.dataroom import sync_data_room
+
+    db = next(get_session())
+    try:
+        user_id = get_local_user_id(db)
+        return sync_data_room(db, user_id)
+    finally:
+        db.close()
+
+
+def _zip_dir(root) -> bytes:
+    """Zip a directory tree (paths relative to root) into bytes."""
+    import io
+    import zipfile
+    from pathlib import Path
+
+    root = Path(root)
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for p in sorted(root.rglob("*")):
+            if p.is_file():
+                zf.write(p, p.relative_to(root).as_posix())
+    return buf.getvalue()
+
+
+def _post_publish_dataroom(
+    zip_bytes: bytes, template_id: str, recipient: str,
+    expires_in_days: int, token: str,
+) -> dict:
+    """POST the data-room zip to the cloud publish endpoint; returns the
+    share URL payload. Real network."""
+    import json
+    import uuid
+    from urllib import error, request
+
+    boundary = uuid.uuid4().hex
+    fields = {
+        "template_id": template_id,
+        "recipient": recipient,
+        "expires_in_days": str(expires_in_days),
+    }
+    parts = []
+    for name, value in fields.items():
+        parts.append(
+            f"--{boundary}\r\nContent-Disposition: form-data; "
+            f"name=\"{name}\"\r\n\r\n{value}\r\n".encode()
+        )
+    parts.append(
+        f"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; "
+        f"filename=\"data_room.zip\"\r\nContent-Type: application/zip\r\n\r\n".encode()
+    )
+    parts.append(zip_bytes)
+    parts.append(f"\r\n--{boundary}--\r\n".encode())
+    body = b"".join(parts)
+    headers = {"Content-Type": f"multipart/form-data; boundary={boundary}"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = request.Request(
+        f"{GUARDIAN_CLOUD_URL}/api/context/publish-dataroom",
+        data=body, headers=headers, method="POST",
+    )
+    try:
+        with request.urlopen(req, timeout=120) as resp:
+            payload = json.loads(resp.read().decode())
+    except error.HTTPError as exc:
+        raise RuntimeError(f"publish-dataroom failed ({exc.code}): {exc.read().decode()[:200]}") from exc
+    except (error.URLError, ValueError) as exc:
+        raise RuntimeError(f"publish-dataroom failed: {exc}") from exc
+    if not payload.get("url"):
+        raise RuntimeError(f"publish-dataroom returned no url: {payload}")
+    return payload
+
+
+def local_publish_data_room(
+    template_id: str = "h1b_petition", recipient: str = "",
+    expires_in_days: int = 14, confirm: bool = False, remember: str = "once",
+) -> dict:
+    """Consent-gated: sync the canonical data room, upload it to Guardian
+    cloud, and get back a private share URL rendered by the existing web
+    data-room template. Same consent discipline as share_data_room."""
+    from compliance_os import consent
+    from compliance_os.dataroom import dataroom_root, sync_data_room
+
+    purpose = "dataroom-view"
+
+    def _do_publish() -> dict:
+        db = next(get_session())
+        try:
+            user_id = get_local_user_id(db)
+            summary = sync_data_room(db, user_id)
+        finally:
+            db.close()
+        zip_bytes = _zip_dir(dataroom_root())
+        result = _post_publish_dataroom(
+            zip_bytes, template_id, recipient,
+            expires_in_days, _resolve_license_token(),
+        )
+        return {
+            "status": "published",
+            "url": result.get("url"),
+            "reference_id": result.get("reference_id"),
+            "expires_in_days": result.get("expires_in_days", expires_in_days),
+            "files": summary.get("total"),
+            "template_id": template_id,
+        }
+
+    if consent.has_consent(purpose):
+        return _do_publish()
+    if not confirm:
+        return {
+            "status": "consent_required",
+            "purpose": purpose,
+            "destination": "Guardian cloud",
+            "data_categories": _SHARE_DATA_CATEGORIES,
+            "message": (
+                "This will upload your data room (documents + facts manifest) to "
+                "Guardian's cloud and create a private share link rendered at "
+                "guardiancompliance.app. Nothing is sent unless you approve. To "
+                "proceed, call again with confirm=true and remember set to "
+                "'once', 'session', or 'always'. To decline, do nothing."
+            ),
+        }
+    consent.record_consent(purpose, remember, destination="guardian_cloud",
+                           data_categories=_SHARE_DATA_CATEGORIES)
+    return _do_publish()

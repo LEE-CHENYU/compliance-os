@@ -27,8 +27,10 @@ from compliance_os.local_engine import (
     force_local_embeddings,
     is_local_mode,
     local_ask_grounding,
+    local_build_data_room,
     local_cross_check,
     local_get_facts,
+    local_publish_data_room,
     local_record_extracted_facts,
     local_resolve_conflict,
     local_set_fact,
@@ -38,8 +40,10 @@ from compliance_os.local_engine import (
 from compliance_os.presenters import (
     format_compliance_result,
     format_cross_check,
+    format_data_room,
     format_deadlines,
     format_fact_wedge,
+    format_publish_result,
     format_record_wedge,
     format_risks,
 )
@@ -201,9 +205,20 @@ GUARDIAN_INSTRUCTIONS = (
     "employer-vs-petitioner, EAD date, operating system), call set_user_fact on "
     "the workflow track in the SAME turn -- do not defer it, or the data room "
     "stays empty across turns and you will re-ask.\n\n"
+    "DATA ROOM: Guardian actively mirrors every uploaded document into a "
+    "canonical folder tree at ~/.guardian/data-room/<category>/<doc_type>/ "
+    "(files are COPIES — originals stay in the upload store) with manifest.json "
+    "+ INDEX.md mapping each file to its extracted fields and source-of-truth "
+    "facts; this happens automatically on upload_document and "
+    "record_extracted_facts. Call build_data_room to re-sync on demand or to "
+    "show the user where their organized files live. publish_data_room "
+    "(consent-gated, like share_data_room) uploads the data room and returns a "
+    "private read-only URL rendered by Guardian's web data-room template -- "
+    "offer it when the user wants to share their case with a lawyer/CPA or "
+    "view it as a web page.\n\n"
     "SHOW WHAT YOU DID: several tools (set_user_fact, record_extracted_facts, "
     "run_compliance_check, cross_check_filings, guardian_risks, "
-    "guardian_deadlines) now return a ready-to-display Markdown "
+    "guardian_deadlines, build_data_room, publish_data_room) return a ready-to-display Markdown "
     "card -- a source-of-truth wedge (what locked, old -> new, from which "
     "document), a result table, a risk/deadline list, or a mismatch diff. When a "
     "tool returns such a card, SHOW IT to the user as-is (keep its headings and "
@@ -2556,6 +2571,73 @@ def share_data_room(purpose: str, confirm: bool = False, remember: str = "once")
     if not is_local_mode():
         return json.dumps({"error": "share_data_room is only available in local mode."})
     return json.dumps(local_share_data_room(purpose, confirm=confirm, remember=remember), default=str, indent=2)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Build canonical data room",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=True,
+    ),
+)
+def build_data_room() -> str:
+    """Sync the canonical on-disk data room: every uploaded document is
+    COPIED (never moved) into ~/.guardian/data-room/<category>/<doc_type>/,
+    and manifest.json + INDEX.md map each file to its extracted fields and
+    the source-of-truth facts it asserted. Runs automatically after uploads
+    and fact recording; call this to rebuild on demand or to show the user
+    where their organized files live. Local mode only; nothing leaves the
+    machine."""
+    if not is_local_mode():
+        return json.dumps({"error": "build_data_room is only available in local mode."})
+    res = local_build_data_room()
+    if isinstance(res, dict) and "error" in res:
+        return json.dumps(res, default=str, indent=2)
+    return format_data_room(res)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Publish data room to a share URL",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+    ),
+)
+def publish_data_room(
+    template_id: str = "h1b_petition",
+    recipient: str = "",
+    expires_in_days: int = 14,
+    confirm: bool = False,
+    remember: str = "once",
+) -> str:
+    """Publish the user's data room as a private read-only web page and
+    return the URL — rendered by Guardian's existing share template
+    (coverage by section, key facts, timeline, file previews/download).
+    ONLY with explicit approval: with no prior 'always' grant and
+    confirm=false this returns a consent request describing exactly what
+    will be uploaded and where; show it to the user and, if they approve,
+    call again with confirm=true. Local mode only.
+
+    Args:
+        template_id: Case template the web view renders against — h1b /
+            h1b_petition, cpa / cpa_nr_entity, founder_h1b, form_5472,
+            eb1a, or dependent_status.
+        recipient: Optional label for who the link is for (e.g. "Attorney Kim").
+        expires_in_days: Link lifetime, 1-90 days (default 14).
+        confirm: Set true only after the user has approved the upload.
+        remember: How long to remember approval — "once", "session", or "always".
+    """
+    if not is_local_mode():
+        return json.dumps({"error": "publish_data_room is only available in local mode."})
+    res = local_publish_data_room(
+        template_id=template_id, recipient=recipient,
+        expires_in_days=expires_in_days, confirm=confirm, remember=remember,
+    )
+    if isinstance(res, dict) and res.get("status") == "published":
+        return format_publish_result(res)
+    return json.dumps(res, default=str, indent=2)
 
 
 @mcp.tool(
