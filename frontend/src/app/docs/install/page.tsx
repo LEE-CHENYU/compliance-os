@@ -162,6 +162,38 @@ export default function InstallDocsPage() {
           </div>
         </section>
 
+        {/* Optional companion skill */}
+        <section className="rounded-2xl bg-white/70 backdrop-blur border border-[#D97757]/15 p-8 shadow-sm">
+          <div className="flex items-start justify-between gap-6 flex-wrap">
+            <div className="flex-1 min-w-[260px]">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-[#b35d3f] mb-2">Optional · /guardian in Cowork</div>
+              <h2 className="text-xl font-semibold mb-3 text-[#0d1424]">Add the /guardian command</h2>
+              <p className="text-sm text-[#556480] leading-relaxed mb-4">
+                The extension already answers when you ask to <em>&ldquo;Start Guardian&rdquo;</em> in any chat, and <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">/guardian</code> works in plain chat out of the box. Installing this small skill also makes <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">/guardian</code> typeable in Cowork — e.g. <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">/guardian F-1 student, paid internship in 2 weeks</code>.
+              </p>
+              <a
+                href="/guardian.skill"
+                download="guardian.skill"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#b35d3f] border border-[#D97757]/30 font-semibold text-sm shadow-sm hover:shadow-md transition-shadow"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download guardian.skill
+              </a>
+              <ol className="mt-6 space-y-3 text-sm text-[#556480] leading-relaxed list-decimal pl-5 marker:text-[#b35d3f] marker:font-semibold">
+                <li>
+                  In Claude Desktop, go to <strong>Settings → Capabilities → Skills</strong> and upload <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">guardian.skill</code>.
+                </li>
+                <li>
+                  Skills are account-level — install once and <code className="bg-white/70 px-1.5 py-0.5 rounded text-[#b35d3f] font-mono">/guardian</code> follows you to every machine.
+                </li>
+              </ol>
+            </div>
+            <div className="text-[11px] text-[#8b97ad] pt-7 max-w-[200px]">
+              Needs the desktop extension installed — the skill is a front door, the extension does the work.
+            </div>
+          </div>
+        </section>
+
         {/* Fastest path: the agent does it */}
         <section className="rounded-2xl bg-[#0d1424] text-white p-8 shadow-sm">
           <div className="flex items-start justify-between gap-6 flex-wrap">
