@@ -82,7 +82,13 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" },
   },
-  icons: { icon: "/favicon.ico" },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/guardian-favicon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: "/guardian-favicon-512.png",
+  },
   category: "productivity",
 };
 
