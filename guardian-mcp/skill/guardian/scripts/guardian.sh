@@ -35,15 +35,17 @@ fi
 # api GET <path> — prints body; distinguishes auth failure from network failure.
 api() {
   local path="$1" body code
-  body=$(curl -s -w '\n%{http_code}' -H "Authorization: Bearer $TOKEN" "$API_URL$path") || {
+  body=$(curl -s --max-time 30 -w '\n%{http_code}' -H "Authorization: Bearer $TOKEN" "$API_URL$path") || {
     echo "Error: Could not reach Guardian API at $API_URL. Check network connection." >&2
     exit 1
   }
   code=${body##*$'\n'}
   body=${body%$'\n'*}
   if [ "$code" = "401" ] || [ "$code" = "403" ]; then
-    echo "Error: Guardian rejected the token (HTTP $code) — key invalid or expired." >&2
-    echo "Generate a fresh one at guardiancompliance.app/connect and re-save ~/.guardian-token." >&2
+    echo "Error: Guardian rejected the token (HTTP $code) — likely revoked by a newer key." >&2
+    echo "Paste the CURRENT active key into ~/.guardian-token. Only regenerate at" >&2
+    echo "guardiancompliance.app/connect if the key is lost — each Generate click" >&2
+    echo "de-activates ALL previously issued keys, including the desktop extension's." >&2
     exit 1
   fi
   if [ "${code:0:1}" != "2" ]; then
@@ -208,7 +210,7 @@ cmd_ask() {
   fi
   local json_question body code
   json_question=$(printf '%s' "$question" | jq -Rs .)
-  body=$(curl -s -w '\n%{http_code}' -X POST \
+  body=$(curl -s --max-time 60 -w '\n%{http_code}' -X POST \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
     -d "{\"message\": $json_question, \"history\": []}" \
@@ -219,8 +221,10 @@ cmd_ask() {
   code=${body##*$'\n'}
   body=${body%$'\n'*}
   if [ "$code" = "401" ] || [ "$code" = "403" ]; then
-    echo "Error: Guardian rejected the token (HTTP $code) — key invalid or expired." >&2
-    echo "Generate a fresh one at guardiancompliance.app/connect and re-save ~/.guardian-token." >&2
+    echo "Error: Guardian rejected the token (HTTP $code) — likely revoked by a newer key." >&2
+    echo "Paste the CURRENT active key into ~/.guardian-token. Only regenerate at" >&2
+    echo "guardiancompliance.app/connect if the key is lost — each Generate click" >&2
+    echo "de-activates ALL previously issued keys, including the desktop extension's." >&2
     exit 1
   fi
   if [ "${code:0:1}" != "2" ]; then
@@ -228,6 +232,12 @@ cmd_ask() {
     exit 1
   fi
   echo "$body" | jq -r '.reply // "No response received."'
+  local refs
+  refs=$(echo "$body" | jq -r '[.references[]?.filename] | unique | join(", ")' 2>/dev/null || true)
+  if [ -n "$refs" ]; then
+    echo ""
+    echo "_Grounded in: ${refs}_"
+  fi
 }
 
 case "$CMD" in

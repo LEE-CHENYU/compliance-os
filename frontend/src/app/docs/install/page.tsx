@@ -189,7 +189,7 @@ export default function InstallDocsPage() {
               </ol>
             </div>
             <div className="text-[11px] text-[#8b97ad] pt-7 max-w-[200px]">
-              Needs the desktop extension installed — the skill is a front door, the extension does the work.
+              Works best with the desktop extension (local + private). Without it, the skill reads your hosted Guardian account using your API key.
             </div>
           </div>
         </section>
