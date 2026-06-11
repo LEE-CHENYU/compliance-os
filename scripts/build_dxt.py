@@ -44,9 +44,9 @@ MANIFEST = {
         "issues. Also handles Form 8843 generation, FBAR aggregation, "
         "I-983 STEM OPT training plan review, and tokenized data-room "
         "share links for external collaborators like attorneys and CPAs. "
-        "Run the /guardian command to start it deterministically — or "
-        "/guardian <your situation> (e.g. 'F-1 student, paid internship in "
-        "2 weeks') to route straight to your case."
+        "To start, just ask: 'Start Guardian' — or describe your situation "
+        "(e.g. 'F-1 student, paid internship in 2 weeks') to route straight "
+        "to your case. In plain chat you can also type /guardian."
     ),
     "author": {
         "name": "Guardian",
