@@ -342,7 +342,7 @@ export default function Home() {
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
-            <span><span style={{color:'#5b8dee',fontWeight:600}}>Private by design.</span> Your documents never leave your computer before you approve it — and with the local extension, never at all.</span>
+            <span><span style={{color:'#5b8dee',fontWeight:600}}>Private by design.</span> Your documents never leave your computer.</span>
           </p>
           <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}>
             <button onClick={() => router.push("/check")} style={{padding:'15px 32px',borderRadius:12,background:'linear-gradient(135deg, #5b8dee, #4a74d4)',color:'white',fontWeight:600,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(74,116,212,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',whiteSpace:'nowrap'}}>
@@ -658,7 +658,7 @@ export default function Home() {
       </section>
 
       <footer style={{position:'relative',zIndex:1,padding:48,textAlign:'center',fontSize:13,color:'#8e9ab5',lineHeight:1.7}}>
-        Local-first by design — your documents never leave your computer before you approve it.<br />
+        Local-first by design — your documents never leave your computer.<br />
         Free to use. No account required.
       </footer>
     </>
