@@ -109,6 +109,56 @@ def test_inactive_when_server_says_invalid(monkeypatch, tmp_path):
     assert licensing.activation_block()["state"] == "inactive"
 
 
+def test_key_change_invalidates_cache(monkeypatch, tmp_path):
+    """A negative verdict cached for an OLD key must not pin a NEW key to
+    inactive: changing GUARDIAN_LICENSE_KEY forces re-validation even when
+    the cache is fresh (<24h)."""
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    from compliance_os import licensing
+
+    # Old key validates as invalid; that verdict gets cached.
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", "gdn_oc_old_rejected")
+    monkeypatch.setattr(
+        licensing, "validate_online",
+        lambda key: {"valid": False, "status": "invalid", "tier": "free",
+                     "features": [], "grace_until": None},
+    )
+    assert licensing.activation_state() == "inactive"
+
+    # User regenerates the key; server now says valid. The fresh cache
+    # belongs to the old key, so the client must re-validate, not stay
+    # pinned to "inactive" for 24 hours.
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", "gdn_oc_new_good")
+    monkeypatch.setattr(
+        licensing, "validate_online",
+        lambda key: {"valid": True, "status": "active", "tier": "free",
+                     "features": ["extraction"], "grace_until": None},
+    )
+    assert licensing.activation_state() == "active"
+
+
+def test_key_change_offline_fails_open(monkeypatch, tmp_path):
+    """Offline with only a different key's cached verdict on disk: the old
+    verdict is not evidence about the new key, so fail open like the
+    never-validated case (soft-gate rule)."""
+    monkeypatch.setenv("GUARDIAN_HOME", str(tmp_path))
+    from compliance_os import licensing
+
+    # Old key's rejection gets cached while online.
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", "gdn_oc_old_rejected")
+    monkeypatch.setattr(
+        licensing, "validate_online",
+        lambda key: {"valid": False, "status": "invalid", "tier": "free",
+                     "features": [], "grace_until": None},
+    )
+    assert licensing.activation_state() == "inactive"
+
+    # New key, now offline: no cache for THIS key — fail open.
+    monkeypatch.setenv("GUARDIAN_LICENSE_KEY", "gdn_oc_new_good")
+    monkeypatch.setattr(licensing, "validate_online", lambda key: None)
+    assert licensing.activation_state() == "active"
+
+
 def test_offline_grace_then_expiry(monkeypatch, tmp_path):
     from datetime import datetime, timedelta, timezone
 
@@ -121,12 +171,14 @@ def test_offline_grace_then_expiry(monkeypatch, tmp_path):
 
     future = (datetime.now(timezone.utc) + timedelta(days=3)).isoformat()
     licensing._write_cache({"valid": True, "status": "active", "tier": "free",
-                            "features": ["extraction"], "grace_until": future})
+                            "features": ["extraction"], "grace_until": future},
+                           "gdn_oc_aa_bb")
     assert licensing.activation_state() == "active"   # within grace
 
     past = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
     licensing._write_cache({"valid": True, "status": "active", "tier": "free",
-                            "features": ["extraction"], "grace_until": past})
+                            "features": ["extraction"], "grace_until": past},
+                           "gdn_oc_aa_bb")
     assert licensing.activation_state() == "expired_offline"
 
 

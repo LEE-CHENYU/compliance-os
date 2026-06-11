@@ -17,6 +17,7 @@ enforcement.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from datetime import datetime, timedelta, timezone
@@ -81,12 +82,19 @@ def _read_cache() -> dict | None:
         return None
 
 
-def _write_cache(entitlements: dict) -> None:
+def _key_fp(key: str) -> str:
+    """Non-reversible fingerprint binding a cached verdict to its key."""
+    return hashlib.sha256(key.encode()).hexdigest()[:12]
+
+
+def _write_cache(entitlements: dict, key: str | None = None) -> None:
     try:
         path = _cache_path()
         path.parent.mkdir(parents=True, exist_ok=True)
         data = dict(entitlements)
         data["_cached_at"] = _now().isoformat()
+        if key:
+            data["_key_fp"] = _key_fp(key)
         path.write_text(json.dumps(data, indent=2), encoding="utf-8")
     except Exception:
         pass
@@ -97,6 +105,22 @@ def _parse_dt(value) -> datetime | None:
         return datetime.fromisoformat(value)
     except Exception:
         return None
+
+
+def _read_cache_for(key: str) -> dict | None:
+    """The cached verdict for THIS key, or None.
+
+    A verdict cached for a different (e.g. since-regenerated) key is not
+    evidence about the current key — discard it rather than letting it pin
+    the state or extend grace. Discarding makes a key change behave exactly
+    like a first run: re-validate immediately, fail open if offline. Legacy
+    caches without a fingerprint are discarded too and get stamped on the
+    next successful validation.
+    """
+    cache = _read_cache()
+    if cache is not None and cache.get("_key_fp") != _key_fp(key):
+        return None
+    return cache
 
 
 def _should_refresh(cache: dict | None) -> bool:
@@ -114,11 +138,11 @@ def current_entitlements() -> dict | None:
     key = _license_key()
     if not key:
         return None
-    cache = _read_cache()
+    cache = _read_cache_for(key)
     if _should_refresh(cache):
         fresh = validate_online(key)
         if fresh is not None:
-            _write_cache(fresh)
+            _write_cache(fresh, key)
             return fresh
     return cache
 
@@ -128,12 +152,12 @@ def activation_state() -> str:
     key = _license_key()
     if not key:
         return "unconfigured"
-    cache = _read_cache()
+    cache = _read_cache_for(key)
     fresh = None
     if _should_refresh(cache):
         fresh = validate_online(key)
         if fresh is not None:
-            _write_cache(fresh)
+            _write_cache(fresh, key)
     ent = fresh if fresh is not None else cache
     if ent is None:
         # Key configured but never validated and currently offline (no cache to
