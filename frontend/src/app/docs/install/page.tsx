@@ -6,7 +6,7 @@ import { Logo } from "@/components/Logo";
 type AppId = "claude-code" | "claude-desktop" | "codex";
 
 const APPS: { id: AppId; label: string; sub: string; configPath: string; language: "json" | "toml" }[] = [
-  { id: "claude-code",    label: "Claude Code",    sub: "Anthropic CLI",         configPath: "~/.claude/settings.json", language: "json" },
+  { id: "claude-code",    label: "Claude Code",    sub: "Anthropic CLI",         configPath: "~/.claude.json", language: "json" },
   { id: "claude-desktop", label: "Claude Desktop", sub: "macOS / Windows / Linux app", configPath: "~/Library/Application Support/Claude/claude_desktop_config.json", language: "json" },
   { id: "codex",          label: "Codex CLI",      sub: "OpenAI CLI",            configPath: "~/.codex/config.toml",    language: "toml" },
 ];

@@ -30,7 +30,10 @@ def _claude_desktop_config_path() -> Path | None:
 
 
 def _claude_code_config_path() -> Path:
-    return Path.home() / ".claude" / "settings.json"
+    # User-scope MCP servers live in ~/.claude.json (top-level mcpServers key).
+    # ~/.claude/settings.json does NOT register servers — Claude Code only reads
+    # allow/deny lists from settings files.
+    return Path.home() / ".claude.json"
 
 
 def _codex_config_path() -> Path:
@@ -51,7 +54,7 @@ def _detect_apps() -> list[dict[str, str | Path | bool]]:
         })
 
     code_path = _claude_code_config_path()
-    if code_path.parent.exists():
+    if code_path.exists() or (Path.home() / ".claude").exists():
         apps.append({
             "name": "Claude Code",
             "path": code_path,
@@ -152,6 +155,15 @@ GUARDIAN_MODE = "local"
 # ─── License key setup ───────────────────────────────────────────
 
 def _prompt_license_key() -> str:
+    # Env first: the documented zero-fetch one-liner sets GUARDIAN_TOKEN (or
+    # GUARDIAN_LICENSE_KEY) and runs non-interactively from an agent shell.
+    env_key = (
+        os.environ.get("GUARDIAN_LICENSE_KEY")
+        or os.environ.get("GUARDIAN_TOKEN")
+        or ""
+    ).strip()
+    if env_key:
+        return env_key
     print()
     print("  Guardian activation")
     print("  -------------------")
@@ -159,7 +171,13 @@ def _prompt_license_key() -> str:
     print("  Everything runs locally on your machine — your documents never leave.")
     print("  Get your license key: guardiancompliance.app/connect  (sign in → Generate).")
     print()
-    return input("  Paste Guardian license key: ").strip()
+    try:
+        return input("  Paste Guardian license key: ").strip()
+    except EOFError:
+        print()
+        print("  No TTY and no key in the environment. Re-run with:")
+        print("    GUARDIAN_LICENSE_KEY=gdn_oc_... guardian-mcp install --auto")
+        sys.exit(1)
 
 
 # ─── Main installer ──────────────────────────────────────────────

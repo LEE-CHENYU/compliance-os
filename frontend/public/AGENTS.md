@@ -37,7 +37,7 @@ Look at what host you are running in and pick ONE of:
 
 | Host | Config file |
 |---|---|
-| Claude Code (CLI) | `~/.claude/settings.json` |
+| Claude Code (CLI) | `~/.claude.json` (top-level `mcpServers` key) — or simply run `claude mcp add --scope user guardian -- python -m compliance_os.mcp_server` |
 | Claude Desktop | macOS: `~/Library/Application Support/Claude/claude_desktop_config.json` · Windows: `%APPDATA%\Claude\claude_desktop_config.json` · Linux: `~/.config/Claude/claude_desktop_config.json` |
 | Codex CLI | `~/.codex/config.toml` |
 | Cursor / Continue / other | Follow that tool's MCP config convention |
