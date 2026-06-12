@@ -59,7 +59,7 @@ function configPath(app: AppId): string {
     case "claude-desktop":
       return "~/Library/Application Support/Claude/claude_desktop_config.json";
     case "claude-code":
-      return "~/.claude/settings.json";
+      return "~/.claude.json";
     case "codex":
       return "~/.codex/config.toml";
   }

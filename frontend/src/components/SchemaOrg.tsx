@@ -268,7 +268,7 @@ export const INSTALL_SCHEMA = {
       "@type": "HowToStep",
       position: 2,
       name: "Configure your client",
-      text: "Add the Guardian MCP block to ~/.claude/settings.json (Claude Code), claude_desktop_config.json (Claude Desktop), or ~/.codex/config.toml (Codex CLI). Paste your token from /connect.",
+      text: "Add the Guardian MCP block to ~/.claude.json (Claude Code), claude_desktop_config.json (Claude Desktop), or ~/.codex/config.toml (Codex CLI). Paste your token from /connect.",
     },
     {
       "@type": "HowToStep",
